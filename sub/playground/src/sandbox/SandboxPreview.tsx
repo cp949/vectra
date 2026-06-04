@@ -65,7 +65,7 @@ export function SandboxPreview({
     portRef.current = channel.port1;
     channel.port1.onmessage = (event: MessageEvent): void => {
       const raw = event.data as { protocol?: unknown } | null | undefined;
-      if (!raw || raw.protocol !== 'vectra-playground/v1') return;
+      if (raw?.protocol !== 'vectra-playground/v1') return;
       onMessageRef.current?.(event.data as SandboxChildMessage);
     };
 
