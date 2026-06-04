@@ -1,0 +1,201 @@
+{
+  "name": "@cp949/vectra",
+  "version": "0.0.0",
+  "description": "TypeScript geometry/math function catalog",
+  "keywords": [
+    "geometry",
+    "2d",
+    "typescript",
+    "math"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://git.jjfive.net/jjfive/vectra.git",
+    "directory": "sub/vectra"
+  },
+  "homepage": "https://git.jjfive.net/jjfive/vectra#readme",
+  "bugs": {
+    "url": "https://git.jjfive.net/jjfive/vectra/issues"
+  },
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rimraf dist coverage",
+    "lint": "biome check build-entrypoints.ts tsup.config.ts src tests",
+    "lint:fix": "biome check --write build-entrypoints.ts tsup.config.ts src tests",
+    "format": "biome check --write build-entrypoints.ts tsup.config.ts src tests",
+    "format:check": "biome format build-entrypoints.ts tsup.config.ts src tests",
+    "surface:check": "vitest run --config vitest.config.ts tests/contract/source-surface-drift.test.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "test:contract": "pnpm build && vitest run --config vitest.config.ts tests/contract",
+    "test:coverage": "vitest run --coverage --config vitest.config.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./vec": {
+      "import": "./dist/vec/index.js",
+      "types": "./dist/vec/index.d.ts"
+    },
+    "./segment": {
+      "import": "./dist/segment/index.js",
+      "types": "./dist/segment/index.d.ts"
+    },
+    "./rect": {
+      "import": "./dist/rect/index.js",
+      "types": "./dist/rect/index.d.ts"
+    },
+    "./bounds": {
+      "import": "./dist/bounds/index.js",
+      "types": "./dist/bounds/index.d.ts"
+    },
+    "./capsule": {
+      "import": "./dist/capsule/index.js",
+      "types": "./dist/capsule/index.d.ts"
+    },
+    "./circle": {
+      "import": "./dist/circle/index.js",
+      "types": "./dist/circle/index.d.ts"
+    },
+    "./ellipse": {
+      "import": "./dist/ellipse/index.js",
+      "types": "./dist/ellipse/index.d.ts"
+    },
+    "./matrix": {
+      "import": "./dist/matrix/index.js",
+      "types": "./dist/matrix/index.d.ts"
+    },
+    "./polyline": {
+      "import": "./dist/polyline/index.js",
+      "types": "./dist/polyline/index.d.ts"
+    },
+    "./polygon": {
+      "import": "./dist/polygon/index.js",
+      "types": "./dist/polygon/index.d.ts"
+    },
+    "./triangle": {
+      "import": "./dist/triangle/index.js",
+      "types": "./dist/triangle/index.d.ts"
+    },
+    "./oriented-rect": {
+      "import": "./dist/oriented-rect/index.js",
+      "types": "./dist/oriented-rect/index.d.ts"
+    },
+    "./pose2": {
+      "import": "./dist/pose2/index.js",
+      "types": "./dist/pose2/index.d.ts"
+    },
+    "./intersects": {
+      "import": "./dist/intersects/index.js",
+      "types": "./dist/intersects/index.d.ts"
+    },
+    "./random": {
+      "import": "./dist/random/index.js",
+      "types": "./dist/random/index.d.ts"
+    },
+    "./random-state": {
+      "import": "./dist/random-state/index.js",
+      "types": "./dist/random-state/index.d.ts"
+    },
+    "./path": {
+      "import": "./dist/path/index.js",
+      "types": "./dist/path/index.d.ts"
+    },
+    "./math": {
+      "import": "./dist/math/index.js",
+      "types": "./dist/math/index.d.ts"
+    },
+    "./curve": {
+      "import": "./dist/curve/index.js",
+      "types": "./dist/curve/index.d.ts"
+    },
+    "./svg-path": {
+      "import": "./dist/svg-path/index.js",
+      "types": "./dist/svg-path/index.d.ts"
+    },
+    "./infinite-line": {
+      "import": "./dist/infinite-line/index.js",
+      "types": "./dist/infinite-line/index.d.ts"
+    },
+    "./ray": {
+      "import": "./dist/ray/index.js",
+      "types": "./dist/ray/index.d.ts"
+    },
+    "./angle": {
+      "import": "./dist/angle/index.js",
+      "types": "./dist/angle/index.d.ts"
+    },
+    "./interpolation": {
+      "import": "./dist/interpolation/index.js",
+      "types": "./dist/interpolation/index.d.ts"
+    },
+    "./easing": {
+      "import": "./dist/easing/index.js",
+      "types": "./dist/easing/index.d.ts"
+    },
+    "./adapter": {
+      "import": "./dist/adapter/index.js",
+      "types": "./dist/adapter/index.d.ts"
+    },
+    "./editor-geometry": {
+      "import": "./dist/editor-geometry/index.js",
+      "types": "./dist/editor-geometry/index.d.ts"
+    },
+    "./linalg": {
+      "import": "./dist/linalg/index.js",
+      "types": "./dist/linalg/index.d.ts"
+    },
+    "./calculus": {
+      "import": "./dist/calculus/index.js",
+      "types": "./dist/calculus/index.d.ts"
+    },
+    "./statistics": {
+      "import": "./dist/statistics/index.js",
+      "types": "./dist/statistics/index.d.ts"
+    },
+    "./grid": {
+      "import": "./dist/grid/index.js",
+      "types": "./dist/grid/index.d.ts"
+    },
+    "./hex-grid": {
+      "import": "./dist/hex-grid/index.js",
+      "types": "./dist/hex-grid/index.d.ts"
+    },
+    "./motion": {
+      "import": "./dist/motion/index.js",
+      "types": "./dist/motion/index.d.ts"
+    },
+    "./noise": {
+      "import": "./dist/noise/index.js",
+      "types": "./dist/noise/index.d.ts"
+    },
+    "./sdf": {
+      "import": "./dist/sdf/index.js",
+      "types": "./dist/sdf/index.d.ts"
+    },
+    "./fitting": {
+      "import": "./dist/fitting/index.js",
+      "types": "./dist/fitting/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}

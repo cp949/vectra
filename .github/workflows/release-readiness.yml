@@ -1,0 +1,42 @@
+name: Release Readiness
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  verify:
+    name: Verify package release gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify workspace
+        run: pnpm verify
+
+      - name: Verify vectra contract imports
+        run: pnpm --filter @cp949/vectra test:contract
+
+      - name: Build vectra package
+        run: pnpm --filter @cp949/vectra build
+
+      - name: Check npm package contents
+        working-directory: sub/vectra
+        run: npm pack --dry-run

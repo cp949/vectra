@@ -1,0 +1,1231 @@
+{
+  "generatedBy": "scripts/check-public-import-boundary.mjs --write",
+  "valueImports": [
+    {
+      "from": "angle/angle-delta.ts",
+      "to": "angle/wrap-radians.ts"
+    },
+    {
+      "from": "angle/bisect-angle.ts",
+      "to": "angle/angle-delta.ts"
+    },
+    {
+      "from": "angle/clamp-angle.ts",
+      "to": "angle/wrap-radians-positive.ts"
+    },
+    {
+      "from": "angle/is-angle-between.ts",
+      "to": "angle/wrap-radians-positive.ts"
+    },
+    {
+      "from": "angle/is-reflex.ts",
+      "to": "angle/wrap-radians-positive.ts"
+    },
+    {
+      "from": "angle/move-toward-angle.ts",
+      "to": "angle/angle-delta.ts"
+    },
+    {
+      "from": "angle/near-angle.ts",
+      "to": "angle/angle-delta.ts"
+    },
+    {
+      "from": "angle/octant.ts",
+      "to": "angle/wrap-radians-positive.ts"
+    },
+    {
+      "from": "angle/quadrant.ts",
+      "to": "angle/wrap-radians-positive.ts"
+    },
+    {
+      "from": "angle/shortest-lerp-angle.ts",
+      "to": "angle/angle-delta.ts"
+    },
+    {
+      "from": "angle/turn-direction.ts",
+      "to": "angle/angle-delta.ts"
+    },
+    {
+      "from": "angle/wrap-degrees-positive.ts",
+      "to": "math/wrap-float-half-open.ts"
+    },
+    {
+      "from": "angle/wrap-degrees.ts",
+      "to": "math/wrap-float-half-open.ts"
+    },
+    {
+      "from": "angle/wrap-radians-positive.ts",
+      "to": "math/wrap-float-half-open.ts"
+    },
+    {
+      "from": "angle/wrap-radians.ts",
+      "to": "math/wrap-float-half-open.ts"
+    },
+    {
+      "from": "bounds/bounds-from.ts",
+      "to": "bounds/copy-into.ts"
+    },
+    {
+      "from": "bounds/bounds-from.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "bounds/closest-point-into.ts",
+      "to": "bounds/is-empty.ts"
+    },
+    {
+      "from": "bounds/closest-point.ts",
+      "to": "bounds/is-empty.ts"
+    },
+    {
+      "from": "bounds/distance-to-point.ts",
+      "to": "bounds/is-empty.ts"
+    },
+    {
+      "from": "bounds/expand-by-sides.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "bounds/from-center.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "bounds/from-points.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "bounds/from-rect.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "bounds/intersection.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "bounds/to-rect.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "bounds/transform.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "bounds/union.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "circle/circle-from.ts",
+      "to": "circle/copy-into.ts"
+    },
+    {
+      "from": "circle/circle-from.ts",
+      "to": "circle/create-circle.ts"
+    },
+    {
+      "from": "circle/expand-by.ts",
+      "to": "circle/create-circle.ts"
+    },
+    {
+      "from": "circle/from-bounds.ts",
+      "to": "circle/create-circle.ts"
+    },
+    {
+      "from": "circle/from-three-points.ts",
+      "to": "circle/create-circle.ts"
+    },
+    {
+      "from": "circle/scale.ts",
+      "to": "circle/create-circle.ts"
+    },
+    {
+      "from": "circle/shrink-by-into.ts",
+      "to": "circle/expand-by-into.ts"
+    },
+    {
+      "from": "circle/shrink-by.ts",
+      "to": "circle/create-circle.ts"
+    },
+    {
+      "from": "circle/translate.ts",
+      "to": "circle/create-circle.ts"
+    },
+    {
+      "from": "curve/arc-bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "curve/arc-closest-point-into.ts",
+      "to": "curve/arc-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/arc-point-at-length-into.ts",
+      "to": "curve/arc-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/arc-point-at-length-into.ts",
+      "to": "curve/arc-t-at-length.ts"
+    },
+    {
+      "from": "curve/arc-sample-into.ts",
+      "to": "curve/arc-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/bspline-polyline-into.ts",
+      "to": "curve/bspline-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/cardinal-polyline-into.ts",
+      "to": "curve/cardinal-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/catmull-rom-polyline-into.ts",
+      "to": "curve/catmull-rom-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/cubic-bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "curve/cubic-lookup-table-into.ts",
+      "to": "curve/cubic-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/cubic-sample-into.ts",
+      "to": "curve/cubic-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/cubic-self-intersections-into.ts",
+      "to": "curve/cubic-classify.ts"
+    },
+    {
+      "from": "curve/cubic-spaced-points-into.ts",
+      "to": "curve/cubic-length.ts"
+    },
+    {
+      "from": "curve/cubic-spaced-points-into.ts",
+      "to": "curve/cubic-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/cubic-spaced-points-into.ts",
+      "to": "curve/cubic-t-at-length.ts"
+    },
+    {
+      "from": "curve/quadratic-bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "curve/quadratic-lookup-table-into.ts",
+      "to": "curve/quadratic-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/quadratic-sample-into.ts",
+      "to": "curve/quadratic-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/quadratic-spaced-points-into.ts",
+      "to": "curve/quadratic-length.ts"
+    },
+    {
+      "from": "curve/quadratic-spaced-points-into.ts",
+      "to": "curve/quadratic-point-at-t-into.ts"
+    },
+    {
+      "from": "curve/quadratic-spaced-points-into.ts",
+      "to": "curve/quadratic-t-at-length.ts"
+    },
+    {
+      "from": "editor-geometry/connector-line.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "ellipse/bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "ellipse/ellipse-from.ts",
+      "to": "ellipse/copy-into.ts"
+    },
+    {
+      "from": "ellipse/ellipse-from.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/expand-by.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/from-bounds.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/from-circle.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/from-foci.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/from-rect.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/rotated-bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "ellipse/scale.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/transform.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "ellipse/translate.ts",
+      "to": "ellipse/create-ellipse.ts"
+    },
+    {
+      "from": "infinite-line/from-angle.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/from-coefficients.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/from-normal.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/from-points.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/from-segment.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/from-slope.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/infinite-line-from.ts",
+      "to": "infinite-line/copy-into.ts"
+    },
+    {
+      "from": "infinite-line/infinite-line-from.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/infinite-line-mirror-line.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/reverse.ts",
+      "to": "infinite-line/create-infinite-line.ts"
+    },
+    {
+      "from": "infinite-line/side.ts",
+      "to": "infinite-line/signed-distance-to-point.ts"
+    },
+    {
+      "from": "intersects/curve-curve-intersections-into.ts",
+      "to": "curve/cubic-cubic-intersections-into.ts"
+    },
+    {
+      "from": "intersects/curve-curve-intersections-into.ts",
+      "to": "curve/quadratic-cubic-intersections-into.ts"
+    },
+    {
+      "from": "intersects/curve-curve-intersections-into.ts",
+      "to": "curve/quadratic-quadratic-intersections-into.ts"
+    },
+    {
+      "from": "intersects/curve-self-intersections-into.ts",
+      "to": "curve/cubic-self-intersections-into.ts"
+    },
+    {
+      "from": "intersects/infinite-line-cubic-intersections-into.ts",
+      "to": "curve/cubic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/infinite-line-quadratic-intersections-into.ts",
+      "to": "curve/quadratic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/line-curve-intersections-into.ts",
+      "to": "curve/cubic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/line-curve-intersections-into.ts",
+      "to": "curve/quadratic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/ray-cubic-intersections-into.ts",
+      "to": "curve/cubic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/ray-quadratic-intersections-into.ts",
+      "to": "curve/quadratic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/segment-cubic-intersections-into.ts",
+      "to": "curve/cubic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/segment-curve-intersections-into.ts",
+      "to": "curve/cubic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/segment-curve-intersections-into.ts",
+      "to": "curve/quadratic-line-intersections-into.ts"
+    },
+    {
+      "from": "intersects/segment-quadratic-intersections-into.ts",
+      "to": "curve/quadratic-line-intersections-into.ts"
+    },
+    {
+      "from": "linalg/gauss-jordan-into.ts",
+      "to": "linalg/reduced-row-echelon-form-into.ts"
+    },
+    {
+      "from": "linalg/gauss-jordan.ts",
+      "to": "linalg/reduced-row-echelon-form.ts"
+    },
+    {
+      "from": "math/lcm.ts",
+      "to": "math/gcd.ts"
+    },
+    {
+      "from": "math/solve-cubic.ts",
+      "to": "math/solve-quadratic.ts"
+    },
+    {
+      "from": "math/solve-quadratic.ts",
+      "to": "math/solve-linear.ts"
+    },
+    {
+      "from": "matrix/invert.ts",
+      "to": "matrix/create-matrix.ts"
+    },
+    {
+      "from": "matrix/matrix-from.ts",
+      "to": "matrix/copy-into.ts"
+    },
+    {
+      "from": "matrix/matrix-from.ts",
+      "to": "matrix/create-matrix.ts"
+    },
+    {
+      "from": "matrix/multiply.ts",
+      "to": "matrix/create-matrix.ts"
+    },
+    {
+      "from": "matrix/transform-bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "matrix/transform-rect.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "path/arc-through-commands-into.ts",
+      "to": "path/line-commands-into.ts"
+    },
+    {
+      "from": "path/area.ts",
+      "to": "path/signed-area.ts"
+    },
+    {
+      "from": "path/bounds-into.ts",
+      "to": "bounds/empty-into.ts"
+    },
+    {
+      "from": "path/bounds-into.ts",
+      "to": "curve/arc-bounds-into.ts"
+    },
+    {
+      "from": "path/bounds-into.ts",
+      "to": "curve/cubic-bounds-into.ts"
+    },
+    {
+      "from": "path/bounds-into.ts",
+      "to": "curve/endpoint-arc-to-center-into.ts"
+    },
+    {
+      "from": "path/bounds-into.ts",
+      "to": "curve/quadratic-bounds-into.ts"
+    },
+    {
+      "from": "path/classify-point.ts",
+      "to": "path/contains-point.ts"
+    },
+    {
+      "from": "path/classify-point.ts",
+      "to": "path/distance-to-point.ts"
+    },
+    {
+      "from": "path/closest-point-into.ts",
+      "to": "curve/arc-flatten-into.ts"
+    },
+    {
+      "from": "path/closest-point-into.ts",
+      "to": "curve/cubic-flatten-into.ts"
+    },
+    {
+      "from": "path/closest-point-into.ts",
+      "to": "curve/endpoint-arc-to-center-into.ts"
+    },
+    {
+      "from": "path/closest-point-into.ts",
+      "to": "curve/quadratic-flatten-into.ts"
+    },
+    {
+      "from": "path/contains-point.ts",
+      "to": "path/flatten-into.ts"
+    },
+    {
+      "from": "path/curvature-at-length.ts",
+      "to": "curve/endpoint-arc-to-center-into.ts"
+    },
+    {
+      "from": "path/distance-to-point.ts",
+      "to": "curve/arc-flatten-into.ts"
+    },
+    {
+      "from": "path/distance-to-point.ts",
+      "to": "curve/cubic-flatten-into.ts"
+    },
+    {
+      "from": "path/distance-to-point.ts",
+      "to": "curve/endpoint-arc-to-center-into.ts"
+    },
+    {
+      "from": "path/distance-to-point.ts",
+      "to": "curve/quadratic-flatten-into.ts"
+    },
+    {
+      "from": "path/draw-direction.ts",
+      "to": "path/signed-area.ts"
+    },
+    {
+      "from": "path/is-clockwise.ts",
+      "to": "path/signed-area.ts"
+    },
+    {
+      "from": "path/is-path-command-list.ts",
+      "to": "path/is-path-command.ts"
+    },
+    {
+      "from": "path/length.ts",
+      "to": "curve/arc-flatten-into.ts"
+    },
+    {
+      "from": "path/length.ts",
+      "to": "curve/cubic-flatten-into.ts"
+    },
+    {
+      "from": "path/length.ts",
+      "to": "curve/endpoint-arc-to-center-into.ts"
+    },
+    {
+      "from": "path/length.ts",
+      "to": "curve/quadratic-flatten-into.ts"
+    },
+    {
+      "from": "path/normal-at-length-into.ts",
+      "to": "path/properties-at-length.ts"
+    },
+    {
+      "from": "path/orient-commands-into.ts",
+      "to": "path/is-clockwise.ts"
+    },
+    {
+      "from": "path/orient-commands-into.ts",
+      "to": "path/reverse-commands-into.ts"
+    },
+    {
+      "from": "path/partial-into.ts",
+      "to": "path/length.ts"
+    },
+    {
+      "from": "path/partial-into.ts",
+      "to": "path/split-at-length-into.ts"
+    },
+    {
+      "from": "path/point-at-length-into.ts",
+      "to": "curve/arc-flatten-into.ts"
+    },
+    {
+      "from": "path/point-at-length-into.ts",
+      "to": "curve/cubic-flatten-into.ts"
+    },
+    {
+      "from": "path/point-at-length-into.ts",
+      "to": "curve/endpoint-arc-to-center-into.ts"
+    },
+    {
+      "from": "path/point-at-length-into.ts",
+      "to": "curve/quadratic-flatten-into.ts"
+    },
+    {
+      "from": "path/point-at-length-ratio-into.ts",
+      "to": "path/length.ts"
+    },
+    {
+      "from": "path/point-at-length-ratio-into.ts",
+      "to": "path/point-at-length-into.ts"
+    },
+    {
+      "from": "path/properties-at-length.ts",
+      "to": "curve/arc-flatten-into.ts"
+    },
+    {
+      "from": "path/properties-at-length.ts",
+      "to": "curve/cubic-flatten-into.ts"
+    },
+    {
+      "from": "path/properties-at-length.ts",
+      "to": "curve/endpoint-arc-to-center-into.ts"
+    },
+    {
+      "from": "path/properties-at-length.ts",
+      "to": "curve/quadratic-flatten-into.ts"
+    },
+    {
+      "from": "path/rounded-rect-commands-into.ts",
+      "to": "path/rect-commands-into.ts"
+    },
+    {
+      "from": "path/sanitize-commands-into.ts",
+      "to": "path/remove-collinear-commands-into.ts"
+    },
+    {
+      "from": "path/segment-commands-into.ts",
+      "to": "path/line-commands-into.ts"
+    },
+    {
+      "from": "path/signed-area.ts",
+      "to": "path/flatten-into.ts"
+    },
+    {
+      "from": "path/subpath-at.ts",
+      "to": "path/split-subpaths-into.ts"
+    },
+    {
+      "from": "path/subpath-bounds-into.ts",
+      "to": "path/bounds-into.ts"
+    },
+    {
+      "from": "path/subpath-bounds-into.ts",
+      "to": "path/split-subpaths-into.ts"
+    },
+    {
+      "from": "path/tangent-at-length-into.ts",
+      "to": "path/properties-at-length.ts"
+    },
+    {
+      "from": "path/winding.ts",
+      "to": "path/flatten-into.ts"
+    },
+    {
+      "from": "polygon/bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "polygon/edge-at.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "polyline/bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "polyline/segment-at.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "random-state/create-random-state.ts",
+      "to": "random/create-rng.ts"
+    },
+    {
+      "from": "random-state/rand.ts",
+      "to": "random-state/create-random-state.ts"
+    },
+    {
+      "from": "random/angle.ts",
+      "to": "random/float.ts"
+    },
+    {
+      "from": "random/direction-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/log-normal.ts",
+      "to": "random/normal.ts"
+    },
+    {
+      "from": "random/normal.ts",
+      "to": "random/standard-normal.ts"
+    },
+    {
+      "from": "random/permutation.ts",
+      "to": "random/range-permutation-into.ts"
+    },
+    {
+      "from": "random/permutation.ts",
+      "to": "random/shuffle-into.ts"
+    },
+    {
+      "from": "random/point-in-bounds-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-circle-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-ellipse-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-polygon-into.ts",
+      "to": "polygon/bounds-into.ts"
+    },
+    {
+      "from": "random/point-in-polygon-into.ts",
+      "to": "polygon/contains-point.ts"
+    },
+    {
+      "from": "random/point-in-polygon-into.ts",
+      "to": "polygon/signed-area.ts"
+    },
+    {
+      "from": "random/point-in-polygon-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-rect-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-triangle-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-circle-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-path-into.ts",
+      "to": "path/length.ts"
+    },
+    {
+      "from": "random/point-on-path-into.ts",
+      "to": "path/point-at-length-into.ts"
+    },
+    {
+      "from": "random/point-on-path-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-polyline-into.ts",
+      "to": "polyline/length.ts"
+    },
+    {
+      "from": "random/point-on-polyline-into.ts",
+      "to": "polyline/point-at-length-into.ts"
+    },
+    {
+      "from": "random/point-on-polyline-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-segment-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-point-on-path-into.ts",
+      "to": "path/point-at-length-into.ts"
+    },
+    {
+      "from": "random/weighted-point-on-polyline-into.ts",
+      "to": "polyline/point-at-length-into.ts"
+    },
+    {
+      "from": "ray/ray-from.ts",
+      "to": "ray/copy-into.ts"
+    },
+    {
+      "from": "ray/ray-from.ts",
+      "to": "ray/create-ray.ts"
+    },
+    {
+      "from": "rect/fit-inside.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "rect/fit-outside.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "rect/from-bounds.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "rect/intersection.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "rect/perimeter-points-into.ts",
+      "to": "rect/perimeter-point-into.ts"
+    },
+    {
+      "from": "rect/rect-align-to.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "rect/rect-from.ts",
+      "to": "rect/copy-into.ts"
+    },
+    {
+      "from": "rect/rect-from.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "rect/to-square.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "rect/union.ts",
+      "to": "rect/create-rect.ts"
+    },
+    {
+      "from": "segment/bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "segment/center-on.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/extend.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/from-angle.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/from-circle.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/from-midpoint-angle-length.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/from-normal.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/from-point-vector.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/reverse.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/rotate-around.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/rotate.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/segment-from.ts",
+      "to": "segment/copy-into.ts"
+    },
+    {
+      "from": "segment/segment-from.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/single-intersection-into.ts",
+      "to": "segment/is-zero-length.ts"
+    },
+    {
+      "from": "segment/transform.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "segment/translate.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "statistics/standard-deviation.ts",
+      "to": "statistics/variance.ts"
+    },
+    {
+      "from": "svg-path/optimize-path-data-string.ts",
+      "to": "svg-path/path-data-to-string.ts"
+    },
+    {
+      "from": "svg-path/parse-subpaths-into.ts",
+      "to": "path/split-subpaths-into.ts"
+    },
+    {
+      "from": "svg-path/parse-subpaths-into.ts",
+      "to": "svg-path/parse-path-data-into.ts"
+    },
+    {
+      "from": "triangle/altitude.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "triangle/bounds.ts",
+      "to": "bounds/create-bounds.ts"
+    },
+    {
+      "from": "triangle/contains-points.ts",
+      "to": "triangle/contains-point.ts"
+    },
+    {
+      "from": "triangle/euler-line.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "triangle/median.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "triangle/medians.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "triangle/side-at.ts",
+      "to": "segment/create-segment.ts"
+    },
+    {
+      "from": "triangle/triangle-from.ts",
+      "to": "triangle/copy-into.ts"
+    },
+    {
+      "from": "vec/lerp-into.ts",
+      "to": "interpolation/lerp-point-into.ts"
+    },
+    {
+      "from": "vec/lerp.ts",
+      "to": "interpolation/lerp-point.ts"
+    },
+    {
+      "from": "vec/midpoint-into.ts",
+      "to": "interpolation/midpoint-into.ts"
+    },
+    {
+      "from": "vec/midpoint.ts",
+      "to": "interpolation/midpoint.ts"
+    },
+    {
+      "from": "vec/move-toward-into.ts",
+      "to": "interpolation/move-toward-point-into.ts"
+    },
+    {
+      "from": "vec/move-toward.ts",
+      "to": "interpolation/move-toward-point.ts"
+    },
+    {
+      "from": "vec/vec-from.ts",
+      "to": "vec/copy-into.ts"
+    }
+  ],
+  "typeOnlyImports": [
+    {
+      "from": "polygon/polygon-from.ts",
+      "to": "polygon/create-polygon.ts"
+    },
+    {
+      "from": "polyline/polyline-from.ts",
+      "to": "polyline/create-polyline.ts"
+    },
+    {
+      "from": "random-state/create-random-state.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/angle.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/bernoulli.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/beta.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/binomial.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/choice.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/create-rng.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/direction-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/direction.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/dirichlet-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/dirichlet.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/exponential.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/float.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/gamma.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/geometric.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/int.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/log-normal.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/multivariate-normal-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/multivariate-normal.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/normal.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/permutation.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/pick-unique-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/pick-unique.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-bounds-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-bounds.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-circle-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-circle.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-ellipse-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-ellipse.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-polygon-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-polygon.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-rect-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-rect-outside-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-rect-outside.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-rect.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-triangle-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-in-triangle.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-circle-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-circle.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-path-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-path.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-polyline-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-polyline.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-segment-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/point-on-segment.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/poisson.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/random-index.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/range-permutation-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/range-permutation.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/sample-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/sample.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/secure-random-source.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/shuffle-in-place.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/shuffle-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/shuffle.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/sign.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/standard-normal.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/triangular.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/uniform.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/unique-indices-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/unique-indices.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-choice.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-point-on-path-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-point-on-path.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-point-on-polyline-into.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-point-on-polyline.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-probability.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-random-index.ts",
+      "to": "random/random.ts"
+    },
+    {
+      "from": "random/weighted-shuffle.ts",
+      "to": "random/random.ts"
+    }
+  ]
+}

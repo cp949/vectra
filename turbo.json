@@ -1,0 +1,51 @@
+{
+  "$schema": "https://v2-9-16.turborepo.dev/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": ["NODE_ENV"]
+    },
+    "build:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "typecheck:examples": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint:fix": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "outputs": []
+    },
+    "format": {
+      "cache": false,
+      "outputs": []
+    },
+    "format:check": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build", "build"],
+      "outputs": [],
+      "inputs": ["src/**/*.ts", "tests/**/*.ts", "vitest.config.*"]
+    },
+    "test:contract": {
+      "dependsOn": ["build"],
+      "outputs": [],
+      "inputs": ["dist/**", "tests/**/*.ts", "package.json", "vitest.config.*"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

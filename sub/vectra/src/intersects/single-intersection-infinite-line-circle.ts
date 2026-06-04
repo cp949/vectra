@@ -1,0 +1,35 @@
+import { readCircleCenter, readCircleRadius } from '../internal/circle';
+import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
+import { infiniteLineToLineFamilyParam, lineFamilyCircleIntersectionPoint } from '../internal/line-family';
+import { DEFAULT_EPSILON } from '../internal/numeric';
+import { readX, readY } from '../internal/xy';
+import type { CircleLike, InfiniteLineLike, XYObjectWritable } from '../types';
+
+/**
+ * infinite-line과 circle의 단일 교점을 새 object로 반환한다.
+ *
+ * tangent이면 접점 object를 반환한다. 2-point crossing이면 undefined.
+ * empty circle (radius ≤ 0): undefined.
+ * allocating companion — internal helper를 직접 호출한다.
+ */
+export function singleIntersectionInfiniteLineCircle(
+  infiniteLine: InfiniteLineLike,
+  circle: CircleLike,
+  epsilon = DEFAULT_EPSILON
+): XYObjectWritable | undefined {
+  const origin = readInfiniteLineOrigin(infiniteLine);
+  const dir = readInfiniteLineDirection(infiniteLine);
+  const lineParam = infiniteLineToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
+  const center = readCircleCenter(circle);
+  const out: XYObjectWritable = { x: 0, y: 0 };
+  return lineFamilyCircleIntersectionPoint(
+    out,
+    lineParam,
+    readX(center),
+    readY(center),
+    readCircleRadius(circle),
+    epsilon
+  )
+    ? out
+    : undefined;
+}
