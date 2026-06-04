@@ -7,20 +7,6 @@ import { describe, expect, test } from 'vitest';
 import * as Random from '../../../src/random';
 import { createRandomState } from '../../../src/random-state/create-random-state';
 
-// random-state facade는 seeded rng를 trailing `rng?` 인자로 주입하는 wrapper다. rng를 소비하지 않는
-// 함수는 stateful wrapper가 무의미하므로 parity 대상에서 제외한다.
-// - createRng / randomUint32 / secureRandomSource: rng source/factory (rng 미소비)
-// - haltonSequence(Into) / sobolSequence(Into): deterministic low-discrepancy sequence (rng 미소비)
-const randomStateExclusions = new Set([
-  'createRng',
-  'randomUint32',
-  'secureRandomSource',
-  'haltonSequence',
-  'haltonSequenceInto',
-  'sobolSequence',
-  'sobolSequenceInto',
-]);
-
 import { rand } from '../../../src/random-state/rand';
 
 /**
@@ -51,9 +37,9 @@ describe('createRandomState — seeded 재현성', () => {
 });
 
 describe('createRandomState — random domain wrapper completeness', () => {
-  test('random domain의 stateful wrapper 대상 function을 모두 노출한다', () => {
+  test('random domain의 function을 모두 노출한다', () => {
     const randomFunctionNames = Object.entries(Random)
-      .filter(([name, value]) => typeof value === 'function' && !randomStateExclusions.has(name))
+      .filter(([, value]) => typeof value === 'function')
       .map(([name]) => name)
       .sort();
     const stateFunctionNames = Object.entries(createRandomState('complete'))

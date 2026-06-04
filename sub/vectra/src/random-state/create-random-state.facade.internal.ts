@@ -3,6 +3,7 @@ import { bernoulli } from '../random/bernoulli';
 import { beta } from '../random/beta';
 import { binomial } from '../random/binomial';
 import { choice } from '../random/choice';
+import { createRng } from '../random/create-rng';
 import { direction } from '../random/direction';
 import { directionInto } from '../random/direction-into';
 import { dirichlet } from '../random/dirichlet';
@@ -11,6 +12,8 @@ import { exponential } from '../random/exponential';
 import { float } from '../random/float';
 import { gamma } from '../random/gamma';
 import { geometric } from '../random/geometric';
+import { haltonSequence } from '../random/halton-sequence';
+import { haltonSequenceInto } from '../random/halton-sequence-into';
 import { int } from '../random/int';
 import { logNormal } from '../random/log-normal';
 import { multivariateNormal } from '../random/multivariate-normal';
@@ -44,14 +47,18 @@ import { pointOnSegmentInto } from '../random/point-on-segment-into';
 import { poisson } from '../random/poisson';
 import { type RandomSource, random } from '../random/random';
 import { randomIndex } from '../random/random-index';
+import { randomUint32 } from '../random/random-uint32';
 import { rangePermutation } from '../random/range-permutation';
 import { rangePermutationInto } from '../random/range-permutation-into';
 import { sample } from '../random/sample';
 import { sampleInto } from '../random/sample-into';
+import { secureRandomSource } from '../random/secure-random-source';
 import { shuffle } from '../random/shuffle';
 import { shuffleInPlace } from '../random/shuffle-in-place';
 import { shuffleInto } from '../random/shuffle-into';
 import { sign } from '../random/sign';
+import { sobolSequence } from '../random/sobol-sequence';
+import { sobolSequenceInto } from '../random/sobol-sequence-into';
 import { standardNormal } from '../random/standard-normal';
 import { triangular } from '../random/triangular';
 import { uniform } from '../random/uniform';
@@ -85,7 +92,10 @@ function permutationWithRng<T>(arrayOrLength: number | readonly T[], rng?: Rando
 }
 
 export const createRandomStateFacade = (pick: RandomStateRngPicker): RandomState => ({
+  createRng,
   random: (rng) => random(pick(rng)),
+  randomUint32,
+  secureRandomSource,
   float: (min, max, rng) => float(min, max, pick(rng)),
   int: (min, max, rng) => int(min, max, pick(rng)),
   sign: (rng) => sign(pick(rng)),
@@ -120,6 +130,10 @@ export const createRandomStateFacade = (pick: RandomStateRngPicker): RandomState
   weightedPointOnPolyline: (polyline, weights, rng) => weightedPointOnPolyline(polyline, weights, pick(rng)),
   weightedPointOnPathInto: (out, commands, weights, rng) => weightedPointOnPathInto(out, commands, weights, pick(rng)),
   weightedPointOnPath: (commands, weights, rng) => weightedPointOnPath(commands, weights, pick(rng)),
+  haltonSequence,
+  haltonSequenceInto,
+  sobolSequence,
+  sobolSequenceInto,
 
   choice: (items, rng) => choice(items, pick(rng)),
   weightedChoice: (items, weights, rng) => weightedChoice(items, weights, pick(rng)),

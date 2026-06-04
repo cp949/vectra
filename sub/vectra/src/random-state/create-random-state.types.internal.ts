@@ -1,4 +1,6 @@
+import type { RandomSeed } from '../random/create-rng';
 import type { RandomSource } from '../random/random';
+import type { HaltonSequenceOptions, SobolSequenceOptions } from '../random/types';
 import type { WeightedProbabilitySample } from '../random/weighted-probability';
 import type {
   BoundsLike,
@@ -22,7 +24,10 @@ import type {
  * 사용한다.
  */
 export interface RandomState {
+  createRng(seed: RandomSeed): RandomSource;
   random(rng?: RandomSource): number;
+  randomUint32(): number;
+  secureRandomSource(): RandomSource;
   float(min: number, max: number, rng?: RandomSource): number;
   int(min: number, max: number, rng?: RandomSource): number;
   sign(rng?: RandomSource): -1 | 1;
@@ -79,6 +84,20 @@ export interface RandomState {
     weights: readonly number[],
     rng?: RandomSource
   ): { x: number; y: number } | undefined;
+  haltonSequence(count: number, dimension: number, options?: HaltonSequenceOptions): number[][];
+  haltonSequenceInto<Out extends number[][]>(
+    out: Out,
+    count: number,
+    dimension: number,
+    options?: HaltonSequenceOptions
+  ): Out;
+  sobolSequence(count: number, dimension: number, options?: SobolSequenceOptions): number[][];
+  sobolSequenceInto<Out extends number[][]>(
+    out: Out,
+    count: number,
+    dimension: number,
+    options?: SobolSequenceOptions
+  ): Out;
 
   choice<T>(items: readonly T[], rng?: RandomSource): T | undefined;
   weightedChoice<T>(items: readonly T[], weights: readonly number[], rng?: RandomSource): T | undefined;
