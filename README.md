@@ -5,14 +5,6 @@ TypeScript geometry/math function catalog monorepo.
 `@cp949/vectra`는 renderer, DOM, scene graph, editor state를 소유하지 않는다.
 좌표와 shape data를 받아 geometry/math 결과를 계산한다.
 
-## 빠른 시작
-
-```sh
-corepack enable
-pnpm install --frozen-lockfile
-pnpm verify
-```
-
 package 사용자는 [sub/vectra/README.md](./sub/vectra/README.md)에서 시작한다.
 문서 허브는 [docs/README.md](./docs/README.md)를 본다.
 
@@ -122,4 +114,3 @@ pnpm release:check
 | Package manager | `pnpm@10.17.1` |
 | Module format | ESM |
 | Runtime dependencies | `@cp949/vectra` 기준 없음 |
-
