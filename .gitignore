@@ -5,6 +5,7 @@ _tmp/
 node_modules/
 dist/
 coverage/
+sub/vectra/llm.txt
 .turbo/
 *.tsbuildinfo
 .claude/

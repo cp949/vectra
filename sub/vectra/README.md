@@ -5,6 +5,9 @@ TypeScript geometry/math function catalog.
 `vectra`는 renderer, DOM, scene graph, editor state를 소유하지 않는다.
 좌표와 shape data를 받아 geometry/math 결과를 계산한다.
 
+이 README는 npm package 페이지와 package tarball 안에서 읽히는 문서다.
+repository 전체 구조와 내부 운영 문서는 root README와 `docs/`를 본다.
+
 ## 설치
 
 ```sh
@@ -59,7 +62,8 @@ import { VECTRA_PACKAGE_NAME } from '@cp949/vectra';
 console.log(VECTRA_PACKAGE_NAME); // '@cp949/vectra'
 ```
 
-자세한 내용은 [Import 방식](../../docs/guides/imports.md)을 본다.
+leaf module import는 package exports에서 막는다.
+공개 import는 package root, `types`, domain subpath만 사용한다.
 
 ## Output
 
@@ -78,7 +82,8 @@ console.log(out); // { x: 4, y: 6 }
 console.log(returned === out); // true
 ```
 
-자세한 내용은 [Output과 Into](../../docs/guides/outputs-and-into.md)를 본다.
+`*Into` 함수는 caller-owned output object를 수정하고 같은 object를 반환한다.
+allocating companion은 새 object를 만든다.
 
 ## Input
 
@@ -94,7 +99,8 @@ const b: XYInput = [3, 4];
 console.log(Vecx.distance(a, b));
 ```
 
-자세한 내용은 [Input과 Shape](../../docs/guides/inputs-and-shapes.md)을 본다.
+typed-array, mutable number array, array-like object는 공식 좌표 input이 아니다.
+외부 format은 caller가 `{ x, y }` 또는 readonly tuple로 변환한다.
 
 ## Degenerate geometry
 
@@ -114,7 +120,7 @@ console.log(Trianglex.circumcenter(lineTriangle)); // undefined
 ```
 
 정확한 sentinel은 각 함수 JSDoc을 기준으로 한다.
-자세한 내용은 [Degenerate와 Numeric Policy](../../docs/guides/degen-and-numeric-policy.md)를 본다.
+예외보다 `undefined`, empty result, clamped value 같은 함수별 sentinel을 우선한다.
 
 ## Domain
 
@@ -130,7 +136,7 @@ console.log(Trianglex.circumcenter(lineTriangle)); // undefined
 - `adapter`, `svg-path`: 외부 format 변환
 - `editor-geometry`: editor-oriented pure geometry
 
-전체 지도는 [Domain 지도](../../docs/reference/domains.md)를 본다.
+각 domain은 `@cp949/vectra/<domain>` 형태의 subpath로 import한다.
 
 ## 제품 경계
 
@@ -149,8 +155,11 @@ console.log(Trianglex.circumcenter(lineTriangle)); // undefined
 - physics engine
 - animation/tween engine
 
-## 추가 문서
+## Package files
 
-- [문서 허브](../../docs/README.md)
-- [시작하기](../../docs/guides/getting-started.md)
-- [Domain 지도](../../docs/reference/domains.md)
+npm package에는 다음 파일이 포함된다.
+
+- `dist`: ESM build output과 `.d.ts`
+- `README.md`: package 사용 문서
+- `LICENSE`: MIT license
+- `llm.txt`: LLM용 package summary

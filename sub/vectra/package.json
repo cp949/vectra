@@ -1,6 +1,6 @@
 {
   "name": "@cp949/vectra",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "TypeScript geometry/math function catalog",
   "keywords": [
     "geometry",
@@ -19,14 +19,17 @@
   },
   "type": "module",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && node ./scripts/generate-llm-txt.mjs",
     "build:watch": "tsup --watch",
-    "clean": "rimraf dist coverage",
+    "clean": "rimraf dist coverage llm.txt",
     "lint": "biome check build-entrypoints.ts tsup.config.ts src tests",
     "lint:fix": "biome check --write build-entrypoints.ts tsup.config.ts src tests",
     "format": "biome check --write build-entrypoints.ts tsup.config.ts src tests",
@@ -196,6 +199,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "llm.txt"
   ]
 }

@@ -38,7 +38,8 @@
     "verify:vectra": "pnpm --filter @cp949/vectra typecheck && pnpm --filter @cp949/vectra lint && pnpm --filter @cp949/vectra test",
     "verify:apps-impact": "pnpm --filter @cp949/vectra build && pnpm --filter @repo/playground typecheck && pnpm --filter @repo/playground test && pnpm --filter @repo/canvas-demo typecheck && pnpm --filter @repo/canvas-demo typecheck:examples && pnpm --filter @repo/canvas-demo test && pnpm --filter @repo/pixi-demo typecheck && pnpm --filter @repo/pixi-demo typecheck:examples && pnpm --filter @repo/pixi-demo test && pnpm --filter @repo/showcase typecheck && pnpm --filter @repo/showcase typecheck:examples && pnpm --filter @repo/showcase test",
     "verify": "pnpm examples:coverage:test && pnpm examples:typecheck && pnpm governance:report:strict && pnpm import-boundary:test && pnpm import-boundary:check && pnpm jsdoc:companion:check && turbo run typecheck lint format:check test build",
-    "release:check": "pnpm verify && pnpm test:contract && pnpm --filter @cp949/vectra build && cd sub/vectra && npm pack --dry-run"
+    "release:check": "pnpm verify && pnpm test:contract && pnpm --filter @cp949/vectra build && cd sub/vectra && npm pack --dry-run",
+    "publish:npm": "pnpm release:check && cd sub/vectra && npm publish --access public"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
