@@ -10,12 +10,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://git.jjfive.net/jjfive/vectra.git",
+    "url": "git+https://github.com/cp949/vectra.git",
     "directory": "sub/vectra"
   },
-  "homepage": "https://git.jjfive.net/jjfive/vectra#readme",
+  "homepage": "https://github.com/cp949/vectra#readme",
   "bugs": {
-    "url": "https://git.jjfive.net/jjfive/vectra/issues"
+    "url": "https://github.com/cp949/vectra/issues"
   },
   "type": "module",
   "license": "MIT",
