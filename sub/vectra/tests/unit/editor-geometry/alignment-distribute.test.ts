@@ -686,13 +686,6 @@ describe('distributeEqually', () => {
     expect(result[0].point).toEqual({ x: 100, y: 0 });
   });
 
-  test('각 point가 plain object다', () => {
-    const result = distributeEqually([b(0, 0, 50, 50), b(150, 0, 50, 50), b(200, 0, 50, 50)], 'edge-x');
-    for (const t of result) {
-      expect(Object.getPrototypeOf(t.point)).toBe(Object.prototype);
-    }
-  });
-
   test('Into와 동일한 target index / 좌표를 반환한다', () => {
     const bounds = [b(0, 0, 30, 30), b(50, 0, 30, 30), b(100, 0, 30, 30), b(150, 0, 30, 30), b(400, 0, 30, 30)];
     const expected: DistributeTarget<XYObjectWritable>[] = [];

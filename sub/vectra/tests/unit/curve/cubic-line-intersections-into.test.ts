@@ -7,10 +7,6 @@ import { cubicLineIntersectionsInto } from '../../../src/curve/cubic-line-inters
 import type { IntersectionHit } from '../../../src/types';
 
 describe('cubicLineIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof cubicLineIntersectionsInto).toBe('function');
-  });
-
   test('horizontal line이 S-curve를 두 점 이상에서 교차한다', () => {
     // S-curve: p0=(0,0), p1=(2,3), p2=(-2,3), p3=(0,6), y=1.5 line
     const hits: IntersectionHit[] = [];

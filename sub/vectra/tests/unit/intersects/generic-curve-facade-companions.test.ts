@@ -33,10 +33,6 @@ const CUBIC: CurveLike = {
 describe('lineCurveIntersections', () => {
   const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
 
-  test('함수가 존재한다', () => {
-    expect(typeof lineCurveIntersections).toBe('function');
-  });
-
   test('quadratic에서 Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];
     lineCurveIntersectionsInto(expected, line, QUADRATIC);
@@ -72,10 +68,6 @@ describe('lineCurveIntersections', () => {
 
 describe('segmentCurveIntersections', () => {
   const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
-
-  test('함수가 존재한다', () => {
-    expect(typeof segmentCurveIntersections).toBe('function');
-  });
 
   test('quadratic에서 Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];
@@ -124,10 +116,6 @@ describe('curveCurveIntersections', () => {
     p2: { x: 1, y: 1 },
   } as const satisfies CurveLike;
 
-  test('함수가 존재한다', () => {
-    expect(typeof curveCurveIntersections).toBe('function');
-  });
-
   test('Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];
     curveCurveIntersectionsInto(expected, QA, QB);
@@ -173,10 +161,6 @@ describe('curveSelfIntersections', () => {
     p2: { x: -2, y: 2 },
     p3: { x: 2, y: 0 },
   } as const satisfies CurveLike;
-
-  test('함수가 존재한다', () => {
-    expect(typeof curveSelfIntersections).toBe('function');
-  });
 
   test('Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];

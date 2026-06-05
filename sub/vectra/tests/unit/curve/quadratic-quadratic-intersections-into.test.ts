@@ -7,10 +7,6 @@ import { quadraticQuadraticIntersectionsInto } from '../../../src/curve/quadrati
 import type { IntersectionHit } from '../../../src/types';
 
 describe('quadraticQuadraticIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof quadraticQuadraticIntersectionsInto).toBe('function');
-  });
-
   test('X 형태로 교차하는 두 quadratic이 한 교차점을 반환한다', () => {
     // curve A: p0=(0,1), p1=(0.5,0.5), p2=(1,0) — 우하방
     // curve B: p0=(0,0), p1=(0.5,0.5), p2=(1,1) — 우상방, (0.5, 0.5)에서 교차

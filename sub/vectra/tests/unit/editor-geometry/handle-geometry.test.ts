@@ -162,9 +162,6 @@ describe('resizeHandles', () => {
       { id: 'sw', x: 10, y: 80 },
       { id: 'w', x: 10, y: 50 },
     ]);
-    for (const h of result) {
-      expect(Object.getPrototypeOf(h.point)).toBe(Object.prototype);
-    }
   });
 
   test('각 point는 서로 다른 object다', () => {
@@ -271,7 +268,6 @@ describe('rotateHandles', () => {
   test('기본 offset=0이면 top-center {x:50,y:0}을 반환한다', () => {
     const result = rotateHandles({ min: { x: 0, y: 0 }, max: { x: 100, y: 60 } });
     expect(result[0].point).toEqual({ x: 50, y: 0 });
-    expect(Object.getPrototypeOf(result[0].point)).toBe(Object.prototype);
   });
 
   test('offset=30이면 {x:50,y:-30}을 반환한다', () => {

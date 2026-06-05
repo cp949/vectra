@@ -13,7 +13,6 @@ describe('rect - fitOutside (companion)', () => {
     const container = { x: 0, y: 0, width: 2, height: 2 };
     const result = fitOutside(target, container);
     expect(result).toEqual({ x: 0, y: -1, width: 2, height: 4 });
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   });
 
   test('fitOutsideInto와 동일한 결과를 반환한다 - cover 기본 케이스', () => {

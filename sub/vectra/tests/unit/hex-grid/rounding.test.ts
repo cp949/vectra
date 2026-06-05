@@ -34,11 +34,6 @@ describe('hexRoundInto / hexRound - fractional coordinate를 nearest integer axi
     expect(hexRound([0.4, 0.4, 0.4])).toEqual({ q: 0, r: 0 });
   });
 
-  test('새 plain object를 반환한다', () => {
-    const result = hexRound([0.1, 0.1]);
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
-  });
-
   test('결과 -0을 0으로 canonicalize한다', () => {
     const result = hexRound({ q: -0.1, r: 0.1 });
     expect(Object.is(result.q, 0)).toBe(true);

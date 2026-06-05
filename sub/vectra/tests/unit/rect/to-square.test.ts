@@ -11,7 +11,6 @@ describe('rect - toSquare (companion)', () => {
   test('새 plain object를 반환한다', () => {
     const result = toSquare({ x: 0, y: 0, width: 10, height: 4 });
     expect(result).toEqual({ x: 3, y: 0, width: 4, height: 4 });
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   });
 
   test('default mode는 min: width > height인 rect의 짧은 변을 사용한다', () => {

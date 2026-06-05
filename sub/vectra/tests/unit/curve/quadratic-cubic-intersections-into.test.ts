@@ -7,10 +7,6 @@ import { quadraticCubicIntersectionsInto } from '../../../src/curve/quadratic-cu
 import type { IntersectionHit } from '../../../src/types';
 
 describe('quadraticCubicIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof quadraticCubicIntersectionsInto).toBe('function');
-  });
-
   test('교차하는 quadratic과 cubic이 교차점을 반환한다', () => {
     // quadratic A: p0=(0,0), p1=(0.5,2), p2=(1,0) — 위로 볼록
     // cubic B: p0=(0,1), p1=(0.3,1), p2=(0.7,1), p3=(1,1) — y≈1 수평

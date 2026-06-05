@@ -37,10 +37,6 @@ const C3 = { x: 1, y: 0 };
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('segmentQuadraticIntersections', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof segmentQuadraticIntersections).toBe('function');
-  });
-
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
     const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
     const expected: IntersectionHit[] = [];
@@ -73,10 +69,6 @@ describe('segmentQuadraticIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('segmentCubicIntersections', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof segmentCubicIntersections).toBe('function');
-  });
-
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
     const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
     const expected: IntersectionHit[] = [];
@@ -110,10 +102,6 @@ describe('segmentCubicIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('rayQuadraticIntersections', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof rayQuadraticIntersections).toBe('function');
-  });
-
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
     const ray = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
     const expected: IntersectionHit[] = [];
@@ -146,10 +134,6 @@ describe('rayQuadraticIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('rayCubicIntersections', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof rayCubicIntersections).toBe('function');
-  });
-
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
     const ray = { origin: { x: -1, y: 0.5 }, direction: { x: 1, y: 0 } };
     const expected: IntersectionHit[] = [];
@@ -182,10 +166,6 @@ describe('rayCubicIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('infiniteLineQuadraticIntersections', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof infiniteLineQuadraticIntersections).toBe('function');
-  });
-
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
     const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
     const expected: IntersectionHit[] = [];
@@ -218,10 +198,6 @@ describe('infiniteLineQuadraticIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('infiniteLineCubicIntersections', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof infiniteLineCubicIntersections).toBe('function');
-  });
-
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
     const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
     const expected: IntersectionHit[] = [];

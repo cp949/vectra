@@ -7,10 +7,6 @@ import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-lin
 import type { IntersectionHit } from '../../../src/types';
 
 describe('quadraticLineIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof quadraticLineIntersectionsInto).toBe('function');
-  });
-
   test('대칭 quadratic이 horizontal line과 두 점에서 cross 교차한다', () => {
     // p0=(0,0), p1=(0.5,2), p2=(1,0), y=0.5 line
     // y(t)=4t(1-t) → 8t²-8t+1=0, 판별식 32>0 → 두 실근

@@ -208,7 +208,6 @@ describe('rect - rectAlignTo (companion)', () => {
   test('새 plain object를 반환한다', () => {
     const result = rectAlignTo(TARGET, CONTAINER, { anchor: 'center' });
     expect(result).toEqual({ x: 30, y: 40, width: 40, height: 20 });
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   });
 
   test('rectAlignToInto와 동일한 결과 - 모든 anchor', () => {

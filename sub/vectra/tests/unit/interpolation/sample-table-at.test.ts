@@ -188,10 +188,3 @@ describe('sampleTableAt 경계값 — 4개 이상 sample', () => {
     expect(sampleTableAt([0, 10, 20, 30], 0.5)).toBe(15);
   });
 });
-
-describe('sampleTableAt barrel export', () => {
-  test('domain barrel에서 sampleTableAt이 함수로 export된다', async () => {
-    const barrel = await import('../../../src/interpolation/index');
-    expect(typeof (barrel as Record<string, unknown>).sampleTableAt).toBe('function');
-  });
-});

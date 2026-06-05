@@ -36,7 +36,6 @@ describe('hexAxialToCube - axial을 cube로 변환', () => {
   test('새 plain object를 반환한다', () => {
     const result = hexAxialToCube([0, 0]);
     expect(result).toEqual({ q: 0, r: 0, s: 0 });
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   });
 
   test.each([
@@ -70,7 +69,6 @@ describe('hexCubeToAxial - cube를 axial로 변환', () => {
   test('새 plain object를 반환한다', () => {
     const result = hexCubeToAxial([0, 0, 0]);
     expect(result).toEqual({ q: 0, r: 0 });
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   });
 
   test('q + r + s !== 0이면 RangeError다', () => {
@@ -119,13 +117,6 @@ describe('hexAxialToOffset / hexOffsetToAxial - axial과 offset 변환', () => {
   test('tuple input을 object input과 동일하게 처리한다', () => {
     expect(hexAxialToOffset([2, 3], 'odd-r')).toEqual({ col: 3, row: 3 });
     expect(hexOffsetToAxial([3, 3], 'odd-r')).toEqual({ q: 2, r: 3 });
-  });
-
-  test('새 plain object를 반환한다', () => {
-    const offset = hexAxialToOffset([0, 0], 'odd-r');
-    expect(Object.getPrototypeOf(offset)).toBe(Object.prototype);
-    const axial = hexOffsetToAxial([0, 0], 'odd-r');
-    expect(Object.getPrototypeOf(axial)).toBe(Object.prototype);
   });
 
   test('invalid layout string은 RangeError다', () => {

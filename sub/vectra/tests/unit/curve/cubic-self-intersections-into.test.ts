@@ -7,10 +7,6 @@ import { cubicSelfIntersectionsInto } from '../../../src/curve/cubic-self-inters
 import type { IntersectionHit } from '../../../src/types';
 
 describe('cubicSelfIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof cubicSelfIntersectionsInto).toBe('function');
-  });
-
   test('loop cubic이 자기 교차점을 반환한다', () => {
     // p0=(0,0), p1=(2,2), p2=(-2,2), p3=(2,0) — loop 형태
     // 자기 교차점: tA≈0.173, tB≈0.827, 위치 ≈(0.572, 0.858)

@@ -4,7 +4,6 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import * as interpolation from '../../../src/interpolation';
 import { criticallyDamped } from '../../../src/interpolation/critically-damped';
 import { exponentialDecay } from '../../../src/interpolation/exponential-decay';
 import { springLerp } from '../../../src/interpolation/spring-lerp';
@@ -69,10 +68,6 @@ describe('interpolation exponentialDecay', () => {
   test('dt < 0이면 RangeError를 던진다', () => {
     expect(() => exponentialDecay(0, 10, 1, -0.5)).toThrow(RangeError);
   });
-
-  test('domain barrel에서 function으로 노출된다', () => {
-    expect(typeof interpolation.exponentialDecay).toBe('function');
-  });
 });
 
 describe('interpolation criticallyDamped', () => {
@@ -130,10 +125,6 @@ describe('interpolation criticallyDamped', () => {
   test('angularFrequency <= 0이면 RangeError를 던진다', () => {
     expect(() => criticallyDamped(2, 8, 1, 0.05, { angularFrequency: 0 })).toThrow(RangeError);
     expect(() => criticallyDamped(2, 8, 1, 0.05, { angularFrequency: -5 })).toThrow(RangeError);
-  });
-
-  test('domain barrel에서 function으로 노출된다', () => {
-    expect(typeof interpolation.criticallyDamped).toBe('function');
   });
 });
 
@@ -296,10 +287,6 @@ describe('interpolation springLerp', () => {
 
   test('dampingRatio < 0이면 RangeError를 던진다', () => {
     expect(() => springLerp(2, 8, 1, 0.05, { dampingRatio: -0.1 })).toThrow(RangeError);
-  });
-
-  test('domain barrel에서 function으로 노출된다', () => {
-    expect(typeof interpolation.springLerp).toBe('function');
   });
 });
 

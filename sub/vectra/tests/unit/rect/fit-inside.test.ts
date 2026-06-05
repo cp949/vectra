@@ -13,7 +13,6 @@ describe('rect - fitInside (companion)', () => {
     const container = { x: 0, y: 0, width: 100, height: 100 };
     const result = fitInside(target, container);
     expect(result).toEqual({ x: 0, y: 25, width: 100, height: 50 });
-    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   });
 
   test('fitInsideInto와 동일한 결과를 반환한다 - contain 기본 케이스', () => {

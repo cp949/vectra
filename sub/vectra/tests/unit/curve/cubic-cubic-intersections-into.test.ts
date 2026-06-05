@@ -7,10 +7,6 @@ import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-inte
 import type { IntersectionHit } from '../../../src/types';
 
 describe('cubicCubicIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof cubicCubicIntersectionsInto).toBe('function');
-  });
-
   test('S-curve와 거울 대칭 S-curve가 두 점에서 교차한다', () => {
     // A: p0=(0,0), p1=(2,3), p2=(-2,3), p3=(4,0) — S자
     // B: p0=(0,3), p1=(2,0), p2=(-2,0), p3=(4,3) — A를 y=1.5 기준 반전
