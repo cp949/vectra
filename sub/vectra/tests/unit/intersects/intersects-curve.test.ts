@@ -19,10 +19,6 @@ import type { IntersectionHit } from '../../../src/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('segmentQuadraticIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof segmentQuadraticIntersectionsInto).toBe('function');
-  });
-
   test('segment range 내 hit만 반환한다', () => {
     // quadratic: p0=(0,0), p1=(0.5,2), p2=(1,0) — y=0.5 선과 두 번 교차
     // segment A=(0,0.5) B=(1,0.5) — curve 교차 2점이 segment 내에 있다
@@ -84,10 +80,6 @@ describe('segmentQuadraticIntersectionsInto', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('rayQuadraticIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof rayQuadraticIntersectionsInto).toBe('function');
-  });
-
   test('ray 앞 방향 hit만 반환한다', () => {
     // quadratic: p0=(0,0), p1=(0.5,2), p2=(1,0), y=0.5 선과 두 번 교차
     // ray: origin=(0,0.5), direction=(1,0) — 오른쪽으로 뻗는 ray
@@ -132,10 +124,6 @@ describe('rayQuadraticIntersectionsInto', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('infiniteLineQuadraticIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof infiniteLineQuadraticIntersectionsInto).toBe('function');
-  });
-
   test('양방향 hit를 모두 반환한다', () => {
     // quadratic: p0=(0,0), p1=(0.5,2), p2=(1,0), y=0.5 선과 두 번 교차
     const hits: IntersectionHit[] = [];
@@ -173,10 +161,6 @@ describe('infiniteLineQuadraticIntersectionsInto', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('segmentCubicIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof segmentCubicIntersectionsInto).toBe('function');
-  });
-
   test('segment range 내 hit만 반환한다', () => {
     // cubic: p0=(0,0), p1=(0,1), p2=(1,1), p3=(1,0) — 아치형
     // segment A=(0,0.5) B=(1,0.5) — 두 번 교차
@@ -233,10 +217,6 @@ describe('segmentCubicIntersectionsInto', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('rayCubicIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof rayCubicIntersectionsInto).toBe('function');
-  });
-
   test('ray 앞 방향 hit만 반환한다', () => {
     // cubic 아치형: p0=(0,0), p1=(0,1), p2=(1,1), p3=(1,0), y=0.5 교차
     // ray: origin=(-1, 0.5), direction=(1,0) — 왼쪽에서 오른쪽으로
@@ -288,10 +268,6 @@ describe('rayCubicIntersectionsInto', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('infiniteLineCubicIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof infiniteLineCubicIntersectionsInto).toBe('function');
-  });
-
   test('양방향 hit를 모두 반환한다', () => {
     // cubic 아치형: p0=(0,0), p1=(0,1), p2=(1,1), p3=(1,0), y=0.5 교차
     const hits: IntersectionHit[] = [];

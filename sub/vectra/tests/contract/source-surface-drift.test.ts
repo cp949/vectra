@@ -1,10 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import {
-  deriveBarrelRuntimeExportNames,
-  deriveDomainSurfaces,
-  deriveFunctionLeafExportsForDomain,
-  deriveSourceLeafExportsForDomain,
-} from './_helpers/source-surface';
+import { deriveBarrelRuntimeExportNames, deriveDomainSurfaces } from './_helpers/source-surface';
 
 describe('source surface drift', () => {
   test('source leaf runtime exports가 fixture에서 누락되지 않는다', async () => {
@@ -25,17 +20,5 @@ describe('source surface drift', () => {
 
       expect(deriveBarrelRuntimeExportNames(domain), domain).toEqual(sourceExportNames);
     }
-  });
-
-  test('function leaf fixture helper가 exportName을 fnName으로 변환한다', () => {
-    const sourceLeafExports = deriveSourceLeafExportsForDomain('intersects');
-    const functionLeafExports = deriveFunctionLeafExportsForDomain('intersects');
-
-    expect(functionLeafExports).toEqual(
-      sourceLeafExports.map(({ exportName, leafPath }) => ({
-        fnName: exportName,
-        leafPath,
-      }))
-    );
   });
 });

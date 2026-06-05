@@ -38,10 +38,6 @@ const CUBIC: CurveLike = { kind: 'cubic', p0: C0, p1: C1, p2: C2, p3: C3 };
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('lineCurveIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof lineCurveIntersectionsInto).toBe('function');
-  });
-
   test('quadratic 결과가 기존 quadraticLine kernel과 flat shape 기준 동치다', () => {
     const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
     const ref: IntersectionHit[] = [];
@@ -133,10 +129,6 @@ describe('lineCurveIntersectionsInto', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('segmentCurveIntersectionsInto', () => {
-  test('함수가 존재한다', () => {
-    expect(typeof segmentCurveIntersectionsInto).toBe('function');
-  });
-
   test('segment 전체를 덮으면 quadratic 두 교차점을 모두 반환한다', () => {
     const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
     const out: CurveIntersectionHit[] = [];
@@ -241,10 +233,6 @@ describe('curveCurveIntersectionsInto', () => {
     p2: { x: 0.7, y: 1 },
     p3: { x: 1, y: 1 },
   } as const satisfies CurveLike;
-
-  test('함수가 존재한다', () => {
-    expect(typeof curveCurveIntersectionsInto).toBe('function');
-  });
 
   test('quadratic × quadratic 결과가 기존 kernel과 동치다', () => {
     const ref: IntersectionHit[] = [];
@@ -381,10 +369,6 @@ describe('curveSelfIntersectionsInto', () => {
     p2: { x: -2, y: 2 },
     p3: { x: 2, y: 0 },
   } as const satisfies CurveLike;
-
-  test('함수가 존재한다', () => {
-    expect(typeof curveSelfIntersectionsInto).toBe('function');
-  });
 
   test('self-intersecting cubic 결과가 기존 kernel과 동치다', () => {
     const ref: IntersectionHit[] = [];

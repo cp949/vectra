@@ -7,7 +7,6 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import * as motion from '../../../src/motion';
 import { acceleration } from '../../../src/motion/acceleration';
 import { accelerationFromDisplacement } from '../../../src/motion/acceleration-from-displacement';
 import { durationByDistance } from '../../../src/motion/duration-by-distance';
@@ -56,10 +55,6 @@ describe('acceleration', () => {
   test('overflow 결과는 RangeError', () => {
     expect(() => acceleration(-Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE)).toThrow(RangeError);
   });
-
-  test('barrel에서 acceleration을 re-export한다', () => {
-    expect(motion.acceleration(2, 14, 4)).toBe(3);
-  });
 });
 
 describe('accelerationFromDisplacement', () => {
@@ -98,10 +93,6 @@ describe('accelerationFromDisplacement', () => {
 
   test('overflow 결과는 RangeError', () => {
     expect(() => accelerationFromDisplacement(0, Number.MAX_VALUE, Number.MIN_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 accelerationFromDisplacement를 re-export한다', () => {
-    expect(motion.accelerationFromDisplacement(2, 32, 4)).toBe(3);
   });
 });
 
@@ -142,10 +133,6 @@ describe('initialVelocity', () => {
   test('overflow 결과는 RangeError', () => {
     expect(() => initialVelocity(-Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
   });
-
-  test('barrel에서 initialVelocity를 re-export한다', () => {
-    expect(motion.initialVelocity(14, 3, 4)).toBe(2);
-  });
 });
 
 describe('initialVelocityFromDisplacement', () => {
@@ -185,10 +172,6 @@ describe('initialVelocityFromDisplacement', () => {
   test('overflow 결과는 RangeError', () => {
     expect(() => initialVelocityFromDisplacement(Number.MAX_VALUE, 0, Number.MIN_VALUE)).toThrow(RangeError);
   });
-
-  test('barrel에서 initialVelocityFromDisplacement를 re-export한다', () => {
-    expect(motion.initialVelocityFromDisplacement(32, 3, 4)).toBe(2);
-  });
 });
 
 describe('timeToVelocity', () => {
@@ -227,10 +210,6 @@ describe('timeToVelocity', () => {
 
   test('overflow 결과는 RangeError', () => {
     expect(() => timeToVelocity(-Number.MAX_VALUE, Number.MIN_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 timeToVelocity를 re-export한다', () => {
-    expect(motion.timeToVelocity(2, 3, 14)).toBe(4);
   });
 });
 
@@ -304,10 +283,6 @@ describe('timeToDisplacement', () => {
   test('overflow 결과는 RangeError', () => {
     expect(() => timeToDisplacement(Number.MIN_VALUE, 0, Number.MAX_VALUE)).toThrow(RangeError);
   });
-
-  test('barrel에서 timeToDisplacement를 re-export한다', () => {
-    expect(motion.timeToDisplacement(2, 3, 32)).toBe(4);
-  });
 });
 
 describe('stopDistance', () => {
@@ -347,10 +322,6 @@ describe('stopDistance', () => {
   test('overflow 결과는 RangeError', () => {
     expect(() => stopDistance(Number.MAX_VALUE, Number.MIN_VALUE)).toThrow(RangeError);
   });
-
-  test('barrel에서 stopDistance를 re-export한다', () => {
-    expect(motion.stopDistance(10, 2)).toBe(25);
-  });
 });
 
 describe('stopDuration', () => {
@@ -385,10 +356,6 @@ describe('stopDuration', () => {
 
   test('overflow 결과는 RangeError', () => {
     expect(() => stopDuration(Number.MAX_VALUE, Number.MIN_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 stopDuration을 re-export한다', () => {
-    expect(motion.stopDuration(-10, 2)).toBe(5);
   });
 });
 
@@ -425,10 +392,6 @@ describe('durationByDistance', () => {
 
   test('overflow 결과는 RangeError', () => {
     expect(() => durationByDistance(Number.MAX_VALUE, Number.MIN_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 durationByDistance를 re-export한다', () => {
-    expect(motion.durationByDistance(10, 2)).toBe(5);
   });
 });
 
@@ -523,13 +486,6 @@ describe('moveTowardByElapsed', () => {
 
   test('overflow step은 RangeError', () => {
     expect(() => moveTowardByElapsed(0, 10, Number.MAX_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 moveTowardByElapsed를 re-export한다', () => {
-    expect(motion.moveTowardByElapsed(0, 10, 3, 2)).toEqual({
-      value: 6,
-      reached: false,
-    });
   });
 
   test('MoveTowardResult를 type으로 사용할 수 있다', () => {

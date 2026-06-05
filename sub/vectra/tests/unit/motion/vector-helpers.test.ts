@@ -3,7 +3,6 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import * as motion from '../../../src/motion';
 import { displacementVector } from '../../../src/motion/displacement-vector';
 import { displacementVectorInto } from '../../../src/motion/displacement-vector-into';
 import { position } from '../../../src/motion/position';
@@ -100,10 +99,6 @@ describe('displacementVectorInto', () => {
     expect(Object.is(result.x, -0)).toBe(false);
     expect(Object.is(result.y, -0)).toBe(false);
   });
-
-  test('barrel에서 displacementVectorInto를 re-export한다', () => {
-    expect(motion.displacementVectorInto({ x: 0, y: 0 }, { x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toEqual({ x: 12, y: 6 });
-  });
 });
 
 describe('displacementVector', () => {
@@ -138,10 +133,6 @@ describe('displacementVector', () => {
 
     expect(Object.is(result.x, -0)).toBe(false);
     expect(Object.is(result.y, -0)).toBe(false);
-  });
-
-  test('barrel에서 displacementVector를 re-export한다', () => {
-    expect(motion.displacementVector({ x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toEqual({ x: 12, y: 6 });
   });
 });
 
@@ -220,10 +211,6 @@ describe('velocityInto', () => {
     expect(Object.is(result.x, -0)).toBe(false);
     expect(Object.is(result.y, -0)).toBe(false);
   });
-
-  test('barrel에서 velocityInto를 re-export한다', () => {
-    expect(motion.velocityInto({ x: 0, y: 0 }, { x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toEqual({ x: 10, y: 9 });
-  });
 });
 
 describe('velocity', () => {
@@ -258,13 +245,6 @@ describe('velocity', () => {
 
     expect(Object.is(result.x, -0)).toBe(false);
     expect(Object.is(result.y, -0)).toBe(false);
-  });
-
-  test('barrel에서 velocity를 re-export한다', () => {
-    expect(motion.velocity({ x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toEqual({
-      x: 10,
-      y: 9,
-    });
   });
 });
 
@@ -359,13 +339,6 @@ describe('positionInto', () => {
     expect(Object.is(result.x, -0)).toBe(false);
     expect(Object.is(result.y, -0)).toBe(false);
   });
-
-  test('barrel에서 positionInto를 re-export한다', () => {
-    expect(motion.positionInto({ x: 0, y: 0 }, { x: 1, y: 2 }, { x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toEqual({
-      x: 13,
-      y: 8,
-    });
-  });
 });
 
 describe('position', () => {
@@ -400,9 +373,5 @@ describe('position', () => {
 
     expect(Object.is(result.x, -0)).toBe(false);
     expect(Object.is(result.y, -0)).toBe(false);
-  });
-
-  test('barrel에서 position을 re-export한다', () => {
-    expect(motion.position({ x: 1, y: 2 }, { x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toEqual({ x: 13, y: 8 });
   });
 });

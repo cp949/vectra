@@ -4,7 +4,6 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import * as motion from '../../../src/motion';
 import { displacement } from '../../../src/motion/displacement';
 import { displacementFromVelocities } from '../../../src/motion/displacement-from-velocities';
 import { finalVelocity } from '../../../src/motion/final-velocity';
@@ -41,10 +40,6 @@ describe('finalVelocity', () => {
 
   test('overflow 결과는 RangeError', () => {
     expect(() => finalVelocity(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 finalVelocity를 re-export한다', () => {
-    expect(motion.finalVelocity(2, 3, 4)).toBe(14);
   });
 });
 
@@ -84,10 +79,6 @@ describe('displacement', () => {
 
   test('finite 입력의 Infinity + (-Infinity) NaN 결과는 RangeError', () => {
     expect(() => displacement(-Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 displacement를 re-export한다', () => {
-    expect(motion.displacement(2, 3, 4)).toBe(32);
   });
 });
 
@@ -134,9 +125,5 @@ describe('displacementFromVelocities', () => {
 
   test('endpoint velocity 평균이 finite이면 합산 overflow 없이 계산한다', () => {
     expect(displacementFromVelocities(Number.MAX_VALUE, Number.MAX_VALUE, 0.5)).toBe(Number.MAX_VALUE / 2);
-  });
-
-  test('barrel에서 displacementFromVelocities를 re-export한다', () => {
-    expect(motion.displacementFromVelocities(2, 14, 4)).toBe(32);
   });
 });

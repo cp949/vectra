@@ -4,8 +4,6 @@
 
 import { describe, expect, test } from 'vitest';
 import packageJson from '../../package.json' with { type: 'json' };
-import { linalgLeafExports } from './_fixtures/linalg-leaf-exports';
-import { statisticsLeafExports } from './_fixtures/statistics-leaf-exports';
 
 describe('public surface 계약', () => {
   test('MVP package subpath exports가 도메인 leaf 패턴으로 선언된다', () => {
@@ -99,22 +97,4 @@ describe('public surface 계약', () => {
 
     expect(domains).toHaveLength(35);
   }, 30_000);
-
-  test('linalg barrel이 vector/sparse helper와 matrix shape/access/factory/arithmetic/product/query/norm helper를 export한다', async () => {
-    const barrel = await import('../../src/linalg/index');
-    const fnKeys = Object.keys(barrel as Record<string, unknown>)
-      .filter((k) => typeof (barrel as Record<string, unknown>)[k] === 'function')
-      .sort();
-    const expectedFnKeys = linalgLeafExports.map(({ fnName }) => fnName).sort();
-    expect(fnKeys).toEqual(expectedFnKeys);
-  });
-
-  test('statistics barrel이 descriptive helper를 export한다', async () => {
-    const barrel = await import('../../src/statistics/index');
-    const fnKeys = Object.keys(barrel as Record<string, unknown>)
-      .filter((k) => typeof (barrel as Record<string, unknown>)[k] === 'function')
-      .sort();
-    const expectedFnKeys = statisticsLeafExports.map(({ fnName }) => fnName).sort();
-    expect(fnKeys).toEqual(expectedFnKeys);
-  });
 });

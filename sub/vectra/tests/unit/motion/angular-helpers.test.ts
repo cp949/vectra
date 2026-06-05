@@ -4,7 +4,6 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import * as motion from '../../../src/motion';
 import { angularDisplacement } from '../../../src/motion/angular-displacement';
 import { angularVelocity } from '../../../src/motion/angular-velocity';
 import { angularVelocityAfter } from '../../../src/motion/angular-velocity-after';
@@ -55,10 +54,6 @@ describe('angularVelocity', () => {
   test('overflow 결과는 RangeError', () => {
     expect(() => angularVelocity(0, Math.PI, Number.MIN_VALUE)).toThrow(RangeError);
   });
-
-  test('barrel에서 angularVelocity를 re-export한다', () => {
-    expect(motion.angularVelocity(0, Math.PI / 2, 2)).toBe(Math.PI / 4);
-  });
 });
 
 describe('angularDisplacement', () => {
@@ -94,10 +89,6 @@ describe('angularDisplacement', () => {
 
   test('overflow 결과는 RangeError', () => {
     expect(() => angularDisplacement(Number.MAX_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 angularDisplacement를 re-export한다', () => {
-    expect(motion.angularDisplacement(Math.PI / 4, 2)).toBe(Math.PI / 2);
   });
 });
 
@@ -137,10 +128,6 @@ describe('angularVelocityAfter', () => {
 
   test('overflow 결과는 RangeError', () => {
     expect(() => angularVelocityAfter(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
-  });
-
-  test('barrel에서 angularVelocityAfter를 re-export한다', () => {
-    expect(motion.angularVelocityAfter(Math.PI / 4, Math.PI / 8, 2)).toBe(Math.PI / 2);
   });
 });
 
@@ -210,9 +197,5 @@ describe('moveTowardAngleByElapsed', () => {
 
     expect(result).toBe(0);
     expect(Object.is(result, -0)).toBe(false);
-  });
-
-  test('barrel에서 moveTowardAngleByElapsed를 re-export한다', () => {
-    expect(motion.moveTowardAngleByElapsed(0, Math.PI / 2, Math.PI / 4, 1)).toBe(Math.PI / 4);
   });
 });

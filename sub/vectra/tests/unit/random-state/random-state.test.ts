@@ -246,12 +246,6 @@ describe('createRandomState — collection wrapper', () => {
 });
 
 describe('rand — module-level instance', () => {
-  test('rand.float, rand.int, rand.shuffle가 함수로 존재한다', () => {
-    expect(typeof rand.float).toBe('function');
-    expect(typeof rand.int).toBe('function');
-    expect(typeof rand.shuffle).toBe('function');
-  });
-
   test('rand.float은 override rng가 주어지면 그 값을 사용한다', () => {
     const result = rand.float(0, 1, () => 0);
     expect(result).toBe(0);
