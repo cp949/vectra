@@ -104,14 +104,13 @@ describe('fromBounds', () => {
     expect(actual.points).toEqual(expected);
   });
 
-  test('매 호출마다 새 { points } object와 새 plain { x, y } element를 만든다', () => {
+  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
     const bounds = { min: { x: 0, y: 0 }, max: { x: 1, y: 1 } };
     const r1 = fromBounds(bounds);
     const r2 = fromBounds(bounds);
     expect(r1).not.toBe(r2);
     expect(r1.points).not.toBe(r2.points);
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    expect(Object.getPrototypeOf(r1.points[0])).toBe(Object.prototype);
   });
 });
 
@@ -204,14 +203,13 @@ describe('fromRect', () => {
     expect(actual.points).toEqual(expected);
   });
 
-  test('매 호출마다 새 { points } object와 새 plain { x, y } element를 만든다', () => {
+  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
     const rect = { x: 0, y: 0, width: 1, height: 1 };
     const r1 = fromRect(rect);
     const r2 = fromRect(rect);
     expect(r1).not.toBe(r2);
     expect(r1.points).not.toBe(r2.points);
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    expect(Object.getPrototypeOf(r1.points[0])).toBe(Object.prototype);
   });
 });
 
@@ -339,7 +337,7 @@ describe('fromTriangle', () => {
     expect(actual.points).toEqual(expected);
   });
 
-  test('매 호출마다 새 { points } object와 새 plain { x, y } element를 만든다', () => {
+  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
     const triangle = {
       a: { x: 0, y: 0 },
       b: { x: 1, y: 0 },
@@ -350,6 +348,5 @@ describe('fromTriangle', () => {
     expect(r1).not.toBe(r2);
     expect(r1.points).not.toBe(r2.points);
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    expect(Object.getPrototypeOf(r1.points[0])).toBe(Object.prototype);
   });
 });

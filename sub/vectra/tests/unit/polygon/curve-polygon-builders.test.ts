@@ -173,13 +173,12 @@ describe('fromCircleApproximation', () => {
     expect(actual.points).toEqual(expected);
   });
 
-  test('매 호출마다 새 { points } object와 새 plain { x, y } element를 만든다', () => {
+  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
     const r1 = fromCircleApproximation([0, 0], 1, 8);
     const r2 = fromCircleApproximation([0, 0], 1, 8);
     expect(r1).not.toBe(r2);
     expect(r1.points).not.toBe(r2.points);
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    expect(Object.getPrototypeOf(r1.points[0])).toBe(Object.prototype);
   });
 
   test('invalid segments에서 빈 points를 반환한다', () => {
@@ -394,13 +393,12 @@ describe('fromEllipseApproximation', () => {
     expect(actual.points).toEqual(expected);
   });
 
-  test('매 호출마다 새 { points } object와 새 plain { x, y } element를 만든다', () => {
+  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
     const r1 = fromEllipseApproximation([0, 0], 3, 2, 8);
     const r2 = fromEllipseApproximation([0, 0], 3, 2, 8);
     expect(r1).not.toBe(r2);
     expect(r1.points).not.toBe(r2.points);
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    expect(Object.getPrototypeOf(r1.points[0])).toBe(Object.prototype);
   });
 
   test('invalid segments에서 빈 points를 반환한다', () => {

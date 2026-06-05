@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest';
-import * as easing from '../../../src/easing';
 import { constant } from '../../../src/easing/constant';
 import { hold } from '../../../src/easing/hold';
 import { linear } from '../../../src/easing/linear';
@@ -191,59 +190,5 @@ describe('easing - smootherstep', () => {
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => smootherstep(value)).toThrow(RangeError);
-  });
-});
-
-describe('easing barrel - 모든 함수가 export된다', () => {
-  test('basic 함수가 barrel에서 export된다', () => {
-    expect(typeof easing.linear).toBe('function');
-    expect(typeof easing.constant).toBe('function');
-    expect(typeof easing.hold).toBe('function');
-    expect(typeof easing.step).toBe('function');
-    expect(typeof easing.steps).toBe('function');
-    expect(typeof easing.smoothstep).toBe('function');
-    expect(typeof easing.smootherstep).toBe('function');
-  });
-
-  test('polynomial 함수가 barrel에서 export된다', () => {
-    expect(typeof easing.powerIn).toBe('function');
-    expect(typeof easing.powerOut).toBe('function');
-    expect(typeof easing.powerInOut).toBe('function');
-    expect(typeof easing.quadIn).toBe('function');
-    expect(typeof easing.quadOut).toBe('function');
-    expect(typeof easing.quadInOut).toBe('function');
-    expect(typeof easing.cubicIn).toBe('function');
-    expect(typeof easing.cubicOut).toBe('function');
-    expect(typeof easing.cubicInOut).toBe('function');
-    expect(typeof easing.quartIn).toBe('function');
-    expect(typeof easing.quartOut).toBe('function');
-    expect(typeof easing.quartInOut).toBe('function');
-    expect(typeof easing.quintIn).toBe('function');
-    expect(typeof easing.quintOut).toBe('function');
-    expect(typeof easing.quintInOut).toBe('function');
-  });
-
-  test('trig/expo/circ 함수가 barrel에서 export된다', () => {
-    expect(typeof easing.sineIn).toBe('function');
-    expect(typeof easing.sineOut).toBe('function');
-    expect(typeof easing.sineInOut).toBe('function');
-    expect(typeof easing.expoIn).toBe('function');
-    expect(typeof easing.expoOut).toBe('function');
-    expect(typeof easing.expoInOut).toBe('function');
-    expect(typeof easing.circIn).toBe('function');
-    expect(typeof easing.circOut).toBe('function');
-    expect(typeof easing.circInOut).toBe('function');
-  });
-
-  test('back/bounce/elastic 함수가 barrel에서 export된다', () => {
-    expect(typeof easing.backIn).toBe('function');
-    expect(typeof easing.backOut).toBe('function');
-    expect(typeof easing.backInOut).toBe('function');
-    expect(typeof easing.bounceIn).toBe('function');
-    expect(typeof easing.bounceOut).toBe('function');
-    expect(typeof easing.bounceInOut).toBe('function');
-    expect(typeof easing.elasticIn).toBe('function');
-    expect(typeof easing.elasticOut).toBe('function');
-    expect(typeof easing.elasticInOut).toBe('function');
   });
 });

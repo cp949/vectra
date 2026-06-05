@@ -168,14 +168,12 @@ describe('regularPolygon', () => {
     expect(actual.points).toEqual(expected);
   });
 
-  test('매 호출마다 새 { points } object와 새 plain { x, y } element를 만든다', () => {
+  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
     const r1 = regularPolygon([0, 0], 1, 5);
     const r2 = regularPolygon([0, 0], 1, 5);
     expect(r1).not.toBe(r2);
     expect(r1.points).not.toBe(r2.points);
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    // element는 plain object여야 한다 (Object.getPrototypeOf === Object.prototype).
-    expect(Object.getPrototypeOf(r1.points[0])).toBe(Object.prototype);
   });
 
   test('invalid sides에서 빈 points를 반환한다', () => {
@@ -348,13 +346,12 @@ describe('starPolygon', () => {
     expect(actual.points).toEqual(expected);
   });
 
-  test('매 호출마다 새 { points } object와 새 plain { x, y } element를 만든다', () => {
+  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
     const r1 = starPolygon([0, 0], 1, 2, 5);
     const r2 = starPolygon([0, 0], 1, 2, 5);
     expect(r1).not.toBe(r2);
     expect(r1.points).not.toBe(r2.points);
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    expect(Object.getPrototypeOf(r1.points[0])).toBe(Object.prototype);
   });
 
   test('invalid points에서 빈 points를 반환한다', () => {

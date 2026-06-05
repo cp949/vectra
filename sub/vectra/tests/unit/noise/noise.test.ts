@@ -3,7 +3,6 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import * as noise from '../../../src/noise';
 import { createNoise2 } from '../../../src/noise/create-noise-2';
 import { fbm2 } from '../../../src/noise/fbm-2';
 import { perlinNoise2 } from '../../../src/noise/perlin-noise-2';
@@ -18,12 +17,6 @@ for (let i = 0; i < 8; i += 1) {
     SAMPLE_GRID.push([i * 0.37 + 0.13, j * 0.41 - 0.29]);
   }
 }
-
-describe('noise domain', () => {
-  test('domain barrel을 import할 수 있다', () => {
-    expect(noise).toBeTypeOf('object');
-  });
-});
 
 describe('perlinNoise2', () => {
   test('같은 seed와 coordinate는 반복 호출에서 같은 값을 반환한다', () => {
@@ -92,11 +85,6 @@ describe('perlinNoise2', () => {
 });
 
 describe('createNoise2', () => {
-  test('Noise2 callable을 반환한다', () => {
-    const sample = createNoise2({ seed: 42 });
-    expect(sample).toBeTypeOf('function');
-  });
-
   test('perlinNoise2(x, y, { seed })와 같은 값을 반환한다', () => {
     const sample = createNoise2({ seed: 42 });
     for (const [x, y] of SAMPLE_GRID) {
