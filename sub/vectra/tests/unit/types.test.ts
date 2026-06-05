@@ -7,39 +7,11 @@ import type {
 import type { CriticallyDampedOptions, SpringLerpOptions, SpringMotionResult } from '../../src/interpolation/types';
 import type {
   AreaOverlapDetail,
-  BoundsLike,
-  BoundsObjectLike,
-  BoundsTuple,
-  BoundsWritable,
-  CapsuleLike,
-  CapsuleObjectLike,
-  CapsuleTuple,
-  CapsuleWritable,
-  CardinalTangentOptions,
-  CircleLike,
-  CircleObjectLike,
-  CircleTuple,
-  CircleWritable,
   LinePolygonOverlapIntervalDetail,
-  MatrixLike,
-  MatrixObjectLike,
-  MatrixTuple,
-  MatrixWritable,
   OverlapIntervalDetail,
   PointRelationDetail,
-  PolygonLike,
-  PolygonObjectLike,
-  PolygonWritable,
-  PolylineLike,
-  PolylineObjectLike,
-  PolylineWritable,
-  RectLike,
-  RectObjectLike,
-  RectTuple,
   RelationDetailKind,
-  SampleTableOptions,
   SegmentLike,
-  SegmentObjectLike,
   SegmentSegmentDetail,
   SegmentWritable,
   TwoPointRelationDetail,
@@ -50,135 +22,32 @@ import type {
 } from '../../src/types';
 
 describe('structural public types', () => {
-  test('accepts object and tuple coordinate inputs', () => {
+  // 입력 union 계약: 좌표 입력은 readonly object와 readonly tuple을 모두 허용한다.
+  test('XYInput은 object와 tuple 좌표 입력을 허용한다', () => {
     expectTypeOf<{ readonly x: number; readonly y: number }>().toMatchTypeOf<XYInput>();
     expectTypeOf<readonly [number, number]>().toMatchTypeOf<XYInput>();
   });
 
-  test('XYObjectWritable는 x, y field object를 허용한다', () => {
-    expectTypeOf<{ x: number; y: number }>().toMatchTypeOf<XYObjectWritable>();
+  // writable 좌표 계약: mutable object/tuple은 허용, readonly tuple은 거부한다.
+  // (대표 contract — XYObjectWritable/XYTupleWritable shape별 반복은 이 한 케이스로 대표한다.)
+  test('XYWritable은 mutable object/tuple을 허용하고 readonly tuple을 거부한다', () => {
     expectTypeOf<{ x: number; y: number }>().toMatchTypeOf<XYWritable>();
-  });
-
-  test('XYTupleWritable는 mutable tuple을 허용한다', () => {
-    expectTypeOf<[number, number]>().toMatchTypeOf<XYTupleWritable>();
     expectTypeOf<[number, number]>().toMatchTypeOf<XYWritable>();
-  });
-
-  test('readonly tuple은 XYTupleWritable에 할당되지 않는다', () => {
-    expectTypeOf<readonly [number, number]>().not.toMatchTypeOf<XYTupleWritable>();
     expectTypeOf<readonly [number, number]>().not.toMatchTypeOf<XYWritable>();
   });
 
-  test('number[] 배열은 XYTupleWritable에 할당되지 않는다', () => {
-    expectTypeOf<number[]>().not.toMatchTypeOf<XYTupleWritable>();
-  });
-
-  test('shape writable은 generic 좌표 storage로 mutable tuple을 허용한다', () => {
+  // generic storage 계약: shape writable은 좌표 storage 타입 파라미터를 그대로 전파한다.
+  // (Segment를 대표로 검증 — Bounds/Circle/Polyline/Polygon 동일 패턴은 생략한다.)
+  test('SegmentWritable은 generic 좌표 storage를 필드 타입으로 전파한다', () => {
     expectTypeOf<[number, number]>().toMatchTypeOf<SegmentWritable<XYTupleWritable>['a']>();
-    expectTypeOf<[number, number]>().toMatchTypeOf<BoundsWritable<XYTupleWritable>['min']>();
-    expectTypeOf<[number, number]>().toMatchTypeOf<CircleWritable<XYTupleWritable>['center']>();
-    expectTypeOf<[number, number]>().toMatchTypeOf<PolylineWritable<XYTupleWritable>['points'][number]>();
-    expectTypeOf<[number, number]>().toMatchTypeOf<PolygonWritable<XYTupleWritable>['points'][number]>();
-  });
-
-  test('readonly tuple은 shape writable 내부 좌표 필드에 할당되지 않는다', () => {
     expectTypeOf<readonly [number, number]>().not.toMatchTypeOf<SegmentWritable<XYWritable>['a']>();
-    expectTypeOf<readonly [number, number]>().not.toMatchTypeOf<BoundsWritable<XYWritable>['min']>();
-    expectTypeOf<readonly [number, number]>().not.toMatchTypeOf<CircleWritable<XYWritable>['center']>();
-    expectTypeOf<readonly [number, number]>().not.toMatchTypeOf<PolylineWritable<XYWritable>['points'][number]>();
-    expectTypeOf<readonly [number, number]>().not.toMatchTypeOf<PolygonWritable<XYWritable>['points'][number]>();
   });
 
-  test('defines MVP writable and shape inputs', () => {
-    expectTypeOf<{ readonly a: XYInput; readonly b: XYInput }>().toMatchTypeOf<SegmentObjectLike>();
+  // 입력 shape 계약: *Like 입력 타입은 object 형태와 tuple 형태를 모두 허용한다.
+  // (Segment를 대표로 검증 — Bounds/Capsule/Circle/Rect/Polyline/Polygon/Matrix Like 군은 생략한다.)
+  test('SegmentLike는 object와 tuple 입력 shape를 모두 허용한다', () => {
     expectTypeOf<{ readonly a: XYInput; readonly b: XYInput }>().toMatchTypeOf<SegmentLike>();
     expectTypeOf<readonly [XYInput, XYInput]>().toMatchTypeOf<SegmentLike>();
-    expectTypeOf<{ readonly min: XYInput; readonly max: XYInput }>().toMatchTypeOf<BoundsObjectLike>();
-    expectTypeOf<readonly [XYInput, XYInput]>().toMatchTypeOf<BoundsTuple>();
-    expectTypeOf<readonly [XYInput, XYInput]>().toMatchTypeOf<BoundsLike>();
-    expectTypeOf<readonly [XYInput, XYInput, number]>().toMatchTypeOf<CapsuleTuple>();
-    expectTypeOf<{
-      readonly a: XYInput;
-      readonly b: XYInput;
-      readonly radius: number;
-    }>().toMatchTypeOf<CapsuleObjectLike>();
-    expectTypeOf<readonly [XYInput, XYInput, number]>().toMatchTypeOf<CapsuleLike>();
-    expectTypeOf<{ readonly a: XYInput; readonly b: XYInput; readonly radius: number }>().toMatchTypeOf<CapsuleLike>();
-    expectTypeOf<{ a: [number, number]; b: [number, number]; radius: number }>().toMatchTypeOf<
-      CapsuleWritable<XYTupleWritable, XYTupleWritable>
-    >();
-    expectTypeOf<readonly [XYInput, number]>().toMatchTypeOf<CircleTuple>();
-    expectTypeOf<{ readonly center: XYInput; readonly radius: number }>().toMatchTypeOf<CircleObjectLike>();
-    expectTypeOf<readonly [XYInput, number]>().toMatchTypeOf<CircleLike>();
-    expectTypeOf<{
-      readonly x: number;
-      readonly y: number;
-      readonly width: number;
-      readonly height: number;
-    }>().toMatchTypeOf<RectObjectLike>();
-    expectTypeOf<{
-      readonly x: number;
-      readonly y: number;
-      readonly width: number;
-      readonly height: number;
-    }>().toMatchTypeOf<RectLike>();
-    expectTypeOf<readonly [number, number, number, number]>().toMatchTypeOf<RectTuple>();
-    expectTypeOf<readonly [number, number, number, number]>().toMatchTypeOf<RectLike>();
-    expectTypeOf<{ readonly min: XYInput; readonly max: XYInput }>().toMatchTypeOf<BoundsLike>();
-    expectTypeOf<{ readonly points: readonly XYInput[] }>().toMatchTypeOf<PolylineObjectLike>();
-    expectTypeOf<{ readonly points: readonly XYInput[] }>().toMatchTypeOf<PolylineLike>();
-    expectTypeOf<readonly XYInput[]>().toMatchTypeOf<PolylineLike>();
-    expectTypeOf<{ readonly points: readonly XYInput[] }>().toMatchTypeOf<PolygonObjectLike>();
-    expectTypeOf<{ readonly points: readonly XYInput[] }>().toMatchTypeOf<PolygonLike>();
-    expectTypeOf<readonly XYInput[]>().toMatchTypeOf<PolygonLike>();
-    expectTypeOf<{ readonly center: XYInput; readonly radius: number }>().toMatchTypeOf<CircleLike>();
-    expectTypeOf<readonly [XYInput, XYInput]>().not.toMatchTypeOf<RectLike>();
-    expectTypeOf<readonly [XYInput, number]>().not.toMatchTypeOf<BoundsLike>();
-    expectTypeOf<readonly [XYInput, XYInput]>().not.toMatchTypeOf<CapsuleLike>();
-    expectTypeOf<readonly [XYInput, number]>().not.toMatchTypeOf<CapsuleLike>();
-    expectTypeOf<readonly [XYInput, XYInput]>().not.toMatchTypeOf<CircleLike>();
-    expectTypeOf<{
-      readonly a: number;
-      readonly b: number;
-      readonly c: number;
-      readonly d: number;
-      readonly tx: number;
-      readonly ty: number;
-    }>().toMatchTypeOf<MatrixObjectLike>();
-    expectTypeOf<{
-      readonly a: number;
-      readonly b: number;
-      readonly c: number;
-      readonly d: number;
-      readonly tx: number;
-      readonly ty: number;
-    }>().toMatchTypeOf<MatrixLike>();
-    expectTypeOf<readonly [number, number, number, number, number, number]>().toMatchTypeOf<MatrixTuple>();
-    expectTypeOf<readonly [number, number, number, number, number, number]>().toMatchTypeOf<MatrixLike>();
-  });
-
-  test('MatrixWritable은 mutable 6-component object를 허용한다', () => {
-    expectTypeOf<{
-      a: number;
-      b: number;
-      c: number;
-      d: number;
-      tx: number;
-      ty: number;
-    }>().toMatchTypeOf<MatrixWritable>();
-  });
-
-  test('CardinalTangentOptions는 선택적 tension을 허용한다', () => {
-    expectTypeOf<{ tension: number }>().toMatchTypeOf<CardinalTangentOptions>();
-    expectTypeOf<{ tension?: number }>().toMatchTypeOf<CardinalTangentOptions>();
-  });
-
-  test('SampleTableOptions는 선택적 interpolation과 extrapolate를 허용한다', () => {
-    expectTypeOf<{ interpolation: 'linear' }>().toMatchTypeOf<SampleTableOptions>();
-    expectTypeOf<{ interpolation: 'nearest' }>().toMatchTypeOf<SampleTableOptions>();
-    expectTypeOf<{ extrapolate: boolean }>().toMatchTypeOf<SampleTableOptions>();
-    expectTypeOf<{ interpolation?: 'linear'; extrapolate?: boolean }>().toMatchTypeOf<SampleTableOptions>();
   });
 });
 

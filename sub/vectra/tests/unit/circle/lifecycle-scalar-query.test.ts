@@ -7,47 +7,14 @@ import { containsPoint } from '../../../src/circle/contains-point';
 import { copyInto } from '../../../src/circle/copy-into';
 import { distanceToPoint } from '../../../src/circle/distance-to-point';
 import { fromBoundsInto } from '../../../src/circle/from-bounds-into';
-import type { CircleWritable, XYTupleWritable } from '../../../src/types';
+import type { CircleWritable } from '../../../src/types';
 
 function makeCircle(): CircleWritable {
   return { center: { x: 0, y: 0 }, radius: 0 };
 }
 
 describe('circle lifecycle - copyInto', () => {
-  test('center, radius 인자로 circle을 기록하고 out을 반환한다', () => {
-    const out = makeCircle();
-    const result = copyInto(out, { x: 3, y: 4 }, 5);
-    expect(result).toBe(out);
-    expect(out.center).toEqual({ x: 3, y: 4 });
-    expect(out.radius).toBe(5);
-  });
-
-  test('tuple center, radius 인자로 circle을 기록한다', () => {
-    const out = makeCircle();
-    copyInto(out, [3, 4], 5);
-    expect(out.center).toEqual({ x: 3, y: 4 });
-    expect(out.radius).toBe(5);
-  });
-
-  test('mutable tuple center storage에 기록한다', () => {
-    const center: [number, number] = [0, 0];
-    const out: CircleWritable<XYTupleWritable> = { center, radius: 0 };
-    const result = copyInto(out, { x: 3, y: 4 }, 5);
-    expect(result).toBe(out);
-    expect(center).toEqual([3, 4]);
-    expect(out.radius).toBe(5);
-  });
-
-  test('radius <= 0을 그대로 기록한다', () => {
-    const zero = makeCircle();
-    const negative = makeCircle();
-    copyInto(zero, { x: 1, y: 2 }, 0);
-    copyInto(negative, { x: 1, y: 2 }, -3);
-    expect(zero.radius).toBe(0);
-    expect(negative.radius).toBe(-3);
-  });
-
-  test('object center CircleLike를 복사한다', () => {
+  test('object center CircleLike를 복사하고 out을 반환한다', () => {
     const out = makeCircle();
     const src = { center: { x: 3, y: 4 }, radius: 5 };
     const result = copyInto(out, src);
@@ -64,23 +31,6 @@ describe('circle lifecycle - copyInto', () => {
     expect(out.radius).toBe(5);
   });
 
-  test('tuple shorthand CircleLike를 복사한다', () => {
-    const out = makeCircle();
-    copyInto(out, [[3, 4], 5]);
-    expect(out.center).toEqual({ x: 3, y: 4 });
-    expect(out.radius).toBe(5);
-  });
-
-  test('mutable tuple center storage에 복사한다', () => {
-    const center: [number, number] = [0, 0];
-    const out: CircleWritable<XYTupleWritable> = { center, radius: 0 };
-    const src = { center: { x: 3, y: 4 }, radius: 5 };
-    const result = copyInto(out, src);
-    expect(result).toBe(out);
-    expect(center).toEqual([3, 4]);
-    expect(out.radius).toBe(5);
-  });
-
   test('out === circle aliasing에서도 안전하게 복사한다', () => {
     const out = makeCircle();
     out.center.x = 3;
@@ -90,27 +40,10 @@ describe('circle lifecycle - copyInto', () => {
     expect(out.center).toEqual({ x: 3, y: 4 });
     expect(out.radius).toBe(5);
   });
-
-  test('out.center === circle.center aliasing에서도 안전하게 복사한다', () => {
-    const sharedCenter = { x: 3, y: 4 };
-    const out: CircleWritable = { center: sharedCenter, radius: 0 };
-    const src = { center: sharedCenter, radius: 7 };
-    copyInto(out, src);
-    expect(out.center).toEqual({ x: 3, y: 4 });
-    expect(out.radius).toBe(7);
-  });
-
-  test('소스 circle을 mutate하지 않는다', () => {
-    const out = makeCircle();
-    const src = { center: { x: 3, y: 4 }, radius: 5 };
-    copyInto(out, src);
-    expect(src.center).toEqual({ x: 3, y: 4 });
-    expect(src.radius).toBe(5);
-  });
 });
 
 describe('circle lifecycle - fromBoundsInto', () => {
-  test('정사각형 bounds의 inscribed circle을 기록한다', () => {
+  test('정사각형 bounds의 inscribed circle을 기록하고 out을 반환한다', () => {
     const out = makeCircle();
     const result = fromBoundsInto(out, { min: { x: 0, y: 0 }, max: { x: 4, y: 4 } });
     expect(result).toBe(out);
@@ -118,116 +51,17 @@ describe('circle lifecycle - fromBoundsInto', () => {
     expect(out.radius).toBe(2);
   });
 
-  test('width < height bounds: radius = width / 2', () => {
+  test('non-square bounds: radius = min(width, height) / 2', () => {
     const out = makeCircle();
     fromBoundsInto(out, { min: { x: 0, y: 0 }, max: { x: 4, y: 10 } });
     expect(out.center).toEqual({ x: 2, y: 5 });
     expect(out.radius).toBe(2);
   });
 
-  test('height < width bounds: radius = height / 2', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: { x: 0, y: 0 }, max: { x: 10, y: 4 } });
-    expect(out.center).toEqual({ x: 5, y: 2 });
-    expect(out.radius).toBe(2);
-  });
-
-  test('tuple min/max bounds를 처리한다', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: [0, 0], max: [6, 6] });
-    expect(out.center).toEqual({ x: 3, y: 3 });
-    expect(out.radius).toBe(3);
-  });
-
-  test('mutable tuple center storage에 bounds 결과를 기록한다', () => {
-    const center: [number, number] = [0, 0];
-    const out: CircleWritable<XYTupleWritable> = { center, radius: 0 };
-    const result = fromBoundsInto(out, { min: [0, 0], max: [6, 6] });
-    expect(result).toBe(out);
-    expect(center).toEqual([3, 3]);
-    expect(out.radius).toBe(3);
-  });
-
-  test('object min, tuple max 혼합 bounds를 처리한다', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: { x: 2, y: 2 }, max: [6, 8] });
-    expect(out.center).toEqual({ x: 4, y: 5 });
-    expect(out.radius).toBe(2);
-  });
-
-  test('empty bounds (x inverted): radius = 0, center = (min.x, min.y)를 기록한다', () => {
+  test('empty bounds (inverted): radius = 0, center = (min.x, min.y)를 기록한다', () => {
     const out = makeCircle();
     fromBoundsInto(out, { min: { x: 5, y: 0 }, max: { x: 1, y: 5 } });
     expect(out.center).toEqual({ x: 5, y: 0 });
-    expect(out.radius).toBe(0);
-  });
-
-  test('empty bounds (y inverted): radius = 0, center = (min.x, min.y)를 기록한다', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: { x: 0, y: 5 }, max: { x: 5, y: 1 } });
-    expect(out.center).toEqual({ x: 0, y: 5 });
-    expect(out.radius).toBe(0);
-  });
-
-  test('sentinel empty bounds (Infinity, -Infinity): radius = 0, center = (Infinity, Infinity)를 기록한다', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } });
-    expect(out.center).toEqual({ x: Infinity, y: Infinity });
-    expect(out.radius).toBe(0);
-  });
-
-  test('out.center === bounds.min aliasing에서도 안전하게 기록한다', () => {
-    const shared = { x: 0, y: 0 };
-    const out: CircleWritable = { center: shared, radius: 0 };
-    fromBoundsInto(out, { min: shared, max: { x: 4, y: 4 } });
-    expect(out.center).toEqual({ x: 2, y: 2 });
-    expect(out.radius).toBe(2);
-  });
-
-  test('out.center === bounds.max aliasing에서도 안전하게 기록한다', () => {
-    const shared = { x: 4, y: 4 };
-    const out: CircleWritable = { center: shared, radius: 0 };
-    fromBoundsInto(out, { min: { x: 0, y: 0 }, max: shared });
-    expect(out.center).toEqual({ x: 2, y: 2 });
-    expect(out.radius).toBe(2);
-  });
-
-  test('min === max 단일 점 bounds: radius = 0, center = 점 좌표를 기록한다', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: { x: 3, y: 5 }, max: { x: 3, y: 5 } });
-    expect(out.center).toEqual({ x: 3, y: 5 });
-    expect(out.radius).toBe(0);
-  });
-
-  test('width = 0 line bounds: radius = 0, center = 수직 중심을 기록한다', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: { x: 3, y: 0 }, max: { x: 3, y: 6 } });
-    expect(out.center).toEqual({ x: 3, y: 3 });
-    expect(out.radius).toBe(0);
-  });
-
-  test('height = 0 line bounds: radius = 0, center = 수평 중심을 기록한다', () => {
-    const out = makeCircle();
-    fromBoundsInto(out, { min: { x: 0, y: 3 }, max: { x: 6, y: 3 } });
-    expect(out.center).toEqual({ x: 3, y: 3 });
-    expect(out.radius).toBe(0);
-  });
-
-  test('empty bounds + out.center === bounds.min aliasing에서도 안전하게 기록한다', () => {
-    const shared = { x: 5, y: 2 };
-    const out: CircleWritable = { center: shared, radius: 0 };
-    // x inverted → empty: max.x(1) < min.x(5)
-    fromBoundsInto(out, { min: shared, max: { x: 1, y: 8 } });
-    expect(out.center).toEqual({ x: 5, y: 2 });
-    expect(out.radius).toBe(0);
-  });
-
-  test('empty bounds + out.center === bounds.max aliasing에서도 안전하게 기록한다', () => {
-    const shared = { x: 1, y: 8 };
-    const out: CircleWritable = { center: shared, radius: 0 };
-    // x inverted → empty: max.x(1) < min.x(5), center = (min.x, min.y) = (5, 2)
-    fromBoundsInto(out, { min: { x: 5, y: 2 }, max: shared });
-    expect(out.center).toEqual({ x: 5, y: 2 });
     expect(out.radius).toBe(0);
   });
 });

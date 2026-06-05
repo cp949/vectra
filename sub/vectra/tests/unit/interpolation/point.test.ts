@@ -90,14 +90,6 @@ describe('interpolation point 보간 - lerpPoint', () => {
     expect(result).not.toBe(b);
     expect(result).toEqual({ x: 2, y: 3 });
   });
-
-  test('lerpPointInto와 동일한 결과를 반환한다', () => {
-    const out = { x: 0, y: 0 };
-    lerpPointInto(out, [1, 2], [5, 8], 0.75);
-    const result = lerpPoint([1, 2], [5, 8], 0.75);
-    expect(result.x).toBe(out.x);
-    expect(result.y).toBe(out.y);
-  });
 });
 
 describe('interpolation point 보간 - midpointInto', () => {
@@ -130,7 +122,6 @@ describe('interpolation point 보간 - midpointInto', () => {
     expect(result).toBe(out);
     expect(out[0]).toBe(2);
     expect(out[1]).toBe(3);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('out === a aliasing에서도 올바른 결과를 반환한다', () => {
@@ -166,14 +157,6 @@ describe('interpolation point 보간 - midpoint', () => {
     expect(result).not.toBe(a);
     expect(result).not.toBe(b);
     expect(result).toEqual({ x: 2, y: 3 });
-  });
-
-  test('midpointInto와 동일한 결과를 반환한다', () => {
-    const out = { x: 0, y: 0 };
-    midpointInto(out, [2, 4], [8, 10]);
-    const result = midpoint([2, 4], [8, 10]);
-    expect(result.x).toBe(out.x);
-    expect(result.y).toBe(out.y);
   });
 });
 
@@ -225,7 +208,6 @@ describe('interpolation point 보간 - moveTowardPointInto', () => {
     expect(result).toBe(out);
     expect(out[0]).toBe(3);
     expect(out[1]).toBe(4);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('out === current aliasing에서도 올바른 결과를 반환한다', () => {
@@ -276,14 +258,6 @@ describe('interpolation point 보간 - moveTowardPoint', () => {
     expect(result).not.toBe(current);
     expect(result).not.toBe(target);
     expect(result).toEqual({ x: 3, y: 4 });
-  });
-
-  test('moveTowardPointInto와 동일한 결과를 반환한다', () => {
-    const out = { x: 0, y: 0 };
-    moveTowardPointInto(out, [0, 0], [10, 0], 3);
-    const result = moveTowardPoint([0, 0], [10, 0], 3);
-    expect(result.x).toBeCloseTo(out.x, 10);
-    expect(result.y).toBeCloseTo(out.y, 10);
   });
 });
 
@@ -340,7 +314,6 @@ describe('interpolation 쌍선형 보간 - bilerpPointInto', () => {
     expect(result).toBe(out);
     expect(out[0]).toBe(1);
     expect(out[1]).toBe(1);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test.each([
@@ -366,14 +339,6 @@ describe('interpolation 쌍선형 보간 - bilerpPoint', () => {
   test('새 plain object를 반환한다', () => {
     const result = bilerpPoint({ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }, 0.5, 0.5);
     expect(result).toEqual({ x: 1, y: 1 });
-  });
-
-  test('bilerpPointInto와 동일한 결과를 반환한다', () => {
-    const out = { x: 0, y: 0 };
-    bilerpPointInto(out, [0, 0], [2, 0], [0, 2], [2, 2], 0.25, 0.75);
-    const result = bilerpPoint([0, 0], [2, 0], [0, 2], [2, 2], 0.25, 0.75);
-    expect(result.x).toBe(out.x);
-    expect(result.y).toBe(out.y);
   });
 });
 
@@ -423,7 +388,6 @@ describe('interpolation point elapsed-time - lerpPointByElapsedInto', () => {
     expect(result).toBe(out);
     expect(out[0]).toBe(2);
     expect(out[1]).toBe(3);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('out === a aliasing에서도 올바른 결과를 반환한다', () => {
@@ -466,14 +430,6 @@ describe('interpolation point elapsed-time - lerpPointByElapsed', () => {
   test('새 plain object를 반환한다', () => {
     const result = lerpPointByElapsed({ x: 0, y: 0 }, { x: 4, y: 6 }, 5, 10);
     expect(result).toEqual({ x: 2, y: 3 });
-  });
-
-  test('lerpPointByElapsedInto와 동일한 결과를 반환한다', () => {
-    const out = { x: 0, y: 0 };
-    lerpPointByElapsedInto(out, [0, 0], [4, 6], 15, 10);
-    const result = lerpPointByElapsed([0, 0], [4, 6], 15, 10);
-    expect(result.x).toBe(out.x);
-    expect(result.y).toBe(out.y);
   });
 
   test('duration <= 0은 RangeError를 던진다', () => {

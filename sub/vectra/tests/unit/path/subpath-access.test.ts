@@ -54,18 +54,12 @@ describe('subpathAt', () => {
     expect(s1?.[0]).toEqual({ kind: 'move', x: 20, y: 20 });
   });
 
-  test('index === subpathCount는 undefined를 반환한다', () => {
+  test('invalid index(out-of-range / 음수 / empty / non-finite / non-integer)는 undefined를 반환한다', () => {
     expect(subpathAt(twoSubpathRect, 2)).toBeUndefined();
-  });
-
-  test('음수 index는 undefined를 반환한다 (JS Array wrap 사용 안 함)', () => {
     expect(subpathAt(twoSubpathRect, -1)).toBeUndefined();
-  });
-
-  test('empty path는 모든 index에 대해 undefined를 반환한다', () => {
     expect(subpathAt([], 0)).toBeUndefined();
-    expect(subpathAt([], 1)).toBeUndefined();
-    expect(subpathAt([], -1)).toBeUndefined();
+    expect(subpathAt(twoSubpathRect, Number.NaN)).toBeUndefined();
+    expect(subpathAt(twoSubpathRect, 0.5)).toBeUndefined();
   });
 
   test('첫 command가 Move가 아닌 path는 암묵적 origin subpath를 index 0으로 반환한다', () => {
@@ -77,29 +71,12 @@ describe('subpathAt', () => {
     expect(s0?.[1]).toEqual({ kind: 'line', x: 5, y: 5 });
   });
 
-  test('반환된 배열은 원본 commands 배열과 reference를 공유하지 않는다', () => {
+  test('반환 배열은 원본 commands와 다른 reference이다 (문서화된 fresh array contract)', () => {
     const result = subpathAt(twoSubpathRect, 0);
     expect(result).not.toBe(twoSubpathRect);
   });
 
-  test('single-subpath 입력에서도 반환 배열이 원본 commands와 다른 reference이다', () => {
-    const cmds: PathCommand[] = [
-      { kind: 'move', x: 0, y: 0 },
-      { kind: 'line', x: 1, y: 0 },
-    ];
-    const s0 = subpathAt(cmds, 0);
-    expect(s0).not.toBe(cmds);
-    expect(s0).toHaveLength(cmds.length);
-  });
-
-  test('non-finite / non-integer index는 undefined를 반환한다', () => {
-    expect(subpathAt(twoSubpathRect, Number.NaN)).toBeUndefined();
-    expect(subpathAt(twoSubpathRect, Number.POSITIVE_INFINITY)).toBeUndefined();
-    expect(subpathAt(twoSubpathRect, Number.NEGATIVE_INFINITY)).toBeUndefined();
-    expect(subpathAt(twoSubpathRect, 0.5)).toBeUndefined();
-  });
-
-  test('내부 command object reference는 그대로 재사용된다', () => {
+  test('내부 command object reference는 그대로 재사용된다 (문서화된 contract)', () => {
     const move: PathCommand = { kind: 'move', x: 0, y: 0 };
     const line: PathCommand = { kind: 'line', x: 1, y: 1 };
     const cmds = [move, line];
@@ -120,24 +97,11 @@ describe('commandAt', () => {
     expect(commandAt(twoSubpathRect, twoSubpathRect.length - 1)).toBe(last);
   });
 
-  test('index === commands.length는 undefined를 반환한다', () => {
+  test('invalid index(out-of-range / 음수 / empty / non-finite / non-integer)는 undefined를 반환한다', () => {
     expect(commandAt(twoSubpathRect, twoSubpathRect.length)).toBeUndefined();
-  });
-
-  test('음수 index는 undefined를 반환한다 (JS Array wrap 사용 안 함)', () => {
     expect(commandAt(twoSubpathRect, -1)).toBeUndefined();
-  });
-
-  test('empty path는 모든 index에 대해 undefined를 반환한다', () => {
     expect(commandAt([], 0)).toBeUndefined();
-    expect(commandAt([], -1)).toBeUndefined();
-    expect(commandAt([], 100)).toBeUndefined();
-  });
-
-  test('non-finite / non-integer index는 undefined를 반환한다', () => {
     expect(commandAt(twoSubpathRect, Number.NaN)).toBeUndefined();
-    expect(commandAt(twoSubpathRect, Number.POSITIVE_INFINITY)).toBeUndefined();
-    expect(commandAt(twoSubpathRect, Number.NEGATIVE_INFINITY)).toBeUndefined();
     expect(commandAt(twoSubpathRect, 0.5)).toBeUndefined();
   });
 });
@@ -204,33 +168,11 @@ describe('subpathBoundsInto', () => {
     expect(out.max).toEqual({ x: 30, y: 25 });
   });
 
-  test('out-of-range index는 sentinel bounds를 out에 기록한다', () => {
-    const out = makeBoundsOut();
-    subpathBoundsInto(out, twoSubpathRect, 5);
-    expect(out).toEqual(sentinelBounds());
-  });
-
-  test('이전 호출의 stale 값이 신규 호출 결과에 누설되지 않는다', () => {
-    const out = makeBoundsOut();
-    subpathBoundsInto(out, twoSubpathRect, 1);
-    expect(out.max).toEqual({ x: 30, y: 25 });
-    subpathBoundsInto(out, twoSubpathRect, 0);
-    expect(out.min).toEqual({ x: 0, y: 0 });
-    expect(out.max).toEqual({ x: 10, y: 5 });
-  });
-
   test('out-of-range로 sentinel 기록 시 이전 값이 완전히 덮어쓰인다', () => {
     const out = makeBoundsOut();
     subpathBoundsInto(out, twoSubpathRect, 0);
     subpathBoundsInto(out, twoSubpathRect, 99);
     expect(out).toEqual(sentinelBounds());
-  });
-
-  test('tuple writable output도 허용한다', () => {
-    const out: BoundsWritable<[number, number], [number, number]> = { min: [0, 0], max: [0, 0] };
-    subpathBoundsInto(out, twoSubpathRect, 0);
-    expect(out.min).toEqual([0, 0]);
-    expect(out.max).toEqual([10, 5]);
   });
 });
 

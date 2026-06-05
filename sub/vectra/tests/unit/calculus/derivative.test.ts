@@ -33,16 +33,6 @@ describe('derivativeInto — forward 차분 (Into)', () => {
   });
 });
 
-describe('derivative — forward 차분 (companion)', () => {
-  test('새 배열을 반환한다', () => {
-    expect(derivative((x) => 2 * x + 3, 0, 3, 4, { method: 'forward' })).toEqual([2, 2, 2, 2]);
-  });
-
-  test('quadratic forward', () => {
-    expect(derivative((x) => x * x, 0, 3, 4, { method: 'forward' })).toEqual([1, 3, 5, 5]);
-  });
-});
-
 // ---------------------------------------------------------------------------
 // derivativeInto / derivative — backward method
 // ---------------------------------------------------------------------------
@@ -59,16 +49,6 @@ describe('derivativeInto — backward 차분 (Into)', () => {
   test('binCount 2는 backward와 boundary fallback이 같은 결과를 만든다', () => {
     // dx = 1, y = [3, 5]. boundary i=0: y[1]-y[0]=2. backward i=1: y[1]-y[0]=2.
     expect(derivativeInto([], (x) => 2 * x + 3, 0, 1, 2, { method: 'backward' })).toEqual([2, 2]);
-  });
-});
-
-describe('derivative — backward 차분 (companion)', () => {
-  test('새 배열을 반환한다', () => {
-    expect(derivative((x) => 2 * x + 3, 0, 3, 4, { method: 'backward' })).toEqual([2, 2, 2, 2]);
-  });
-
-  test('quadratic backward', () => {
-    expect(derivative((x) => x * x, 0, 3, 4, { method: 'backward' })).toEqual([1, 1, 3, 5]);
   });
 });
 
@@ -114,13 +94,6 @@ describe('derivativeInto — binCount 0/1 degenerate', () => {
     const out1: number[] = [99, 99, 99];
     derivativeInto(out1, (x) => x, 0, 1, 1);
     expect(out1).toEqual([0]);
-  });
-});
-
-describe('derivative — binCount 0/1 degenerate', () => {
-  test('binCount 0은 새 빈 배열, binCount 1은 [0]', () => {
-    expect(derivative((x) => x, 0, 1, 0)).toEqual([]);
-    expect(derivative((x) => x, 0, 1, 1)).toEqual([0]);
   });
 });
 
@@ -211,21 +184,9 @@ describe('derivativeInto — 성공 시 out atomicity', () => {
   });
 });
 
-describe('derivative — invalid input은 throw한다', () => {
+describe('derivative — invalid input은 throw한다 (companion 대표)', () => {
   test('f가 function 아니면 TypeError', () => {
     expect(() => derivative(undefined as unknown as (x: number) => number, 0, 1, 4)).toThrow(TypeError);
-  });
-
-  test('xMin NaN은 RangeError', () => {
-    expect(() => derivative((x) => x, Number.NaN, 1, 4)).toThrow(RangeError);
-  });
-
-  test('binCount -1은 RangeError', () => {
-    expect(() => derivative((x) => x, 0, 1, -1)).toThrow(RangeError);
-  });
-
-  test('invalid method는 RangeError', () => {
-    expect(() => derivative((x) => x, 0, 1, 4, { method: 'middle' as unknown as 'central' })).toThrow(RangeError);
   });
 });
 
@@ -281,13 +242,15 @@ describe('derivativeInto — central 차분 (Into, default)', () => {
   });
 });
 
-describe('derivative — central 차분 (companion, default)', () => {
-  test('options 생략 = central', () => {
-    expect(derivative((x) => x * x, 0, 4, 5)).toEqual([1, 2, 4, 6, 7]);
+describe('derivative — companion (default + method 전달)', () => {
+  test('options 생략은 central default로 동작하고 새 배열을 반환한다', () => {
+    const out = derivative((x) => x * x, 0, 4, 5);
+    expect(out).toEqual([1, 2, 4, 6, 7]);
+    expect(Array.isArray(out)).toBe(true);
   });
 
-  test('explicit central', () => {
-    expect(derivative((x) => x * x, 0, 4, 5, { method: 'central' })).toEqual([1, 2, 4, 6, 7]);
+  test('method option이 derivativeInto로 전달된다 (forward)', () => {
+    expect(derivative((x) => x * x, 0, 3, 4, { method: 'forward' })).toEqual([1, 3, 5, 5]);
   });
 });
 

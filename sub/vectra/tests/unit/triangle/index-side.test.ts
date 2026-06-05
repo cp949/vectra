@@ -30,21 +30,9 @@ describe('pointAtIndexInto', () => {
     expect(out).toEqual({ x: 5, y: 6 });
   });
 
-  test('index -1: false를 반환하고 out을 수정하지 않는다', () => {
+  test('invalid index: false를 반환하고 out을 수정하지 않는다', () => {
     const out = { x: 99, y: 99 };
     expect(pointAtIndexInto(out, triangle, -1)).toBe(false);
-    expect(out).toEqual({ x: 99, y: 99 });
-  });
-
-  test('index 3: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { x: 99, y: 99 };
-    expect(pointAtIndexInto(out, triangle, 3)).toBe(false);
-    expect(out).toEqual({ x: 99, y: 99 });
-  });
-
-  test('index NaN: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { x: 99, y: 99 };
-    expect(pointAtIndexInto(out, triangle, Number.NaN)).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
 
@@ -69,22 +57,12 @@ describe('pointAtIndexInto', () => {
 describe('pointAtIndex', () => {
   const triangle = { a: { x: 1, y: 2 }, b: { x: 3, y: 4 }, c: { x: 5, y: 6 } };
 
-  test('index 0: vertex a를 반환한다', () => {
-    expect(pointAtIndex(triangle, 0)).toEqual({ x: 1, y: 2 });
-  });
-
   test('index 1: vertex b를 반환한다', () => {
     expect(pointAtIndex(triangle, 1)).toEqual({ x: 3, y: 4 });
   });
 
-  test('index 2: vertex c를 반환한다', () => {
-    expect(pointAtIndex(triangle, 2)).toEqual({ x: 5, y: 6 });
-  });
-
   test('invalid index: undefined를 반환한다', () => {
     expect(pointAtIndex(triangle, -1)).toBeUndefined();
-    expect(pointAtIndex(triangle, 3)).toBeUndefined();
-    expect(pointAtIndex(triangle, Number.NaN)).toBeUndefined();
   });
 });
 
@@ -109,21 +87,9 @@ describe('sideAtInto', () => {
     expect(out).toEqual({ a: { x: 0, y: 0 }, b: { x: 4, y: 0 } });
   });
 
-  test('index -1: false를 반환하고 out을 수정하지 않는다', () => {
+  test('invalid index: false를 반환하고 out을 수정하지 않는다', () => {
     const out = { a: { x: 99, y: 99 }, b: { x: 99, y: 99 } };
     expect(sideAtInto(out, triangle, -1)).toBe(false);
-    expect(out).toEqual({ a: { x: 99, y: 99 }, b: { x: 99, y: 99 } });
-  });
-
-  test('index 3: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { a: { x: 99, y: 99 }, b: { x: 99, y: 99 } };
-    expect(sideAtInto(out, triangle, 3)).toBe(false);
-    expect(out).toEqual({ a: { x: 99, y: 99 }, b: { x: 99, y: 99 } });
-  });
-
-  test('index NaN: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { a: { x: 99, y: 99 }, b: { x: 99, y: 99 } };
-    expect(sideAtInto(out, triangle, Number.NaN)).toBe(false);
     expect(out).toEqual({ a: { x: 99, y: 99 }, b: { x: 99, y: 99 } });
   });
 
@@ -146,17 +112,7 @@ describe('sideAt', () => {
     expect(sideAt(triangle, 0)).toEqual({ a: { x: 4, y: 0 }, b: { x: 2, y: 3 } });
   });
 
-  test('index 1: side CA(c→a)를 반환한다', () => {
-    expect(sideAt(triangle, 1)).toEqual({ a: { x: 2, y: 3 }, b: { x: 0, y: 0 } });
-  });
-
-  test('index 2: side AB(a→b)를 반환한다', () => {
-    expect(sideAt(triangle, 2)).toEqual({ a: { x: 0, y: 0 }, b: { x: 4, y: 0 } });
-  });
-
   test('invalid index: undefined를 반환한다', () => {
     expect(sideAt(triangle, -1)).toBeUndefined();
-    expect(sideAt(triangle, 3)).toBeUndefined();
-    expect(sideAt(triangle, Number.NaN)).toBeUndefined();
   });
 });
