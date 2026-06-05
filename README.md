@@ -5,10 +5,6 @@ TypeScript geometry/math function catalog monorepo.
 `@cp949/vectra`는 renderer, DOM, scene graph, editor state를 소유하지 않는다.
 좌표와 shape data를 받아 geometry/math 결과를 계산한다.
 
-이 파일은 GitHub repository 첫 화면용 landing page다.
-npm package 사용자는 [sub/vectra/README.md](./sub/vectra/README.md)에서 시작한다.
-문서 허브는 [docs/README.md](./docs/README.md)를 본다.
-
 ## Package
 
 | 항목 | 값 |
@@ -25,7 +21,8 @@ npm install @cp949/vectra
 ```ts
 import * as Vecx from '@cp949/vectra/vec';
 
-console.log(Vecx.add({ x: 1, y: 2 }, [3, 4]));
+console.log(Vecx.add({ x: 1, y: 2 }, [3, 4])); // {x: 4, y: 6}
+console.log(Vecx.add([3, 4], { x: 1, y: 2 })); // {x: 4, y: 6}
 ```
 
 ## Workspace
