@@ -13,10 +13,6 @@ export type SubpathExport = {
   readonly kind: string;
 };
 
-type NormalizedSubpathExport = SubpathExport & {
-  readonly displayName: string;
-};
-
 type DomainSubpathExportOptions = {
   readonly domain: string;
   readonly sourceBarrel: ModuleExports;
@@ -24,7 +20,6 @@ type DomainSubpathExportOptions = {
   readonly includeDist?: boolean;
   readonly dedupeExpectedExports?: boolean;
   readonly timeout?: number;
-  readonly barrelCheckMode?: 'each' | 'all';
   readonly compareTestName?: string;
 };
 
@@ -43,6 +38,9 @@ export function assertFunctionDomainSubpathExports(options: FunctionDomainSubpat
   });
 }
 
+// domain barrel과 generated fixture catalog의 동기화(drift)를 검증한다.
+// leaf별 import/kind 반복 검증은 package-imports.test.ts의 dist import contract가 커버하므로
+// 여기서는 barrel kind smoke, (필요 시) dist barrel smoke, 양방향 key 일치만 유지한다.
 export function assertDomainSubpathExports({
   domain,
   sourceBarrel,
@@ -50,130 +48,49 @@ export function assertDomainSubpathExports({
   includeDist = false,
   dedupeExpectedExports = false,
   timeout,
-  barrelCheckMode = 'each',
   compareTestName = 'barrel이 fixture에 없는 함수를 추가로 export하지 않는다',
 }: DomainSubpathExportOptions): void {
-  const exports = leafExports.map(({ exportName, leafPath, kind }) => ({
-    exportName,
-    leafPath,
-    kind,
-    displayName: exportName,
-  }));
-
   describe(`${domain} subpath export surface`, () => {
-    if (exports.length > 0) {
-      describe(`@cp949/vectra/${domain} domain barrel`, () => {
-        testBarrelExports(sourceBarrel, exports, barrelCheckMode, 'barrel', timeout);
-      });
-
-      describe('leaf module source-level import', () => {
-        testLeafSourceExports(domain, exports);
-      });
-
-      if (includeDist) {
-        describe('built dist barrel import', () => {
-          testBarrelImporter(
-            () => import(/* @vite-ignore */ `../../../dist/${domain}/index.js`) as Promise<ModuleExports>,
-            exports,
-            barrelCheckMode,
-            `dist/${domain}/index.js`,
-            timeout
-          );
-        });
-
-        describe('built dist leaf import', () => {
-          test.each(exports)('$leafPath built leaf module이 $displayName를 export한다', async ({
-            exportName,
-            leafPath,
-            kind,
-          }) => {
-            const leaf = await import(/* @vite-ignore */ `../../../dist/${domain}/${leafPath}.js`);
-            expect(typeof (leaf as ModuleExports)[exportName]).toBe(kind);
-          });
-        });
-      }
-    }
-
-    describe('barrel export 집합과 fixture 집합 양방향 일치', () => {
+    if (leafExports.length > 0) {
       test(
-        compareTestName,
-        async () => {
-          const barrelKeys = Object.keys(sourceBarrel)
-            .filter((key) => shouldIncludeBarrelKey(sourceBarrel, exports, key))
-            .sort();
-          const expectedKeys = getExpectedExportKeys(exports, dedupeExpectedExports);
-          expect(barrelKeys).toEqual(expectedKeys);
+        'fixture의 모든 export가 source barrel에 kind대로 존재한다',
+        () => {
+          for (const { exportName, kind } of leafExports) {
+            expect(typeof sourceBarrel[exportName]).toBe(kind);
+          }
         },
         timeout
       );
-    });
-  });
-}
 
-function testLeafSourceExports(domain: string, exports: readonly NormalizedSubpathExport[]): void {
-  test.each(exports)('$leafPath leaf module이 $displayName를 export한다', async ({ exportName, leafPath, kind }) => {
-    const leaf = await import(/* @vite-ignore */ `../../../src/${domain}/${leafPath}`);
-    expect(typeof (leaf as ModuleExports)[exportName]).toBe(kind);
-  });
-}
+      if (includeDist) {
+        test(
+          'built dist barrel이 fixture export를 노출한다',
+          async () => {
+            const barrel = (await import(/* @vite-ignore */ `../../../dist/${domain}/index.js`)) as ModuleExports;
+            for (const { exportName, kind } of leafExports) {
+              expect(typeof barrel[exportName]).toBe(kind);
+            }
+          },
+          timeout
+        );
+      }
+    }
 
-function testBarrelExports(
-  barrel: ModuleExports,
-  exports: readonly NormalizedSubpathExport[],
-  mode: 'each' | 'all',
-  label: string,
-  timeout: number | undefined
-): void {
-  if (mode === 'all') {
     test(
-      `fixture의 모든 함수가 ${label}에 존재한다`,
-      async () => {
-        for (const { exportName, kind } of exports) {
-          expect(typeof barrel[exportName]).toBe(kind);
-        }
+      compareTestName,
+      () => {
+        const barrelKeys = Object.keys(sourceBarrel)
+          .filter((key) => shouldIncludeBarrelKey(sourceBarrel, leafExports, key))
+          .sort();
+        const expectedKeys = getExpectedExportKeys(leafExports, dedupeExpectedExports);
+        expect(barrelKeys).toEqual(expectedKeys);
       },
       timeout
     );
-    return;
-  }
-
-  test.each(exports)('$displayName가 함수로 존재한다', async ({ exportName, kind }) => {
-    expect(typeof barrel[exportName]).toBe(kind);
   });
 }
 
-function testBarrelImporter(
-  importBarrel: () => Promise<ModuleExports>,
-  exports: readonly NormalizedSubpathExport[],
-  mode: 'each' | 'all',
-  label: string,
-  timeout: number | undefined
-): void {
-  if (mode === 'all') {
-    test(
-      `fixture의 모든 함수가 ${label}에 존재한다`,
-      async () => {
-        const barrel = await importBarrel();
-        for (const { exportName, kind } of exports) {
-          expect(typeof barrel[exportName]).toBe(kind);
-        }
-      },
-      timeout
-    );
-    return;
-  }
-
-  test.each(exports)(`$displayName가 ${label}에 존재한다`, async ({ exportName, kind }) => {
-    const barrel = await importBarrel();
-    expect(typeof barrel[exportName]).toBe(kind);
-  });
-}
-
-function shouldIncludeBarrelKey(
-  sourceBarrel: ModuleExports,
-  exports: readonly NormalizedSubpathExport[],
-  key: string
-): boolean {
+function shouldIncludeBarrelKey(sourceBarrel: ModuleExports, exports: readonly SubpathExport[], key: string): boolean {
   const expected = exports.find(({ exportName }) => exportName === key);
   if (expected === undefined) {
     return exports.every(({ kind }) => kind === 'function') ? typeof sourceBarrel[key] === 'function' : true;
@@ -181,7 +98,7 @@ function shouldIncludeBarrelKey(
   return typeof sourceBarrel[key] === expected.kind;
 }
 
-function getExpectedExportKeys(exports: readonly NormalizedSubpathExport[], dedupeExpectedExports: boolean): string[] {
+function getExpectedExportKeys(exports: readonly SubpathExport[], dedupeExpectedExports: boolean): string[] {
   const keys = exports.map(({ exportName }) => exportName);
   return (dedupeExpectedExports ? [...new Set(keys)] : keys).sort();
 }

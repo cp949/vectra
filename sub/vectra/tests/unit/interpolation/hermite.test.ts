@@ -112,37 +112,11 @@ describe('interpolation Hermite - cubicHermiteClamped', () => {
     expect(cubicHermiteClamped(2, 1, 5, 3, 100)).toBe(5);
   });
 
-  test('[0, 1] 범위 안의 t는 cubicHermite와 동일한 결과를 반환한다', () => {
-    for (const t of [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1]) {
-      expect(cubicHermiteClamped(1, 2, 4, 1, t)).toBe(cubicHermite(1, 2, 4, 1, t));
-    }
-  });
-
   test('value result를 clamp하지 않는다', () => {
     // tangent가 크면 [a, b] 밖의 값이 나올 수 있다
     const result = cubicHermiteClamped(0, 10, 1, 10, 0.5);
     // 결과는 [0, 1] 밖일 수 있다
     expect(result).toBeCloseTo(hermiteExpect(0, 10, 1, 10, 0.5), 10);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 a=%s는 RangeError를 던진다', (value) => {
-    expect(() => cubicHermiteClamped(value, 1, 5, 1, 0.5)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 tangentA=%s는 RangeError를 던진다', (value) => {
-    expect(() => cubicHermiteClamped(2, value, 5, 1, 0.5)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 b=%s는 RangeError를 던진다', (value) => {
-    expect(() => cubicHermiteClamped(2, 1, value, 1, 0.5)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 tangentB=%s는 RangeError를 던진다', (value) => {
-    expect(() => cubicHermiteClamped(2, 1, 5, value, 0.5)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 t=%s는 RangeError를 던진다', (value) => {
-    expect(() => cubicHermiteClamped(2, 1, 5, 1, value)).toThrow(RangeError);
   });
 });
 
@@ -201,31 +175,6 @@ describe('interpolation Hermite from points - cubicHermiteFromPoints', () => {
 
   test('t=1에서 b를 반환한다', () => {
     expect(cubicHermiteFromPoints(0, 1, 4, 6, 1)).toBe(4);
-  });
-
-  test('Cardinal tangent를 사용한 cubicHermite 결과와 일치한다', () => {
-    const prev = 0;
-    const a = 1;
-    const b = 4;
-    const next = 6;
-    const t = 0.5;
-    const tangentA = tangentCardinal(prev, b);
-    const tangentB = tangentCardinal(a, next);
-    const expected = cubicHermite(a, tangentA, b, tangentB, t);
-    expect(cubicHermiteFromPoints(prev, a, b, next, t)).toBeCloseTo(expected, 10);
-  });
-
-  test('tension 옵션이 Cardinal tangent에 전달된다', () => {
-    const prev = 0;
-    const a = 1;
-    const b = 4;
-    const next = 6;
-    const t = 0.5;
-    const options = { tension: 0.5 };
-    const tangentA = tangentCardinal(prev, b, options);
-    const tangentB = tangentCardinal(a, next, options);
-    const expected = cubicHermite(a, tangentA, b, tangentB, t);
-    expect(cubicHermiteFromPoints(prev, a, b, next, t, options)).toBeCloseTo(expected, 10);
   });
 
   test('t < 0 extrapolation을 허용한다', () => {

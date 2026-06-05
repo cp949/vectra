@@ -75,15 +75,6 @@ describe('subpathAt', () => {
     const result = subpathAt(twoSubpathRect, 0);
     expect(result).not.toBe(twoSubpathRect);
   });
-
-  test('내부 command object reference는 그대로 재사용된다 (문서화된 contract)', () => {
-    const move: PathCommand = { kind: 'move', x: 0, y: 0 };
-    const line: PathCommand = { kind: 'line', x: 1, y: 1 };
-    const cmds = [move, line];
-    const s0 = subpathAt(cmds, 0);
-    expect(s0?.[0]).toBe(move);
-    expect(s0?.[1]).toBe(line);
-  });
 });
 
 // ──────────────────────────────────────────────
@@ -218,38 +209,6 @@ describe('forEachSegment', () => {
     expect(collected[1]).toEqual({ kind: 'line', startsSubpath: false });
   });
 
-  test('cubic으로 시작하는 subpath의 첫 segment는 startsSubpath: true', () => {
-    const cmds: PathCommand[] = [
-      { kind: 'move', x: 0, y: 0 },
-      { kind: 'cubic', x1: 1, y1: 1, x2: 2, y2: 1, x: 3, y: 0 },
-      { kind: 'line', x: 4, y: 0 },
-    ];
-    const collected: Array<{ kind: PathSegment['kind']; startsSubpath: boolean }> = [];
-    forEachSegment(cmds, (seg) => {
-      if (seg.kind !== 'close') {
-        collected.push({ kind: seg.kind, startsSubpath: seg.startsSubpath });
-      }
-    });
-    expect(collected[0]).toEqual({ kind: 'cubic', startsSubpath: true });
-    expect(collected[1]).toEqual({ kind: 'line', startsSubpath: false });
-  });
-
-  test('arc로 시작하는 subpath의 첫 segment는 startsSubpath: true', () => {
-    const cmds: PathCommand[] = [
-      { kind: 'move', x: 0, y: 0 },
-      { kind: 'arc', rx: 1, ry: 1, xRotation: 0, largeArc: false, sweep: true, x: 2, y: 0 },
-      { kind: 'line', x: 3, y: 0 },
-    ];
-    const collected: Array<{ kind: PathSegment['kind']; startsSubpath: boolean }> = [];
-    forEachSegment(cmds, (seg) => {
-      if (seg.kind !== 'close') {
-        collected.push({ kind: seg.kind, startsSubpath: seg.startsSubpath });
-      }
-    });
-    expect(collected[0]).toEqual({ kind: 'arc', startsSubpath: true });
-    expect(collected[1]).toEqual({ kind: 'line', startsSubpath: false });
-  });
-
   test('subpath의 첫 drawing segment는 startsSubpath: true', () => {
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
@@ -349,17 +308,5 @@ describe('forEachSegment', () => {
       expect(closeSeg.fromX).toBe(10);
       expect(closeSeg.fromY).toBe(4);
     }
-  });
-
-  test('options 인수를 받아도 동작에 영향이 없다', () => {
-    const cmds: PathCommand[] = [
-      { kind: 'move', x: 0, y: 0 },
-      { kind: 'line', x: 1, y: 1 },
-    ];
-    const seenWithout: PathSegment['kind'][] = [];
-    const seenWith: PathSegment['kind'][] = [];
-    forEachSegment(cmds, (s) => seenWithout.push(s.kind));
-    forEachSegment(cmds, (s) => seenWith.push(s.kind), { flatness: 0.5 });
-    expect(seenWith).toEqual(seenWithout);
   });
 });

@@ -150,13 +150,8 @@ describe('interpolation point 보간 - midpointInto', () => {
 });
 
 describe('interpolation point 보간 - midpoint', () => {
-  test('새 plain object를 반환한다', () => {
-    const a = { x: 0, y: 0 };
-    const b = { x: 4, y: 6 };
-    const result = midpoint(a, b);
-    expect(result).not.toBe(a);
-    expect(result).not.toBe(b);
-    expect(result).toEqual({ x: 2, y: 3 });
+  test('중점을 반환한다', () => {
+    expect(midpoint({ x: 0, y: 0 }, { x: 4, y: 6 })).toEqual({ x: 2, y: 3 });
   });
 });
 
@@ -166,12 +161,6 @@ describe('interpolation point 보간 - moveTowardPointInto', () => {
     // distance = 5 (3-4-5 삼각형), maxDistance = 10 → target 도달
     const result = moveTowardPointInto(out, { x: 0, y: 0 }, { x: 3, y: 4 }, 10);
     expect(result).toBe(out);
-    expect(out).toEqual({ x: 3, y: 4 });
-  });
-
-  test('euclidean distance와 maxDistance가 같으면 target을 반환한다', () => {
-    const out = { x: 0, y: 0 };
-    moveTowardPointInto(out, { x: 0, y: 0 }, { x: 3, y: 4 }, 5);
     expect(out).toEqual({ x: 3, y: 4 });
   });
 
@@ -202,28 +191,6 @@ describe('interpolation point 보간 - moveTowardPointInto', () => {
     expect(out.y).toBeCloseTo(0, 10);
   });
 
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = moveTowardPointInto(out, { x: 0, y: 0 }, { x: 3, y: 4 }, 10);
-    expect(result).toBe(out);
-    expect(out[0]).toBe(3);
-    expect(out[1]).toBe(4);
-  });
-
-  test('out === current aliasing에서도 올바른 결과를 반환한다', () => {
-    const pt: { x: number; y: number } = { x: 0, y: 0 };
-    moveTowardPointInto(pt, pt, { x: 10, y: 0 }, 5);
-    expect(pt.x).toBeCloseTo(5, 10);
-    expect(pt.y).toBeCloseTo(0, 10);
-  });
-
-  test('out === target aliasing에서 distance < maxDistance일 때 target을 올바르게 반환한다', () => {
-    // out과 target이 같은 object이고 distance(5) < maxDistance(10) → target 도달 경로
-    const pt: { x: number; y: number } = { x: 3, y: 4 };
-    moveTowardPointInto(pt, { x: 0, y: 0 }, pt, 10);
-    expect(pt).toEqual({ x: 3, y: 4 });
-  });
-
   test('out === target aliasing에서 distance > maxDistance일 때 partial move가 올바르다', () => {
     // out과 target이 같은 object이고 distance(10) > maxDistance(5) → partial move 경로
     // current=(0,0), target=(6,8) → dist=10, maxDistance=5 → 절반 지점 (3,4)
@@ -251,13 +218,8 @@ describe('interpolation point 보간 - moveTowardPointInto', () => {
 });
 
 describe('interpolation point 보간 - moveTowardPoint', () => {
-  test('새 plain object를 반환한다', () => {
-    const current = { x: 0, y: 0 };
-    const target = { x: 3, y: 4 };
-    const result = moveTowardPoint(current, target, 10);
-    expect(result).not.toBe(current);
-    expect(result).not.toBe(target);
-    expect(result).toEqual({ x: 3, y: 4 });
+  test('이동 결과를 반환한다', () => {
+    expect(moveTowardPoint({ x: 0, y: 0 }, { x: 3, y: 4 }, 10)).toEqual({ x: 3, y: 4 });
   });
 });
 

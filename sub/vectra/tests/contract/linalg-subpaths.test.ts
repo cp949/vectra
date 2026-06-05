@@ -7,5 +7,4 @@ assertFunctionDomainSubpathExports({
   sourceBarrel,
   leafExports: linalgLeafExports,
   timeout: 30_000,
-  barrelCheckMode: 'all',
 });

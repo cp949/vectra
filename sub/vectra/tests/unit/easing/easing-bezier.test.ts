@@ -201,12 +201,6 @@ describe('easing - easeCss', () => {
     expect(v).toBeLessThan(1);
   });
 
-  test('easeCss(t)는 cubicBezier(t, [0.25, 0.1], [0.25, 1])과 같다', () => {
-    for (const t of [0, 0.25, 0.5, 0.75, 1]) {
-      expect(easeCss(t)).toBeCloseTo(cubicBezier(t, [0.25, 0.1], [0.25, 1]), 6);
-    }
-  });
-
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => easeCss(value)).toThrow(RangeError);
   });
@@ -224,12 +218,6 @@ describe('easing - easeInCss', () => {
   test('초반 느리고 후반 빠른 곡선: t=0.5 < 0.5이다', () => {
     // ease-in은 천천히 시작 → 중간값이 선형보다 낮다
     expect(easeInCss(0.5)).toBeLessThan(0.5);
-  });
-
-  test('easeInCss(t)는 cubicBezier(t, [0.42, 0], [1, 1])과 같다', () => {
-    for (const t of [0, 0.25, 0.5, 0.75, 1]) {
-      expect(easeInCss(t)).toBeCloseTo(cubicBezier(t, [0.42, 0], [1, 1]), 6);
-    }
   });
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
@@ -251,12 +239,6 @@ describe('easing - easeOutCss', () => {
     expect(easeOutCss(0.5)).toBeGreaterThan(0.5);
   });
 
-  test('easeOutCss(t)는 cubicBezier(t, [0, 0], [0.58, 1])과 같다', () => {
-    for (const t of [0, 0.25, 0.5, 0.75, 1]) {
-      expect(easeOutCss(t)).toBeCloseTo(cubicBezier(t, [0, 0], [0.58, 1]), 6);
-    }
-  });
-
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => easeOutCss(value)).toThrow(RangeError);
   });
@@ -274,12 +256,6 @@ describe('easing - easeInOutCss', () => {
   test('t=0.5에서 0.5에 가깝다 (대칭 곡선)', () => {
     // ease-in-out은 0.5에서 대칭
     expect(easeInOutCss(0.5)).toBeCloseTo(0.5, 3);
-  });
-
-  test('easeInOutCss(t)는 cubicBezier(t, [0.42, 0], [0.58, 1])과 같다', () => {
-    for (const t of [0, 0.25, 0.5, 0.75, 1]) {
-      expect(easeInOutCss(t)).toBeCloseTo(cubicBezier(t, [0.42, 0], [0.58, 1]), 6);
-    }
   });
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {

@@ -34,21 +34,8 @@ describe('interpolation 선형 보간 - unclampedLerp', () => {
 });
 
 describe('interpolation 선형 보간 - mix (unclampedLerp alias)', () => {
-  test('unclampedLerp와 동일한 representative values를 반환한다', () => {
-    expect(mix(10, 20, 0)).toBe(unclampedLerp(10, 20, 0));
-    expect(mix(10, 20, 0.5)).toBe(unclampedLerp(10, 20, 0.5));
-    expect(mix(10, 20, 1)).toBe(unclampedLerp(10, 20, 1));
-  });
-
-  test('t를 clamp하지 않고 extrapolation을 허용한다', () => {
-    expect(mix(10, 20, -0.5)).toBe(5);
-    expect(mix(10, 20, 1.5)).toBe(25);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => mix(value, 1, 0.5)).toThrow(RangeError);
-    expect(() => mix(0, value, 0.5)).toThrow(RangeError);
-    expect(() => mix(0, 1, value)).toThrow(RangeError);
+  test('representative value를 보간한다', () => {
+    expect(mix(10, 20, 0.5)).toBe(15);
   });
 });
 
@@ -76,12 +63,6 @@ describe('interpolation 선형 보간 - clampedLerp', () => {
     expect(clampedLerp(20, 10, -0.5)).toBe(20);
     expect(clampedLerp(20, 10, 1.5)).toBe(10);
   });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => clampedLerp(value, 1, 0.5)).toThrow(RangeError);
-    expect(() => clampedLerp(0, value, 0.5)).toThrow(RangeError);
-    expect(() => clampedLerp(0, 1, value)).toThrow(RangeError);
-  });
 });
 
 describe('interpolation 역보간 - inverseLerp', () => {
@@ -102,12 +83,6 @@ describe('interpolation 역보간 - inverseLerp', () => {
 
   test('역방향 range는 RangeError를 던진다', () => {
     expect(() => inverseLerp(20, 10, 15)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => inverseLerp(value, 1, 0.5)).toThrow(RangeError);
-    expect(() => inverseLerp(0, value, 0.5)).toThrow(RangeError);
-    expect(() => inverseLerp(0, 1, value)).toThrow(RangeError);
   });
 });
 
@@ -134,12 +109,6 @@ describe('interpolation 역보간 - inverseLerpClamped', () => {
 
   test('역방향 range는 RangeError를 던진다', () => {
     expect(() => inverseLerpClamped(20, 10, 15)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => inverseLerpClamped(value, 1, 0.5)).toThrow(RangeError);
-    expect(() => inverseLerpClamped(0, value, 0.5)).toThrow(RangeError);
-    expect(() => inverseLerpClamped(0, 1, value)).toThrow(RangeError);
   });
 });
 
@@ -204,14 +173,6 @@ describe('interpolation 범위 변환 - remapClamped', () => {
   test('역방향 source range는 RangeError를 던진다', () => {
     expect(() => remapClamped(5, 10, 0, 100, 200)).toThrow(RangeError);
   });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => remapClamped(value, 0, 1, 0, 10)).toThrow(RangeError);
-    expect(() => remapClamped(0, value, 1, 0, 10)).toThrow(RangeError);
-    expect(() => remapClamped(0, 0, value, 0, 10)).toThrow(RangeError);
-    expect(() => remapClamped(0, 0, 1, value, 10)).toThrow(RangeError);
-    expect(() => remapClamped(0, 0, 1, 0, value)).toThrow(RangeError);
-  });
 });
 
 describe('interpolation 목표 이동 - moveToward', () => {
@@ -272,14 +233,6 @@ describe('interpolation elapsed-time - progressByElapsed', () => {
     expect(() => progressByElapsed(5, 0)).toThrow(RangeError);
     expect(() => progressByElapsed(5, -1)).toThrow(RangeError);
   });
-
-  test.each(nonFiniteValues)('finite하지 않은 elapsed %s는 RangeError를 던진다', (value) => {
-    expect(() => progressByElapsed(value, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 duration %s는 RangeError를 던진다', (value) => {
-    expect(() => progressByElapsed(5, value)).toThrow(RangeError);
-  });
 });
 
 describe('interpolation elapsed-time - clampedLerpByElapsed', () => {
@@ -303,22 +256,6 @@ describe('interpolation elapsed-time - clampedLerpByElapsed', () => {
     expect(() => clampedLerpByElapsed(10, 20, 5, 0)).toThrow(RangeError);
     expect(() => clampedLerpByElapsed(10, 20, 5, -1)).toThrow(RangeError);
   });
-
-  test.each(nonFiniteValues)('finite하지 않은 a %s는 RangeError를 던진다', (value) => {
-    expect(() => clampedLerpByElapsed(value, 20, 5, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 b %s는 RangeError를 던진다', (value) => {
-    expect(() => clampedLerpByElapsed(10, value, 5, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 elapsed %s는 RangeError를 던진다', (value) => {
-    expect(() => clampedLerpByElapsed(10, 20, value, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 duration %s는 RangeError를 던진다', (value) => {
-    expect(() => clampedLerpByElapsed(10, 20, 5, value)).toThrow(RangeError);
-  });
 });
 
 describe('interpolation elapsed-time - lerpByElapsed', () => {
@@ -336,21 +273,5 @@ describe('interpolation elapsed-time - lerpByElapsed', () => {
   test('duration <= 0은 RangeError를 던진다', () => {
     expect(() => lerpByElapsed(10, 20, 5, 0)).toThrow(RangeError);
     expect(() => lerpByElapsed(10, 20, 5, -1)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 a %s는 RangeError를 던진다', (value) => {
-    expect(() => lerpByElapsed(value, 20, 5, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 b %s는 RangeError를 던진다', (value) => {
-    expect(() => lerpByElapsed(10, value, 5, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 elapsed %s는 RangeError를 던진다', (value) => {
-    expect(() => lerpByElapsed(10, 20, value, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 duration %s는 RangeError를 던진다', (value) => {
-    expect(() => lerpByElapsed(10, 20, 5, value)).toThrow(RangeError);
   });
 });

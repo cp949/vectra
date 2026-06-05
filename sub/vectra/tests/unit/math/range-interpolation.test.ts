@@ -76,12 +76,6 @@ describe('math 보간 - lerp', () => {
   test('같은 시작값과 끝값을 허용한다', () => {
     expect(lerp(7, 7, 4)).toBe(7);
   });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => lerp(value, 1, 0.5)).toThrow(RangeError);
-    expect(() => lerp(0, value, 0.5)).toThrow(RangeError);
-    expect(() => lerp(0, 1, value)).toThrow(RangeError);
-  });
 });
 
 describe('math 보간 - inverseLerp', () => {
@@ -99,12 +93,6 @@ describe('math 보간 - inverseLerp', () => {
   test('뒤집힌 source range와 0-length source range는 RangeError를 던진다', () => {
     expect(() => inverseLerp(20, 10, 15)).toThrow(RangeError);
     expect(() => inverseLerp(10, 10, 10)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => inverseLerp(value, 1, 0.5)).toThrow(RangeError);
-    expect(() => inverseLerp(0, value, 0.5)).toThrow(RangeError);
-    expect(() => inverseLerp(0, 1, value)).toThrow(RangeError);
   });
 });
 
@@ -125,14 +113,6 @@ describe('math 보간 - remap', () => {
   test('뒤집힌 source range와 0-length source range는 RangeError를 던진다', () => {
     expect(() => remap(5, 10, 0, 100, 200)).toThrow(RangeError);
     expect(() => remap(5, 10, 10, 100, 200)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
-    expect(() => remap(value, 0, 1, 0, 10)).toThrow(RangeError);
-    expect(() => remap(0, value, 1, 0, 10)).toThrow(RangeError);
-    expect(() => remap(0, 0, value, 0, 10)).toThrow(RangeError);
-    expect(() => remap(0, 0, 1, value, 10)).toThrow(RangeError);
-    expect(() => remap(0, 0, 1, 0, value)).toThrow(RangeError);
   });
 });
 

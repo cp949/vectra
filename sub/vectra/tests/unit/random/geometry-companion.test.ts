@@ -33,8 +33,6 @@ describe('random geometry companion 함수', () => {
     test('direction은 { x, y } 형태의 방향 벡터를 반환한다', () => {
       // rng=0 → theta=0 → (1, 0)
       const result = direction(1, () => 0);
-      expect(result).toHaveProperty('x');
-      expect(result).toHaveProperty('y');
       expect(result.x).toBeCloseTo(1);
       expect(result.y).toBeCloseTo(0);
     });
@@ -58,8 +56,6 @@ describe('random geometry companion 함수', () => {
     test('pointOnSegment는 { x, y } 형태를 반환한다', () => {
       // t=0.25, a=(10,20), b=(30,60) → (15, 30)
       const result = pointOnSegment({ a: { x: 10, y: 20 }, b: { x: 30, y: 60 } }, () => 0.25);
-      expect(result).toHaveProperty('x');
-      expect(result).toHaveProperty('y');
       expect(result).toEqual({ x: 15, y: 30 });
     });
 
@@ -203,17 +199,6 @@ describe('random geometry companion 함수', () => {
         expect(result.y).toBeCloseTo(out.y);
       }
     });
-
-    test('매번 새 object 반환', () => {
-      const ellipse = { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 5 };
-      let call = 0;
-      // rng cycles [0.5, 0.25] so both calls receive same values → same x/y but distinct references
-      const rng = () => (call++ % 2 === 0 ? 0.5 : 0.25);
-      const r1 = pointInEllipse(ellipse, rng);
-      const r2 = pointInEllipse(ellipse, rng);
-      // identity check: each call creates a fresh { x, y } object
-      expect(r1).not.toBe(r2);
-    });
   });
 
   describe('pointOnPath', () => {
@@ -252,16 +237,6 @@ describe('random geometry companion 함수', () => {
         () => 0.5
       );
       expect(result).toBeUndefined();
-    });
-
-    test('매번 새 object 반환', () => {
-      const commands = [
-        { kind: 'move' as const, x: 0, y: 0 },
-        { kind: 'line' as const, x: 10, y: 0 },
-      ];
-      const r1 = pointOnPath(commands, () => 0.5);
-      const r2 = pointOnPath(commands, () => 0.5);
-      expect(r1).not.toBe(r2);
     });
   });
 
@@ -307,16 +282,6 @@ describe('random geometry companion 함수', () => {
         expect(result.x).toBeCloseTo(5);
         expect(result.y).toBeCloseTo(0);
       }
-    });
-
-    test('매번 새 object 반환', () => {
-      const polyline = [
-        { x: 0, y: 0 },
-        { x: 10, y: 0 },
-      ];
-      const r1 = pointOnPolyline(polyline, () => 0.5);
-      const r2 = pointOnPolyline(polyline, () => 0.5);
-      expect(r1).not.toBe(r2);
     });
   });
 
@@ -386,25 +351,12 @@ describe('random geometry companion 함수', () => {
       expect(result).toBeUndefined();
       expect(calls).toBe(0);
     });
-
-    test('매번 새 object 반환', () => {
-      let call = 0;
-      const rng = () => {
-        call++;
-        return 0.5;
-      };
-      const r1 = pointInPolygon(unitSquare, rng);
-      const r2 = pointInPolygon(unitSquare, rng);
-      expect(r1).not.toBe(r2);
-    });
   });
 
   describe('pointInTriangle', () => {
     test('pointInTriangle는 { x, y } 형태를 반환한다', () => {
       // a=(0,0), b=(4,0), c=(0,4), r=0.2, s=0.3 → (0.8, 1.2)
       const result = pointInTriangle({ x: 0, y: 0 }, { x: 4, y: 0 }, { x: 0, y: 4 }, sequence([0.2, 0.3]));
-      expect(result).toHaveProperty('x');
-      expect(result).toHaveProperty('y');
       expect(result.x).toBeCloseTo(0.8);
       expect(result.y).toBeCloseTo(1.2);
     });

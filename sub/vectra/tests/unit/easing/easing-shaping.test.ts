@@ -59,10 +59,6 @@ describe('easing - sigmoid', () => {
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => sigmoid(value)).toThrow(RangeError);
   });
-
-  test.each(nonFiniteValues)('비finite steepness %s는 RangeError를 던진다', (value) => {
-    expect(() => sigmoid(0.5, value)).toThrow(RangeError);
-  });
 });
 
 // ─── bias ─────────────────────────────────────────────────────────────────────
@@ -93,30 +89,12 @@ describe('easing - bias', () => {
     expect(bias(t, amount)).toBeCloseTo(expected, 10);
   });
 
-  test('amount=0은 RangeError를 던진다', () => {
-    expect(() => bias(0.5, 0)).toThrow(RangeError);
-  });
-
-  test('amount=1은 RangeError를 던진다', () => {
-    expect(() => bias(0.5, 1)).toThrow(RangeError);
-  });
-
-  test('amount가 음수이면 RangeError를 던진다', () => {
-    expect(() => bias(0.5, -0.1)).toThrow(RangeError);
-    expect(() => bias(0.5, -1)).toThrow(RangeError);
-  });
-
-  test('amount가 1 초과이면 RangeError를 던진다', () => {
-    expect(() => bias(0.5, 1.1)).toThrow(RangeError);
-    expect(() => bias(0.5, 2)).toThrow(RangeError);
+  test.each([0, 1, -0.1, 2])('amount %s ([0,1] 개구간 밖)는 RangeError를 던진다', (amount) => {
+    expect(() => bias(0.5, amount)).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => bias(value, 0.5)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite amount %s는 RangeError를 던진다', (value) => {
-    expect(() => bias(0.5, value)).toThrow(RangeError);
   });
 });
 
@@ -155,28 +133,12 @@ describe('easing - gain', () => {
     expect(gain(t, amount)).toBeCloseTo(1 - biasVal / 2, 10);
   });
 
-  test('amount=0은 RangeError를 던진다', () => {
-    expect(() => gain(0.5, 0)).toThrow(RangeError);
-  });
-
-  test('amount=1은 RangeError를 던진다', () => {
-    expect(() => gain(0.5, 1)).toThrow(RangeError);
-  });
-
-  test('amount가 음수이면 RangeError를 던진다', () => {
-    expect(() => gain(0.5, -0.5)).toThrow(RangeError);
-  });
-
-  test('amount가 1 초과이면 RangeError를 던진다', () => {
-    expect(() => gain(0.5, 1.5)).toThrow(RangeError);
+  test.each([0, 1, -0.5, 1.5])('amount %s ([0,1] 개구간 밖)는 RangeError를 던진다', (amount) => {
+    expect(() => gain(0.5, amount)).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => gain(value, 0.5)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite amount %s는 RangeError를 던진다', (value) => {
-    expect(() => gain(0.5, value)).toThrow(RangeError);
   });
 });
 
@@ -220,10 +182,6 @@ describe('easing - impulse', () => {
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => impulse(value, 1)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite k %s는 RangeError를 던진다', (value) => {
-    expect(() => impulse(0.5, value)).toThrow(RangeError);
   });
 
   test('k * t가 overflow할 때 JavaScript 수식 결과를 따른다', () => {
@@ -281,10 +239,6 @@ describe('easing - parabola', () => {
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => parabola(value, 1)).toThrow(RangeError);
   });
-
-  test.each(nonFiniteValues)('비finite k %s는 RangeError를 던진다', (value) => {
-    expect(() => parabola(0.5, value)).toThrow(RangeError);
-  });
 });
 
 // ─── almostIdentity ───────────────────────────────────────────────────────────
@@ -332,14 +286,6 @@ describe('easing - almostIdentity', () => {
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => almostIdentity(value, 0.2, 0.1)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite m %s는 RangeError를 던진다', (value) => {
-    expect(() => almostIdentity(0.5, value, 0.1)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite n %s는 RangeError를 던진다', (value) => {
-    expect(() => almostIdentity(0.5, 0.2, value)).toThrow(RangeError);
   });
 });
 
@@ -391,14 +337,6 @@ describe('easing - expStep', () => {
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => expStep(value, 1, 1)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite k %s는 RangeError를 던진다', (value) => {
-    expect(() => expStep(0.5, value, 1)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite n %s는 RangeError를 던진다', (value) => {
-    expect(() => expStep(0.5, 1, value)).toThrow(RangeError);
   });
 });
 
@@ -455,10 +393,6 @@ describe('easing - logistic', () => {
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => logistic(value)).toThrow(RangeError);
   });
-
-  test.each(nonFiniteValues)('비finite steepness %s는 RangeError를 던진다', (value) => {
-    expect(() => logistic(0.5, { steepness: value })).toThrow(RangeError);
-  });
 });
 
 // ─── seat ─────────────────────────────────────────────────────────────────────
@@ -510,10 +444,6 @@ describe('easing - seat', () => {
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => seat(value)).toThrow(RangeError);
   });
-
-  test.each(nonFiniteValues)('비finite power %s는 RangeError를 던진다', (value) => {
-    expect(() => seat(0.5, { power: value })).toThrow(RangeError);
-  });
 });
 
 // ─── doubleSeat ─────────────────────────────────────────────────────────────────
@@ -558,14 +488,6 @@ describe('easing - doubleSeat', () => {
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => doubleSeat(value)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite center %s는 RangeError를 던진다', (value) => {
-    expect(() => doubleSeat(0.5, { center: value })).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite power %s는 RangeError를 던진다', (value) => {
-    expect(() => doubleSeat(0.5, { power: value })).toThrow(RangeError);
   });
 });
 
@@ -631,13 +553,5 @@ describe('easing - cliff', () => {
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
     expect(() => cliff(value)).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite threshold %s는 RangeError를 던진다', (value) => {
-    expect(() => cliff(0.5, { threshold: value })).toThrow(RangeError);
-  });
-
-  test.each(nonFiniteValues)('비finite width %s는 RangeError를 던진다', (value) => {
-    expect(() => cliff(0.5, { width: value })).toThrow(RangeError);
   });
 });

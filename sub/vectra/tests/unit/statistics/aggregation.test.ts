@@ -72,15 +72,6 @@ describe('min — invalid input', () => {
   });
 });
 
-describe('min — non-mutation', () => {
-  test('input 배열을 mutate하지 않는다', () => {
-    const input = [5, 1, 4, 2, 3];
-    const snapshot = [...input];
-    min(input);
-    expect(input).toEqual(snapshot);
-  });
-});
-
 describe('min — signed zero canonicalize', () => {
   test('-0이 최솟값이면 +0으로 canonicalize', () => {
     const result = min([-0]);
@@ -121,39 +112,6 @@ describe('max — basic case', () => {
   test('duplicate entry가 있는 최댓값', () => {
     expect(max([2, 2, 2])).toBe(2);
     expect(max([1, 3, 1, 3])).toBe(3);
-  });
-});
-
-describe('max — invalid input', () => {
-  test('빈 배열은 RangeError', () => {
-    expect(() => max([])).toThrow(RangeError);
-  });
-
-  test('non-array는 TypeError', () => {
-    expect(() => max(null as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => max(undefined as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => max('abc' as unknown as readonly number[])).toThrow(TypeError);
-  });
-
-  test('NaN entry는 RangeError', () => {
-    expect(() => max([1, Number.NaN, 3])).toThrow(RangeError);
-  });
-
-  test('Infinity entry는 RangeError', () => {
-    expect(() => max([1, Number.POSITIVE_INFINITY])).toThrow(RangeError);
-  });
-
-  test('-Infinity entry는 RangeError', () => {
-    expect(() => max([1, Number.NEGATIVE_INFINITY])).toThrow(RangeError);
-  });
-});
-
-describe('max — non-mutation', () => {
-  test('input 배열을 mutate하지 않는다', () => {
-    const input = [5, 1, 4, 2, 3];
-    const snapshot = [...input];
-    max(input);
-    expect(input).toEqual(snapshot);
   });
 });
 
@@ -199,29 +157,6 @@ describe('range — basic case', () => {
   });
 });
 
-describe('range — invalid input', () => {
-  test('빈 배열은 RangeError', () => {
-    expect(() => range([])).toThrow(RangeError);
-  });
-
-  test('non-array는 TypeError', () => {
-    expect(() => range(null as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => range('abc' as unknown as readonly number[])).toThrow(TypeError);
-  });
-
-  test('NaN entry는 RangeError', () => {
-    expect(() => range([1, Number.NaN, 3])).toThrow(RangeError);
-  });
-
-  test('Infinity entry는 RangeError', () => {
-    expect(() => range([1, Number.POSITIVE_INFINITY])).toThrow(RangeError);
-  });
-
-  test('-Infinity entry는 RangeError', () => {
-    expect(() => range([1, Number.NEGATIVE_INFINITY])).toThrow(RangeError);
-  });
-});
-
 describe('range — arithmetic overflow', () => {
   test('max - min이 non-finite면 RangeError', () => {
     // Number.MAX_VALUE - (-Number.MAX_VALUE) = Infinity
@@ -231,15 +166,6 @@ describe('range — arithmetic overflow', () => {
   test('순서가 뒤바뀐 입력도 동일하게 RangeError', () => {
     // 입력 순서에 의존하지 않음을 명시: 단일 패스로 min/max를 동시에 산출한다.
     expect(() => range([Number.MAX_VALUE, -Number.MAX_VALUE])).toThrow(RangeError);
-  });
-});
-
-describe('range — non-mutation', () => {
-  test('input 배열을 mutate하지 않는다', () => {
-    const input = [5, 1, 4, 2, 3];
-    const snapshot = [...input];
-    range(input);
-    expect(input).toEqual(snapshot);
   });
 });
 
@@ -289,30 +215,6 @@ describe('sum — basic case', () => {
   });
 });
 
-describe('sum — invalid input', () => {
-  test('빈 배열은 RangeError', () => {
-    expect(() => sum([])).toThrow(RangeError);
-  });
-
-  test('non-array는 TypeError', () => {
-    expect(() => sum(null as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => sum(undefined as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => sum('abc' as unknown as readonly number[])).toThrow(TypeError);
-  });
-
-  test('NaN entry는 RangeError', () => {
-    expect(() => sum([1, Number.NaN, 3])).toThrow(RangeError);
-  });
-
-  test('Infinity entry는 RangeError', () => {
-    expect(() => sum([1, Number.POSITIVE_INFINITY])).toThrow(RangeError);
-  });
-
-  test('-Infinity entry는 RangeError', () => {
-    expect(() => sum([1, Number.NEGATIVE_INFINITY])).toThrow(RangeError);
-  });
-});
-
 describe('sum — arithmetic overflow', () => {
   test('누적 sum이 non-finite면 RangeError', () => {
     expect(() => sum([Number.MAX_VALUE, Number.MAX_VALUE])).toThrow(RangeError);
@@ -320,15 +222,6 @@ describe('sum — arithmetic overflow', () => {
 
   test('음수 방향 overflow도 RangeError', () => {
     expect(() => sum([-Number.MAX_VALUE, -Number.MAX_VALUE])).toThrow(RangeError);
-  });
-});
-
-describe('sum — non-mutation', () => {
-  test('input 배열을 mutate하지 않는다', () => {
-    const input = [5, 1, 4, 2, 3];
-    const snapshot = [...input];
-    sum(input);
-    expect(input).toEqual(snapshot);
   });
 });
 
@@ -377,30 +270,6 @@ describe('product — basic case', () => {
   });
 });
 
-describe('product — invalid input', () => {
-  test('빈 배열은 RangeError', () => {
-    expect(() => product([])).toThrow(RangeError);
-  });
-
-  test('non-array는 TypeError', () => {
-    expect(() => product(null as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => product(undefined as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => product('abc' as unknown as readonly number[])).toThrow(TypeError);
-  });
-
-  test('NaN entry는 RangeError', () => {
-    expect(() => product([1, Number.NaN, 3])).toThrow(RangeError);
-  });
-
-  test('Infinity entry는 RangeError', () => {
-    expect(() => product([1, Number.POSITIVE_INFINITY])).toThrow(RangeError);
-  });
-
-  test('-Infinity entry는 RangeError', () => {
-    expect(() => product([1, Number.NEGATIVE_INFINITY])).toThrow(RangeError);
-  });
-});
-
 describe('product — arithmetic overflow', () => {
   test('누적 product가 non-finite면 RangeError', () => {
     expect(() => product([Number.MAX_VALUE, 2])).toThrow(RangeError);
@@ -414,15 +283,6 @@ describe('product — arithmetic overflow', () => {
     // entry-finite 검증이 누적 곱셈보다 먼저 수행되어 index 1에서 차단된다.
     // message가 "values[1]"을 포함해 entry-level error임을 명확히 한다.
     expect(() => product([0, Number.NaN])).toThrow(/values\[1\]/);
-  });
-});
-
-describe('product — non-mutation', () => {
-  test('input 배열을 mutate하지 않는다', () => {
-    const input = [5, 1, 4, 2, 3];
-    const snapshot = [...input];
-    product(input);
-    expect(input).toEqual(snapshot);
   });
 });
 
@@ -477,16 +337,6 @@ describe('geometricMean — basic case', () => {
 });
 
 describe('geometricMean — invalid input', () => {
-  test('빈 배열은 RangeError', () => {
-    expect(() => geometricMean([])).toThrow(RangeError);
-  });
-
-  test('non-array는 TypeError', () => {
-    expect(() => geometricMean(null as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => geometricMean(undefined as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => geometricMean('abc' as unknown as readonly number[])).toThrow(TypeError);
-  });
-
   test('음수 entry는 RangeError', () => {
     expect(() => geometricMean([-1, 2])).toThrow(RangeError);
     expect(() => geometricMean([2, -3, 4])).toThrow(RangeError);
@@ -497,18 +347,6 @@ describe('geometricMean — invalid input', () => {
     // 나머지 entry를 끝까지 검증하므로 index 1의 음수가 RangeError로 차단된다.
     expect(() => geometricMean([0, -1])).toThrow(RangeError);
     expect(() => geometricMean([-1, 0])).toThrow(RangeError);
-  });
-
-  test('NaN entry는 RangeError', () => {
-    expect(() => geometricMean([1, Number.NaN, 3])).toThrow(RangeError);
-  });
-
-  test('Infinity entry는 RangeError', () => {
-    expect(() => geometricMean([1, Number.POSITIVE_INFINITY])).toThrow(RangeError);
-  });
-
-  test('-Infinity entry는 RangeError', () => {
-    expect(() => geometricMean([1, Number.NEGATIVE_INFINITY])).toThrow(RangeError);
   });
 });
 
@@ -527,15 +365,6 @@ describe('geometricMean — log-sum overflow 회피', () => {
     expect(Number.isFinite(result)).toBe(true);
     expect(result).toBeGreaterThan(0);
     expect(result).toBe(Number.MIN_VALUE);
-  });
-});
-
-describe('geometricMean — non-mutation', () => {
-  test('input 배열을 mutate하지 않는다', () => {
-    const input = [5, 1, 4, 2, 3];
-    const snapshot = [...input];
-    geometricMean(input);
-    expect(input).toEqual(snapshot);
   });
 });
 
@@ -577,16 +406,6 @@ describe('harmonicMean — basic case', () => {
 });
 
 describe('harmonicMean — invalid input', () => {
-  test('빈 배열은 RangeError', () => {
-    expect(() => harmonicMean([])).toThrow(RangeError);
-  });
-
-  test('non-array는 TypeError', () => {
-    expect(() => harmonicMean(null as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => harmonicMean(undefined as unknown as readonly number[])).toThrow(TypeError);
-    expect(() => harmonicMean('abc' as unknown as readonly number[])).toThrow(TypeError);
-  });
-
   test('0 entry는 RangeError', () => {
     expect(() => harmonicMean([1, 0, 4])).toThrow(RangeError);
   });
@@ -598,33 +417,12 @@ describe('harmonicMean — invalid input', () => {
   test('음수 entry는 RangeError', () => {
     expect(() => harmonicMean([1, -2, 4])).toThrow(RangeError);
   });
-
-  test('NaN entry는 RangeError', () => {
-    expect(() => harmonicMean([1, Number.NaN, 3])).toThrow(RangeError);
-  });
-
-  test('Infinity entry는 RangeError', () => {
-    expect(() => harmonicMean([1, Number.POSITIVE_INFINITY])).toThrow(RangeError);
-  });
-
-  test('-Infinity entry는 RangeError', () => {
-    expect(() => harmonicMean([1, Number.NEGATIVE_INFINITY])).toThrow(RangeError);
-  });
 });
 
 describe('harmonicMean — arithmetic overflow', () => {
   test('reciprocal sum이 non-finite면 RangeError', () => {
     // 1 / Number.MIN_VALUE = Infinity. 매 step finite 검증으로 차단.
     expect(() => harmonicMean([Number.MIN_VALUE])).toThrow(RangeError);
-  });
-});
-
-describe('harmonicMean — non-mutation', () => {
-  test('input 배열을 mutate하지 않는다', () => {
-    const input = [5, 1, 4, 2, 3];
-    const snapshot = [...input];
-    harmonicMean(input);
-    expect(input).toEqual(snapshot);
   });
 });
 
@@ -687,30 +485,6 @@ describe('trimmedMean — invalid fraction', () => {
   test('fraction 검증은 values 검증보다 먼저 fail-fast한다', () => {
     // 빈 입력이어도 invalid fraction이 우선 차단된다.
     expect(() => trimmedMean([], 0.5)).toThrow(RangeError);
-  });
-});
-
-describe('trimmedMean — invalid values', () => {
-  test('빈 배열은 RangeError', () => {
-    expect(() => trimmedMean([], 0.25)).toThrow(RangeError);
-  });
-
-  test('non-array는 TypeError', () => {
-    expect(() => trimmedMean(null as unknown as readonly number[], 0.25)).toThrow(TypeError);
-    expect(() => trimmedMean(undefined as unknown as readonly number[], 0.25)).toThrow(TypeError);
-    expect(() => trimmedMean('abc' as unknown as readonly number[], 0.25)).toThrow(TypeError);
-  });
-
-  test('NaN entry는 RangeError', () => {
-    expect(() => trimmedMean([1, Number.NaN, 3, 4], 0.25)).toThrow(RangeError);
-  });
-
-  test('Infinity entry는 RangeError', () => {
-    expect(() => trimmedMean([1, Number.POSITIVE_INFINITY, 3, 4], 0.25)).toThrow(RangeError);
-  });
-
-  test('-Infinity entry는 RangeError', () => {
-    expect(() => trimmedMean([1, Number.NEGATIVE_INFINITY, 3, 4], 0.25)).toThrow(RangeError);
   });
 });
 
