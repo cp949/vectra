@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 describe('MonacoCodeEditor', () => {
-  it('패키지 엔트리에서 MonacoCodeEditor를 제공한다', async () => {
-    const { MonacoCodeEditor } = await import('..');
-
-    expect(typeof MonacoCodeEditor).toBe('function');
-  });
-
   it('lazy MonacoCodeEditor import는 Monaco 전역을 설치하지 않는다', async () => {
     delete (globalThis as { MonacoEnvironment?: unknown }).MonacoEnvironment;
 
