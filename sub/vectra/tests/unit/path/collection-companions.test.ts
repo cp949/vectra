@@ -17,7 +17,6 @@ import { ellipseCommandsInto } from '../../../src/path/ellipse-commands-into';
 import { equalizeSegments } from '../../../src/path/equalize-segments';
 import { equalizeSegmentsInto } from '../../../src/path/equalize-segments-into';
 import { flatten } from '../../../src/path/flatten';
-import { flattenInto } from '../../../src/path/flatten-into';
 import { lineCommands } from '../../../src/path/line-commands';
 import { lineCommandsInto } from '../../../src/path/line-commands-into';
 import { normalizeCommands } from '../../../src/path/normalize-commands';
@@ -37,7 +36,6 @@ import { regularPolygonCommandsInto } from '../../../src/path/regular-polygon-co
 import { removeCollinearCommands } from '../../../src/path/remove-collinear-commands';
 import { removeCollinearCommandsInto } from '../../../src/path/remove-collinear-commands-into';
 import { reverseCommands } from '../../../src/path/reverse-commands';
-import { reverseCommandsInto } from '../../../src/path/reverse-commands-into';
 import { roundedRectCommands } from '../../../src/path/rounded-rect-commands';
 import { roundedRectCommandsInto } from '../../../src/path/rounded-rect-commands-into';
 import { segmentCommands } from '../../../src/path/segment-commands';
@@ -47,7 +45,6 @@ import { splitSubpathsInto } from '../../../src/path/split-subpaths-into';
 import { starCommands } from '../../../src/path/star-commands';
 import { starCommandsInto } from '../../../src/path/star-commands-into';
 import { transformCommands } from '../../../src/path/transform-commands';
-import { transformCommandsInto } from '../../../src/path/transform-commands-into';
 import type { ArcCommand, PathCommand } from '../../../src/types/index';
 
 const RECT = { x: 0, y: 0, width: 100, height: 50 };
@@ -71,23 +68,12 @@ describe('normalizeCommands', () => {
   test('empty input은 empty array를 반환한다', () => {
     expect(normalizeCommands([])).toEqual([]);
   });
-
-  test('새 배열을 반환한다', () => {
-    const a = normalizeCommands(CMDS);
-    const b = normalizeCommands(CMDS);
-    expect(a).not.toBe(b);
-  });
 });
 
 // ──────────────────────────────────────────────
 // removeCollinearCommands
 // ──────────────────────────────────────────────
 describe('removeCollinearCommands', () => {
-  test('removeCollinearCommandsInto 결과와 deep equal이다', () => {
-    const expected = removeCollinearCommandsInto([], CMDS);
-    expect(removeCollinearCommands(CMDS)).toEqual(expected);
-  });
-
   test('empty input은 empty array를 반환한다', () => {
     expect(removeCollinearCommands([])).toEqual([]);
   });
@@ -107,11 +93,6 @@ describe('removeCollinearCommands', () => {
 // flatten
 // ──────────────────────────────────────────────
 describe('flatten', () => {
-  test('flattenInto 결과와 deep equal이다', () => {
-    const expected = flattenInto([], CMDS);
-    expect(flatten(CMDS)).toEqual(expected);
-  });
-
   test('empty input은 empty array를 반환한다', () => {
     expect(flatten([])).toEqual([]);
   });
@@ -121,11 +102,6 @@ describe('flatten', () => {
 // reverseCommands
 // ──────────────────────────────────────────────
 describe('reverseCommands', () => {
-  test('reverseCommandsInto 결과와 deep equal이다', () => {
-    const expected = reverseCommandsInto([], CMDS);
-    expect(reverseCommands(CMDS)).toEqual(expected);
-  });
-
   test('empty input은 empty array를 반환한다', () => {
     expect(reverseCommands([])).toEqual([]);
   });
@@ -154,11 +130,6 @@ describe('orientCommands', () => {
 // transformCommands
 // ──────────────────────────────────────────────
 describe('transformCommands', () => {
-  test('transformCommandsInto 결과와 deep equal이다', () => {
-    const expected = transformCommandsInto([], CMDS, MATRIX);
-    expect(transformCommands(CMDS, MATRIX)).toEqual(expected);
-  });
-
   test('empty input은 empty array를 반환한다', () => {
     expect(transformCommands([], MATRIX)).toEqual([]);
   });

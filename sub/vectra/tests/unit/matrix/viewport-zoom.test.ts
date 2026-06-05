@@ -171,20 +171,11 @@ describe('matrix viewport - zoomToFitInto', () => {
 });
 
 describe('matrix viewport - zoomToFit', () => {
-  test('Into 결과와 같은 matrix를 새 object로 반환한다', () => {
+  test('cover 모드 결과 matrix를 새 object로 반환한다', () => {
     const content = { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } };
     const viewport = { min: { x: 0, y: 0 }, max: { x: 200, y: 100 } };
     const result = zoomToFit(content, viewport, { mode: 'cover' });
-    const expected = zoomToFitInto(makeMatrix(), content, viewport, { mode: 'cover' });
-    expectNearMatrix(result, expected);
-  });
-
-  test('매 호출 새 plain object를 반환한다', () => {
-    const content = { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } };
-    const viewport = { min: { x: 0, y: 0 }, max: { x: 200, y: 100 } };
-    const a = zoomToFit(content, viewport);
-    const b = zoomToFit(content, viewport);
-    expect(a).not.toBe(b);
+    expectNearMatrix(result, { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: -50 });
   });
 });
 
@@ -270,18 +261,10 @@ describe('matrix viewport - zoomAtPointInto', () => {
 });
 
 describe('matrix viewport - zoomAtPoint', () => {
-  test('Into 결과와 같은 matrix를 새 object로 반환한다', () => {
+  test('focal zoom 결과 matrix를 새 object로 반환하고 input matrix를 변경하지 않는다', () => {
     const matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
     const result = zoomAtPoint(matrix, { x: 100, y: 50 }, 2);
-    const expected = zoomAtPointInto(makeMatrix(), matrix, { x: 100, y: 50 }, 2);
-    expectNearMatrix(result, expected);
-  });
-
-  test('매 호출 새 plain object를 반환하고 input matrix를 변경하지 않는다', () => {
-    const matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
-    const a = zoomAtPoint(matrix, { x: 100, y: 50 }, 2);
-    const b = zoomAtPoint(matrix, { x: 100, y: 50 }, 2);
-    expect(a).not.toBe(b);
+    expectNearMatrix(result, { a: 2, b: 0, c: 0, d: 2, tx: -80, ty: -10 });
     expectNearMatrix(matrix, { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 });
   });
 });

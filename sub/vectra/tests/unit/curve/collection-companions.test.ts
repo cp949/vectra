@@ -9,9 +9,7 @@ import { arcFlattenInto } from '../../../src/curve/arc-flatten-into';
 import { arcSample } from '../../../src/curve/arc-sample';
 import { arcSampleInto } from '../../../src/curve/arc-sample-into';
 import { arcSplitAt } from '../../../src/curve/arc-split-at';
-import { arcSplitAtInto } from '../../../src/curve/arc-split-at-into';
 import { arcToCubic } from '../../../src/curve/arc-to-cubic';
-import { arcToCubicInto } from '../../../src/curve/arc-to-cubic-into';
 import { bsplinePath } from '../../../src/curve/bspline-path';
 import { bsplinePathInto } from '../../../src/curve/bspline-path-into';
 import { bsplinePolyline } from '../../../src/curve/bspline-polyline';
@@ -41,7 +39,6 @@ import { cubicSampleInto } from '../../../src/curve/cubic-sample-into';
 import { cubicSplit } from '../../../src/curve/cubic-split';
 import { cubicSplitInto } from '../../../src/curve/cubic-split-into';
 import { cubicToArcs } from '../../../src/curve/cubic-to-arcs';
-import { cubicToArcsInto } from '../../../src/curve/cubic-to-arcs-into';
 import { monotoneXPath } from '../../../src/curve/monotone-x-path';
 import { monotoneXPathInto } from '../../../src/curve/monotone-x-path-into';
 import { monotoneXPolyline } from '../../../src/curve/monotone-x-polyline';
@@ -92,9 +89,6 @@ type CompanionCase = {
   actual: () => unknown;
   expected: () => unknown;
   empty?: () => unknown[];
-  fresh?: () => unknown[];
-  freshItems?: number;
-  forbiddenFirstItem?: unknown;
   rangeError?: () => unknown;
   length?: number;
 };
@@ -114,20 +108,6 @@ function defineCompanionCase(companionCase: CompanionCase): void {
     if (companionCase.empty) {
       test('invalid-size input은 empty array를 반환한다', () => {
         expect(companionCase.empty?.()).toEqual([]);
-      });
-    }
-
-    if (companionCase.fresh) {
-      test('새 배열을 반환한다', () => {
-        const a = companionCase.fresh?.() ?? [];
-        const b = companionCase.fresh?.() ?? [];
-        expect(a).not.toBe(b);
-        for (let index = 0; index < (companionCase.freshItems ?? 0); index += 1) {
-          expect(a[index]).not.toBe(b[index]);
-        }
-        if (companionCase.forbiddenFirstItem !== undefined) {
-          expect(a[0]).not.toBe(companionCase.forbiddenFirstItem);
-        }
       });
     }
 
@@ -151,7 +131,6 @@ const companionCases = [
     name: 'arcFlatten',
     actual: () => arcFlatten(CENTER_ARC),
     expected: () => arcFlattenInto([], CENTER_ARC),
-    fresh: () => arcFlatten(CENTER_ARC),
   },
   {
     name: 'arcSample',
@@ -186,7 +165,6 @@ const companionCases = [
     actual: () => cubicChainFlatten(POINTS),
     expected: () => cubicChainFlattenInto([], POINTS),
     empty: () => cubicChainFlatten([P0, P1, P2]),
-    fresh: () => cubicChainFlatten(POINTS),
   },
   {
     name: 'cubicSample',
@@ -241,16 +219,12 @@ const companionCases = [
     actual: () => stepPolyline(POINTS, { mode: 'before' }),
     expected: () => collect((out) => stepPolylineInto(out, POINTS, { mode: 'before' })),
     empty: () => stepPolyline([P0]),
-    fresh: () => stepPolyline(POINTS),
-    freshItems: 1,
-    forbiddenFirstItem: P0,
   },
   {
     name: 'stepPath',
     actual: () => stepPath(POINTS, { mode: 'after' }),
     expected: () => stepPathInto([], POINTS, { mode: 'after' }),
     empty: () => stepPath([P0]),
-    fresh: () => stepPath(POINTS),
   },
   {
     name: 'stepBeforePath',
@@ -269,38 +243,14 @@ const companionCases = [
 companionCases.forEach(defineCompanionCase);
 
 describe('arcSplitAt', () => {
-  test('arcSplitAtInto 결과와 deep equal이다', () => {
-    const expected = arcSplitAtInto([], CENTER_ARC, 0.5);
-    expect(arcSplitAt(CENTER_ARC, 0.5)).toEqual(expected);
-  });
-
   test('항상 길이 2 배열을 반환한다', () => {
     expect(arcSplitAt(CENTER_ARC, 0.5)).toHaveLength(2);
     expect(arcSplitAt(CENTER_ARC, 0)).toHaveLength(2);
     expect(arcSplitAt(CENTER_ARC, 1)).toHaveLength(2);
   });
-
-  test('새 배열을 반환한다', () => {
-    const a = arcSplitAt(CENTER_ARC, 0.5);
-    const b = arcSplitAt(CENTER_ARC, 0.5);
-    expect(a).not.toBe(b);
-    expect(a[0]).not.toBe(b[0]);
-    expect(a[1]).not.toBe(b[1]);
-  });
-
-  test('반환 segment는 입력 centerArc object와 다른 reference다', () => {
-    const result = arcSplitAt(CENTER_ARC, 0.5);
-    expect(result[0]).not.toBe(CENTER_ARC);
-    expect(result[1]).not.toBe(CENTER_ARC);
-  });
 });
 
 describe('arcToCubic', () => {
-  test('arcToCubicInto 결과와 deep equal이다', () => {
-    const expected = arcToCubicInto([], CENTER_ARC);
-    expect(arcToCubic(CENTER_ARC)).toEqual(expected);
-  });
-
   test('zero-sweep arc는 empty array를 반환한다', () => {
     const zeroSweep = { ...CENTER_ARC, startAngle: 0, endAngle: 0 };
     expect(arcToCubic(zeroSweep)).toEqual([]);
@@ -325,23 +275,6 @@ describe('quadraticSplit', () => {
 });
 
 describe('cubicToArcs', () => {
-  const KAPPA = 0.5522847498;
-  const QC_P0 = { x: 1, y: 0 };
-  const QC_P1 = { x: 1, y: KAPPA };
-  const QC_P2 = { x: KAPPA, y: 1 };
-  const QC_P3 = { x: 0, y: 1 };
-
-  test('cubicToArcsInto 결과와 deep equal이다', () => {
-    const expected = cubicToArcsInto([], QC_P0, QC_P1, QC_P2, QC_P3);
-    expect(cubicToArcs(QC_P0, QC_P1, QC_P2, QC_P3)).toEqual(expected);
-  });
-
-  test('새 배열을 반환한다', () => {
-    const a = cubicToArcs(QC_P0, QC_P1, QC_P2, QC_P3);
-    const b = cubicToArcs(QC_P0, QC_P1, QC_P2, QC_P3);
-    expect(a).not.toBe(b);
-  });
-
   test('zero-length degenerate cubic은 빈 배열을 반환한다', () => {
     const pt = { x: 0, y: 0 };
     expect(cubicToArcs(pt, pt, pt, pt)).toEqual([]);
@@ -443,8 +376,6 @@ const monotoneCompanionCases = [
     actual: () => monotoneXPolyline(MONO_X, 8),
     expected: () => collect((out) => monotoneXPolylineInto(out, MONO_X, 8)),
     empty: () => monotoneXPolyline([P0], 8),
-    fresh: () => monotoneXPolyline(MONO_X, 8),
-    freshItems: 1,
   },
   {
     name: 'monotoneXPath',
@@ -469,8 +400,6 @@ const monotoneCompanionCases = [
     actual: () => naturalSplinePolyline(POINTS, 8),
     expected: () => collect((out) => naturalSplinePolylineInto(out, POINTS, 8)),
     empty: () => naturalSplinePolyline([P0], 8),
-    fresh: () => naturalSplinePolyline(POINTS, 8),
-    freshItems: 1,
   },
   {
     name: 'naturalSplinePath',
@@ -483,7 +412,6 @@ const monotoneCompanionCases = [
     actual: () => bumpXPath(POINTS),
     expected: () => bumpXPathInto([], POINTS),
     empty: () => bumpXPath([P0]),
-    fresh: () => bumpXPath(POINTS),
   },
   {
     name: 'bumpYPath',

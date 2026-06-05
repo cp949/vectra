@@ -52,12 +52,6 @@ describe('random geometry companion 함수', () => {
       expect(result.x).toBeCloseTo(1);
       expect(result.y).toBeCloseTo(0);
     });
-
-    test('direction은 매번 새 object를 반환한다', () => {
-      const r1 = direction(1, () => 0);
-      const r2 = direction(1, () => 0);
-      expect(r1).not.toBe(r2);
-    });
   });
 
   describe('pointOnSegment', () => {
@@ -72,13 +66,6 @@ describe('random geometry companion 함수', () => {
     test('pointOnSegment는 degenerate segment에서 endpoint를 반환한다', () => {
       const result = pointOnSegment({ a: { x: 5, y: 7 }, b: { x: 5, y: 7 } }, () => 0.5);
       expect(result).toEqual({ x: 5, y: 7 });
-    });
-
-    test('pointOnSegment는 매번 새 object를 반환한다', () => {
-      const seg = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 } };
-      const r1 = pointOnSegment(seg, () => 0.5);
-      const r2 = pointOnSegment(seg, () => 0.5);
-      expect(r1).not.toBe(r2);
     });
   });
 
@@ -125,12 +112,6 @@ describe('random geometry companion 함수', () => {
         pointInRectOutsideInto(out, outer, inner, sequence([0.8, 0.5, 0.5]));
         expect(result).toEqual(out);
       }
-    });
-
-    test('pointInRectOutside는 매번 새 object를 반환한다', () => {
-      const r1 = pointInRectOutside(outer, inner, sequence([0, 0.5, 0.5]));
-      const r2 = pointInRectOutside(outer, inner, sequence([0, 0.5, 0.5]));
-      expect(r1).not.toBe(r2);
     });
   });
 

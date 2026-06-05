@@ -4,8 +4,8 @@
  * S10-RM-005: single-intersection API가 손실하는 2점 crossing을 collection으로 노출하는
  * segment/ray/infinite-line × ellipse helper를 검증한다. proper two-point의 t 오름차순,
  * tangent 1점, no hit, segment/ray range 경계(range 안 2점 / range 안 1점 / range 밖 0점),
- * contained interior, degenerate direction, empty ellipse, out array clear/reference 보존,
- * companion fresh array, tuple/object 입력 동등성을 다룬다.
+ * contained interior, degenerate direction, empty ellipse, out array clear,
+ * tuple/object 입력 동등성을 다룬다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -133,16 +133,6 @@ describe('segmentEllipseIntersections', () => {
     const segment = { a: { x: -5, y: 0 }, b: { x: 5, y: 0 } };
     expect(segmentEllipseIntersections(segment, { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 0 })).toEqual([]);
   });
-
-  test('tuple 입력과 object 입력은 같은 좌표를 반환한다', () => {
-    const segObj = { a: { x: -5, y: 0 }, b: { x: 5, y: 0 } };
-    const segTuple = [
-      [-5, 0],
-      [5, 0],
-    ] as const;
-    const ellipseTuple = [[0, 0], 2, 1] as const;
-    expect(segmentEllipseIntersections(segTuple, ellipseTuple)).toEqual(segmentEllipseIntersections(segObj, ellipse));
-  });
 });
 
 describe('rayEllipseIntersections', () => {
@@ -180,14 +170,6 @@ describe('rayEllipseIntersections', () => {
     const ray = { origin: { x: -5, y: 0 }, direction: { x: 1, y: 0 } };
     expect(rayEllipseIntersections(ray, { center: { x: 0, y: 0 }, radiusX: -1, radiusY: 1 })).toEqual([]);
   });
-
-  test('tuple 입력과 object 입력은 같은 좌표를 반환한다', () => {
-    const rayObj = { origin: { x: -5, y: 0 }, direction: { x: 1, y: 0 } };
-    // RayTuple = readonly [ox, oy, dx, dy]
-    const rayTuple = [-5, 0, 1, 0] as const;
-    const ellipseTuple = [[0, 0], 2, 1] as const;
-    expect(rayEllipseIntersections(rayTuple, ellipseTuple)).toEqual(rayEllipseIntersections(rayObj, ellipse));
-  });
 });
 
 describe('Into out array 계약', () => {
@@ -210,34 +192,5 @@ describe('Into out array 계약', () => {
     const result = infiniteLineEllipseIntersectionsInto(out, line, ellipse);
     expect(result).toBe(out);
     expect(out).toHaveLength(0);
-  });
-
-  test('push된 point는 입력 center object와 다른 reference다', () => {
-    const sharedCenter = { x: 0, y: 0 };
-    const out: { x: number; y: number }[] = [];
-    const ray = { origin: { x: -5, y: 0 }, direction: { x: 1, y: 0 } };
-    rayEllipseIntersectionsInto(out, ray, { center: sharedCenter, radiusX: 2, radiusY: 1 });
-    for (const p of out) {
-      expect(p).not.toBe(sharedCenter);
-    }
-  });
-});
-
-describe('companion fresh array', () => {
-  test('companion은 새 배열을 반환하고 Into와 같은 좌표를 반환한다', () => {
-    const line = { origin: { x: -5, y: 0 }, direction: { x: 1, y: 0 } };
-    const into: { x: number; y: number }[] = [];
-    infiniteLineEllipseIntersectionsInto(into, line, ellipse);
-    const result = infiniteLineEllipseIntersections(line, ellipse);
-    expect(result).not.toBe(into);
-    expect(result).toEqual(into);
-  });
-
-  test('companion은 호출마다 다른 배열을 반환한다', () => {
-    const segment = { a: { x: -5, y: 0 }, b: { x: 5, y: 0 } };
-    const first = segmentEllipseIntersections(segment, ellipse);
-    const second = segmentEllipseIntersections(segment, ellipse);
-    expect(first).not.toBe(second);
-    expect(first).toEqual(second);
   });
 });

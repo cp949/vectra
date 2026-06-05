@@ -166,19 +166,11 @@ describe('fromCircleApproximationInto', () => {
 // fromCircleApproximation (companion)
 // ──────────────────────────────────────────────
 describe('fromCircleApproximation', () => {
-  test('fromCircleApproximationInto 결과와 동등한 { points } 를 반환한다', () => {
-    const expected: XYObjectWritable[] = [];
-    fromCircleApproximationInto(expected, [3, 4], 2, 8);
-    const actual = fromCircleApproximation([3, 4], 2, 8);
-    expect(actual.points).toEqual(expected);
-  });
-
-  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
-    const r1 = fromCircleApproximation([0, 0], 1, 8);
-    const r2 = fromCircleApproximation([0, 0], 1, 8);
-    expect(r1).not.toBe(r2);
-    expect(r1.points).not.toBe(r2.points);
-    expect(r1.points[0]).not.toBe(r2.points[0]);
+  test('segments 개수만큼 vertex를 만들고 첫 점이 (cx, cy - radius)다', () => {
+    const result = fromCircleApproximation({ x: 10, y: 20 }, 4, 8);
+    expect(result.points).toHaveLength(8);
+    expectClose(result.points[0].x, 10);
+    expectClose(result.points[0].y, 16);
   });
 
   test('invalid segments에서 빈 points를 반환한다', () => {
@@ -386,19 +378,11 @@ describe('fromEllipseApproximationInto', () => {
 // fromEllipseApproximation (companion)
 // ──────────────────────────────────────────────
 describe('fromEllipseApproximation', () => {
-  test('fromEllipseApproximationInto 결과와 동등한 { points } 를 반환한다', () => {
-    const expected: XYObjectWritable[] = [];
-    fromEllipseApproximationInto(expected, [3, 4], 5, 2, 8);
-    const actual = fromEllipseApproximation([3, 4], 5, 2, 8);
-    expect(actual.points).toEqual(expected);
-  });
-
-  test('매 호출마다 새 { points } object와 새 { x, y } element를 만든다', () => {
-    const r1 = fromEllipseApproximation([0, 0], 3, 2, 8);
-    const r2 = fromEllipseApproximation([0, 0], 3, 2, 8);
-    expect(r1).not.toBe(r2);
-    expect(r1.points).not.toBe(r2.points);
-    expect(r1.points[0]).not.toBe(r2.points[0]);
+  test('segments 개수만큼 vertex를 만들고 첫 점이 (cx, cy - radiusY)다', () => {
+    const result = fromEllipseApproximation({ x: 10, y: 20 }, 5, 3, 16);
+    expect(result.points).toHaveLength(16);
+    expectClose(result.points[0].x, 10);
+    expectClose(result.points[0].y, 17);
   });
 
   test('invalid segments에서 빈 points를 반환한다', () => {

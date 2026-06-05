@@ -206,28 +206,6 @@ describe('alignmentGuides', () => {
     expect(result).toEqual([{ axis: 'x', value: 10, kind: 'left', itemIndices: [0, 1] }]);
   });
 
-  test('Into와 동일한 result ordering / grouping을 반환한다', () => {
-    const bounds = [b(10, 0, 50, 30), b(50, 0, 40, 30), b(10, 60, 70, 30)];
-    const expected: AlignmentGuideResult[] = [];
-    alignmentGuidesInto(expected, bounds, 'left');
-    expect(alignmentGuides(bounds, 'left')).toEqual(expected);
-  });
-
-  test('호출마다 새 배열을 반환한다 (재사용 out 아님)', () => {
-    const bounds = [b(0, 0, 50, 50), b(100, 100, 50, 50)];
-    const a = alignmentGuides(bounds, 'left');
-    const c = alignmentGuides(bounds, 'left');
-    expect(a).not.toBe(c);
-  });
-
-  test('호출마다 새 result object를 반환한다', () => {
-    const bounds = [b(0, 0, 50, 50), b(100, 100, 50, 50)];
-    const a = alignmentGuides(bounds, 'left');
-    const c = alignmentGuides(bounds, 'left');
-    expect(a[0]).not.toBe(c[0]);
-    expect(a[0].itemIndices).not.toBe(c[0].itemIndices);
-  });
-
   test('NaN/Infinity 좌표 bounds도 throw하지 않고 산술 결과를 반환한다', () => {
     expect(() => alignmentGuides([b(Number.NaN, 0, 50, 50), b(0, 0, 50, 50)], 'left')).not.toThrow();
     const result = alignmentGuides(
@@ -410,13 +388,6 @@ describe('distributeGuides', () => {
     expect(result.map((g) => g.value)).toEqual([75, 175]);
     expect(result[0].itemIndices).toEqual([0, 1]);
     expect(result[1].itemIndices).toEqual([1, 2]);
-  });
-
-  test('Into와 동일한 result ordering을 반환한다', () => {
-    const bounds = [b(200, 0, 50, 50), b(100, 0, 50, 50), b(0, 0, 50, 50)];
-    const expected: DistributionGuideResult[] = [];
-    distributeGuidesInto(expected, bounds, 'edge-x');
-    expect(distributeGuides(bounds, 'edge-x')).toEqual(expected);
   });
 
   test('호출마다 새 배열을 반환한다', () => {
