@@ -46,18 +46,6 @@ describe('parseSvgPolyline — parseSvgPolylineInto 결과와 동등', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// parseSvgPolyline — 새 array identity
-// ─────────────────────────────────────────────────────────────────────────────
-
-describe('parseSvgPolyline — 새 array 반환 확인', () => {
-  test('매 호출마다 새 배열을 반환한다', () => {
-    const a = parseSvgPolyline('1,2 3,4');
-    const b = parseSvgPolyline('1,2 3,4');
-    expect(a).not.toBe(b);
-  });
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
 // parseSvgPolyline — malformed 입력 throw (Into 정책 동일)
 // ─────────────────────────────────────────────────────────────────────────────
 

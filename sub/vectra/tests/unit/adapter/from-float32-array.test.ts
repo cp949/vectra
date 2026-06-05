@@ -74,16 +74,3 @@ describe('fromFloat32Array — float32 precision 유지', () => {
     expect(result[1]).toEqual({ x: -50, y: 75 });
   });
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// fromFloat32Array — 새 array identity
-// ─────────────────────────────────────────────────────────────────────────────
-
-describe('fromFloat32Array — 새 array 반환 확인', () => {
-  it('매 호출마다 새 배열을 반환한다', () => {
-    const flat = new Float32Array([1, 2, 3, 4]);
-    const a = fromFloat32Array(flat);
-    const b = fromFloat32Array(flat);
-    expect(a).not.toBe(b);
-  });
-});

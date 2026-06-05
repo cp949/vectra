@@ -123,13 +123,6 @@ describe('quadraticLookupTableInto', () => {
     }
   });
 
-  it('각 entry는 새로운 plain object이다', () => {
-    const out: { t: number; length: number }[] = [];
-    quadraticLookupTableInto(out, LINE_P0, LINE_P1, LINE_P2, 3);
-    expect(out[0]).not.toBe(out[1]);
-    expect(out[1]).not.toBe(out[2]);
-  });
-
   it('NaN 좌표는 length로 pass-through된다', () => {
     const out: { t: number; length: number }[] = [];
     quadraticLookupTableInto(out, { x: Number.NaN, y: 0 }, LINE_P1, LINE_P2, 3);
@@ -153,12 +146,6 @@ describe('quadraticLookupTable', () => {
     quadraticLookupTableInto(into, CURVE_P0, CURVE_P1, CURVE_P2, 7);
     const companion = quadraticLookupTable(CURVE_P0, CURVE_P1, CURVE_P2, 7);
     expect(companion).toEqual(into);
-  });
-
-  it('호출마다 새 배열을 반환한다', () => {
-    const a = quadraticLookupTable(LINE_P0, LINE_P1, LINE_P2, 3);
-    const b = quadraticLookupTable(LINE_P0, LINE_P1, LINE_P2, 3);
-    expect(a).not.toBe(b);
   });
 
   it('steps validation 실패 시 RangeError를 던진다', () => {

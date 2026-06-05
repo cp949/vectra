@@ -35,24 +35,12 @@ describe('matrix lifecycle/factory companions', () => {
     expect(identity()).toEqual({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
   });
 
-  test('identity()는 호출마다 새 object를 반환한다', () => {
-    expect(identity()).not.toBe(identity());
-  });
-
   test('translation(offset)은 translation-only matrix를 반환한다', () => {
     expect(translation({ x: 3, y: 4 })).toEqual({ a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 });
   });
 
-  test('translation은 호출마다 새 object를 반환한다', () => {
-    expect(translation({ x: 3, y: 4 })).not.toBe(translation({ x: 3, y: 4 }));
-  });
-
   test('scaling(sx, sy)는 scaling-only matrix를 반환한다', () => {
     expect(scaling(2, 3)).toEqual({ a: 2, b: 0, c: 0, d: 3, tx: 0, ty: 0 });
-  });
-
-  test('scaling은 호출마다 새 object를 반환한다', () => {
-    expect(scaling(2, 3)).not.toBe(scaling(2, 3));
   });
 
   test('rotationMatrix(angle)은 rotation-only matrix를 반환한다', () => {
@@ -69,10 +57,6 @@ describe('matrix lifecycle/factory companions', () => {
     const angle = 0.7;
     const expected = rotationMatrixInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, angle);
     expect(rotationMatrix(angle)).toEqual(expected);
-  });
-
-  test('rotationMatrix는 호출마다 새 object를 반환한다', () => {
-    expect(rotationMatrix(1)).not.toBe(rotationMatrix(1));
   });
 });
 

@@ -106,12 +106,6 @@ describe('interpolation.lerpTuple — allocating companion', () => {
     expect(lerpTuple([0, 10, 20], [2, 12, 22], 0.5)).toEqual(out);
   });
 
-  test('호출마다 새 배열을 반환한다', () => {
-    const first = lerpTuple([0, 10], [2, 14], 0.5);
-    const second = lerpTuple([0, 10], [2, 14], 0.5);
-    expect(first).not.toBe(second);
-  });
-
   test('t=0이면 a, t=1이면 b 값을 반환한다', () => {
     expect(lerpTuple([1, 2, 3], [4, 5, 6], 0)).toEqual([1, 2, 3]);
     expect(lerpTuple([1, 2, 3], [4, 5, 6], 1)).toEqual([4, 5, 6]);

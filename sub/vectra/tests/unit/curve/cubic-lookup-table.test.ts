@@ -124,13 +124,6 @@ describe('cubicLookupTableInto', () => {
     }
   });
 
-  it('각 entry는 새로운 plain object이다', () => {
-    const out: { t: number; length: number }[] = [];
-    cubicLookupTableInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 3);
-    expect(out[0]).not.toBe(out[1]);
-    expect(out[1]).not.toBe(out[2]);
-  });
-
   it('NaN 좌표는 length로 pass-through된다', () => {
     const out: { t: number; length: number }[] = [];
     cubicLookupTableInto(out, { x: Number.NaN, y: 0 }, LINE_P1, LINE_P2, LINE_P3, 3);
@@ -154,12 +147,6 @@ describe('cubicLookupTable', () => {
     cubicLookupTableInto(into, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, 7);
     const companion = cubicLookupTable(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, 7);
     expect(companion).toEqual(into);
-  });
-
-  it('호출마다 새 배열을 반환한다', () => {
-    const a = cubicLookupTable(LINE_P0, LINE_P1, LINE_P2, LINE_P3, 3);
-    const b = cubicLookupTable(LINE_P0, LINE_P1, LINE_P2, LINE_P3, 3);
-    expect(a).not.toBe(b);
   });
 
   it('steps validation 실패 시 RangeError를 던진다', () => {

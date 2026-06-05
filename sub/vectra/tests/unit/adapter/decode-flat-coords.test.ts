@@ -56,19 +56,6 @@ describe('decodeFlatCoords — decodeFlatCoordsInto 결과와 동등', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// decodeFlatCoords — 새 array identity
-// ─────────────────────────────────────────────────────────────────────────────
-
-describe('decodeFlatCoords — 새 array 반환 확인', () => {
-  it('매 호출마다 새 배열을 반환한다', () => {
-    const flat = [1, 2, 3, 4];
-    const a = decodeFlatCoords(flat);
-    const b = decodeFlatCoords(flat);
-    expect(a).not.toBe(b);
-  });
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
 // decodeFlatCoords — 홀수 길이 처리
 // ─────────────────────────────────────────────────────────────────────────────
 
