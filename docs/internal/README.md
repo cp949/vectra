@@ -17,6 +17,7 @@
 | --- | --- |
 | [프로젝트 구조](./project-structure.md) | 저장소 구조를 확인할 때 |
 | [프로젝트 운영](./project-operations.md) | 작업/검증 흐름을 확인할 때 |
+| [테스트 작성 지침](./testing-guidelines.md) | 과도한 테스트를 피하고 회귀 신호 품질을 확인할 때 |
 | [주석 작성 규칙](./comment-style.md) | public JSDoc과 테스트 주석을 작성할 때 |
 | [ADR](./adr/) | 과거 결정 이유를 확인할 때 |
 | [체크리스트](./checklists/) | release 또는 작업 완료 전 확인할 때 |
