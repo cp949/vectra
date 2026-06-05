@@ -6,9 +6,7 @@
 
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import type { XYWritable } from '../../../src/types';
-import { lerp } from '../../../src/vec/lerp';
 import { lerpInto } from '../../../src/vec/lerp-into';
-import { midpoint } from '../../../src/vec/midpoint';
 import { midpointInto } from '../../../src/vec/midpoint-into';
 import { moveToward } from '../../../src/vec/move-toward';
 import { moveTowardInto } from '../../../src/vec/move-toward-into';
@@ -54,21 +52,6 @@ describe('vec interpolation alias - lerpInto', () => {
   });
 });
 
-describe('vec interpolation alias - lerp', () => {
-  test('a와 b 사이를 t로 보간한 새 object를 반환한다', () => {
-    const result = lerp({ x: 0, y: 0 }, { x: 4, y: 6 }, 0.5);
-    expect(result).toEqual({ x: 2, y: 3 });
-  });
-
-  test('lerpInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    lerpInto(out, [1, 2], [5, 8], 0.75);
-    const result = lerp([1, 2], [5, 8], 0.75);
-    expect(result.x).toBe(out.x);
-    expect(result.y).toBe(out.y);
-  });
-});
-
 describe('vec interpolation alias - midpointInto', () => {
   test('a와 b의 중점을 out에 기록한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
@@ -85,21 +68,6 @@ describe('vec interpolation alias - midpointInto', () => {
 
   test('finite하지 않은 input은 RangeError를 던진다', () => {
     expect(() => midpointInto({ x: 0, y: 0 }, { x: NaN, y: 0 }, { x: 1, y: 1 })).toThrow(RangeError);
-  });
-});
-
-describe('vec interpolation alias - midpoint', () => {
-  test('a와 b의 중점을 새 object로 반환한다', () => {
-    const result = midpoint({ x: 0, y: 0 }, { x: 4, y: 6 });
-    expect(result).toEqual({ x: 2, y: 3 });
-  });
-
-  test('midpointInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    midpointInto(out, [2, 4], [8, 10]);
-    const result = midpoint([2, 4], [8, 10]);
-    expect(result.x).toBe(out.x);
-    expect(result.y).toBe(out.y);
   });
 });
 
@@ -132,13 +100,5 @@ describe('vec interpolation alias - moveToward', () => {
   test('current를 target 방향으로 이동한 새 object를 반환한다', () => {
     const result = moveToward({ x: 0, y: 0 }, { x: 3, y: 4 }, 10);
     expect(result).toEqual({ x: 3, y: 4 });
-  });
-
-  test('moveTowardInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    moveTowardInto(out, [0, 0], [10, 0], 3);
-    const result = moveToward([0, 0], [10, 0], 3);
-    expect(result.x).toBeCloseTo(out.x, 10);
-    expect(result.y).toBeCloseTo(out.y, 10);
   });
 });

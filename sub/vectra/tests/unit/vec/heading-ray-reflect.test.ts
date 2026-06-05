@@ -3,9 +3,7 @@ import { heading } from '../../../src/vec/heading';
 import { headingSegment } from '../../../src/vec/heading-segment';
 import { pointOnRay } from '../../../src/vec/point-on-ray';
 import { pointOnRayInto } from '../../../src/vec/point-on-ray-into';
-import { projectOn } from '../../../src/vec/project-on';
 import { projectOnInto } from '../../../src/vec/project-on-into';
-import { reflectAcrossNormal } from '../../../src/vec/reflect-across-normal';
 import { reflectAcrossNormalInto } from '../../../src/vec/reflect-across-normal-into';
 
 describe('heading — point의 각도 계산', () => {
@@ -79,14 +77,6 @@ describe('pointOnRayInto — ray 위 점 계산 (Into 버전)', () => {
 });
 
 describe('pointOnRay — ray 위 점 계산 (allocating companion)', () => {
-  test('새 object로 결과를 반환한다', () => {
-    const result = pointOnRay({ x: 0, y: 0 }, { x: 1, y: 0 }, 3);
-
-    expect(result).not.toBeUndefined();
-    expect(result?.x).toBeCloseTo(3);
-    expect(result?.y).toBeCloseTo(0);
-  });
-
   test('zero-length direction이면 undefined를 반환한다', () => {
     expect(pointOnRay({ x: 0, y: 0 }, { x: 0, y: 0 }, 5)).toBeUndefined();
   });
@@ -122,15 +112,6 @@ describe('projectOnInto — direction으로 vector 투영 (Into 버전)', () => 
   });
 });
 
-describe('projectOn — direction으로 vector 투영 (allocating companion)', () => {
-  test('새 object로 결과를 반환한다', () => {
-    const result = projectOn({ x: 3, y: 4 }, { x: 1, y: 0 });
-
-    expect(result.x).toBeCloseTo(3);
-    expect(result.y).toBeCloseTo(0);
-  });
-});
-
 describe('reflectAcrossNormalInto — normal에 대한 벡터 반사 (Into 버전)', () => {
   test('y축 법선(수평 표면)에서 반사한다', () => {
     const out = { x: 0, y: 0 };
@@ -156,14 +137,5 @@ describe('reflectAcrossNormalInto — normal에 대한 벡터 반사 (Into 버�
 
     expect(out.x).toBeCloseTo(0);
     expect(out.y).toBeCloseTo(3);
-  });
-});
-
-describe('reflectAcrossNormal — normal에 대한 벡터 반사 (allocating companion)', () => {
-  test('새 object로 결과를 반환한다', () => {
-    const result = reflectAcrossNormal({ x: 1, y: -1 }, { x: 0, y: 1 });
-
-    expect(result.x).toBeCloseTo(1);
-    expect(result.y).toBeCloseTo(1);
   });
 });

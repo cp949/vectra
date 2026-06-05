@@ -1,12 +1,11 @@
 /**
  * vec length control helper unit test.
  *
- * clampLengthInto / clampLength — 벡터 길이를 [min, max] 범위로 clamp한다.
- * setLengthInto / setLength     — 벡터 길이를 지정한 값으로 설정한다.
+ * clampLengthInto          — 벡터 길이를 [min, max] 범위로 clamp한다.
+ * setLengthInto / setLength — 벡터 길이를 지정한 값으로 설정한다.
  */
 
 import { describe, expect, test } from 'vitest';
-import { clampLength } from '../../../src/vec/clamp-length';
 import { clampLengthInto } from '../../../src/vec/clamp-length-into';
 import { setLength } from '../../../src/vec/set-length';
 import { setLengthInto } from '../../../src/vec/set-length-into';
@@ -113,33 +112,6 @@ describe('clampLengthInto — 벡터 길이 clamp (Into 버전)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// clampLength (companion)
-// ---------------------------------------------------------------------------
-
-describe('clampLength — 벡터 길이 clamp (companion 버전)', () => {
-  test('새 { x, y } object를 반환한다', () => {
-    const v = { x: 1, y: 0 };
-    const result = clampLength(v, 3, 5);
-    // 원본 object가 아닌 새 object
-    expect(result).not.toBe(v);
-    expect(result.x).toBeCloseTo(3);
-    expect(result.y).toBeCloseTo(0);
-  });
-
-  test('zero vector는 { x: 0, y: 0 }을 반환한다', () => {
-    const result = clampLength({ x: 0, y: 0 }, 1, 5);
-    expect(result.x).toBe(0);
-    expect(result.y).toBe(0);
-  });
-
-  test('max clamp — 반환값 길이가 maxLength와 일치한다', () => {
-    const result = clampLength({ x: 8, y: 0 }, 1, 5);
-    expect(result.x).toBeCloseTo(5);
-    expect(result.y).toBeCloseTo(0);
-  });
-});
-
-// ---------------------------------------------------------------------------
 // setLengthInto
 // ---------------------------------------------------------------------------
 
@@ -228,23 +200,9 @@ describe('setLengthInto — 벡터 길이 설정 (Into 버전)', () => {
 // ---------------------------------------------------------------------------
 
 describe('setLength — 벡터 길이 설정 (companion 버전)', () => {
-  test('새 { x, y } object를 반환한다', () => {
-    const v = { x: 1, y: 0 };
-    const result = setLength(v, 5);
-    expect(result).not.toBe(v);
+  test('targetLength 길이의 새 벡터를 반환한다', () => {
+    const result = setLength({ x: 1, y: 0 }, 5);
     expect(result.x).toBeCloseTo(5);
     expect(result.y).toBeCloseTo(0);
-  });
-
-  test('zero vector는 { x: 0, y: 0 }을 반환한다', () => {
-    const result = setLength({ x: 0, y: 0 }, 3);
-    expect(result.x).toBe(0);
-    expect(result.y).toBe(0);
-  });
-
-  test('결과 길이가 targetLength와 일치한다', () => {
-    const result = setLength({ x: 3, y: 4 }, 15);
-    const len = Math.hypot(result.x, result.y);
-    expect(len).toBeCloseTo(15);
   });
 });

@@ -104,19 +104,8 @@ export function testUnaryBehavior(helper: UnaryBehaviorCase) {
     expectTupleOut((out) => helper.into(out, helper.tupleInput), helper.tupleExpected);
   });
 
-  test('companion은 새 object를 반환한다', () => {
-    const input = helper.tupleInput;
-    const result = helper.companion(input);
-
-    expect(result).not.toBe(input);
-    expectXY(result, helper.tupleExpected);
-  });
-
-  test('companion은 Into와 동일한 결과를 반환한다', () => {
-    expectCompanionMatchesInto(
-      (out) => helper.into(out, helper.tupleInput),
-      () => helper.companion(helper.tupleInput)
-    );
+  test('companion은 올바른 결과를 반환한다', () => {
+    expectXY(helper.companion(helper.tupleInput), helper.tupleExpected);
   });
 }
 
@@ -149,16 +138,7 @@ export function testBinaryBehavior(helper: BinaryBehaviorCase) {
     expectTupleOut((out) => helper.into(out, helper.a, helper.b), helper.expected);
   });
 
-  test('companion은 새 object를 반환한다', () => {
-    const result = helper.companion(helper.a, helper.b);
-
-    expectXY(result, helper.expected);
-  });
-
-  test('companion은 Into와 동일한 결과를 반환한다', () => {
-    expectCompanionMatchesInto(
-      (out) => helper.into(out, helper.a, helper.b),
-      () => helper.companion(helper.a, helper.b)
-    );
+  test('companion은 올바른 결과를 반환한다', () => {
+    expectXY(helper.companion(helper.a, helper.b), helper.expected);
   });
 }

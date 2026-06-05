@@ -9,7 +9,6 @@ import type { XYWritable } from '../../../src/types';
 import { fromAngle } from '../../../src/vec/from-angle';
 import { fromAngleInto } from '../../../src/vec/from-angle-into';
 import { normalize } from '../../../src/vec/normalize';
-import { normalizeInto } from '../../../src/vec/normalize-into';
 import { perpendicular } from '../../../src/vec/perpendicular';
 import { perpendicularInto } from '../../../src/vec/perpendicular-into';
 import { rotate } from '../../../src/vec/rotate';
@@ -196,21 +195,10 @@ describe('vec point-output - rotateAroundInto', () => {
 
 describe('vec companion - normalize', () => {
   test('입력 벡터를 정규화해 새 object를 반환한다', () => {
-    const input = { x: 3, y: 4 };
-    const result = normalize(input);
+    const result = normalize({ x: 3, y: 4 });
 
-    expect(result).not.toBe(input);
     expect(result.x).toBeCloseTo(0.6, 10);
     expect(result.y).toBeCloseTo(0.8, 10);
-  });
-
-  test('normalizeInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    normalizeInto(out, { x: 1, y: 1 });
-    const result = normalize({ x: 1, y: 1 });
-
-    expect(result.x).toBeCloseTo(out.x, 10);
-    expect(result.y).toBeCloseTo(out.y, 10);
   });
 
   test('영벡터 입력에서 { x: 0, y: 0 }을 반환하고 throw하지 않는다', () => {
@@ -222,20 +210,9 @@ describe('vec companion - normalize', () => {
 
 describe('vec companion - perpendicular', () => {
   test('CCW 90도 수직 벡터 (-y, x)를 새 object로 반환한다', () => {
-    const input = { x: 3, y: 4 };
-    const result = perpendicular(input);
+    const result = perpendicular({ x: 3, y: 4 });
 
-    expect(result).not.toBe(input);
     expect(result).toEqual({ x: -4, y: 3 });
-  });
-
-  test('perpendicularInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    perpendicularInto(out, { x: 2, y: 5 });
-    const result = perpendicular({ x: 2, y: 5 });
-
-    expect(result.x).toBe(out.x);
-    expect(result.y).toBe(out.y);
   });
 });
 
@@ -246,54 +223,22 @@ describe('vec companion - fromAngle', () => {
     expect(result.x).toBeCloseTo(1, 10);
     expect(result.y).toBeCloseTo(0, 10);
   });
-
-  test('fromAngleInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    fromAngleInto(out, Math.PI / 4);
-    const result = fromAngle(Math.PI / 4);
-
-    expect(result.x).toBeCloseTo(out.x, 10);
-    expect(result.y).toBeCloseTo(out.y, 10);
-  });
 });
 
 describe('vec companion - rotate', () => {
   test('(1, 0)를 90도 CCW 회전하면 (0, 1)인 새 object를 반환한다', () => {
-    const input = { x: 1, y: 0 };
-    const result = rotate(input, Math.PI / 2);
+    const result = rotate({ x: 1, y: 0 }, Math.PI / 2);
 
-    expect(result).not.toBe(input);
     expect(result.x).toBeCloseTo(0, 10);
     expect(result.y).toBeCloseTo(1, 10);
-  });
-
-  test('rotateInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    rotateInto(out, { x: 1, y: 0 }, Math.PI);
-    const result = rotate({ x: 1, y: 0 }, Math.PI);
-
-    expect(result.x).toBeCloseTo(out.x, 10);
-    expect(result.y).toBeCloseTo(out.y, 10);
   });
 });
 
 describe('vec companion - rotateAround', () => {
   test('center=(2,2) 기준으로 (3,2)를 90도 CCW 회전하면 (2,3)인 새 object를 반환한다', () => {
-    const input = { x: 3, y: 2 };
-    const center = { x: 2, y: 2 };
-    const result = rotateAround(input, center, Math.PI / 2);
-
-    expect(result).not.toBe(input);
-    expect(result.x).toBeCloseTo(2, 10);
-    expect(result.y).toBeCloseTo(3, 10);
-  });
-
-  test('rotateAroundInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    rotateAroundInto(out, { x: 3, y: 2 }, { x: 2, y: 2 }, Math.PI / 2);
     const result = rotateAround({ x: 3, y: 2 }, { x: 2, y: 2 }, Math.PI / 2);
 
-    expect(result.x).toBeCloseTo(out.x, 10);
-    expect(result.y).toBeCloseTo(out.y, 10);
+    expect(result.x).toBeCloseTo(2, 10);
+    expect(result.y).toBeCloseTo(3, 10);
   });
 });

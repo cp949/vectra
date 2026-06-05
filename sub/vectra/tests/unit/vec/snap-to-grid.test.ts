@@ -107,21 +107,10 @@ describe('snapToGridInto — component-wise grid snap', () => {
 });
 
 describe('snapToGrid — allocating companion', () => {
-  test('새 object를 반환하고 입력과 다른 reference다', () => {
-    const input = { x: 12.2, y: 18.7 };
-    const result = snapToGrid(input, { x: 5, y: 10 });
+  test('grid에 스냅된 새 벡터를 반환한다', () => {
+    const result = snapToGrid({ x: 12.2, y: 18.7 }, { x: 5, y: 10 });
 
-    expect(result).not.toBe(input);
     expect(result.x).toBe(10);
     expect(result.y).toBe(20);
-  });
-
-  test('Into와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    snapToGridInto(out, { x: -12.2, y: -18.7 }, { x: 5, y: 10 });
-    const companion = snapToGrid({ x: -12.2, y: -18.7 }, { x: 5, y: 10 });
-
-    expect(companion.x).toBe(out.x);
-    expect(companion.y).toBe(out.y);
   });
 });

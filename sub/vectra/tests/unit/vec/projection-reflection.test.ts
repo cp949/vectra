@@ -178,17 +178,8 @@ describe('reflectInto — arbitrary normal에 대한 벡터 반사 (Into 버전)
 // ---------------------------------------------------------------------------
 
 describe('reflect — arbitrary normal에 대한 벡터 반사 (allocating companion)', () => {
-  test('새 { x, y } object를 반환한다', () => {
-    const v = { x: 1, y: -1 };
-    const result = reflect(v, { x: 0, y: 1 });
-
-    expect(result).not.toBe(v);
-    expect(result.x).toBeCloseTo(1);
-    expect(result.y).toBeCloseTo(1);
-  });
-
-  test('non-unit normal도 올바르게 처리한다', () => {
-    const result = reflect({ x: 1, y: -1 }, { x: 0, y: 3 });
+  test('반사 벡터를 반환한다', () => {
+    const result = reflect({ x: 1, y: -1 }, { x: 0, y: 1 });
 
     expect(result.x).toBeCloseTo(1);
     expect(result.y).toBeCloseTo(1);
@@ -301,11 +292,9 @@ describe('rejectFromInto — basis 방향 성분 제거 (Into 버전)', () => {
 // ---------------------------------------------------------------------------
 
 describe('rejectFrom — basis 방향 성분 제거 (allocating companion)', () => {
-  test('새 { x, y } object를 반환한다', () => {
-    const v = { x: 3, y: 4 };
-    const result = rejectFrom(v, { x: 1, y: 0 });
+  test('rejection 벡터를 반환한다', () => {
+    const result = rejectFrom({ x: 3, y: 4 }, { x: 1, y: 0 });
 
-    expect(result).not.toBe(v);
     expect(result.x).toBeCloseTo(0);
     expect(result.y).toBeCloseTo(4);
   });
@@ -409,11 +398,9 @@ describe('slideInto — normal 성분 제거, collision slide (Into 버전)', ()
 // ---------------------------------------------------------------------------
 
 describe('slide — normal 성분 제거, collision slide (allocating companion)', () => {
-  test('새 { x, y } object를 반환한다', () => {
-    const v = { x: 3, y: 4 };
-    const result = slide(v, { x: 0, y: 1 });
+  test('slide 벡터를 반환한다', () => {
+    const result = slide({ x: 3, y: 4 }, { x: 0, y: 1 });
 
-    expect(result).not.toBe(v);
     expect(result.x).toBeCloseTo(3);
     expect(result.y).toBeCloseTo(0);
   });

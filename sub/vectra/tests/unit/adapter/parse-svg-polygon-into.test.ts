@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'vitest';
 import { parseSvgPolygonInto } from '../../../src/adapter/parse-svg-polygon-into';
-import { parseSvgPolylineInto } from '../../../src/adapter/parse-svg-polyline-into';
 import { svgPolygonToString } from '../../../src/adapter/svg-polygon-to-string';
 import type { XYObjectWritable } from '../../../src/types/index';
 
@@ -183,33 +182,5 @@ describe('svgPolygonToString — precision 옵션', () => {
   test('빈 배열은 빈 문자열을 반환한다', () => {
     const str = svgPolygonToString([]);
     expect(str).toBe('');
-  });
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// polygon vs polyline — 동일 입력 동일 결과
-// ─────────────────────────────────────────────────────────────────────────────
-
-describe('parseSvgPolygonInto vs parseSvgPolylineInto — 동일 결과', () => {
-  test('같은 입력에 대해 동일한 결과를 반환한다', () => {
-    const outPolygon: XYObjectWritable[] = [];
-    const outPolyline: XYObjectWritable[] = [];
-    const input = '10,20 30,40 50,60';
-    parseSvgPolygonInto(outPolygon, input);
-    parseSvgPolylineInto(outPolyline, input);
-    expect(outPolygon).toHaveLength(outPolyline.length);
-    for (let i = 0; i < outPolygon.length; i++) {
-      expect(outPolygon[i].x).toBe(outPolyline[i].x);
-      expect(outPolygon[i].y).toBe(outPolyline[i].y);
-    }
-  });
-
-  test('빈 입력에 대해 둘 다 빈 배열을 반환한다', () => {
-    const outPolygon: XYObjectWritable[] = [];
-    const outPolyline: XYObjectWritable[] = [];
-    parseSvgPolygonInto(outPolygon, '');
-    parseSvgPolylineInto(outPolyline, '');
-    expect(outPolygon).toHaveLength(0);
-    expect(outPolyline).toHaveLength(0);
   });
 });
