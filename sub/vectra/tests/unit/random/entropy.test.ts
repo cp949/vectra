@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
-  UINT32_SIZE,
   cryptoUint32,
   defaultRandom,
   hasCrypto,
   randomUint32Below,
+  UINT32_SIZE,
 } from '../../../src/random/entropy.internal';
 
 /**
@@ -80,9 +80,7 @@ describe('randomUint32Below — RangeError 가드', () => {
 
   test('range=0은 RangeError를 던진다', () => {
     expect(() => randomUint32Below(0)).toThrow(RangeError);
-    expect(() => randomUint32Below(0)).toThrow(
-      'range must be a positive safe integer less than or equal to 2^32'
-    );
+    expect(() => randomUint32Below(0)).toThrow('range must be a positive safe integer less than or equal to 2^32');
   });
 
   test('range=-1은 RangeError를 던진다', () => {
