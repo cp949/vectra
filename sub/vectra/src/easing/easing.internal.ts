@@ -3,209 +3,42 @@
  *
  * public leaf module끼리 domain barrel을 import하지 않으므로
  * 공유 계산과 validation guard를 여기에 모은다.
- */
-
-/**
- * t가 finite number인지 검증한다.
  *
- * NaN과 +/-Infinity를 domain 경계에서 거르기 위한 공통 guard다.
+ * validators+상수, standard raw는 group helper로 분할됐고 named export 보존을 위해 re-export한다.
  */
-export function assertFiniteT(t: number): void {
-  if (!Number.isFinite(t)) {
-    throw new RangeError('easing t must be a finite number');
-  }
-}
 
-/**
- * exponent가 finite positive number(> 0)인지 검증한다.
- *
- * powerIn/Out/InOut에서 사용한다.
- */
-export function assertPositiveFiniteExponent(exponent: number): void {
-  if (!Number.isFinite(exponent) || exponent <= 0) {
-    throw new RangeError('easing exponent must be a finite positive number (> 0)');
-  }
-}
+// ─── validators + 공유 상수 group re-export ─────────────────────────────────────
+export {
+  assertFiniteT,
+  assertPositiveFiniteExponent,
+  assertFiniteOvershoot,
+  assertEasingFunction,
+  assertFiniteWeight,
+  assertElasticAmplitude,
+  assertElasticPeriod,
+  DEFAULT_BACK_OVERSHOOT,
+  BOUNCE_N1,
+  BOUNCE_D1,
+  ELASTIC_DEFAULT_AMPLITUDE,
+  ELASTIC_DEFAULT_PERIOD,
+} from './easing-validators.internal';
 
-/**
- * t ** exponent 방식의 ease-in 계산을 수행한다.
- *
- * validation 없이 계산만 수행한다. 호출 전 finite 검증을 호출자가 보장해야 한다.
- */
-export function powerInRaw(t: number, exponent: number): number {
-  return t ** exponent;
-}
-
-/**
- * 1 - (1 - t) ** exponent 방식의 ease-out 계산을 수행한다.
- *
- * validation 없이 계산만 수행한다. 호출 전 finite 검증을 호출자가 보장해야 한다.
- */
-export function powerOutRaw(t: number, exponent: number): number {
-  return 1 - (1 - t) ** exponent;
-}
-
-/**
- * ease-in-out 계산을 수행한다.
- *
- * t < 0.5이면 (2 * t) ** exponent / 2, t >= 0.5이면 1 - (2 - 2 * t) ** exponent / 2.
- * validation 없이 계산만 수행한다. 호출 전 finite 검증을 호출자가 보장해야 한다.
- */
-export function powerInOutRaw(t: number, exponent: number): number {
-  if (t < 0.5) {
-    return (2 * t) ** exponent / 2;
-  }
-  return 1 - (2 - 2 * t) ** exponent / 2;
-}
-
-/**
- * back easing의 overshoot이 finite number인지 검증한다.
- *
- * non-finite overshoot은 공식 연산 결과를 예측 불가하게 만들므로 거른다.
- * 음수 overshoot은 anticipation 반전을 위해 허용한다.
- */
-export function assertFiniteOvershoot(overshoot: number): void {
-  if (!Number.isFinite(overshoot)) {
-    throw new RangeError('easing overshoot must be a finite number');
-  }
-}
-
-/**
- * fn이 callable function인지 검증한다.
- *
- * with* composition helper에서 사용한다.
- */
-export function assertEasingFunction(fn: unknown): void {
-  if (typeof fn !== 'function') {
-    throw new RangeError('easing wrapper fn must be a function');
-  }
-}
-
-/**
- * blend weight가 finite number인지 검증한다.
- *
- * easeBlend는 weight를 clamp하지 않고 extrapolation을 허용하되 non-finite만 거른다.
- */
-export function assertFiniteWeight(weight: number): void {
-  if (!Number.isFinite(weight)) {
-    throw new RangeError('easing blend weight must be a finite number');
-  }
-}
-
-/**
- * elastic easing의 amplitude가 유효한지 검증한다.
- *
- * amplitude >= 1이어야 하며 finite positive number를 요구한다.
- */
-export function assertElasticAmplitude(amplitude: number): void {
-  if (!Number.isFinite(amplitude) || amplitude < 1) {
-    throw new RangeError('easing elastic amplitude must be a finite number >= 1');
-  }
-}
-
-/**
- * elastic easing의 period가 유효한지 검증한다.
- *
- * period > 0이어야 하며 finite positive number를 요구한다.
- */
-export function assertElasticPeriod(period: number): void {
-  if (!Number.isFinite(period) || period <= 0) {
-    throw new RangeError('easing elastic period must be a finite positive number (> 0)');
-  }
-}
-
-// ─── 공유 상수 ────────────────────────────────────────────────────────────────
-
-/** back easing 기본 overshoot 값 (Penner 표준값). */
-export const DEFAULT_BACK_OVERSHOOT = 1.70158;
-
-/** bounce 공식 상수 (Penner 표준값). */
-export const BOUNCE_N1 = 7.5625;
-export const BOUNCE_D1 = 2.75;
-
-/** elastic easing 기본 파라미터. */
-export const ELASTIC_DEFAULT_AMPLITUDE = 1;
-export const ELASTIC_DEFAULT_PERIOD = 0.3;
-
-// ─── sine raw ─────────────────────────────────────────────────────────────────
-
-/** 1 - cos(t*PI/2). validation 없이 계산만 수행한다. */
-export function sineInRaw(t: number): number {
-  return 1 - Math.cos((t * Math.PI) / 2);
-}
-
-/** sin(t*PI/2). validation 없이 계산만 수행한다. */
-export function sineOutRaw(t: number): number {
-  return Math.sin((t * Math.PI) / 2);
-}
-
-/** -(cos(PI*t) - 1) / 2. validation 없이 계산만 수행한다. */
-export function sineInOutRaw(t: number): number {
-  return -(Math.cos(Math.PI * t) - 1) / 2;
-}
-
-// ─── expo raw ─────────────────────────────────────────────────────────────────
-
-/** t === 0 ? 0 : 2^(10t - 10). validation 없이 계산만 수행한다. */
-export function expoInRaw(t: number): number {
-  return t === 0 ? 0 : 2 ** (10 * t - 10);
-}
-
-/** t === 1 ? 1 : 1 - 2^(-10t). validation 없이 계산만 수행한다. */
-export function expoOutRaw(t: number): number {
-  return t === 1 ? 1 : 1 - 2 ** (-10 * t);
-}
-
-/** expo ease-in-out. validation 없이 계산만 수행한다. */
-export function expoInOutRaw(t: number): number {
-  if (t === 0) return 0;
-  if (t === 1) return 1;
-  if (t < 0.5) return 2 ** (20 * t - 10) / 2;
-  return (2 - 2 ** (-20 * t + 10)) / 2;
-}
-
-// ─── circ raw ─────────────────────────────────────────────────────────────────
-
-/** 1 - sqrt(1 - t²). validation 없이 계산만 수행한다. */
-export function circInRaw(t: number): number {
-  return 1 - Math.sqrt(1 - t * t);
-}
-
-/** sqrt(1 - (t-1)²). validation 없이 계산만 수행한다. */
-export function circOutRaw(t: number): number {
-  return Math.sqrt(1 - (t - 1) ** 2);
-}
-
-/** circ ease-in-out. validation 없이 계산만 수행한다. */
-export function circInOutRaw(t: number): number {
-  if (t < 0.5) {
-    return (1 - Math.sqrt(1 - (2 * t) ** 2)) / 2;
-  }
-  return (Math.sqrt(1 - (-2 * t + 2) ** 2) + 1) / 2;
-}
-
-// ─── bounce raw ───────────────────────────────────────────────────────────────
-
-/**
- * bounceOut piecewise 계산 내부 함수.
- *
- * validation 없이 계산만 수행한다. 호출 전 finite 검증을 호출자가 보장해야 한다.
- */
-export function bounceOutRaw(t: number): number {
-  if (t < 1 / BOUNCE_D1) {
-    return BOUNCE_N1 * t * t;
-  }
-  if (t < 2 / BOUNCE_D1) {
-    const u = t - 1.5 / BOUNCE_D1;
-    return BOUNCE_N1 * u * u + 0.75;
-  }
-  if (t < 2.5 / BOUNCE_D1) {
-    const u = t - 2.25 / BOUNCE_D1;
-    return BOUNCE_N1 * u * u + 0.9375;
-  }
-  const u = t - 2.625 / BOUNCE_D1;
-  return BOUNCE_N1 * u * u + 0.984375;
-}
+// ─── standard raw group re-export ───────────────────────────────────────────────
+export {
+  powerInRaw,
+  powerOutRaw,
+  powerInOutRaw,
+  sineInRaw,
+  sineOutRaw,
+  sineInOutRaw,
+  expoInRaw,
+  expoOutRaw,
+  expoInOutRaw,
+  circInRaw,
+  circOutRaw,
+  circInOutRaw,
+  bounceOutRaw,
+} from './easing-standard-raw.internal';
 
 // ─── back raw ─────────────────────────────────────────────────────────────────
 
