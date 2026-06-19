@@ -168,3 +168,8 @@ mock 호출 횟수만 보고 결과 계약을 보지 않는 테스트를 피한�
 5. 결과 계약보다 mock 호출 세부사항에 의존하는 테스트
 
 삭제 후에는 수정한 package의 focused test를 먼저 실행하고, 영향이 넓으면 package 전체 test를 실행한다.
+
+## 관련 문서
+
+테스트를 어떻게 작성하는가(runner, 파일 조직, 표준 `*Into` 검증 시나리오, numeric 함정)는
+[테스트 메커니즘](./testing-mechanics.md)을 본다.
