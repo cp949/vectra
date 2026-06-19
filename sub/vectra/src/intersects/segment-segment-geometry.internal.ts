@@ -82,7 +82,14 @@ export function segmentEndpointsCollinearWithinDistance(
   return Number.isFinite(startDist) && Number.isFinite(endDist) && startDist <= epsilon && endDist <= epsilon;
 }
 
-export function parameterOnSegmentPoint(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
+export function parameterOnSegmentPoint(
+  px: number,
+  py: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number
+): number {
   const qx = px - ax;
   const qy = py - ay;
   const dx = bx - ax;
