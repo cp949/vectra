@@ -1,188 +1,21 @@
 import { arcTAtLength } from '../curve/arc-t-at-length';
 import { centerArcToEndpointInto } from '../curve/center-arc-to-endpoint-into';
-import { cubicSplitInto } from '../curve/cubic-split-into';
-import { cubicTAtLength } from '../curve/cubic-t-at-length';
-import { quadraticSplitInto } from '../curve/quadratic-split-into';
-import { quadraticTAtLength } from '../curve/quadratic-t-at-length';
-import { polylineTotalLength } from '../internal/polyline';
-import type {
-  ArcCommand,
-  ArcCommandWritable,
-  CenterArcWritable,
-  CubicCommand,
-  CubicCurveWritable,
-  PathCommand,
-  QuadraticCommand,
-  QuadraticCurveWritable,
-  XYObjectWritable,
-} from '../types/index';
+import type { ArcCommand, ArcCommandWritable, CenterArcWritable, PathCommand, XYObjectWritable } from '../types/index';
+import { createCenterArcBuf, type DrawSegment, forEachDrawSegment } from './path-segments.internal';
+import { writeCubicSplit, writeQuadraticSplit } from './path-slice-curve-writers.internal';
+import { writeCloseSplit, writeLineSplit } from './path-slice-line-writers.internal';
 import {
-  createCenterArcBuf,
-  type DrawSegment,
-  flattenDrawSegmentInto,
-  forEachDrawSegment,
-} from './path-segments.internal';
+  appendCommandsBeforeSegment,
+  appendRemainingCommands,
+  measureSegmentLength,
+} from './path-slice-shared.internal';
 
 /**
  * splitAtLengthInto에서 두 path command sequence(outA, outB)를 만들기 위한 path-local
- * slicing helper. public domain barrel은 사용하지 않고, curve domain의 t-at-length /
- * split helper를 직접 호출한다.
+ * slicing orchestration. public domain barrel은 사용하지 않고, curve type별 writer와 공유
+ * helper를 import해 dispatch한다. splitCommandsAtLength는 소비처(split-at-length-into.ts)가
+ * 직접 import하는 named export로 보존된다.
  */
-
-/**
- * line segment를 t 위치에서 split해 두 line endpoint를 만든다.
- *
- * `t`는 segment의 두 endpoint를 잇는 직선 비례 위치다 (curve t와 동일 의미).
- */
-function splitLineEndpoint(
-  fromX: number,
-  fromY: number,
-  toX: number,
-  toY: number,
-  t: number
-): { x: number; y: number } {
-  return { x: fromX + t * (toX - fromX), y: fromY + t * (toY - fromY) };
-}
-
-function measureSegmentLength(
-  seg: DrawSegment,
-  segBuf: XYObjectWritable[],
-  centerArcBuf: CenterArcWritable,
-  flatOpts: { flatness: number; maxRecursion: number }
-): number {
-  flattenDrawSegmentInto(segBuf, seg, flatOpts, centerArcBuf);
-  return polylineTotalLength(segBuf);
-}
-
-function appendCommandsBeforeSegment(
-  outA: PathCommand[],
-  commands: readonly PathCommand[],
-  scanIndex: number,
-  seg: DrawSegment
-): number {
-  let nextIndex = scanIndex;
-  while (nextIndex < commands.length && commands[nextIndex] !== seg.command) {
-    outA.push(commands[nextIndex]);
-    nextIndex += 1;
-  }
-  return nextIndex;
-}
-
-function writeLineSplit(
-  outA: PathCommand[],
-  outB: PathCommand[],
-  seg: DrawSegment & { kind: 'line' },
-  t: number
-): void {
-  const mid = splitLineEndpoint(seg.fromX, seg.fromY, seg.command.x, seg.command.y, t);
-  outA.push({ kind: 'line', x: mid.x, y: mid.y });
-  outB.push({ kind: 'move', x: mid.x, y: mid.y });
-  outB.push({ kind: 'line', x: seg.command.x, y: seg.command.y });
-}
-
-function writeCloseSplit(
-  outA: PathCommand[],
-  outB: PathCommand[],
-  seg: DrawSegment & { kind: 'close' },
-  t: number
-): void {
-  const mid = splitLineEndpoint(seg.fromX, seg.fromY, seg.subpathStartX, seg.subpathStartY, t);
-  // outA는 split 지점까지의 line만, outB는 split 지점에서 시작해 subpath start로 가는
-  // line + 원본 close (close는 이미 subpath start에 도달했으므로 zero-length no-op)
-  outA.push({ kind: 'line', x: mid.x, y: mid.y });
-  outB.push({ kind: 'move', x: mid.x, y: mid.y });
-  outB.push({ kind: 'line', x: seg.subpathStartX, y: seg.subpathStartY });
-  outB.push(seg.command);
-}
-
-function writeQuadraticSplit(
-  outA: PathCommand[],
-  outB: PathCommand[],
-  seg: DrawSegment & { kind: 'quadratic' },
-  local: number
-): void {
-  const cmd = seg.command;
-  const p0 = { x: seg.fromX, y: seg.fromY };
-  const p1 = { x: cmd.x1, y: cmd.y1 };
-  const p2 = { x: cmd.x, y: cmd.y };
-  const t = quadraticTAtLength(p0, p1, p2, local);
-  const left: QuadraticCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-  };
-  const right: QuadraticCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-  };
-  quadraticSplitInto(left, right, p0, p1, p2, t);
-  const leftCmd: QuadraticCommand = {
-    kind: 'quadratic',
-    x1: left.p1.x,
-    y1: left.p1.y,
-    x: left.p2.x,
-    y: left.p2.y,
-  };
-  const rightCmd: QuadraticCommand = {
-    kind: 'quadratic',
-    x1: right.p1.x,
-    y1: right.p1.y,
-    x: right.p2.x,
-    y: right.p2.y,
-  };
-  outA.push(leftCmd);
-  outB.push({ kind: 'move', x: right.p0.x, y: right.p0.y });
-  outB.push(rightCmd);
-}
-
-function writeCubicSplit(
-  outA: PathCommand[],
-  outB: PathCommand[],
-  seg: DrawSegment & { kind: 'cubic' },
-  local: number
-): void {
-  const cmd = seg.command;
-  const p0 = { x: seg.fromX, y: seg.fromY };
-  const p1 = { x: cmd.x1, y: cmd.y1 };
-  const p2 = { x: cmd.x2, y: cmd.y2 };
-  const p3 = { x: cmd.x, y: cmd.y };
-  const t = cubicTAtLength(p0, p1, p2, p3, local);
-  const left: CubicCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-    p3: { x: 0, y: 0 },
-  };
-  const right: CubicCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-    p3: { x: 0, y: 0 },
-  };
-  cubicSplitInto(left, right, p0, p1, p2, p3, t);
-  const leftCmd: CubicCommand = {
-    kind: 'cubic',
-    x1: left.p1.x,
-    y1: left.p1.y,
-    x2: left.p2.x,
-    y2: left.p2.y,
-    x: left.p3.x,
-    y: left.p3.y,
-  };
-  const rightCmd: CubicCommand = {
-    kind: 'cubic',
-    x1: right.p1.x,
-    y1: right.p1.y,
-    x2: right.p2.x,
-    y2: right.p2.y,
-    x: right.p3.x,
-    y: right.p3.y,
-  };
-  outA.push(leftCmd);
-  outB.push({ kind: 'move', x: right.p0.x, y: right.p0.y });
-  outB.push(rightCmd);
-}
 
 function writeArcSplit(outA: PathCommand[], outB: PathCommand[], centerArc: CenterArcWritable, local: number): void {
   const t = arcTAtLength(centerArc, local);
@@ -275,12 +108,6 @@ function writeSplitSegment(
   } else if (seg.kind === 'arc') {
     // centerArcBuf는 measureSegmentLength의 arc 분기에서 이미 채워졌다.
     writeArcSplit(outA, outB, centerArcBuf, local);
-  }
-}
-
-function appendRemainingCommands(outB: PathCommand[], commands: readonly PathCommand[], splitIndex: number): void {
-  for (let i = splitIndex; i < commands.length; i++) {
-    outB.push(commands[i]);
   }
 }
 
