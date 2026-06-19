@@ -31,19 +31,19 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@monaco-editor/react": "^4.7.0",
-    "@mui/icons-material": "^9.0.1",
-    "@mui/material": "^9.0.1",
+    "@mui/icons-material": "^9.1.1",
+    "@mui/material": "^9.1.1",
     "monaco-editor": "^0.55.1",
     "react-inspector": "^9.0.0",
     "sucrase": "^3.35.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.16",
+    "@biomejs/biome": "^2.5.0",
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "^19.2.16",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
   }
 }
