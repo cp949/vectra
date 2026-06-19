@@ -8,55 +8,52 @@
  * named export 보존을 위해 전부 re-export하는 배럴이다.
  */
 
-// ─── validators + 공유 상수 group re-export ─────────────────────────────────────
-export {
-  assertFiniteT,
-  assertPositiveFiniteExponent,
-  assertFiniteOvershoot,
-  assertEasingFunction,
-  assertFiniteWeight,
-  assertElasticAmplitude,
-  assertElasticPeriod,
-  DEFAULT_BACK_OVERSHOOT,
-  BOUNCE_N1,
-  BOUNCE_D1,
-  ELASTIC_DEFAULT_AMPLITUDE,
-  ELASTIC_DEFAULT_PERIOD,
-} from './easing-validators.internal';
-
-// ─── standard raw group re-export ───────────────────────────────────────────────
-export {
-  powerInRaw,
-  powerOutRaw,
-  powerInOutRaw,
-  sineInRaw,
-  sineOutRaw,
-  sineInOutRaw,
-  expoInRaw,
-  expoOutRaw,
-  expoInOutRaw,
-  circInRaw,
-  circOutRaw,
-  circInOutRaw,
-  bounceOutRaw,
-} from './easing-standard-raw.internal';
-
 // ─── parametric raw group re-export ─────────────────────────────────────────────
 export {
+  backInOutRaw,
   backInRaw,
   backOutRaw,
-  backInOutRaw,
   bezierScalarRaw,
   cubicBezierRaw,
+  elasticInOutRaw,
   elasticInRaw,
   elasticOutRaw,
-  elasticInOutRaw,
 } from './easing-parametric-raw.internal';
-
 // ─── shaping raw group re-export ────────────────────────────────────────────────
 export {
   biasRaw,
+  cliffRaw,
   logisticNormalizedRaw,
   seatRaw,
-  cliffRaw,
 } from './easing-shaping-raw.internal';
+// ─── standard raw group re-export ───────────────────────────────────────────────
+export {
+  bounceOutRaw,
+  circInOutRaw,
+  circInRaw,
+  circOutRaw,
+  expoInOutRaw,
+  expoInRaw,
+  expoOutRaw,
+  powerInOutRaw,
+  powerInRaw,
+  powerOutRaw,
+  sineInOutRaw,
+  sineInRaw,
+  sineOutRaw,
+} from './easing-standard-raw.internal';
+// ─── validators + 공유 상수 group re-export ─────────────────────────────────────
+export {
+  assertEasingFunction,
+  assertElasticAmplitude,
+  assertElasticPeriod,
+  assertFiniteOvershoot,
+  assertFiniteT,
+  assertFiniteWeight,
+  assertPositiveFiniteExponent,
+  BOUNCE_D1,
+  BOUNCE_N1,
+  DEFAULT_BACK_OVERSHOOT,
+  ELASTIC_DEFAULT_AMPLITUDE,
+  ELASTIC_DEFAULT_PERIOD,
+} from './easing-validators.internal';
