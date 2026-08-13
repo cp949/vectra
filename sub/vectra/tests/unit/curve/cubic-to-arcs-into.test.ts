@@ -177,6 +177,43 @@ describe('cubicToArcsInto — 오류 케이스', () => {
     expect(() => cubicToArcsInto([], QC_P0, QC_P1, QC_P2, { x: 0, y: NaN })).toThrow(RangeError);
   });
 
+  test('options 검증은 control point getter 평가보다 먼저 실행한다', () => {
+    const unreadablePoint = {
+      get x(): number {
+        throw new Error('control point getter must not run');
+      },
+      y: 0,
+    };
+
+    expect(() => cubicToArcsInto([], unreadablePoint, QC_P1, QC_P2, QC_P3, { errorTolerance: 0 })).toThrowError(
+      'cubicToArcsInto: errorTolerance must be a finite positive number'
+    );
+  });
+
+  test('control point 좌표는 호출 초기에 한 번씩만 읽는다', () => {
+    let reads = 0;
+    const countedPoint = (x: number, y: number) => ({
+      get x(): number {
+        reads++;
+        return x;
+      },
+      get y(): number {
+        reads++;
+        return y;
+      },
+    });
+
+    cubicToArcsInto(
+      [],
+      countedPoint(QC_P0.x, QC_P0.y),
+      countedPoint(QC_P1.x, QC_P1.y),
+      countedPoint(QC_P2.x, QC_P2.y),
+      countedPoint(QC_P3.x, QC_P3.y)
+    );
+
+    expect(reads).toBe(8);
+  });
+
   test('collinear straight cubic은 RangeError를 던진다', () => {
     // 완전 직선 cubic: 원호로 근사 불가
     expect(() => cubicToArcsInto([], { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 })).toThrow(
