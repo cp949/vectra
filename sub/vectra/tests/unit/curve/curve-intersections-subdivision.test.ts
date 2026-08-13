@@ -1,36 +1,26 @@
 /**
- * curve-intersections.internal의 splitCubic/splitQuadratic/subdivideCurves 단위 테스트.
+ * curve.subdivideCurves — 커브 교차 subdivision kernel의 계산 계약을 검증한다.
  *
- * cubic-cubic/cubic-self/quadratic-cubic/quadratic-quadratic 4개 파일에 중복돼 있던
- * split/subdivide kernel을 승격한 뒤 direct test가 없던 상태를 characterization golden으로
- * 고정한다. subdivideCurves는 fake adapter로 trunk(hull-bounds 조기 종료/span 분기/재귀/
- * maxDepth)만 분리해서 검증하고, 마지막 test에서 실제 cubic adapter로 배선해 leaf golden과
- * 동일한 교차점을 재현한다.
+ * 대상 함수:
+ *  - splitCubic       : t=0.5 De Casteljau 분할
+ *  - splitQuadratic   : t=0.5 De Casteljau 분할
+ *  - subdivideCurves  : bounds 조기 종료, span 재귀, maxDepth 수렴, 콜백 데이터 흐름
  */
 
 import { describe, expect, test } from 'vitest';
-import {
-  type CubicFlat,
-  classifyIntersectionKind,
-  cubicHullBounds,
-  cubicTangent,
-  pushHitIfNewAB,
-  SUBDIVISION_DEDUPE_T_FACTOR,
-  SUBDIVISION_KIND_EPSILON_FACTOR,
-  splitCubic,
-  splitQuadratic,
-  subdivideCurves,
-} from '../../../src/curve/curve-intersections.internal';
+import { splitCubic, splitQuadratic, subdivideCurves } from '../../../src/curve/curve-intersections.internal';
 import type { IntersectionHit } from '../../../src/types';
 
-describe('splitCubic', () => {
+describe('curve subdivision - splitCubic', () => {
   test('직선형 cubic — De Casteljau 중점이 등간격으로 나뉜다', () => {
+    // 손으로 계산 가능한 직선형 control point로 각 half의 전체 좌표를 고정한다.
     const [left, right] = splitCubic(0, 0, 1, 0, 2, 0, 3, 0);
     expect(left).toEqual([0, 0, 0.5, 0, 1, 0, 1.5, 0]);
     expect(right).toEqual([1.5, 0, 2, 0, 2.5, 0, 3, 0]);
   });
 
   test('원본 시작/끝점을 보존하고, 두 half가 t=0.5에서 연속이다', () => {
+    // 비대칭 control point에서도 endpoint 보존과 half 연결점 연속성을 함께 확인한다.
     const [left, right] = splitCubic(0, 0, 2, 3, -2, 3, 4, 0);
     expect([left[0], left[1]]).toEqual([0, 0]);
     expect([right[6], right[7]]).toEqual([4, 0]);
@@ -38,14 +28,16 @@ describe('splitCubic', () => {
   });
 });
 
-describe('splitQuadratic', () => {
+describe('curve subdivision - splitQuadratic', () => {
   test('직선형 quadratic — De Casteljau 중점이 등간격으로 나뉜다', () => {
+    // 손으로 계산 가능한 직선형 control point로 각 half의 전체 좌표를 고정한다.
     const [left, right] = splitQuadratic(0, 0, 2, 0, 4, 0);
     expect(left).toEqual([0, 0, 1, 0, 2, 0]);
     expect(right).toEqual([2, 0, 3, 0, 4, 0]);
   });
 
   test('원본 시작/끝점을 보존하고, 두 half가 t=0.5에서 연속이다', () => {
+    // 굽은 quadratic에서도 endpoint 보존과 half 연결점 연속성을 함께 확인한다.
     const [left, right] = splitQuadratic(0, 0, 2, 4, 4, 0);
     expect([left[0], left[1]]).toEqual([0, 0]);
     expect([right[4], right[5]]).toEqual([4, 0]);
@@ -68,8 +60,9 @@ function splitRange(sub: Range): [Range, Range] {
   ];
 }
 
-describe('subdivideCurves — trunk 분기', () => {
+describe('curve subdivision - subdivideCurves trunk', () => {
   test('hull-bounds가 겹치지 않으면 onConverge를 호출하지 않는다', () => {
+    // 겹치지 않는 branch는 split과 수렴 콜백 전에 제거돼야 한다.
     const calls: Array<[number, number, number, number]> = [];
     const outHits: IntersectionHit[] = [];
     subdivideCurves<Range, Range, IntersectionHit['point']>(
@@ -98,6 +91,7 @@ describe('subdivideCurves — trunk 분기', () => {
   });
 
   test('겹치는 range는 span이 epsilonT 이하로 수렴할 때까지 재귀한 뒤 onConverge를 호출한다', () => {
+    // 한쪽 span만 계속 줄이는 회귀도 잡도록 양쪽 최종 span을 모두 검증한다.
     const calls: Array<[number, number, number, number]> = [];
     const outHits: IntersectionHit[] = [];
     subdivideCurves<Range, Range, IntersectionHit['point']>(
@@ -130,6 +124,7 @@ describe('subdivideCurves — trunk 분기', () => {
   });
 
   test('maxDepth 도달 시 span이 남아 있어도 즉시 onConverge를 호출한다', () => {
+    // depth 제한은 epsilonT 수렴보다 우선하는 강제 종료 계약이다.
     const calls: Array<[number, number, number, number]> = [];
     const outHits: IntersectionHit[] = [];
     subdivideCurves<Range, Range, IntersectionHit['point']>(
@@ -156,73 +151,42 @@ describe('subdivideCurves — trunk 분기', () => {
     );
     expect(calls).toEqual([[0, 1, 0, 1]]);
   });
-});
 
-describe('subdivideCurves — 실제 cubic adapter 배선', () => {
-  test('두 transversal cubic 교차점을 leaf golden과 동일하게 재현한다', () => {
-    // cubic-cubic-intersections-into.test.ts의 '두 transversal 교차점을 각각 한 hit로
-    // 반환한다' 케이스와 동일 입력 — y≈0.5에서 2개 hit.
-    const origA: CubicFlat = [0, 0, 0.3, 1, 0.7, 1, 1, 0];
-    const bSub: CubicFlat = [0, 0.5, 0.3, 0.5, 0.7, 0.5, 1, 0.5];
-    const outHits: IntersectionHit[] = [];
+  test('수렴 콜백에 불변 origA와 현재 depth의 bSub를 전달한다', () => {
+    // B만 한 번 분할해 origA identity와 두 current B half를 독립적으로 관찰한다.
+    const origA: Range = [100, 200];
+    const converged: Array<{ origA: Range; bSub: Range }> = [];
 
-    function onConverge(
-      hits: IntersectionHit[],
-      tA0: number,
-      tA1: number,
-      tB0: number,
-      tB1: number,
-      oA: CubicFlat,
-      b: CubicFlat,
-      epsilon: number,
-      epsilonT: number,
-      makePoint: () => IntersectionHit['point']
-    ): void {
-      const tAMid = (tA0 + tA1) * 0.5;
-      const tBMid = (tB0 + tB1) * 0.5;
-      const spanA = tA1 - tA0;
-      const spanB = tB1 - tB0;
-      const [oA0x, oA0y, oA1x, oA1y, oA2x, oA2y, oA3x, oA3y] = oA;
-      const mt = 1 - tAMid;
-      const mt2 = mt * mt;
-      const mt3 = mt2 * mt;
-      const t2 = tAMid * tAMid;
-      const t3 = t2 * tAMid;
-      const px = mt3 * oA0x + 3 * mt2 * tAMid * oA1x + 3 * mt * t2 * oA2x + t3 * oA3x;
-      const py = mt3 * oA0y + 3 * mt2 * tAMid * oA1y + 3 * mt * t2 * oA2y + t3 * oA3y;
-      const [taxDx, taxDy] = cubicTangent(oA0x, oA0y, oA1x, oA1y, oA2x, oA2y, oA3x, oA3y, tAMid);
-      const [tbxDx, tbxDy] = cubicTangent(b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], 0.5);
-      const kindEpsilon = Math.max(epsilon, SUBDIVISION_KIND_EPSILON_FACTOR * Math.max(spanA, spanB));
-      const kind = classifyIntersectionKind(taxDx, taxDy, tbxDx, tbxDy, kindEpsilon);
-      const dedupeT = Math.max(epsilonT, SUBDIVISION_DEDUPE_T_FACTOR * Math.max(spanA, spanB));
-      pushHitIfNewAB(hits, px, py, kind, tAMid, tBMid, dedupeT, makePoint);
-    }
-
-    subdivideCurves<CubicFlat, CubicFlat, IntersectionHit['point']>(
-      outHits,
+    subdivideCurves<Range, Range, IntersectionHit['point']>(
+      [],
+      [2, 6],
+      0,
+      0.25,
+      [0, 8],
+      0,
+      0.5,
       origA,
       0,
-      1,
-      bSub,
-      0,
-      1,
-      origA,
-      1e-9,
-      1e-10,
-      32,
+      0.25,
+      10,
       0,
       () => ({ x: 0, y: 0 }),
       {
-        hullBoundsA: (sub) => cubicHullBounds(...sub),
-        hullBoundsB: (sub) => cubicHullBounds(...sub),
-        splitA: (sub) => splitCubic(...sub),
-        splitB: (sub) => splitCubic(...sub),
-        onConverge,
+        hullBoundsA: rangeHullBounds,
+        hullBoundsB: rangeHullBounds,
+        splitA: splitRange,
+        splitB: splitRange,
+        onConverge: (_outHits, _tA0, _tA1, _tB0, _tB1, receivedOrigA, currentBSub) =>
+          converged.push({ origA: receivedOrigA, bSub: currentBSub }),
       }
     );
 
-    expect(outHits).toHaveLength(2);
-    expect(outHits[0].point.y).toBeCloseTo(0.5, 4);
-    expect(outHits[1].point.y).toBeCloseTo(0.5, 4);
+    expect(converged).toHaveLength(2);
+    expect(converged[0].origA).toBe(origA);
+    expect(converged[1].origA).toBe(origA);
+    expect(converged.map(({ bSub }) => bSub)).toEqual([
+      [0, 4],
+      [4, 8],
+    ]);
   });
 });
