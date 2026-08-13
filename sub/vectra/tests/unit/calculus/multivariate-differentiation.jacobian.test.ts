@@ -161,15 +161,14 @@ describe('jacobianInto — callback result invalid', () => {
     expect(out).toEqual([[9, 9]]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('callback array entry %s는 RangeError이며 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [[9, 9]];
-    expect(() => jacobianInto(out, () => [bad], [1])).toThrow(RangeError);
-    expect(out).toEqual([[9, 9]]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'callback array entry %s는 RangeError이며 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [[9, 9]];
+      expect(() => jacobianInto(out, () => [bad], [1])).toThrow(RangeError);
+      expect(out).toEqual([[9, 9]]);
+    }
+  );
 
   test('callback result entry가 number 아니면 RangeError', () => {
     const out: number[][] = [[9, 9]];
@@ -248,17 +247,14 @@ describe('jacobianInto — invalid input은 throw하고 out을 수정하지 않�
     expect(out).toEqual([[9, 9]]);
   });
 
-  test.each([
-    0,
-    -1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('scalar step %s는 RangeError', (bad) => {
-    const out: number[][] = [[9, 9]];
-    expect(() => jacobianInto(out, (x) => [x[0]], [1, 2], { step: bad })).toThrow(RangeError);
-    expect(out).toEqual([[9, 9]]);
-  });
+  test.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'scalar step %s는 RangeError',
+    (bad) => {
+      const out: number[][] = [[9, 9]];
+      expect(() => jacobianInto(out, (x) => [x[0]], [1, 2], { step: bad })).toThrow(RangeError);
+      expect(out).toEqual([[9, 9]]);
+    }
+  );
 
   test('step vector length mismatch는 RangeError', () => {
     const out: number[][] = [[9, 9]];
@@ -268,17 +264,14 @@ describe('jacobianInto — invalid input은 throw하고 out을 수정하지 않�
     expect(out).toEqual([[9, 9]]);
   });
 
-  test.each([
-    0,
-    -1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('step vector entry %s는 RangeError', (bad) => {
-    const out: number[][] = [[9, 9]];
-    expect(() => jacobianInto(out, (x) => [x[0]], [1, 2], { step: [1e-5, bad] })).toThrow(RangeError);
-    expect(out).toEqual([[9, 9]]);
-  });
+  test.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'step vector entry %s는 RangeError',
+    (bad) => {
+      const out: number[][] = [[9, 9]];
+      expect(() => jacobianInto(out, (x) => [x[0]], [1, 2], { step: [1e-5, bad] })).toThrow(RangeError);
+      expect(out).toEqual([[9, 9]]);
+    }
+  );
 });
 
 describe('jacobian — invalid input은 throw한다', () => {

@@ -86,16 +86,14 @@ describe('boundsSplitGridInto - bounds를 rows x cols로 균등 분할', () => {
     ]);
   });
 
-  test.each([
-    0,
-    -1,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('invalid rows %s는 RangeError다', (rows) => {
-    expect(() => boundsSplitGridInto([], { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } }, rows, 2)).toThrow(RangeError);
-  });
+  test.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'invalid rows %s는 RangeError다',
+    (rows) => {
+      expect(() => boundsSplitGridInto([], { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } }, rows, 2)).toThrow(
+        RangeError
+      );
+    }
+  );
 
   test.each([0, -1, 2.5, Number.NaN, Number.NEGATIVE_INFINITY])('invalid cols %s는 RangeError다', (cols) => {
     expect(() => boundsSplitGridInto([], { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } }, 2, cols)).toThrow(RangeError);

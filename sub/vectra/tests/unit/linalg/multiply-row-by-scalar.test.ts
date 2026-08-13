@@ -55,31 +55,30 @@ describe('multiplyRowByScalarInto — matrix row × scalar (Into)', () => {
     ]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite scalar %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      multiplyRowByScalarInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        0,
-        bad
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite scalar %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        multiplyRowByScalarInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          0,
+          bad
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('overflow(Number.MAX_VALUE * 2 = Infinity)는 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9]];
@@ -87,35 +86,30 @@ describe('multiplyRowByScalarInto — matrix row × scalar (Into)', () => {
     expect(out).toEqual([[9]]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    1.5,
-    2,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid rowIndex %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      multiplyRowByScalarInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        bad,
-        2
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([-1, 0.5, 1.5, 2, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid rowIndex %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        multiplyRowByScalarInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          bad,
+          2
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('out capacity 부족 시 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9]];

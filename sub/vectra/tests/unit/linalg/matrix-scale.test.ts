@@ -61,55 +61,53 @@ describe('scaleMatrixInto — matrix scalar multiplication (Into)', () => {
     expect(out).toEqual([]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite scalar %s는 RangeError를 던지고 out을 수정하지 않는다', (badScalar) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      scaleMatrixInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        badScalar
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite scalar %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (badScalar) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        scaleMatrixInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          badScalar
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('matrix non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      scaleMatrixInto(
-        out,
-        [
-          [1, 2],
-          [bad, 4],
-        ],
-        2
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'matrix non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        scaleMatrixInto(
+          out,
+          [
+            [1, 2],
+            [bad, 4],
+          ],
+          2
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('overflow(Number.MAX_VALUE * 2 = Infinity)는 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9]];

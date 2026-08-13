@@ -306,56 +306,53 @@ describe('solveTriangularMatrix — validation', () => {
     expect(() => solveTriangularMatrix([[1, 0], [2]], [1, 5], 'lower')).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])("triangle='lower' matrix entry %s는 RangeError를 던진다", (bad) => {
-    expect(() =>
-      solveTriangularMatrix(
-        [
-          [1, 0],
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    "triangle='lower' matrix entry %s는 RangeError를 던진다",
+    (bad) => {
+      expect(() =>
+        solveTriangularMatrix(
+          [
+            [1, 0],
+            [bad, 1],
+          ],
+          [1, 1],
+          'lower'
+        )
+      ).toThrow(RangeError);
+    }
+  );
+
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    "triangle='upper' matrix entry %s는 RangeError를 던진다",
+    (bad) => {
+      expect(() =>
+        solveTriangularMatrix(
+          [
+            [1, bad],
+            [0, 1],
+          ],
+          [1, 1],
+          'upper'
+        )
+      ).toThrow(RangeError);
+    }
+  );
+
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    "triangle='lower' vector entry %s는 RangeError를 던진다",
+    (bad) => {
+      expect(() =>
+        solveTriangularMatrix(
+          [
+            [1, 0],
+            [0, 1],
+          ],
           [bad, 1],
-        ],
-        [1, 1],
-        'lower'
-      )
-    ).toThrow(RangeError);
-  });
-
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])("triangle='upper' matrix entry %s는 RangeError를 던진다", (bad) => {
-    expect(() =>
-      solveTriangularMatrix(
-        [
-          [1, bad],
-          [0, 1],
-        ],
-        [1, 1],
-        'upper'
-      )
-    ).toThrow(RangeError);
-  });
-
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])("triangle='lower' vector entry %s는 RangeError를 던진다", (bad) => {
-    expect(() =>
-      solveTriangularMatrix(
-        [
-          [1, 0],
-          [0, 1],
-        ],
-        [bad, 1],
-        'lower'
-      )
-    ).toThrow(RangeError);
-  });
+          'lower'
+        )
+      ).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, -1])('invalid epsilon %s는 RangeError를 던진다', (bad) => {
     expect(() => solveTriangularMatrix([[1]], [1], 'lower', { epsilon: bad })).toThrow(RangeError);

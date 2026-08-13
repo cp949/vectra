@@ -76,17 +76,12 @@ describe('trapezoidalIntegral — invalid input은 throw한다', () => {
     expect(() => trapezoidalIntegral((x) => x, 0, xMax, 4)).toThrow(RangeError);
   });
 
-  test.each([
-    -1,
-    0,
-    1,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('binCount %s는 RangeError', (binCount) => {
-    expect(() => trapezoidalIntegral((x) => x, 0, 1, binCount)).toThrow(RangeError);
-  });
+  test.each([-1, 0, 1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'binCount %s는 RangeError',
+    (binCount) => {
+      expect(() => trapezoidalIntegral((x) => x, 0, 1, binCount)).toThrow(RangeError);
+    }
+  );
 
   test('binCount 0/1에서도 f를 호출하지 않고 RangeError', () => {
     const f = vi.fn((x: number) => x);
@@ -229,18 +224,12 @@ describe('simpsonIntegral — invalid input은 throw한다', () => {
     expect(() => simpsonIntegral((x) => x, 0, xMax, 5)).toThrow(RangeError);
   });
 
-  test.each([
-    -1,
-    0,
-    1,
-    2,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('binCount %s는 RangeError(<3 또는 invalid)', (binCount) => {
-    expect(() => simpsonIntegral((x) => x, 0, 1, binCount)).toThrow(RangeError);
-  });
+  test.each([-1, 0, 1, 2, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'binCount %s는 RangeError(<3 또는 invalid)',
+    (binCount) => {
+      expect(() => simpsonIntegral((x) => x, 0, 1, binCount)).toThrow(RangeError);
+    }
+  );
 
   test.each([4, 6, 8, 100])('binCount %s는 (binCount - 1)이 홀수이므로 parity 위반 RangeError', (binCount) => {
     expect(() => simpsonIntegral((x) => x, 0, 1, binCount)).toThrow(RangeError);

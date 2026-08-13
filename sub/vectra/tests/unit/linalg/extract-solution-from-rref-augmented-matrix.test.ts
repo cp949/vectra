@@ -192,21 +192,19 @@ describe('extractSolutionFromRrefAugmentedMatrix — validation', () => {
     ).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError를 던진다', (bad) => {
-    expect(() => extractSolutionFromRrefAugmentedMatrix([[1, 0, bad]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError를 던진다',
+    (bad) => {
+      expect(() => extractSolutionFromRrefAugmentedMatrix([[1, 0, bad]])).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    -1,
-  ])('invalid epsilon %s는 다른 input보다 먼저 RangeError를 던진다', (bad) => {
-    expect(() => extractSolutionFromRrefAugmentedMatrix([[1, 0, 2]], { epsilon: bad })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, -1])(
+    'invalid epsilon %s는 다른 input보다 먼저 RangeError를 던진다',
+    (bad) => {
+      expect(() => extractSolutionFromRrefAugmentedMatrix([[1, 0, 2]], { epsilon: bad })).toThrow(RangeError);
+    }
+  );
 
   test('invalid epsilon은 rref input 검증 전에 먼저 던진다', () => {
     // rref가 ragged여도 epsilon 검증이 우선이라 epsilon 메시지로 throw한다.

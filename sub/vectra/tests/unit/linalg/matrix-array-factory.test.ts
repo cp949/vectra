@@ -155,21 +155,20 @@ describe('fromIndexFunctionInto — callback 기반 matrix 생성 (Into)', () =>
     expect(fn).not.toHaveBeenCalled();
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('callback이 non-finite %s를 반환하면 RangeError를 던지고 out을 수정하지 않는다', (badValue) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() => fromIndexFunctionInto(out, [2, 2], () => badValue)).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'callback이 non-finite %s를 반환하면 RangeError를 던지고 out을 수정하지 않는다',
+    (badValue) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() => fromIndexFunctionInto(out, [2, 2], () => badValue)).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('callback이 throw하면 그대로 전파하고 out을 수정하지 않는다', () => {
     const out: number[][] = [

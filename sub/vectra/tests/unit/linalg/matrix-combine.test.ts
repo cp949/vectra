@@ -103,34 +103,33 @@ describe('combineMatricesInto — callback 기반 element-wise 합성 (Into)', (
     ]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('callback이 non-finite %s를 반환하면 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      combineMatricesInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        [
-          [5, 6],
-          [7, 8],
-        ],
-        () => bad
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'callback이 non-finite %s를 반환하면 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        combineMatricesInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          [
+            [5, 6],
+            [7, 8],
+          ],
+          () => bad
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('out === a aliasing이 허용된다', () => {
     const a: number[][] = [

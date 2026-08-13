@@ -99,18 +99,14 @@ describe('rowInto — row 추출 (Into)', () => {
     expect(out).toEqual([9]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid rowIndex %s는 RangeError를 던지고 out을 수정하지 않는다', (idx) => {
-    const out = [9, 9, 9];
-    expect(() => rowInto(out, [[1, 2, 3]], idx)).toThrow(RangeError);
-    expect(out).toEqual([9, 9, 9]);
-  });
+  test.each([-1, 0.5, 1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid rowIndex %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (idx) => {
+      const out = [9, 9, 9];
+      expect(() => rowInto(out, [[1, 2, 3]], idx)).toThrow(RangeError);
+      expect(out).toEqual([9, 9, 9]);
+    }
+  );
 
   test('빈 matrix는 어떤 rowIndex여도 RangeError', () => {
     const out = [9];
@@ -203,27 +199,23 @@ describe('columnInto — column 추출 (Into)', () => {
     expect(out).toEqual([9]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    2,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid columnIndex %s는 RangeError를 던지고 out을 수정하지 않는다', (idx) => {
-    const out = [9, 9];
-    expect(() =>
-      columnInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        idx
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([-1, 0.5, 2, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid columnIndex %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (idx) => {
+      const out = [9, 9];
+      expect(() =>
+        columnInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          idx
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('빈 matrix는 어떤 columnIndex여도 RangeError', () => {
     const out = [9];

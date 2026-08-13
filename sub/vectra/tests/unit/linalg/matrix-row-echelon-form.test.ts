@@ -129,30 +129,29 @@ describe('rowEchelonFormInto — REF (Into)', () => {
     ]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    -1,
-  ])('invalid epsilon %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      rowEchelonFormInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        { epsilon: bad }
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, -1])(
+    'invalid epsilon %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        rowEchelonFormInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          { epsilon: bad }
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('out capacity 부족 시 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9]];

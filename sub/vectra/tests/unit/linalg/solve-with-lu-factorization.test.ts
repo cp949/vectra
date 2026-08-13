@@ -332,26 +332,24 @@ describe('solveWithLuFactorization — validation', () => {
     expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
   });
 
-  test.each([
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('permutation entry %s가 비정수이면 RangeError', (bad) => {
-    const fact: LUFactorization = {
-      lower: [
-        [1, 0],
-        [0, 1],
-      ],
-      upper: [
-        [1, 0],
-        [0, 1],
-      ],
-      permutation: [0, bad],
-      swaps: 0,
-    };
-    expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
-  });
+  test.each([0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'permutation entry %s가 비정수이면 RangeError',
+    (bad) => {
+      const fact: LUFactorization = {
+        lower: [
+          [1, 0],
+          [0, 1],
+        ],
+        upper: [
+          [1, 0],
+          [0, 1],
+        ],
+        permutation: [0, bad],
+        swaps: 0,
+      };
+      expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
+    }
+  );
 
   test.each([-1, 2, 3])('permutation entry %s가 범위를 벗어나면 RangeError', (bad) => {
     const fact: LUFactorization = {
@@ -385,45 +383,43 @@ describe('solveWithLuFactorization — validation', () => {
     expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('lower matrix entry %s는 RangeError', (bad) => {
-    const fact: LUFactorization = {
-      lower: [
-        [1, 0],
-        [bad, 1],
-      ],
-      upper: [
-        [1, 0],
-        [0, 1],
-      ],
-      permutation: [0, 1],
-      swaps: 0,
-    };
-    expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'lower matrix entry %s는 RangeError',
+    (bad) => {
+      const fact: LUFactorization = {
+        lower: [
+          [1, 0],
+          [bad, 1],
+        ],
+        upper: [
+          [1, 0],
+          [0, 1],
+        ],
+        permutation: [0, 1],
+        swaps: 0,
+      };
+      expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('upper matrix entry %s는 RangeError', (bad) => {
-    const fact: LUFactorization = {
-      lower: [
-        [1, 0],
-        [0, 1],
-      ],
-      upper: [
-        [1, bad],
-        [0, 1],
-      ],
-      permutation: [0, 1],
-      swaps: 0,
-    };
-    expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'upper matrix entry %s는 RangeError',
+    (bad) => {
+      const fact: LUFactorization = {
+        lower: [
+          [1, 0],
+          [0, 1],
+        ],
+        upper: [
+          [1, bad],
+          [0, 1],
+        ],
+        permutation: [0, 1],
+        swaps: 0,
+      };
+      expect(() => solveWithLuFactorization(fact, [1, 2])).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])('b entry %s는 RangeError', (bad) => {
     const fact: LUFactorization = {

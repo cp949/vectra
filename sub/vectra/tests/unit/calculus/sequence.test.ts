@@ -75,37 +75,32 @@ describe('linspaceInto — 균등 sample 생성 (Into)', () => {
     expect(linspaceInto([], 0, 1, 2, { endpoint: false })).toEqual([0, 0.5]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('xMin %s는 RangeError를 던지고 out을 수정하지 않는다', (xMin) => {
-    const out: number[] = [9, 9];
-    expect(() => linspaceInto(out, xMin, 1, 4)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'xMin %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (xMin) => {
+      const out: number[] = [9, 9];
+      expect(() => linspaceInto(out, xMin, 1, 4)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('xMax %s는 RangeError를 던지고 out을 수정하지 않는다', (xMax) => {
-    const out: number[] = [9, 9];
-    expect(() => linspaceInto(out, 0, xMax, 4)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'xMax %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (xMax) => {
+      const out: number[] = [9, 9];
+      expect(() => linspaceInto(out, 0, xMax, 4)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    -1,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('binCount %s는 RangeError를 던지고 out을 수정하지 않는다', (binCount) => {
-    const out: number[] = [9, 9];
-    expect(() => linspaceInto(out, 0, 1, binCount)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'binCount %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (binCount) => {
+      const out: number[] = [9, 9];
+      expect(() => linspaceInto(out, 0, 1, binCount)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('xMax - xMin overflow는 RangeError이며 out을 수정하지 않는다', () => {
     const out: number[] = [9, 9];
@@ -184,37 +179,32 @@ describe('stepsInto — start + step * index sequence (Into)', () => {
     expect(out).toHaveLength(3);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('start %s는 RangeError를 던지고 out을 수정하지 않는다', (start) => {
-    const out: number[] = [9, 9];
-    expect(() => stepsInto(out, start, 1, 3)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'start %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (start) => {
+      const out: number[] = [9, 9];
+      expect(() => stepsInto(out, start, 1, 3)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('step %s는 RangeError를 던지고 out을 수정하지 않는다', (step) => {
-    const out: number[] = [9, 9];
-    expect(() => stepsInto(out, 0, step, 3)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'step %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (step) => {
+      const out: number[] = [9, 9];
+      expect(() => stepsInto(out, 0, step, 3)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    -1,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('count %s는 RangeError를 던지고 out을 수정하지 않는다', (count) => {
-    const out: number[] = [9, 9];
-    expect(() => stepsInto(out, 0, 1, count)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'count %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (count) => {
+      const out: number[] = [9, 9];
+      expect(() => stepsInto(out, 0, 1, count)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('start + step * index overflow는 RangeError이며 out을 수정하지 않는다', () => {
     const out: number[] = [9, 9];
@@ -348,35 +338,32 @@ describe('rangeInto — half-open stop-exclusive sequence (Into)', () => {
     expect(out).toEqual([9, 9]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('start %s는 RangeError를 던지고 out을 수정하지 않는다', (start) => {
-    const out: number[] = [9, 9];
-    expect(() => rangeInto(out, start, 5)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'start %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (start) => {
+      const out: number[] = [9, 9];
+      expect(() => rangeInto(out, start, 5)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('stop %s는 RangeError를 던지고 out을 수정하지 않는다', (stop) => {
-    const out: number[] = [9, 9];
-    expect(() => rangeInto(out, 0, stop)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'stop %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (stop) => {
+      const out: number[] = [9, 9];
+      expect(() => rangeInto(out, 0, stop)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('step %s는 RangeError를 던지고 out을 수정하지 않는다', (step) => {
-    const out: number[] = [9, 9];
-    expect(() => rangeInto(out, 0, 5, step)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'step %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (step) => {
+      const out: number[] = [9, 9];
+      expect(() => rangeInto(out, 0, 5, step)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('safe-integer를 넘는 count는 RangeError이며 out을 수정하지 않는다', () => {
     const out: number[] = [9, 9];

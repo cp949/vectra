@@ -99,33 +99,32 @@ describe('addMatricesInto — element-wise matrix add (Into)', () => {
     ).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      addMatricesInto(
-        out,
-        [
-          [1, 2],
-          [3, bad],
-        ],
-        [
-          [1, 1],
-          [1, 1],
-        ]
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        addMatricesInto(
+          out,
+          [
+            [1, 2],
+            [3, bad],
+          ],
+          [
+            [1, 1],
+            [1, 1],
+          ]
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('합 overflow(Number.MAX_VALUE + Number.MAX_VALUE = Infinity)는 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9]];

@@ -277,17 +277,14 @@ describe('hessianInto — invalid input은 throw하고 out을 수정하지 않�
     expect(out).toEqual([[9, 9]]);
   });
 
-  test.each([
-    0,
-    -1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('scalar step %s는 RangeError', (bad) => {
-    const out: number[][] = [[9, 9]];
-    expect(() => hessianInto(out, fSumSq, [1, 2], { step: bad })).toThrow(RangeError);
-    expect(out).toEqual([[9, 9]]);
-  });
+  test.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'scalar step %s는 RangeError',
+    (bad) => {
+      const out: number[][] = [[9, 9]];
+      expect(() => hessianInto(out, fSumSq, [1, 2], { step: bad })).toThrow(RangeError);
+      expect(out).toEqual([[9, 9]]);
+    }
+  );
 
   test('step vector length mismatch는 RangeError', () => {
     const out: number[][] = [[9, 9]];
@@ -297,17 +294,14 @@ describe('hessianInto — invalid input은 throw하고 out을 수정하지 않�
     expect(out).toEqual([[9, 9]]);
   });
 
-  test.each([
-    0,
-    -1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('step vector entry %s는 RangeError', (bad) => {
-    const out: number[][] = [[9, 9]];
-    expect(() => hessianInto(out, fSumSq, [1, 2], { step: [1e-5, bad] })).toThrow(RangeError);
-    expect(out).toEqual([[9, 9]]);
-  });
+  test.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'step vector entry %s는 RangeError',
+    (bad) => {
+      const out: number[][] = [[9, 9]];
+      expect(() => hessianInto(out, fSumSq, [1, 2], { step: [1e-5, bad] })).toThrow(RangeError);
+      expect(out).toEqual([[9, 9]]);
+    }
+  );
 });
 
 describe('hessian — invalid input은 throw한다', () => {
@@ -337,18 +331,17 @@ describe('hessian — invalid input은 throw한다', () => {
 // ---------------------------------------------------------------------------
 
 describe('hessianInto — callback result non-finite는 RangeError이며 out을 수정하지 않는다', () => {
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('baseline f(point)이 %s를 반환하면 RangeError', (bad) => {
-    const out: number[][] = [[9, 9]];
-    let call = 0;
-    // 첫 호출(baseline)에서 non-finite → fail-fast.
-    const f = (_x: readonly number[]) => (call++ === 0 ? bad : 0);
-    expect(() => hessianInto(out, f, [1, 2])).toThrow(RangeError);
-    expect(out).toEqual([[9, 9]]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'baseline f(point)이 %s를 반환하면 RangeError',
+    (bad) => {
+      const out: number[][] = [[9, 9]];
+      let call = 0;
+      // 첫 호출(baseline)에서 non-finite → fail-fast.
+      const f = (_x: readonly number[]) => (call++ === 0 ? bad : 0);
+      expect(() => hessianInto(out, f, [1, 2])).toThrow(RangeError);
+      expect(out).toEqual([[9, 9]]);
+    }
+  );
 
   test('diagonal plus evaluation에서 NaN이면 RangeError', () => {
     const out: number[][] = [[9, 9]];

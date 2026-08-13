@@ -250,37 +250,35 @@ describe('solveByGaussianElimination — validation', () => {
     expect(() => solveByGaussianElimination([[]], [0])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('A에 non-finite entry %s가 있으면 RangeError를 던진다', (bad) => {
-    expect(() =>
-      solveByGaussianElimination(
-        [
-          [1, 0],
-          [bad, 1],
-        ],
-        [1, 2]
-      )
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'A에 non-finite entry %s가 있으면 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        solveByGaussianElimination(
+          [
+            [1, 0],
+            [bad, 1],
+          ],
+          [1, 2]
+        )
+      ).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('b에 non-finite entry %s가 있으면 RangeError를 던진다', (bad) => {
-    expect(() =>
-      solveByGaussianElimination(
-        [
-          [1, 0],
-          [0, 1],
-        ],
-        [1, bad]
-      )
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'b에 non-finite entry %s가 있으면 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        solveByGaussianElimination(
+          [
+            [1, 0],
+            [0, 1],
+          ],
+          [1, bad]
+        )
+      ).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, -1])('invalid epsilon %s는 RangeError를 던진다', (bad) => {
     expect(() =>

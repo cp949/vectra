@@ -54,15 +54,12 @@ describe('gridCellInto - world point를 cell coordinate로 변환', () => {
     expect(out).toEqual({ col: 1, row: 2 });
   });
 
-  test.each([
-    0,
-    -10,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('cellSize %s는 RangeError다', (cellSize) => {
-    expect(() => gridCellInto(makeCell(), { x: 1, y: 1 }, { cellSize })).toThrow(RangeError);
-  });
+  test.each([0, -10, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'cellSize %s는 RangeError다',
+    (cellSize) => {
+      expect(() => gridCellInto(makeCell(), { x: 1, y: 1 }, { cellSize })).toThrow(RangeError);
+    }
+  );
 
   test('rectangular cellSize의 한 축만 invalid여도 RangeError다', () => {
     expect(() => gridCellInto(makeCell(), { x: 1, y: 1 }, { cellSize: { x: 10, y: 0 } })).toThrow(RangeError);

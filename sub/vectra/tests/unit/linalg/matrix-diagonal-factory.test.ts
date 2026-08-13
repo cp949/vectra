@@ -39,21 +39,20 @@ describe('diagonalMatrixInto — diagonal entries로 square matrix 생성 (Into)
     expect(out).toEqual([]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite diagonalEntries entry %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() => diagonalMatrixInto(out, [1, bad])).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite diagonalEntries entry %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() => diagonalMatrixInto(out, [1, bad])).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('out capacity 부족 시 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9, 9]];

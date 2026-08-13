@@ -35,15 +35,12 @@ describe('hexDistance - 두 hex coordinate 사이 grid distance', () => {
     expect(() => hexDistance({ q: 0, r: 0 }, [1, 2, 0])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('non-finite/non-integer/unsafe axial q %s는 RangeError다', (q) => {
-    expect(() => hexDistance({ q, r: 0 }, { q: 0, r: 0 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'non-finite/non-integer/unsafe axial q %s는 RangeError다',
+    (q) => {
+      expect(() => hexDistance({ q, r: 0 }, { q: 0, r: 0 })).toThrow(RangeError);
+    }
+  );
 
   test('safe integer 입력이라도 계산된 distance가 unsafe integer면 RangeError다', () => {
     expect(() => hexDistance({ q: Number.MAX_SAFE_INTEGER, r: 0 }, { q: -Number.MAX_SAFE_INTEGER, r: 0 })).toThrow(

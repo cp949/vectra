@@ -47,26 +47,19 @@ describe('hexNeighborInto - 단일 방향 neighbor', () => {
     expect(cell).toEqual({ q: 6, r: 5 });
   });
 
-  test.each([
-    -1,
-    6,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid direction %s는 RangeError다', (direction) => {
-    expect(() => hexNeighborInto({ q: 0, r: 0 }, { q: 0, r: 0 }, direction)).toThrow(RangeError);
-  });
+  test.each([-1, 6, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid direction %s는 RangeError다',
+    (direction) => {
+      expect(() => hexNeighborInto({ q: 0, r: 0 }, { q: 0, r: 0 }, direction)).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('invalid axial q %s는 RangeError다', (q) => {
-    expect(() => hexNeighborInto({ q: 0, r: 0 }, { q, r: 0 }, 0)).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'invalid axial q %s는 RangeError다',
+    (q) => {
+      expect(() => hexNeighborInto({ q: 0, r: 0 }, { q, r: 0 }, 0)).toThrow(RangeError);
+    }
+  );
 
   test('computed q overflow는 RangeError다', () => {
     const out: HexAxialWritable = { q: 7, r: 7 };

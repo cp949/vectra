@@ -137,16 +137,15 @@ describe('interpolation point 보간 - midpointInto', () => {
     expect(pt).toEqual({ x: 2, y: 3 });
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('finite하지 않은 input %s는 RangeError를 던진다', (value) => {
-    expect(() => midpointInto({ x: 0, y: 0 }, { x: value, y: 0 }, { x: 1, y: 1 })).toThrow(RangeError);
-    expect(() => midpointInto({ x: 0, y: 0 }, { x: 0, y: value }, { x: 1, y: 1 })).toThrow(RangeError);
-    expect(() => midpointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: value, y: 1 })).toThrow(RangeError);
-    expect(() => midpointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 1, y: value })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'finite하지 않은 input %s는 RangeError를 던진다',
+    (value) => {
+      expect(() => midpointInto({ x: 0, y: 0 }, { x: value, y: 0 }, { x: 1, y: 1 })).toThrow(RangeError);
+      expect(() => midpointInto({ x: 0, y: 0 }, { x: 0, y: value }, { x: 1, y: 1 })).toThrow(RangeError);
+      expect(() => midpointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: value, y: 1 })).toThrow(RangeError);
+      expect(() => midpointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 1, y: value })).toThrow(RangeError);
+    }
+  );
 });
 
 describe('interpolation point 보간 - midpoint', () => {
@@ -204,17 +203,16 @@ describe('interpolation point 보간 - moveTowardPointInto', () => {
     expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 5, y: 0 }, -1)).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('finite하지 않은 input %s는 RangeError를 던진다', (value) => {
-    expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: value, y: 0 }, { x: 5, y: 0 }, 1)).toThrow(RangeError);
-    expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: value }, { x: 5, y: 0 }, 1)).toThrow(RangeError);
-    expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: value, y: 0 }, 1)).toThrow(RangeError);
-    expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 5, y: value }, 1)).toThrow(RangeError);
-    expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 5, y: 0 }, value)).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'finite하지 않은 input %s는 RangeError를 던진다',
+    (value) => {
+      expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: value, y: 0 }, { x: 5, y: 0 }, 1)).toThrow(RangeError);
+      expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: value }, { x: 5, y: 0 }, 1)).toThrow(RangeError);
+      expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: value, y: 0 }, 1)).toThrow(RangeError);
+      expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 5, y: value }, 1)).toThrow(RangeError);
+      expect(() => moveTowardPointInto({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 5, y: 0 }, value)).toThrow(RangeError);
+    }
+  );
 });
 
 describe('interpolation point 보간 - moveTowardPoint', () => {
@@ -278,23 +276,22 @@ describe('interpolation 쌍선형 보간 - bilerpPointInto', () => {
     expect(out[1]).toBe(1);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('finite하지 않은 input %s는 RangeError를 던진다', (value) => {
-    const base = { x: 0, y: 0 };
-    expect(() => bilerpPointInto(base, { x: value, y: 0 }, [1, 0], [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, { x: 0, y: value }, [1, 0], [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], { x: value, y: 0 }, [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], { x: 0, y: value }, [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], [1, 0], { x: value, y: 1 }, [1, 1], 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], [1, 0], { x: 0, y: value }, [1, 1], 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], { x: value, y: 1 }, 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], { x: 1, y: value }, 0.5, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], [1, 1], value, 0.5)).toThrow(RangeError);
-    expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], [1, 1], 0.5, value)).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'finite하지 않은 input %s는 RangeError를 던진다',
+    (value) => {
+      const base = { x: 0, y: 0 };
+      expect(() => bilerpPointInto(base, { x: value, y: 0 }, [1, 0], [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, { x: 0, y: value }, [1, 0], [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], { x: value, y: 0 }, [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], { x: 0, y: value }, [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], [1, 0], { x: value, y: 1 }, [1, 1], 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], [1, 0], { x: 0, y: value }, [1, 1], 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], { x: value, y: 1 }, 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], { x: 1, y: value }, 0.5, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], [1, 1], value, 0.5)).toThrow(RangeError);
+      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], [1, 1], 0.5, value)).toThrow(RangeError);
+    }
+  );
 });
 
 describe('interpolation 쌍선형 보간 - bilerpPoint', () => {

@@ -116,15 +116,12 @@ describe('hexLineDrawInto - inclusive hex line traversal', () => {
     expect(() => hexLineDrawInto([], { q: 0, r: 0 }, [1, 2, 0])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('non-finite/non-integer/unsafe start q %s는 RangeError다', (q) => {
-    expect(() => hexLineDrawInto([], { q, r: 0 }, { q: 0, r: 0 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'non-finite/non-integer/unsafe start q %s는 RangeError다',
+    (q) => {
+      expect(() => hexLineDrawInto([], { q, r: 0 }, { q: 0, r: 0 })).toThrow(RangeError);
+    }
+  );
 
   test('결과 길이(n + 1)가 safe array length를 넘으면 RangeError이고 out을 수정하지 않는다', () => {
     const out: HexAxialWritable[] = [{ q: 7, r: 7 }];

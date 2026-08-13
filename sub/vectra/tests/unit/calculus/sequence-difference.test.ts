@@ -74,28 +74,23 @@ describe('cumulativeTrapezoidInto — invalid input', () => {
     expect(out).toEqual([9, 9]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('values entry %s는 RangeError이고 out 미수정', (bad) => {
-    const out: number[] = [9, 9];
-    expect(() => cumulativeTrapezoidInto(out, [1, bad, 3])).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'values entry %s는 RangeError이고 out 미수정',
+    (bad) => {
+      const out: number[] = [9, 9];
+      expect(() => cumulativeTrapezoidInto(out, [1, bad, 3])).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    0,
-    -1,
-    -1e-9,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('spacing %s는 RangeError이고 out 미수정', (spacing) => {
-    const out: number[] = [9, 9];
-    expect(() => cumulativeTrapezoidInto(out, [1, 2, 3], spacing)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([0, -1, -1e-9, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'spacing %s는 RangeError이고 out 미수정',
+    (spacing) => {
+      const out: number[] = [9, 9];
+      expect(() => cumulativeTrapezoidInto(out, [1, 2, 3], spacing)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('spacing이 number가 아니면 RangeError', () => {
     const out: number[] = [9, 9];
@@ -270,27 +265,23 @@ describe('diffInto — invalid input', () => {
     expect(out).toEqual([9, 9]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('order %s는 RangeError이고 out 미수정', (order) => {
-    const out: number[] = [9, 9];
-    expect(() => diffInto(out, [1, 2, 3], order)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'order %s는 RangeError이고 out 미수정',
+    (order) => {
+      const out: number[] = [9, 9];
+      expect(() => diffInto(out, [1, 2, 3], order)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('values entry %s는 RangeError이고 out 미수정', (bad) => {
-    const out: number[] = [9, 9];
-    expect(() => diffInto(out, [1, bad, 3])).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'values entry %s는 RangeError이고 out 미수정',
+    (bad) => {
+      const out: number[] = [9, 9];
+      expect(() => diffInto(out, [1, bad, 3])).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('empty values + invalid order도 out 미수정으로 throw한다', () => {
     // values.length === 0이어도 order validation은 산술/commit 이전에 실행되어야 한다.
@@ -438,15 +429,14 @@ describe('cumulativeSumInto — invalid input', () => {
     expect(out).toEqual([9, 9]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('values entry %s는 RangeError이고 out 미수정', (bad) => {
-    const out: number[] = [9, 9];
-    expect(() => cumulativeSumInto(out, [1, bad, 3])).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'values entry %s는 RangeError이고 out 미수정',
+    (bad) => {
+      const out: number[] = [9, 9];
+      expect(() => cumulativeSumInto(out, [1, bad, 3])).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 });
 
 // ---------------------------------------------------------------------------

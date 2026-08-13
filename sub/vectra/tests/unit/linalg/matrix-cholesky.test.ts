@@ -231,26 +231,24 @@ describe('choleskyDecomposition — validation', () => {
     expect(() => choleskyDecomposition([[]])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError를 던진다', (bad) => {
-    expect(() =>
-      choleskyDecomposition([
-        [1, 0],
-        [0, bad],
-      ])
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        choleskyDecomposition([
+          [1, 0],
+          [0, bad],
+        ])
+      ).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('1x1 diagonal 위치의 non-finite entry %s도 RangeError를 던진다', (bad) => {
-    expect(() => choleskyDecomposition([[bad]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    '1x1 diagonal 위치의 non-finite entry %s도 RangeError를 던진다',
+    (bad) => {
+      expect(() => choleskyDecomposition([[bad]])).toThrow(RangeError);
+    }
+  );
 
   test('non-symmetric matrix는 RangeError를 던진다', () => {
     expect(() =>

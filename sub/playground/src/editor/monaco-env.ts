@@ -1,7 +1,7 @@
 /// <reference path="./monaco-env.d.ts" />
 
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
-import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker&inline';
+import EditorWorker from 'monaco-editor/editor/editor.worker?worker&inline';
+import TsWorker from 'monaco-editor/language/typescript/ts.worker?worker&inline';
 
 type MonacoWorkerLabel = 'typescript' | 'javascript' | string;
 

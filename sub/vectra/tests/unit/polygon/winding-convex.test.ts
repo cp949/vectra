@@ -309,20 +309,20 @@ describe('polygon light query - isConvex', () => {
     expect(typeof isConvex(NAN_VERTEX)).toBe('boolean');
   });
 
-  test.each([
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('vertex 좌표가 %s여도 throw 없이 deterministic boolean을 반환한다', (coord) => {
-    const INF_VERTEX: PolygonLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: coord, y: 4 },
-        { x: 0, y: 4 },
-      ],
-    };
-    expect(() => isConvex(INF_VERTEX)).not.toThrow();
-    expect(typeof isConvex(INF_VERTEX)).toBe('boolean');
-    expect(isConvex(INF_VERTEX)).toBe(isConvex(INF_VERTEX));
-  });
+  test.each([Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'vertex 좌표가 %s여도 throw 없이 deterministic boolean을 반환한다',
+    (coord) => {
+      const INF_VERTEX: PolygonLike = {
+        points: [
+          { x: 0, y: 0 },
+          { x: 4, y: 0 },
+          { x: coord, y: 4 },
+          { x: 0, y: 4 },
+        ],
+      };
+      expect(() => isConvex(INF_VERTEX)).not.toThrow();
+      expect(typeof isConvex(INF_VERTEX)).toBe('boolean');
+      expect(isConvex(INF_VERTEX)).toBe(isConvex(INF_VERTEX));
+    }
+  );
 });

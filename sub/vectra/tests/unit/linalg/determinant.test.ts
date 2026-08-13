@@ -107,18 +107,17 @@ describe('determinant', () => {
     ).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s가 있으면 RangeError를 던진다', (bad) => {
-    expect(() =>
-      determinant([
-        [bad, 0],
-        [0, 1],
-      ])
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s가 있으면 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        determinant([
+          [bad, 0],
+          [0, 1],
+        ])
+      ).toThrow(RangeError);
+    }
+  );
 
   test('custom epsilon으로 작은 pivot을 singular로 판정한다', () => {
     expect(

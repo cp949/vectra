@@ -30,16 +30,12 @@ describe('gridIndex - col/row를 flat index로 변환', () => {
     expect(gridIndex({ col: 0, row: 0 }, 10)).toBe(0);
   });
 
-  test.each([
-    -1,
-    0.5,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('cell col %s는 RangeError다', (col) => {
-    expect(() => gridIndex({ col, row: 0 }, 10)).toThrow(RangeError);
-  });
+  test.each([-1, 0.5, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'cell col %s는 RangeError다',
+    (col) => {
+      expect(() => gridIndex({ col, row: 0 }, 10)).toThrow(RangeError);
+    }
+  );
 
   test.each([-1, 2.5, Number.NaN, Number.POSITIVE_INFINITY])('cell row %s는 RangeError다', (row) => {
     expect(() => gridIndex({ col: 0, row }, 10)).toThrow(RangeError);
@@ -79,16 +75,12 @@ describe('gridCoordinatesInto - flat index를 col/row로 변환', () => {
     expect(out).toEqual({ col: 7, row: 4 });
   });
 
-  test.each([
-    -1,
-    0.5,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('index %s는 RangeError다', (index) => {
-    expect(() => gridCoordinatesInto(makeCell(), index, 10)).toThrow(RangeError);
-  });
+  test.each([-1, 0.5, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'index %s는 RangeError다',
+    (index) => {
+      expect(() => gridCoordinatesInto(makeCell(), index, 10)).toThrow(RangeError);
+    }
+  );
 
   test.each([0, -10, 1.5, Number.NaN, Number.POSITIVE_INFINITY])('columnCount %s는 RangeError다', (columnCount) => {
     expect(() => gridCoordinatesInto(makeCell(), 32, columnCount)).toThrow(RangeError);

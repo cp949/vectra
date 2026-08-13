@@ -87,15 +87,12 @@ describe('gridCellsInRectInto - world rect가 덮는 cell collection', () => {
     expect(out).toEqual([]);
   });
 
-  test.each([
-    0,
-    -10,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('cellSize %s는 RangeError다', (cellSize) => {
-    expect(() => gridCellsInRectInto([], { x: 0, y: 0, width: 10, height: 10 }, { cellSize })).toThrow(RangeError);
-  });
+  test.each([0, -10, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'cellSize %s는 RangeError다',
+    (cellSize) => {
+      expect(() => gridCellsInRectInto([], { x: 0, y: 0, width: 10, height: 10 }, { cellSize })).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])('rect 성분 %s는 RangeError다', (bad) => {
     expect(() => gridCellsInRectInto([], { x: bad, y: 0, width: 10, height: 10 }, { cellSize: 10 })).toThrow(

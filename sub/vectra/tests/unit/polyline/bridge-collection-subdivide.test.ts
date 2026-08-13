@@ -147,16 +147,12 @@ describe('polyline bridge/collection - subdivideInto', () => {
     ]);
   });
 
-  test.each([
-    0,
-    -1,
-    2.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('segmentsPerSegment %p는 RangeError를 던진다', (value) => {
-    expect(() => subdivideInto([], TWO_PT, { segmentsPerSegment: value })).toThrow(RangeError);
-  });
+  test.each([0, -1, 2.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'segmentsPerSegment %p는 RangeError를 던진다',
+    (value) => {
+      expect(() => subdivideInto([], TWO_PT, { segmentsPerSegment: value })).toThrow(RangeError);
+    }
+  );
 });
 
 describe('polyline bridge/collection - subdivide', () => {

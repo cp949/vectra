@@ -185,17 +185,14 @@ describe('secondDerivativeInto — invalid input은 throw하고 out 미수정', 
     expect(out).toEqual([9, 9]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('binCount %s는 RangeError', (binCount) => {
-    const out: number[] = [9, 9];
-    expect(() => secondDerivativeInto(out, (x) => x, 0, 1, binCount)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'binCount %s는 RangeError',
+    (binCount) => {
+      const out: number[] = [9, 9];
+      expect(() => secondDerivativeInto(out, (x) => x, 0, 1, binCount)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('xMax - xMin overflow는 RangeError', () => {
     const out: number[] = [9, 9];

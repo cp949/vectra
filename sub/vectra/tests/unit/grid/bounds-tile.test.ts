@@ -77,15 +77,12 @@ describe('boundsTileInto - bounds를 fixed tile size로 분할', () => {
     expect(out).toEqual([{ x: 0, y: 0, width: 0, height: 10 }]);
   });
 
-  test.each([
-    0,
-    -1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid tile size %s는 RangeError다', (tileSize) => {
-    expect(() => boundsTileInto([], { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } }, tileSize)).toThrow(RangeError);
-  });
+  test.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid tile size %s는 RangeError다',
+    (tileSize) => {
+      expect(() => boundsTileInto([], { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } }, tileSize)).toThrow(RangeError);
+    }
+  );
 
   test('rectangular tile size의 한 축만 invalid여도 RangeError다', () => {
     expect(() => boundsTileInto([], { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } }, { x: 10, y: 0 })).toThrow(

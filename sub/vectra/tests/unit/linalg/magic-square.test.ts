@@ -108,16 +108,13 @@ describe('magicSquareInto — magic square 생성 (Into)', () => {
     expectMagicSquare(out, 5);
   });
 
-  test.each([
-    -1,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('비정수/음수/unsafe size %s는 RangeError', (size) => {
-    const out: number[][] = [];
-    expect(() => magicSquareInto(out, size)).toThrow(RangeError);
-  });
+  test.each([-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    '비정수/음수/unsafe size %s는 RangeError',
+    (size) => {
+      const out: number[][] = [];
+      expect(() => magicSquareInto(out, size)).toThrow(RangeError);
+    }
+  );
 
   test('out capacity 부족 시 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9, 9]];

@@ -140,16 +140,12 @@ describe('segment subdivide - subdivideInto', () => {
     expect(out[1].b).toEqual({ x: Number.POSITIVE_INFINITY, y: Number.NEGATIVE_INFINITY });
   });
 
-  test.each([
-    0,
-    -1,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('count=%s이면 RangeError로 실패한다', (count) => {
-    expect(() => subdivideInto([], { a: { x: 0, y: 0 }, b: { x: 8, y: 0 } }, { count })).toThrow(RangeError);
-  });
+  test.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'count=%s이면 RangeError로 실패한다',
+    (count) => {
+      expect(() => subdivideInto([], { a: { x: 0, y: 0 }, b: { x: 8, y: 0 } }, { count })).toThrow(RangeError);
+    }
+  );
 });
 
 describe('segment subdivide - subdivide', () => {
@@ -188,14 +184,10 @@ describe('segment subdivide - subdivide', () => {
     expect(toPlain(result)).toEqual(toPlain(out));
   });
 
-  test.each([
-    0,
-    -1,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('count=%s이면 RangeError로 실패한다', (count) => {
-    expect(() => subdivide({ a: { x: 0, y: 0 }, b: { x: 8, y: 0 } }, { count })).toThrow(RangeError);
-  });
+  test.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'count=%s이면 RangeError로 실패한다',
+    (count) => {
+      expect(() => subdivide({ a: { x: 0, y: 0 }, b: { x: 8, y: 0 } }, { count })).toThrow(RangeError);
+    }
+  );
 });

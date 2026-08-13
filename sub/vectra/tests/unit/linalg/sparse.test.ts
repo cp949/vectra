@@ -140,18 +140,14 @@ describe('vectorFromSparseEntriesInto — sparse 재구성 (Into)', () => {
     expect(out).toEqual([9]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    3,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid index %s는 RangeError를 던지고 out을 수정하지 않는다', (idx) => {
-    const out = [9, 9, 9];
-    expect(() => vectorFromSparseEntriesInto(out, 3, [{ index: idx, value: 1 }])).toThrow(RangeError);
-    expect(out).toEqual([9, 9, 9]);
-  });
+  test.each([-1, 0.5, 3, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid index %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (idx) => {
+      const out = [9, 9, 9];
+      expect(() => vectorFromSparseEntriesInto(out, 3, [{ index: idx, value: 1 }])).toThrow(RangeError);
+      expect(out).toEqual([9, 9, 9]);
+    }
+  );
 
   test('duplicate index는 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out = [9, 9, 9];
@@ -394,37 +390,29 @@ describe('matrixFromSparseEntriesInto — matrix sparse 재구성 (Into)', () =>
     expect(out[1]).toBe('not-array');
   });
 
-  test.each([
-    -1,
-    0.5,
-    2,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid row %s는 RangeError + out 미수정', (row) => {
-    const out = makeOut(2, 2, 9);
-    expect(() => matrixFromSparseEntriesInto(out, [2, 2], [{ row, column: 0, value: 1 }])).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([-1, 0.5, 2, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid row %s는 RangeError + out 미수정',
+    (row) => {
+      const out = makeOut(2, 2, 9);
+      expect(() => matrixFromSparseEntriesInto(out, [2, 2], [{ row, column: 0, value: 1 }])).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
-  test.each([
-    -1,
-    0.5,
-    2,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid column %s는 RangeError + out 미수정', (column) => {
-    const out = makeOut(2, 2, 9);
-    expect(() => matrixFromSparseEntriesInto(out, [2, 2], [{ row: 0, column, value: 1 }])).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([-1, 0.5, 2, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid column %s는 RangeError + out 미수정',
+    (column) => {
+      const out = makeOut(2, 2, 9);
+      expect(() => matrixFromSparseEntriesInto(out, [2, 2], [{ row: 0, column, value: 1 }])).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('duplicate (row, column) 좌표는 RangeError + out 미수정', () => {
     const out = makeOut(2, 2, 9);

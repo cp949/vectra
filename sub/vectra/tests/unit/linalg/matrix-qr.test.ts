@@ -257,18 +257,17 @@ describe('qrDecomposition — validation', () => {
     expect(() => qrDecomposition([[]])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError를 던진다', (bad) => {
-    expect(() =>
-      qrDecomposition([
-        [1, bad],
-        [0, 1],
-      ])
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        qrDecomposition([
+          [1, bad],
+          [0, 1],
+        ])
+      ).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, -1])('invalid epsilon %s는 RangeError를 던진다', (bad) => {
     expect(() => qrDecomposition([[1]], { epsilon: bad })).toThrow(RangeError);

@@ -149,19 +149,14 @@ describe('normalAtInto / normalAt', () => {
 describe('tangent ⊥ normal 관계', () => {
   const ellipse = { center: { x: 2, y: -3 }, radiusX: 5, radiusY: 4 };
 
-  it.each([
-    0,
-    Math.PI / 6,
-    Math.PI / 4,
-    Math.PI / 3,
-    Math.PI / 2,
-    Math.PI,
-    (3 * Math.PI) / 2,
-  ])('θ=%f에서 tangent · normal ≈ 0이다', (angle) => {
-    const t = tangentAt(ellipse, angle);
-    const n = normalAt(ellipse, angle);
-    expect(dot(t.x, t.y, n.x, n.y)).toBeCloseTo(0, 10);
-  });
+  it.each([0, Math.PI / 6, Math.PI / 4, Math.PI / 3, Math.PI / 2, Math.PI, (3 * Math.PI) / 2])(
+    'θ=%f에서 tangent · normal ≈ 0이다',
+    (angle) => {
+      const t = tangentAt(ellipse, angle);
+      const n = normalAt(ellipse, angle);
+      expect(dot(t.x, t.y, n.x, n.y)).toBeCloseTo(0, 10);
+    }
+  );
 });
 
 describe('expandByInto / expandBy', () => {

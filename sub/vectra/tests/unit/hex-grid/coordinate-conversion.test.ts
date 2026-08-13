@@ -38,15 +38,12 @@ describe('hexAxialToCube - axial을 cube로 변환', () => {
     expect(result).toEqual({ q: 0, r: 0, s: 0 });
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('non-finite/non-integer/unsafe axial q %s는 RangeError다', (q) => {
-    expect(() => hexAxialToCube({ q, r: 0 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'non-finite/non-integer/unsafe axial q %s는 RangeError다',
+    (q) => {
+      expect(() => hexAxialToCube({ q, r: 0 })).toThrow(RangeError);
+    }
+  );
 
   test('safe integer q/r이라도 계산된 s가 unsafe integer면 RangeError다', () => {
     expect(() => hexAxialToCube({ q: Number.MAX_SAFE_INTEGER, r: Number.MAX_SAFE_INTEGER })).toThrow(RangeError);
@@ -76,15 +73,12 @@ describe('hexCubeToAxial - cube를 axial로 변환', () => {
     expect(() => hexCubeToAxial([1, 2, 0])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('non-finite/non-integer/unsafe cube s %s는 RangeError다', (s) => {
-    expect(() => hexCubeToAxial({ q: 0, r: 0, s })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'non-finite/non-integer/unsafe cube s %s는 RangeError다',
+    (s) => {
+      expect(() => hexCubeToAxial({ q: 0, r: 0, s })).toThrow(RangeError);
+    }
+  );
 });
 
 const OFFSET_LAYOUTS: readonly HexOffsetLayout[] = ['odd-r', 'even-r', 'odd-q', 'even-q'];
@@ -124,25 +118,19 @@ describe('hexAxialToOffset / hexOffsetToAxial - axial과 offset 변환', () => {
     expect(() => hexOffsetToAxial({ col: 0, row: 0 }, 'diagonal' as HexOffsetLayout)).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('non-finite/non-integer/unsafe axial q %s는 RangeError다', (q) => {
-    expect(() => hexAxialToOffset({ q, r: 0 }, 'odd-r')).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'non-finite/non-integer/unsafe axial q %s는 RangeError다',
+    (q) => {
+      expect(() => hexAxialToOffset({ q, r: 0 }, 'odd-r')).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('non-finite/non-integer/unsafe offset row %s는 RangeError다', (row) => {
-    expect(() => hexOffsetToAxial({ col: 0, row }, 'odd-r')).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'non-finite/non-integer/unsafe offset row %s는 RangeError다',
+    (row) => {
+      expect(() => hexOffsetToAxial({ col: 0, row }, 'odd-r')).toThrow(RangeError);
+    }
+  );
 
   test('safe integer 입력이라도 계산된 col/row가 unsafe integer면 RangeError다', () => {
     expect(() => hexAxialToOffset({ q: Number.MAX_SAFE_INTEGER, r: Number.MAX_SAFE_INTEGER }, 'even-r')).toThrow(

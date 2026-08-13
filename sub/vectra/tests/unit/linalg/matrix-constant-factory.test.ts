@@ -170,16 +170,13 @@ describe('identityInto — identity matrix 생성 (Into)', () => {
     expect(out).toEqual([]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('비정수/음수/unsafe size %s는 RangeError', (size) => {
-    const out: number[][] = [];
-    expect(() => identityInto(out, size)).toThrow(RangeError);
-  });
+  test.each([-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    '비정수/음수/unsafe size %s는 RangeError',
+    (size) => {
+      const out: number[][] = [];
+      expect(() => identityInto(out, size)).toThrow(RangeError);
+    }
+  );
 
   test('out capacity 부족 시 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9, 9]];
@@ -229,21 +226,20 @@ describe('fillInto — value matrix 생성 (Into)', () => {
     expect(out).toEqual([]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite value %s는 RangeError를 던지고 out을 수정하지 않는다', (value) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() => fillInto(out, [2, 2], value)).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite value %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (value) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() => fillInto(out, [2, 2], value)).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('one-sided zero shape는 RangeError', () => {
     const out: number[][] = [];

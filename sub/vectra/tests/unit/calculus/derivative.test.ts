@@ -132,17 +132,14 @@ describe('derivativeInto — invalid input은 throw하고 out을 수정하지 �
     expect(out).toEqual([9, 9]);
   });
 
-  test.each([
-    -1,
-    0.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('binCount %s는 RangeError', (binCount) => {
-    const out: number[] = [9, 9];
-    expect(() => derivativeInto(out, (x) => x, 0, 1, binCount)).toThrow(RangeError);
-    expect(out).toEqual([9, 9]);
-  });
+  test.each([-1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])(
+    'binCount %s는 RangeError',
+    (binCount) => {
+      const out: number[] = [9, 9];
+      expect(() => derivativeInto(out, (x) => x, 0, 1, binCount)).toThrow(RangeError);
+      expect(out).toEqual([9, 9]);
+    }
+  );
 
   test('invalid method는 RangeError이며 binCount 0/1에서도 method 검증이 먼저 실행된다', () => {
     const out: number[] = [9, 9];

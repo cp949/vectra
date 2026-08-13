@@ -137,15 +137,13 @@ describe('gridLineInto - start cell에서 end cell까지 Bresenham traversal', (
     ]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-  ])('invalid col/row %s는 RangeError다', (bad) => {
-    expect(() => gridLineInto([], { col: bad, row: 0 }, { col: 3, row: 0 })).toThrow(RangeError);
-    expect(() => gridLineInto([], { col: 0, row: 0 }, { col: bad, row: 0 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5])(
+    'invalid col/row %s는 RangeError다',
+    (bad) => {
+      expect(() => gridLineInto([], { col: bad, row: 0 }, { col: 3, row: 0 })).toThrow(RangeError);
+      expect(() => gridLineInto([], { col: 0, row: 0 }, { col: bad, row: 0 })).toThrow(RangeError);
+    }
+  );
 
   test('safe integer 범위를 벗어난 col/row는 RangeError다', () => {
     const out: GridCellWritable[] = [{ col: 7, row: 7 }];

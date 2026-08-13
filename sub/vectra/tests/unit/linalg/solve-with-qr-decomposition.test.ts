@@ -240,17 +240,13 @@ describe('solveWithQrDecomposition — singular R', () => {
 });
 
 describe('solveWithQrDecomposition — validation', () => {
-  test.each([
-    -1,
-    Number.NaN,
-    0.5,
-    Number.MAX_SAFE_INTEGER + 1,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid rank %s는 RangeError를 던진다', (bad) => {
-    const dec = { orthogonal: [], upper: [], rank: bad } as unknown as QRDecomposition;
-    expect(() => solveWithQrDecomposition(dec, [])).toThrow(RangeError);
-  });
+  test.each([-1, Number.NaN, 0.5, Number.MAX_SAFE_INTEGER + 1, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid rank %s는 RangeError를 던진다',
+    (bad) => {
+      const dec = { orthogonal: [], upper: [], rank: bad } as unknown as QRDecomposition;
+      expect(() => solveWithQrDecomposition(dec, [])).toThrow(RangeError);
+    }
+  );
 
   test('orthogonal이 array가 아니면 RangeError', () => {
     const dec = {
@@ -360,24 +356,23 @@ describe('solveWithQrDecomposition — validation', () => {
     expect(() => solveWithQrDecomposition(dec, [])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('orthogonal entry %s는 RangeError', (bad) => {
-    const dec: QRDecomposition = {
-      orthogonal: [
-        [1, 0],
-        [bad, 1],
-      ],
-      upper: [
-        [1, 0],
-        [0, 1],
-      ],
-      rank: 2,
-    };
-    expect(() => solveWithQrDecomposition(dec, [1, 2])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'orthogonal entry %s는 RangeError',
+    (bad) => {
+      const dec: QRDecomposition = {
+        orthogonal: [
+          [1, 0],
+          [bad, 1],
+        ],
+        upper: [
+          [1, 0],
+          [0, 1],
+        ],
+        rank: 2,
+      };
+      expect(() => solveWithQrDecomposition(dec, [1, 2])).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])('upper entry %s는 RangeError', (bad) => {
     const dec: QRDecomposition = {

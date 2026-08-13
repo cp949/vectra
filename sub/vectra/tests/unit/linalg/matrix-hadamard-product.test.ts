@@ -63,33 +63,32 @@ describe('hadamardMatrixProductInto — element-wise matrix product (Into)', () 
     expect(out).toEqual([[9]]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      hadamardMatrixProductInto(
-        out,
-        [
-          [1, 2],
-          [3, bad],
-        ],
-        [
-          [1, 1],
-          [1, 1],
-        ]
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        hadamardMatrixProductInto(
+          out,
+          [
+            [1, 2],
+            [3, bad],
+          ],
+          [
+            [1, 1],
+            [1, 1],
+          ]
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('out === a aliasing이 허용된다', () => {
     const a: number[][] = [

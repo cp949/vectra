@@ -50,15 +50,13 @@ describe('gridNeighbors4Into - cardinal neighbor collection', () => {
     ]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-  ])('invalid col/row %s는 RangeError다', (bad) => {
-    expect(() => gridNeighbors4Into([], { col: bad, row: 0 })).toThrow(RangeError);
-    expect(() => gridNeighbors4Into([], { col: 0, row: bad })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5])(
+    'invalid col/row %s는 RangeError다',
+    (bad) => {
+      expect(() => gridNeighbors4Into([], { col: bad, row: 0 })).toThrow(RangeError);
+      expect(() => gridNeighbors4Into([], { col: 0, row: bad })).toThrow(RangeError);
+    }
+  );
 
   test('neighbor 계산 결과가 unsafe integer이면 RangeError다', () => {
     const out: GridCellWritable[] = [{ col: 7, row: 7 }];
@@ -164,14 +162,12 @@ describe('gridNeighbors8Into - cardinal + diagonal neighbor collection', () => {
     ]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-  ])('invalid col/row %s는 RangeError다', (bad) => {
-    expect(() => gridNeighbors8Into([], { col: bad, row: 0 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5])(
+    'invalid col/row %s는 RangeError다',
+    (bad) => {
+      expect(() => gridNeighbors8Into([], { col: bad, row: 0 })).toThrow(RangeError);
+    }
+  );
 
   test('neighbor 계산 결과가 unsafe integer이면 RangeError다', () => {
     const out: GridCellWritable[] = [{ col: 7, row: 7 }];

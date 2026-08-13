@@ -179,37 +179,35 @@ describe('solveByForwardSubstitution — validation', () => {
     expect(() => solveByForwardSubstitution([[1, 0], [2]], [1, 5])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('matrix entry %s는 RangeError를 던진다', (bad) => {
-    expect(() =>
-      solveByForwardSubstitution(
-        [
-          [1, 0],
-          [bad, 1],
-        ],
-        [1, 1]
-      )
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'matrix entry %s는 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        solveByForwardSubstitution(
+          [
+            [1, 0],
+            [bad, 1],
+          ],
+          [1, 1]
+        )
+      ).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('vector entry %s는 RangeError를 던진다', (bad) => {
-    expect(() =>
-      solveByForwardSubstitution(
-        [
-          [1, 0],
-          [0, 1],
-        ],
-        [bad, 1]
-      )
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'vector entry %s는 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        solveByForwardSubstitution(
+          [
+            [1, 0],
+            [0, 1],
+          ],
+          [bad, 1]
+        )
+      ).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, -1])('invalid epsilon %s는 RangeError를 던진다', (bad) => {
     expect(() => solveByForwardSubstitution([[1]], [1], { epsilon: bad })).toThrow(RangeError);

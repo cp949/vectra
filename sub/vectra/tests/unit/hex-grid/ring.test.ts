@@ -81,25 +81,19 @@ describe('hexRingInto - radius perimeter collection', () => {
     ]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    1.5,
-    Number.MAX_SAFE_INTEGER + 1,
-  ])('invalid center q %s는 RangeError다', (q) => {
-    expect(() => hexRingInto([], { q, r: 0 }, 1)).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
+    'invalid center q %s는 RangeError다',
+    (q) => {
+      expect(() => hexRingInto([], { q, r: 0 }, 1)).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    -1,
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('invalid radius %s는 RangeError다', (radius) => {
-    expect(() => hexRingInto([], { q: 0, r: 0 }, radius)).toThrow(RangeError);
-  });
+  test.each([-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'invalid radius %s는 RangeError다',
+    (radius) => {
+      expect(() => hexRingInto([], { q: 0, r: 0 }, radius)).toThrow(RangeError);
+    }
+  );
 
   test('computed q overflow 시 out을 수정하지 않는다', () => {
     const out: HexAxialWritable[] = [{ q: 7, r: 7 }];

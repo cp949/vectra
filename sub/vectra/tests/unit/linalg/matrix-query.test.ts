@@ -106,21 +106,19 @@ describe('equals — matrix exact equality', () => {
     ).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('a에 non-finite entry %s가 있으면 RangeError', (bad) => {
-    expect(() => equals([[bad]], [[1]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'a에 non-finite entry %s가 있으면 RangeError',
+    (bad) => {
+      expect(() => equals([[bad]], [[1]])).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('b에 non-finite entry %s가 있으면 RangeError', (bad) => {
-    expect(() => equals([[1]], [[bad]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'b에 non-finite entry %s가 있으면 RangeError',
+    (bad) => {
+      expect(() => equals([[1]], [[bad]])).toThrow(RangeError);
+    }
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -180,15 +178,12 @@ describe('nearEquals — matrix epsilon equality', () => {
     expect(nearEquals([], [[1]])).toBe(false);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-    -1,
-    -1e-300,
-  ])('invalid epsilon %s는 RangeError', (badEpsilon) => {
-    expect(() => nearEquals([[1]], [[1]], badEpsilon)).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, -1, -1e-300])(
+    'invalid epsilon %s는 RangeError',
+    (badEpsilon) => {
+      expect(() => nearEquals([[1]], [[1]], badEpsilon)).toThrow(RangeError);
+    }
+  );
 
   test('ragged matrix는 RangeError', () => {
     expect(() =>
@@ -202,21 +197,19 @@ describe('nearEquals — matrix epsilon equality', () => {
     ).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('a에 non-finite entry %s가 있으면 RangeError', (bad) => {
-    expect(() => nearEquals([[bad]], [[1]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'a에 non-finite entry %s가 있으면 RangeError',
+    (bad) => {
+      expect(() => nearEquals([[bad]], [[1]])).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('b에 non-finite entry %s가 있으면 RangeError', (bad) => {
-    expect(() => nearEquals([[1]], [[bad]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'b에 non-finite entry %s가 있으면 RangeError',
+    (bad) => {
+      expect(() => nearEquals([[1]], [[bad]])).toThrow(RangeError);
+    }
+  );
 
   test('epsilon은 entry 검증 전에 reject한다', () => {
     expect(() => nearEquals([[Number.NaN]], [[1]], Number.NaN)).toThrow(/epsilon/);
@@ -277,13 +270,12 @@ describe('frobeniusNorm — sqrt(Σ entry²)', () => {
     expect(() => frobeniusNorm([[1, 2], [3]])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError', (bad) => {
-    expect(() => frobeniusNorm([[bad]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError',
+    (bad) => {
+      expect(() => frobeniusNorm([[bad]])).toThrow(RangeError);
+    }
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -335,13 +327,12 @@ describe('columnSumSupremumNorm — max column absolute sum', () => {
     expect(() => columnSumSupremumNorm([[1, 2], [3]])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError', (bad) => {
-    expect(() => columnSumSupremumNorm([[bad]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError',
+    (bad) => {
+      expect(() => columnSumSupremumNorm([[bad]])).toThrow(RangeError);
+    }
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -392,11 +383,10 @@ describe('rowSumSupremumNorm — max row absolute sum', () => {
     expect(() => rowSumSupremumNorm([[1, 2], [3]])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError', (bad) => {
-    expect(() => rowSumSupremumNorm([[bad]])).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError',
+    (bad) => {
+      expect(() => rowSumSupremumNorm([[bad]])).toThrow(RangeError);
+    }
+  );
 });

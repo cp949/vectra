@@ -59,32 +59,31 @@ describe('addScalarMultipleOfRowToRowInto — matrix row += scalar * otherRow (I
     expect(out).toEqual([[8, 16]]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite scalar %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      addScalarMultipleOfRowToRowInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        0,
-        1,
-        bad
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite scalar %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        addScalarMultipleOfRowToRowInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          0,
+          1,
+          bad
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('scaling overflow(Number.MAX_VALUE * 2)는 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9], [9]];

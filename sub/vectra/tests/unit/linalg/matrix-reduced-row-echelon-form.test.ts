@@ -157,30 +157,29 @@ describe('reducedRowEchelonFormInto — RREF (Into)', () => {
     expect(out).toEqual([[9]]);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    -0.5,
-  ])('invalid epsilon %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [
-      [9, 9],
-      [9, 9],
-    ];
-    expect(() =>
-      reducedRowEchelonFormInto(
-        out,
-        [
-          [1, 2],
-          [3, 4],
-        ],
-        { epsilon: bad }
-      )
-    ).toThrow(RangeError);
-    expect(out).toEqual([
-      [9, 9],
-      [9, 9],
-    ]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, -0.5])(
+    'invalid epsilon %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [
+        [9, 9],
+        [9, 9],
+      ];
+      expect(() =>
+        reducedRowEchelonFormInto(
+          out,
+          [
+            [1, 2],
+            [3, 4],
+          ],
+          { epsilon: bad }
+        )
+      ).toThrow(RangeError);
+      expect(out).toEqual([
+        [9, 9],
+        [9, 9],
+      ]);
+    }
+  );
 
   test('overflow 결과는 RangeError', () => {
     const out: number[][] = [

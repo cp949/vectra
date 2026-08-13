@@ -74,23 +74,21 @@ describe('hexAxialToPixelInto / hexAxialToPixel - axial을 world pixel로', () =
     );
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite axial q/r %s는 RangeError다', (bad) => {
-    expect(() => hexAxialToPixel({ q: bad, r: 0 }, { size: 10 })).toThrow(RangeError);
-    expect(() => hexAxialToPixel({ q: 0, r: bad }, { size: 10 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite axial q/r %s는 RangeError다',
+    (bad) => {
+      expect(() => hexAxialToPixel({ q: bad, r: 0 }, { size: 10 })).toThrow(RangeError);
+      expect(() => hexAxialToPixel({ q: 0, r: bad }, { size: 10 })).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite origin x/y %s는 RangeError다', (bad) => {
-    expect(() => hexAxialToPixel({ q: 0, r: 0 }, { size: 10, origin: { x: bad, y: 0 } })).toThrow(RangeError);
-    expect(() => hexAxialToPixel({ q: 0, r: 0 }, { size: 10, origin: { x: 0, y: bad } })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite origin x/y %s는 RangeError다',
+    (bad) => {
+      expect(() => hexAxialToPixel({ q: 0, r: 0 }, { size: 10, origin: { x: bad, y: 0 } })).toThrow(RangeError);
+      expect(() => hexAxialToPixel({ q: 0, r: 0 }, { size: 10, origin: { x: 0, y: bad } })).toThrow(RangeError);
+    }
+  );
 
   test('계산 결과가 overflow해 non-finite가 되면 RangeError다', () => {
     expect(() => hexAxialToPixel({ q: 1e308, r: 0 }, { size: 1e308 })).toThrow(RangeError);
@@ -143,23 +141,21 @@ describe('hexPixelToAxialInto / hexPixelToAxial - world pixel을 fractional axia
     expect(() => hexPixelToAxial({ x: 0, y: 0 }, { size })).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite point x/y %s는 RangeError다', (bad) => {
-    expect(() => hexPixelToAxial({ x: bad, y: 0 }, { size: 10 })).toThrow(RangeError);
-    expect(() => hexPixelToAxial({ x: 0, y: bad }, { size: 10 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite point x/y %s는 RangeError다',
+    (bad) => {
+      expect(() => hexPixelToAxial({ x: bad, y: 0 }, { size: 10 })).toThrow(RangeError);
+      expect(() => hexPixelToAxial({ x: 0, y: bad }, { size: 10 })).toThrow(RangeError);
+    }
+  );
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite origin x/y %s는 RangeError다', (bad) => {
-    expect(() => hexPixelToAxial({ x: 0, y: 0 }, { size: 10, origin: { x: bad, y: 0 } })).toThrow(RangeError);
-    expect(() => hexPixelToAxial({ x: 0, y: 0 }, { size: 10, origin: { x: 0, y: bad } })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite origin x/y %s는 RangeError다',
+    (bad) => {
+      expect(() => hexPixelToAxial({ x: 0, y: 0 }, { size: 10, origin: { x: bad, y: 0 } })).toThrow(RangeError);
+      expect(() => hexPixelToAxial({ x: 0, y: 0 }, { size: 10, origin: { x: 0, y: bad } })).toThrow(RangeError);
+    }
+  );
 
   test('계산 결과가 overflow해 non-finite가 되면 RangeError다', () => {
     expect(() => hexPixelToAxial({ x: 1e308, y: 0 }, { size: 1, origin: { x: -1e308, y: 0 } })).toThrow(RangeError);

@@ -69,18 +69,18 @@ describe('scanLineFamilyPolygonEdges', () => {
     expect(recorder.collinears).toHaveLength(0);
   });
 
-  test.each([
-    Number.POSITIVE_INFINITY,
-    Number.NaN,
-  ])('non-finite polygon vertex(%s)와 연결된 edge만 skip한다', (nonFiniteCoordinate) => {
-    const recorder = makeSpyRecorder();
-    const polygonWithNonFiniteVertex = polygon(p(0, 0), p(nonFiniteCoordinate, 0), p(4, 4), p(0, 4));
+  test.each([Number.POSITIVE_INFINITY, Number.NaN])(
+    'non-finite polygon vertex(%s)와 연결된 edge만 skip한다',
+    (nonFiniteCoordinate) => {
+      const recorder = makeSpyRecorder();
+      const polygonWithNonFiniteVertex = polygon(p(0, 0), p(nonFiniteCoordinate, 0), p(4, 4), p(0, 4));
 
-    scanLineFamilyPolygonEdges(-1, 2, 1, 0, 'inf', polygonWithNonFiniteVertex, 1e-9, recorder);
+      scanLineFamilyPolygonEdges(-1, 2, 1, 0, 'inf', polygonWithNonFiniteVertex, 1e-9, recorder);
 
-    expect(recorder.crossings).toEqual([{ edgeIndex: 3, ex: 0, ey: -4, qx: 1, qy: 2, cross: -4 }]);
-    expect(recorder.collinears).toHaveLength(0);
-  });
+      expect(recorder.crossings).toEqual([{ edgeIndex: 3, ex: 0, ey: -4, qx: 1, qy: 2, cross: -4 }]);
+      expect(recorder.collinears).toHaveLength(0);
+    }
+  );
 
   test('non-parallel edge마다 crossing을 호출한다(raw qx/qy/cross 전달, tLine/tEdge 판정 없음)', () => {
     const recorder = makeSpyRecorder();

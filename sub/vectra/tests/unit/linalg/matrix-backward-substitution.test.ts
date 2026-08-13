@@ -132,21 +132,20 @@ describe('solveByBackwardSubstitution — validation', () => {
     ).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('matrix entry %s는 RangeError를 던진다', (bad) => {
-    expect(() =>
-      solveByBackwardSubstitution(
-        [
-          [1, bad],
-          [0, 1],
-        ],
-        [1, 1]
-      )
-    ).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'matrix entry %s는 RangeError를 던진다',
+    (bad) => {
+      expect(() =>
+        solveByBackwardSubstitution(
+          [
+            [1, bad],
+            [0, 1],
+          ],
+          [1, 1]
+        )
+      ).toThrow(RangeError);
+    }
+  );
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY])('invalid epsilon %s는 RangeError를 던진다', (bad) => {
     expect(() => solveByBackwardSubstitution([[1]], [1], { epsilon: bad })).toThrow(RangeError);

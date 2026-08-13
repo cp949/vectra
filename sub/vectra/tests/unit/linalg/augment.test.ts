@@ -77,15 +77,14 @@ describe('augmentInto — matrix horizontal augment (Into)', () => {
     expect(() => augmentInto(out, [[1, 2], [3]] as unknown as number[][], [[10], [20]])).toThrow(RangeError);
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다', (bad) => {
-    const out: number[][] = [[9, 9, 9, 9]];
-    expect(() => augmentInto(out, [[1, bad]], [[10, 20]])).toThrow(RangeError);
-    expect(out).toEqual([[9, 9, 9, 9]]);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite entry %s는 RangeError를 던지고 out을 수정하지 않는다',
+    (bad) => {
+      const out: number[][] = [[9, 9, 9, 9]];
+      expect(() => augmentInto(out, [[1, bad]], [[10, 20]])).toThrow(RangeError);
+      expect(out).toEqual([[9, 9, 9, 9]]);
+    }
+  );
 
   test('out capacity 부족 시 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [[9]];

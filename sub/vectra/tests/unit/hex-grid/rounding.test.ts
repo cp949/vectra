@@ -54,13 +54,12 @@ describe('hexRoundInto / hexRound - fractional coordinate를 nearest integer axi
     expect(io).toEqual({ q: 1, r: 1 });
   });
 
-  test.each([
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-finite axial q %s는 RangeError다', (q) => {
-    expect(() => hexRound({ q, r: 0 })).toThrow(RangeError);
-  });
+  test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-finite axial q %s는 RangeError다',
+    (q) => {
+      expect(() => hexRound({ q, r: 0 })).toThrow(RangeError);
+    }
+  );
 
   test('unsafe integer result는 RangeError다', () => {
     expect(() => hexRound({ q: 2 ** 53, r: 0 })).toThrow(RangeError);

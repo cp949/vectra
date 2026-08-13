@@ -56,14 +56,12 @@ describe('gridCellCenterInto - cell coordinate를 world center로 변환', () =>
     expect(out).toEqual([25, 35]);
   });
 
-  test.each([
-    1.5,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ])('non-integer/non-finite cell col %s는 RangeError다', (col) => {
-    expect(() => gridCellCenterInto(makeXY(), { col, row: 0 }, { cellSize: 10 })).toThrow(RangeError);
-  });
+  test.each([1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+    'non-integer/non-finite cell col %s는 RangeError다',
+    (col) => {
+      expect(() => gridCellCenterInto(makeXY(), { col, row: 0 }, { cellSize: 10 })).toThrow(RangeError);
+    }
+  );
 
   test('invalid cellSize는 RangeError다', () => {
     expect(() => gridCellCenterInto(makeXY(), { col: 1, row: 1 }, { cellSize: 0 })).toThrow(RangeError);
