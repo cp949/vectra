@@ -239,3 +239,202 @@ export function classifyIntersectionKind(
   const relCross = Math.abs(crossZ) / (lenA * lenB);
   return relCross < epsilon ? 'touch' : 'cross';
 }
+
+/** cubic sub-curve flat 좌표 — [p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y]. */
+export type CubicFlat = [number, number, number, number, number, number, number, number];
+
+/** quadratic sub-curve flat 좌표 — [p0x, p0y, p1x, p1y, p2x, p2y]. */
+export type QuadFlat = [number, number, number, number, number, number];
+
+/**
+ * cubic Bezier를 t=0.5에서 De Casteljau 분할한다.
+ */
+export function splitCubic(
+  p0x: number,
+  p0y: number,
+  p1x: number,
+  p1y: number,
+  p2x: number,
+  p2y: number,
+  p3x: number,
+  p3y: number
+): [CubicFlat, CubicFlat] {
+  const m01x = (p0x + p1x) * 0.5;
+  const m01y = (p0y + p1y) * 0.5;
+  const m12x = (p1x + p2x) * 0.5;
+  const m12y = (p1y + p2y) * 0.5;
+  const m23x = (p2x + p3x) * 0.5;
+  const m23y = (p2y + p3y) * 0.5;
+  const m012x = (m01x + m12x) * 0.5;
+  const m012y = (m01y + m12y) * 0.5;
+  const m123x = (m12x + m23x) * 0.5;
+  const m123y = (m12y + m23y) * 0.5;
+  const mx = (m012x + m123x) * 0.5;
+  const my = (m012y + m123y) * 0.5;
+  return [
+    [p0x, p0y, m01x, m01y, m012x, m012y, mx, my],
+    [mx, my, m123x, m123y, m23x, m23y, p3x, p3y],
+  ];
+}
+
+/**
+ * quadratic Bezier를 t=0.5에서 De Casteljau 분할한다.
+ */
+export function splitQuadratic(
+  p0x: number,
+  p0y: number,
+  p1x: number,
+  p1y: number,
+  p2x: number,
+  p2y: number
+): [QuadFlat, QuadFlat] {
+  const m01x = (p0x + p1x) * 0.5;
+  const m01y = (p0y + p1y) * 0.5;
+  const m12x = (p1x + p2x) * 0.5;
+  const m12y = (p1y + p2y) * 0.5;
+  const mx = (m01x + m12x) * 0.5;
+  const my = (m01y + m12y) * 0.5;
+  return [
+    [p0x, p0y, m01x, m01y, mx, my],
+    [mx, my, m12x, m12y, p2x, p2y],
+  ];
+}
+
+/** curve × curve subdivision kernel에 주입하는 타입별 adapter 묶음. */
+export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
+  /** curve A sub-curve의 control point hull AABB. */
+  hullBoundsA: (sub: A) => [number, number, number, number];
+  /** curve B sub-curve의 control point hull AABB. */
+  hullBoundsB: (sub: B) => [number, number, number, number];
+  /** curve A sub-curve를 t=0.5에서 두 half로 분할한다. */
+  splitA: (sub: A) => [A, A];
+  /** curve B sub-curve를 t=0.5에서 두 half로 분할한다. */
+  splitB: (sub: B) => [B, B];
+  /**
+   * subdivision이 수렴(또는 maxDepth 도달)했을 때 호출된다.
+   * origA는 재귀 내내 불변인 curve A 원본 좌표 — 정밀 교차점 계산에 사용한다.
+   * bSub는 현재 재귀 depth의 curve B sub-curve 좌표다.
+   * self-intersection처럼 A/B가 같은 원본을 공유하는 경우 bSub는 무시해도 된다.
+   */
+  onConverge: (
+    outHits: IntersectionHit<P>[],
+    tA0: number,
+    tA1: number,
+    tB0: number,
+    tB1: number,
+    origA: A,
+    bSub: B,
+    epsilon: number,
+    epsilonT: number,
+    makePoint: () => P
+  ) => void;
+}
+
+/**
+ * curve × curve subdivision 재귀 kernel.
+ * hull bound가 겹치지 않으면 branch를 중단하고, span이 더 큰 쪽을 매 단계 분할해
+ * parameter box를 좁힌다. 수렴(또는 maxDepth 도달) 시 adapters.onConverge에 위임한다.
+ */
+export function subdivideCurves<A, B, P extends XYWritable>(
+  outHits: IntersectionHit<P>[],
+  aSub: A,
+  tA0: number,
+  tA1: number,
+  bSub: B,
+  tB0: number,
+  tB1: number,
+  // 원본 curve A 좌표 — 수렴 시 정밀 좌표 계산에 사용한다
+  origA: A,
+  epsilon: number,
+  epsilonT: number,
+  maxDepth: number,
+  depth: number,
+  makePoint: () => P,
+  adapters: CurveSubdivisionAdapters<A, B, P>
+): void {
+  const { hullBoundsA, hullBoundsB, splitA, splitB, onConverge } = adapters;
+  const [aMinX, aMinY, aMaxX, aMaxY] = hullBoundsA(aSub);
+  const [bMinX, bMinY, bMaxX, bMaxY] = hullBoundsB(bSub);
+
+  if (!boundsOverlap(aMinX, aMinY, aMaxX, aMaxY, bMinX, bMinY, bMaxX, bMaxY, epsilon)) return;
+
+  const spanA = tA1 - tA0;
+  const spanB = tB1 - tB0;
+
+  if ((spanA <= epsilonT && spanB <= epsilonT) || depth >= maxDepth) {
+    onConverge(outHits, tA0, tA1, tB0, tB1, origA, bSub, epsilon, epsilonT, makePoint);
+    return;
+  }
+
+  if (spanA >= spanB) {
+    const tAMid = (tA0 + tA1) * 0.5;
+    const [leftA, rightA] = splitA(aSub);
+    subdivideCurves(
+      outHits,
+      leftA,
+      tA0,
+      tAMid,
+      bSub,
+      tB0,
+      tB1,
+      origA,
+      epsilon,
+      epsilonT,
+      maxDepth,
+      depth + 1,
+      makePoint,
+      adapters
+    );
+    subdivideCurves(
+      outHits,
+      rightA,
+      tAMid,
+      tA1,
+      bSub,
+      tB0,
+      tB1,
+      origA,
+      epsilon,
+      epsilonT,
+      maxDepth,
+      depth + 1,
+      makePoint,
+      adapters
+    );
+  } else {
+    const tBMid = (tB0 + tB1) * 0.5;
+    const [leftB, rightB] = splitB(bSub);
+    subdivideCurves(
+      outHits,
+      aSub,
+      tA0,
+      tA1,
+      leftB,
+      tB0,
+      tBMid,
+      origA,
+      epsilon,
+      epsilonT,
+      maxDepth,
+      depth + 1,
+      makePoint,
+      adapters
+    );
+    subdivideCurves(
+      outHits,
+      aSub,
+      tA0,
+      tA1,
+      rightB,
+      tBMid,
+      tB1,
+      origA,
+      epsilon,
+      epsilonT,
+      maxDepth,
+      depth + 1,
+      makePoint,
+      adapters
+    );
+  }
+}
