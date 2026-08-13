@@ -304,12 +304,16 @@ export function splitQuadratic(
 export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
   /** curve A sub-curve의 control point hull AABB. */
   hullBoundsA: (sub: A) => [number, number, number, number];
+
   /** curve B sub-curve의 control point hull AABB. */
   hullBoundsB: (sub: B) => [number, number, number, number];
+
   /** curve A sub-curve를 t=0.5에서 두 half로 분할한다. */
   splitA: (sub: A) => [A, A];
+
   /** curve B sub-curve를 t=0.5에서 두 half로 분할한다. */
   splitB: (sub: B) => [B, B];
+
   /**
    * subdivision이 수렴(또는 maxDepth 도달)했을 때 호출된다.
    * origA는 재귀 내내 불변인 curve A 원본 좌표 — 정밀 교차점 계산에 사용한다.
@@ -334,6 +338,10 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
  * curve × curve subdivision 재귀 kernel.
  * hull bound가 겹치지 않으면 branch를 중단하고, span이 더 큰 쪽을 매 단계 분할해
  * parameter box를 좁힌다. 수렴(또는 maxDepth 도달) 시 adapters.onConverge에 위임한다.
+ *
+ * 호출자는 각 parameter 구간을 오름차순으로 전달하고 epsilon/epsilonT/maxDepth/depth를
+ * 음이 아닌 값으로 보장해야 한다. 일반 호출은 depth=0에서 시작한다. zero-span 구간은
+ * 양쪽 span이 epsilonT 이하일 때 즉시 수렴한다.
  */
 export function subdivideCurves<A, B, P extends XYWritable>(
   outHits: IntersectionHit<P>[],
