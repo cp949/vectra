@@ -1,7 +1,7 @@
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { polygonContainsPoint, rectContainsPointXY } from '../internal/polygon';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
+import { polygonContainsPoint } from '../internal/polygon';
+import { readRectHeight, readRectWidth, readRectX, readRectY, rectContainsPointXY } from '../internal/rect';
 import { flattenPathInto } from '../path/flatten.internal';
 import type { PathCommand, PathMeasurementOptions, RectLike } from '../types';
 

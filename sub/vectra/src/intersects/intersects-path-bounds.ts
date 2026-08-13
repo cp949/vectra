@@ -1,7 +1,7 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
+import { boundsContainsPointXY, readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { boundsContainsPointXY, polygonContainsPoint } from '../internal/polygon';
+import { polygonContainsPoint } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
 import { flattenPathInto } from '../path/flatten.internal';
 import type { BoundsLike, PathCommand, PathMeasurementOptions } from '../types';

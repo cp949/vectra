@@ -1,5 +1,5 @@
-import { polygonContainsPoint, readPolygonPoints, rectContainsPointXY, segmentsIntersect } from '../internal/polygon';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
+import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from '../internal/polygon';
+import { readRectHeight, readRectWidth, readRectX, readRectY, rectContainsPointXY } from '../internal/rect';
 import { readX, readY } from '../internal/xy';
 import type { PolygonLike, RectLike } from '../types';
 

@@ -8,7 +8,7 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import { rectContainsPointXY } from '../internal/polygon';
+import { rectContainsPointXY } from '../internal/rect';
 import type { IntersectionHit } from '../types';
 import type { CurveLineProbe } from './curve-primitive-probe.internal';
 import { curveCrossesSegment } from './curve-primitive-segment.internal';

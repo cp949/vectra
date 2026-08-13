@@ -1,5 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { boundsContainsPointXY, polygonContainsPoint, readPolygonPoints, segmentsIntersect } from '../internal/polygon';
+import { boundsContainsPointXY, readBoundsMax, readBoundsMin } from '../internal/bounds';
+import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, PolygonLike } from '../types';
 
