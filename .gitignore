@@ -13,7 +13,7 @@ sub/vectra/llm.txt
 .agents/
 .superpowers/
 skills-lock.json
-tsup.config.bundled*
+tsdown.config.bundled*
 .vscode/
 CLAUDE.md
 AGENTS.md

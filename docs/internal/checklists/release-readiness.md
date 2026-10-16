@@ -54,7 +54,7 @@ publish 직전 무엇을 확인해야 하는가를 담는 체크리스트다.
 
 ## 3. Exports / Build Entry 일치 확인
 
-`package.json` root/domain barrel `exports`와 `build-entrypoints.ts`에서 파생되는 `tsup` entry가
+`package.json` root/domain barrel `exports`와 `build-entrypoints.ts`에서 파생되는 `tsdown` entry가
 충돌하지 않아야 한다.
 
 - [ ] 공개 root/domain barrel build entry에 대응하는 `exports` 항목이 존재한다

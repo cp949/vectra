@@ -32,7 +32,7 @@
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │   Build + Governance (런타임 없음; CI-time 계약)                          │
-│  build-entrypoints.ts + tsup.config.ts → per-leaf dist entrypoint         │
+│  build-entrypoints.ts + tsdown.config.ts → per-leaf dist entrypoint         │
 │  scripts/*.mjs → governance / import-boundary / jsdoc-companion           │
 │  tests/contract/* → public surface drift, subpath, dist import 검증       │
 └───────────────────────────────────────────────────────────────────────────┘
@@ -64,7 +64,7 @@ structural typing.
 - 목적: 도메인 leaf를 한 진입점으로 모음
 - 위치: `src/<domain>/index.ts`
 - 구성: `export { name } from './name'` 라인만 (jsdoc-companion script가 이 패턴을 파싱)
-- 사용처: tsup entrypoint, subpath export, contract test
+- 사용처: tsdown entrypoint, subpath export, contract test
 
 **Internal shared layer:**
 - 목적: structural input 좌표 read/write, hot-path 공유 로직
@@ -117,7 +117,7 @@ structural typing.
 | --- | --- | --- | --- |
 | npm root export | `dist/index.js` ← `src/index.ts` | `import ... from '@cp949/vectra'` | type 전용 re-export (런타임 값 미노출) |
 | domain subpath | `dist/<domain>/index.js` ← `src/<domain>/index.ts` | `import ... from '@cp949/vectra/<domain>'` | 도메인 함수 노출 (tree-shaking 친화) |
-| build entrypoint 생성 | `sub/vectra/build-entrypoints.ts` | `tsup` build | `src` 재귀 스캔으로 public leaf/barrel을 per-file dist entry로 변환 |
+| build entrypoint 생성 | `sub/vectra/build-entrypoints.ts` | `tsdown` build | `src` 재귀 스캔으로 public leaf/barrel을 per-file dist entry로 변환 |
 
 `build-entrypoints.ts`의 `isPublicSourceFile`이 `.internal.`, `src/internal/`,
 depth 4+ 파일을 entrypoint에서 제외한다.
