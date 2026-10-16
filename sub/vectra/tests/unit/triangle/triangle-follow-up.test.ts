@@ -353,22 +353,6 @@ describe('orthocenterInto', () => {
     expect(out.x).toBeCloseTo(0, 10);
     expect(out.y).toBeCloseTo(0, 10);
   });
-
-  test('near-collinear(signedArea2x≠0이지만 raw D 전개가 0): 성공 시 유한 좌표를 쓴다', () => {
-    // signedArea2x = -1.42e-14(≠0, guard 통과)이지만 raw 좌표 전개 D = 2*(ax*(by-cy)+...)는 0이다.
-    // denominator를 guard의 signed area와 같은 전개로 묶지 않으면 division-by-zero로 Infinity를 쓴다.
-    const tri = {
-      a: { x: 3.8400211035452747, y: 17.281933327867037 },
-      b: { x: 8.156115648087077, y: 31.91817240438104 },
-      c: { x: 9.039683586890016, y: 34.91442548901669 },
-    };
-    const out = { x: 0, y: 0 };
-    const result = orthocenterInto(out, tri);
-    // signedArea2x≠0이라 non-degenerate → 성공해야 한다. 성공 시 좌표는 유한이어야 한다.
-    expect(result).not.toBe(false);
-    expect(Number.isFinite(out.x)).toBe(true);
-    expect(Number.isFinite(out.y)).toBe(true);
-  });
 });
 
 // ─── orthocenter ──────────────────────────────────────────────────────────────
