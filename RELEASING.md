@@ -46,7 +46,7 @@ release-it이 수행하는 순서:
    - hook 문자열에 `${`를 쓰지 않는다. release-it이 hook을 Eta 템플릿(`${...}`)으로 렌더링한다. `${TMPDIR:-/tmp}` 같은 shell 문법은 렌더링 단계에서 실패한다.
 2. 버전 선택 프롬프트. `sub/vectra/package.json`의 `version`을 올린다.
 3. 루트 `CHANGELOG.md`의 `[Unreleased]` 항목을 `[<version>] - <날짜>` 섹션으로 옮기고, 빈 `[Unreleased]`를 다시 둔다.
-4. 변경 파일을 stage한다. `sub/vectra` 범위는 `git add . --update`로, 루트 `CHANGELOG.md`는 `after:bump` hook이 stage한다.
+4. 변경 파일을 stage한다. `sub/vectra` 범위는 `git add . --update`로, 루트 `CHANGELOG.md`는 `before:release` hook이 stage한다. keep-a-changelog가 `beforeRelease` 단계에서 파일을 쓰므로, 그보다 늦은 이 hook이어야 변경이 잡힌다.
 5. `pnpm publish . --tag <dist-tag> --access public --no-git-checks`를 실행한다. 일반 버전의 dist-tag는 `latest`다. `prepublishOnly`가 `dist`를 다시 빌드한다. 2FA가 켜져 있으면 pnpm이 OTP 입력 또는 web 인증을 요청한다.
    - `--no-git-checks`가 필요한 이유: 이 시점에는 bump 변경이 stage만 된 상태다. pnpm의 기본 배포 branch 검사가 `main` 외 branch 배포를 막는다.
 6. `chore: @cp949/vectra v<version> 배포` 커밋, annotated tag `v<version>` 생성, `origin`에 push(`--follow-tags`)를 수행한다.
