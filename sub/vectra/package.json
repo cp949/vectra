@@ -1,6 +1,6 @@
 {
   "name": "@cp949/vectra",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "TypeScript geometry/math function catalog",
   "keywords": [
     "geometry",
