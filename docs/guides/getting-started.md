@@ -14,7 +14,7 @@ npm install @cp949/vectra
 
 | 항목 | 기준 |
 | --- | --- |
-| Runtime | Node.js `>=20.19.0`에서 검증 |
+| Runtime | Node.js `>=24.18.0`에서 검증 |
 | Module format | ESM only |
 | Dependencies | runtime dependency 없음 |
 | TypeScript | package가 제공하는 `.d.ts` 사용 |

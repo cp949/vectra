@@ -5,7 +5,7 @@
   "description": "TypeScript geometry/math function catalog",
   "type": "module",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=24.18.0"
   },
   "packageManager": "pnpm@10.17.1",
   "scripts": {

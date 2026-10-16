@@ -133,7 +133,7 @@ pnpm publish:npm
 
 | 항목 | 값 |
 | --- | --- |
-| Node.js | `>=20.19.0` |
+| Node.js | `>=24.18.0` |
 | Package manager | `pnpm@10.17.1` |
 | Module format | ESM |
 | Runtime dependencies | `@cp949/vectra` 기준 없음 |
