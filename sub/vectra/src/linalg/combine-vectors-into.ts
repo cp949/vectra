@@ -8,6 +8,7 @@ import { assertFiniteVector, assertSameVectorLength } from './validate.internal'
  * 두 vector는 같은 길이여야 하며 모든 entry와 callback result는 finite number여야 한다.
  * `fn`이 던진 예외는 그대로 전파하고 `out`은 수정하지 않는다.
  * `out === a` 또는 `out === b` aliasing을 허용한다.
+ * 결과 entry의 `-0`은 `+0`으로 canonicalize한다.
  */
 export function combineVectorsInto<Out extends VecWritable>(
   out: Out,

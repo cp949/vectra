@@ -9,6 +9,7 @@ import type { IterationOptions, MatLike } from './types';
  *
  * Jacobi convergence 실패와 음수 eigenvalue 같은 numeric failure는 `undefined`를 반환한다.
  * 빈 matrix `[]`, `m === 0 || n === 0`, zero matrix는 `[]`를 반환한다.
+ * 결과 entry의 `-0`은 `+0`으로 canonicalize한다.
  *
  * `matrix`는 rectangular nested array여야 한다. ragged matrix와 one-sided zero shape `[[]]`는
  * `RangeError`. 모든 entry는 finite number여야 한다. 위반 시 `RangeError`.

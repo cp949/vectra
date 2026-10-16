@@ -9,6 +9,7 @@ import type { IterationOptions, MatLike } from './types';
  *
  * full column rank이면 `[]`. zero matrix이면 column 수만큼의 standard basis row vector를 반환한다.
  * 빈 matrix `[]`는 `[]`.
+ * 결과 entry의 `-0`은 `+0`으로 canonicalize한다.
  *
  * `matrix`는 rectangular nested array여야 한다. ragged matrix와 one-sided zero shape `[[]]`는
  * `RangeError`. 모든 entry는 finite number여야 한다. 위반 시 `RangeError`.

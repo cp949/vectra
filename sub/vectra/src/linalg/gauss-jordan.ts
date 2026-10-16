@@ -6,7 +6,7 @@ import type { MatLike, PivotOptions } from './types';
  *
  * `reducedRowEchelonForm`의 canonical alias다. 같은 partial pivoting RREF 결과를 반환하며
  * pivot row normalize, pivot column 위/아래 entry 제거, epsilon zero cleanup 정책을 모두
- * 동일하게 따른다.
+ * 동일하게 따른다. 결과 entry의 `-0`은 `+0`으로 canonicalize한다.
  *
  * `matrix`는 rectangular nested array여야 한다. ragged matrix는 `RangeError`.
  * 모든 entry는 finite number여야 한다. 위반 시 `RangeError`.
