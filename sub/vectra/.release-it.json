@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/release-it@21/schema/release-it.json",
   "hooks": {
-    "before:init": "cd ../.. && pnpm release:check",
+    "before:init": "cd ../.. && pnpm release:check > \"${TMPDIR:-/tmp}/vectra-release-check.log\" 2>&1 || { tail -n 100 \"${TMPDIR:-/tmp}/vectra-release-check.log\"; exit 1; }",
     "after:bump": "git add --update ../../CHANGELOG.md"
   },
   "git": {
