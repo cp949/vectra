@@ -32,7 +32,7 @@
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │   Build + Governance (런타임 없음; CI-time 계약)                          │
-│  build-entrypoints.ts + tsdown.config.ts → per-leaf dist entrypoint         │
+│  build-entrypoints.ts + tsdown.config.ts → domain barrel dist entry        │
 │  scripts/*.mjs → governance / import-boundary / jsdoc-companion           │
 │  tests/contract/* → public surface drift, subpath, dist import 검증       │
 └───────────────────────────────────────────────────────────────────────────┘
@@ -117,10 +117,13 @@ structural typing.
 | --- | --- | --- | --- |
 | npm root export | `dist/index.js` ← `src/index.ts` | `import ... from '@cp949/vectra'` | type 전용 re-export (런타임 값 미노출) |
 | domain subpath | `dist/<domain>/index.js` ← `src/<domain>/index.ts` | `import ... from '@cp949/vectra/<domain>'` | 도메인 함수 노출 (tree-shaking 친화) |
-| build entrypoint 생성 | `sub/vectra/build-entrypoints.ts` | `tsdown` build | `src` 재귀 스캔으로 public leaf/barrel을 per-file dist entry로 변환 |
+| build entrypoint 생성 | `sub/vectra/build-entrypoints.ts` | `tsdown` build | `src` 재귀 스캔으로 root/domain barrel만 dist entry로 변환. leaf는 barrel에 병합 |
 
 `build-entrypoints.ts`의 `isPublicSourceFile`이 `.internal.`, `src/internal/`,
-depth 4+ 파일을 entrypoint에서 제외한다.
+depth 4+ 파일, 도메인 `index.ts`가 아닌 leaf를 entrypoint에서 제외한다.
+
+`tsdown.config.ts`는 `keepNames`를 켜지 않는다. barrel 병합 번들에 최상위 `__name(...)`
+호출이 남아 tree-shaking을 막기 때문이다.
 
 ## 아키텍처 제약
 

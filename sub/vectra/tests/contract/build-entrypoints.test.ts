@@ -26,6 +26,13 @@ describe('build entrypoints', () => {
     expect(exactSourcePatterns.filter((pattern) => !entrypoints.has(pattern))).toEqual([]);
   });
 
+  test('build entry는 root와 domain barrel만이다. leaf는 entry가 아니다', () => {
+    const entrypoints = buildEntrypoints();
+
+    expect(entrypoints.every((entry) => entry === 'src/index.ts' || /^src\/[^/]+\/index\.ts$/.test(entry))).toBe(true);
+    expect(entrypoints).not.toContain('src/vec/add.ts');
+  });
+
   test('internal source file을 public build entry로 노출하지 않는다', () => {
     expect(buildEntrypoints()).not.toContain('src/internal/xy.ts');
     expect(buildEntrypoints()).not.toContain('src/meta.internal.ts');

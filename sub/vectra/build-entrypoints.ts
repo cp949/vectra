@@ -65,7 +65,9 @@ function isPublicSourceFile(filePath: string): boolean {
     return sourcePath === 'src/index.ts';
   }
 
-  return segments.length === 3;
+  // leaf는 entry로 만들지 않는다. 도메인 barrel(`src/<domain>/index.ts`)만 entry다.
+  // leaf를 entry로 두면 dist 파일이 수천 개로 늘고, `exports`로 열리지 않는 파일만 늘어난다.
+  return segments.length === 3 && segments[2] === 'index.ts';
 }
 
 function listPublicSourceFiles(dirPath: string): string[] {

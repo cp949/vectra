@@ -63,19 +63,10 @@ type PackageSpecifierAssertion = {
 function addFunctionDomainAssertions(
   assertions: ImportAssertion[],
   distPath: string,
-  entries: readonly FunctionLeafExport[],
-  checkBarrel = true
+  entries: readonly FunctionLeafExport[]
 ): void {
-  if (checkBarrel) {
-    for (const { fnName } of entries) {
-      assertions.push({ modulePath: `${distPath}/index.js`, exportName: fnName, kind: 'function' });
-    }
-  } else {
-    assertions.push({ modulePath: `${distPath}/index.js` });
-  }
-
-  for (const { fnName, leafPath } of entries) {
-    assertions.push({ modulePath: `${distPath}/${leafPath}.js`, exportName: fnName, kind: 'function' });
+  for (const { fnName } of entries) {
+    assertions.push({ modulePath: `${distPath}/index.js`, exportName: fnName, kind: 'function' });
   }
 }
 
@@ -86,10 +77,6 @@ function addTypedDomainAssertions(
 ): void {
   for (const { exportName, kind } of entries) {
     assertions.push({ modulePath: `${distPath}/index.js`, exportName, kind });
-  }
-
-  for (const { exportName, leafPath, kind } of entries) {
-    assertions.push({ modulePath: `${distPath}/${leafPath}.js`, exportName, kind });
   }
 }
 
@@ -110,7 +97,7 @@ function createImportAssertions(): ImportAssertion[] {
   addFunctionDomainAssertions(assertions, 'infinite-line', infiniteLineLeafExports);
   addFunctionDomainAssertions(assertions, 'interpolation', interpolationLeafExports);
   addFunctionDomainAssertions(assertions, 'intersects', intersectsLeafExports);
-  addFunctionDomainAssertions(assertions, 'linalg', linalgLeafExports, false);
+  addFunctionDomainAssertions(assertions, 'linalg', linalgLeafExports);
   addFunctionDomainAssertions(assertions, 'math', mathLeafExports);
   addFunctionDomainAssertions(assertions, 'matrix', matrixLeafExports);
   addFunctionDomainAssertions(assertions, 'motion', motionLeafExports);
@@ -299,7 +286,7 @@ async function runNodePackageSpecifierAssertions(
 }
 
 describe('package built dist import contract', () => {
-  test('@cp949/vectra dist barrel과 leaf module이 import되고 expected export를 노출한다', async () => {
+  test('@cp949/vectra dist barrel이 import되고 expected export를 노출한다', async () => {
     const { stderr } = await runNodeImportAssertions(createImportAssertions());
 
     expect(stderr).toBe('');

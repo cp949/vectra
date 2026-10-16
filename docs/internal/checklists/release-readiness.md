@@ -148,7 +148,7 @@ contract test 범위:
 
 - [ ] `dist/` 폴더가 존재하고 비어 있지 않다
 - [ ] 각 domain barrel (`dist/<domain>/index.js`, `dist/<domain>/index.d.ts`) 파일이 존재한다
-- [ ] 각 leaf subpath 파일이 존재한다
+- [ ] leaf 단위 dist 파일이 없다 (domain barrel에 병합된다)
 - [ ] `.d.ts` 타입 선언 파일이 모든 entry에 대해 생성된다
 - [ ] `dist/index.js`가 존재한다 (root entry)
 
