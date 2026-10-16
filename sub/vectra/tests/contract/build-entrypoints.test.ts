@@ -20,8 +20,10 @@ describe('build entrypoints', () => {
     const exactSourcePatterns = Object.values(packageJson.exports)
       .map(({ import: importPath }) => importTargetToSourcePattern(importPath))
       .filter((pattern) => !pattern.includes('*'));
+    // buildEntrypoints()는 src 전체를 순회한다. 한 번만 호출한다.
+    const entrypoints = new Set(buildEntrypoints());
 
-    expect(exactSourcePatterns.filter((pattern) => !buildEntrypoints().includes(pattern))).toEqual([]);
+    expect(exactSourcePatterns.filter((pattern) => !entrypoints.has(pattern))).toEqual([]);
   });
 
   test('internal source file을 public build entry로 노출하지 않는다', () => {

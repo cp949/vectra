@@ -116,7 +116,21 @@ function isPublicLeafSourceFile(filePath: string): boolean {
   );
 }
 
+// 같은 파일 안에서 fixture와 테스트가 같은 domain을 반복 파싱한다. 결과를 domain별로 재사용한다.
+const sourceLeafExportsCache = new Map<string, LeafExportEntry[]>();
+
 export function deriveSourceLeafExportsForDomain(domain: string): LeafExportEntry[] {
+  let entries = sourceLeafExportsCache.get(domain);
+
+  if (!entries) {
+    entries = parseSourceLeafExportsForDomain(domain);
+    sourceLeafExportsCache.set(domain, entries);
+  }
+
+  return [...entries];
+}
+
+function parseSourceLeafExportsForDomain(domain: string): LeafExportEntry[] {
   const domainRoot = join(sourceRoot, domain);
 
   return listFiles(domainRoot)
