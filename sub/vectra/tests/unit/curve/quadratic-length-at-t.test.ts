@@ -2,11 +2,11 @@
  * quadraticLengthAtT unit test.
  *
  * 검증 방법:
- * - t=0은 0을 반환한다.
- * - t=1은 전체 length를 반환한다.
- * - t 범위 밖은 clamp된다.
  * - 직선 Bezier에서 length가 유클리드 거리와 일치한다.
- * - 원호 근사 Bezier로 전체 적분과 부분 적분의 정합성을 확인한다.
+ * - 부분 length가 전체 length 사이에 있다.
+ * - tuple XYInput을 받는다.
+ *
+ * t clamp, 단조 증가 같은 일반 동작은 speed-length.test.ts가 검증한다.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -22,36 +22,6 @@ describe('quadraticLengthAtT', () => {
   const p0 = { x: 0, y: 0 };
   const p1 = { x: 1, y: 2 };
   const p2 = { x: 4, y: 0 };
-
-  it('t=0이면 0을 반환한다', () => {
-    expect(quadraticLengthAtT(p0, p1, p2, 0)).toBe(0);
-  });
-
-  it('t<0이면 0을 반환한다', () => {
-    expect(quadraticLengthAtT(p0, p1, p2, -0.5)).toBe(0);
-  });
-
-  it('t=1이면 전체 length와 같다', () => {
-    const total = quadraticLength(p0, p1, p2);
-    const atT1 = quadraticLengthAtT(p0, p1, p2, 1);
-    expect(relErr(atT1, total)).toBeLessThan(1e-10);
-  });
-
-  it('t>1이면 전체 length와 같다 (clamp)', () => {
-    const total = quadraticLength(p0, p1, p2);
-    const atT2 = quadraticLengthAtT(p0, p1, p2, 2);
-    expect(relErr(atT2, total)).toBeLessThan(1e-10);
-  });
-
-  it('t가 증가하면 length도 단조 증가한다', () => {
-    const ts = [0.1, 0.25, 0.5, 0.75, 0.9];
-    let prev = 0;
-    for (const t of ts) {
-      const len = quadraticLengthAtT(p0, p1, p2, t);
-      expect(len).toBeGreaterThan(prev);
-      prev = len;
-    }
-  });
 
   it('직선 Bezier에서 t=0.5의 length가 유클리드 거리 절반과 일치한다', () => {
     const a = { x: 0, y: 0 };
