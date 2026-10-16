@@ -19,7 +19,6 @@ type DomainSubpathExportOptions = {
   readonly leafExports: readonly SubpathExport[];
   readonly includeDist?: boolean;
   readonly dedupeExpectedExports?: boolean;
-  readonly timeout?: number;
   readonly compareTestName?: string;
 };
 
@@ -47,46 +46,33 @@ export function assertDomainSubpathExports({
   leafExports,
   includeDist = false,
   dedupeExpectedExports = false,
-  timeout,
   compareTestName = 'barrel이 fixture에 없는 함수를 추가로 export하지 않는다',
 }: DomainSubpathExportOptions): void {
   describe(`${domain} subpath export surface`, () => {
     if (leafExports.length > 0) {
-      test(
-        'fixture의 모든 export가 source barrel에 kind대로 존재한다',
-        () => {
-          for (const { exportName, kind } of leafExports) {
-            expect(typeof sourceBarrel[exportName]).toBe(kind);
-          }
-        },
-        timeout
-      );
+      test('fixture의 모든 export가 source barrel에 kind대로 존재한다', () => {
+        for (const { exportName, kind } of leafExports) {
+          expect(typeof sourceBarrel[exportName]).toBe(kind);
+        }
+      });
 
       if (includeDist) {
-        test(
-          'built dist barrel이 fixture export를 노출한다',
-          async () => {
-            const barrel = (await import(/* @vite-ignore */ `../../../dist/${domain}/index.js`)) as ModuleExports;
-            for (const { exportName, kind } of leafExports) {
-              expect(typeof barrel[exportName]).toBe(kind);
-            }
-          },
-          timeout
-        );
+        test('built dist barrel이 fixture export를 노출한다', async () => {
+          const barrel = (await import(/* @vite-ignore */ `../../../dist/${domain}/index.js`)) as ModuleExports;
+          for (const { exportName, kind } of leafExports) {
+            expect(typeof barrel[exportName]).toBe(kind);
+          }
+        });
       }
     }
 
-    test(
-      compareTestName,
-      () => {
-        const barrelKeys = Object.keys(sourceBarrel)
-          .filter((key) => shouldIncludeBarrelKey(sourceBarrel, leafExports, key))
-          .sort();
-        const expectedKeys = getExpectedExportKeys(leafExports, dedupeExpectedExports);
-        expect(barrelKeys).toEqual(expectedKeys);
-      },
-      timeout
-    );
+    test(compareTestName, () => {
+      const barrelKeys = Object.keys(sourceBarrel)
+        .filter((key) => shouldIncludeBarrelKey(sourceBarrel, leafExports, key))
+        .sort();
+      const expectedKeys = getExpectedExportKeys(leafExports, dedupeExpectedExports);
+      expect(barrelKeys).toEqual(expectedKeys);
+    });
   });
 }
 

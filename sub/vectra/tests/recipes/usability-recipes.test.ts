@@ -11,6 +11,9 @@
  */
 
 import { describe, expect, it } from 'vitest';
+// vec barrel은 모듈 그래프가 커서 정적 import한다.
+// 테스트 본문에서 동적 import하면 병렬 부하에서 testTimeout 5000ms를 넘긴다.
+import * as vec from '../../src/vec/index';
 
 // ── 레시피 1: 마우스 좌표를 segment에 투영하여 closest point 구하기 ──────────
 // canvas demo의 segment snap 예제와 동일한 흐름을 검증한다.
@@ -429,9 +432,7 @@ describe('README 빠른 시작 예제 검증', () => {
     expect(distance(out, [6, 4])).toBeCloseTo(4, 10);
   });
 
-  it('Domain barrel import 예제 — normalizeInto와 nearEquals가 README대로 동작한다', async () => {
-    const vec = await import('../../src/vec/index');
-
+  it('Domain barrel import 예제 — normalizeInto와 nearEquals가 README대로 동작한다', () => {
     const unit = { x: 0, y: 0 };
 
     // README 예제: vec.normalizeInto(unit, [3, 4]) → { x: 0.6, y: 0.8 }
@@ -441,5 +442,5 @@ describe('README 빠른 시작 예제 검증', () => {
 
     // README 예제: vec.nearEquals(unit, { x: 0.6, y: 0.8 }, 1e-9) → true
     expect(vec.nearEquals(unit, { x: 0.6, y: 0.8 }, 1e-9)).toBe(true);
-  }, 10_000);
+  });
 });
