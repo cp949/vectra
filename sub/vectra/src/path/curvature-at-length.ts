@@ -1,9 +1,10 @@
 import { endpointArcToCenterInto } from '../curve/endpoint-arc-to-center-into';
 import { polylineTotalLength } from '../internal/polyline';
-import type { CenterArcWritable, PathCommand, PathMeasurementOptions, XYObjectWritable } from '../types/index';
+import type { CenterArcWritable, PathCommand, PathMeasurementOptions } from '../types/index';
 import { ellipseArcCurvature } from './path-ellipse-arc.internal';
 import type { DrawSegment } from './path-segments.internal';
-import { createCenterArcBuf, flattenDrawSegmentInto, forEachDrawSegment } from './path-segments.internal';
+import { forEachDrawSegment } from './path-segments.internal';
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 /**
  * segment kind에 따라 segment-local arc-length parameter `localT ∈ [0, 1]` 위치의 signed
@@ -106,12 +107,7 @@ export function curvatureAtLength(
 ): number {
   if (!Number.isFinite(distance)) return Number.NaN;
 
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
-  const segBuf: XYObjectWritable[] = [];
-  const centerArcBuf = createCenterArcBuf();
+  const flattener = createSegmentFlattener(options);
 
   let cumulativeLen = 0;
   let found = false;
@@ -121,14 +117,13 @@ export function curvatureAtLength(
   forEachDrawSegment(commands, (seg) => {
     if (found) return;
 
-    flattenDrawSegmentInto(segBuf, seg, flatOpts, centerArcBuf);
-    const segLen = polylineTotalLength(segBuf);
+    const segLen = polylineTotalLength(flattener.flatten(seg));
 
     if (distance <= 0 || distance < cumulativeLen + segLen) {
       const localTarget = Math.max(0, distance - cumulativeLen);
       // segLen === 0이면 segment-local arc-length parameter는 0으로 정의한다.
       const localT = segLen === 0 ? 0 : Math.max(0, Math.min(1, localTarget / segLen));
-      result = computeSegmentCurvature(seg, localT, centerArcBuf);
+      result = computeSegmentCurvature(seg, localT, flattener.centerArc);
       found = true;
       return;
     }
@@ -140,7 +135,7 @@ export function curvatureAtLength(
   if (found) return result;
   // distance > totalLength → 마지막 segment 끝점 (localT = 1)
   if (lastSeg !== undefined) {
-    return computeSegmentCurvature(lastSeg, 1, centerArcBuf);
+    return computeSegmentCurvature(lastSeg, 1, flattener.centerArc);
   }
   // drawing segment 없음 (empty / Move-only)
   return Number.NaN;

@@ -1,6 +1,7 @@
 import { polylineTotalLength } from '../internal/polyline';
-import type { PathCommand, PathLocation, PathMeasurementOptions, XYObjectWritable } from '../types/index';
-import { createCenterArcBuf, flattenDrawSegmentInto, forEachDrawSegment } from './path-segments.internal';
+import type { PathCommand, PathLocation, PathMeasurementOptions } from '../types/index';
+import { forEachDrawSegment } from './path-segments.internal';
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 /**
  * path 위 arc-length offset `distance` 위치의 `PathLocation`(`{ segmentIndex, t }`)을 반환한다.
@@ -28,12 +29,7 @@ export function locationAtLength(
 ): PathLocation | undefined {
   if (!Number.isFinite(distance)) return undefined;
 
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
-  const segBuf: XYObjectWritable[] = [];
-  const centerArcBuf = createCenterArcBuf();
+  const flattener = createSegmentFlattener(options);
 
   let drawIndex = -1;
   let cumulativeLen = 0;
@@ -46,8 +42,7 @@ export function locationAtLength(
     if (found) return;
 
     drawIndex += 1;
-    flattenDrawSegmentInto(segBuf, seg, flatOpts, centerArcBuf);
-    const segLen = polylineTotalLength(segBuf);
+    const segLen = polylineTotalLength(flattener.flatten(seg));
 
     if (distance <= 0 || distance < cumulativeLen + segLen) {
       const localTarget = Math.max(0, distance - cumulativeLen);

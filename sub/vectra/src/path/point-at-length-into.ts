@@ -1,73 +1,8 @@
-import { arcFlattenInto } from '../curve/arc-flatten-into';
-import { cubicFlattenInto } from '../curve/cubic-flatten-into';
-import { endpointArcToCenterInto } from '../curve/endpoint-arc-to-center-into';
-import { quadraticFlattenInto } from '../curve/quadratic-flatten-into';
 import { polylineSampleAtLengthInto, polylineTotalLength } from '../internal/polyline';
 import { writeXY } from '../internal/xy';
-import type {
-  CenterArcWritable,
-  PathCommand,
-  PathMeasurementOptions,
-  XYObjectWritable,
-  XYWritable,
-} from '../types/index';
-import type { DrawSegment } from './path-segments.internal';
+import type { PathCommand, PathMeasurementOptions, XYWritable } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
-
-/**
- * segment의 flatten 결과를 segBuf에 기록하는 private helper.
- *
- * - line/close: 시작점과 끝점 2개 push
- * - quadratic/cubic/arc: flatten 함수가 out.length=0 후 시작점부터 끝점까지 push
- *
- * @param segBuf flatten 결과를 기록할 배열 (기존 내용은 덮어쓰인다)
- * @param seg 처리할 drawing segment
- * @param flatOpts flatten flatness / maxRecursion 옵션
- * @param centerArcBuf arc endpoint→center 변환용 재사용 버퍼
- */
-function buildSegmentPoints(
-  segBuf: XYObjectWritable[],
-  seg: DrawSegment,
-  flatOpts: { flatness: number; maxRecursion: number },
-  centerArcBuf: CenterArcWritable
-): void {
-  if (seg.kind === 'line') {
-    // line: 시작점과 끝점 두 개로 구성
-    segBuf.length = 0;
-    segBuf.push({ x: seg.fromX, y: seg.fromY });
-    segBuf.push({ x: seg.command.x, y: seg.command.y });
-  } else if (seg.kind === 'close') {
-    // close: current → subpath start
-    segBuf.length = 0;
-    segBuf.push({ x: seg.fromX, y: seg.fromY });
-    segBuf.push({ x: seg.subpathStartX, y: seg.subpathStartY });
-  } else if (seg.kind === 'quadratic') {
-    const cmd = seg.command;
-    // quadraticFlattenInto가 out.length=0 후 시작점부터 끝점까지 push
-    quadraticFlattenInto(
-      segBuf,
-      { x: seg.fromX, y: seg.fromY },
-      { x: cmd.x1, y: cmd.y1 },
-      { x: cmd.x, y: cmd.y },
-      flatOpts
-    );
-  } else if (seg.kind === 'cubic') {
-    const cmd = seg.command;
-    // cubicFlattenInto가 out.length=0 후 시작점부터 끝점까지 push
-    cubicFlattenInto(
-      segBuf,
-      { x: seg.fromX, y: seg.fromY },
-      { x: cmd.x1, y: cmd.y1 },
-      { x: cmd.x2, y: cmd.y2 },
-      { x: cmd.x, y: cmd.y },
-      flatOpts
-    );
-  } else if (seg.kind === 'arc') {
-    // endpoint form → center form 변환 후 arcFlattenInto로 push
-    endpointArcToCenterInto(centerArcBuf, { x: seg.fromX, y: seg.fromY }, seg.command);
-    arcFlattenInto(segBuf, centerArcBuf, flatOpts);
-  }
-}
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 /**
  * path의 arc-length offset 위치에 해당하는 point를 out에 기록한다.
@@ -89,23 +24,7 @@ export function pointAtLengthInto(
   distance: number,
   options?: PathMeasurementOptions
 ): boolean {
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
-  // segment별 flatten 결과를 담는 함수 로컬 임시 버퍼 — 모듈 레벨 상태 금지
-  const segBuf: XYObjectWritable[] = [];
-  // arc endpoint→center 변환 결과를 담는 함수 로컬 재사용 구조체
-  const centerArcBuf: CenterArcWritable = {
-    cx: 0,
-    cy: 0,
-    rx: 0,
-    ry: 0,
-    xRotation: 0,
-    startAngle: 0,
-    endAngle: 0,
-    sweep: false,
-  };
+  const flattener = createSegmentFlattener(options);
 
   let hasDrawing = false;
   let cumulativeLen = 0;
@@ -120,8 +39,8 @@ export function pointAtLengthInto(
 
     hasDrawing = true;
 
-    // 이 segment의 flatten 결과를 segBuf에 구성
-    buildSegmentPoints(segBuf, seg, flatOpts, centerArcBuf);
+    // 이 segment의 flatten 결과. 다음 flatten 호출 전까지만 유효하다.
+    const segBuf = flattener.flatten(seg);
 
     const segLen = polylineTotalLength(segBuf);
 

@@ -1,7 +1,8 @@
 import { polylineTotalLength } from '../internal/polyline';
-import type { CenterArcWritable, PathCommand, PathMeasurementOptions, XYObjectWritable } from '../types/index';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import type { DrawSegment } from './path-segments.internal';
-import { createCenterArcBuf, flattenDrawSegmentInto, forEachDrawSegment } from './path-segments.internal';
+import { forEachDrawSegment } from './path-segments.internal';
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 function drawSegmentHasFiniteMeasurementInput(seg: DrawSegment): boolean {
   if (!Number.isFinite(seg.fromX) || !Number.isFinite(seg.fromY)) return false;
@@ -70,14 +71,7 @@ export function drawingSegmentCount(commands: readonly PathCommand[]): number {
  * @param options flatten 허용 오차와 subdivision 깊이 상한
  */
 export function drawingSegmentLengths(commands: readonly PathCommand[], options?: PathMeasurementOptions): number[] {
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
-  // segment별 flatten 결과를 담는 함수 로컬 임시 버퍼 — 모듈 레벨 상태 금지
-  const segBuf: XYObjectWritable[] = [];
-  // arc endpoint→center 변환 결과를 담는 함수 로컬 재사용 구조체
-  const centerArcBuf: CenterArcWritable = createCenterArcBuf();
+  const flattener = createSegmentFlattener(options);
 
   const lengths: number[] = [];
   forEachDrawSegment(commands, (seg) => {
@@ -86,8 +80,7 @@ export function drawingSegmentLengths(commands: readonly PathCommand[], options?
       return;
     }
 
-    flattenDrawSegmentInto(segBuf, seg, flatOpts, centerArcBuf);
-    lengths.push(polylineTotalLength(segBuf));
+    lengths.push(polylineTotalLength(flattener.flatten(seg)));
   });
 
   return lengths;

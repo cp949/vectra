@@ -42,10 +42,6 @@ export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathC
   distance: number,
   options?: PathMeasurementOptions
 ): void {
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
   // aliasing 대비: outA / outB가 commands와 같은 배열이면 clear 전에 snapshot
   const snapshot =
     commands === (outA as readonly PathCommand[]) || commands === (outB as readonly PathCommand[])
@@ -79,7 +75,7 @@ export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathC
     return;
   }
 
-  const split = splitCommandsAtLength(outA, outB, snapshot, distance, flatOpts);
+  const split = splitCommandsAtLength(outA, outB, snapshot, distance, options);
 
   if (!split) {
     // distance >= totalLength fallback: outA에 전체 path. splitCommandsAtLength가 split 없이 끝나면

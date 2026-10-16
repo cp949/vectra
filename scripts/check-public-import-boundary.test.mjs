@@ -23,7 +23,7 @@ test('import-boundary snapshot can be written and used as check baseline', async
     const baseline = JSON.parse(readFileSync(baselinePath, 'utf8'));
     assert.ok(Array.isArray(baseline.valueImports));
     assert.ok(Array.isArray(baseline.typeOnlyImports));
-    assert.equal(baseline.valueImports.length, 235);
+    assert.equal(baseline.valueImports.length, 215);
     assert.equal(baseline.typeOnlyImports.length, 71);
 
     const output = execFileSync('node', [scriptPath, '--baseline', baselinePath], {
@@ -32,7 +32,7 @@ test('import-boundary snapshot can be written and used as check baseline', async
       stdio: 'pipe',
     });
 
-    assert.match(output, /value imports: 235 \/ 235/);
+    assert.match(output, /value imports: 215 \/ 215/);
     assert.match(output, /type-only imports: 71 \/ 71/);
   } finally {
     await rm(tempDir, { recursive: true, force: true });

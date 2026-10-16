@@ -1,16 +1,10 @@
-import { arcFlattenInto } from '../curve/arc-flatten-into';
-import { cubicFlattenInto } from '../curve/cubic-flatten-into';
-import { endpointArcToCenterInto } from '../curve/endpoint-arc-to-center-into';
-import { quadraticFlattenInto } from '../curve/quadratic-flatten-into';
 import type {
   ArcCommand,
-  CenterArcWritable,
   CloseCommand,
   CubicCommand,
   LineCommand,
   PathCommand,
   QuadraticCommand,
-  XYObjectWritable,
 } from '../types/index';
 
 /**
@@ -155,77 +149,5 @@ export function forEachDrawSegment(commands: readonly PathCommand[], visitor: (s
     curY = cmd.y;
 
     prevWasMove = false;
-  }
-}
-
-/**
- * 재사용 가능한 `CenterArcWritable` 버퍼를 새로 생성한다.
- *
- * 모든 필드는 0 또는 false로 초기화된다. arc segment 처리 시 `endpointArcToCenterInto`가
- * 필드를 덮어쓴다.
- */
-export function createCenterArcBuf(): CenterArcWritable {
-  return {
-    cx: 0,
-    cy: 0,
-    rx: 0,
-    ry: 0,
-    xRotation: 0,
-    startAngle: 0,
-    endAngle: 0,
-    sweep: false,
-  };
-}
-
-/**
- * drawing segment를 flatten polyline으로 segBuf에 기록한다.
- *
- * - line / close: 시작점과 끝점 2개 push (각각 `seg.fromX/Y`와 endpoint 또는 subpath start)
- * - quadratic / cubic / arc: 대응 flatten 함수가 segBuf를 클리어 후 시작점부터 끝점까지 push
- *
- * `centerArcBuf`는 arc segment에서만 endpoint→center 변환 결과로 덮어써진다. 호출자가 함수
- * 단위 재사용을 위해 공유 버퍼를 전달한다.
- *
- * @param segBuf flatten polyline을 기록할 배열 (기존 내용은 덮어쓰인다)
- * @param seg 처리할 drawing segment
- * @param flatOpts flatten flatness / maxRecursion 옵션
- * @param centerArcBuf arc endpoint→center 변환 재사용 버퍼
- */
-export function flattenDrawSegmentInto(
-  segBuf: XYObjectWritable[],
-  seg: DrawSegment,
-  flatOpts: { flatness: number; maxRecursion: number },
-  centerArcBuf: CenterArcWritable
-): void {
-  if (seg.kind === 'line') {
-    segBuf.length = 0;
-    segBuf.push({ x: seg.fromX, y: seg.fromY });
-    segBuf.push({ x: seg.command.x, y: seg.command.y });
-  } else if (seg.kind === 'close') {
-    segBuf.length = 0;
-    segBuf.push({ x: seg.fromX, y: seg.fromY });
-    segBuf.push({ x: seg.subpathStartX, y: seg.subpathStartY });
-  } else if (seg.kind === 'quadratic') {
-    const cmd = seg.command;
-    quadraticFlattenInto(
-      segBuf,
-      { x: seg.fromX, y: seg.fromY },
-      { x: cmd.x1, y: cmd.y1 },
-      { x: cmd.x, y: cmd.y },
-      flatOpts
-    );
-  } else if (seg.kind === 'cubic') {
-    const cmd = seg.command;
-    cubicFlattenInto(
-      segBuf,
-      { x: seg.fromX, y: seg.fromY },
-      { x: cmd.x1, y: cmd.y1 },
-      { x: cmd.x2, y: cmd.y2 },
-      { x: cmd.x, y: cmd.y },
-      flatOpts
-    );
-  } else if (seg.kind === 'arc') {
-    endpointArcToCenterInto(centerArcBuf, { x: seg.fromX, y: seg.fromY }, seg.command);
-    arcFlattenInto(segBuf, centerArcBuf, flatOpts);
   }
 }

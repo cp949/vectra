@@ -1,6 +1,7 @@
 import { polylineTotalLength } from '../internal/polyline';
-import type { CenterArcWritable, PathCommand, XYObjectWritable } from '../types/index';
-import { type DrawSegment, flattenDrawSegmentInto } from './path-segments.internal';
+import type { PathCommand } from '../types/index';
+import type { DrawSegment } from './path-segments.internal';
+import type { SegmentFlattener } from './segment-flattener.internal';
 
 /**
  * splitAtLengthInto에서 두 path command sequence(outA, outB)를 만들기 위한 path-local
@@ -23,14 +24,8 @@ export function splitLineEndpoint(
   return { x: fromX + t * (toX - fromX), y: fromY + t * (toY - fromY) };
 }
 
-export function measureSegmentLength(
-  seg: DrawSegment,
-  segBuf: XYObjectWritable[],
-  centerArcBuf: CenterArcWritable,
-  flatOpts: { flatness: number; maxRecursion: number }
-): number {
-  flattenDrawSegmentInto(segBuf, seg, flatOpts, centerArcBuf);
-  return polylineTotalLength(segBuf);
+export function measureSegmentLength(seg: DrawSegment, flattener: SegmentFlattener): number {
+  return polylineTotalLength(flattener.flatten(seg));
 }
 
 export function appendCommandsBeforeSegment(
