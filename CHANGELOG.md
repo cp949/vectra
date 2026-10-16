@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+- linalg `rowEchelonForm`과 `rowEchelonFormInto`가 `-0` 입력에서 `-0`을 남기던 문제를 고친다. JSDoc 약속대로 `0`을 반환한다.
+
 ## [1.1.0] - 2026-10-17
 
 - Node.js 최소 지원 버전을 24.18로 상향한다. 런타임 코드는 바뀌지 않는다.

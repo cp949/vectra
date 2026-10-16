@@ -38,6 +38,15 @@ export function rowEchelonFormInto<Out extends MatWritable>(out: Out, matrix: Ma
   const [rows, columns] = shape;
   const temp = deepCopyMatrix(matrix, rows, columns);
   eliminateRows(temp, rows, columns, epsilon, false);
+  // REF는 pivot row를 normalize하지 않고, elimination이 건너뛴 항목은 다시 쓰지 않는다. 입력 `-0`이 남을 수 있다.
+  for (let r = 0; r < rows; r++) {
+    const row = temp[r];
+    for (let c = 0; c < columns; c++) {
+      if (Object.is(row[c], -0)) {
+        row[c] = 0;
+      }
+    }
+  }
   commitMatrixInto(out, temp, rows, columns, 'out');
   return out;
 }
