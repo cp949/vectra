@@ -22,6 +22,7 @@ function extractHeadingSummary(readmeText) {
 function normalizeExportName(name) {
   return name
     .trim()
+    .replace(/^type\s+/, '')
     .replace(/\s+as\s+.+$/, '')
     .trim();
 }
@@ -29,7 +30,7 @@ function normalizeExportName(name) {
 function extractExportNames(sourceText) {
   const names = [];
 
-  for (const match of sourceText.matchAll(/export\s+\{([^}]+)\}/g)) {
+  for (const match of sourceText.matchAll(/export\s+(?:type\s+)?\{([^}]+)\}/g)) {
     for (const part of match[1].split(',')) {
       const name = normalizeExportName(part);
       if (name && !names.includes(name)) {
