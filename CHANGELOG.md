@@ -8,6 +8,7 @@
 ## [Unreleased]
 
 - Node.js 최소 지원 버전을 24.18로 상향한다. 런타임 코드는 바뀌지 않는다.
-- 빌드 도구를 tsup에서 tsdown으로 교체한다. 공개 entry와 export는 그대로다. chunk 파일 이름만 달라진다.
+- 빌드 도구를 tsup에서 tsdown으로 교체한다. 공개 entry와 export는 그대로다.
+- dist를 root와 domain barrel 단위로만 만든다. leaf 단위 dist 파일은 없어진다. 패키지 파일은 6,079개에서 212개로, 압축 크기는 2.3 MB에서 1.6 MB로 줄어든다. `exports`를 우회해 `dist/<domain>/<leaf>.js`를 직접 import하던 코드는 domain subpath(`@cp949/vectra/<domain>`)로 바꿔야 한다.
 - 개발 의존성을 같은 메이저 안에서 갱신한다. vitest는 5로 올린다.
 - 배포에 `release-it`을 도입한다. [RELEASING.md](RELEASING.md)를 본다.
