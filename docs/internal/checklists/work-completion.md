@@ -29,7 +29,7 @@
 
 ## 3. Export / Package Surface
 
-- [ ] 새 public 함수의 leaf subpath export를 추가했다.
+- [ ] 새 public 함수를 leaf 파일(`src/<domain>/<kebab>.ts`)로 추가했다.
 - [ ] domain barrel export를 갱신했다.
 - [ ] `sub/vectra/package.json` `exports`가 root/domain barrel만 공개하는지 확인했다.
 - [ ] 새 public leaf가 domain barrel에서 export되는지 확인했다. leaf 파일은 build entry가 아니다.

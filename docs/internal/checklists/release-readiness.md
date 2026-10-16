@@ -38,7 +38,7 @@ publish 직전 무엇을 확인해야 하는가를 담는 체크리스트다.
 | --- | --- | --- |
 | Runtime | Node.js `>=24.18.0` | `pnpm verify`와 package 단위 검증을 이 기준에서 실행 |
 | Package format | ESM only | `package.json`의 `"type": "module"`, `exports` 유지 |
-| Import surface | root / domain barrel / leaf subpath | contract test로 package import와 subpath import 확인 |
+| Import surface | root / domain barrel | contract test로 package import와 subpath import 확인 |
 | Type declarations | `.d.ts` 포함 | `pnpm --filter @cp949/vectra build` 후 `dist/**/*.d.ts` 확인 |
 | Bundler/browser | ESM package exports를 해석하는 bundler 환경 | bundle size gate 도입 전까지 README support statement와 contract test를 기준으로 확인 |
 | Coordinate input | `{ x, y }` object 또는 readonly `[x, y]` tuple | typed-array / array-like coordinate를 공식 `XYInput`으로 문서화하지 않음 |
@@ -61,38 +61,11 @@ publish 직전 무엇을 확인해야 하는가를 담는 체크리스트다.
 - [ ] `exports`에 선언된 모든 경로가 build entry로 파생된다
 - [ ] 새로 추가된 domain barrel이 두 파일 모두에 반영되어 있다
 
-현재 domain barrel (23개):
+현재 `exports`는 38개다. root 1개와 domain barrel 37개다.
 
-```
-.               (root index)
-./types
-./vec
-./segment
-./rect
-./bounds
-./circle
-./ellipse
-./matrix
-./polyline
-./polygon
-./triangle
-./random
-./path
-./math
-./curve
-./svg-path
-./infinite-line
-./ray
-./intersects
-./angle
-./interpolation
-./easing
-```
-
-leaf subpath: `vec` 39개, `segment` 39개, `rect` 32개, `bounds` 23개, `circle` 26개,
-`ellipse` 30개, `matrix` 23개, `polyline` 20개, `polygon` 27개, `triangle` 24개, `random` 31개,
-`path` 14개, `math` 25개, `curve` 29개, `svg-path` 2개, `ray` 27개, `infinite-line` 25개,
-`intersects` 71개, `angle` 23개, `interpolation` 9개 파일(16개 함수), `easing` 18개 파일(40개 함수)
+- 목록 원본: `sub/vectra/package.json` `exports`.
+- build entry 원본: `sub/vectra/build-entrypoints.ts`.
+- leaf 파일은 build entry가 아니다. domain barrel에 병합된다.
 
 ---
 
@@ -120,27 +93,7 @@ release 작업에서 수행한다.
 contract test 범위:
 
 - [ ] `tests/contract/package-imports.test.ts` — root / types / 각 domain barrel import 검증
-- [ ] `tests/contract/vec-subpaths.test.ts`
-- [ ] `tests/contract/segment-subpaths.test.ts`
-- [ ] `tests/contract/rect-subpaths.test.ts`
-- [ ] `tests/contract/bounds-subpaths.test.ts`
-- [ ] `tests/contract/circle-subpaths.test.ts`
-- [ ] `tests/contract/ellipse-subpaths.test.ts`
-- [ ] `tests/contract/matrix-subpaths.test.ts`
-- [ ] `tests/contract/polyline-subpaths.test.ts`
-- [ ] `tests/contract/polygon-subpaths.test.ts`
-- [ ] `tests/contract/triangle-subpaths.test.ts`
-- [ ] `tests/contract/random-subpaths.test.ts`
-- [ ] `tests/contract/path-subpaths.test.ts`
-- [ ] `tests/contract/math-subpaths.test.ts`
-- [ ] `tests/contract/curve-subpaths.test.ts`
-- [ ] `tests/contract/svg-path-subpaths.test.ts`
-- [ ] `tests/contract/ray-subpaths.test.ts`
-- [ ] `tests/contract/infinite-line-subpaths.test.ts`
-- [ ] `tests/contract/intersects-subpaths.test.ts`
-- [ ] `tests/contract/angle-subpaths.test.ts`
-- [ ] `tests/contract/interpolation-subpaths.test.ts`
-- [ ] `tests/contract/easing-subpaths.test.ts`
+- [ ] `tests/contract/<domain>-subpaths.test.ts` — `types`를 뺀 domain마다 1개. 현재 36개
 
 ---
 
