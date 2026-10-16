@@ -60,6 +60,8 @@ signed-zero가 발생할 수 있는 builder 패턴:
 builder JSDoc에는 "부호 반전 산술은 입력이 `0`일 때 JS의 signed-zero 규칙에 따라 `-0`을 그대로
 기록한다" 식의 한 줄 주석을 둔다. API surface 문서도 마찬가지.
 
+`-0` 출력 정책 전반은 [ADR 0008](../../adr/0008-negative-zero-output-policy.md)을 따른다.
+
 ## 관련 작업
 
 - `_works/S3-RM-044/20260525-01-infinite-line-builder-follow-up/함정.md` (TASK-01).
