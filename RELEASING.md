@@ -41,6 +41,9 @@ pnpm release-it
 release-it이 수행하는 순서:
 
 1. `before:init` hook. 루트에서 `pnpm release:check`를 실행한다. `verify`, `test:contract`, 빌드, `npm pack --dry-run`을 차례로 수행하고, 하나라도 실패하면 중단한다.
+   - 출력은 `mktemp` 임시 파일로 보낸다. release-it의 출력 버퍼 1 MB를 넘기지 않기 위해서다.
+   - 실패하면 마지막 100줄과 전체 로그 경로를 보여 준다. 성공하면 로그를 지운다.
+   - hook 문자열에 `${`를 쓰지 않는다. release-it이 hook을 Eta 템플릿(`${...}`)으로 렌더링한다. `${TMPDIR:-/tmp}` 같은 shell 문법은 렌더링 단계에서 실패한다.
 2. 버전 선택 프롬프트. `sub/vectra/package.json`의 `version`을 올린다.
 3. 루트 `CHANGELOG.md`의 `[Unreleased]` 항목을 `[<version>] - <날짜>` 섹션으로 옮기고, 빈 `[Unreleased]`를 다시 둔다.
 4. 변경 파일을 stage한다. `sub/vectra` 범위는 `git add . --update`로, 루트 `CHANGELOG.md`는 `after:bump` hook이 stage한다.

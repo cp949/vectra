@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/release-it@21/schema/release-it.json",
   "hooks": {
-    "before:init": "cd ../.. && pnpm release:check > \"${TMPDIR:-/tmp}/vectra-release-check.log\" 2>&1 || { tail -n 100 \"${TMPDIR:-/tmp}/vectra-release-check.log\"; exit 1; }",
+    "before:init": "cd ../.. && log=$(mktemp) && if pnpm release:check > \"$log\" 2>&1; then rm -f \"$log\"; else tail -n 100 \"$log\"; echo \"release:check 실패. 전체 로그: $log\"; exit 1; fi",
     "after:bump": "git add --update ../../CHANGELOG.md"
   },
   "git": {
