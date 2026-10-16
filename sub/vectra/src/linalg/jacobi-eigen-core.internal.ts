@@ -1,5 +1,6 @@
+import { firstNonZeroSignOfColumn } from '../internal/first-nonzero-sign';
+import type { ResolvedIterationOptions } from '../internal/iteration-options';
 import { type JacobiSymmetricEigenRawResult, jacobiSymmetricEigenRaw } from '../internal/jacobi-symmetric-eigen';
-import type { ResolvedIterationOptions } from './jacobi-eigen-options.internal';
 
 /** Jacobi 결과. 수렴하지 못한 경우 `undefined`. */
 export interface JacobiEigenResult {
@@ -88,14 +89,7 @@ function finalize(raw: JacobiSymmetricEigenRawResult, n: number, epsilon: number
  */
 export function applyColumnSignConvention(vectors: number[][], n: number, k: number, epsilon: number): void {
   for (let col = 0; col < k; col++) {
-    let sign = 1;
-    for (let r = 0; r < n; r++) {
-      const v = vectors[r][col];
-      if (v !== 0) {
-        sign = v < 0 ? -1 : 1;
-        break;
-      }
-    }
+    const sign = firstNonZeroSignOfColumn(vectors, col, n);
     for (let r = 0; r < n; r++) {
       const v = sign * vectors[r][col];
       const cleaned = Math.abs(v) <= epsilon ? 0 : v;

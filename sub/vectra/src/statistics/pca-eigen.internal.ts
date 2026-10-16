@@ -1,3 +1,4 @@
+import { firstNonZeroSign } from '../internal/first-nonzero-sign';
 import { type JacobiSymmetricEigenRawResult, jacobiSymmetricEigenRaw } from '../internal/jacobi-symmetric-eigen';
 import type { ResolvedPCAOptions } from './pca-options.internal';
 
@@ -97,15 +98,7 @@ export function orderEigenDescending(raw: SymmetricEigenResult, n: number, epsil
 
   for (let i = 0; i < n; i++) {
     const row = components[i];
-    let sign = 1;
-    for (let c = 0; c < n; c++) {
-      const v = row[c];
-      if (v !== 0) {
-        sign = v < 0 ? -1 : 1;
-        break;
-      }
-    }
-    if (sign === -1) {
+    if (firstNonZeroSign(row) === -1) {
       for (let c = 0; c < n; c++) {
         const v = -row[c];
         row[c] = Object.is(v, -0) ? 0 : v;
