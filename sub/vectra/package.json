@@ -29,6 +29,7 @@
   "scripts": {
     "build": "tsdown && node ./scripts/generate-llm-txt.mjs",
     "build:watch": "tsdown --watch",
+    "prepublishOnly": "pnpm build",
     "clean": "rimraf dist coverage llm.txt",
     "lint": "biome check build-entrypoints.ts tsdown.config.ts src tests",
     "lint:fix": "biome check --write build-entrypoints.ts tsdown.config.ts src tests",

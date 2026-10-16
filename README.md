@@ -94,10 +94,10 @@ Release readiness 후보:
 pnpm release:check
 ```
 
-실제 npm publish:
+실제 npm publish는 `release-it`으로 진행한다. 절차는 [RELEASING.md](./RELEASING.md)를 따른다.
 
 ```sh
-pnpm publish:npm
+pnpm release-it
 ```
 
 ## 문서
@@ -111,6 +111,7 @@ pnpm publish:npm
 | [Output과 Into](./docs/guides/outputs-and-into.md) | allocation과 caller-owned output |
 | [Domain 지도](./docs/reference/domains.md) | domain별 기능 탐색 |
 | [내부 문서 허브](./docs/internal/README.md) | 기여, release, agent 작업 문서 |
+| [RELEASING](./RELEASING.md) | npm 배포 절차 (release-it) |
 
 ## 제품 경계
 

@@ -249,25 +249,19 @@ alias 없이 전면 rename. 이전 이름은 모두 제거됨.
 실제 publish는 이 체크리스트를 모두 통과한 뒤 별도 작업으로 진행한다.
 
 ```sh
-# 1. 전체 검증
-pnpm verify
+# 1. 실제 변경 없이 흐름만 확인
+pnpm release-it --dry-run
 
-# 2. 빌드 산출물 확인
-pnpm --filter @cp949/vectra build
-ls sub/vectra/dist
-
-# 3. pack dry-run으로 포함 파일 확인
-cd sub/vectra && npm pack --dry-run
-
-# 4. version bump (별도 작업)
-# npm version patch  또는  minor  또는  major
-
-# 5. git tag 생성 (별도 작업)
-# git tag v<version>
-
-# 6. publish (별도 작업)
-# npm publish --access public
+# 2. 배포
+pnpm release-it
 ```
+
+`pnpm release-it`이 아래 단계를 수행한다. 자세한 절차와 실패 후 조치는 [RELEASING.md](../../../RELEASING.md)에 있다.
+
+- `pnpm release:check` (`verify`, `test:contract`, 빌드, `npm pack --dry-run`)
+- version bump와 `CHANGELOG.md` 갱신
+- `pnpm publish`
+- 배포 commit, `v<version>` tag 생성, push
 
 ---
 
