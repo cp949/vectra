@@ -148,6 +148,14 @@ describe('columnSpaceInto — 정상 입력', () => {
     expectOrthonormalRows(out);
     expectColumnsInSpan(A, out);
   });
+
+  test('결과 entry의 -0은 +0으로 canonicalize', () => {
+    // 음수 column과 0 entry를 섞은 입력이다. basis의 0 자리는 +0이어야 한다.
+    const out: number[][] = [[9, 9]];
+    columnSpaceInto(out, [[-1], [0]]);
+    expect(out).toEqual([[-1, 0]]);
+    expect(Object.is(out[0][1], -0)).toBe(false);
+  });
 });
 
 describe('columnSpaceInto — invalid input', () => {

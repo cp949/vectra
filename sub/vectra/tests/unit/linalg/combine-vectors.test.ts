@@ -2,7 +2,7 @@
  * combineVectors(Into) callback composition unit test.
  *
  * 정상값, index 전달, callback throw, non-finite result,
- * 길이 mismatch, capacity 부족 정책을 고정한다.
+ * 길이 mismatch, capacity 부족, -0 canonicalize 정책을 고정한다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -32,5 +32,18 @@ describe('combineVectorsInto / combineVectors — callback composition', () => {
   test('길이 mismatch와 capacity 부족은 RangeError이다', () => {
     expect(() => combineVectorsInto([], [1, 2], [1], (a, b) => a + b)).toThrow(RangeError);
     expect(() => combineVectorsInto([9], [1, 2], [3, 4], (a, b) => a + b)).toThrow(RangeError);
+  });
+
+  test('callback 결과 -0은 0으로 canonicalize한다(Into, companion)', () => {
+    // 0 * -1은 -0이다.
+    expect(Object.is(0 * -1, -0)).toBe(true);
+    const out = [9, 9];
+    combineVectorsInto(out, [0, 2], [-1, 3], (a, b) => a * b);
+    expect(Object.is(out[0], -0)).toBe(false);
+    expect(out).toEqual([0, 6]);
+
+    const result = combineVectors([0, 2], [-1, 3], (a, b) => a * b);
+    expect(Object.is(result[0], -0)).toBe(false);
+    expect(result).toEqual([0, 6]);
   });
 });

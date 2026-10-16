@@ -318,6 +318,24 @@ describe('pseudoInverseInto — output capacity / aliasing / -0', () => {
     }
   });
 
+  test('pseudoInverseInto 결과 entry에 -0이 남지 않는다', () => {
+    // pseudo-inverse = [[-1, 0], [0, -1]]. 입력 -0 entry 자리에 -0이 남지 않아야 한다.
+    const out: number[][] = [
+      [9, 9],
+      [9, 9],
+    ];
+    pseudoInverseInto(out, [
+      [-1, -0],
+      [-0, -1],
+    ]);
+    expect(out).toEqual([
+      [-1, 0],
+      [0, -1],
+    ]);
+    expect(Object.is(out[0][1], -0)).toBe(false);
+    expect(Object.is(out[1][0], -0)).toBe(false);
+  });
+
   test('pseudoInverse companion은 입력 row 참조를 공유하지 않는다', () => {
     const A: number[][] = [
       [1, 0],

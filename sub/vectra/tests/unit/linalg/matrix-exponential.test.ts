@@ -490,4 +490,18 @@ describe('exp — matrix exponential (companion)', () => {
   test('invalid scalingThreshold는 RangeError', () => {
     expect(() => exp([[0]], { scalingThreshold: 0 })).toThrow(RangeError);
   });
+
+  test('결과 entry에 -0이 남지 않는다', () => {
+    // 입력 -0 entry는 결과 0 자리에서 +0이어야 한다.
+    const result = exp([
+      [0, -0],
+      [-0, 0],
+    ]);
+    expect(result).toEqual([
+      [1, 0],
+      [0, 1],
+    ]);
+    expect(Object.is(result[0][1], -0)).toBe(false);
+    expect(Object.is(result[1][0], -0)).toBe(false);
+  });
 });

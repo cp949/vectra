@@ -2,7 +2,7 @@
  * subtractVectors(Into) element-wise difference unit test.
  *
  * 정상값, out/input aliasing, 길이 mismatch, non-finite,
- * capacity 부족, overflow 정책을 고정한다.
+ * capacity 부족, overflow, -0 canonicalize 정책을 고정한다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -32,5 +32,18 @@ describe('subtractVectorsInto / subtractVectors — element-wise difference', ()
     expect(() => subtractVectorsInto([9], [1, 2], [3, 4])).toThrow(RangeError);
     expect(() => subtractVectorsInto(out, [-Number.MAX_VALUE], [Number.MAX_VALUE])).toThrow(RangeError);
     expect(out).toEqual([9, 9]);
+  });
+
+  test('결과 -0은 0으로 canonicalize한다(Into, companion)', () => {
+    // -0 - 0은 -0이다.
+    expect(Object.is(-0 - 0, -0)).toBe(true);
+    const out = [9, 9];
+    subtractVectorsInto(out, [-0, 3], [0, 1]);
+    expect(Object.is(out[0], -0)).toBe(false);
+    expect(out).toEqual([0, 2]);
+
+    const result = subtractVectors([-0, 3], [0, 1]);
+    expect(Object.is(result[0], -0)).toBe(false);
+    expect(result).toEqual([0, 2]);
   });
 });

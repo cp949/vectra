@@ -230,4 +230,11 @@ describe('reducedRowEchelonForm — RREF (companion)', () => {
   test('invalid epsilon은 RangeError', () => {
     expect(() => reducedRowEchelonForm([[1]], { epsilon: Number.NaN })).toThrow(RangeError);
   });
+
+  test('pivot row의 -0은 0으로 canonicalize한다', () => {
+    // pivot row `[1, -0, 2]`를 pivot 1로 나눌 때 `-0 / 1`이 -0이다.
+    const result = reducedRowEchelonForm([[1, -0, 2]]);
+    expect(result).toEqual([[1, 0, 2]]);
+    expect(Object.is(result[0][1], -0)).toBe(false);
+  });
 });

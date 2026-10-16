@@ -65,6 +65,14 @@ describe('gaussJordanInto — Gauss-Jordan alias (Into)', () => {
       [9, 9],
     ]);
   });
+
+  test('pivot row의 -0은 0으로 canonicalize한다', () => {
+    // pivot row `[1, -0, 2]`를 pivot 1로 나눌 때 `-0 / 1`이 -0이다.
+    const out: number[][] = [[9, 9, 9]];
+    gaussJordanInto(out, [[1, -0, 2]]);
+    expect(out).toEqual([[1, 0, 2]]);
+    expect(Object.is(out[0][1], -0)).toBe(false);
+  });
 });
 
 describe('gaussJordan — Gauss-Jordan alias (companion)', () => {
@@ -79,5 +87,11 @@ describe('gaussJordan — Gauss-Jordan alias (companion)', () => {
 
   test('빈 matrix는 빈 배열', () => {
     expect(gaussJordan([])).toEqual([]);
+  });
+
+  test('pivot row의 -0은 0으로 canonicalize한다', () => {
+    const result = gaussJordan([[1, -0, 2]]);
+    expect(result).toEqual([[1, 0, 2]]);
+    expect(Object.is(result[0][1], -0)).toBe(false);
   });
 });
