@@ -1,4 +1,5 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
+import { hasSeparatingEdgeNormal } from '../internal/convex-separating-axis';
 import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, TriangleLike } from '../types';
@@ -26,17 +27,6 @@ export function intersectsBoundsTriangle(bounds: BoundsLike, triangle: TriangleL
   if (maxX < minX || maxY < minY) return false;
 
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-  const boundsVerts: [number, number][] = [
-    [minX, minY],
-    [maxX, minY],
-    [maxX, maxY],
-    [minX, maxY],
-  ];
-  const triVerts: [number, number][] = [
-    [ax, ay],
-    [bx, by],
-    [cx, cy],
-  ];
 
   const triMinX = Math.min(ax, bx, cx);
   const triMaxX = Math.max(ax, bx, cx);
@@ -45,29 +35,8 @@ export function intersectsBoundsTriangle(bounds: BoundsLike, triangle: TriangleL
   const triMaxY = Math.max(ay, by, cy);
   if (triMaxY < minY || maxY < triMinY) return false;
 
-  const triEdges: [number, number][] = [
-    [-(by - ay), bx - ax],
-    [-(cy - by), cx - bx],
-    [-(ay - cy), ax - cx],
-  ];
+  const boundsVerts = [minX, minY, maxX, minY, maxX, maxY, minX, maxY];
+  const triVerts = [ax, ay, bx, by, cx, cy];
 
-  for (const [nx, ny] of triEdges) {
-    let minTri = Infinity;
-    let maxTri = -Infinity;
-    for (const [vx, vy] of triVerts) {
-      const p = vx * nx + vy * ny;
-      if (p < minTri) minTri = p;
-      if (p > maxTri) maxTri = p;
-    }
-    let minBounds = Infinity;
-    let maxBounds = -Infinity;
-    for (const [vx, vy] of boundsVerts) {
-      const p = vx * nx + vy * ny;
-      if (p < minBounds) minBounds = p;
-      if (p > maxBounds) maxBounds = p;
-    }
-    if (maxTri < minBounds || maxBounds < minTri) return false;
-  }
-
-  return true;
+  return !hasSeparatingEdgeNormal(triVerts, boundsVerts);
 }

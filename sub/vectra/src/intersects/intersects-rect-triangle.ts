@@ -1,3 +1,4 @@
+import { hasSeparatingEdgeNormal } from '../internal/convex-separating-axis';
 import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
 import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
 import type { RectLike, TriangleLike } from '../types';
@@ -25,17 +26,6 @@ export function intersectsRectTriangle(rect: RectLike, triangle: TriangleLike): 
   const rx2 = rx + rw;
   const ry2 = ry + rh;
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-  const rectVerts: [number, number][] = [
-    [rx, ry],
-    [rx2, ry],
-    [rx2, ry2],
-    [rx, ry2],
-  ];
-  const triVerts: [number, number][] = [
-    [ax, ay],
-    [bx, by],
-    [cx, cy],
-  ];
 
   const triMinX = Math.min(ax, bx, cx);
   const triMaxX = Math.max(ax, bx, cx);
@@ -44,29 +34,8 @@ export function intersectsRectTriangle(rect: RectLike, triangle: TriangleLike): 
   const triMaxY = Math.max(ay, by, cy);
   if (triMaxY < ry || ry2 < triMinY) return false;
 
-  const triEdges: [number, number][] = [
-    [-(by - ay), bx - ax],
-    [-(cy - by), cx - bx],
-    [-(ay - cy), ax - cx],
-  ];
+  const rectVerts = [rx, ry, rx2, ry, rx2, ry2, rx, ry2];
+  const triVerts = [ax, ay, bx, by, cx, cy];
 
-  for (const [nx, ny] of triEdges) {
-    let minTri = Infinity;
-    let maxTri = -Infinity;
-    for (const [vx, vy] of triVerts) {
-      const p = vx * nx + vy * ny;
-      if (p < minTri) minTri = p;
-      if (p > maxTri) maxTri = p;
-    }
-    let minRect = Infinity;
-    let maxRect = -Infinity;
-    for (const [vx, vy] of rectVerts) {
-      const p = vx * nx + vy * ny;
-      if (p < minRect) minRect = p;
-      if (p > maxRect) maxRect = p;
-    }
-    if (maxTri < minRect || maxRect < minTri) return false;
-  }
-
-  return true;
+  return !hasSeparatingEdgeNormal(triVerts, rectVerts);
 }
