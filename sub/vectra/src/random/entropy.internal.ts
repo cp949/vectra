@@ -9,7 +9,7 @@ export const hasCrypto = (): boolean => typeof globalThis.crypto?.getRandomValue
 export const cryptoUint32 = (): number => {
   const buf = new Uint32Array(1);
   globalThis.crypto.getRandomValues(buf);
-  return buf[0] ?? 0;
+  return buf[0] as number;
 };
 
 /** Web Crypto 우선, 미지원 환경에서는 `Math.random`으로 fallback한다. */

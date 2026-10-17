@@ -1,7 +1,11 @@
 import { type RandomSource, random } from './random';
 
+/**
+ * `value` 다음 representable double을 돌려준다.
+ *
+ * `value`는 0 이상 유한이어야 한다. 호출자가 finite한 arc-length 누적값만 넘긴다.
+ */
 function nextRepresentableNumber(value: number): number {
-  if (!Number.isFinite(value)) return value;
   if (value === 0) return Number.MIN_VALUE;
 
   const buffer = new ArrayBuffer(8);
@@ -10,18 +14,11 @@ function nextRepresentableNumber(value: number): number {
   let hi = view.getUint32(0);
   let lo = view.getUint32(4);
 
-  if (value > 0) {
-    if (lo === 0xffffffff) {
-      lo = 0;
-      hi++;
-    } else {
-      lo++;
-    }
-  } else if (lo === 0) {
-    lo = 0xffffffff;
-    hi--;
+  if (lo === 0xffffffff) {
+    lo = 0;
+    hi++;
   } else {
-    lo--;
+    lo++;
   }
 
   view.setUint32(0, hi);
