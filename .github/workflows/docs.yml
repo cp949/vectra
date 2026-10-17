@@ -1,4 +1,4 @@
-name: API Docs
+name: Pages
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build API reference
+    name: Build showcase and API reference
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -35,8 +35,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build showcase
+        run: pnpm --filter @repo/showcase build:pages
+
       - name: Generate API reference
         run: pnpm --filter @repo/api-docs docs:api
+
+      # 사이트 루트는 showcase, API reference는 /api/ 아래에 둔다
+      - name: Assemble site
+        run: |
+          mkdir -p _site/api
+          cp -R apps/showcase/dist/. _site/
+          cp -R sub/api-docs/docs-api/. _site/api/
 
       - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
@@ -44,7 +54,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: sub/api-docs/docs-api
+          path: _site
 
   deploy:
     name: Deploy to GitHub Pages

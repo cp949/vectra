@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "build:pages": "vite build --mode pages && node -e \"require('node:fs').copyFileSync('dist/index.html', 'dist/404.html')\"",
     "dev": "vite",
     "lint": "biome check --error-on-warnings .",
     "lint:fix": "biome check --write .",
