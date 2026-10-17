@@ -52,11 +52,16 @@ export default defineConfig({
       include: ['src/**/*.ts'],
       exclude: ['src/**/*.d.ts'],
       // 전역 기준이다. shared와 isolated 두 project의 합산에 적용한다.
-      // 실측(statements 97.32, branches 93.43, functions 97.45, lines 97.86)에서 약 2%p 아래로 둔다.
+      // statements, branches, lines는 실측(97.33, 93.49, 97.86)에서 약 2%p 아래로 둔다.
+      // functions만 예외다. 실측 99.93(2994/2996)에서 약 1%p 아래로 둔다.
+      // 미커버 2개는 public API로 호출되지 않는다.
+      // - curve-speed.internal.ts: 퇴화 반지름의 `integrate: () => 0`. speedLength가 from === to에서 먼저 0을 반환한다.
+      // - segment-segment-collinear.internal.ts: `collinearSortAxis`의 `key: (x) => x`. 방어 분기다.
+      // 99는 미커버 약 29개까지 허용한다. 미커버가 2개보다 늘면 새 함수의 테스트 누락을 의심한다.
       thresholds: {
         statements: 95,
         branches: 91,
-        functions: 95,
+        functions: 99,
         lines: 95,
       },
     },

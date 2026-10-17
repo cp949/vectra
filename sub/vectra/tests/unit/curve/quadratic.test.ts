@@ -309,6 +309,23 @@ describe('quadraticExtrema', () => {
     }
   });
 
+  it('y extrema가 x extrema보다 작으면 순서를 바꿔 오름차순으로 반환한다', () => {
+    // tx = (0-2)/(0-4+1) = 2/3, ty = (0-3)/(0-6+1) = 3/5
+    // 삽입 순서는 [tx, ty]이므로 정렬이 순서를 뒤집어야 한다.
+    const result = quadraticExtrema({ x: 0, y: 0 }, { x: 2, y: 3 }, { x: 1, y: 1 });
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBeCloseTo(3 / 5, 12);
+    expect(result[1]).toBeCloseTo(2 / 3, 12);
+  });
+
+  it('x extrema가 y extrema보다 작으면 삽입 순서를 유지한다', () => {
+    // tx = (0-3)/(0-6+1) = 3/5, ty = (0-2)/(0-4+1) = 2/3
+    const result = quadraticExtrema({ x: 0, y: 0 }, { x: 3, y: 2 }, { x: 1, y: 1 });
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBeCloseTo(3 / 5, 12);
+    expect(result[1]).toBeCloseTo(2 / 3, 12);
+  });
+
   it('degenerate curve (p0==p1==p2)에서 빈 배열을 반환한다', () => {
     const p = { x: 1, y: 1 };
     const result = quadraticExtrema(p, p, p);
