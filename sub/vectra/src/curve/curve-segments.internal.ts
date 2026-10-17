@@ -69,7 +69,6 @@ export function cubicSegmentsToPolylineInto(
 ): XYWritable[] {
   assertSamplesPerSegment(steps);
   out.length = 0;
-  if (segCount <= 0) return out;
   for (let s = 0; s < segCount; s++) {
     const o = s * 8;
     const p0x = segments[o];

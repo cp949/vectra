@@ -25,7 +25,8 @@ function readFiniteAxes(points: readonly XYInput[]): { xs: number[]; ys: number[
 }
 
 // natural cubic spline second derivative를 index parameter(h=1) tridiagonal solve로 구한다.
-// 양 끝 second derivative는 0(natural). pivot이 0이거나 non-finite면 RangeError.
+// 양 끝 second derivative는 0(natural).
+// pivot은 v와 무관하게 4 - 1/pivot_prev라서 항상 [2 + √3, 4]이다. 0이나 non-finite가 될 수 없다.
 function solveNaturalSecondDerivatives(v: readonly number[]): number[] {
   const n = v.length;
   const m = new Array<number>(n).fill(0);
@@ -41,9 +42,6 @@ function solveNaturalSecondDerivatives(v: readonly number[]): number[] {
     const sub = idx === 0 ? 0 : 1;
     const sup = idx === k - 1 ? 0 : 1;
     const denom = 4 - sub * (idx === 0 ? 0 : cp[idx - 1]);
-    if (denom === 0 || !Number.isFinite(denom)) {
-      throw new RangeError('natural spline tridiagonal solve failed: non-invertible system');
-    }
     cp[idx] = sup / denom;
     dp[idx] = (rhs - sub * (idx === 0 ? 0 : dp[idx - 1])) / denom;
   }
@@ -59,7 +57,7 @@ function solveNaturalSecondDerivatives(v: readonly number[]): number[] {
  * natural cubic spline cubic Bezier segment를 flat number[]로 생성한다.
  *
  * x/y를 각각 index parameter 기준으로 natural spline 처리한다. x monotonic은 요구하지 않는다.
- * 좌표가 non-finite거나 tridiagonal solve가 실패하면 RangeError로 실패한다.
+ * 좌표가 non-finite면 RangeError로 실패한다.
  * 호출자는 points.length >= 2를 보장한다. points.length === 2이면 line segment와 동일하다.
  *
  * @param points natural spline이 통과할 입력 point 배열

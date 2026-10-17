@@ -10,7 +10,7 @@ const DEFAULT_STEPS = 16;
  * x/y를 각각 index parameter 기준으로 natural spline 처리한다. x monotonic은 요구하지 않는다.
  * endpoint second derivative는 0이다. 첫 segment만 시작점을 포함하고 후속 segment는 연결점 중복을 피한다.
  * points.length < 2이면 out.length를 0으로 두고 반환한다. points.length === 2이면 line segment와 동일하다.
- * 좌표가 non-finite거나 tridiagonal solve가 실패하면 RangeError로 실패한다.
+ * 좌표가 non-finite면 RangeError로 실패한다.
  * steps가 safe integer가 아니거나 1 미만이면 RangeError로 실패한다.
  *
  * @param out point를 기록할 writable point 배열. 기존 내용은 덮어쓴다.

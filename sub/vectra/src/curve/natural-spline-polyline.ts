@@ -7,7 +7,7 @@ import { naturalSplinePolylineInto } from './natural-spline-polyline-into';
  * x/y를 각각 index parameter 기준으로 natural spline 처리한다. x monotonic은 요구하지 않는다.
  * endpoint second derivative는 0이다. 첫 segment만 시작점을 포함하고 후속 segment는 연결점 중복을 피한다.
  * points.length < 2이면 빈 배열을 반환한다. points.length === 2이면 line segment와 동일하다.
- * 좌표가 non-finite거나 tridiagonal solve가 실패하면 RangeError로 실패한다.
+ * 좌표가 non-finite면 RangeError로 실패한다.
  * steps가 safe integer가 아니거나 1 미만이면 RangeError로 실패한다.
  * 성능 최적화가 필요하면 `naturalSplinePolylineInto`를 사용한다.
  *
