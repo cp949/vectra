@@ -61,6 +61,24 @@ publish가 git commit·tag보다 먼저 실행된다(release-it 21 lifecycle).
 
 설정 파일: [`sub/vectra/.release-it.json`](sub/vectra/.release-it.json)
 
+## API 문서 배포
+
+API reference는 GitHub Pages로 배포한다. 생성기는 `sub/api-docs`(typedoc)다.
+
+- 트리거: `v*` tag push, 또는 수동 실행. workflow는 `.github/workflows/docs.yml`이다.
+- release-it이 tag를 push하면 문서가 자동으로 갱신된다.
+- 수동 실행: `gh workflow run docs.yml`. 첫 배포와 문서만 다시 올릴 때 쓴다.
+- 최초 1회: 저장소 Settings → Pages → Source를 `GitHub Actions`로 바꾼다.
+- 로컬 생성: `pnpm --filter @repo/api-docs docs:api`. 결과는 `sub/api-docs/docs-api/`다. Git에서 제외한다.
+
+typedoc을 `sub/vectra`에 두지 않는 이유:
+
+- typedoc 0.28은 TypeScript `<=6.0.x`만 지원한다. `sub/vectra`는 TypeScript 7을 쓴다.
+- TypeScript 7과 같이 실행하면 typedoc이 시작 단계에서 죽는다.
+- `sub/api-docs`가 TypeScript `~6.0.3`을 따로 가진다.
+
+문서 대상 모듈은 `sub/vectra/package.json`의 `exports`에서 읽는다. 새 domain subpath를 추가하면 문서에도 자동으로 들어간다.
+
 ## 실패 후 조치
 
 release-it은 push 성공 전에 종료되면(에러, Ctrl+C) 로컬 변경을 자동 rollback한다.

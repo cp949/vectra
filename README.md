@@ -31,6 +31,7 @@ console.log(Vecx.add([3, 4], { x: 1, y: 2 })); // {x: 4, y: 6}
 | --- | --- |
 | `sub/vectra` | publish package `@cp949/vectra` |
 | `sub/playground` | demo app 공통 playground shell |
+| `sub/api-docs` | typedoc API reference 생성 (private) |
 | `sub/typescript-config` | workspace TypeScript config package |
 | `apps/canvas-demo` | 정적 geometry 계산 결과 시각화 |
 | `apps/pixi-demo` | interaction / animation geometry demo |
