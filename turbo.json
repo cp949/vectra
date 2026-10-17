@@ -18,22 +18,6 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "lint": {
-      "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "lint:fix": {
-      "dependsOn": ["^build"],
-      "cache": false,
-      "outputs": []
-    },
-    "format": {
-      "cache": false,
-      "outputs": []
-    },
-    "format:check": {
-      "outputs": []
-    },
     "test": {
       "dependsOn": ["^build"],
       "outputs": [],

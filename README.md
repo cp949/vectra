@@ -86,7 +86,7 @@ pnpm examples:coverage:test
 pnpm examples:typecheck
 ```
 
-`pnpm verify`는 위 governance gate와 workspace `typecheck`, `typecheck:examples`, `lint`, `format:check`, `test`, `build`를 실행한다.
+`pnpm verify`는 위 governance gate, 루트 `pnpm lint`(`biome ci --error-on-warnings .`: lint, format, import 정렬, warning), workspace `typecheck`, `typecheck:examples`, `test`, `build`를 실행한다.
 
 Release readiness 후보:
 
