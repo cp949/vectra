@@ -217,6 +217,26 @@ const hits = intersections(polyline, other);
 판단 기준은 API-007과 같다. collection / multi-output도 companion을 기본으로 제공한다.
 catalog 기본값("제공한다", API-012)은 collection output에도 동일하게 적용된다.
 
+### Point 배열 출력: clear 후 push가 기본이다
+
+point 배열을 `out`으로 받는 collection `xxxInto`는 `out.length = 0` 뒤 새 point object를 push한다.
+
+- 대상: polyline·polygon의 `*PointsInto`, `rect/perimeterPointsInto`, curve의 `*PolylineInto` 등.
+- 결과 길이는 입력으로 정해진다. 호출 전 `out`의 길이와 내용은 결과에 영향을 주지 않는다.
+- 새 object를 만든다. caller가 쥐고 있던 이전 원소를 수정하지 않는다.
+- polyline·polygon의 `transformPointsInto`는 입력과 `out`이 같은 배열이어도 안전하다.
+- 대가로 호출마다 point object를 할당한다.
+
+예외는 `matrix/transformPointsInto` 하나다. 이 함수는 `out[i]`에 `writeXY`한다.
+
+- `out[i]`는 tuple, 외부 point class instance일 수 있다. 호출 전에 caller가 준비한다.
+- `out.length < points.length`이면 `RangeError`를 던지고 `out`을 수정하지 않는다.
+- `out.length > points.length`이면 초과 항목을 수정하지 않는다.
+- 같은 index의 입력을 먼저 읽고 기록하므로 `out[i] === points[i]` aliasing만 안전하다.
+- point object를 할당하지 않는다.
+
+두 방식은 호출 계약이 달라서 한쪽으로 통일하지 않는다. 새 collection `Into`는 clear 후 push를 따른다. 원소 타입을 caller가 정해야 하는 경우에만 index 위치 기록을 쓴다.
+
 ## API-009: 좌표 입력 (`XYInput`)
 
 좌표 입력은 `XYInput`을 사용한다. 숫자 나열 overload는 public input에 포함하지 않는다.
