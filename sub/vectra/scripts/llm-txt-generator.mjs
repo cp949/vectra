@@ -95,7 +95,7 @@ export function renderLlmTxt({ packageJson, readmeText, modules, declarationFile
     ...declarationInventory,
     '',
     '## Usage Patterns',
-    `- Import broad APIs from \`${packageJson.name}\` when bundle size is not critical.`,
+    '- The package root re-exports types and `VECTRA_PACKAGE_NAME` only. Import functions from domain subpaths.',
     `- Import domain APIs from subpaths such as \`${packageJson.name}/vec\`, \`${packageJson.name}/segment\`, or \`${packageJson.name}/intersects\`.`,
     '- Prefer `*Into` functions when reusing output objects matters.',
     '- Treat degenerate geometry behavior as part of the public contract documented by the package tests and README.',

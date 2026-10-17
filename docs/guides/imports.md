@@ -21,16 +21,14 @@ const center = Rectx.centerInto({ x: 0, y: 0 }, frame);
 
 ## Root import
 
-root import는 편의용이다.
-여러 domain을 한 파일에서 섞어 쓰는 경우 domain 경계가 흐려진다.
+root는 type 재export와 metadata(`VECTRA_PACKAGE_NAME`)만 제공한다.
+함수는 domain subpath에서 import한다.
 
 ```ts
 import { VECTRA_PACKAGE_NAME } from '@cp949/vectra';
 
 console.log(VECTRA_PACKAGE_NAME); // '@cp949/vectra'
 ```
-
-사용자 코드에서는 domain barrel import를 먼저 선택한다.
 
 ## Package export 기준
 
