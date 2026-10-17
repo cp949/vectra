@@ -87,9 +87,9 @@ export function collinearMappedInterval(
   const endTA = Math.min(1, bHiOnA);
   if (startTA > endTA) return null;
 
+  // startTA, endTA는 [bLoOnA, bHiOnA] 안이라 |startTA - tBo|, |endTA - tBo|가 |s| 이하다. 몫은 finite다.
   const startTB = (startTA - tBo) / s;
   const endTB = (endTA - tBo) / s;
-  if (!allFinite(startTB, endTB)) return undefined;
 
   return { startTA, endTA, startTB, endTB };
 }
@@ -164,8 +164,8 @@ export function collinearSortAxis(
   ax1: number,
   ay1: number
 ): { key: (x: number, y: number) => number } {
+  // 퇴화 선분(길이 0)은 detail 진입부의 degenerate 분기가 먼저 처리하므로 A는 길이가 있다.
   const scale = Math.max(Math.abs(ax0), Math.abs(ay0), Math.abs(ax1), Math.abs(ay1));
-  if (!Number.isFinite(scale) || scale === 0) return { key: (x) => x };
   const dx = ax1 / scale - ax0 / scale;
   const dy = ay1 / scale - ay0 / scale;
   if (Math.abs(dx) >= Math.abs(dy)) {

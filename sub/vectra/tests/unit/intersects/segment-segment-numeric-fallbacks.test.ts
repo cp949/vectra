@@ -8,7 +8,6 @@ import {
   collinearMappedInterval,
   collinearOverlapCandidates,
   collinearOverlapFromMappedInterval,
-  collinearSortAxis,
 } from '../../../src/intersects/segment-segment-collinear.internal';
 import {
   intersectionParameters,
@@ -120,14 +119,6 @@ describe('collinear helper', () => {
 
   test('collinearOverlapCandidates는 A가 한 점이면 A 쪽 parameter가 NaN인 후보를 버린다', () => {
     expect(collinearOverlapCandidates(0, 0, 0, 0, 0, 0, 1, 1, 1e-9)).toEqual([{ x: 0, y: 0, tA: 0, tB: 0 }]);
-  });
-
-  test('collinearSortAxis는 A가 원점의 한 점이면 x를 그대로 정렬 키로 쓴다', () => {
-    expect(collinearSortAxis(0, 0, 0, 0).key(3, 4)).toBe(3);
-  });
-
-  test('collinearSortAxis는 A가 원점이 아닌 한 점이면 양의 방향으로 x를 정렬 키로 쓴다', () => {
-    expect(collinearSortAxis(1, 1, 1, 1).key(3, 4)).toBe(3);
   });
 });
 

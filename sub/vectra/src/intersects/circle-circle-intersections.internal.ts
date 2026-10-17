@@ -91,8 +91,8 @@ export function circleCircleDetailXY(
 
   const dx = nbx - nax;
   const dy = nby - nay;
+  // 정규화 좌표는 모두 [-1, 1] 안이라 d는 2√2 이하로 finite다.
   const d = Math.hypot(dx, dy);
-  if (!Number.isFinite(d)) return { kind: 'none' };
 
   const rSum = nrA + nrB;
   const rDiff = Math.abs(nrA - nrB);

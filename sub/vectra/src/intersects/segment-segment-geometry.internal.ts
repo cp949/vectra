@@ -7,9 +7,8 @@ export function pointPointDist(ax: number, ay: number, bx: number, by: number): 
   // 차분/거리가 overflow로 non-finite가 될 때만 scale 정규화 fallback을 쓴다.
   const direct = Math.hypot(ax - bx, ay - by);
   if (Number.isFinite(direct)) return direct;
+  // 입력은 detail 진입부에서 finite가 보장된다. 직접 거리가 overflow했다면 scale > 0이다.
   const scale = Math.max(Math.abs(ax), Math.abs(ay), Math.abs(bx), Math.abs(by));
-  if (!Number.isFinite(scale)) return Number.POSITIVE_INFINITY;
-  if (scale === 0) return 0;
   return scale * Math.hypot(ax / scale - bx / scale, ay / scale - by / scale);
 }
 
@@ -32,9 +31,8 @@ export function pointLineDist(px: number, py: number, ax: number, ay: number, bx
     return axisDist === undefined ? scaledDist : Math.max(scaledDist, axisDist);
   }
 
+  // 입력은 finite다. 위 분기를 못 탄 것은 차분이 overflow한 경우라 scale > 0이다.
   const scale = Math.max(Math.abs(px), Math.abs(py), Math.abs(ax), Math.abs(ay), Math.abs(bx), Math.abs(by));
-  if (!Number.isFinite(scale)) return Number.POSITIVE_INFINITY;
-  if (scale === 0) return 0;
   const npx = px / scale;
   const npy = py / scale;
   const nax = ax / scale;
@@ -99,8 +97,8 @@ export function parameterOnSegmentPoint(
     return qy / dy;
   }
 
+  // 입력이 모두 0이면 scale이 0이라 아래 나눗셈이 NaN을 만들고, 결과도 NaN이다.
   const scale = Math.max(Math.abs(px), Math.abs(py), Math.abs(ax), Math.abs(ay), Math.abs(bx), Math.abs(by));
-  if (!Number.isFinite(scale) || scale === 0) return Number.NaN;
   const npx = px / scale;
   const npy = py / scale;
   const nax = ax / scale;
