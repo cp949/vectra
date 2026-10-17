@@ -1,7 +1,6 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyBoxIntersectionPoint } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, InfiniteLineLike, XYWritable } from '../types';
 
@@ -14,7 +13,7 @@ export function singleIntersectionInfiniteLineBoundsInto(
   out: XYWritable,
   infiniteLine: InfiniteLineLike,
   bounds: BoundsLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);

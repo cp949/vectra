@@ -1,6 +1,5 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersectionPoint, segmentToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, SegmentLike, XYWritable } from '../types';
@@ -15,12 +14,13 @@ import type { BoundsLike, SegmentLike, XYWritable } from '../types';
  * @param line 교점을 구할 segment
  * @param bounds 교점을 구할 bounds (axis-aligned)
  * @param epsilon 수치 비교 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionSegmentBoundsInto(
   out: XYWritable,
   line: SegmentLike,
   bounds: BoundsLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);

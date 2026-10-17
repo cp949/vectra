@@ -1,5 +1,4 @@
 import { lineFamilyBoxIntersectionPoint, segmentToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
@@ -15,11 +14,12 @@ import type { RectLike, SegmentLike, XYObjectWritable } from '../types';
  * @param line 교점을 구할 segment
  * @param rect 교점을 구할 rect
  * @param epsilon 수치 비교 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionSegmentRect(
   line: SegmentLike,
   rect: RectLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable | undefined {
   const rw = readRectWidth(rect);
   const rh = readRectHeight(rect);

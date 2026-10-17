@@ -1,5 +1,4 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { lineFamilyPolygonOverlapIntervalsInto } from '../internal/polygon-line-intersections';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, LinePolygonOverlapIntervalDetail, PolygonLike } from '../types';
@@ -26,12 +25,13 @@ import type { InfiniteLineLike, LinePolygonOverlapIntervalDetail, PolygonLike } 
  * @param infiniteLine 교차를 구할 infinite-line
  * @param polygon 교차를 구할 polygon
  * @param epsilon collinear/수렴 판정 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function infiniteLinePolygonOverlapIntervalsInto(
   outIntervals: LinePolygonOverlapIntervalDetail[],
   infiniteLine: InfiniteLineLike,
   polygon: PolygonLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): LinePolygonOverlapIntervalDetail[] {
   const origin = readInfiniteLineOrigin(infiniteLine);
   const direction = readInfiniteLineDirection(infiniteLine);

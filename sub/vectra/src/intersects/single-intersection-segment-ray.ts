@@ -1,5 +1,4 @@
 import { lineFamilyIntersectionPoint, rayToLineFamilyParam, segmentToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
@@ -15,11 +14,12 @@ import type { RayLike, SegmentLike, XYObjectWritable } from '../types';
  * @param line 교점을 구할 segment
  * @param ray 교점을 구할 ray
  * @param epsilon cross product 절대값 및 거리 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionSegmentRay(
   line: SegmentLike,
   ray: RayLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable | undefined {
   const a = readSegmentA(line);
   const b = readSegmentB(line);

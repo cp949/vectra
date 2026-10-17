@@ -17,6 +17,7 @@
 import type { PolygonLike } from '../types';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { getLineFamilyOwnRangeInterval } from './line-family-range.internal';
+import { crossExceeds, DEFAULT_EPSILON } from './numeric';
 import { readPolygonPoints } from './polygon';
 import { readX, readY } from './xy';
 
@@ -66,7 +67,7 @@ export interface LineFamilyPolygonEdgeScanRecorder {
  *
  * | 케이스                                  | 결과                              |
  * |------------------------------------------|-----------------------------------|
- * | non-parallel edge(`|cross| > epsilon`)    | `recorder.crossing(...)` 호출     |
+ * | non-parallel edge(`|cross| > 임계`)        | `recorder.crossing(...)` 호출     |
  * | collinear edge, 비어 있지 않은 겹침(`lo <= hi`) | `recorder.collinear(...)` 호출 |
  * | collinear이지만 겹침 없음(`lo > hi`)      | 호출 없음                          |
  * | non-finite vertex/direction/origin        | 해당 edge skip(호출 없음)          |
@@ -79,7 +80,8 @@ export interface LineFamilyPolygonEdgeScanRecorder {
  * @param dy line-family direction y
  * @param kind range kind
  * @param polygon 순회할 polygon
- * @param epsilon parallel/collinear 판정 임계값
+ * @param epsilon 거리 임계값. 생략하면 거리는 `DEFAULT_EPSILON`, parallel 판정은 `sin θ <= DEFAULT_EPSILON`이다.
+ *   명시하면 parallel 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  * @param recorder edge 판정 결과를 기록할 recorder
  */
 export function scanLineFamilyPolygonEdges(
@@ -89,13 +91,14 @@ export function scanLineFamilyPolygonEdges(
   dy: number,
   kind: LineFamilyRangeKind,
   polygon: PolygonLike,
-  epsilon: number,
+  epsilonArg: number | undefined,
   recorder: LineFamilyPolygonEdgeScanRecorder
 ): void {
   const pts = readPolygonPoints(polygon);
   const n = pts.length;
   if (n < 3) return;
 
+  const epsilon = epsilonArg ?? DEFAULT_EPSILON;
   const lenSq = dx * dx + dy * dy;
   // degenerate direction: 판정 대상 자체가 없다
   if (lenSq === 0 && dx === 0 && dy === 0) return;
@@ -112,7 +115,7 @@ export function scanLineFamilyPolygonEdges(
     // non-finite vertex/direction: 가짜 판정을 만들지 않고 해당 edge를 건너뛴다(pass-through).
     if (!Number.isFinite(cross)) continue;
 
-    if (Math.abs(cross) > epsilon) {
+    if (crossExceeds(cross, epsilonArg, lenSq, ex * ex + ey * ey)) {
       const qx = ax - ox;
       const qy = ay - oy;
       // cross는 origin 독립이므로 q vector를 별도로 검증한다.

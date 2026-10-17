@@ -244,12 +244,13 @@ describe('isSelfIntersecting epsilon', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// epsilon 절대 임계값 정책 (normalize 안 됨, scale 의존) — intersectsSegmentSegment와 동일
+// epsilon 생략 시 상대(sin θ) 판정, 명시 시 절대 cross 임계값 — intersectsSegmentSegment와 동일
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe('epsilon absolute cross threshold', () => {
-  // 같은 모양의 bowtie를 scale만 다르게 둔다. cross = 2 * s^2 이므로 작은 좌표 scale에서
-  // |cross| <= default epsilon(1e-9)이 되어 실제 교차도 parallel로 합쳐진다.
+describe('epsilon cross threshold', () => {
+  // 같은 모양의 bowtie를 scale만 다르게 둔다. 두 edge의 cross는 scale s에 대해 s²로 줄어든다.
+  // epsilon을 생략하면 sin θ로 판정하므로 scale과 무관하게 교차를 검출한다.
+  // epsilon을 명시하면 절대 cross 비교라 작은 scale에서 실제 교차도 parallel로 합쳐진다.
   const unitBowtie: PolygonLike = {
     points: [
       { x: 0, y: 0 },
@@ -272,12 +273,17 @@ describe('epsilon absolute cross threshold', () => {
     expect(isSimple(unitBowtie)).toBe(false);
   });
 
-  test('매우 작은 scale bowtie는 default epsilon에서 under-report된다 (절대 임계값)', () => {
-    expect(isSelfIntersecting(smallBowtie)).toBe(false);
-    expect(isSimple(smallBowtie)).toBe(true);
+  test('매우 작은 scale bowtie도 epsilon을 생략하면 교차를 검출한다 (상대 임계값)', () => {
+    expect(isSelfIntersecting(smallBowtie)).toBe(true);
+    expect(isSimple(smallBowtie)).toBe(false);
   });
 
-  test('작은 scale에서도 epsilon을 줄이면 교차를 검출한다', () => {
+  test('epsilon=1e-9를 명시하면 매우 작은 scale bowtie는 under-report된다 (절대 임계값)', () => {
+    expect(isSelfIntersecting(smallBowtie, 1e-9)).toBe(false);
+    expect(isSimple(smallBowtie, 1e-9)).toBe(true);
+  });
+
+  test('작은 scale에서도 명시 epsilon을 줄이면 교차를 검출한다', () => {
     expect(isSelfIntersecting(smallBowtie, 1e-12)).toBe(true);
     expect(isSimple(smallBowtie, 1e-12)).toBe(false);
   });

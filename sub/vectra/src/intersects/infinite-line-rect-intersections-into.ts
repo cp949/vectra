@@ -1,6 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { lineFamilyBoxIntersectionPoints } from '../internal/line-family-box';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
@@ -21,12 +20,13 @@ import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
  * @param line 교점을 구할 infinite-line (전체 finite t 범위)
  * @param rect 교점을 구할 rect (axis-aligned)
  * @param epsilon collinear/dedupe 판정 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function infiniteLineRectIntersectionsInto(
   outPoints: XYObjectWritable[],
   line: InfiniteLineLike,
   rect: RectLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable[] {
   const rw = readRectWidth(rect);
   const rh = readRectHeight(rect);

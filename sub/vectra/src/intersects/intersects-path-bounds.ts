@@ -54,7 +54,7 @@ export function intersectsPathBounds(
       const qx = tmp[i + 1].x;
       const qy = tmp[i + 1].y;
       const seg = segmentToLineFamilyParam(px, py, qx, qy);
-      if (lineFamilyBoxIntersects(seg, x0, y0, x1, y1, DEFAULT_EPSILON)) return true;
+      if (lineFamilyBoxIntersects(seg, x0, y0, x1, y1, undefined)) return true;
     }
   }
 

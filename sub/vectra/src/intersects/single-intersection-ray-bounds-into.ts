@@ -1,6 +1,5 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersectionPoint, rayToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, RayLike, XYWritable } from '../types';
@@ -15,12 +14,13 @@ import type { BoundsLike, RayLike, XYWritable } from '../types';
  * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param bounds 교점을 구할 axis-aligned bounding box
  * @param epsilon 수치 비교 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionRayBoundsInto(
   out: XYWritable,
   ray: RayLike,
   bounds: BoundsLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);

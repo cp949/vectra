@@ -1,6 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyBoxIntersectionPoint } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
@@ -14,7 +13,7 @@ import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
 export function singleIntersectionInfiniteLineRect(
   infiniteLine: InfiniteLineLike,
   rect: RectLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable | undefined {
   const rw = readRectWidth(rect);
   const rh = readRectHeight(rect);

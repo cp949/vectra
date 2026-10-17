@@ -1,5 +1,4 @@
 import { lineFamilyIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { SegmentLike } from '../types';
@@ -14,8 +13,9 @@ import type { SegmentLike } from '../types';
  * @param a 첫 번째 segment
  * @param b 두 번째 segment
  * @param epsilon 평행 판정 및 거리 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsSegmentSegment(a: SegmentLike, b: SegmentLike, epsilon = DEFAULT_EPSILON): boolean {
+export function intersectsSegmentSegment(a: SegmentLike, b: SegmentLike, epsilon?: number): boolean {
   const aa = readSegmentA(a);
   const ab = readSegmentB(a);
   const ba = readSegmentA(b);

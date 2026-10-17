@@ -1,4 +1,3 @@
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { lineFamilyPolygonOverlapIntervalsInto } from '../internal/polygon-line-intersections';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
@@ -26,12 +25,13 @@ import type { LinePolygonOverlapIntervalDetail, PolygonLike, RayLike } from '../
  * @param ray 교차를 구할 ray
  * @param polygon 교차를 구할 polygon
  * @param epsilon collinear/수렴 판정 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function rayPolygonOverlapIntervalsInto(
   outIntervals: LinePolygonOverlapIntervalDetail[],
   ray: RayLike,
   polygon: PolygonLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): LinePolygonOverlapIntervalDetail[] {
   const origin = readRayOrigin(ray);
   const direction = readRayDirection(ray);

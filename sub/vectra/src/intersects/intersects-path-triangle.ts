@@ -61,7 +61,7 @@ export function intersectsPathTriangle(
       const qx = tmp[i + 1].x;
       const qy = tmp[i + 1].y;
       const seg = segmentToLineFamilyParam(px, py, qx, qy);
-      if (lineFamilyTriangleIntersects(seg, ax, ay, bx, by, cx, cy, DEFAULT_EPSILON)) return true;
+      if (lineFamilyTriangleIntersects(seg, ax, ay, bx, by, cx, cy, undefined)) return true;
     }
   }
 

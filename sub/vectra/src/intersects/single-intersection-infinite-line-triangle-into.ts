@@ -1,6 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyTriangleIntersectionPoint } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readTriangleRawCoords } from '../internal/triangle';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, TriangleLike, XYWritable } from '../types';
@@ -14,7 +13,7 @@ export function singleIntersectionInfiniteLineTriangleInto(
   out: XYWritable,
   infiniteLine: InfiniteLineLike,
   triangle: TriangleLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const origin = readInfiniteLineOrigin(infiniteLine);
   const dir = readInfiniteLineDirection(infiniteLine);

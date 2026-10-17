@@ -1,6 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyIntersects } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike } from '../types';
 
@@ -14,11 +13,12 @@ import type { InfiniteLineLike } from '../types';
  * @param a 첫 번째 infinite-line
  * @param b 두 번째 infinite-line
  * @param epsilon 평행 판정 및 거리 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function intersectsInfiniteLineInfiniteLine(
   a: InfiniteLineLike,
   b: InfiniteLineLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const ao = readInfiniteLineOrigin(a);
   const ad = readInfiniteLineDirection(a);

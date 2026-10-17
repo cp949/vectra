@@ -12,9 +12,13 @@ import { readX, readY } from './xy';
  *
  * @param line     교차를 검사할 line-family parametric record
  * @param polyline segment 목록을 제공할 polyline input
- * @param epsilon  교차 판정 허용 오차
+ * @param epsilon  교차 판정 허용 오차. 생략하면 평행 판정이 scale 불변(`sin θ`)이다
  */
-export function lineFamilyPolylineIntersects(line: LineFamilyParam, polyline: PolylineLike, epsilon: number): boolean {
+export function lineFamilyPolylineIntersects(
+  line: LineFamilyParam,
+  polyline: PolylineLike,
+  epsilon: number | undefined
+): boolean {
   const pts = readPolylinePoints(polyline);
   const n = pts.length;
   if (n < 2) return false;

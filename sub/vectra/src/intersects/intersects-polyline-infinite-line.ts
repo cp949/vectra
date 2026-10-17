@@ -1,6 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, PolylineLike } from '../types';
@@ -14,11 +13,12 @@ import type { InfiniteLineLike, PolylineLike } from '../types';
  * @param infiniteLine 교차를 검사할 infinite-line
  * @param polyline     교차를 검사할 polyline
  * @param epsilon      교차 판정 허용 오차
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function intersectsPolylineInfiniteLine(
   polyline: PolylineLike,
   infiniteLine: InfiniteLineLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const o = readInfiniteLineOrigin(infiniteLine);
   const d = readInfiniteLineDirection(infiniteLine);

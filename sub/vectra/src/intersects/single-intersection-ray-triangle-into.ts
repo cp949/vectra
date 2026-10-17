@@ -1,5 +1,4 @@
 import { lineFamilyTriangleIntersectionPoint, rayToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readTriangleRawCoords } from '../internal/triangle';
 import { readX, readY } from '../internal/xy';
@@ -15,12 +14,13 @@ import type { RayLike, TriangleLike, XYWritable } from '../types';
  * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param triangle 교점을 구할 triangle
  * @param epsilon 수치 비교 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionRayTriangleInto(
   out: XYWritable,
   ray: RayLike,
   triangle: TriangleLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const origin = readRayOrigin(ray);
   const dir = readRayDirection(ray);

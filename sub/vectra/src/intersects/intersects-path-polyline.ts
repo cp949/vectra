@@ -1,5 +1,4 @@
 import { segmentToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { flattenPathInto } from '../path/flatten.internal';
 import type { PathCommand, PathMeasurementOptions, PolylineLike } from '../types';
@@ -28,7 +27,7 @@ export function intersectsPathPolyline(
   if (n < 2) return false;
   for (let i = 0; i < n - 1; i++) {
     const seg = segmentToLineFamilyParam(tmp[i].x, tmp[i].y, tmp[i + 1].x, tmp[i + 1].y);
-    if (lineFamilyPolylineIntersects(seg, polyline, DEFAULT_EPSILON)) return true;
+    if (lineFamilyPolylineIntersects(seg, polyline, undefined)) return true;
   }
   return false;
 }

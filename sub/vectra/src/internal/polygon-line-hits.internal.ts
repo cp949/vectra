@@ -12,6 +12,7 @@
 import type { IntersectionKind, LinePolygonIntersectionHit, PolygonLike, XYObjectWritable, XYWritable } from '../types';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';
+import { DEFAULT_EPSILON } from './numeric';
 import {
   edgeParam,
   type LineFamilyPolygonEdgeScanRecorder,
@@ -83,8 +84,9 @@ export function lineFamilyPolygonIntersectionHits(
   dy: number,
   kind: LineFamilyRangeKind,
   polygon: PolygonLike,
-  epsilon: number
+  epsilonArg: number | undefined
 ): LinePolygonHitRecord[] {
+  const epsilon = epsilonArg ?? DEFAULT_EPSILON;
   outHits.length = 0;
 
   const recorder: LineFamilyPolygonEdgeScanRecorder = {
@@ -116,7 +118,7 @@ export function lineFamilyPolygonIntersectionHits(
       }
     },
   };
-  scanLineFamilyPolygonEdges(ox, oy, dx, dy, kind, polygon, epsilon, recorder);
+  scanLineFamilyPolygonEdges(ox, oy, dx, dy, kind, polygon, epsilonArg, recorder);
 
   outHits.sort((p, q) => p.tLine - q.tLine);
   dedupeByPoint(outHits, epsilon);
@@ -148,7 +150,7 @@ export function lineFamilyPolygonIntersectionHitsInto(
   dy: number,
   kind: LineFamilyRangeKind,
   polygon: PolygonLike,
-  epsilon: number
+  epsilon: number | undefined
 ): LinePolygonIntersectionHit[] {
   const records: LinePolygonHitRecord[] = [];
   lineFamilyPolygonIntersectionHits(records, ox, oy, dx, dy, kind, polygon, epsilon);
@@ -185,7 +187,7 @@ export function closestLineFamilyPolygonIntersectionInto<P extends XYWritable>(
   dy: number,
   kind: LineFamilyRangeKind,
   polygon: PolygonLike,
-  epsilon: number
+  epsilon: number | undefined
 ): boolean {
   const records: LinePolygonHitRecord[] = [];
   lineFamilyPolygonIntersectionHits(records, ox, oy, dx, dy, kind, polygon, epsilon);

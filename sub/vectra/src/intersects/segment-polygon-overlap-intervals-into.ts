@@ -1,4 +1,3 @@
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { lineFamilyPolygonOverlapIntervalsInto } from '../internal/polygon-line-intersections';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
@@ -25,12 +24,13 @@ import type { LinePolygonOverlapIntervalDetail, PolygonLike, SegmentLike } from 
  * @param segment 교차를 구할 segment
  * @param polygon 교차를 구할 polygon
  * @param epsilon collinear/수렴 판정 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function segmentPolygonOverlapIntervalsInto(
   outIntervals: LinePolygonOverlapIntervalDetail[],
   segment: SegmentLike,
   polygon: PolygonLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): LinePolygonOverlapIntervalDetail[] {
   const a = readSegmentA(segment);
   const b = readSegmentB(segment);

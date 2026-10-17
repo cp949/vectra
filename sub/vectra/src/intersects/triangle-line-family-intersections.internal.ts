@@ -55,7 +55,7 @@ export function triangleLineFamilyIntersectionsInto(
   by: number,
   cx: number,
   cy: number,
-  epsilon: number
+  epsilon: number | undefined
 ): XYObjectWritable[] {
   outPoints.length = 0;
 

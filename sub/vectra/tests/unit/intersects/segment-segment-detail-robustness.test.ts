@@ -169,7 +169,7 @@ describe('segmentSegmentDetail — non-finite input', () => {
     });
   });
 
-  test('epsilon-parallel mapped interval overlap은 boolean과 같은 hit 판정을 유지한다', () => {
+  test('epsilon-parallel mapped interval overlap은 boolean과 같은 hit 판정을 유지한다 (epsilon 명시)', () => {
     const a = {
       a: { x: -2.5237740622833373e-11, y: 0.08640966904349626 },
       b: { x: -6.586415157653392e-11, y: -4.40322199370712e-9 },
@@ -179,8 +179,24 @@ describe('segmentSegmentDetail — non-finite input', () => {
       b: { x: 9.67600171919912e-9, y: 8.992325747385621e-11 },
     };
 
-    expect(intersectsSegmentSegment(a, b)).toBe(true);
-    expect(segmentSegmentDetail(a, b).kind).not.toBe('none');
+    // epsilon을 명시하면 |cross| = 9e-10 <= 1e-9라 parallel로 보고 mapped interval 허용 오차를 쓴다.
+    expect(intersectsSegmentSegment(a, b, 1e-9)).toBe(true);
+    expect(segmentSegmentDetail(a, b, 1e-9).kind).not.toBe('none');
+  });
+
+  test('epsilon을 생략하면 sin θ가 큰 두 segment는 끝점 간격이 임계값을 넘는 한 교차하지 않는다', () => {
+    const a = {
+      a: { x: -2.5237740622833373e-11, y: 0.08640966904349626 },
+      b: { x: -6.586415157653392e-11, y: -4.40322199370712e-9 },
+    };
+    const b = {
+      a: { x: -7.566656586714089e-10, y: -0.000008751176367513836 },
+      b: { x: 9.67600171919912e-9, y: 8.992325747385621e-11 },
+    };
+
+    // sin θ ≈ 1.2e-3이라 non-parallel이다. 교점은 a의 끝점에서 약 8e-6 밖이라 boolean과 detail 모두 none이다.
+    expect(intersectsSegmentSegment(a, b)).toBe(false);
+    expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
   });
 
   test('epsilon-parallel mapped interval이 겹치지 않으면 endpoint 후보가 가까워도 none이다', () => {

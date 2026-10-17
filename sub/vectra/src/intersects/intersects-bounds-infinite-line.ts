@@ -1,7 +1,6 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyBoxIntersects } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, InfiniteLineLike } from '../types';
 
@@ -15,11 +14,12 @@ import type { BoundsLike, InfiniteLineLike } from '../types';
  * @param bounds 교차를 판정할 bounds
  * @param infiniteLine 교차를 판정할 infinite line
  * @param epsilon 부동소수점 비교에 사용할 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function intersectsBoundsInfiniteLine(
   bounds: BoundsLike,
   infiniteLine: InfiniteLineLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);

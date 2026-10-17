@@ -1,5 +1,6 @@
 import type { PolygonLike, PolylineLike } from '../types';
 import { type LineFamilyParam, lineFamilyIntersects, segmentToLineFamilyParam } from './line-family';
+import { DEFAULT_EPSILON } from './numeric';
 import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from './polygon';
 import { readPolylinePoints } from './polyline';
 import { readX, readY } from './xy';
@@ -11,7 +12,11 @@ import { readX, readY } from './xy';
  * edge 교차가 없고 segment인 경우 origin이 polygon 내부에 있으면 true(완전 포함).
  * pts.length < 3이면 empty polygon으로 false를 반환한다.
  */
-export function lineFamilyPolygonIntersects(line: LineFamilyParam, polygon: PolygonLike, epsilon: number): boolean {
+export function lineFamilyPolygonIntersects(
+  line: LineFamilyParam,
+  polygon: PolygonLike,
+  epsilon: number | undefined
+): boolean {
   const pts = readPolygonPoints(polygon);
   const n = pts.length;
   if (n < 3) return false;
@@ -27,7 +32,7 @@ export function lineFamilyPolygonIntersects(line: LineFamilyParam, polygon: Poly
 
   // segment가 polygon 내부에 완전히 포함된 경우: edge 교차 없이도 true
   if (line.kind !== 'finite') return false;
-  return polygonContainsPoint(pts, line.ox, line.oy, epsilon);
+  return polygonContainsPoint(pts, line.ox, line.oy, epsilon ?? DEFAULT_EPSILON);
 }
 
 /**

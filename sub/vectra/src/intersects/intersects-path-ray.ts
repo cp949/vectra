@@ -1,5 +1,4 @@
 import { rayToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
@@ -28,5 +27,5 @@ export function intersectsPathRay(
   const lineParam = rayToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
   const tmp: { x: number; y: number }[] = [];
   flattenPathInto(tmp, commands, options);
-  return lineFamilyPolylineIntersects(lineParam, tmp, DEFAULT_EPSILON);
+  return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }

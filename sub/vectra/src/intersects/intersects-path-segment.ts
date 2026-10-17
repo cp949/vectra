@@ -1,5 +1,4 @@
 import { segmentToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
@@ -28,5 +27,5 @@ export function intersectsPathSegment(
   const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
   const tmp: { x: number; y: number }[] = [];
   flattenPathInto(tmp, commands, options);
-  return lineFamilyPolylineIntersects(lineParam, tmp, DEFAULT_EPSILON);
+  return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }

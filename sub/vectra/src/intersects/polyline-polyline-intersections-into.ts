@@ -36,12 +36,13 @@ interface LocalHit {
  * @param subject 첫 번째 polyline. point ordering의 기준이다.
  * @param target 두 번째 polyline
  * @param epsilon 평행/거리/dedupe 판정 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function polylinePolylineIntersectionsInto(
   outPoints: XYObjectWritable[],
   subject: PolylineLike,
   target: PolylineLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable[] {
   const subPts = snapshotPolylinePoints(readPolylinePoints(subject));
   const tgtPts = snapshotPolylinePoints(readPolylinePoints(target));
@@ -49,7 +50,8 @@ export function polylinePolylineIntersectionsInto(
   if (subPts.length < 2 || tgtPts.length < 2) return outPoints;
   if (hasNonFinitePolylinePoint(subPts) || hasNonFinitePolylinePoint(tgtPts)) return outPoints;
 
-  const epsSq = epsilon * epsilon;
+  const distEpsilon = epsilon ?? DEFAULT_EPSILON;
+  const epsSq = distEpsilon * distEpsilon;
   for (let i = 0; i < subPts.length - 1; i++) {
     const ax0 = readX(subPts[i]);
     const ay0 = readY(subPts[i]);

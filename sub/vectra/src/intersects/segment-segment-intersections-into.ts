@@ -1,4 +1,3 @@
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { SegmentLike, XYObjectWritable } from '../types';
@@ -22,12 +21,13 @@ import { segmentSegmentDetailXY } from './segment-segment-detail.internal';
  * @param a 첫 번째 segment. point ordering의 기준이다.
  * @param b 두 번째 segment
  * @param epsilon 평행 판정 및 거리 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function segmentSegmentIntersectionsInto(
   outPoints: XYObjectWritable[],
   a: SegmentLike,
   b: SegmentLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable[] {
   const aa = readSegmentA(a);
   const ab = readSegmentB(a);

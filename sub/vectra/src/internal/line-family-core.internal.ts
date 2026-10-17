@@ -5,6 +5,7 @@ import {
   getMappedLineFamilyRangeInterval,
   lineFamilyRangeContains,
 } from './line-family-range.internal';
+import { crossExceeds, crossWithin, DEFAULT_EPSILON } from './numeric';
 import { writeXY } from './xy';
 
 /**
@@ -34,11 +35,52 @@ function containsPointNormalized(param: LineFamilyParam, px: number, py: number,
  *
  * @param a 첫 번째 line-family
  * @param b 두 번째 line-family
- * @param epsilon cross product 절대값 및 거리 임계값
+ * @param epsilon 거리 임계값. 생략하면 거리는 `DEFAULT_EPSILON`, 평행 판정은 `sin θ <= DEFAULT_EPSILON`이다.
+ *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
-export function lineFamilyIntersects(a: LineFamilyParam, b: LineFamilyParam, epsilon: number): boolean {
+export function lineFamilyIntersects(a: LineFamilyParam, b: LineFamilyParam, epsilon: number | undefined): boolean {
   const aLenSq = a.dx * a.dx + a.dy * a.dy;
   const bLenSq = b.dx * b.dx + b.dy * b.dy;
+  const cross = a.dx * b.dy - a.dy * b.dx;
+
+  // hot path: O(n²) self-intersection loop가 쌍마다 호출한다.
+  // 1e-18은 DEFAULT_EPSILON²이고, 식은 `crossExceeds`의 유한 길이 곱 분기와 같다. 상수 로드를 줄이려고 풀어 썼다.
+  // 길이 곱이 오버플로한 경우와 degenerate(임계 0, cross = 0)는 여기서 false이고 아래 함수가 처리한다.
+  if (epsilon === undefined ? cross * cross > 1e-18 * (aLenSq * bLenSq) : Math.abs(cross) > epsilon) {
+    return crossingIntersects(a, b, cross);
+  }
+  return lineFamilyParallelIntersects(a, b, cross, aLenSq, bLenSq, epsilon);
+}
+
+/** non-parallel 두 line-family의 교점이 양쪽 range 안에 있으면 true를 반환한다. */
+function crossingIntersects(a: LineFamilyParam, b: LineFamilyParam, cross: number): boolean {
+  const qx = b.ox - a.ox;
+  const qy = b.oy - a.oy;
+  const t = (qx * b.dy - qy * b.dx) / cross;
+  const u = (qx * a.dy - qy * a.dx) / cross;
+  return lineFamilyRangeContains(t, a.kind) && lineFamilyRangeContains(u, b.kind);
+}
+
+/**
+ * non-parallel로 확정되지 않은 두 line-family의 교점 여부를 판정한다.
+ *
+ * `lineFamilyIntersects`의 hot path를 작게 유지하려고 분리했다.
+ * 길이 곱 오버플로로 hot path가 거른 non-parallel은 `crossExceeds`로 다시 확인해 처리한다.
+ * degenerate(direction = 0)는 점으로 환원해 containment로 판정하고, 그 외에는 collinear overlap으로 판정한다.
+ */
+function lineFamilyParallelIntersects(
+  a: LineFamilyParam,
+  b: LineFamilyParam,
+  cross: number,
+  aLenSq: number,
+  bLenSq: number,
+  epsilonArg: number | undefined
+): boolean {
+  if (crossExceeds(cross, epsilonArg, aLenSq, bLenSq)) return crossingIntersects(a, b, cross);
+
+  const epsilon = epsilonArg ?? DEFAULT_EPSILON;
+  const qx = b.ox - a.ox;
+  const qy = b.oy - a.oy;
   const aDegen = aLenSq === 0;
   const bDegen = bLenSq === 0;
 
@@ -46,24 +88,12 @@ export function lineFamilyIntersects(a: LineFamilyParam, b: LineFamilyParam, eps
   if (aDegen || bDegen) {
     if (aDegen && bDegen) {
       // 점 vs 점: epsilon 거리 이내 여부 (range는 의미 없으므로 origin 일치만 확인)
-      const dx = a.ox - b.ox;
-      const dy = a.oy - b.oy;
-      return dx * dx + dy * dy <= epsilon * epsilon;
+      return qx * qx + qy * qy <= epsilon * epsilon;
     }
     if (aDegen) {
       return containsPointNormalized(b, a.ox, a.oy, epsilon);
     }
     return containsPointNormalized(a, b.ox, b.oy, epsilon);
-  }
-
-  const qx = b.ox - a.ox;
-  const qy = b.oy - a.oy;
-  const cross = a.dx * b.dy - a.dy * b.dx;
-
-  if (Math.abs(cross) > epsilon) {
-    const t = (qx * b.dy - qy * b.dx) / cross;
-    const u = (qx * a.dy - qy * a.dx) / cross;
-    return lineFamilyRangeContains(t, a.kind) && lineFamilyRangeContains(u, b.kind);
   }
 
   const tBo = (qx * a.dx + qy * a.dy) / aLenSq;
@@ -91,14 +121,16 @@ export function lineFamilyIntersects(a: LineFamilyParam, b: LineFamilyParam, eps
  * @param out 교점 좌표를 기록할 writable output
  * @param a 첫 번째 line-family
  * @param b 두 번째 line-family
- * @param epsilon cross product 절대값 및 거리 임계값
+ * @param epsilon 거리 임계값. 생략하면 거리는 `DEFAULT_EPSILON`, 평행 판정은 `sin θ <= DEFAULT_EPSILON`이다.
+ *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
 export function lineFamilyIntersectionPoint(
   out: XYWritable,
   a: LineFamilyParam,
   b: LineFamilyParam,
-  epsilon: number
+  epsilonArg: number | undefined
 ): boolean {
+  const epsilon = epsilonArg ?? DEFAULT_EPSILON;
   const aLenSq = a.dx * a.dx + a.dy * a.dy;
   const bLenSq = b.dx * b.dx + b.dy * b.dy;
   const aDegen = aLenSq === 0;
@@ -131,7 +163,7 @@ export function lineFamilyIntersectionPoint(
   const cross = a.dx * b.dy - a.dy * b.dx;
 
   // parallel 또는 collinear: 단일 교점이 없으므로 항상 false (out 미수정)
-  if (Math.abs(cross) <= epsilon) return false;
+  if (crossWithin(cross, epsilonArg, aLenSq, bLenSq)) return false;
 
   const qx = b.ox - a.ox;
   const qy = b.oy - a.oy;

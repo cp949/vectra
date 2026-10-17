@@ -1,4 +1,4 @@
-import { DEFAULT_EPSILON } from '../internal/numeric';
+import { crossWithin, DEFAULT_EPSILON } from '../internal/numeric';
 import { readSegmentA, readSegmentB, segmentContainsPoint } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { SegmentLike, XYWritable } from '../types';
@@ -6,21 +6,18 @@ import { isZeroLength } from './is-zero-length';
 
 /**
  * 두 segment가 단일 교점을 가지면 out에 기록하고 true를 반환한다. 교점이 없으면 false를 반환하고 out을 수정하지 않는다.
- * collinear 분기(|cross(da,db)| <= epsilon)에서는 항상 false를 반환한다.
+ * parallel/collinear 분기에서는 항상 false를 반환한다.
  * 교점 좌표는 line a 기준 a0 + t1*(a1-a0)로 계산한다.
  * endpoint touch는 해당 endpoint 좌표를 그대로 기록한다(t1 우선, 그 다음 t2).
  *
  * @param out 교점을 기록할 writable output
  * @param a 첫 번째 segment
  * @param b 두 번째 segment
- * @param epsilon cross product 절대값 임계값과 점 판정 거리 임계값
+ * @param epsilon 거리 임계값 (기본값 `1e-9`). 생략하면 평행 판정은 `|cross| <= 1e-9·|a|·|b|`(sin θ 기준)로 scale 불변이다.
+ *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
-export function singleIntersectionInto(
-  out: XYWritable,
-  a: SegmentLike,
-  b: SegmentLike,
-  epsilon: number = DEFAULT_EPSILON
-): boolean {
+export function singleIntersectionInto(out: XYWritable, a: SegmentLike, b: SegmentLike, epsilon?: number): boolean {
+  const distEpsilon = epsilon ?? DEFAULT_EPSILON;
   // zero-length 검출은 caller epsilon과 무관하게 isZeroLength 기본값(1e-9) 사용
   const aIsZero = isZeroLength(a);
   const bIsZero = isZeroLength(b);
@@ -30,7 +27,7 @@ export function singleIntersectionInto(
       // 점 vs 점: epsilon 거리 이내이면 a의 시작점을 기록
       const px = readX(readSegmentA(a)) - readX(readSegmentA(b));
       const py = readY(readSegmentA(a)) - readY(readSegmentA(b));
-      if (px * px + py * py <= epsilon * epsilon) {
+      if (px * px + py * py <= distEpsilon * distEpsilon) {
         writeXY(out, readX(readSegmentA(a)), readY(readSegmentA(a)));
         return true;
       }
@@ -38,14 +35,14 @@ export function singleIntersectionInto(
     }
     if (aIsZero) {
       // a가 점: b 위에 a의 시작점이 있으면 a의 시작점을 기록
-      if (segmentContainsPoint(b, readX(readSegmentA(a)), readY(readSegmentA(a)), epsilon)) {
+      if (segmentContainsPoint(b, readX(readSegmentA(a)), readY(readSegmentA(a)), distEpsilon)) {
         writeXY(out, readX(readSegmentA(a)), readY(readSegmentA(a)));
         return true;
       }
       return false;
     }
     // b가 점: a 위에 b의 시작점이 있으면 b의 시작점을 기록
-    if (segmentContainsPoint(a, readX(readSegmentA(b)), readY(readSegmentA(b)), epsilon)) {
+    if (segmentContainsPoint(a, readX(readSegmentA(b)), readY(readSegmentA(b)), distEpsilon)) {
       writeXY(out, readX(readSegmentA(b)), readY(readSegmentA(b)));
       return true;
     }
@@ -63,7 +60,7 @@ export function singleIntersectionInto(
   const cross = dax * dby - day * dbx;
 
   // collinear 또는 parallel: 단일 점이 결정되지 않으므로 항상 false
-  if (Math.abs(cross) <= epsilon) {
+  if (crossWithin(cross, epsilon, dax * dax + day * day, dbx * dbx + dby * dby)) {
     return false;
   }
 

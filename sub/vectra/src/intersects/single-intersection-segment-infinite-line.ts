@@ -4,7 +4,6 @@ import {
   lineFamilyIntersectionPoint,
   segmentToLineFamilyParam,
 } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, SegmentLike, XYObjectWritable } from '../types';
@@ -19,11 +18,12 @@ import type { InfiniteLineLike, SegmentLike, XYObjectWritable } from '../types';
  * @param line 교점을 구할 segment
  * @param infLine 교점을 구할 infinite-line
  * @param epsilon cross product 절대값 및 거리 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionSegmentInfiniteLine(
   line: SegmentLike,
   infLine: InfiniteLineLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable | undefined {
   const a = readSegmentA(line);
   const b = readSegmentB(line);

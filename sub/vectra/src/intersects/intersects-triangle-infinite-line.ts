@@ -1,6 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyTriangleIntersects } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readTriangleRawCoords } from '../internal/triangle';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, TriangleLike } from '../types';
@@ -15,11 +14,12 @@ import type { InfiniteLineLike, TriangleLike } from '../types';
  * @param triangle 세 꼭짓점으로 정의된 삼각형
  * @param infiniteLine 양방향 무한 직선
  * @param epsilon 평행 판정 및 거리 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function intersectsTriangleInfiniteLine(
   triangle: TriangleLike,
   infiniteLine: InfiniteLineLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): boolean {
   const origin = readInfiniteLineOrigin(infiniteLine);
   const dir = readInfiniteLineDirection(infiniteLine);

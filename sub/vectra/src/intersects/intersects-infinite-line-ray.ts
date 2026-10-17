@@ -1,6 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyIntersects, rayToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, RayLike } from '../types';
@@ -15,8 +14,9 @@ import type { InfiniteLineLike, RayLike } from '../types';
  * @param infLine infinite-line
  * @param ray origin에서 direction 방향으로 뻗는 반직선
  * @param epsilon 평행 판정 및 거리 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsInfiniteLineRay(infLine: InfiniteLineLike, ray: RayLike, epsilon = DEFAULT_EPSILON): boolean {
+export function intersectsInfiniteLineRay(infLine: InfiniteLineLike, ray: RayLike, epsilon?: number): boolean {
   const origin = readRayOrigin(ray);
   const dir = readRayDirection(ray);
   const infOrigin = readInfiniteLineOrigin(infLine);

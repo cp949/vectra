@@ -1,6 +1,5 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersects, rayToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, RayLike } from '../types';
@@ -15,8 +14,9 @@ import type { BoundsLike, RayLike } from '../types';
  * @param bounds 교차를 판정할 bounds
  * @param ray 교차를 판정할 ray
  * @param epsilon 부동소수점 비교에 사용할 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsBoundsRay(bounds: BoundsLike, ray: RayLike, epsilon = DEFAULT_EPSILON): boolean {
+export function intersectsBoundsRay(bounds: BoundsLike, ray: RayLike, epsilon?: number): boolean {
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);
   const x0 = readX(min);

@@ -12,18 +12,19 @@ import type { XYInput } from '../types';
  * consecutive repeated point가 만든 zero-length edge는 양옆 non-adjacent edge가 같은 점을 공유하게
  * 만들어 self-intersection으로 판정된다. non-adjacent edge pair가 존재하지 않는 `n < 4`는 항상
  * false다.
- * 판정은 line-family segment intersection을 쓴다. epsilon은 두 edge 방향 벡터 cross product 절대값
- * 임계값이며 normalize되지 않는다. 따라서 좌표 scale에 의존한다: 큰 epsilon에서는 near-parallel edge가
- * collinear overlap으로 합쳐지고, 매우 작은 좌표 scale에서는 실제 교차도 cross가 epsilon 이하가 되어
- * parallel로 합쳐질 수 있다. 이는 `intersectsSegmentSegment`의 epsilon 의미와 같다.
+ * 판정은 line-family segment intersection을 쓴다. epsilon을 생략하면 두 edge가 평행인지를
+ * `sin θ <= DEFAULT_EPSILON`으로 판정해 좌표 scale에 불변이다. epsilon을 명시하면 두 edge 방향 벡터
+ * cross product 절대값 임계값(normalize되지 않음)이라 좌표 scale에 의존한다: 큰 epsilon에서는
+ * near-parallel edge가 collinear overlap으로 합쳐지고, 작은 좌표 scale에서는 실제 교차도 cross가
+ * epsilon 이하가 되어 parallel로 합쳐질 수 있다. 이는 `intersectsSegmentSegment`의 epsilon 의미와 같다.
  *
  * 이 helper로 `isSelfIntersecting`과 `isSimple`이 public 함수끼리 import하지 않고 같은 kernel을
  * 공유한다.
  *
  * @param pts polygon vertex 배열 (implicit closed ring으로 순회)
- * @param epsilon cross product 절대값 임계값 (normalize되지 않음)
+ * @param epsilon 생략하면 sin θ 기준 상대 판정, 명시하면 cross product 절대값 임계값 (normalize되지 않음)
  */
-export function ringSelfIntersects(pts: readonly XYInput[], epsilon: number): boolean {
+export function ringSelfIntersects(pts: readonly XYInput[], epsilon: number | undefined): boolean {
   const n = pts.length;
   if (n < 4) return false;
 

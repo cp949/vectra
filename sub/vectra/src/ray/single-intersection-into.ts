@@ -1,4 +1,4 @@
-import { DEFAULT_EPSILON } from '../internal/numeric';
+import { crossWithin, DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { RayLike, XYObjectWritable } from '../types';
@@ -13,14 +13,11 @@ import type { RayLike, XYObjectWritable } from '../types';
  * @param out 교점 좌표를 기록할 writable object
  * @param a 첫 번째 ray
  * @param b 두 번째 ray
- * @param epsilon cross product 절대값 및 거리 임계값 (기본값 `1e-9`)
+ * @param epsilon 거리 임계값 (기본값 `1e-9`). 생략하면 평행 판정은 `|cross| <= 1e-9·|da|·|db|`(sin θ 기준)로 scale 불변이다.
+ *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
-export function singleIntersectionInto(
-  out: XYObjectWritable,
-  a: RayLike,
-  b: RayLike,
-  epsilon: number = DEFAULT_EPSILON
-): boolean {
+export function singleIntersectionInto(out: XYObjectWritable, a: RayLike, b: RayLike, epsilon?: number): boolean {
+  const distEpsilon = epsilon ?? DEFAULT_EPSILON;
   const oax = readX(readRayOrigin(a));
   const oay = readY(readRayOrigin(a));
   const dax = readX(readRayDirection(a));
@@ -39,7 +36,7 @@ export function singleIntersectionInto(
       // 양쪽 degenerate: origin 일치이면 a.origin 기록
       const dx = oax - obx;
       const dy = oay - oby;
-      if (dx * dx + dy * dy <= epsilon * epsilon) {
+      if (dx * dx + dy * dy <= distEpsilon * distEpsilon) {
         writeXY(out, oax, oay);
         return true;
       }
@@ -53,7 +50,7 @@ export function singleIntersectionInto(
       if (t < 0) return false;
       const cx = t * dbx - px;
       const cy = t * dby - py;
-      if (cx * cx + cy * cy <= epsilon * epsilon) {
+      if (cx * cx + cy * cy <= distEpsilon * distEpsilon) {
         writeXY(out, oax, oay);
         return true;
       }
@@ -66,7 +63,7 @@ export function singleIntersectionInto(
     if (t < 0) return false;
     const cx = t * dax - px;
     const cy = t * day - py;
-    if (cx * cx + cy * cy <= epsilon * epsilon) {
+    if (cx * cx + cy * cy <= distEpsilon * distEpsilon) {
       writeXY(out, obx, oby);
       return true;
     }
@@ -79,7 +76,7 @@ export function singleIntersectionInto(
   const cross = dax * dby - day * dbx;
 
   // parallel 또는 collinear: 단일 교점 없음
-  if (Math.abs(cross) <= epsilon) return false;
+  if (crossWithin(cross, epsilon, aLenSq, bLenSq)) return false;
 
   const t = (qx * dby - qy * dbx) / cross;
   const u = (day * qx - dax * qy) / cross;

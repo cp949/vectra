@@ -1,6 +1,5 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersectionPoints } from '../internal/line-family-box';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, RayLike, XYObjectWritable } from '../types';
@@ -23,12 +22,13 @@ import type { BoundsLike, RayLike, XYObjectWritable } from '../types';
  * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param bounds 교점을 구할 bounds (axis-aligned)
  * @param epsilon collinear/dedupe 판정 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function rayBoundsIntersectionsInto(
   outPoints: XYObjectWritable[],
   ray: RayLike,
   bounds: BoundsLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable[] {
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);

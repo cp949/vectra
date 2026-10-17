@@ -1,6 +1,7 @@
 import type { XYObjectWritable, XYWritable } from '../types';
 import { lineFamilyIntersectionPoint } from './line-family-core.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
+import { DEFAULT_EPSILON } from './numeric';
 import { writeXY } from './xy';
 
 /**
@@ -13,8 +14,9 @@ export function findSingleLineFamilySideIntersectionPoint(
   out: XYWritable,
   line: LineFamilyParam,
   sides: readonly LineFamilyParam[],
-  epsilon: number
+  epsilon: number | undefined
 ): boolean {
+  const eps = epsilon ?? DEFAULT_EPSILON;
   const tmp: XYObjectWritable = { x: 0, y: 0 };
   let px0 = 0;
   let py0 = 0;
@@ -31,7 +33,7 @@ export function findSingleLineFamilySideIntersectionPoint(
 
     const dx = tmp.x - px0;
     const dy = tmp.y - py0;
-    if (dx * dx + dy * dy > epsilon * epsilon) return false;
+    if (dx * dx + dy * dy > eps * eps) return false;
   }
 
   if (count === 1) {

@@ -46,7 +46,7 @@ export function lineFamilyBoxIntersectionPoints(
   y0: number,
   x1: number,
   y1: number,
-  epsilon: number
+  epsilon: number | undefined
 ): XYObjectWritable[] {
   outPoints.length = 0;
 

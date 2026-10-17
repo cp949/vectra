@@ -29,12 +29,13 @@ interface LocalHit {
  * @param a 첫 번째 triangle. point ordering의 기준이다.
  * @param b 두 번째 triangle
  * @param epsilon 평행/거리/dedupe 판정 임계값
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function triangleTriangleIntersectionsInto(
   outPoints: XYObjectWritable[],
   a: TriangleLike,
   b: TriangleLike,
-  epsilon = DEFAULT_EPSILON
+  epsilon?: number
 ): XYObjectWritable[] {
   outPoints.length = 0;
   if (hasNonFiniteVertex(a) || triangleSignedArea2x(a) === 0) return outPoints;
@@ -53,7 +54,8 @@ export function triangleTriangleIntersectionsInto(
     [B.cx, B.cy, B.ax, B.ay],
   ];
 
-  const epsSq = epsilon * epsilon;
+  const distEpsilon = epsilon ?? DEFAULT_EPSILON;
+  const epsSq = distEpsilon * distEpsilon;
   for (let i = 0; i < aEdges.length; i++) {
     const ae = aEdges[i];
     const local: LocalHit[] = [];

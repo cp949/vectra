@@ -15,13 +15,13 @@ import { ringHasZeroLengthEdge, ringSelfIntersects } from './self-intersection.i
  * 입력을 mutate하지 않는다.
  *
  * @param polygon simple polygon 여부를 검사할 polygon
- * @param epsilon self-intersection 판정용 cross product 절대값 임계값이다. `|cross| <= epsilon`이면
- *   parallel/collinear로 본다. normalize되지 않은 절대값이라 좌표 scale에 의존한다. 큰 epsilon에서는
- *   마주보는 near-parallel edge가 overlap으로 합쳐져 false가 될 수 있고, 매우 작은 좌표 scale에서는
- *   실제 교차를 놓쳐 true가 될 수 있다. zero-length edge 판정에는 적용되지 않는다. 기본값은
- *   DEFAULT_EPSILON이다.
+ * @param epsilon self-intersection 판정용 임계값이다. 생략하면 두 edge가 `sin θ <= DEFAULT_EPSILON`일 때
+ *   parallel/collinear로 보므로 좌표 scale에 불변이다. 명시하면 `|cross| <= epsilon`(normalize되지 않은
+ *   절대값)이면 parallel/collinear로 보므로 좌표 scale에 의존한다. 큰 명시 epsilon에서는 마주보는
+ *   near-parallel edge가 overlap으로 합쳐져 false가 될 수 있고, 작은 좌표 scale에서는 실제 교차를 놓쳐
+ *   true가 될 수 있다. zero-length edge 판정에는 적용되지 않는다(길이 임계값 DEFAULT_EPSILON 고정).
  */
-export function isSimple(polygon: PolygonLike, epsilon = DEFAULT_EPSILON): boolean {
+export function isSimple(polygon: PolygonLike, epsilon?: number): boolean {
   const pts = readPolygonPoints(polygon);
   if (pts.length < 3) return false;
   // zero-length edge 판정은 길이 임계값이다. caller epsilon은 cross product(면적) 단위라 길이와

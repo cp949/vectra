@@ -1,3 +1,4 @@
+import { crossExceeds, DEFAULT_EPSILON } from '../internal/numeric';
 import type { SegmentSegmentDetail } from '../types';
 import {
   addCandidate,
@@ -86,7 +87,8 @@ function none(): SegmentSegmentDetail {
  * @param by0 segment b 시작점 y
  * @param bx1 segment b 끝점 x
  * @param by1 segment b 끝점 y
- * @param epsilon 평행 판정 및 거리 임계값
+ * @param epsilon 거리 임계값. 생략하면 평행 판정은 `sin θ <= DEFAULT_EPSILON`이다.
+ *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
 export function segmentSegmentDetailXY(
   ax0: number,
@@ -97,8 +99,9 @@ export function segmentSegmentDetailXY(
   by0: number,
   bx1: number,
   by1: number,
-  epsilon: number
+  epsilonArg: number | undefined
 ): SegmentSegmentDetail {
+  const epsilon = epsilonArg ?? DEFAULT_EPSILON;
   if (!allFinite(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1, epsilon)) return none();
 
   const adx = ax1 - ax0;
@@ -112,12 +115,14 @@ export function segmentSegmentDetailXY(
   const qx = bx0 - ax0;
   const qy = by0 - ay0;
   const cross = adx * bdy - ady * bdx;
+  // 생략하면 sin θ 기준 상대 임계, 명시하면 절대 cross 임계. boolean `lineFamilyIntersects`와 같은 식이다.
+  const crossIsNonParallel = crossExceeds(cross, epsilonArg, adx * adx + ady * ady, bdx * bdx + bdy * bdy);
   const params =
     intersectionParameters(qx, qy, adx, ady, bdx, bdy) ??
     intersectionParametersFromEndpoints(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1);
   const collinearByDistance = segmentEndpointsCollinearWithinDistance(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1, epsilon);
-  // cross가 epsilon보다 크면 단일 교점, overflow로 non-finite여도 scaled params가 있으면 단일 교점이다.
-  const nonParallel = Math.abs(cross) > epsilon || (!Number.isFinite(cross) && params !== undefined);
+  // cross가 평행 임계보다 크면 단일 교점, overflow로 non-finite여도 scaled params가 있으면 단일 교점이다.
+  const nonParallel = crossIsNonParallel || (!Number.isFinite(cross) && params !== undefined);
 
   if (!collinearByDistance && nonParallel) {
     // non-parallel: 단일 교점.
@@ -146,7 +151,7 @@ export function segmentSegmentDetailXY(
   // boolean intersectsSegmentSegment는 여전히 raw t/u range로 hit를 판정한다.
   // range 밖이면 boolean은 false이므로 가짜 overlap을 만들지 않고 none을 반환한다.
   // overflow(non-finite cross)에서는 raw 식이 무의미하므로 이 gate를 건너뛴다.
-  if (collinearByDistance && Number.isFinite(cross) && Math.abs(cross) > epsilon) {
+  if (collinearByDistance && Number.isFinite(cross) && crossIsNonParallel) {
     const { tA, tB } = rawCrossParams(qx, qy, adx, ady, bdx, bdy, cross);
     if (!allFinite(tA, tB) || tA < 0 || tA > 1 || tB < 0 || tB > 1) return none();
   }

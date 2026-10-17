@@ -1,5 +1,4 @@
 import { lineFamilyBoxIntersects, rayToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
 import { readX, readY } from '../internal/xy';
@@ -14,8 +13,9 @@ import type { RayLike, RectLike } from '../types';
  * @param rect 교차를 검사할 rect
  * @param ray 교차를 검사할 ray
  * @param epsilon 수치 비교 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsRectRay(rect: RectLike, ray: RayLike, epsilon = DEFAULT_EPSILON): boolean {
+export function intersectsRectRay(rect: RectLike, ray: RayLike, epsilon?: number): boolean {
   const rw = readRectWidth(rect);
   const rh = readRectHeight(rect);
   if (rw <= 0 || rh <= 0) return false;

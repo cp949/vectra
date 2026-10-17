@@ -12,6 +12,7 @@
 
 import type { LinePolygonOverlapIntervalDetail, PolygonLike, XYObjectWritable } from '../types';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
+import { DEFAULT_EPSILON } from './numeric';
 import {
   edgeParam,
   type LineFamilyPolygonEdgeScanRecorder,
@@ -89,8 +90,9 @@ export function lineFamilyPolygonOverlapIntervals(
   dy: number,
   kind: LineFamilyRangeKind,
   polygon: PolygonLike,
-  epsilon: number
+  epsilonArg: number | undefined
 ): LinePolygonOverlapIntervalRecord[] {
+  const epsilon = epsilonArg ?? DEFAULT_EPSILON;
   outIntervals.length = 0;
 
   const recorder: LineFamilyPolygonEdgeScanRecorder = {
@@ -117,7 +119,7 @@ export function lineFamilyPolygonOverlapIntervals(
       });
     },
   };
-  scanLineFamilyPolygonEdges(ox, oy, dx, dy, kind, polygon, epsilon, recorder);
+  scanLineFamilyPolygonEdges(ox, oy, dx, dy, kind, polygon, epsilonArg, recorder);
 
   outIntervals.sort((p, q) => p.tLineStart - q.tLineStart);
   return outIntervals;
@@ -148,7 +150,7 @@ export function lineFamilyPolygonOverlapIntervalsInto(
   dy: number,
   kind: LineFamilyRangeKind,
   polygon: PolygonLike,
-  epsilon: number
+  epsilon: number | undefined
 ): LinePolygonOverlapIntervalDetail[] {
   const records: LinePolygonOverlapIntervalRecord[] = [];
   lineFamilyPolygonOverlapIntervals(records, ox, oy, dx, dy, kind, polygon, epsilon);

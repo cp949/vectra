@@ -1,6 +1,5 @@
 import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { BoundsLike, SegmentLike } from '../types';
@@ -15,8 +14,9 @@ import type { BoundsLike, SegmentLike } from '../types';
  * @param bounds 교차를 판정할 bounds
  * @param line 교차를 판정할 segment
  * @param epsilon 부동소수점 비교에 사용할 tolerance
+ *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsBoundsSegment(bounds: BoundsLike, line: SegmentLike, epsilon = DEFAULT_EPSILON): boolean {
+export function intersectsBoundsSegment(bounds: BoundsLike, line: SegmentLike, epsilon?: number): boolean {
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);
   const x0 = readX(min);

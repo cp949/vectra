@@ -19,6 +19,7 @@
 - ellipse 교차(`ellipseEllipseDetail`, `ellipseEllipseIntersections(Into)`, `ellipseCircleIntersectionsInto`)가 크기 1 미만 ellipse도 정규화한다. 이전에는 scale 1e-6 이하에서 교점 4개를 1개 이하로 반환했다. 무작위 3만 건에서 scale 변형 불일치가 10097건에서 0건으로 준다.
 - linalg `rowEchelonForm`과 `rowEchelonFormInto`가 `-0` 입력에서 `-0`을 남기던 문제를 고친다. JSDoc 약속대로 `0`을 반환한다.
 - curve GL5 적분 상수를 소수 10자리에서 double 정밀도의 정확한 값으로 고친다. 곡선 길이와 `tAtLength` 결과가 약 1e-10 달라진다. 직선 곡선의 길이가 chord와 일치한다.
+- 선분·ray·infinite-line의 평행 판정이 `epsilon`을 생략하면 상대 판정(`|cross| <= 1e-9·|a|·|b|`, 즉 sin θ <= 1e-9)을 쓴다. 이전에는 길이² 단위인 cross를 길이 단위 `epsilon`과 절대 비교해, 좌표나 direction이 작으면 교차를 평행으로 오판했다. 반길이 1e-8 십자 선분 2개가 `intersectsSegmentSegment` false, `segmentSegmentDetail` none이었다. scale 1e-8 무작위 선분 쌍 4000건에서는 교차 920건 중 818건을 놓쳤다. 이제 좌표 scale 1e-8–1e8, direction 길이 1e-8–1e6에서 같은 결과를 낸다. 대상은 `intersects*`·`singleIntersection*`·`*IntersectionsInto`의 선분/ray/infinite-line 조합(rect, bounds, triangle, polygon, polyline, path 포함), `segmentSegmentDetail`, segment·ray·infinite-line의 `singleIntersectionInto`, infinite-line `isParallel`·`isCollinear`, `isSimple`, `isSelfIntersecting`이다. `epsilon`을 명시한 호출은 이전과 같은 절대 cross 비교를 쓰고, 타입은 `epsilon?: number`로 그대로다. 대가가 있다. 긴 선분이 sin θ <= 1e-9로 교차하면 이제 평행으로 본다. 길이 1e4 선분 2개가 sin θ = 5e-10(끝점이 상대 직선에서 2.5e-6 벗어남)로 교차하면 `intersectsSegmentSegment`가 true에서 false가 된다. 이전 동작이 필요하면 `epsilon`을 명시한다. 거리 임계값 `1e-9`는 길이 단위 그대로다. 두 방향 길이의 곱이 약 1e154 이상이면 상대 임계를 만들 수 없어 이전의 절대 비교를 쓴다.
 
 ## [1.1.0] - 2026-10-17
 

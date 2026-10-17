@@ -19,7 +19,7 @@ export function lineFamilyBoxIntersects(
   y0: number,
   x1: number,
   y1: number,
-  epsilon: number
+  epsilon: number | undefined
 ): boolean {
   // top: (x0,y0)→(x1,y0), right: (x1,y0)→(x1,y1), bottom: (x1,y1)→(x0,y1), left: (x0,y1)→(x0,y0)
   return (
@@ -43,7 +43,7 @@ export function lineFamilyBoxIntersectionPoint(
   y0: number,
   x1: number,
   y1: number,
-  epsilon: number
+  epsilon: number | undefined
 ): boolean {
   const sides: LineFamilyParam[] = [
     segmentToLineFamilyParam(x0, y0, x1, y0),
@@ -169,7 +169,7 @@ export function lineFamilyTriangleIntersects(
   by: number,
   cx: number,
   cy: number,
-  epsilon: number
+  epsilon: number | undefined
 ): boolean {
   const area2 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   if (area2 === 0) return false;
@@ -205,7 +205,7 @@ export function lineFamilyTriangleIntersectionPoint(
   by: number,
   cx: number,
   cy: number,
-  epsilon: number
+  epsilon: number | undefined
 ): boolean {
   const area2 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   if (area2 === 0) return false;
