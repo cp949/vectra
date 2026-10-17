@@ -93,6 +93,7 @@ release 작업에서 수행한다.
 이 gate는 `.github/workflows/release-readiness.yml`에서 `pull_request`와 `main` push에 실행한다.
 `npm pack --dry-run`은 포함 파일 확인용이며 publish를 수행하지 않는다.
 workflow는 `permissions: contents: read`만 쓴다. actions는 커밋 SHA로 고정하고 `.github/dependabot.yml`이 weekly로 갱신한다. PR의 이전 실행은 취소하고 main push 실행은 취소하지 않는다.
+workflow는 `pnpm verify`와 `pnpm test:contract` 뒤에 `pnpm --filter @cp949/vectra test:coverage`로 coverage thresholds를 검사한다.
 
 contract test 범위:
 

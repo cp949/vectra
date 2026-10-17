@@ -119,7 +119,10 @@ deterministic `RandomSource` 주입으로 검증한다: `rng?: RandomSource`에
 provider `v8`(`@vitest/coverage-v8`). reporter `text`/`json`/`html`.
 전역 threshold를 vitest config에 둔다: statements 95, branches 91, functions 95, lines 95.
 shared와 isolated 두 project 합산에 적용한다. 미달이면 `test:coverage`가 exit 1로 끝난다.
-`test:coverage`는 `pnpm verify`, `release:check`, CI에 연결하지 않았다. 수동 실행용이다.
+`test:coverage`는 CI(`release-readiness.yml`의 "Check coverage thresholds" step)에서만 실행한다.
+`pnpm verify`, `release:check`에는 연결하지 않았다. 로컬에서는 수동으로 실행한다.
+CI에서는 verify의 test 단계와 같은 테스트를 한 번 더 돌린다. 중복 비용(단독 6–10s)을 받아들인다.
+contract 테스트가 dist를 읽으므로 build가 선행돼야 한다.
 `@vitest/coverage-v8`은 vitest와 버전이 정확히 같아야 한다(peer `vitest: 5.0.5`). vitest를 올리면 같이 올린다.
 example coverage는 governance script로 강제한다: `pnpm examples:coverage:strict`,
 `pnpm examples:coverage:test`.

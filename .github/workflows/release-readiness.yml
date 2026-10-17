@@ -49,6 +49,9 @@ jobs:
       - name: Verify vectra contract imports
         run: pnpm test:contract
 
+      - name: Check coverage thresholds
+        run: pnpm --filter @cp949/vectra test:coverage
+
       - name: Lint package exports (publint, attw)
         run: pnpm --filter @cp949/vectra lint:package
 
