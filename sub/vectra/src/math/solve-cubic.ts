@@ -41,7 +41,7 @@ const CUBIC_NOISE_FACTOR = 16;
 export function solveCubic(a: number, b: number, c: number, d: number, eps?: number): number[] {
   assertFiniteNumbers([a, b, c, d]);
 
-  if (a === 0) return solveQuadratic(b, c, d, eps).map(toPositiveZero);
+  if (a === 0) return solveQuadratic(b, c, d, eps);
 
   // Cardano 공식 — depressed cubic t³ + pt + q = 0으로 치환
   const A = b / a;

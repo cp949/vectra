@@ -377,6 +377,16 @@ describe('math solver - solveLinear', () => {
     expect(solveLinear(0, 5)).toBeNaN();
   });
 
+  test('해가 0이면 -0이 아니라 +0을 반환한다', () => {
+    // b === 0이고 a > 0이면 -b / a가 -0이다.
+    expect(Object.is(solveLinear(1, 0), 0)).toBe(true);
+    expect(Object.is(solveLinear(5, 0), 0)).toBe(true);
+    expect(Object.is(solveLinear(-5, 0), 0)).toBe(true);
+    expect(Object.is(solveLinear(5, -0), 0)).toBe(true);
+    // -b / a가 underflow해 -0이 되는 경우도 +0이다.
+    expect(Object.is(solveLinear(1e200, 1e-200), 0)).toBe(true);
+  });
+
   test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
     expect(() => solveLinear(value, 1)).toThrow(RangeError);
     expect(() => solveLinear(1, value)).toThrow(RangeError);
@@ -405,6 +415,20 @@ describe('math solver - solveQuadratic', () => {
     const roots = solveQuadratic(0, 2, -4);
     expect(roots).toHaveLength(1);
     expect(roots[0]).toBeCloseTo(2);
+  });
+
+  test('근이 0이면 -0이 아니라 +0을 반환한다', () => {
+    // eps 생략: 선형 fallback x = 0, 중복근 x² = 0.
+    expect(solveQuadratic(0, 1, 0).map((r) => Object.is(r, 0))).toEqual([true]);
+    expect(solveQuadratic(1, 0, 0).map((r) => Object.is(r, 0))).toEqual([true]);
+    expect(solveQuadratic(-1, 0, 0).map((r) => Object.is(r, 0))).toEqual([true]);
+    // 서로 다른 두 근 중 하나가 0: x² - x = 0.
+    expect(solveQuadratic(1, -1, 0).map((r) => Object.is(r, -0))).toEqual([false, false]);
+    // eps 명시: 선형 fallback, 중복근 -b / (2a).
+    expect(solveQuadratic(0, 1, 0, 1e-9).map((r) => Object.is(r, 0))).toEqual([true]);
+    expect(solveQuadratic(1, 0, 0, 1e-9).map((r) => Object.is(r, 0))).toEqual([true]);
+    expect(solveQuadratic(1, 0, 0, 0).map((r) => Object.is(r, 0))).toEqual([true]);
+    expect(solveQuadratic(2, -0, 0, 1e-9).map((r) => Object.is(r, 0))).toEqual([true]);
   });
 
   test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {

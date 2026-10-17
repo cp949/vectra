@@ -4,6 +4,7 @@ import { assertFiniteNumbers } from './range.internal';
  * 1차 방정식 ax + b = 0의 해를 반환한다.
  *
  * x = -b / a. a === 0이면 NaN을 반환한다. 모든 인자는 finite number여야 한다.
+ * 해 0은 `-0`이 아니라 `+0`으로 반환한다.
  *
  * @param a 1차항 계수
  * @param b 상수항
@@ -13,5 +14,6 @@ export function solveLinear(a: number, b: number): number {
 
   if (a === 0) return Number.NaN;
 
-  return -b / a;
+  // `+ 0`은 -0을 +0으로 바꾼다. b === 0이거나 -b / a가 underflow해도 해 0의 부호가 갈리지 않게 한다.
+  return -b / a + 0;
 }
