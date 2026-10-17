@@ -1,6 +1,7 @@
 import { lineFamilyIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
+import { SWEEP_MIN_VERTEX_COUNT, sweepRingSelfIntersects } from './self-intersection-sweep.internal';
 
 /**
  * closed ring의 non-adjacent edge pair가 교차/접촉/overlap하는지 판정한다.
@@ -18,6 +19,10 @@ import type { XYInput } from '../types';
  * near-parallel edge가 collinear overlap으로 합쳐지고, 작은 좌표 scale에서는 실제 교차도 cross가
  * epsilon 이하가 되어 parallel로 합쳐질 수 있다. 이는 `intersectsSegmentSegment`의 epsilon 의미와 같다.
  *
+ * `epsilon`을 생략하고 vertex가 `SWEEP_MIN_VERTEX_COUNT` 이상이면 AABB sweep으로 후보 쌍을 줄인다.
+ * 반환값은 전수 비교와 같다. sweep을 쓸 수 없는 입력(edge 길이 한계 초과, non-finite 좌표)은
+ * 전수 비교로 폴백한다. 명시 epsilon은 항상 전수 비교다.
+ *
  * 이 helper로 `isSelfIntersecting`과 `isSimple`이 public 함수끼리 import하지 않고 같은 kernel을
  * 공유한다.
  *
@@ -28,11 +33,16 @@ export function ringSelfIntersects(pts: readonly XYInput[], epsilon: number | un
   const n = pts.length;
   if (n < 4) return false;
 
-  // edge별 line-family param을 한 번만 만들어 O(n²) pair 비교에서 재사용한다.
+  // edge별 line-family param을 한 번만 만들어 pair 비교(전수 비교와 sweep)에서 재사용한다.
   const edges: ReturnType<typeof segmentToLineFamilyParam>[] = [];
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
     edges.push(segmentToLineFamilyParam(readX(pts[i]), readY(pts[i]), readX(pts[j]), readY(pts[j])));
+  }
+
+  if (epsilon === undefined && n >= SWEEP_MIN_VERTEX_COUNT) {
+    const swept = sweepRingSelfIntersects(edges);
+    if (swept !== undefined) return swept;
   }
 
   for (let i = 0; i < n; i++) {

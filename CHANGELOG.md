@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 
+- `isSimple`과 `isSelfIntersecting`의 self-intersection 검사를 빠르게 한다. vertex가 64개 이상이고 `epsilon`을 생략한 호출은 AABB sweep으로 후보 edge 쌍을 줄인다. 원형 4000 vertex는 약 60ms에서 약 0.7ms로, 20000 vertex는 약 1.5초에서 약 4ms로 줄어든다. 동작 변경은 없다. 반환값은 이전과 같다. `epsilon`을 명시한 호출, vertex 64개 미만, edge 길이가 약 1.16e77을 넘거나 NaN·Infinity 좌표가 있는 입력은 이전의 전수 비교를 쓴다. 이미 교차한 polygon은 첫 교차를 일찍 찾는 이전 루프가 더 빠를 수 있다. 정렬과 배열 할당 때문에 vertex 4000개에서 약 0.1ms가 약 0.9ms가 된다.
 - README와 문서의 런타임 지원 표기를 '검증 환경'(Node.js `>=24.18.0`)과 '빌드 target'(ES2020, platform neutral)으로 나눈다. 문서 표기만 바뀐다. `package.json`, 빌드 결과, 공개 API는 그대로이고 `engines`는 추가하지 않는다.
 - `package.json`의 `exports` 각 항목에 `default` 조건을 추가한다. 이전에는 CJS `require('@cp949/vectra/vec')`가 `ERR_PACKAGE_PATH_NOT_EXPORTED`로 실패했다. 이제 `require(esm)`을 지원하는 Node.js(`>=24.18.0`)에서 root와 모든 subpath를 `require()`로 불러올 수 있다. 패키지는 계속 ESM이다. `import`로 쓰는 코드는 영향이 없다.
 - `exports` 각 항목에서 `types` 조건을 첫 번째로 옮긴다. 조건은 순서대로 해석되므로 이전 순서에서는 TypeScript가 `import`를 먼저 만났다. publint 오류 38건이 사라진다.
