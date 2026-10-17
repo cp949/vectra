@@ -6,6 +6,6 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "types": ["node"]
   },
-  "include": ["src/**/*", "tests/**/*", "tsdown.config.ts", "vitest.config.ts"],
+  "include": ["src/**/*", "tests/**/*", "vite/**/*", "tsdown.config.ts", "vitest.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
