@@ -34,6 +34,5 @@ export function boundsContainsPointXY(
   px: number,
   py: number
 ): boolean {
-  if (maxX < minX || maxY < minY) return false;
   return px >= minX && px <= maxX && py >= minY && py <= maxY;
 }

@@ -115,7 +115,6 @@ function isPointOnEllipseBoundary(
 ): boolean {
   const ux = (px - cx) / rx;
   const uy = (py - cy) / ry;
-  if (!Number.isFinite(ux) || !Number.isFinite(uy)) return false;
   return Math.abs(Math.hypot(ux, uy) - 1) * Math.max(rx, ry) <= epsilon;
 }
 

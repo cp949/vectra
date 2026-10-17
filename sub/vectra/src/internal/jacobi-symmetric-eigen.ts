@@ -42,7 +42,7 @@ export function jacobiSymmetricEigenRaw(
 
     const rotation = computeJacobiRotation(working, pivot.p, pivot.q, errorPrefix);
     applyRotationToWorking(working, n, pivot.p, pivot.q, rotation, errorPrefix);
-    applyRotationToVectors(vectors, n, pivot.p, pivot.q, rotation, errorPrefix);
+    applyRotationToVectors(vectors, n, pivot.p, pivot.q, rotation);
   }
 
   return undefined;
@@ -117,15 +117,13 @@ function computeJacobiRotation(
     throw new RangeError(`${errorPrefix} produced non-finite theta at (${p}, ${q}), got ${String(theta)}`);
   }
   const denomMag = Math.abs(theta) + Math.hypot(theta, 1);
-  if (!Number.isFinite(denomMag) || denomMag === 0) {
+  // denomMag >= 1이라 0이 될 수 없다. overflow만 확인한다.
+  if (!Number.isFinite(denomMag)) {
     throw new RangeError(`${errorPrefix} produced non-finite denominator at (${p}, ${q}), got ${String(denomMag)}`);
   }
   const t = theta >= 0 ? 1 / denomMag : -1 / denomMag;
   const c = 1 / Math.hypot(t, 1);
   const s = t * c;
-  if (!Number.isFinite(c) || !Number.isFinite(s)) {
-    throw new RangeError(`${errorPrefix} produced non-finite (c, s) at (${p}, ${q}), got (${String(c)}, ${String(s)})`);
-  }
   return { c, s };
 }
 
@@ -173,28 +171,15 @@ function applyRotationToWorking(
   }
 }
 
-function applyRotationToVectors(
-  vectors: number[][],
-  n: number,
-  p: number,
-  q: number,
-  rotation: JacobiRotation,
-  errorPrefix: string
-): void {
+// eigenvector 행렬은 단위 행렬에서 시작해 직교 회전만 곱하므로 원소가 [-1, 1] 안이다. overflow하지 않는다.
+function applyRotationToVectors(vectors: number[][], n: number, p: number, q: number, rotation: JacobiRotation): void {
   const { c, s } = rotation;
   for (let r = 0; r < n; r++) {
     const vRow = vectors[r];
     const vrp = vRow[p];
     const vrq = vRow[q];
-    const newVrp = c * vrp - s * vrq;
-    const newVrq = s * vrp + c * vrq;
-    if (!Number.isFinite(newVrp) || !Number.isFinite(newVrq)) {
-      throw new RangeError(
-        `${errorPrefix} produced non-finite eigenvector entry at (${r}, ${p}/${q}), got (${String(newVrp)}, ${String(newVrq)})`
-      );
-    }
-    vRow[p] = newVrp;
-    vRow[q] = newVrq;
+    vRow[p] = c * vrp - s * vrq;
+    vRow[q] = s * vrp + c * vrq;
   }
 }
 

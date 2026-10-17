@@ -98,7 +98,8 @@ export function lineFamilyPolygonIntersectionHits(
       // 그러지 않으면 긴 edge에서 tolerance가 거리로 부풀어 polygon 밖 점을 touch로 잡거나
       // 내부 transversal 교점을 touch로 오분류한다.
       const edgeLen = Math.hypot(ex, ey);
-      const edgeTol = edgeLen > 0 ? epsilon / edgeLen : epsilon;
+      // edgeLen === 0이면 cross = 0이고 분자도 0이라 tLine이 NaN이 되어 위에서 이미 걸러진다. edgeLen > 0이다.
+      const edgeTol = epsilon / edgeLen;
       if (tEdge < -edgeTol || tEdge > 1 + edgeTol) return;
       const atVertex = tEdge <= edgeTol || tEdge >= 1 - edgeTol;
       const clampedEdge = tEdge < 0 ? 0 : tEdge > 1 ? 1 : tEdge;

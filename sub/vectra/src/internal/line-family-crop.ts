@@ -57,7 +57,7 @@ function circleCropInterval(
  * axis-aligned box 내부에 들어가는 parametric 구간을 Liang-Barsky로 반환한다. 교점 없으면 null.
  *
  * 전제: `lenSq > 0`이고 box가 비어 있지 않다(`x0 < x1`, `y0 < y1`).
- * slab과 평행하면서 바깥(`q < 0`)이면 null. 결과 구간 길이가 0 이하이면 null.
+ * slab과 평행하면서 바깥(`q < 0`)이면 null. 구간 길이가 0 이하인 결과는 caller(`writeClippedCropInto`)가 거른다.
  */
 function rectCropInterval(
   ox: number,
@@ -92,7 +92,6 @@ function rectCropInterval(
     }
   }
 
-  if (!(lo < hi)) return null;
   return { lo, hi };
 }
 
