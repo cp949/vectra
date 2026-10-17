@@ -25,6 +25,7 @@ export function infiniteLineAngleBetween(a: InfiniteLineLike, b: InfiniteLineLik
   const denom = Math.hypot(dax, day) * Math.hypot(dbx, dby);
   // zero direction → denom 0 → NaN (0/0 또는 v/0)
   const cos = Math.abs(dot) / denom;
-  const clamped = cos > 1 ? 1 : cos < 0 ? 0 : cos;
+  // cos는 절댓값을 양수 denom으로 나눈 값이라 0 이상이거나 NaN이다.
+  const clamped = cos > 1 ? 1 : cos;
   return Math.acos(clamped);
 }
