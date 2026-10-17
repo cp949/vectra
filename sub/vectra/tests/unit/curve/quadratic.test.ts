@@ -369,6 +369,95 @@ describe('quadraticBoundsInto', () => {
     const ret = quadraticBoundsInto(out, p0, p1, p2);
     expect(ret).toBe(out);
   });
+
+  it('x 극값이 endpoint 밖이면 max.x를 확장한다', () => {
+    // tx = 0.75, B(0.75).x = 2.25 > max(0, 2)
+    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    quadraticBoundsInto(out, { x: 0, y: 0 }, { x: 3, y: 1 }, { x: 2, y: 2 });
+    expect(out.max.x).toBeCloseTo(2.25, 12);
+    expect(out.min.x).toBe(0);
+  });
+
+  it('x 극값이 endpoint 밖이면 min.x를 확장한다', () => {
+    // tx = 3/7, B(3/7).x = 5/7 < min(2, 3)
+    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    quadraticBoundsInto(out, { x: 2, y: 0 }, { x: -1, y: 1 }, { x: 3, y: 2 });
+    expect(out.min.x).toBeCloseTo(5 / 7, 12);
+    expect(out.max.x).toBe(3);
+  });
+
+  it('y 극값이 endpoint 밖이면 min.y를 확장한다', () => {
+    // ty = 0.5, B(0.5).y = -1
+    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    quadraticBoundsInto(out, { x: 0, y: 0 }, { x: 1, y: -2 }, { x: 2, y: 0 });
+    expect(out.min.y).toBeCloseTo(-1, 12);
+    expect(out.max.y).toBe(0);
+  });
+
+  it('극값 t가 (0, 1) 밖이면 endpoint로 bounds가 정해진다', () => {
+    // p1이 양 끝 사이에 있지만 중점이 아니어서 denom은 0이 아니다. tx = ty = -1/8
+    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    quadraticBoundsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 10, y: 10 });
+    expect(out.min).toEqual({ x: 0, y: 0 });
+    expect(out.max).toEqual({ x: 10, y: 10 });
+  });
+
+  it('여러 curve에서 촘촘한 sampling의 bounds와 같다', () => {
+    const curves: [number, number][][] = [
+      [
+        [0, 0],
+        [3, 1],
+        [2, 2],
+      ],
+      [
+        [2, 0],
+        [-1, 1],
+        [3, 2],
+      ],
+      [
+        [0, 0],
+        [1, -2],
+        [2, 0],
+      ],
+      [
+        [-4, 5],
+        [6, -7],
+        [1, 3],
+      ],
+      [
+        [5, 5],
+        [5, -9],
+        [-5, 5],
+      ],
+    ];
+    for (const [a, b, c] of curves) {
+      const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+      quadraticBoundsInto(out, a, b, c);
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      for (let i = 0; i <= 4000; i++) {
+        const t = i / 4000;
+        const mt = 1 - t;
+        const x = mt * mt * a[0] + 2 * mt * t * b[0] + t * t * c[0];
+        const y = mt * mt * a[1] + 2 * mt * t * b[1] + t * t * c[1];
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+      // sampling은 극값을 놓치므로 닫힌 형태가 항상 같거나 더 크고, 오차는 sampling 간격의 제곱 수준이다
+      expect(out.min.x).toBeLessThanOrEqual(minX);
+      expect(out.min.y).toBeLessThanOrEqual(minY);
+      expect(out.max.x).toBeGreaterThanOrEqual(maxX);
+      expect(out.max.y).toBeGreaterThanOrEqual(maxY);
+      expect(minX - out.min.x).toBeLessThan(1e-5);
+      expect(minY - out.min.y).toBeLessThan(1e-5);
+      expect(out.max.x - maxX).toBeLessThan(1e-5);
+      expect(out.max.y - maxY).toBeLessThan(1e-5);
+    }
+  });
 });
 
 describe('quadraticFlattenInto', () => {
