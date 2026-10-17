@@ -64,10 +64,17 @@ export function validateCubicToArcsInputs(
   };
 }
 
+const TWO_PI = 2 * Math.PI;
+
+/** from에서 to까지 반시계로 잰 각도를 [0, 2π)로 돌려준다. */
+function relativeAngle(from: number, to: number): number {
+  return (((to - from) % TWO_PI) + TWO_PI) % TWO_PI;
+}
+
 /**
  * 세 점을 지나는 circumcircle의 center와 반지름을 반환한다.
  *
- * collinear이거나 반지름이 유효하지 않으면 null을 반환한다.
+ * collinear이거나 반지름이 유효하지 않거나 두 끝점의 중심각이 0이면 null을 반환한다.
  */
 function circumcircle(
   x0: number,
@@ -87,6 +94,11 @@ function circumcircle(
   const dy = y0 - cy;
   const r = Math.hypot(dx, dy);
   if (!Number.isFinite(cx) || !Number.isFinite(cy) || !Number.isFinite(r) || !(r > 0)) {
+    return null;
+  }
+  // 반지름이 각도 해상도를 넘으면 두 끝점이 중심에서 같은 각도로 보여 arc의 중심각이 0이 된다.
+  // 끝점이 달라도 한 점으로 붕괴하므로 collinear와 같이 null로 둔다.
+  if (relativeAngle(Math.atan2(y0 - cy, x0 - cx), Math.atan2(y2 - cy, x2 - cx)) === 0) {
     return null;
   }
   return { cx, cy, r };
@@ -142,10 +154,10 @@ function tryEmitArcFromSegment(
   // midpoint 각도로 진행 방향을 정한 뒤 endAngle을 unwrap한다.
   // center-arc 규약: consumer는 sweep flag가 아니라 (endAngle - startAngle)로 보간하므로
   // 이 차이가 진행 방향과 각폭을 담아야 한다. raw atan2 endAngle은 -π 경계에서 부호가 뒤집힌다.
-  const TWO_PI = 2 * Math.PI;
-  const relMid = (((midAngle - startAngle) % TWO_PI) + TWO_PI) % TWO_PI;
-  const relEnd = (((rawEndAngle - startAngle) % TWO_PI) + TWO_PI) % TWO_PI;
-  const sweep = relEnd === 0 ? true : relMid < relEnd;
+  // relEnd는 circumcircle이 0을 걸러내므로 항상 양수다.
+  const relMid = relativeAngle(startAngle, midAngle);
+  const relEnd = relativeAngle(startAngle, rawEndAngle);
+  const sweep = relMid < relEnd;
   const endAngle = startAngle + (sweep ? relEnd : relEnd - TWO_PI);
 
   out.push({ cx, cy, rx: r, ry: r, xRotation: 0, startAngle, endAngle, sweep });

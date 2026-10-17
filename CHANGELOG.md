@@ -35,6 +35,7 @@
 - ellipse 교차(`ellipseEllipseDetail`, `ellipseEllipseIntersections(Into)`, `ellipseCircleIntersectionsInto`)가 중심과 반지름이 거의 같은 두 ellipse의 교점을 놓치지 않는다. 내부 4차 방정식 solver가 resolvent의 양수근이 `eps` 이하이면 실근을 모두 버렸다. 중심·반지름이 1e-10 규모로 어긋나 실제로는 두 점에서 만나는 ellipse 쌍이 `none`이나 `contains`로 나왔다. 이제 그 근을 Newton으로 다시 구해 교점을 반환한다. 근접 퇴화 입력 무작위 40만 쌍에서 `none`·`contains` 판정 중 실제 교차가 있던 비율이 17.8%(21460/120371)에서 4.2%(4348/102878)로 준다. 남은 4348건은 이번 수정이 다루지 않는다. 일반 입력의 결과는 그대로다.
 - `circleLensArea`의 정밀도를 높인다. 이전에는 표준 공식(`acos`와 kite 뺄셈)이 반지름비가 크거나 외접·내접 경계에 가까운 입력에서 큰 항끼리 상쇄했다. 내접 경계 근처는 상대 오차가 1e-8 규모였고, 반지름비 1e6 입력에서는 값이 몇 배에서 1e14배까지 틀렸다. 이제 원호 조각 면적의 합을 반각 접선과 오차 없는 합으로 계산한다. 반지름 0.001–1000, 외접·내접 경계에서 1e-9까지 가까운 무작위 입력 약 6000건에서 80자리 십진수 계산 대비 최대 상대 오차가 4.8e14에서 2e-15로 준다. 반환값의 정의와 분기 경계는 그대로다.
 - `mean`이 결과 `-0`을 남기던 문제를 고친다. 음의 subnormal 합을 나누면 `-0`이 되던 `mean([-5e-324, 0])`이 `+0`을 반환한다. 다른 statistics 함수와 JSDoc 약속대로 맞춘다. 값은 같고 `Object.is`로 비교하는 코드만 영향을 받는다.
+- `cubicToArcs`와 `cubicToArcsInto`가 거의 직선인 cubic에서 한 점으로 붕괴한 arc를 돌려주지 않는다. 곡률 반지름이 각도 해상도를 넘어(제어점 y가 1e-16 규모인 길이 3 cubic은 반지름이 약 3e16) 끝점의 중심각이 0이 되면, 이전에는 끝점이 달라도 `startAngle === endAngle`인 arc 하나를 돌려줬다. 이제 정확히 직선인 cubic과 같이 `collinear segment cannot be approximated by a circular arc` RangeError를 던진다. 반지름이 이보다 작은 cubic은 그대로다.
 
 ## [1.1.0] - 2026-10-17
 
