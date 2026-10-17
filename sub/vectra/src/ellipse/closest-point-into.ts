@@ -9,15 +9,20 @@ const DEFAULT_EPSILON = 1e-10;
 /**
  * ellipse boundary에서 point에 가장 가까운 점을 out에 기록하고 out을 반환한다.
  *
+ * 거리는 Euclidean 거리다. 기록한 점에서 point로 향하는 선은 boundary에 수직이다.
  * 내부 점도 경계 위의 closest boundary point를 기록한다.
  * radiusX <= 0 또는 radiusY <= 0인 empty ellipse는 ellipse center를 기록한다.
  * point === ellipse center인 경우 θ₀ = 0으로 tie-break하여 (cx + radiusX, cy)를 기록한다.
+ * radiusX > radiusY이면 이 tie-break 점이 가장 가까운 boundary 점은 아니다.
+ * major axis 위의 점이 evolute 안에 있으면 최근접점이 둘이다.
+ * 이때 center보다 y가 큰 쪽을 기록한다. radiusY > radiusX이면 x가 큰 쪽을 기록한다.
+ * 반복 수치 해법이다. 수렴 실패 시 마지막 반복 값을 사용한다.
  * out과 point가 같은 object일 때도 안전하게 동작한다.
  *
  * @param out closest boundary point를 기록할 writable output
  * @param ellipse 기준 ellipse
  * @param point closest point를 계산할 기준 point
- * @param epsilon Newton-Raphson 수렴 판정 임계값. 기본값: 1e-10
+ * @param epsilon Newton-Raphson 수렴 판정 상대 임계값. 기본값: 1e-10
  */
 export function closestPointInto<Out extends XYWritable>(
   out: Out,

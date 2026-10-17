@@ -10,6 +10,7 @@ import type { CircleLike, EllipseLike } from '../types';
  * degenerate ellipse (rx ≤ 0 또는 ry ≤ 0): false.
  * degenerate circle (r ≤ 0): false.
  * closed boundary 포함 (접점도 true).
+ * ellipse boundary까지의 Euclidean 최단 거리가 circle 반지름 이하이면 교차한다.
  *
  * @param ellipse 교차를 검사할 ellipse
  * @param circle 교차를 검사할 circle

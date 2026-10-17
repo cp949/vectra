@@ -10,11 +10,12 @@ const DEFAULT_EPSILON = 1e-10;
  * ellipse와 point 사이의 최단 거리를 반환한다.
  *
  * closed filled ellipse 기준: point가 ellipse 내부 또는 boundary 위에 있으면 0을 반환한다.
+ * 외부 점은 boundary 위 Euclidean closest point까지의 거리를 반환한다.
  * radiusX <= 0 또는 radiusY <= 0인 empty ellipse는 point에서 ellipse center까지 Euclidean 거리를 반환한다.
  *
  * @param ellipse 기준 ellipse
  * @param point 거리를 측정할 point
- * @param epsilon Newton-Raphson 수렴 판정 임계값. 기본값: 1e-10
+ * @param epsilon Newton-Raphson 수렴 판정 상대 임계값. 기본값: 1e-10
  */
 export function distanceToPoint(ellipse: EllipseLike, point: XYInput, epsilon = DEFAULT_EPSILON): number {
   const rx = readEllipseRadiusX(ellipse);
