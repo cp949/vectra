@@ -44,9 +44,8 @@ pnpm verify
 
 `pnpm verify`는 다음을 실행한다.
 
+- `lint` (루트 `biome ci --error-on-warnings .`. format, import 정렬, warning 포함)
 - `typecheck`
-- `lint`
-- `format:check`
 - `test`
 - `build`
 
