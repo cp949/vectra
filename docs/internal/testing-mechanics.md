@@ -19,7 +19,7 @@ pnpm test                                  # 전체 (turbo run test)
 pnpm --filter @cp949/vectra test           # vectra package 전체
 pnpm --filter @cp949/vectra test tests/unit/vec/arithmetic.test.ts   # 단일 파일 (package root 기준 경로)
 pnpm --filter @cp949/vectra test:coverage  # v8 coverage
-pnpm test:contract                         # build 후 dist 계약 테스트
+pnpm test:contract                         # build 후 dist 계약 테스트 (turbo가 build를 선행)
 pnpm --filter @cp949/vectra surface:check  # source-surface drift 검사
 pnpm verify:vectra                         # typecheck + lint + test
 ```
@@ -125,8 +125,9 @@ provider `v8`. reporter `text`/`json`/`html`. **명시적 threshold는 vitest co
 - `<domain>-subpaths.test.ts`: source barrel과 leaf export 목록을 대조
   (`assertFunctionDomainSubpathExports`).
 - `package-imports.test.ts`: **built dist**(`dist/<domain>/index.js`)를 dynamic import로 검증
-  → `pnpm build` 선행 필요. 그래서 `test:contract`로 분리(`pnpm build && vitest run tests/contract`)되고
-  turbo가 build 의존을 보장한다.
+  → `pnpm build` 선행 필요. 그래서 `test:contract`로 분리(`vitest run tests/contract`)되고
+  turbo `test:contract`의 `dependsOn: ["build"]`가 build 의존을 보장한다.
+  `pnpm --filter @cp949/vectra test:contract`는 build를 하지 않는다. 루트 `pnpm test:contract`로 실행한다.
 - `source-surface-drift.test.ts`: source surface와 catalog 문서/baseline drift 검사.
 
 **dist dynamic import 함정** (`agent-traps/testing/built-dist-contract-test.md`): dist import는

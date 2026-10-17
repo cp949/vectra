@@ -2,15 +2,22 @@
  * package.json `exports` 조건 계약을 검증한다.
  * - 각 항목의 첫 조건은 `types`다. TypeScript는 조건을 순서대로 해석한다.
  * - 각 항목에 `default`가 있다. 없으면 CJS `require()`가 ERR_PACKAGE_PATH_NOT_EXPORTED로 실패한다.
- * - 실제 `require()`는 빌드된 dist를 대상으로 한다. `test:contract`가 build를 먼저 실행한다.
+ * - 실제 `require()`는 빌드된 dist를 대상으로 한다. turbo `test:contract`가 build를 먼저 실행한다.
  */
 import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, test } from 'vitest';
+import { beforeAll, describe, expect, test } from 'vitest';
 import packageJson from '../../package.json' with { type: 'json' };
 
 const packageRoot = fileURLToPath(new URL('../../', import.meta.url));
 const entries = Object.entries(packageJson.exports);
+
+beforeAll(() => {
+  if (!existsSync(new URL('../../dist/index.js', import.meta.url))) {
+    throw new Error('dist가 없다. pnpm build를 먼저 실행한다 (pnpm --filter @cp949/vectra build)');
+  }
+});
 
 /**
  * 모든 exports specifier를 CJS `require()`로 불러 실패한 항목을 돌려준다.

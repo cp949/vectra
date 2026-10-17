@@ -39,7 +39,7 @@
     "surface:check": "vitest run --config vitest.config.ts tests/contract/source-surface-drift.test.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
-    "test:contract": "pnpm build && vitest run --config vitest.config.ts tests/contract",
+    "test:contract": "vitest run --config vitest.config.ts tests/contract",
     "test:coverage": "vitest run --coverage --config vitest.config.ts"
   },
   "devDependencies": {

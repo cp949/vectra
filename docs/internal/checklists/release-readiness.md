@@ -214,7 +214,7 @@ pnpm release-it
 
 `pnpm release-it`이 아래 단계를 수행한다. 자세한 절차와 실패 후 조치는 [RELEASING.md](../../../RELEASING.md)에 있다.
 
-- `pnpm release:check` (`verify`, `test:contract`, 빌드, `npm pack --dry-run`)
+- `pnpm release:check` (`verify`(빌드 포함), `test:contract`, `lint:package`, `npm pack --dry-run`)
 - version bump와 `CHANGELOG.md` 갱신
 - `pnpm publish`
 - 배포 commit, `v<version>` tag 생성, push

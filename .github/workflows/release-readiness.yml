@@ -32,10 +32,7 @@ jobs:
         run: pnpm verify
 
       - name: Verify vectra contract imports
-        run: pnpm --filter @cp949/vectra test:contract
-
-      - name: Build vectra package
-        run: pnpm --filter @cp949/vectra build
+        run: pnpm test:contract
 
       - name: Lint package exports (publint, attw)
         run: pnpm --filter @cp949/vectra lint:package
