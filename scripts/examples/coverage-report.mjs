@@ -23,6 +23,7 @@ function parseArgs(args) {
     output: DEFAULT_OUTPUT,
     exceptions: DEFAULT_EXCEPTIONS,
     write: false,
+    check: false,
     strict: false,
   };
 
@@ -31,6 +32,11 @@ function parseArgs(args) {
 
     if (arg === '--write') {
       parsed.write = true;
+      continue;
+    }
+
+    if (arg === '--check') {
+      parsed.check = true;
       continue;
     }
 
@@ -74,12 +80,14 @@ function printHelp() {
 Usage:
   node scripts/examples/coverage-report.mjs
   node scripts/examples/coverage-report.mjs --write
+  node scripts/examples/coverage-report.mjs --check
   node scripts/examples/coverage-report.mjs --strict
 
 Options:
   --write                 docs/internal/examples/coverage.md 파일을 갱신한다.
+  --check                 커밋된 coverage.md가 현재 소스와 다르면 exit code 1을 반환한다.
   --strict                uncovered public leaf가 있으면 exit code 1을 반환한다.
-  --output <path>         --write 출력 경로. 기본: ${DEFAULT_OUTPUT}
+  --output <path>         --write, --check 대상 경로. 기본: ${DEFAULT_OUTPUT}
   --exceptions <path>     예외 파일 경로. 기본: ${DEFAULT_EXCEPTIONS}
   --repo-root <path>      repository root. 기본: 현재 작업 디렉터리
 `);
@@ -506,6 +514,18 @@ export function renderMarkdownReport(report) {
   return `${lines.join('\n')}\n`;
 }
 
+export async function isCoverageFileCurrent({ outputPath, markdown }) {
+  try {
+    return (await readFile(outputPath, 'utf8')) === markdown;
+  } catch (error) {
+    if (error && error.code === 'ENOENT') {
+      return false;
+    }
+
+    throw error;
+  }
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -522,6 +542,13 @@ async function main() {
     await mkdir(path.dirname(outputPath), { recursive: true });
     await writeFile(outputPath, markdown, 'utf8');
     console.log(`wrote ${args.output}`);
+  } else if (args.check) {
+    const outputPath = path.join(args.repoRoot, args.output);
+
+    if (!(await isCoverageFileCurrent({ outputPath, markdown }))) {
+      console.error(`${args.output}가 소스와 다르다. pnpm examples:coverage:write로 갱신한다.`);
+      process.exitCode = 1;
+    }
   } else {
     process.stdout.write(markdown);
   }

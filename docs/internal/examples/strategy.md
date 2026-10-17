@@ -107,6 +107,7 @@ containment, distance/closest point, transform 비교는 한 장면에 합치지
 
 - `pnpm examples:coverage`는 누락/중복/분류만 출력하고 exit code `0`을 반환한다.
 - `pnpm examples:coverage:write`는 `docs/internal/examples/coverage.md`를 갱신한다.
+- `pnpm examples:coverage:check`는 커밋된 `coverage.md`가 현재 소스와 다르면 exit code `1`을 반환한다.
 - `pnpm examples:coverage:strict`는 uncovered public leaf가 있으면 exit code `1`을 반환한다.
 - demo app은 커버리지 누락이 있어도 실행된다.
 - allocating companion과 `*Into` companion이 같은 계산을 공유하면 둘 중 하나의 의미 있는 사용을

@@ -228,6 +228,12 @@ pnpm examples:coverage
 pnpm examples:coverage:write
 ```
 
+커밋된 `coverage.md`가 소스와 같은지 검사한다. 다르면 exit code `1`이다. `pnpm verify`가 실행한다.
+
+```sh
+pnpm examples:coverage:check
+```
+
 스크립트 자체를 검증한다.
 
 ```sh

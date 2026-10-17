@@ -10,10 +10,10 @@ pnpm examples:coverage:write
 
 ## 요약
 
-- 전체 public leaf: 1516
-- covered: 642
+- 전체 public leaf: 1926
+- covered: 652
 - excepted: 0
-- uncovered: 874
+- uncovered: 1274
 - 예제 수: 171
 
 ## 표
@@ -64,6 +64,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/angle/rad-to-deg` | `radToDeg` | `pixi:angle-heading-turn`, `pixi:angle-unit-compass`, `pixi:arc-to-cubic`, `pixi:polar-coordinate-plot`, `pixi:vec-rotate-around`, `pixi:vec-slerp-direction` |  | covered |
 | `@cp949/vectra/angle/rad-to-turn` | `radToTurn` | `pixi:angle-unit-compass` |  | covered |
 | `@cp949/vectra/angle/reflect-angle` | `reflectAngle` |  |  | uncovered |
+| `@cp949/vectra/angle/sector-contains` | `sectorContains` |  |  | uncovered |
 | `@cp949/vectra/angle/shortest-lerp-angle` | `shortestLerpAngle` | `pixi:angle-heading-turn` |  | covered |
 | `@cp949/vectra/angle/sin-cos` | `sinCos` | `pixi:angle-unit-compass` |  | covered |
 | `@cp949/vectra/angle/sin-cos-into` | `sinCosInto` | `pixi:angle-unit-compass` |  | covered |
@@ -147,10 +148,18 @@ pnpm examples:coverage:write
 | `@cp949/vectra/calculus/steps` | `steps` |  |  | uncovered |
 | `@cp949/vectra/calculus/steps-into` | `stepsInto` |  |  | uncovered |
 | `@cp949/vectra/calculus/trapezoidal-integral` | `trapezoidalIntegral` |  |  | uncovered |
+| `@cp949/vectra/capsule/bounds` | `bounds` |  |  | uncovered |
+| `@cp949/vectra/capsule/bounds-into` | `boundsInto` |  |  | uncovered |
+| `@cp949/vectra/capsule/closest-point` | `closestPoint` |  |  | uncovered |
+| `@cp949/vectra/capsule/closest-point-into` | `closestPointInto` |  |  | uncovered |
+| `@cp949/vectra/capsule/contains-point` | `containsPoint` |  |  | uncovered |
+| `@cp949/vectra/capsule/distance-to-point` | `distanceToPoint` |  |  | uncovered |
+| `@cp949/vectra/circle/arc-length` | `arcLength` |  |  | uncovered |
 | `@cp949/vectra/circle/area` | `area` | `pixi:circle-tank-fill` |  | covered |
 | `@cp949/vectra/circle/bounds` | `bounds` |  |  | uncovered |
 | `@cp949/vectra/circle/bounds-into` | `boundsInto` |  |  | uncovered |
 | `@cp949/vectra/circle/chord-length` | `chordLength` |  |  | uncovered |
+| `@cp949/vectra/circle/circle-annulus-area` | `circleAnnulusArea` |  |  | uncovered |
 | `@cp949/vectra/circle/circle-from` | `circleFrom` |  |  | uncovered |
 | `@cp949/vectra/circle/circumference` | `circumference` |  |  | uncovered |
 | `@cp949/vectra/circle/closest-point` | `closestPoint` | `pixi:circular-measurement-lab`, `pixi:orbit-segment` |  | covered |
@@ -189,6 +198,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/circle/tangent-points-from-external-into` | `tangentPointsFromExternalInto` | `pixi:circle-tangent-construction` |  | covered |
 | `@cp949/vectra/circle/translate` | `translate` |  |  | uncovered |
 | `@cp949/vectra/circle/translate-into` | `translateInto` |  |  | uncovered |
+| `@cp949/vectra/curve/arc-bounds` | `arcBounds` | `canvas:arc-length-probe` |  | covered |
 | `@cp949/vectra/curve/arc-bounds-into` | `arcBoundsInto` | `canvas:arc-length-probe` |  | covered |
 | `@cp949/vectra/curve/arc-closest-point` | `arcClosestPoint` | `canvas:arc-length-probe` |  | covered |
 | `@cp949/vectra/curve/arc-closest-point-into` | `arcClosestPointInto` | `canvas:arc-length-probe` |  | covered |
@@ -202,6 +212,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/curve/arc-normal-at-into` | `arcNormalAtInto` | `canvas:arc-length-probe` |  | covered |
 | `@cp949/vectra/curve/arc-point-at-length` | `arcPointAtLength` | `canvas:arc-length-probe` |  | covered |
 | `@cp949/vectra/curve/arc-point-at-length-into` | `arcPointAtLengthInto` | `canvas:arc-length-probe` |  | covered |
+| `@cp949/vectra/curve/arc-point-at-t` | `arcPointAtT` | `canvas:arc-length-probe`, `pixi:arc-length-parameterize`, `pixi:curve-sampling-workbench` |  | covered |
 | `@cp949/vectra/curve/arc-point-at-t-into` | `arcPointAtTInto` | `canvas:arc-length-probe`, `pixi:arc-length-parameterize`, `pixi:curve-sampling-workbench` |  | covered |
 | `@cp949/vectra/curve/arc-sample` | `arcSample` | `canvas:arc-length-probe`, `pixi:arc-to-cubic` |  | covered |
 | `@cp949/vectra/curve/arc-sample-into` | `arcSampleInto` | `canvas:arc-length-probe`, `pixi:arc-to-cubic` |  | covered |
@@ -239,6 +250,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/curve/control-points-into` | `controlPointsInto` |  |  | uncovered |
 | `@cp949/vectra/curve/correct-endpoint-arc-radii` | `correctEndpointArcRadii` |  |  | uncovered |
 | `@cp949/vectra/curve/correct-endpoint-arc-radii-into` | `correctEndpointArcRadiiInto` |  |  | uncovered |
+| `@cp949/vectra/curve/cubic-bounds` | `cubicBounds` | `pixi:cubic-bezier-inspector` |  | covered |
 | `@cp949/vectra/curve/cubic-bounds-into` | `cubicBoundsInto` | `pixi:cubic-bezier-inspector` |  | covered |
 | `@cp949/vectra/curve/cubic-chain-flatten` | `cubicChainFlatten` |  |  | uncovered |
 | `@cp949/vectra/curve/cubic-chain-flatten-into` | `cubicChainFlattenInto` |  |  | uncovered |
@@ -267,6 +279,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/curve/cubic-normal-at-into` | `cubicNormalAtInto` | `pixi:cubic-bezier-inspector` |  | covered |
 | `@cp949/vectra/curve/cubic-part` | `cubicPart` | `pixi:cubic-curve-analysis-lab` |  | covered |
 | `@cp949/vectra/curve/cubic-part-into` | `cubicPartInto` | `pixi:cubic-curve-analysis-lab` |  | covered |
+| `@cp949/vectra/curve/cubic-point-at-t` | `cubicPointAtT` | `pixi:cubic-bezier-inspector`, `pixi:cubic-curve-analysis-lab` |  | covered |
 | `@cp949/vectra/curve/cubic-point-at-t-into` | `cubicPointAtTInto` | `pixi:cubic-bezier-inspector`, `pixi:cubic-curve-analysis-lab` |  | covered |
 | `@cp949/vectra/curve/cubic-sample` | `cubicSample` | `pixi:bezier-intersection-workbench` |  | covered |
 | `@cp949/vectra/curve/cubic-sample-into` | `cubicSampleInto` | `pixi:bezier-intersection-workbench` |  | covered |
@@ -281,6 +294,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/curve/cubic-tangent-at-into` | `cubicTangentAtInto` | `pixi:cubic-bezier-inspector` |  | covered |
 | `@cp949/vectra/curve/cubic-to-arcs` | `cubicToArcs` |  |  | uncovered |
 | `@cp949/vectra/curve/cubic-to-arcs-into` | `cubicToArcsInto` |  |  | uncovered |
+| `@cp949/vectra/curve/curve-frenet-frame-at` | `curveFrenetFrameAt` |  |  | uncovered |
+| `@cp949/vectra/curve/curve-frenet-frame-at-into` | `curveFrenetFrameAtInto` |  |  | uncovered |
 | `@cp949/vectra/curve/endpoint-arc-to-center` | `endpointArcToCenter` |  |  | uncovered |
 | `@cp949/vectra/curve/endpoint-arc-to-center-into` | `endpointArcToCenterInto` |  |  | uncovered |
 | `@cp949/vectra/curve/monotone-x-path` | `monotoneXPath` |  |  | uncovered |
@@ -330,6 +345,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/curve/quadratic-split-into` | `quadraticSplitInto` | `pixi:quadratic-curve-analysis-lab` |  | covered |
 | `@cp949/vectra/curve/quadratic-t-at-length` | `quadraticTAtLength` | `pixi:quadratic-curve-analysis-lab` |  | covered |
 | `@cp949/vectra/curve/quadratic-tangent-at-into` | `quadraticTangentAtInto` | `pixi:bezier-control-inspector`, `pixi:quadratic-curve-analysis-lab` |  | covered |
+| `@cp949/vectra/curve/reduce-bezier-degree` | `reduceBezierDegree` |  |  | uncovered |
+| `@cp949/vectra/curve/reduce-bezier-degree-into` | `reduceBezierDegreeInto` |  |  | uncovered |
 | `@cp949/vectra/curve/step-after-path` | `stepAfterPath` |  |  | uncovered |
 | `@cp949/vectra/curve/step-after-path-into` | `stepAfterPathInto` |  |  | uncovered |
 | `@cp949/vectra/curve/step-before-path` | `stepBeforePath` |  |  | uncovered |
@@ -350,6 +367,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/easing/circ` | `circIn` |  |  | uncovered |
 | `@cp949/vectra/easing/circ` | `circInOut` |  |  | uncovered |
 | `@cp949/vectra/easing/circ` | `circOut` |  |  | uncovered |
+| `@cp949/vectra/easing/cliff` | `cliff` |  |  | uncovered |
 | `@cp949/vectra/easing/constant` | `constant` |  |  | uncovered |
 | `@cp949/vectra/easing/css` | `easeCss` |  |  | uncovered |
 | `@cp949/vectra/easing/css` | `easeInCss` |  |  | uncovered |
@@ -359,6 +377,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/easing/cubic` | `cubicInOut` | `pixi:path-morph` |  | covered |
 | `@cp949/vectra/easing/cubic` | `cubicOut` | `pixi:path-morph` |  | covered |
 | `@cp949/vectra/easing/cubic-bezier` | `cubicBezier` |  |  | uncovered |
+| `@cp949/vectra/easing/double-seat` | `doubleSeat` |  |  | uncovered |
+| `@cp949/vectra/easing/ease-blend` | `easeBlend` |  |  | uncovered |
 | `@cp949/vectra/easing/elastic` | `elasticIn` |  |  | uncovered |
 | `@cp949/vectra/easing/elastic` | `elasticInOut` |  |  | uncovered |
 | `@cp949/vectra/easing/elastic` | `elasticOut` |  |  | uncovered |
@@ -370,6 +390,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/easing/hold` | `hold` |  |  | uncovered |
 | `@cp949/vectra/easing/impulse` | `impulse` |  |  | uncovered |
 | `@cp949/vectra/easing/linear` | `linear` |  |  | uncovered |
+| `@cp949/vectra/easing/logistic` | `logistic` |  |  | uncovered |
 | `@cp949/vectra/easing/parabola` | `parabola` |  |  | uncovered |
 | `@cp949/vectra/easing/power` | `powerIn` |  |  | uncovered |
 | `@cp949/vectra/easing/power` | `powerInOut` |  |  | uncovered |
@@ -384,6 +405,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/easing/quint` | `quintIn` |  |  | uncovered |
 | `@cp949/vectra/easing/quint` | `quintInOut` |  |  | uncovered |
 | `@cp949/vectra/easing/quint` | `quintOut` |  |  | uncovered |
+| `@cp949/vectra/easing/seat` | `seat` |  |  | uncovered |
 | `@cp949/vectra/easing/sigmoid` | `sigmoid` |  |  | uncovered |
 | `@cp949/vectra/easing/sine` | `sineIn` |  |  | uncovered |
 | `@cp949/vectra/easing/sine` | `sineInOut` |  |  | uncovered |
@@ -396,6 +418,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/easing/with-in-out` | `withInOut` |  |  | uncovered |
 | `@cp949/vectra/easing/with-mirror` | `withMirror` |  |  | uncovered |
 | `@cp949/vectra/easing/with-reverse` | `withReverse` |  |  | uncovered |
+| `@cp949/vectra/editor-geometry/alignment-guides` | `alignmentGuides` | `pixi:editor-snap-guides-lab` |  | covered |
 | `@cp949/vectra/editor-geometry/alignment-guides-into` | `alignmentGuidesInto` | `pixi:editor-snap-guides-lab` |  | covered |
 | `@cp949/vectra/editor-geometry/anchor-point` | `anchorPoint` | `pixi:rotate-handle` |  | covered |
 | `@cp949/vectra/editor-geometry/anchor-point-into` | `anchorPointInto` | `pixi:rotate-handle` |  | covered |
@@ -408,7 +431,9 @@ pnpm examples:coverage:write
 | `@cp949/vectra/editor-geometry/constrain-resize` | `constrainResize` | `pixi:transform-handles` |  | covered |
 | `@cp949/vectra/editor-geometry/constrain-resize-into` | `constrainResizeInto` | `pixi:transform-handles` |  | covered |
 | `@cp949/vectra/editor-geometry/constrain-rotate` | `constrainRotate` | `pixi:rotate-handle` |  | covered |
+| `@cp949/vectra/editor-geometry/distribute-equally` | `distributeEqually` | `pixi:distribute-equal-gaps` |  | covered |
 | `@cp949/vectra/editor-geometry/distribute-equally-into` | `distributeEquallyInto` | `pixi:distribute-equal-gaps` |  | covered |
+| `@cp949/vectra/editor-geometry/distribute-guides` | `distributeGuides` |  |  | uncovered |
 | `@cp949/vectra/editor-geometry/distribute-guides-into` | `distributeGuidesInto` |  |  | uncovered |
 | `@cp949/vectra/editor-geometry/group-bounds` | `groupBounds` | `pixi:group-bounds` |  | covered |
 | `@cp949/vectra/editor-geometry/group-bounds-into` | `groupBoundsInto` | `pixi:group-bounds` |  | covered |
@@ -417,7 +442,9 @@ pnpm examples:coverage:write
 | `@cp949/vectra/editor-geometry/magnetic-snap-into` | `magneticSnapInto` | `pixi:editor-snap-guides-lab` |  | covered |
 | `@cp949/vectra/editor-geometry/pixel-align` | `pixelAlign` | `pixi:pixel-grid-align` |  | covered |
 | `@cp949/vectra/editor-geometry/pixel-align-into` | `pixelAlignInto` | `pixi:pixel-grid-align` |  | covered |
+| `@cp949/vectra/editor-geometry/resize-handles` | `resizeHandles` | `pixi:transform-handles` |  | covered |
 | `@cp949/vectra/editor-geometry/resize-handles-into` | `resizeHandlesInto` | `pixi:transform-handles` |  | covered |
+| `@cp949/vectra/editor-geometry/rotate-handles` | `rotateHandles` | `pixi:rotate-handle` |  | covered |
 | `@cp949/vectra/editor-geometry/rotate-handles-into` | `rotateHandlesInto` | `pixi:rotate-handle` |  | covered |
 | `@cp949/vectra/editor-geometry/snap-angle` | `snapAngle` | `pixi:angle-snap-dial`, `pixi:rotation-control-dial` |  | covered |
 | `@cp949/vectra/editor-geometry/snap-distance` | `snapDistance` | `pixi:snap-distance-ruler` |  | covered |
@@ -470,16 +497,74 @@ pnpm examples:coverage:write
 | `@cp949/vectra/ellipse/points-into` | `pointsInto` |  |  | uncovered |
 | `@cp949/vectra/ellipse/project-point` | `projectPoint` |  |  | uncovered |
 | `@cp949/vectra/ellipse/project-point-into` | `projectPointInto` |  |  | uncovered |
+| `@cp949/vectra/ellipse/rotated-bounds` | `rotatedBounds` |  |  | uncovered |
+| `@cp949/vectra/ellipse/rotated-bounds-into` | `rotatedBoundsInto` |  |  | uncovered |
+| `@cp949/vectra/ellipse/rotated-point-at-angle` | `rotatedPointAtAngle` |  |  | uncovered |
+| `@cp949/vectra/ellipse/rotated-point-at-angle-into` | `rotatedPointAtAngleInto` |  |  | uncovered |
 | `@cp949/vectra/ellipse/scale` | `scale` |  |  | uncovered |
 | `@cp949/vectra/ellipse/scale-into` | `scaleInto` |  |  | uncovered |
 | `@cp949/vectra/ellipse/tangent-at` | `tangentAt` | `pixi:ellipse-inspector` |  | covered |
 | `@cp949/vectra/ellipse/tangent-at-into` | `tangentAtInto` | `pixi:ellipse-inspector` |  | covered |
 | `@cp949/vectra/ellipse/to-circle` | `toCircle` |  |  | uncovered |
 | `@cp949/vectra/ellipse/to-circle-into` | `toCircleInto` |  |  | uncovered |
+| `@cp949/vectra/ellipse/to-rotated` | `toRotated` |  |  | uncovered |
+| `@cp949/vectra/ellipse/to-rotated-into` | `toRotatedInto` |  |  | uncovered |
 | `@cp949/vectra/ellipse/transform` | `transform` |  |  | uncovered |
 | `@cp949/vectra/ellipse/transform-into` | `transformInto` |  |  | uncovered |
+| `@cp949/vectra/ellipse/transform-to-rotated` | `transformToRotated` |  |  | uncovered |
+| `@cp949/vectra/ellipse/transform-to-rotated-into` | `transformToRotatedInto` |  |  | uncovered |
 | `@cp949/vectra/ellipse/translate` | `translate` |  |  | uncovered |
 | `@cp949/vectra/ellipse/translate-into` | `translateInto` |  |  | uncovered |
+| `@cp949/vectra/fitting/fit-circle-to-points` | `fitCircleToPoints` |  |  | uncovered |
+| `@cp949/vectra/fitting/fit-circle-to-points-into` | `fitCircleToPointsInto` |  |  | uncovered |
+| `@cp949/vectra/fitting/fit-line-to-points` | `fitLineToPoints` |  |  | uncovered |
+| `@cp949/vectra/fitting/fit-line-to-points-into` | `fitLineToPointsInto` |  |  | uncovered |
+| `@cp949/vectra/fitting/fit-minimum-area-rect` | `fitMinimumAreaRect` |  |  | uncovered |
+| `@cp949/vectra/fitting/fit-minimum-area-rect-into` | `fitMinimumAreaRectInto` |  |  | uncovered |
+| `@cp949/vectra/fitting/principal-directions` | `principalDirections` |  |  | uncovered |
+| `@cp949/vectra/fitting/principal-directions-into` | `principalDirectionsInto` |  |  | uncovered |
+| `@cp949/vectra/grid/bounds-split-grid` | `boundsSplitGrid` |  |  | uncovered |
+| `@cp949/vectra/grid/bounds-split-grid-into` | `boundsSplitGridInto` |  |  | uncovered |
+| `@cp949/vectra/grid/bounds-tile` | `boundsTile` |  |  | uncovered |
+| `@cp949/vectra/grid/bounds-tile-into` | `boundsTileInto` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cell` | `gridCell` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cell-bounds` | `gridCellBounds` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cell-bounds-into` | `gridCellBoundsInto` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cell-center` | `gridCellCenter` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cell-center-into` | `gridCellCenterInto` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cell-into` | `gridCellInto` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cells-in-rect` | `gridCellsInRect` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-cells-in-rect-into` | `gridCellsInRectInto` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-coordinates` | `gridCoordinates` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-coordinates-into` | `gridCoordinatesInto` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-index` | `gridIndex` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-line` | `gridLine` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-line-into` | `gridLineInto` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-neighbors-4` | `gridNeighbors4` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-neighbors-4-into` | `gridNeighbors4Into` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-neighbors-8` | `gridNeighbors8` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-neighbors-8-into` | `gridNeighbors8Into` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-snap` | `gridSnap` |  |  | uncovered |
+| `@cp949/vectra/grid/grid-snap-into` | `gridSnapInto` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-axial-to-cube` | `hexAxialToCube` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-axial-to-offset` | `hexAxialToOffset` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-axial-to-pixel` | `hexAxialToPixel` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-axial-to-pixel-into` | `hexAxialToPixelInto` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-cube-to-axial` | `hexCubeToAxial` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-distance` | `hexDistance` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-line-draw` | `hexLineDraw` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-line-draw-into` | `hexLineDrawInto` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-neighbor` | `hexNeighbor` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-neighbor-into` | `hexNeighborInto` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-neighbors` | `hexNeighbors` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-neighbors-into` | `hexNeighborsInto` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-offset-to-axial` | `hexOffsetToAxial` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-pixel-to-axial` | `hexPixelToAxial` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-pixel-to-axial-into` | `hexPixelToAxialInto` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-ring` | `hexRing` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-ring-into` | `hexRingInto` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-round` | `hexRound` |  |  | uncovered |
+| `@cp949/vectra/hex-grid/hex-round-into` | `hexRoundInto` |  |  | uncovered |
 | `@cp949/vectra/infinite-line/contains-point` | `containsPoint` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/copy-into` | `copyInto` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/create-infinite-line` | `createInfiniteLine` | `pixi:infinite-line-diagnostics-lab` |  | covered |
@@ -499,7 +584,11 @@ pnpm examples:coverage:write
 | `@cp949/vectra/infinite-line/from-segment-into` | `fromSegmentInto` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/from-slope` | `fromSlope` |  |  | uncovered |
 | `@cp949/vectra/infinite-line/from-slope-into` | `fromSlopeInto` |  |  | uncovered |
+| `@cp949/vectra/infinite-line/infinite-line-angle-between` | `infiniteLineAngleBetween` |  |  | uncovered |
 | `@cp949/vectra/infinite-line/infinite-line-from` | `infiniteLineFrom` |  |  | uncovered |
+| `@cp949/vectra/infinite-line/infinite-line-mirror-line` | `infiniteLineMirrorLine` |  |  | uncovered |
+| `@cp949/vectra/infinite-line/infinite-line-mirror-line-into` | `infiniteLineMirrorLineInto` |  |  | uncovered |
+| `@cp949/vectra/infinite-line/infinite-line-parallel-distance` | `infiniteLineParallelDistance` |  |  | uncovered |
 | `@cp949/vectra/infinite-line/is-collinear` | `isCollinear` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/is-degenerate` | `isDegenerate` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/is-parallel` | `isParallel` | `pixi:infinite-line-diagnostics-lab` |  | covered |
@@ -507,11 +596,16 @@ pnpm examples:coverage:write
 | `@cp949/vectra/infinite-line/origin-into` | `originInto` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/point-at-t` | `pointAtT` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/point-at-t-into` | `pointAtTInto` | `pixi:infinite-line-diagnostics-lab` |  | covered |
+| `@cp949/vectra/infinite-line/principal-angle` | `principalAngle` |  |  | uncovered |
 | `@cp949/vectra/infinite-line/project-point` | `projectPoint` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/project-point-into` | `projectPointInto` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/projection-t` | `projectionT` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/reverse` | `reverse` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/reverse-into` | `reverseInto` | `pixi:infinite-line-diagnostics-lab` |  | covered |
+| `@cp949/vectra/infinite-line/segment-inside-circle` | `segmentInsideCircle` |  |  | uncovered |
+| `@cp949/vectra/infinite-line/segment-inside-circle-into` | `segmentInsideCircleInto` |  |  | uncovered |
+| `@cp949/vectra/infinite-line/segment-inside-rect` | `segmentInsideRect` |  |  | uncovered |
+| `@cp949/vectra/infinite-line/segment-inside-rect-into` | `segmentInsideRectInto` |  |  | uncovered |
 | `@cp949/vectra/infinite-line/side` | `side` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/signed-distance-to-point` | `signedDistanceToPoint` | `pixi:infinite-line-diagnostics-lab` |  | covered |
 | `@cp949/vectra/infinite-line/single-intersection` | `singleIntersection` | `pixi:infinite-line-diagnostics-lab` |  | covered |
@@ -519,13 +613,19 @@ pnpm examples:coverage:write
 | `@cp949/vectra/interpolation/bilerp-point` | `bilerpPoint` | `pixi:bilinear-warp-grid` |  | covered |
 | `@cp949/vectra/interpolation/bilerp-point-into` | `bilerpPointInto` | `pixi:bilinear-warp-grid` |  | covered |
 | `@cp949/vectra/interpolation/clamped-lerp` | `clampedLerp` |  |  | uncovered |
+| `@cp949/vectra/interpolation/clamped-lerp-by-elapsed` | `clampedLerpByElapsed` |  |  | uncovered |
+| `@cp949/vectra/interpolation/critically-damped` | `criticallyDamped` |  |  | uncovered |
 | `@cp949/vectra/interpolation/cubic` | `cubic` |  |  | uncovered |
 | `@cp949/vectra/interpolation/cubic` | `cubicClamped` |  |  | uncovered |
+| `@cp949/vectra/interpolation/exponential-decay` | `exponentialDecay` |  |  | uncovered |
 | `@cp949/vectra/interpolation/inverse-lerp` | `inverseLerp` | `pixi:inverse-lerp-track` |  | covered |
 | `@cp949/vectra/interpolation/inverse-lerp` | `inverseLerpClamped` | `pixi:inverse-lerp-track` |  | covered |
 | `@cp949/vectra/interpolation/lerp-array` | `lerpArray` |  |  | uncovered |
 | `@cp949/vectra/interpolation/lerp-array-into` | `lerpArrayInto` |  |  | uncovered |
+| `@cp949/vectra/interpolation/lerp-by-elapsed` | `lerpByElapsed` |  |  | uncovered |
 | `@cp949/vectra/interpolation/lerp-point` | `lerpPoint` | `pixi:path-morph` |  | covered |
+| `@cp949/vectra/interpolation/lerp-point-by-elapsed` | `lerpPointByElapsed` |  |  | uncovered |
+| `@cp949/vectra/interpolation/lerp-point-by-elapsed-into` | `lerpPointByElapsedInto` |  |  | uncovered |
 | `@cp949/vectra/interpolation/lerp-point-into` | `lerpPointInto` | `pixi:path-morph` |  | covered |
 | `@cp949/vectra/interpolation/lerp-tuple` | `lerpTuple` |  |  | uncovered |
 | `@cp949/vectra/interpolation/lerp-tuple-into` | `lerpTupleInto` |  |  | uncovered |
@@ -534,6 +634,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/interpolation/move-toward` | `moveToward` |  |  | uncovered |
 | `@cp949/vectra/interpolation/move-toward-point` | `moveTowardPoint` | `pixi:cursor-chase` |  | covered |
 | `@cp949/vectra/interpolation/move-toward-point-into` | `moveTowardPointInto` | `pixi:cursor-chase` |  | covered |
+| `@cp949/vectra/interpolation/progress-by-elapsed` | `progressByElapsed` |  |  | uncovered |
 | `@cp949/vectra/interpolation/quadratic` | `quadratic` |  |  | uncovered |
 | `@cp949/vectra/interpolation/quadratic` | `quadraticClamped` |  |  | uncovered |
 | `@cp949/vectra/interpolation/remap` | `remap` | `pixi:easing-bias-curve`, `pixi:easing-motion-timing`, `pixi:stepped-timing-track` |  | covered |
@@ -541,21 +642,68 @@ pnpm examples:coverage:write
 | `@cp949/vectra/interpolation/sample-parameters` | `sampleParameters` | `pixi:hermite-spline-builder` |  | covered |
 | `@cp949/vectra/interpolation/sample-parameters-into` | `sampleParametersInto` | `pixi:hermite-spline-builder` |  | covered |
 | `@cp949/vectra/interpolation/sample-table-at` | `sampleTableAt` | `pixi:sample-table-lookup` |  | covered |
+| `@cp949/vectra/interpolation/spring-lerp` | `springLerp` |  |  | uncovered |
 | `@cp949/vectra/interpolation/unclamped-lerp` | `mix` |  |  | uncovered |
 | `@cp949/vectra/interpolation/unclamped-lerp` | `unclampedLerp` |  |  | uncovered |
+| `@cp949/vectra/intersects/bounds-bounds-area-overlap-detail` | `boundsBoundsAreaOverlapDetail` |  |  | uncovered |
+| `@cp949/vectra/intersects/bounds-sweep-bounds` | `boundsSweepBounds` |  |  | uncovered |
+| `@cp949/vectra/intersects/bounds-sweep-bounds-into` | `boundsSweepBoundsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/bounds-sweep-point` | `boundsSweepPoint` |  |  | uncovered |
+| `@cp949/vectra/intersects/bounds-sweep-point-into` | `boundsSweepPointInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-bounds-intersections` | `circleBoundsIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-bounds-intersections-into` | `circleBoundsIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-circle-area-overlap-detail` | `circleCircleAreaOverlapDetail` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-circle-detail` | `circleCircleDetail` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-circle-intersections` | `circleCircleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-circle-intersections-into` | `circleCircleIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-lens-area` | `circleLensArea` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-polyline-intersections` | `circlePolylineIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-polyline-intersections-into` | `circlePolylineIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-rect-closest-point` | `circleRectClosestPoint` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-rect-closest-point-into` | `circleRectClosestPointInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-rect-intersections` | `circleRectIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-rect-intersections-into` | `circleRectIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-triangle-intersections` | `circleTriangleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/circle-triangle-intersections-into` | `circleTriangleIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/closest-ray-polygon-intersection` | `closestRayPolygonIntersection` |  |  | uncovered |
+| `@cp949/vectra/intersects/closest-ray-polygon-intersection-into` | `closestRayPolygonIntersectionInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/closest-segment-polygon-intersection` | `closestSegmentPolygonIntersection` |  |  | uncovered |
+| `@cp949/vectra/intersects/closest-segment-polygon-intersection-into` | `closestSegmentPolygonIntersectionInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/curve-curve-intersections` | `curveCurveIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/curve-curve-intersections-into` | `curveCurveIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/curve-self-intersections` | `curveSelfIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/curve-self-intersections-into` | `curveSelfIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ellipse-circle-intersections` | `ellipseCircleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ellipse-circle-intersections-into` | `ellipseCircleIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ellipse-ellipse-detail` | `ellipseEllipseDetail` |  |  | uncovered |
+| `@cp949/vectra/intersects/ellipse-ellipse-intersections` | `ellipseEllipseIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ellipse-ellipse-intersections-into` | `ellipseEllipseIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ellipse-triangle-intersections` | `ellipseTriangleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ellipse-triangle-intersections-into` | `ellipseTriangleIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-bounds-intersections` | `infiniteLineBoundsIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-bounds-intersections-into` | `infiniteLineBoundsIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-circle-intersections` | `infiniteLineCircleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-circle-intersections-into` | `infiniteLineCircleIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/infinite-line-cubic-intersections` | `infiniteLineCubicIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/infinite-line-cubic-intersections-into` | `infiniteLineCubicIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-ellipse-intersections` | `infiniteLineEllipseIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-ellipse-intersections-into` | `infiniteLineEllipseIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-polygon-intersections` | `infiniteLinePolygonIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-polygon-intersections-into` | `infiniteLinePolygonIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-polygon-overlap-intervals` | `infiniteLinePolygonOverlapIntervals` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-polygon-overlap-intervals-into` | `infiniteLinePolygonOverlapIntervalsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/infinite-line-quadratic-intersections` | `infiniteLineQuadraticIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/infinite-line-quadratic-intersections-into` | `infiniteLineQuadraticIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-rect-intersections` | `infiniteLineRectIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/infinite-line-rect-intersections-into` | `infiniteLineRectIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-bounds-bounds` | `intersectsBoundsBounds` | `pixi:bounds-bounds-overlap` |  | covered |
 | `@cp949/vectra/intersects/intersects-bounds-infinite-line` | `intersectsBoundsInfiniteLine` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-bounds-ray` | `intersectsBoundsRay` | `pixi:ray-bounds-hit`, `pixi:raycast-workbench` |  | covered |
 | `@cp949/vectra/intersects/intersects-bounds-segment` | `intersectsBoundsSegment` | `pixi:segment-contact-gates-lab` |  | covered |
 | `@cp949/vectra/intersects/intersects-bounds-triangle` | `intersectsBoundsTriangle` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-capsule-capsule` | `intersectsCapsuleCapsule` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-capsule-point` | `intersectsCapsulePoint` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-capsule-segment` | `intersectsCapsuleSegment` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-circle-bounds` | `intersectsCircleBounds` | `pixi:segment-contact-gates-lab` |  | covered |
 | `@cp949/vectra/intersects/intersects-circle-circle` | `intersectsCircleCircle` | `pixi:circle-circle-overlap` |  | covered |
 | `@cp949/vectra/intersects/intersects-circle-infinite-line` | `intersectsCircleInfiniteLine` | `pixi:circle-infinite-line-hit` |  | covered |
@@ -563,6 +711,11 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/intersects-circle-rect` | `intersectsCircleRect` | `pixi:circle-rect-overlap`, `pixi:shape-hitbox-lab` |  | covered |
 | `@cp949/vectra/intersects/intersects-circle-segment` | `intersectsCircleSegment` | `pixi:circular-measurement-lab`, `pixi:orbit-segment`, `pixi:segment-contact-gates-lab` |  | covered |
 | `@cp949/vectra/intersects/intersects-circle-triangle` | `intersectsCircleTriangle` | `pixi:segment-contact-gates-lab` |  | covered |
+| `@cp949/vectra/intersects/intersects-cubic-bounds` | `intersectsCubicBounds` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-cubic-circle` | `intersectsCubicCircle` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-cubic-ellipse` | `intersectsCubicEllipse` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-cubic-rect` | `intersectsCubicRect` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-cubic-triangle` | `intersectsCubicTriangle` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-ellipse-bounds` | `intersectsEllipseBounds` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-ellipse-circle` | `intersectsEllipseCircle` | `pixi:ellipse-circle-overlap` |  | covered |
 | `@cp949/vectra/intersects/intersects-ellipse-infinite-line` | `intersectsEllipseInfiniteLine` |  |  | uncovered |
@@ -573,8 +726,11 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/intersects-infinite-line-infinite-line` | `intersectsInfiniteLineInfiniteLine` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-infinite-line-ray` | `intersectsInfiniteLineRay` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-infinite-line-segment` | `intersectsInfiniteLineSegment` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-oriented-rect-oriented-rect` | `intersectsOrientedRectOrientedRect` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-oriented-rect-point` | `intersectsOrientedRectPoint` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-path-bounds` | `intersectsPathBounds` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-path-circle` | `intersectsPathCircle` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-path-ellipse` | `intersectsPathEllipse` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-path-infinite-line` | `intersectsPathInfiniteLine` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-path-polygon` | `intersectsPathPolygon` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-path-polyline` | `intersectsPathPolyline` |  |  | uncovered |
@@ -591,6 +747,11 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/intersects-polyline-infinite-line` | `intersectsPolylineInfiniteLine` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-polyline-ray` | `intersectsPolylineRay` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-polyline-segment` | `intersectsPolylineSegment` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-quadratic-bounds` | `intersectsQuadraticBounds` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-quadratic-circle` | `intersectsQuadraticCircle` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-quadratic-ellipse` | `intersectsQuadraticEllipse` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-quadratic-rect` | `intersectsQuadraticRect` |  |  | uncovered |
+| `@cp949/vectra/intersects/intersects-quadratic-triangle` | `intersectsQuadraticTriangle` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-ray-ray` | `intersectsRayRay` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-ray-segment` | `intersectsRaySegment` | `pixi:ray-segment-hit`, `pixi:raycast-workbench` |  | covered |
 | `@cp949/vectra/intersects/intersects-rect-bounds` | `intersectsRectBounds` |  |  | uncovered |
@@ -606,16 +767,49 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/intersects-triangle-triangle` | `intersectsTriangleTriangle` | `pixi:triangle-triangle-overlap` |  | covered |
 | `@cp949/vectra/intersects/line-curve-intersections` | `lineCurveIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/line-curve-intersections-into` | `lineCurveIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/polygon-polygon-intersects` | `polygonPolygonIntersects` |  |  | uncovered |
+| `@cp949/vectra/intersects/polyline-polyline-intersections` | `polylinePolylineIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/polyline-polyline-intersections-into` | `polylinePolylineIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-bounds-intersections` | `rayBoundsIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-bounds-intersections-into` | `rayBoundsIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-circle-intersections` | `rayCircleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-circle-intersections-into` | `rayCircleIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-cubic-intersections` | `rayCubicIntersections` | `pixi:ray-cubic-hits`, `pixi:raycast-workbench` |  | covered |
 | `@cp949/vectra/intersects/ray-cubic-intersections-into` | `rayCubicIntersectionsInto` | `pixi:ray-cubic-hits`, `pixi:raycast-workbench` |  | covered |
+| `@cp949/vectra/intersects/ray-ellipse-intersections` | `rayEllipseIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-ellipse-intersections-into` | `rayEllipseIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-polygon-intersections` | `rayPolygonIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-polygon-intersections-into` | `rayPolygonIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-polygon-overlap-intervals` | `rayPolygonOverlapIntervals` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-polygon-overlap-intervals-into` | `rayPolygonOverlapIntervalsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-quadratic-intersections` | `rayQuadraticIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-quadratic-intersections-into` | `rayQuadraticIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-rect-intersections` | `rayRectIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-rect-intersections-into` | `rayRectIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/rays-from-point-to-polygon` | `raysFromPointToPolygon` |  |  | uncovered |
+| `@cp949/vectra/intersects/rays-from-point-to-polygon-into` | `raysFromPointToPolygonInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/rect-rect-area-overlap-detail` | `rectRectAreaOverlapDetail` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-bounds-intersections` | `segmentBoundsIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-bounds-intersections-into` | `segmentBoundsIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-circle-intersections` | `segmentCircleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-circle-intersections-into` | `segmentCircleIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/segment-cubic-intersections` | `segmentCubicIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/segment-cubic-intersections-into` | `segmentCubicIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/segment-curve-intersections` | `segmentCurveIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/segment-curve-intersections-into` | `segmentCurveIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-ellipse-intersections` | `segmentEllipseIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-ellipse-intersections-into` | `segmentEllipseIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-polygon-intersections` | `segmentPolygonIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-polygon-intersections-into` | `segmentPolygonIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-polygon-overlap-intervals` | `segmentPolygonOverlapIntervals` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-polygon-overlap-intervals-into` | `segmentPolygonOverlapIntervalsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/segment-quadratic-intersections` | `segmentQuadraticIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/segment-quadratic-intersections-into` | `segmentQuadraticIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-rect-intersections` | `segmentRectIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-rect-intersections-into` | `segmentRectIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-segment-detail` | `segmentSegmentDetail` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-segment-intersections` | `segmentSegmentIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/segment-segment-intersections-into` | `segmentSegmentIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/single-intersection-infinite-line-bounds` | `singleIntersectionInfiniteLineBounds` |  |  | uncovered |
 | `@cp949/vectra/intersects/single-intersection-infinite-line-bounds-into` | `singleIntersectionInfiniteLineBoundsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/single-intersection-infinite-line-circle` | `singleIntersectionInfiniteLineCircle` |  |  | uncovered |
@@ -652,6 +846,16 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/single-intersection-segment-rect-into` | `singleIntersectionSegmentRectInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/single-intersection-segment-triangle` | `singleIntersectionSegmentTriangle` | `pixi:segment-contact-gates-lab` |  | covered |
 | `@cp949/vectra/intersects/single-intersection-segment-triangle-into` | `singleIntersectionSegmentTriangleInto` | `pixi:segment-contact-gates-lab` |  | covered |
+| `@cp949/vectra/intersects/triangle-infinite-line-intersections` | `triangleInfiniteLineIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/triangle-infinite-line-intersections-into` | `triangleInfiniteLineIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/triangle-ray-intersections` | `triangleRayIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/triangle-ray-intersections-into` | `triangleRayIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/triangle-segment-intersections` | `triangleSegmentIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/triangle-segment-intersections-into` | `triangleSegmentIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/triangle-triangle-intersections` | `triangleTriangleIntersections` |  |  | uncovered |
+| `@cp949/vectra/intersects/triangle-triangle-intersections-into` | `triangleTriangleIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/visibility-polygon` | `visibilityPolygon` |  |  | uncovered |
+| `@cp949/vectra/intersects/visibility-polygon-into` | `visibilityPolygonInto` |  |  | uncovered |
 | `@cp949/vectra/linalg/add-matrices` | `addMatrices` |  |  | uncovered |
 | `@cp949/vectra/linalg/add-matrices-into` | `addMatricesInto` |  |  | uncovered |
 | `@cp949/vectra/linalg/add-row-to-row` | `addRowToRow` |  |  | uncovered |
@@ -800,6 +1004,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/math/cos-pi` | `cosPi` |  |  | uncovered |
 | `@cp949/vectra/math/cycle` | `cycle` | `pixi:vector-steering-field` |  | covered |
 | `@cp949/vectra/math/difference` | `difference` |  |  | uncovered |
+| `@cp949/vectra/math/floor-div` | `floorDiv` |  |  | uncovered |
 | `@cp949/vectra/math/floor-to` | `floorTo` |  |  | uncovered |
 | `@cp949/vectra/math/fract` | `fract` |  |  | uncovered |
 | `@cp949/vectra/math/from-percent` | `fromPercent` |  |  | uncovered |
@@ -830,6 +1035,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/math/sign` | `sign` |  |  | uncovered |
 | `@cp949/vectra/math/sin-pi` | `sinPi` |  |  | uncovered |
 | `@cp949/vectra/math/sinc` | `sinc` |  |  | uncovered |
+| `@cp949/vectra/math/smooth-max` | `smoothMax` |  |  | uncovered |
+| `@cp949/vectra/math/smooth-min` | `smoothMin` |  |  | uncovered |
 | `@cp949/vectra/math/snap-ceil` | `snapCeil` | `pixi:grid-snap-bracket` |  | covered |
 | `@cp949/vectra/math/snap-floor` | `snapFloor` | `pixi:grid-snap-bracket` |  | covered |
 | `@cp949/vectra/math/snap-to` | `snapTo` | `pixi:grid-snap-bracket` |  | covered |
@@ -851,6 +1058,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/matrix/append-translate-into` | `appendTranslateInto` | `pixi:matrix-lerp-blend` |  | covered |
 | `@cp949/vectra/matrix/clamp-viewport-bounds` | `clampViewportBounds` |  |  | uncovered |
 | `@cp949/vectra/matrix/clamp-viewport-bounds-into` | `clampViewportBoundsInto` |  |  | uncovered |
+| `@cp949/vectra/matrix/copy` | `copy` |  |  | uncovered |
 | `@cp949/vectra/matrix/copy-into` | `copyInto` |  |  | uncovered |
 | `@cp949/vectra/matrix/create-matrix` | `createMatrix` | `pixi:matrix-lerp-blend`, `pixi:matrix-mirror-reflection`, `pixi:matrix-shear-transform`, `pixi:rotate-handle`, `pixi:transform-handles` |  | covered |
 | `@cp949/vectra/matrix/decompose` | `decompose` |  |  | uncovered |
@@ -870,27 +1078,42 @@ pnpm examples:coverage:write
 | `@cp949/vectra/matrix/from-array-6-into` | `fromArray6Into` |  |  | uncovered |
 | `@cp949/vectra/matrix/from-array-9` | `fromArray9` |  |  | uncovered |
 | `@cp949/vectra/matrix/from-array-9-into` | `fromArray9Into` |  |  | uncovered |
+| `@cp949/vectra/matrix/from-points` | `fromPoints` |  |  | uncovered |
+| `@cp949/vectra/matrix/from-points-into` | `fromPointsInto` |  |  | uncovered |
+| `@cp949/vectra/matrix/identity` | `identity` |  |  | uncovered |
 | `@cp949/vectra/matrix/identity-into` | `identityInto` |  |  | uncovered |
 | `@cp949/vectra/matrix/invert` | `invert` | `canvas:matrix-viewport-fit` |  | covered |
 | `@cp949/vectra/matrix/invert-into` | `invertInto` | `canvas:matrix-viewport-fit` |  | covered |
 | `@cp949/vectra/matrix/is-identity` | `isIdentity` |  |  | uncovered |
 | `@cp949/vectra/matrix/is-invertible` | `isInvertible` | `canvas:matrix-viewport-fit` |  | covered |
+| `@cp949/vectra/matrix/is-orthogonal` | `isOrthogonal` |  |  | uncovered |
 | `@cp949/vectra/matrix/lerp` | `lerp` | `pixi:matrix-lerp-blend` |  | covered |
 | `@cp949/vectra/matrix/lerp-into` | `lerpInto` | `pixi:matrix-lerp-blend` |  | covered |
+| `@cp949/vectra/matrix/matrix-compose` | `matrixCompose` |  |  | uncovered |
+| `@cp949/vectra/matrix/matrix-compose-into` | `matrixComposeInto` |  |  | uncovered |
 | `@cp949/vectra/matrix/matrix-from` | `matrixFrom` |  |  | uncovered |
 | `@cp949/vectra/matrix/multiply` | `multiply` | `canvas:adapter-interop`, `canvas:matrix-transform`, `pixi:matrix-mirror-reflection`, `pixi:matrix-shear-transform`, `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/matrix/multiply-into` | `multiplyInto` | `canvas:adapter-interop`, `canvas:matrix-transform`, `pixi:matrix-mirror-reflection`, `pixi:matrix-shear-transform`, `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/matrix/near-equals` | `nearEquals` |  |  | uncovered |
+| `@cp949/vectra/matrix/oriented-transform-bounds` | `orientedTransformBounds` |  |  | uncovered |
+| `@cp949/vectra/matrix/oriented-transform-bounds-into` | `orientedTransformBoundsInto` |  |  | uncovered |
+| `@cp949/vectra/matrix/oriented-transform-rect` | `orientedTransformRect` |  |  | uncovered |
+| `@cp949/vectra/matrix/oriented-transform-rect-into` | `orientedTransformRectInto` |  |  | uncovered |
+| `@cp949/vectra/matrix/pre-multiply` | `preMultiply` |  |  | uncovered |
 | `@cp949/vectra/matrix/pre-multiply-into` | `preMultiplyInto` |  |  | uncovered |
 | `@cp949/vectra/matrix/rad-to-deg` | `radToDeg` |  |  | uncovered |
 | `@cp949/vectra/matrix/reflection` | `reflection` | `pixi:matrix-mirror-reflection` |  | covered |
 | `@cp949/vectra/matrix/reflection-into` | `reflectionInto` | `pixi:matrix-mirror-reflection` |  | covered |
+| `@cp949/vectra/matrix/rotate` | `rotate` |  |  | uncovered |
 | `@cp949/vectra/matrix/rotation` | `rotation` |  |  | uncovered |
 | `@cp949/vectra/matrix/rotation-around-point` | `rotationAroundPoint` | `pixi:bounds-rotated-aabb`, `pixi:polygon-transform-orientation-lab`, `pixi:rotate-handle` |  | covered |
 | `@cp949/vectra/matrix/rotation-around-point-into` | `rotationAroundPointInto` | `pixi:bounds-rotated-aabb`, `pixi:polygon-transform-orientation-lab`, `pixi:rotate-handle` |  | covered |
+| `@cp949/vectra/matrix/rotation-matrix` | `rotationMatrix` | `canvas:adapter-interop`, `canvas:matrix-transform` |  | covered |
 | `@cp949/vectra/matrix/rotation-matrix-into` | `rotationMatrixInto` | `canvas:adapter-interop`, `canvas:matrix-transform` |  | covered |
+| `@cp949/vectra/matrix/scale` | `scale` |  |  | uncovered |
 | `@cp949/vectra/matrix/scale-around-point` | `scaleAroundPoint` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/matrix/scale-around-point-into` | `scaleAroundPointInto` | `pixi:polygon-transform-orientation-lab` |  | covered |
+| `@cp949/vectra/matrix/scaling` | `scaling` |  |  | uncovered |
 | `@cp949/vectra/matrix/scaling-matrix-into` | `scalingMatrixInto` | `canvas:adapter-interop`, `canvas:matrix-transform` |  | covered |
 | `@cp949/vectra/matrix/skew-x` | `skewX` | `pixi:matrix-shear-transform` |  | covered |
 | `@cp949/vectra/matrix/skew-x-into` | `skewXInto` | `pixi:matrix-shear-transform` |  | covered |
@@ -912,11 +1135,52 @@ pnpm examples:coverage:write
 | `@cp949/vectra/matrix/transform-rect-into` | `transformRectInto` | `canvas:matrix-transform` |  | covered |
 | `@cp949/vectra/matrix/transform-vector` | `transformVector` | `canvas:matrix-viewport-fit` |  | covered |
 | `@cp949/vectra/matrix/transform-vector-into` | `transformVectorInto` | `canvas:matrix-viewport-fit` |  | covered |
+| `@cp949/vectra/matrix/translate` | `translate` |  |  | uncovered |
+| `@cp949/vectra/matrix/translation` | `translation` |  |  | uncovered |
 | `@cp949/vectra/matrix/translation-matrix-into` | `translationMatrixInto` | `canvas:adapter-interop`, `canvas:matrix-transform`, `pixi:matrix-mirror-reflection`, `pixi:matrix-shear-transform` |  | covered |
 | `@cp949/vectra/matrix/zoom-at-point` | `zoomAtPoint` |  |  | uncovered |
 | `@cp949/vectra/matrix/zoom-at-point-into` | `zoomAtPointInto` |  |  | uncovered |
 | `@cp949/vectra/matrix/zoom-to-fit` | `zoomToFit` |  |  | uncovered |
 | `@cp949/vectra/matrix/zoom-to-fit-into` | `zoomToFitInto` |  |  | uncovered |
+| `@cp949/vectra/motion/acceleration` | `acceleration` |  |  | uncovered |
+| `@cp949/vectra/motion/acceleration-from-displacement` | `accelerationFromDisplacement` |  |  | uncovered |
+| `@cp949/vectra/motion/angular-displacement` | `angularDisplacement` |  |  | uncovered |
+| `@cp949/vectra/motion/angular-velocity` | `angularVelocity` |  |  | uncovered |
+| `@cp949/vectra/motion/angular-velocity-after` | `angularVelocityAfter` |  |  | uncovered |
+| `@cp949/vectra/motion/displacement` | `displacement` |  |  | uncovered |
+| `@cp949/vectra/motion/displacement-from-velocities` | `displacementFromVelocities` |  |  | uncovered |
+| `@cp949/vectra/motion/displacement-vector` | `displacementVector` |  |  | uncovered |
+| `@cp949/vectra/motion/displacement-vector-into` | `displacementVectorInto` |  |  | uncovered |
+| `@cp949/vectra/motion/duration-by-distance` | `durationByDistance` |  |  | uncovered |
+| `@cp949/vectra/motion/final-velocity` | `finalVelocity` |  |  | uncovered |
+| `@cp949/vectra/motion/initial-velocity` | `initialVelocity` |  |  | uncovered |
+| `@cp949/vectra/motion/initial-velocity-from-displacement` | `initialVelocityFromDisplacement` |  |  | uncovered |
+| `@cp949/vectra/motion/move-toward-angle-by-elapsed` | `moveTowardAngleByElapsed` |  |  | uncovered |
+| `@cp949/vectra/motion/move-toward-by-elapsed` | `moveTowardByElapsed` |  |  | uncovered |
+| `@cp949/vectra/motion/position` | `position` |  |  | uncovered |
+| `@cp949/vectra/motion/position-into` | `positionInto` |  |  | uncovered |
+| `@cp949/vectra/motion/stop-distance` | `stopDistance` |  |  | uncovered |
+| `@cp949/vectra/motion/stop-duration` | `stopDuration` |  |  | uncovered |
+| `@cp949/vectra/motion/time-to-displacement` | `timeToDisplacement` |  |  | uncovered |
+| `@cp949/vectra/motion/time-to-velocity` | `timeToVelocity` |  |  | uncovered |
+| `@cp949/vectra/motion/velocity` | `velocity` |  |  | uncovered |
+| `@cp949/vectra/motion/velocity-into` | `velocityInto` |  |  | uncovered |
+| `@cp949/vectra/noise/create-noise-2` | `createNoise2` |  |  | uncovered |
+| `@cp949/vectra/noise/fbm-2` | `fbm2` |  |  | uncovered |
+| `@cp949/vectra/noise/perlin-noise-2` | `perlinNoise2` |  |  | uncovered |
+| `@cp949/vectra/noise/ridged-fbm-2` | `ridgedFbm2` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/axes` | `axes` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/bounds` | `bounds` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/bounds-into` | `boundsInto` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/closest-point` | `closestPoint` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/closest-point-into` | `closestPointInto` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/contains-point` | `containsPoint` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/corners` | `corners` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/corners-into` | `cornersInto` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/from-rect` | `fromRect` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/from-rect-into` | `fromRectInto` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/overlap` | `overlap` |  |  | uncovered |
+| `@cp949/vectra/oriented-rect/to-polygon` | `toPolygon` |  |  | uncovered |
 | `@cp949/vectra/path/arc-by-endpoint-commands` | `arcByEndpointCommands` |  |  | uncovered |
 | `@cp949/vectra/path/arc-by-endpoint-commands-into` | `arcByEndpointCommandsInto` |  |  | uncovered |
 | `@cp949/vectra/path/arc-through-commands` | `arcThroughCommands` |  |  | uncovered |
@@ -1033,32 +1297,59 @@ pnpm examples:coverage:write
 | `@cp949/vectra/polygon/from-triangle` | `fromTriangle` |  |  | uncovered |
 | `@cp949/vectra/polygon/from-triangle-into` | `fromTriangleInto` |  |  | uncovered |
 | `@cp949/vectra/polygon/is-clockwise` | `isClockwise` | `pixi:polygon-transform-orientation-lab` |  | covered |
+| `@cp949/vectra/polygon/is-convex` | `isConvex` |  |  | uncovered |
 | `@cp949/vectra/polygon/is-counter-clockwise` | `isCounterClockwise` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/is-empty` | `isEmpty` |  |  | uncovered |
+| `@cp949/vectra/polygon/is-self-intersecting` | `isSelfIntersecting` |  |  | uncovered |
+| `@cp949/vectra/polygon/is-simple` | `isSimple` |  |  | uncovered |
 | `@cp949/vectra/polygon/perimeter` | `perimeter` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/point-at-index` | `pointAtIndex` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/point-at-index-into` | `pointAtIndexInto` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/point-count` | `pointCount` | `pixi:polygon-transform-orientation-lab` |  | covered |
+| `@cp949/vectra/polygon/points-along-edges` | `pointsAlongEdges` |  |  | uncovered |
+| `@cp949/vectra/polygon/points-along-edges-into` | `pointsAlongEdgesInto` |  |  | uncovered |
 | `@cp949/vectra/polygon/polygon-from` | `polygonFrom` | `pixi:polygon-metrics-workbench`, `pixi:polygon-transform-orientation-lab` |  | covered |
+| `@cp949/vectra/polygon/polygon-winding-number` | `polygonWindingNumber` |  |  | uncovered |
 | `@cp949/vectra/polygon/regular-polygon` | `regularPolygon` | `pixi:regular-polygon-construct` |  | covered |
 | `@cp949/vectra/polygon/regular-polygon-into` | `regularPolygonInto` | `pixi:regular-polygon-construct` |  | covered |
 | `@cp949/vectra/polygon/reverse-points` | `reversePoints` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/reverse-points-into` | `reversePointsInto` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/signed-area` | `signedArea` | `pixi:polygon-transform-orientation-lab` |  | covered |
+| `@cp949/vectra/polygon/sort-points-by-angle` | `sortPointsByAngle` |  |  | uncovered |
+| `@cp949/vectra/polygon/sort-points-by-angle-into` | `sortPointsByAngleInto` |  |  | uncovered |
 | `@cp949/vectra/polygon/star-polygon` | `starPolygon` | `pixi:star-polygon-spikes` |  | covered |
 | `@cp949/vectra/polygon/star-polygon-into` | `starPolygonInto` | `pixi:star-polygon-spikes` |  | covered |
+| `@cp949/vectra/polygon/to-number-array` | `toNumberArray` |  |  | uncovered |
+| `@cp949/vectra/polygon/to-number-array-into` | `toNumberArrayInto` |  |  | uncovered |
+| `@cp949/vectra/polygon/to-polyline` | `toPolyline` |  |  | uncovered |
+| `@cp949/vectra/polygon/to-polyline-into` | `toPolylineInto` |  |  | uncovered |
 | `@cp949/vectra/polygon/transform-points` | `transformPoints` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/transform-points-into` | `transformPointsInto` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/translate-points` | `translatePoints` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/translate-points-into` | `translatePointsInto` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polyline/bounds` | `bounds` |  |  | uncovered |
 | `@cp949/vectra/polyline/bounds-into` | `boundsInto` |  |  | uncovered |
+| `@cp949/vectra/polyline/close` | `close` |  |  | uncovered |
+| `@cp949/vectra/polyline/close-into` | `closeInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/closest-point` | `closestPoint` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/closest-point-into` | `closestPointInto` | `pixi:polyline-path-walk` |  | covered |
+| `@cp949/vectra/polyline/concat` | `concat` |  |  | uncovered |
+| `@cp949/vectra/polyline/concat-into` | `concatInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/create-polyline` | `createPolyline` |  |  | uncovered |
+| `@cp949/vectra/polyline/cumulative-lengths` | `cumulativeLengths` |  |  | uncovered |
+| `@cp949/vectra/polyline/cumulative-lengths-into` | `cumulativeLengthsInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/distance-to-point` | `distanceToPoint` | `pixi:curve-sampling-workbench`, `pixi:polyline-distance-probe` |  | covered |
+| `@cp949/vectra/polyline/frame-at-length` | `frameAtLength` |  |  | uncovered |
+| `@cp949/vectra/polyline/frame-at-length-into` | `frameAtLengthInto` |  |  | uncovered |
+| `@cp949/vectra/polyline/from-path` | `fromPath` |  |  | uncovered |
+| `@cp949/vectra/polyline/from-path-into` | `fromPathInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/has-segments` | `hasSegments` |  |  | uncovered |
 | `@cp949/vectra/polyline/length` | `length` | `pixi:polyline-length-ratio`, `pixi:polyline-path-walk` |  | covered |
+| `@cp949/vectra/polyline/monotonic-axis` | `monotonicAxis` |  |  | uncovered |
+| `@cp949/vectra/polyline/normal-at-length` | `normalAtLength` |  |  | uncovered |
+| `@cp949/vectra/polyline/normal-at-length-into` | `normalAtLengthInto` |  |  | uncovered |
+| `@cp949/vectra/polyline/normals` | `normals` |  |  | uncovered |
+| `@cp949/vectra/polyline/normals-into` | `normalsInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/point-at-index` | `pointAtIndex` |  |  | uncovered |
 | `@cp949/vectra/polyline/point-at-index-into` | `pointAtIndexInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/point-at-length` | `pointAtLength` | `pixi:polyline-path-walk` |  | covered |
@@ -1068,6 +1359,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/polyline/polyline-from` | `polylineFrom` |  |  | uncovered |
 | `@cp949/vectra/polyline/reverse-points` | `reversePoints` |  |  | uncovered |
 | `@cp949/vectra/polyline/reverse-points-into` | `reversePointsInto` |  |  | uncovered |
+| `@cp949/vectra/polyline/reversed` | `reversed` |  |  | uncovered |
+| `@cp949/vectra/polyline/reversed-into` | `reversedInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/sample-fixed-count` | `sampleFixedCount` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/sample-fixed-count-into` | `sampleFixedCountInto` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/sample-uniform` | `sampleUniform` | `pixi:polyline-path-walk` |  | covered |
@@ -1075,32 +1368,74 @@ pnpm examples:coverage:write
 | `@cp949/vectra/polyline/segment-at` | `segmentAt` |  |  | uncovered |
 | `@cp949/vectra/polyline/segment-at-into` | `segmentAtInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/segment-count` | `segmentCount` |  |  | uncovered |
+| `@cp949/vectra/polyline/segment-lengths` | `segmentLengths` |  |  | uncovered |
+| `@cp949/vectra/polyline/segment-lengths-into` | `segmentLengthsInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/simplify` | `simplify` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/simplify-into` | `simplifyInto` | `pixi:polyline-path-walk` |  | covered |
+| `@cp949/vectra/polyline/slice-by-length` | `sliceByLength` |  |  | uncovered |
+| `@cp949/vectra/polyline/slice-by-length-into` | `sliceByLengthInto` |  |  | uncovered |
+| `@cp949/vectra/polyline/subdivide` | `subdivide` |  |  | uncovered |
+| `@cp949/vectra/polyline/subdivide-into` | `subdivideInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/tangent-at-index` | `tangentAtIndex` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/tangent-at-index-into` | `tangentAtIndexInto` | `pixi:polyline-path-walk` |  | covered |
+| `@cp949/vectra/polyline/tangent-at-length` | `tangentAtLength` |  |  | uncovered |
+| `@cp949/vectra/polyline/tangent-at-length-into` | `tangentAtLengthInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/tangents` | `tangents` | `pixi:curve-sampling-workbench`, `pixi:polyline-vertex-tangents` |  | covered |
 | `@cp949/vectra/polyline/tangents-into` | `tangentsInto` | `pixi:curve-sampling-workbench`, `pixi:polyline-vertex-tangents` |  | covered |
+| `@cp949/vectra/polyline/to-path` | `toPath` |  |  | uncovered |
+| `@cp949/vectra/polyline/to-path-into` | `toPathInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/transform-points` | `transformPoints` |  |  | uncovered |
 | `@cp949/vectra/polyline/transform-points-into` | `transformPointsInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/translate-points` | `translatePoints` |  |  | uncovered |
 | `@cp949/vectra/polyline/translate-points-into` | `translatePointsInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/compose-pose` | `composePose` |  |  | uncovered |
+| `@cp949/vectra/pose2/compose-pose-into` | `composePoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/inverse-transform-point-by-pose` | `inverseTransformPointByPose` |  |  | uncovered |
+| `@cp949/vectra/pose2/inverse-transform-point-by-pose-into` | `inverseTransformPointByPoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/inverse-transform-vector-by-pose` | `inverseTransformVectorByPose` |  |  | uncovered |
+| `@cp949/vectra/pose2/inverse-transform-vector-by-pose-into` | `inverseTransformVectorByPoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/invert-pose` | `invertPose` |  |  | uncovered |
+| `@cp949/vectra/pose2/invert-pose-into` | `invertPoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/look-at-pose` | `lookAtPose` |  |  | uncovered |
+| `@cp949/vectra/pose2/look-at-pose-into` | `lookAtPoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/matrix-to-pose` | `matrixToPose` |  |  | uncovered |
+| `@cp949/vectra/pose2/matrix-to-pose-into` | `matrixToPoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/pose-approx-equals` | `poseApproxEquals` |  |  | uncovered |
+| `@cp949/vectra/pose2/pose-distance` | `poseDistance` |  |  | uncovered |
+| `@cp949/vectra/pose2/pose-from-translation-rotation` | `poseFromTranslationRotation` |  |  | uncovered |
+| `@cp949/vectra/pose2/pose-from-translation-rotation-into` | `poseFromTranslationRotationInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/pose-to-matrix` | `poseToMatrix` |  |  | uncovered |
+| `@cp949/vectra/pose2/pose-to-matrix-into` | `poseToMatrixInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/relative-pose` | `relativePose` |  |  | uncovered |
+| `@cp949/vectra/pose2/relative-pose-into` | `relativePoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/transform-point-by-pose` | `transformPointByPose` |  |  | uncovered |
+| `@cp949/vectra/pose2/transform-point-by-pose-into` | `transformPointByPoseInto` |  |  | uncovered |
+| `@cp949/vectra/pose2/transform-vector-by-pose` | `transformVectorByPose` |  |  | uncovered |
+| `@cp949/vectra/pose2/transform-vector-by-pose-into` | `transformVectorByPoseInto` |  |  | uncovered |
 | `@cp949/vectra/random-state/create-random-state` | `createRandomState` |  |  | uncovered |
 | `@cp949/vectra/random-state/create-random-state` | `type RandomState` |  |  | uncovered |
 | `@cp949/vectra/random-state/rand` | `rand` |  |  | uncovered |
 | `@cp949/vectra/random/angle` | `angle` |  |  | uncovered |
 | `@cp949/vectra/random/bernoulli` | `bernoulli` | `pixi:bernoulli-trial-tally` |  | covered |
+| `@cp949/vectra/random/beta` | `beta` |  |  | uncovered |
 | `@cp949/vectra/random/binomial` | `binomial` |  |  | uncovered |
 | `@cp949/vectra/random/choice` | `choice` |  |  | uncovered |
 | `@cp949/vectra/random/create-rng` | `createRng` | `canvas:random-boundary-sampling`, `canvas:random-distribution-sampling`, `pixi:bernoulli-trial-tally`, `pixi:normal-distribution-histogram`, `pixi:weighted-loot-table` |  | covered |
 | `@cp949/vectra/random/create-rng` | `type RandomSeed` | `canvas:random-boundary-sampling`, `canvas:random-distribution-sampling`, `pixi:bernoulli-trial-tally`, `pixi:normal-distribution-histogram`, `pixi:weighted-loot-table` |  | covered |
 | `@cp949/vectra/random/direction` | `direction` | `canvas:random-distribution-sampling`, `pixi:vector-steering-field` |  | covered |
 | `@cp949/vectra/random/direction-into` | `directionInto` | `canvas:random-distribution-sampling`, `pixi:vector-steering-field` |  | covered |
+| `@cp949/vectra/random/dirichlet` | `dirichlet` |  |  | uncovered |
+| `@cp949/vectra/random/dirichlet-into` | `dirichletInto` |  |  | uncovered |
 | `@cp949/vectra/random/exponential` | `exponential` |  |  | uncovered |
 | `@cp949/vectra/random/float` | `float` | `pixi:vector-steering-field` |  | covered |
+| `@cp949/vectra/random/gamma` | `gamma` |  |  | uncovered |
 | `@cp949/vectra/random/geometric` | `geometric` |  |  | uncovered |
+| `@cp949/vectra/random/halton-sequence` | `haltonSequence` |  |  | uncovered |
+| `@cp949/vectra/random/halton-sequence-into` | `haltonSequenceInto` |  |  | uncovered |
 | `@cp949/vectra/random/int` | `int` |  |  | uncovered |
 | `@cp949/vectra/random/log-normal` | `logNormal` |  |  | uncovered |
+| `@cp949/vectra/random/multivariate-normal` | `multivariateNormal` |  |  | uncovered |
+| `@cp949/vectra/random/multivariate-normal-into` | `multivariateNormalInto` |  |  | uncovered |
 | `@cp949/vectra/random/normal` | `normal` | `pixi:normal-distribution-histogram` |  | covered |
 | `@cp949/vectra/random/permutation` | `permutation` |  |  | uncovered |
 | `@cp949/vectra/random/pick-unique` | `pickUnique` |  |  | uncovered |
@@ -1115,6 +1450,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/random/point-in-polygon-into` | `pointInPolygonInto` | `canvas:random-distribution-sampling` |  | covered |
 | `@cp949/vectra/random/point-in-rect` | `pointInRect` | `canvas:random-distribution-sampling` |  | covered |
 | `@cp949/vectra/random/point-in-rect-into` | `pointInRectInto` | `canvas:random-distribution-sampling` |  | covered |
+| `@cp949/vectra/random/point-in-rect-outside` | `pointInRectOutside` |  |  | uncovered |
+| `@cp949/vectra/random/point-in-rect-outside-into` | `pointInRectOutsideInto` |  |  | uncovered |
 | `@cp949/vectra/random/point-in-triangle` | `pointInTriangle` | `canvas:random-boundary-sampling` |  | covered |
 | `@cp949/vectra/random/point-in-triangle-into` | `pointInTriangleInto` | `canvas:random-boundary-sampling` |  | covered |
 | `@cp949/vectra/random/point-on-circle` | `pointOnCircle` | `canvas:random-distribution-sampling` |  | covered |
@@ -1139,12 +1476,18 @@ pnpm examples:coverage:write
 | `@cp949/vectra/random/shuffle-in-place` | `shuffleInPlace` |  |  | uncovered |
 | `@cp949/vectra/random/shuffle-into` | `shuffleInto` |  |  | uncovered |
 | `@cp949/vectra/random/sign` | `sign` |  |  | uncovered |
+| `@cp949/vectra/random/sobol-sequence` | `sobolSequence` |  |  | uncovered |
+| `@cp949/vectra/random/sobol-sequence-into` | `sobolSequenceInto` |  |  | uncovered |
 | `@cp949/vectra/random/standard-normal` | `standardNormal` |  |  | uncovered |
 | `@cp949/vectra/random/triangular` | `triangular` |  |  | uncovered |
 | `@cp949/vectra/random/uniform` | `uniform` |  |  | uncovered |
 | `@cp949/vectra/random/unique-indices` | `uniqueIndices` |  |  | uncovered |
 | `@cp949/vectra/random/unique-indices-into` | `uniqueIndicesInto` |  |  | uncovered |
 | `@cp949/vectra/random/weighted-choice` | `weightedChoice` | `pixi:weighted-loot-table` |  | covered |
+| `@cp949/vectra/random/weighted-point-on-path` | `weightedPointOnPath` |  |  | uncovered |
+| `@cp949/vectra/random/weighted-point-on-path-into` | `weightedPointOnPathInto` |  |  | uncovered |
+| `@cp949/vectra/random/weighted-point-on-polyline` | `weightedPointOnPolyline` |  |  | uncovered |
+| `@cp949/vectra/random/weighted-point-on-polyline-into` | `weightedPointOnPolylineInto` |  |  | uncovered |
 | `@cp949/vectra/random/weighted-probability` | `type WeightedProbabilitySample` |  |  | uncovered |
 | `@cp949/vectra/random/weighted-probability` | `weightedProbability` |  |  | uncovered |
 | `@cp949/vectra/random/weighted-random-index` | `weightedRandomIndex` |  |  | uncovered |
@@ -1154,6 +1497,10 @@ pnpm examples:coverage:write
 | `@cp949/vectra/ray/contains-point` | `containsPoint` | `pixi:ray-contains-point` |  | covered |
 | `@cp949/vectra/ray/copy-into` | `copyInto` | `pixi:ray-intersection-lab` |  | covered |
 | `@cp949/vectra/ray/create-ray` | `createRay` | `pixi:ray-intersection-lab` |  | covered |
+| `@cp949/vectra/ray/crop-by-circle` | `cropByCircle` |  |  | uncovered |
+| `@cp949/vectra/ray/crop-by-circle-into` | `cropByCircleInto` |  |  | uncovered |
+| `@cp949/vectra/ray/crop-by-rect` | `cropByRect` |  |  | uncovered |
+| `@cp949/vectra/ray/crop-by-rect-into` | `cropByRectInto` |  |  | uncovered |
 | `@cp949/vectra/ray/direction` | `direction` |  |  | uncovered |
 | `@cp949/vectra/ray/direction-into` | `directionInto` |  |  | uncovered |
 | `@cp949/vectra/ray/distance-to-point` | `distanceToPoint` | `pixi:ray-closest-point` |  | covered |
@@ -1176,16 +1523,21 @@ pnpm examples:coverage:write
 | `@cp949/vectra/ray/single-intersection` | `singleIntersection` | `pixi:ray-intersection-lab` |  | covered |
 | `@cp949/vectra/ray/single-intersection-into` | `singleIntersectionInto` | `pixi:ray-intersection-lab` |  | covered |
 | `@cp949/vectra/rect/area` | `area` | `pixi:rect-intersection-clip` |  | covered |
+| `@cp949/vectra/rect/aspect-ratio` | `aspectRatio` |  |  | uncovered |
 | `@cp949/vectra/rect/bottom` | `bottom` |  |  | uncovered |
 | `@cp949/vectra/rect/bottom-left-into` | `bottomLeftInto` |  |  | uncovered |
 | `@cp949/vectra/rect/bottom-right-into` | `bottomRightInto` |  |  | uncovered |
 | `@cp949/vectra/rect/center-into` | `centerInto` |  |  | uncovered |
+| `@cp949/vectra/rect/clamp-point` | `clampPoint` |  |  | uncovered |
+| `@cp949/vectra/rect/clamp-point-into` | `clampPointInto` |  |  | uncovered |
 | `@cp949/vectra/rect/contains-point` | `containsPoint` | `pixi:rect-contains-point`, `pixi:shape-hitbox-lab` |  | covered |
 | `@cp949/vectra/rect/contains-rect` | `containsRect` | `pixi:rect-contains-rect` |  | covered |
 | `@cp949/vectra/rect/copy-into` | `copyInto` |  |  | uncovered |
 | `@cp949/vectra/rect/corners` | `corners` |  |  | uncovered |
 | `@cp949/vectra/rect/corners-into` | `cornersInto` |  |  | uncovered |
 | `@cp949/vectra/rect/create-rect` | `createRect` |  |  | uncovered |
+| `@cp949/vectra/rect/denormalize-point` | `denormalizePoint` |  |  | uncovered |
+| `@cp949/vectra/rect/denormalize-point-into` | `denormalizePointInto` |  |  | uncovered |
 | `@cp949/vectra/rect/expand-to-include-point-into` | `expandToIncludePointInto` | `pixi:rect-expand-to-include-point`, `pixi:rect-layout-workbench` |  | covered |
 | `@cp949/vectra/rect/expand-to-include-rect-into` | `expandToIncludeRectInto` |  |  | uncovered |
 | `@cp949/vectra/rect/fit-inside` | `fitInside` | `pixi:content-fit-workbench` |  | covered |
@@ -1203,12 +1555,16 @@ pnpm examples:coverage:write
 | `@cp949/vectra/rect/intersection-into` | `intersectionInto` | `pixi:rect-intersection-clip` |  | covered |
 | `@cp949/vectra/rect/is-empty` | `isEmpty` |  |  | uncovered |
 | `@cp949/vectra/rect/left` | `left` |  |  | uncovered |
+| `@cp949/vectra/rect/normalize-point` | `normalizePoint` |  |  | uncovered |
+| `@cp949/vectra/rect/normalize-point-into` | `normalizePointInto` |  |  | uncovered |
 | `@cp949/vectra/rect/perimeter-point` | `perimeterPoint` | `pixi:rect-perimeter-walk` |  | covered |
 | `@cp949/vectra/rect/perimeter-point-into` | `perimeterPointInto` | `pixi:rect-perimeter-walk` |  | covered |
 | `@cp949/vectra/rect/perimeter-points` | `perimeterPoints` | `pixi:rect-perimeter-walk` |  | covered |
 | `@cp949/vectra/rect/perimeter-points-into` | `perimeterPointsInto` | `pixi:rect-perimeter-walk` |  | covered |
 | `@cp949/vectra/rect/quadrants` | `quadrants` | `pixi:rect-quadrants-split` |  | covered |
 | `@cp949/vectra/rect/quadrants-into` | `quadrantsInto` | `pixi:rect-quadrants-split` |  | covered |
+| `@cp949/vectra/rect/rect-align-to` | `rectAlignTo` |  |  | uncovered |
+| `@cp949/vectra/rect/rect-align-to-into` | `rectAlignToInto` |  |  | uncovered |
 | `@cp949/vectra/rect/rect-from` | `rectFrom` |  |  | uncovered |
 | `@cp949/vectra/rect/right` | `right` |  |  | uncovered |
 | `@cp949/vectra/rect/same-dimensions` | `sameDimensions` |  |  | uncovered |
@@ -1225,7 +1581,19 @@ pnpm examples:coverage:write
 | `@cp949/vectra/rect/translate-into` | `translateInto` |  |  | uncovered |
 | `@cp949/vectra/rect/union` | `union` |  |  | uncovered |
 | `@cp949/vectra/rect/union-into` | `unionInto` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-annulus` | `sdfAnnulus` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-capsule` | `sdfCapsule` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-circle` | `sdfCircle` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-intersection` | `sdfIntersection` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-oriented-rect` | `sdfOrientedRect` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-polygon` | `sdfPolygon` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-rect` | `sdfRect` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-rounded-rect` | `sdfRoundedRect` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-segment` | `sdfSegment` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-subtraction` | `sdfSubtraction` |  |  | uncovered |
+| `@cp949/vectra/sdf/sdf-union` | `sdfUnion` |  |  | uncovered |
 | `@cp949/vectra/segment/angle` | `angle` |  |  | uncovered |
+| `@cp949/vectra/segment/bounds` | `bounds` | `pixi:segment-offset-normal-lab` |  | covered |
 | `@cp949/vectra/segment/bounds-into` | `boundsInto` | `pixi:segment-offset-normal-lab` |  | covered |
 | `@cp949/vectra/segment/center-on` | `centerOn` | `pixi:segment-angle-builder` |  | covered |
 | `@cp949/vectra/segment/center-on-into` | `centerOnInto` | `pixi:segment-angle-builder` |  | covered |
@@ -1235,6 +1603,10 @@ pnpm examples:coverage:write
 | `@cp949/vectra/segment/contains-point` | `containsPoint` | `pixi:segment-offset-normal-lab` |  | covered |
 | `@cp949/vectra/segment/copy-into` | `copyInto` |  |  | uncovered |
 | `@cp949/vectra/segment/create-segment` | `createSegment` |  |  | uncovered |
+| `@cp949/vectra/segment/crop-by-circle` | `cropByCircle` |  |  | uncovered |
+| `@cp949/vectra/segment/crop-by-circle-into` | `cropByCircleInto` |  |  | uncovered |
+| `@cp949/vectra/segment/crop-by-rect` | `cropByRect` |  |  | uncovered |
+| `@cp949/vectra/segment/crop-by-rect-into` | `cropByRectInto` |  |  | uncovered |
 | `@cp949/vectra/segment/distance-to-point` | `distanceToPoint` | `canvas:segment-snap` |  | covered |
 | `@cp949/vectra/segment/distance-to-point-sq` | `distanceToPointSq` | `pixi:segment-offset-normal-lab` |  | covered |
 | `@cp949/vectra/segment/end` | `end` |  |  | uncovered |
@@ -1255,6 +1627,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/segment/is-zero-length` | `isZeroLength` |  |  | uncovered |
 | `@cp949/vectra/segment/length` | `length` | `canvas:segment-snap`, `pixi:curve-sampling-workbench`, `pixi:segment-point-at-length`, `pixi:segment-rotate-origin`, `pixi:triangle-construction-lab` |  | covered |
 | `@cp949/vectra/segment/length-sq` | `lengthSq` |  |  | uncovered |
+| `@cp949/vectra/segment/marker` | `marker` |  |  | uncovered |
+| `@cp949/vectra/segment/marker-into` | `markerInto` |  |  | uncovered |
 | `@cp949/vectra/segment/midpoint` | `midpoint` | `pixi:segment-angle-builder`, `pixi:segment-construction-lab`, `pixi:segment-offset-normal-lab` |  | covered |
 | `@cp949/vectra/segment/midpoint-into` | `midpointInto` | `pixi:segment-angle-builder`, `pixi:segment-construction-lab`, `pixi:segment-offset-normal-lab` |  | covered |
 | `@cp949/vectra/segment/nearest-point-on-supporting-line` | `nearestPointOnSupportingLine` | `pixi:segment-supporting-line-foot` |  | covered |
@@ -1282,8 +1656,12 @@ pnpm examples:coverage:write
 | `@cp949/vectra/segment/single-intersection` | `singleIntersection` | `pixi:segment-intersection-point` |  | covered |
 | `@cp949/vectra/segment/single-intersection-into` | `singleIntersectionInto` | `pixi:segment-intersection-point` |  | covered |
 | `@cp949/vectra/segment/slope` | `slope` |  |  | uncovered |
+| `@cp949/vectra/segment/split` | `split` |  |  | uncovered |
+| `@cp949/vectra/segment/split-into` | `splitInto` |  |  | uncovered |
 | `@cp949/vectra/segment/start` | `start` |  |  | uncovered |
 | `@cp949/vectra/segment/start-into` | `startInto` |  |  | uncovered |
+| `@cp949/vectra/segment/subdivide` | `subdivide` |  |  | uncovered |
+| `@cp949/vectra/segment/subdivide-into` | `subdivideInto` |  |  | uncovered |
 | `@cp949/vectra/segment/transform` | `transform` |  |  | uncovered |
 | `@cp949/vectra/segment/transform-into` | `transformInto` |  |  | uncovered |
 | `@cp949/vectra/segment/translate` | `translate` | `pixi:segment-offset-normal-lab` |  | covered |
@@ -1304,6 +1682,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/statistics/covariance-matrix-into` | `covarianceMatrixInto` |  |  | uncovered |
 | `@cp949/vectra/statistics/digitize` | `digitize` |  |  | uncovered |
 | `@cp949/vectra/statistics/digitize-into` | `digitizeInto` |  |  | uncovered |
+| `@cp949/vectra/statistics/geometric-mean` | `geometricMean` |  |  | uncovered |
+| `@cp949/vectra/statistics/harmonic-mean` | `harmonicMean` |  |  | uncovered |
 | `@cp949/vectra/statistics/histogram` | `histogram` |  |  | uncovered |
 | `@cp949/vectra/statistics/histogram-bin-edges` | `histogramBinEdges` |  |  | uncovered |
 | `@cp949/vectra/statistics/histogram-into` | `histogramInto` |  |  | uncovered |
@@ -1330,6 +1710,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/statistics/standardize` | `standardize` |  |  | uncovered |
 | `@cp949/vectra/statistics/standardize-into` | `standardizeInto` |  |  | uncovered |
 | `@cp949/vectra/statistics/sum` | `sum` |  |  | uncovered |
+| `@cp949/vectra/statistics/trimmed-mean` | `trimmedMean` |  |  | uncovered |
 | `@cp949/vectra/statistics/variance` | `variance` |  |  | uncovered |
 | `@cp949/vectra/statistics/weighted-mean` | `weightedMean` |  |  | uncovered |
 | `@cp949/vectra/statistics/weighted-variance` | `weightedVariance` |  |  | uncovered |
@@ -1366,9 +1747,12 @@ pnpm examples:coverage:write
 | `@cp949/vectra/triangle/circumcenter-into` | `circumcenterInto` | `pixi:triangle-centers`, `pixi:triangle-construction-lab` |  | covered |
 | `@cp949/vectra/triangle/circumcircle` | `circumcircle` | `pixi:triangle-centers` |  | covered |
 | `@cp949/vectra/triangle/circumcircle-into` | `circumcircleInto` | `pixi:triangle-centers` |  | covered |
+| `@cp949/vectra/triangle/circumradius` | `circumradius` |  |  | uncovered |
 | `@cp949/vectra/triangle/classify-point` | `classifyPoint` | `pixi:triangle-barycentric-lab` |  | covered |
 | `@cp949/vectra/triangle/closest-point` | `closestPoint` | `pixi:clearance-closest-point-lab`, `pixi:triangle-closest-point` |  | covered |
 | `@cp949/vectra/triangle/closest-point-into` | `closestPointInto` | `pixi:clearance-closest-point-lab`, `pixi:triangle-closest-point` |  | covered |
+| `@cp949/vectra/triangle/closest-point-on-edge` | `closestPointOnEdge` |  |  | uncovered |
+| `@cp949/vectra/triangle/closest-point-on-edge-into` | `closestPointOnEdgeInto` |  |  | uncovered |
 | `@cp949/vectra/triangle/contains-point` | `containsPoint` | `pixi:triangle-contains-point` |  | covered |
 | `@cp949/vectra/triangle/contains-points` | `containsPoints` |  |  | uncovered |
 | `@cp949/vectra/triangle/copy-into` | `copyInto` |  |  | uncovered |
@@ -1376,10 +1760,18 @@ pnpm examples:coverage:write
 | `@cp949/vectra/triangle/distance-to-point` | `distanceToPoint` | `pixi:triangle-point-clearance` |  | covered |
 | `@cp949/vectra/triangle/equilateral-altitude` | `equilateralAltitude` |  |  | uncovered |
 | `@cp949/vectra/triangle/equilateral-side` | `equilateralSide` |  |  | uncovered |
+| `@cp949/vectra/triangle/euler-line` | `eulerLine` |  |  | uncovered |
+| `@cp949/vectra/triangle/euler-line-into` | `eulerLineInto` |  |  | uncovered |
 | `@cp949/vectra/triangle/excenters` | `excenters` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/excenters-into` | `excentersInto` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/excircles` | `excircles` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/excircles-into` | `excirclesInto` | `pixi:triangle-solver-excircles-lab` |  | covered |
+| `@cp949/vectra/triangle/from-center` | `fromCenter` |  |  | uncovered |
+| `@cp949/vectra/triangle/from-center-into` | `fromCenterInto` |  |  | uncovered |
+| `@cp949/vectra/triangle/from-circle` | `fromCircle` |  |  | uncovered |
+| `@cp949/vectra/triangle/from-circle-into` | `fromCircleInto` |  |  | uncovered |
+| `@cp949/vectra/triangle/from-rect` | `fromRect` |  |  | uncovered |
+| `@cp949/vectra/triangle/from-rect-into` | `fromRectInto` |  |  | uncovered |
 | `@cp949/vectra/triangle/from-segment-apex` | `fromSegmentApex` | `pixi:triangle-construction-lab`, `pixi:triangle-from-segment-apex` |  | covered |
 | `@cp949/vectra/triangle/from-segment-apex-into` | `fromSegmentApexInto` | `pixi:triangle-construction-lab`, `pixi:triangle-from-segment-apex` |  | covered |
 | `@cp949/vectra/triangle/from-segment-height` | `fromSegmentHeight` | `pixi:triangle-construction-lab`, `pixi:triangle-from-segment-height` |  | covered |
@@ -1388,6 +1780,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/triangle/incenter-into` | `incenterInto` | `pixi:triangle-centers`, `pixi:triangle-construction-lab` |  | covered |
 | `@cp949/vectra/triangle/incircle` | `incircle` | `pixi:triangle-centers` |  | covered |
 | `@cp949/vectra/triangle/incircle-into` | `incircleInto` | `pixi:triangle-centers` |  | covered |
+| `@cp949/vectra/triangle/inradius` | `inradius` |  |  | uncovered |
 | `@cp949/vectra/triangle/interior-angles` | `interiorAngles` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/interior-angles-into` | `interiorAnglesInto` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/is-acute` | `isAcute` | `pixi:triangle-barycentric-lab` |  | covered |
@@ -1406,14 +1799,20 @@ pnpm examples:coverage:write
 | `@cp949/vectra/triangle/medians` | `medians` | `pixi:triangle-medians-concurrency` |  | covered |
 | `@cp949/vectra/triangle/medians-into` | `mediansInto` | `pixi:triangle-medians-concurrency` |  | covered |
 | `@cp949/vectra/triangle/medians-into` | `type TriangleMediansWritable` | `pixi:triangle-medians-concurrency` |  | covered |
+| `@cp949/vectra/triangle/nine-point-circle` | `ninePointCircle` |  |  | uncovered |
+| `@cp949/vectra/triangle/nine-point-circle-into` | `ninePointCircleInto` |  |  | uncovered |
 | `@cp949/vectra/triangle/orthocenter` | `orthocenter` | `pixi:triangle-barycentric-lab`, `pixi:triangle-construction-lab` |  | covered |
 | `@cp949/vectra/triangle/orthocenter-into` | `orthocenterInto` | `pixi:triangle-barycentric-lab`, `pixi:triangle-construction-lab` |  | covered |
 | `@cp949/vectra/triangle/perimeter` | `perimeter` | `pixi:triangle-barycentric-lab` |  | covered |
 | `@cp949/vectra/triangle/point-at-index` | `pointAtIndex` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/point-at-index-into` | `pointAtIndexInto` | `pixi:triangle-solver-excircles-lab` |  | covered |
+| `@cp949/vectra/triangle/point-from-barycentric` | `pointFromBarycentric` |  |  | uncovered |
+| `@cp949/vectra/triangle/point-from-barycentric-into` | `type BarycentricLike` |  |  | uncovered |
+| `@cp949/vectra/triangle/point-from-barycentric-into` | `pointFromBarycentricInto` |  |  | uncovered |
 | `@cp949/vectra/triangle/side-at` | `sideAt` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/side-at-into` | `sideAtInto` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/signed-area` | `signedArea` | `pixi:triangle-barycentric-lab` |  | covered |
+| `@cp949/vectra/triangle/similar-to` | `similarTo` |  |  | uncovered |
 | `@cp949/vectra/triangle/solve-asa` | `solveAsa` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/solve-asa-into` | `type SideSet` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/solve-asa-into` | `solveAsaInto` | `pixi:triangle-solver-excircles-lab` |  | covered |
@@ -1440,10 +1839,16 @@ pnpm examples:coverage:write
 | `@cp949/vectra/vec/clamp-length` | `clampLength` | `pixi:vec-clamp-length-band`, `pixi:vector-control-workbench` |  | covered |
 | `@cp949/vectra/vec/clamp-length-into` | `clampLengthInto` | `pixi:vec-clamp-length-band`, `pixi:vector-control-workbench` |  | covered |
 | `@cp949/vectra/vec/component-max` | `componentMax` |  |  | uncovered |
+| `@cp949/vectra/vec/component-max-entry` | `componentMaxEntry` |  |  | uncovered |
+| `@cp949/vectra/vec/component-max-index` | `componentMaxIndex` |  |  | uncovered |
 | `@cp949/vectra/vec/component-min` | `componentMin` |  |  | uncovered |
+| `@cp949/vectra/vec/component-min-entry` | `componentMinEntry` |  |  | uncovered |
+| `@cp949/vectra/vec/component-min-index` | `componentMinIndex` |  |  | uncovered |
 | `@cp949/vectra/vec/component-product` | `componentProduct` |  |  | uncovered |
 | `@cp949/vectra/vec/component-sum` | `componentSum` |  |  | uncovered |
 | `@cp949/vectra/vec/copy-into` | `copyInto` |  |  | uncovered |
+| `@cp949/vectra/vec/corner-bisector` | `cornerBisector` |  |  | uncovered |
+| `@cp949/vectra/vec/corner-bisector-into` | `cornerBisectorInto` |  |  | uncovered |
 | `@cp949/vectra/vec/cross` | `cross` | `pixi:vector-projection-reflection-lab` |  | covered |
 | `@cp949/vectra/vec/cross3` | `cross3` |  |  | uncovered |
 | `@cp949/vectra/vec/directed-angle` | `directedAngle` | `pixi:vector-projection-reflection-lab` |  | covered |
@@ -1466,6 +1871,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/vec/heading-segment` | `headingSegment` |  |  | uncovered |
 | `@cp949/vectra/vec/is-collinear` | `isCollinear` | `pixi:orientation-predicate` |  | covered |
 | `@cp949/vectra/vec/is-finite` | `isFinite` |  |  | uncovered |
+| `@cp949/vectra/vec/is-in-quadrant` | `isInQuadrant` |  |  | uncovered |
 | `@cp949/vectra/vec/is-orthogonal` | `isOrthogonal` | `pixi:vec-orthogonal-check` |  | covered |
 | `@cp949/vectra/vec/is-unit` | `isUnit` |  |  | uncovered |
 | `@cp949/vectra/vec/is-zero` | `isZero` |  |  | uncovered |
@@ -1481,6 +1887,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/vec/midpoint-into` | `midpointInto` | `pixi:vec-midpoint` |  | covered |
 | `@cp949/vectra/vec/min` | `min` |  |  | uncovered |
 | `@cp949/vectra/vec/min-into` | `minInto` |  |  | uncovered |
+| `@cp949/vectra/vec/modulo` | `modulo` |  |  | uncovered |
+| `@cp949/vectra/vec/modulo-into` | `moduloInto` |  |  | uncovered |
 | `@cp949/vectra/vec/move-toward` | `moveToward` |  |  | uncovered |
 | `@cp949/vectra/vec/move-toward-into` | `moveTowardInto` |  |  | uncovered |
 | `@cp949/vectra/vec/multiply` | `multiply` |  |  | uncovered |
@@ -1525,6 +1933,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/vec/slerp-into` | `slerpInto` | `pixi:motion-interpolation-workbench`, `pixi:vec-slerp-direction` |  | covered |
 | `@cp949/vectra/vec/slide` | `slide` | `pixi:vec-wall-slide`, `pixi:vector-collision-response` |  | covered |
 | `@cp949/vectra/vec/slide-into` | `slideInto` | `pixi:vec-wall-slide`, `pixi:vector-collision-response` |  | covered |
+| `@cp949/vectra/vec/snap-to-grid` | `snapToGrid` |  |  | uncovered |
+| `@cp949/vectra/vec/snap-to-grid-into` | `snapToGridInto` |  |  | uncovered |
 | `@cp949/vectra/vec/sub` | `sub` | `pixi:cross-track-deviation`, `pixi:vec-orthogonal-check`, `pixi:vec-slerp-direction`, `pixi:vector-projection-reflection-lab` |  | covered |
 | `@cp949/vectra/vec/sub-into` | `subInto` | `pixi:cross-track-deviation`, `pixi:vec-orthogonal-check`, `pixi:vec-slerp-direction`, `pixi:vector-projection-reflection-lab` |  | covered |
 | `@cp949/vectra/vec/subtract-scaled` | `subtractScaled` |  |  | uncovered |

@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 
-import { buildCoverageReport, renderMarkdownReport } from './coverage-report.mjs';
+import { buildCoverageReport, isCoverageFileCurrent, renderMarkdownReport } from './coverage-report.mjs';
 
 async function writeFixtureFile(root, relativePath, contents) {
   const filePath = path.join(root, relativePath);
@@ -176,4 +176,19 @@ test('markdown 표를 렌더링한다', async () => {
   const outputPath = path.join(repoRoot, 'docs/internal/examples/coverage.md');
   await writeFile(outputPath, markdown, 'utf8');
   assert.match(await readFile(outputPath, 'utf8'), /생성 명령/);
+});
+
+test('커밋된 coverage.md가 현재 렌더링과 같은지 판정한다', async () => {
+  const repoRoot = await createFixtureRepo();
+  const markdown = renderMarkdownReport(await buildCoverageReport({ repoRoot }));
+  const outputPath = path.join(repoRoot, 'docs/internal/examples/coverage.md');
+
+  assert.equal(await isCoverageFileCurrent({ outputPath, markdown }), false);
+
+  await mkdir(path.dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, markdown, 'utf8');
+  assert.equal(await isCoverageFileCurrent({ outputPath, markdown }), true);
+
+  await writeFile(outputPath, `${markdown}| stale |\n`, 'utf8');
+  assert.equal(await isCoverageFileCurrent({ outputPath, markdown }), false);
 });
