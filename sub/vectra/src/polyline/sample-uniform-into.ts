@@ -76,17 +76,14 @@ export function sampleUniformInto(
       segIdx++;
     }
 
+    // 선택된 segment는 zero-length가 아니다. dist > 0이라 zero-length segment는 위 루프가 건너뛰고,
+    // 마지막 segment가 zero-length이면 totalLen이 그 시작까지의 누적과 같아 dist < totalLen에 모순이다.
     const sl = segLens[segIdx];
-    if (sl === 0) {
-      // zero-length segment: 해당 점 그대로
-      outPoints.push({ x: xs[segIdx], y: ys[segIdx] });
-    } else {
-      const localT = Math.max(0, Math.min(1, (dist - segAcc) / sl));
-      outPoints.push({
-        x: xs[segIdx] + localT * (xs[segIdx + 1] - xs[segIdx]),
-        y: ys[segIdx] + localT * (ys[segIdx + 1] - ys[segIdx]),
-      });
-    }
+    const localT = Math.max(0, Math.min(1, (dist - segAcc) / sl));
+    outPoints.push({
+      x: xs[segIdx] + localT * (xs[segIdx + 1] - xs[segIdx]),
+      y: ys[segIdx] + localT * (ys[segIdx + 1] - ys[segIdx]),
+    });
 
     dist += spacing;
   }
