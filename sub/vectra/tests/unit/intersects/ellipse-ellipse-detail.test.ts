@@ -354,3 +354,22 @@ describe('ellipseEllipseDetail — Newton polish 2점/다점 분류 회귀', () 
     }
   });
 });
+
+describe('ellipseEllipseDetail — 1보다 작은 좌표 scale', () => {
+  // 기준 배치를 s배 하고 epsilon도 s배 하면 같은 기하 문제다. 교점 개수가 같아야 한다.
+  test('T29 4점 교차 배치는 s = 1e-10–1e4에서 모두 4점이다', () => {
+    for (const s of [1e-10, 1e-8, 1e-6, 1e-2, 1, 1e4]) {
+      const detail = ellipseEllipseDetail(E(0, 0, 2 * s, s), E(0.5 * s, 0, s, 1.5 * s), 1e-9 * s);
+      expect(detail.kind, `s=${s}`).toBe('multi-point');
+      if (detail.kind !== 'multi-point') throw new Error('multi-point 아님');
+      expect(detail.points, `s=${s}`).toHaveLength(4);
+    }
+  });
+
+  test('T30 2점 교차 배치는 s = 1e-10–1e4에서 모두 two-point다', () => {
+    for (const s of [1e-10, 1e-8, 1e-6, 1e-2, 1, 1e4]) {
+      const detail = ellipseEllipseDetail(E(0, 0, s, s), E(1.5 * s, 0, s, s), 1e-9 * s);
+      expect(detail.kind, `s=${s}`).toBe('two-point');
+    }
+  });
+});

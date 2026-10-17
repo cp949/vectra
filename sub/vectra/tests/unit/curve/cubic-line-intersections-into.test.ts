@@ -142,3 +142,90 @@ describe('cubicLineIntersectionsInto', () => {
     }
   });
 });
+
+describe('cubicLineIntersectionsInto 좌표 scale 불변성', () => {
+  const SCALES = [1e-12, 1e-8, 1e-4, 1, 1e4, 1e8];
+
+  /**
+   * 기준 좌표를 s배 한 cubic과 line으로 교차를 구한다.
+   * epsilon도 같이 s배 해 같은 기하 문제를 만든다.
+   */
+  function intersectScaled(
+    points: readonly [number, number][],
+    origin: [number, number],
+    s: number
+  ): IntersectionHit[] {
+    const [p0, p1, p2, p3] = points.map(([x, y]) => ({ x: x * s, y: y * s }));
+    const hits: IntersectionHit[] = [];
+    cubicLineIntersectionsInto(
+      hits,
+      p0,
+      p1,
+      p2,
+      p3,
+      { origin: { x: origin[0] * s, y: origin[1] * s }, direction: { x: 1, y: 0 } },
+      { epsilon: 1e-9 * s }
+    );
+    return [...hits].sort((a, b) => a.tB - b.tB);
+  }
+
+  test('직선 위에서 1e-6만큼 휜 cubic은 모든 scale에서 hit 3건이다', () => {
+    // 양 끝은 직선 위(touch), t=0.5에서 직선을 가로지른다(cross).
+    for (const s of SCALES) {
+      const hits = intersectScaled(
+        [
+          [0, 0],
+          [1, 1e-6],
+          [2, -1e-6],
+          [3, 0],
+        ],
+        [0, 0],
+        s
+      );
+      expect(
+        hits.map((h) => h.kind),
+        `s=${s}`
+      ).toEqual(['touch', 'cross', 'touch']);
+      expect(hits[1].tB, `s=${s}`).toBeCloseTo(0.5, 9);
+    }
+  });
+
+  test('꼭짓점이 직선에 닿는 cubic은 모든 scale에서 touch 1건이다', () => {
+    for (const s of SCALES) {
+      const hits = intersectScaled(
+        [
+          [0, 0],
+          [1, 1],
+          [2, 1],
+          [3, 0],
+        ],
+        [0, 0.75],
+        s
+      );
+      expect(
+        hits.map((h) => h.kind),
+        `s=${s}`
+      ).toEqual(['touch']);
+      expect(hits[0].tB, `s=${s}`).toBeCloseTo(0.5, 6);
+    }
+  });
+
+  test('direction 벡터 길이가 달라도 epsilon 이내 끝점은 touch 1건이다', () => {
+    // 시작점이 직선 y=0에서 5e-10 떨어져 있다. 기본 epsilon 1e-9 이내다.
+    for (const length of [1e-3, 1, 1e3]) {
+      const hits: IntersectionHit[] = [];
+      cubicLineIntersectionsInto(
+        hits,
+        { x: 0, y: 5e-10 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 3, y: 2 },
+        { origin: { x: 0, y: 0 }, direction: { x: length, y: 0 } }
+      );
+      expect(
+        hits.map((h) => [h.kind, h.tB]),
+        `length=${length}`
+      ).toEqual([['touch', 0]]);
+    }
+  });
+});

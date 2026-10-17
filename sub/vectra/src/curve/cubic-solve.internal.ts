@@ -10,14 +10,24 @@ export function solveQuadratic(out: number[], a: number, b: number, c: number, c
 }
 
 /**
+ * cubic 판정 상대 tolerance.
+ * - 3차항 무시: `|a| <= CUBIC_REL_EPS·max(|b|, |c|, |d|)`
+ * - 판별식 0 판정: `|D| <= CUBIC_REL_EPS·((q/2)² + |p/3|³)`
+ * 계수 전체 scale과 근 간격이 바뀌어도 판정이 같다.
+ * 판별식은 근 간격의 6제곱 크기라 절대값과 비교하면 붙은 근을 중근으로 합친다.
+ */
+const CUBIC_REL_EPS = 1e-12;
+
+/** [0, 1] 경계 근을 받아 주는 parameter tolerance. 정규화 parameter 축 값이라 계수 scale과 무관하다. */
+const UNIT_PARAM_EPS = 1e-12;
+
+/**
  * cubic 방정식 at³ + bt² + ct + d = 0의 실근을 [0,1] closed interval로 한정하여 out에 push한다.
- * Cardano 공식 기반. a가 near-zero이면 quadratic으로 fallback한다.
- * 수치 안정성을 위해 depressed cubic p·u + q 형태로 변환 후 풀고, 실수 근만 추출한다.
+ * Cardano 공식 기반. 수치 안정성을 위해 depressed cubic p·u + q 형태로 변환 후 풀고, 실수 근만 추출한다.
+ * [0, 1]에서 at³ 항은 |a| 이하로만 기여한다. 다른 계수 대비 무시할 만큼 작으면 quadratic으로 푼다.
  */
 export function solveCubicInClosedUnit(out: number[], a: number, b: number, c: number, d: number): void {
-  const EPS = 1e-12;
-
-  if (Math.abs(a) < EPS) {
+  if (Math.abs(a) <= CUBIC_REL_EPS * Math.max(Math.abs(b), Math.abs(c), Math.abs(d))) {
     solveQuadratic(out, b, c, d, true);
     return;
   }
@@ -34,26 +44,24 @@ export function solveCubicInClosedUnit(out: number[], a: number, b: number, c: n
   const q = (2 * A * A * A - 9 * A * B + 27 * C) / 27;
 
   const halfQ = q / 2;
-  const discriminant = halfQ * halfQ + (p / 3) * (p / 3) * (p / 3);
+  const p3Cubed = (p / 3) * (p / 3) * (p / 3);
+  const discriminant = halfQ * halfQ + p3Cubed;
+  const discriminantEps = CUBIC_REL_EPS * (halfQ * halfQ + Math.abs(p3Cubed));
 
   const pushIfInUnit = (t: number): void => {
-    if (t >= -EPS && t <= 1 + EPS) {
+    if (t >= -UNIT_PARAM_EPS && t <= 1 + UNIT_PARAM_EPS) {
       out.push(Math.max(0, Math.min(1, t)));
     }
   };
 
-  if (discriminant > EPS) {
+  if (discriminant > discriminantEps) {
     // 실근 1개
     const sqrtD = Math.sqrt(discriminant);
     const u = cbrtSigned(-halfQ + sqrtD) + cbrtSigned(-halfQ - sqrtD);
     pushIfInUnit(u - A3);
-  } else if (discriminant < -EPS) {
-    // 실근 3개 (삼각함수 방법)
-    const r = Math.sqrt(-(p / 3) * (p / 3) * (p / 3));
-    if (r < EPS) {
-      pushIfInUnit(-A3);
-      return;
-    }
+  } else if (discriminant < -discriminantEps) {
+    // 실근 3개 (삼각함수 방법). D < 0이면 (p/3)³ < 0이라 r > 0이다
+    const r = Math.sqrt(-p3Cubed);
     const cosTheta = Math.max(-1, Math.min(1, -halfQ / r));
     const theta = Math.acos(cosTheta);
     const twoR13 = 2 * Math.cbrt(r);

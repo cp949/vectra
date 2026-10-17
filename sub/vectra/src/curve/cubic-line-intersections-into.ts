@@ -10,6 +10,9 @@ import type {
 import { solveCubicInClosedUnit } from './cubic-solve.internal';
 import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-intersections.internal';
 
+/** 다항식 계수 noise 바닥의 상대 계수. `|n|·(좌표 크기)`에 곱한다. double 상쇄 오차보다 충분히 크다. */
+const COEFFICIENT_REL_EPS = 1e-12;
+
 /**
  * cubic Bezier curve와 infinite-line의 교차점을 outHits에 push한다.
  *
@@ -39,7 +42,7 @@ export function cubicLineIntersectionsInto<P extends XYWritable = XYObjectWritab
   const setup = setupLine(line);
   if (!setup) return;
 
-  const { nx, ny, nDotO, epsilon, epsilonT } = { ...setup, ...resolveOptions(options) };
+  const { ox, oy, nx, ny, nDotO, epsilon, epsilonT } = { ...setup, ...resolveOptions(options) };
 
   const p0x = readX(p0);
   const p0y = readY(p0);
@@ -63,32 +66,48 @@ export function cubicLineIntersectionsInto<P extends XYWritable = XYObjectWritab
   const cc = -3 * n0 + 3 * n1;
   const cd = n0 - nDotO;
 
-  // 다항식 계수 degeneracy 판정용 — 좌표 공간 epsilon(1e-9)보다 타이트하게 수치 noise만 차단
-  const INTERNAL_EPS = 1e-12;
+  // 다항식 계수 degeneracy 판정용 noise 바닥. 계수는 n·P 차이라 오차가 |n|·(좌표 크기)에 비례한다.
+  // 절대값으로 두면 작은 좌표의 곡선 전체를 직선 위 overlap으로, 큰 좌표의 overlap을 곡선으로 오판한다.
+  const coordinateScale = Math.max(
+    Math.abs(p0x),
+    Math.abs(p0y),
+    Math.abs(p1x),
+    Math.abs(p1y),
+    Math.abs(p2x),
+    Math.abs(p2y),
+    Math.abs(p3x),
+    Math.abs(p3y),
+    Math.abs(ox),
+    Math.abs(oy)
+  );
+  const normalLength = Math.hypot(nx, ny);
+  const coefficientNoise = COEFFICIENT_REL_EPS * normalLength * coordinateScale;
 
   const makePoint = (): P => ({}) as P;
 
   // curve 전체가 line 위에 놓이는 overlap case는 현재 result type이 interval을 표현하지 못한다.
   // endpoint touch로 축약하면 caller가 finite point 교차로 오해하므로 hit 없음으로 둔다.
   if (
-    Math.abs(ca) < INTERNAL_EPS &&
-    Math.abs(cb) < INTERNAL_EPS &&
-    Math.abs(cc) < INTERNAL_EPS &&
-    Math.abs(cd) < INTERNAL_EPS
+    Math.abs(ca) <= coefficientNoise &&
+    Math.abs(cb) <= coefficientNoise &&
+    Math.abs(cc) <= coefficientNoise &&
+    Math.abs(cd) <= coefficientNoise
   ) {
     return;
   }
 
   // endpoint를 solver보다 먼저 명시적으로 확인한다.
   // Cardano 공식은 t=0/1이 정확한 근일 때 수치 오차로 찾지 못할 수 있다.
+  // f(t)는 직선까지 거리에 |n|을 곱한 값이다. n = (-dy, dx)는 정규화되지 않았으므로 epsilon에 |n|을 곱해 비교한다
   const f0 = cd; // f(0) = n0 - nDotO
   const f1 = ca + cb + cc + cd; // f(1)
-  if (Math.abs(f0) <= epsilon) {
+  const endpointTolerance = epsilon * normalLength;
+  if (Math.abs(f0) <= endpointTolerance) {
     const px = p0x;
     const py = p0y;
     pushHitIfNew(outHits, px, py, 'touch', computeTA(px, py, setup), 0, epsilonT, makePoint);
   }
-  if (Math.abs(f1) <= epsilon) {
+  if (Math.abs(f1) <= endpointTolerance) {
     const px = p3x;
     const py = p3y;
     pushHitIfNew(outHits, px, py, 'touch', computeTA(px, py, setup), 1, epsilonT, makePoint);
@@ -111,7 +130,7 @@ export function cubicLineIntersectionsInto<P extends XYWritable = XYObjectWritab
       // 도함수 f'(t) ≈ 0이면 접선 → touch
       const fp = 3 * ca * t * t + 2 * cb * t + cc;
       // 다항식 도함수 계수 크기로 normalize — scale-invariant touch 판정
-      const fpScale = Math.max(Math.abs(3 * ca), Math.abs(2 * cb), Math.abs(cc), INTERNAL_EPS);
+      const fpScale = Math.max(Math.abs(3 * ca), Math.abs(2 * cb), Math.abs(cc), coefficientNoise);
       kind = Math.abs(fp) / fpScale < 1e-6 ? 'touch' : 'cross';
     }
 

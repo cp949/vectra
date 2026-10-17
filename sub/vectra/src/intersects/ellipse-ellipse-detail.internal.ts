@@ -59,9 +59,11 @@ export function ellipseEllipseDetailXY(
   // scale은 절대 center 크기가 아니라 translated frame의 radius/offset 규모로 정한다.
   // 절대 center가 커도(예: 1e8) radius/offset이 작으면(예: 1e-2) normalized radius가
   // 1로 유지되어 conic 계수 폭발과 quartic 정밀도 손실을 막는다.
+  // scale에 하한(예: 1)을 두지 않는다. 1보다 작은 ellipse도 정규화해야 solver 절대 eps의 O(1) 계수 가정이 성립한다.
+  // radius는 위에서 양수로 걸렀으므로 scale > 0이다.
   const oxAbs = cbx - cax; // ellipse a center 기준 b center offset (원 좌표)
   const oyAbs = cby - cay;
-  const scale = Math.max(rax, ray, rbx, rby, Math.abs(oxAbs), Math.abs(oyAbs), 1);
+  const scale = Math.max(rax, ray, rbx, rby, Math.abs(oxAbs), Math.abs(oyAbs));
   const ox = oxAbs / scale; // 정규화 offset
   const oy = oyAbs / scale;
   const nrax = rax / scale;
