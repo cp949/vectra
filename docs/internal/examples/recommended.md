@@ -2230,7 +2230,7 @@
   marker로 스냅하고, probe↔경계점 연결선이 최단 거리를 보인다. rx≠ry라 최근접점은 center→probe
   방사선이 닿는 곳이 아니라 ellipse normal의 발이며(연결선이 경계에 수직), 내부 변환에
   Newton-Raphson 반복이 쓰인다. probe를 ellipse 안으로 끌어도 marker는 경계 위에 남고(내부 점도
-  경계로 투영), probe===center이면 θ₀=0 tie-break으로 (cx+radiusX, cy)에 스냅하는 정책을 주석으로
+  경계로 투영), probe===center이면 minor axis의 양의 방향 vertex에 스냅하는 정책을 주석으로
   명시한다. empty ellipse(rx≤0||ry≤0 → center 반환)는 고정 ellipse가 non-empty라 미발생이라 주석만
   둔다. diagnostics는 distance·θ(deg) 2개만 표시한다. 반지름 핸들 편집인 `ellipse-inspector`,
   bounding box 구성인 `ellipse-from-rect`, 초점 거리합인 `ellipse-foci-sum`과 분리한 경계 최근접점

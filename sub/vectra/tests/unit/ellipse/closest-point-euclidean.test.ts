@@ -83,7 +83,7 @@ const CENTERS: ReadonlyArray<readonly [number, number]> = [
 
 /**
  * 반지름에 맞춰 내부·외부·축 위·evolute 근처 오프셋 점을 만든다.
- * center와 같은 점(0, 0)은 tie-break 계약이 따로 있어 제외한다.
+ * center와 같은 점(0, 0)은 minor vertex 계약이 따로 있어 제외한다.
  */
 function sampleOffsets(rx: number, ry: number): Array<readonly [number, number]> {
   const fractions = [-3, -1.5, -1, -0.6, -0.2, -0.01, 0, 0.01, 0.2, 0.6, 1, 1.5, 3];
@@ -246,9 +246,42 @@ describe('ellipse Euclidean 최근접점 - 축 위와 evolute', () => {
 });
 
 describe('ellipse Euclidean 최근접점 - 중심과 퇴화 입력', () => {
-  test('point가 center이면 rx > ry여도 (cx + rx, cy)로 tie-break한다', () => {
-    expect(closestPoint(makeEllipse(2, 3, 4, 1), { x: 2, y: 3 })).toEqual({ x: 6, y: 3 });
+  test('point가 center이고 rx > ry이면 양의 y 쪽 minor vertex (cx, cy + ry)를 반환한다', () => {
+    const result = closestPoint(makeEllipse(2, 3, 4, 1), { x: 2, y: 3 });
+    expect(result.x).toBeCloseTo(2, 12);
+    expect(result.y).toBeCloseTo(4, 12);
+  });
+
+  test('point가 center이고 rx < ry이면 양의 x 쪽 minor vertex (cx + rx, cy)를 반환한다', () => {
     expect(closestPoint(makeEllipse(2, 3, 1, 4), { x: 2, y: 3 })).toEqual({ x: 3, y: 3 });
+  });
+
+  test('point가 center이고 rx === ry이면 (cx + rx, cy)를 유지한다', () => {
+    expect(closestPoint(makeEllipse(2, 3, 5, 5), { x: 2, y: 3 })).toEqual({ x: 7, y: 3 });
+  });
+
+  test('center 최근접점까지의 거리는 min(rx, ry)이다', () => {
+    for (const [rx, ry] of [
+      [4, 1],
+      [1, 4],
+      [5, 5],
+    ] as const) {
+      const ellipse = makeEllipse(2, 3, rx, ry);
+      const center = { x: 2, y: 3 };
+      const result = closestPoint(ellipse, center);
+      expect(Math.hypot(result.x - 2, result.y - 3)).toBeCloseTo(Math.min(rx, ry), 12);
+      const projected = projectPoint(ellipse, center);
+      expect(projected.x).toBeCloseTo(result.x, 12);
+      expect(projected.y).toBeCloseTo(result.y, 12);
+      const into = closestPointInto({ x: 0, y: 0 }, ellipse, center);
+      expect(into.x).toBeCloseTo(result.x, 12);
+      expect(into.y).toBeCloseTo(result.y, 12);
+    }
+  });
+
+  test('center 점의 distanceToPoint는 closed filled ellipse 기준 0이다', () => {
+    expect(distanceToPoint(makeEllipse(2, 3, 4, 1), { x: 2, y: 3 })).toBe(0);
+    expect(distanceToPoint(makeEllipse(2, 3, 1, 4), { x: 2, y: 3 })).toBe(0);
   });
 
   test('center에 매우 가까운 점은 minor vertex 쪽으로 투영된다', () => {

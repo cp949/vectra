@@ -49,11 +49,18 @@ describe('ellipse point distance - closestPointInto', () => {
     expect(norm).toBeCloseTo(1, 8);
   });
 
-  test('center 점의 closest point는 right boundary이다 (tie-break θ₀=0)', () => {
+  test('center 점의 closest point는 양의 y 쪽 minor vertex이다 (rx > ry)', () => {
     const out = { x: 0, y: 0 };
     closestPointInto(out, { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 2 }, { x: 0, y: 0 });
-    // tie-break: theta=0 → (cx+rx, cy)
-    expect(out.x).toBeCloseTo(3, 8);
+    // rx > ry이면 minor axis는 y축이다 → (cx, cy + ry)
+    expect(out.x).toBeCloseTo(0, 8);
+    expect(out.y).toBeCloseTo(2, 8);
+  });
+
+  test('center 점의 closest point는 right boundary이다 (rx <= ry)', () => {
+    const out = { x: 0, y: 0 };
+    closestPointInto(out, { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 3 }, { x: 0, y: 0 });
+    expect(out.x).toBeCloseTo(2, 8);
     expect(out.y).toBeCloseTo(0, 8);
   });
 

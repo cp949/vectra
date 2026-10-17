@@ -7,7 +7,7 @@
  * Newton-Raphson 반복이 쓰인다. probe를 ellipse 안으로 끌어도 marker는 경계 위에 남는다.
  *
  * - Ellipses.closestPoint: ellipse 경계에서 주어진 point에 가장 가까운 점을 반환한다. 내부 점도
- *   경계 위 closest로 투영하고, probe===center이면 θ₀=0 tie-break으로 (cx+radiusX, cy)를 반환한다.
+ *   경계 위 closest로 투영하고, probe===center이면 minor axis의 양의 방향 vertex(radiusX>radiusY이면 (cx, cy+radiusY))를 반환한다.
  */
 
 import * as Ellipses from '@cp949/vectra/ellipse';

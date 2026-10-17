@@ -12,8 +12,8 @@ const DEFAULT_EPSILON = 1e-10;
  * 거리는 Euclidean 거리다. 반환한 점에서 point로 향하는 선은 boundary에 수직이다.
  * 내부 점도 경계 위의 closest boundary point를 반환한다.
  * radiusX <= 0 또는 radiusY <= 0인 empty ellipse는 ellipse center를 반환한다.
- * point === ellipse center인 경우 θ₀ = 0으로 tie-break하여 (cx + radiusX, cy)를 반환한다.
- * radiusX > radiusY이면 이 tie-break 점이 가장 가까운 boundary 점은 아니다.
+ * point === ellipse center인 경우 minor axis의 양의 방향 vertex를 반환한다.
+ * radiusX > radiusY이면 (cx, cy + radiusY), 아니면 (cx + radiusX, cy)이다. radiusX === radiusY도 후자다.
  * major axis 위의 점이 evolute 안에 있으면 최근접점이 둘이다.
  * 이때 center보다 y가 큰 쪽을 반환한다. radiusY > radiusX이면 x가 큰 쪽을 반환한다.
  * 반복 수치 해법이다. 수렴 실패 시 마지막 반복 값을 사용한다.

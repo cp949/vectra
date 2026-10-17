@@ -21,7 +21,7 @@
  * fallback: 수렴 실패 시 마지막 반복 값을 사용한다.
  *
  * 특수 입력:
- * - 점이 center이면 θ = 0 (tie-break).
+ * - 점이 center이면 minor axis 쪽 양의 방향 vertex를 반환한다. rx > ry이면 θ = π/2, 아니면 θ = 0이다.
  * - minor axis 위의 점은 minor vertex를 반환한다.
  * - major axis 위의 점이 evolute 안이면 해가 둘이다. y(major가 y이면 x)가 양수인 쪽을 반환한다.
  *
@@ -39,8 +39,8 @@ export function ellipseClosestPointAngle(dx: number, dy: number, rx: number, ry:
   const p = Math.abs(swapped ? dy : dx) / major;
   const q = Math.abs(swapped ? dx : dy) / major;
 
-  // center tie-break: θ = 0 → (cx + rx, cy)
-  if (p === 0 && q === 0) return 0;
+  // center에서는 두 minor vertex가 동률이다. 양의 방향을 고른다. rx === ry이면 θ = 0이다.
+  if (p === 0 && q === 0) return rx > ry ? Math.PI / 2 : 0;
 
   const evolute = (1 - b) * (1 + b);
 
