@@ -9,14 +9,16 @@ export function solveQuadratic(out: number[], a: number, b: number, c: number, c
   quadraticRootsInUnitInto(out, a, b, c, closedUnit);
 }
 
-/**
- * cubic 판정 상대 tolerance.
- * - 3차항 무시: `|a| <= CUBIC_REL_EPS·max(|b|, |c|, |d|)`
- * - 판별식 0 판정: `|D| <= CUBIC_REL_EPS·((q/2)² + |p/3|³)`
- * 계수 전체 scale과 근 간격이 바뀌어도 판정이 같다.
- * 판별식은 근 간격의 6제곱 크기라 절대값과 비교하면 붙은 근을 중근으로 합친다.
- */
+/** 3차항 무시 상대 tolerance. `|a| <= CUBIC_REL_EPS·max(|b|, |c|, |d|)` */
 const CUBIC_REL_EPS = 1e-12;
+
+/**
+ * 판별식 0 판정에서 p, q의 반올림 잡음에 곱하는 안전 계수. 공개 `solveCubic`(eps 생략)과 같은 판정이다.
+ * - 판별식은 근 간격의 6제곱 크기라 절대값과 비교하면 붙은 근을 중근으로 합친다.
+ * - 판별식 값에 대한 상대 임계는 근 크기가 간격보다 크면 잡음보다 작아 중근(접점)을 놓친다.
+ * - 그래서 임계를 p, q 잡음이 판별식에 전파되는 양으로 둔다.
+ */
+const CUBIC_NOISE_FACTOR = 16;
 
 /** [0, 1] 경계 근을 받아 주는 parameter tolerance. 정규화 parameter 축 값이라 계수 scale과 무관하다. */
 const UNIT_PARAM_EPS = 1e-12;
@@ -25,6 +27,9 @@ const UNIT_PARAM_EPS = 1e-12;
  * cubic 방정식 at³ + bt² + ct + d = 0의 실근을 [0,1] closed interval로 한정하여 out에 push한다.
  * Cardano 공식 기반. 수치 안정성을 위해 depressed cubic p·u + q 형태로 변환 후 풀고, 실수 근만 추출한다.
  * [0, 1]에서 at³ 항은 |a| 이하로만 기여한다. 다른 계수 대비 무시할 만큼 작으면 quadratic으로 푼다.
+ *
+ * 중근 판정은 `|D| <= 16·ε·S²·(|q|·S + p²)`이다. `S = max(|A|, √|B|, ∛|C|)`는 근 크기 scale이다.
+ * `|p| <= 16·ε·S²`이면 3중근으로 본다. 판정은 `solveCubic`(eps 생략)과 같아야 한다. 한쪽을 고치면 다른 쪽도 고친다.
  */
 export function solveCubicInClosedUnit(out: number[], a: number, b: number, c: number, d: number): void {
   if (Math.abs(a) <= CUBIC_REL_EPS * Math.max(Math.abs(b), Math.abs(c), Math.abs(d))) {
@@ -46,7 +51,9 @@ export function solveCubicInClosedUnit(out: number[], a: number, b: number, c: n
   const halfQ = q / 2;
   const p3Cubed = (p / 3) * (p / 3) * (p / 3);
   const discriminant = halfQ * halfQ + p3Cubed;
-  const discriminantEps = CUBIC_REL_EPS * (halfQ * halfQ + Math.abs(p3Cubed));
+  const rootScale = Math.max(Math.abs(A), Math.sqrt(Math.abs(B)), Math.cbrt(Math.abs(C)));
+  const noise = CUBIC_NOISE_FACTOR * Number.EPSILON * rootScale * rootScale;
+  const discriminantEps = noise * (Math.abs(q) * rootScale + p * p);
 
   const pushIfInUnit = (t: number): void => {
     if (t >= -UNIT_PARAM_EPS && t <= 1 + UNIT_PARAM_EPS) {
@@ -68,6 +75,9 @@ export function solveCubicInClosedUnit(out: number[], a: number, b: number, c: n
     pushIfInUnit(twoR13 * Math.cos(theta / 3) - A3);
     pushIfInUnit(twoR13 * Math.cos((theta + 2 * Math.PI) / 3) - A3);
     pushIfInUnit(twoR13 * Math.cos((theta + 4 * Math.PI) / 3) - A3);
+  } else if (Math.abs(p) <= noise) {
+    // 3중근. p가 잡음 수준이면 q도 잡음 수준이라 cbrt(-q/2)는 잡음의 세제곱근이다
+    pushIfInUnit(-A3);
   } else {
     // 중근 (discriminant ≈ 0)
     const u1 = cbrtSigned(-halfQ);
