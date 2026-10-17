@@ -79,7 +79,7 @@ export const assertIndexRangeInBounds = (startIndex: number, count: number): voi
  * @param out 결과를 기록할 writable storage. 기존 내용은 제거된다.
  * @param rows commit할 point 행렬. 각 row는 그대로 `out`에 push한다.
  */
-export const commitSequence2DInto = <Out extends number[][]>(out: Out, rows: number[][]): Out => {
+export const commitSequence2DInto = (out: number[][], rows: number[][]): number[][] => {
   out.length = 0;
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i] as number[];

@@ -71,12 +71,12 @@ const sobolCoordinate = (index: number, directions: number[]): number => {
  * @param options startIndex. `0 <= startIndex <= 0xffffffff` safe integer(기본 `0`). seed나 random source가 아니라 row 시작 index만 옮긴다.
  * @throws {RangeError} count/dimension/startIndex가 범위를 벗어나거나, dimension이 `2`를 넘거나, `startIndex + count - 1`이 `0xffffffff`를 넘으면 던진다.
  */
-export const sobolSequenceInto = <Out extends number[][]>(
-  out: Out,
+export const sobolSequenceInto = (
+  out: number[][],
   count: number,
   dimension: number,
   options?: SobolSequenceOptions
-): Out => {
+): number[][] => {
   assertSequenceCount(count);
   assertDimension(dimension, SOBOL_MAX_DIMENSION);
   const startIndex = resolveStartIndex(options?.startIndex);

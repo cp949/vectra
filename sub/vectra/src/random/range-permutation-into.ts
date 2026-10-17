@@ -18,7 +18,7 @@ const assertValidCollectionLength = (length: number): void => {
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다.
  * @throws {RangeError} length가 유효한 collection length가 아니면 던진다.
  */
-export const rangePermutationInto = <Out extends number[]>(out: Out, length: number, rng?: RandomSource): Out => {
+export const rangePermutationInto = (out: number[], length: number, rng?: RandomSource): number[] => {
   assertValidCollectionLength(length);
 
   out.length = 0;

@@ -14,7 +14,7 @@ const MAX_COLLECTION_LENGTH = 0xffffffff;
  * @param max index의 상한(exclusive). [0, max) 범위에서 뽑는다.
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다.
  */
-export function uniqueIndicesInto<Out extends number[]>(out: Out, count: number, max: number, rng?: RandomSource): Out {
+export function uniqueIndicesInto(out: number[], count: number, max: number, rng?: RandomSource): number[] {
   if (!Number.isSafeInteger(count) || count < 0 || count > MAX_COLLECTION_LENGTH) {
     throw new RangeError('uniqueIndicesInto count must be a safe integer between 0 and 0xffffffff');
   }

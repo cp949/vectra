@@ -85,19 +85,9 @@ export interface RandomState {
     rng?: RandomSource
   ): { x: number; y: number } | undefined;
   haltonSequence(count: number, dimension: number, options?: HaltonSequenceOptions): number[][];
-  haltonSequenceInto<Out extends number[][]>(
-    out: Out,
-    count: number,
-    dimension: number,
-    options?: HaltonSequenceOptions
-  ): Out;
+  haltonSequenceInto(out: number[][], count: number, dimension: number, options?: HaltonSequenceOptions): number[][];
   sobolSequence(count: number, dimension: number, options?: SobolSequenceOptions): number[][];
-  sobolSequenceInto<Out extends number[][]>(
-    out: Out,
-    count: number,
-    dimension: number,
-    options?: SobolSequenceOptions
-  ): Out;
+  sobolSequenceInto(out: number[][], count: number, dimension: number, options?: SobolSequenceOptions): number[][];
 
   choice<T>(items: readonly T[], rng?: RandomSource): T | undefined;
   weightedChoice<T>(items: readonly T[], weights: readonly number[], rng?: RandomSource): T | undefined;
@@ -109,9 +99,9 @@ export interface RandomState {
   randomIndex(length: number, rng?: RandomSource): number | undefined;
   sample<T>(items: readonly T[], count: number, rng?: RandomSource): T[];
   sampleInto<T, Out extends T[]>(out: Out, items: readonly T[], count: number, rng?: RandomSource): Out;
-  rangePermutationInto<Out extends number[]>(out: Out, length: number, rng?: RandomSource): Out;
+  rangePermutationInto(out: number[], length: number, rng?: RandomSource): number[];
   rangePermutation(length: number, rng?: RandomSource): number[];
-  uniqueIndicesInto<Out extends number[]>(out: Out, count: number, max: number, rng?: RandomSource): Out;
+  uniqueIndicesInto(out: number[], count: number, max: number, rng?: RandomSource): number[];
   uniqueIndices(count: number, max: number, rng?: RandomSource): number[];
   pickUniqueInto<T, Out extends T[]>(out: Out, items: readonly T[], count: number, rng?: RandomSource): Out;
   pickUnique<T>(items: readonly T[], count: number, rng?: RandomSource): T[];
@@ -132,13 +122,13 @@ export interface RandomState {
   gamma(shape: number, scale?: number, rng?: RandomSource): number;
   beta(alpha: number, betaShape: number, rng?: RandomSource): number;
 
-  dirichletInto<Out extends number[]>(out: Out, alpha: readonly number[], rng?: RandomSource): Out;
+  dirichletInto(out: number[], alpha: readonly number[], rng?: RandomSource): number[];
   dirichlet(alpha: readonly number[], rng?: RandomSource): number[];
-  multivariateNormalInto<Out extends number[]>(
-    out: Out,
+  multivariateNormalInto(
+    out: number[],
     mean: readonly number[],
     covariance: readonly (readonly number[])[],
     rng?: RandomSource
-  ): Out;
+  ): number[];
   multivariateNormal(mean: readonly number[], covariance: readonly (readonly number[])[], rng?: RandomSource): number[];
 }

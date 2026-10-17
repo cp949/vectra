@@ -81,12 +81,12 @@ const resolveBases = (dimension: number, bases: readonly number[] | undefined): 
  * @param options startIndex와 custom bases. `startIndex`는 `0 <= startIndex <= 0xffffffff` safe integer(기본 `0`). `bases`는 length가 `dimension` 이상이고 각 base는 safe integer `>= 2`이며 중복이 없어야 한다.
  * @throws {RangeError} count/dimension/startIndex가 범위를 벗어나거나, `startIndex + count - 1`이 `0xffffffff`를 넘거나, bases가 length/정수/중복 조건을 위반하면 던진다.
  */
-export const haltonSequenceInto = <Out extends number[][]>(
-  out: Out,
+export const haltonSequenceInto = (
+  out: number[][],
   count: number,
   dimension: number,
   options?: HaltonSequenceOptions
-): Out => {
+): number[][] => {
   assertSequenceCount(count);
   assertDimension(dimension);
   const startIndex = resolveStartIndex(options?.startIndex);

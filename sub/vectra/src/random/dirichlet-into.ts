@@ -20,7 +20,7 @@ import type { RandomSource } from './random';
  * @throws {RangeError} alpha가 비어 있거나 entry가 finite number가 아니거나 0 이하일 때.
  * @throws {RangeError} gamma 합이 0이거나 non-finite일 때.
  */
-export const dirichletInto = <Out extends number[]>(out: Out, alpha: readonly number[], rng?: RandomSource): Out => {
+export const dirichletInto = (out: number[], alpha: readonly number[], rng?: RandomSource): number[] => {
   if (!Array.isArray(alpha)) {
     throw new TypeError(`dirichletInto: alpha는 array여야 한다. 받은 값: ${typeof alpha}`);
   }

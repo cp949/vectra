@@ -23,12 +23,12 @@ import type { RandomSource } from './random';
  * @throws {RangeError} covariance shape이 mean과 맞지 않거나 비대칭이거나 positive definite가 아닐 때.
  * @throws {RangeError} 결과 entry가 non-finite일 때.
  */
-export const multivariateNormalInto = <Out extends number[]>(
-  out: Out,
+export const multivariateNormalInto = (
+  out: number[],
   mean: readonly number[],
   covariance: readonly (readonly number[])[],
   rng?: RandomSource
-): Out => {
+): number[] => {
   if (!Array.isArray(mean)) {
     throw new TypeError(`multivariateNormalInto: mean은 array여야 한다. 받은 값: ${typeof mean}`);
   }

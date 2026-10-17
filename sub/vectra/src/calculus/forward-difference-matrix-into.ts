@@ -16,7 +16,7 @@ import { assertNonNegativeSafeInteger } from './validate.internal';
  * @param out matrix를 기록할 writable storage. `[binCount, binCount]`에 맞는 capacity가 준비되어 있어야 한다.
  * @param binCount 행렬 한 변 크기. 비음의 safe integer.
  */
-export function forwardDifferenceMatrixInto<Out extends number[][]>(out: Out, binCount: number): Out {
+export function forwardDifferenceMatrixInto(out: number[][], binCount: number): number[][] {
   assertNonNegativeSafeInteger(binCount, 'binCount');
   fillFiniteDifferenceMatrixInto(out, binCount, (row, i, n) => {
     if (n === 1) {
