@@ -10,13 +10,13 @@
 ```text
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                  Consumers (apps/*, sub/playground)                       │
-│  import { ... } from '@cp949/vectra' 또는 '@cp949/vectra/<domain>'         │
+│  import * as X from '@cp949/vectra/<domain>'                              │
 └──────────────────────────────────┬────────────────────────────────────────┘
                                     │ (subpath exports, tree-shakeable)
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                Public API surface — sub/vectra/src                        │
-│  root barrel  src/index.ts          (type 전용 re-export)                 │
+│  root barrel  src/index.ts          (type re-export + metadata 상수)      │
 │  domain barrel src/<domain>/index.ts (named function re-export)           │
 │  leaf module  src/<domain>/<kebab>.ts (public 함수 1개/파일)              │
 └──────────────────────────────────┬────────────────────────────────────────┘
@@ -115,7 +115,7 @@ structural typing.
 
 | 진입점 | 위치 | trigger | 책임 |
 | --- | --- | --- | --- |
-| npm root export | `dist/index.js` ← `src/index.ts` | `import ... from '@cp949/vectra'` | type 전용 re-export (런타임 값 미노출) |
+| npm root export | `dist/index.js` ← `src/index.ts` | `import ... from '@cp949/vectra'` | type re-export + `VECTRA_PACKAGE_NAME` (런타임 값은 이 상수 1개) |
 | domain subpath | `dist/<domain>/index.js` ← `src/<domain>/index.ts` | `import ... from '@cp949/vectra/<domain>'` | 도메인 함수 노출 (tree-shaking 친화) |
 | build entrypoint 생성 | `sub/vectra/build-entrypoints.ts` | `tsdown` build | `src` 재귀 스캔으로 root/domain barrel만 dist entry로 변환. leaf는 barrel에 병합 |
 

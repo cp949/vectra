@@ -6,7 +6,7 @@ public import path는 package `exports` 기준이다.
 
 | 목적 | Import |
 | --- | --- |
-| 편의 root import | `@cp949/vectra` |
+| type 재export, package metadata | `@cp949/vectra` |
 | shared type import | `@cp949/vectra/types` |
 
 ## Domain subpath

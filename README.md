@@ -107,7 +107,7 @@ pnpm release-it
 | [Package README](./sub/vectra/README.md) | 설치, import, output, domain overview |
 | [Docs README](./docs/README.md) | 외부 사용자 문서 허브 |
 | [Getting Started](./docs/guides/getting-started.md) | 첫 import와 첫 계산 |
-| [Import 방식](./docs/guides/imports.md) | root import / domain barrel 선택 |
+| [Import 방식](./docs/guides/imports.md) | root(type·metadata)와 domain subpath 선택 |
 | [Output과 Into](./docs/guides/outputs-and-into.md) | allocation과 caller-owned output |
 | [Domain 지도](./docs/reference/domains.md) | domain별 기능 탐색 |
 | [내부 문서 허브](./docs/internal/README.md) | 기여, release, agent 작업 문서 |
