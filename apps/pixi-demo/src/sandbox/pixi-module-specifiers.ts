@@ -14,8 +14,7 @@ export const PIXI_ALLOWED_SPECIFIERS: readonly string[] = packageExportSpecifier
 /**
  * sandbox runtime에 실제로 등록하는 vectra module key.
  *
- * compileForSandbox는 namespace import를 그대로 domain barrel key로 참조하고,
- * leaf import는 domain barrel key로 변환한다.
- * 예: `@cp949/vectra/circle/closest-point-into` → `__modules__['@cp949/vectra/circle']`
+ * compileForSandbox는 import specifier를 그대로 `__modules__` key로 참조한다.
+ * 패키지 exports가 domain barrel만 열기 때문에 leaf specifier는 allowlist에서 거부된다.
  */
 export const PIXI_RUNTIME_MODULE_SPECIFIERS: readonly string[] = PIXI_ALLOWED_SPECIFIERS;

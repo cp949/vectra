@@ -7,8 +7,6 @@
 import { transform } from 'sucrase';
 import type { PlaygroundDiagnostic } from '../diagnostics/types';
 
-const VECTRA_PACKAGE_NAME = '@cp949/vectra';
-
 // ──────────────────────────────────────────────
 // 공개 타입
 // ──────────────────────────────────────────────
@@ -150,38 +148,17 @@ function parseStaticImports(source: string): readonly ParsedImport[] {
 // ──────────────────────────────────────────────
 
 /**
- * leaf specifier를 barrel 경로로 변환한다.
- *
- * @cp949/vectra/vec/add-into → @cp949/vectra/vec
- * @cp949/vectra/vec          → @cp949/vectra/vec (그대로)
- * @cp949/vectra              → @cp949/vectra (그대로)
- */
-function resolveBarrelSpecifier(specifier: string): string {
-  const prefix = `${VECTRA_PACKAGE_NAME}/`;
-  if (!specifier.startsWith(prefix)) {
-    return specifier;
-  }
-
-  const parts = specifier.slice(prefix.length).split('/');
-  // @cp949/vectra/<domain>/<leaf> 형태인 경우 domain barrel 경로로 변환
-  if (parts.length >= 2) {
-    return `${VECTRA_PACKAGE_NAME}/${parts[0]}`;
-  }
-  return specifier;
-}
-
-/**
  * 파싱된 import를 `__modules__['specifier']` 구조분해 할당으로 변환한다.
  *
- * leaf specifier는 barrel 경로로 변환한다.
+ * specifier는 변환하지 않는다. 배포 패키지 exports는 domain subpath만 열기 때문에
+ * leaf specifier는 allowlist에서 걸러진다.
  *
  * 예:
- *   import { addInto } from '@cp949/vectra/vec/add-into';
+ *   import { addInto } from '@cp949/vectra/vec';
  *   → const { addInto } = __modules__['@cp949/vectra/vec'];
  */
 function importToModuleRef(parsed: ParsedImport): string {
-  // leaf specifier를 barrel 경로로 변환하여 __modules__ 키와 일치시킨다
-  const ref = `__modules__[${JSON.stringify(resolveBarrelSpecifier(parsed.specifier))}]`;
+  const ref = `__modules__[${JSON.stringify(parsed.specifier)}]`;
 
   // side-effect only: 아무것도 선언하지 않는다
   if (parsed.named.length === 0 && !parsed.namespace && !parsed.defaultBinding) {

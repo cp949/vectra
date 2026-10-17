@@ -8,14 +8,14 @@ playground 예제에서 새 `@cp949/vectra/<domain>` namespace import를 허용�
 iframe runner가 실제로 주입하는 `window.__modules__` barrel map을 갱신하지 않는 실수.
 
 예제 기본 정책은 domain barrel namespace import다. namespace alias는 caller local 변수명과
-충돌하기 쉬운 복수형 대신 PascalCase 단수 의미 + `x` 접미사를 쓴다. leaf import를 쓰더라도
-`compileForSandbox`는 domain barrel 참조로 변환한다.
+충돌하기 쉬운 복수형 대신 PascalCase 단수 의미 + `x` 접미사를 쓴다. `compileForSandbox`는 specifier를
+그대로 `__modules__` key로 쓴다. leaf specifier는 패키지 exports에 없어 allowlist에서 거부된다.
 
 ```txt
-@cp949/vectra/curve/catmull-rom-polyline-into -> __modules__['@cp949/vectra/curve']
+@cp949/vectra/curve -> __modules__['@cp949/vectra/curve']
 ```
 
-따라서 allowlist에 `@cp949/vectra/curve` 또는 `@cp949/vectra/curve/*` specifier가 있어도 sandbox module map에
+따라서 allowlist에 `@cp949/vectra/curve` specifier가 있어도 sandbox module map에
 `@cp949/vectra/curve`가 없으면 컴파일은 성공하고 런타임에서만 실패한다.
 
 ## 증상

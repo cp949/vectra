@@ -14,19 +14,6 @@ function packageExportSpecifiers(): string[] {
   });
 }
 
-function resolveBarrelSpecifier(specifier: string): string {
-  const prefix = '@cp949/vectra/';
-  if (!specifier.startsWith(prefix)) {
-    return specifier;
-  }
-
-  const parts = specifier.slice(prefix.length).split('/');
-  if (parts.length >= 2) {
-    return `@cp949/vectra/${parts[0]}`;
-  }
-  return specifier;
-}
-
 describe('createCanvasRunnerHtml', () => {
   it('사용자 코드를 AsyncFunction으로 실행할 수 있도록 CSP에서 eval을 허용한다', () => {
     const html = createCanvasRunnerHtml();
@@ -51,12 +38,16 @@ describe('createCanvasRunnerHtml', () => {
     expect(html).not.toContain('window.parent.postMessage');
   });
 
-  it('허용된 vectra leaf import의 barrel이 sandbox 모듈 번들에 포함된다', () => {
-    const missingBarrels = [...new Set(VECTRA_ALLOWED_SPECIFIERS.map(resolveBarrelSpecifier))].filter(
+  it('허용된 vectra specifier가 모두 sandbox 모듈 번들에 포함되고 leaf를 담지 않는다', () => {
+    const missing = VECTRA_ALLOWED_SPECIFIERS.filter(
       (specifier) => !VECTRA_SANDBOX_BARREL_SPECIFIERS.includes(specifier)
     );
+    const leaves = VECTRA_ALLOWED_SPECIFIERS.filter(
+      (specifier) => specifier.startsWith(`${VECTRA_PACKAGE_NAME}/`) && specifier.split('/').length > 3
+    );
 
-    expect(missingBarrels).toEqual([]);
+    expect(missing).toEqual([]);
+    expect(leaves).toEqual([]);
   });
 
   it('vectra sandbox allowlist가 package exports에서 파생된다', () => {

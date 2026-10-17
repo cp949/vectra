@@ -34,9 +34,6 @@ function resolveVectraSourceSpecifier(specifier: string): string | undefined {
   if (parts.length === 1) {
     return `${vectraSourceDir}${parts[0]}/index.ts`;
   }
-  if (parts.length === 2) {
-    return `${vectraSourceDir}${parts[0]}/${parts[1]}.ts`;
-  }
   return undefined;
 }
 
@@ -176,7 +173,6 @@ export default defineConfig({
     alias: [
       { find: '@repo/playground', replacement: playgroundSourceEntry },
       { find: /^@cp949\/vectra\/([^/]+)$/, replacement: `${vectraSourceDir}$1/index.ts` },
-      { find: /^@cp949\/vectra\/([^/]+)\/(.+)$/, replacement: `${vectraSourceDir}$1/$2.ts` },
     ],
   },
 });

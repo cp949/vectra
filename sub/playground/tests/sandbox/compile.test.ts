@@ -7,19 +7,18 @@ import { describe, expect, it } from 'vitest';
 import { compileForSandbox } from '../../src/sandbox/compile';
 
 /** 테스트용 허용 specifier 목록 */
-const ALLOWED = ['@cp949/vectra/vec', '@cp949/vectra/vec/add-into', '@cp949/vectra/finite-line'];
+const ALLOWED = ['@cp949/vectra/vec', '@cp949/vectra/finite-line'];
 
 describe('compileForSandbox', () => {
   describe('named import 변환', () => {
     it('단일 named import를 __modules__ 참조로 변환한다', () => {
-      const src = `import { addInto } from '@cp949/vectra/vec/add-into';
+      const src = `import { addInto } from '@cp949/vectra/vec';
 export function draw() {}`;
       const result = compileForSandbox(src, { allowedSpecifiers: ALLOWED });
 
       expect(result.diagnostics).toHaveLength(0);
-      // leaf specifier /vectra/vec/add-into → barrel /vectra/vec 로 매핑된다
       expect(result.compiledJs).toContain('const { addInto } = __modules__["@cp949/vectra/vec"]');
-      expect(result.specifiers).toContain('@cp949/vectra/vec/add-into');
+      expect(result.specifiers).toContain('@cp949/vectra/vec');
     });
 
     it('복수 named import를 구조분해 할당으로 변환한다', () => {
@@ -54,7 +53,7 @@ export function draw() {}`;
 
   describe('export 키워드 제거', () => {
     it('export function을 function으로 변환한다', () => {
-      const src = `import { addInto } from '@cp949/vectra/vec/add-into';
+      const src = `import { addInto } from '@cp949/vectra/vec';
 export function draw(ctx, runtime) { return addInto; }`;
       const result = compileForSandbox(src, { allowedSpecifiers: ALLOWED });
 
@@ -64,7 +63,7 @@ export function draw(ctx, runtime) { return addInto; }`;
     });
 
     it('export const를 const로 변환한다', () => {
-      const src = `import { addInto } from '@cp949/vectra/vec/add-into';
+      const src = `import { addInto } from '@cp949/vectra/vec';
 export const x = 1;
 export function draw() { return addInto; }`;
       const result = compileForSandbox(src, { allowedSpecifiers: ALLOWED });
@@ -98,7 +97,7 @@ export function draw() {}`;
     });
 
     it('허용된 specifier만 사용하면 오류가 없다', () => {
-      const src = `import { addInto } from '@cp949/vectra/vec/add-into';
+      const src = `import { addInto } from '@cp949/vectra/vec';
 export function draw() {}`;
       const result = compileForSandbox(src, { allowedSpecifiers: ALLOWED });
 
@@ -108,7 +107,7 @@ export function draw() {}`;
 
   describe('TypeScript 타입 제거', () => {
     it('TypeScript 타입 어노테이션을 제거한다', () => {
-      const src = `import { addInto } from '@cp949/vectra/vec/add-into';
+      const src = `import { addInto } from '@cp949/vectra/vec';
 export function draw(ctx: CanvasRenderingContext2D): void {
   const out: { x: number; y: number } = { x: 0, y: 0 };
   addInto(out, { x: 1, y: 2 }, { x: 3, y: 4 });
@@ -161,7 +160,7 @@ export function draw() {}`;
     });
   });
 
-  describe('namespace import 및 leaf specifier 변환', () => {
+  describe('namespace import 및 leaf specifier 거부', () => {
     it('namespace import를 __modules__[specifier] 전체 참조로 변환한다', () => {
       const src = `import * as vec from '@cp949/vectra/vec';
 export function draw() { return vec; }`;
@@ -171,14 +170,28 @@ export function draw() { return vec; }`;
       expect(result.compiledJs).toContain('const vec = __modules__["@cp949/vectra/vec"]');
     });
 
-    it('leaf specifier를 barrel 경로로 해석하여 __modules__ 키와 일치시킨다', () => {
+    // 배포 패키지 exports는 domain subpath만 연다. leaf는 allowlist에 없으므로 막힌다.
+    it('allowlist에 없는 leaf specifier를 barrel로 바꾸지 않고 거부한다', () => {
       const src = `import { addInto } from '@cp949/vectra/vec/add-into';
 export function draw() { return addInto; }`;
       const result = compileForSandbox(src, { allowedSpecifiers: ALLOWED });
 
+      expect(result.compiledJs).toBe('');
+      expect(result.diagnostics).toHaveLength(1);
+      expect(result.diagnostics[0].message).toContain("'@cp949/vectra/vec/add-into'");
+    });
+
+    // allowlist를 직접 넓혀도 compile은 specifier를 그대로 __modules__ 키로 쓴다.
+    it('allowlist에 leaf가 있어도 barrel 키로 변환하지 않는다', () => {
+      const src = `import { addInto } from '@cp949/vectra/vec/add-into';
+export function draw() { return addInto; }`;
+      const result = compileForSandbox(src, {
+        allowedSpecifiers: [...ALLOWED, '@cp949/vectra/vec/add-into'],
+      });
+
       expect(result.diagnostics).toHaveLength(0);
-      // leaf specifier /vectra/vec/add-into → barrel /vectra/vec
-      expect(result.compiledJs).toContain('__modules__["@cp949/vectra/vec"]');
+      expect(result.compiledJs).toContain('__modules__["@cp949/vectra/vec/add-into"]');
+      expect(result.compiledJs).not.toContain('__modules__["@cp949/vectra/vec"]');
     });
   });
 });
