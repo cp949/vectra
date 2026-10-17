@@ -77,16 +77,12 @@ export function fbm2Kernel(x: number, y: number, params: ResolvedFbm2Params, rid
   return finalizeNoiseValue(ridged ? normalized * 2 - 1 : normalized);
 }
 
-// 합성 결과를 [-1, 1]로 마감한다. overflow로 non-finite면 RangeError, -0은 +0으로 canonicalize.
+// 합성 결과를 마감한다. overflow로 non-finite면 RangeError, -0은 +0으로 canonicalize.
 function finalizeNoiseValue(value: number): number {
   if (!Number.isFinite(value)) {
     throw new RangeError(`noise result must be a finite number, got ${String(value)}`);
   }
-  if (value <= -1) {
-    return -1;
-  }
-  if (value >= 1) {
-    return 1;
-  }
+  // 각 octave 값이 [-1, 1]이면 누적 합은 총 amplitude를 넘지 않고(부동소수점 덧셈이 단조), 나눗셈 결과도 [-1, 1]이다.
+  // ridged는 [0, 1] 합성 결과를 2배한 뒤 1을 빼므로 역시 [-1, 1]이다. 별도 clamp가 필요 없다.
   return value === 0 ? 0 : value;
 }
