@@ -28,12 +28,14 @@ function writeSplitSegment(
   if (seg.kind === 'line') {
     writeLineSplit(outA, outB, seg, segLen === 0 ? 0 : local / segLen);
   } else if (seg.kind === 'close') {
-    writeCloseSplit(outA, outB, seg, segLen === 0 ? 0 : local / segLen);
+    // close는 앞선 segment가 모두 선택되지 않은 뒤에만 오므로 distance >= cumulativeLen이다.
+    // 선택 조건 `distance < cumulativeLen + segLen`이 참이려면 segLen > 0이다.
+    writeCloseSplit(outA, outB, seg, local / segLen);
   } else if (seg.kind === 'quadratic') {
     writeQuadraticSplit(outA, outB, seg, local);
   } else if (seg.kind === 'cubic') {
     writeCubicSplit(outA, outB, seg, local);
-  } else if (seg.kind === 'arc') {
+  } else {
     // centerArcBuf는 measureSegmentLength의 arc 분기에서 이미 채워졌다.
     writeArcSplit(outA, outB, centerArcBuf, local);
   }

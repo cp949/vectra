@@ -76,7 +76,6 @@ export function sanitizeCommandsInto(
     // 직전 current point 추적. 첫 Move가 없으면 origin(0,0) 가정.
     let curX = 0;
     let curY = 0;
-    let prevWasMove = false;
     let subX = 0;
     let subY = 0;
     let subpathOpen = false;
@@ -87,19 +86,16 @@ export function sanitizeCommandsInto(
         curY = cmd.y;
         subX = cmd.x;
         subY = cmd.y;
-        prevWasMove = true;
         subpathOpen = false;
         continue;
       }
       if (cmd.kind === 'close') {
         stage1.push(cmd);
         // close 후 current = subpath start (`forEachDrawSegment` 정책 일치)
-        if (!prevWasMove && subpathOpen) {
-          curX = subX;
-          curY = subY;
-        }
+        // no-op close(move 바로 뒤, 이미 닫힘)에서도 current point가 이미 subpath 시작점이라 무조건 옮겨도 같다.
+        curX = subX;
+        curY = subY;
         subpathOpen = false;
-        prevWasMove = false;
         continue;
       }
       const ep = endpointOf(cmd);
@@ -107,7 +103,6 @@ export function sanitizeCommandsInto(
       // 여기서는 항상 line/quadratic/cubic/arc이며 ep가 정의된다.
       if (ep !== undefined && Math.abs(ep.x - curX) <= tolerance && Math.abs(ep.y - curY) <= tolerance) {
         // duplicate: drop. current point는 그대로.
-        prevWasMove = false;
         continue;
       }
       stage1.push(cmd);
@@ -118,7 +113,6 @@ export function sanitizeCommandsInto(
       }
       curX = (cmd as { x: number }).x;
       curY = (cmd as { y: number }).y;
-      prevWasMove = false;
     }
   } else {
     stage1 = snapshot.slice();

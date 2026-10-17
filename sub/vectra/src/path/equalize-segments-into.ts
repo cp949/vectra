@@ -89,9 +89,6 @@ function copyWithPadding(out: PathCommand[], commands: readonly PathCommand[], e
         curX = subX;
         curY = subY;
         pushPaddingAt(curX, curY, after - before);
-      } else {
-        curX = subX;
-        curY = subY;
       }
       subpathOpen = false;
       prevWasMove = false;

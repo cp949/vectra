@@ -112,7 +112,8 @@ export function containsPoint(
     if (c === -1) {
       // boundary hit — sentinel으로 표시해 caller가 즉시 true를 반환하도록 함
       totalCrossings = -1;
-    } else if (totalCrossings !== -1) {
+    } else {
+      // 확정된 boundary hit이 있으면 loop가 이미 끝났으므로 여기서 totalCrossings는 -1이 아니다.
       totalCrossings += c;
     }
     subpathCmds.length = 0;

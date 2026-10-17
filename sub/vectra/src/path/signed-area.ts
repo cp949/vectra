@@ -9,7 +9,6 @@ import { flattenInto } from './flatten-into';
  * 점이 2개 미만이면 0이다.
  */
 function shoelaceTwiceArea(pts: XYObjectWritable[]): number {
-  if (pts.length < 2) return 0;
   let acc = 0;
   for (let i = 0; i < pts.length; i++) {
     const j = i + 1 === pts.length ? 0 : i + 1;

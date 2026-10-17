@@ -88,7 +88,7 @@ export function boundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
       const cmd = seg.command;
       cubicBoundsInto(scratchBounds, [fromX, fromY], [cmd.x1, cmd.y1], [cmd.x2, cmd.y2], [cmd.x, cmd.y]);
       includeBounds(outObj, scratchBounds);
-    } else if (seg.kind === 'arc') {
+    } else {
       // arc: endpoint form → center form 변환 후 extrema 계산
       endpointArcToCenterInto(centerArcBuf, [fromX, fromY], seg.command);
       arcBoundsInto(scratchBounds, centerArcBuf);

@@ -81,7 +81,7 @@ export function createSegmentFlattener(options?: PathMeasurementOptions): Segmen
         { x: cmd.x, y: cmd.y },
         flatOpts
       );
-    } else if (seg.kind === 'arc') {
+    } else {
       endpointArcToCenterInto(centerArc, { x: seg.fromX, y: seg.fromY }, seg.command);
       arcFlattenInto(segBuf, centerArc, flatOpts);
     }
