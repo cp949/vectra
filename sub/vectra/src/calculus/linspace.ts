@@ -8,7 +8,7 @@ import type { LinspaceOptions } from './types';
  * `endpoint`가 `true`(기본값)이면 마지막 entry는 `xMax`를 직접 기록한다. denominator는 `binCount - 1`이다.
  * `endpoint`가 `false`이면 denominator는 `binCount`이고 마지막 entry는 `xMax`를 포함하지 않는다.
  * `binCount === 0`은 `[]`. `binCount === 1`은 `endpoint` 옵션과 무관하게 `[xMin]`.
- * 산식 결과가 non-finite가 되면 `RangeError`. 결과의 `-0`은 `0`으로 canonicalize한다.
+ * `xMax - xMin`이 non-finite이면 `RangeError`. 결과의 `-0`은 `0`으로 canonicalize한다.
  *
  * @param xMin 첫 entry로 사용할 시작값. finite number.
  * @param xMax `endpoint: true`일 때 마지막 entry로 사용할 끝값. finite number.

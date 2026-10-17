@@ -8,7 +8,7 @@ import { rangeInto } from './range-into';
  * `step > 0`이면 `value < stop`인 entry만, `step < 0`이면 `value > stop`인 entry만 포함한다.
  * direction이 start/stop과 맞지 않으면 `[]`.
  * `Math.ceil(span/step)`이 stop을 초과하는 entry를 만들 수 있어 fp drift overshoot는 commit 직전에 잘려나간다.
- * 결과 길이가 safe integer 범위를 넘거나 반복 중 entry가 non-finite가 되면 `RangeError`.
+ * 결과 길이가 safe integer 범위를 넘거나 `stop - start`가 non-finite이면 `RangeError`.
  * 결과의 `-0`은 `0`으로 canonicalize한다.
  *
  * @param start 첫 entry로 사용할 시작값. finite number.

@@ -10,7 +10,7 @@ import { assertFiniteNumber, assertNonNegativeSafeInteger } from './validate.int
  * denominator는 `binCount - 1`이다. `endpoint`가 `false`이면 denominator는 `binCount`이고 마지막
  * entry는 `xMax`를 포함하지 않는다.
  * `binCount === 0`은 `[]`. `binCount === 1`은 `endpoint` 옵션과 무관하게 `[xMin]`.
- * 산식 결과가 non-finite가 되면 `RangeError`.
+ * `xMax - xMin`이 non-finite이면 `RangeError`.
  * validation 또는 계산이 실패하면 `out`은 호출 전 상태 그대로 남는다(모든 산술이 끝난 뒤 commit).
  * 성공 시 결과의 `-0`은 `0`으로 canonicalize한다. 반환값은 `out`.
  *
@@ -47,10 +47,8 @@ export function linspaceInto(
   }
 
   const denominator = endpoint ? binCount - 1 : binCount;
+  // denominator >= 1이라 |step| <= |span|이고 span이 finite라 step도 finite다.
   const step = span / denominator;
-  if (!Number.isFinite(step)) {
-    throw new RangeError(`linspace step must be finite, got ${String(step)}`);
-  }
 
   const lastIndex = endpoint ? binCount - 1 : -1;
   const temp = new Array<number>(binCount);
@@ -63,11 +61,8 @@ export function linspaceInto(
       temp[i] = xMax;
       continue;
     }
-    const value = xMin + step * i;
-    if (!Number.isFinite(value)) {
-      throw new RangeError(`linspace entry at index ${i} must be finite, got ${String(value)}`);
-    }
-    temp[i] = value;
+    // |step * i| <= |span|이라 value는 xMin과 xMax 사이에 머물러 항상 finite다.
+    temp[i] = xMin + step * i;
   }
 
   commitSequenceInto(out, temp);

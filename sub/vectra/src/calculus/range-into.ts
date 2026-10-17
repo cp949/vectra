@@ -11,8 +11,8 @@ import { assertFiniteNumber, assertNonNegativeSafeInteger } from './validate.int
  * 결과는 `[]`.
  * non-representable step에서 `Math.ceil(span / step)` 결과가 실제 stop을 초과하는 entry를 포함할 수 있으므로
  * 각 entry를 commit 직전에 stop-exclusive로 한 번 더 검증해 overshoot을 잘라낸다.
- * 결과 길이를 division 기반으로 산출하고 safe integer 범위를 넘으면 `RangeError`. 반복 중 `start + step * i`가
- * non-finite가 되면 `RangeError`.
+ * 결과 길이를 division 기반으로 산출하고 safe integer 범위를 넘으면 `RangeError`. `stop - start`가
+ * non-finite이면 `RangeError`.
  * validation 또는 계산이 실패하면 `out`은 호출 전 상태 그대로 남는다(모든 산술이 끝난 뒤 commit).
  * 성공 시 결과의 `-0`은 `0`으로 canonicalize한다. 반환값은 `out`.
  *
@@ -44,10 +44,8 @@ export function rangeInto(out: number[], start: number, stop: number, step: numb
   const temp = new Array<number>(rawCount);
   let actualCount = 0;
   for (let i = 0; i < rawCount; i++) {
+    // i < span / step이라 step * i는 span을 넘지 않고 value는 start와 stop 사이에 머물러 항상 finite다.
     const value = start + step * i;
-    if (!Number.isFinite(value)) {
-      throw new RangeError(`range entry at index ${i} must be finite, got ${String(value)}`);
-    }
     // fp drift로 마지막 entry가 stop에 도달하거나 초과할 수 있다. stop-exclusive 정책을 강제한다.
     if (step > 0 ? value >= stop : value <= stop) {
       break;

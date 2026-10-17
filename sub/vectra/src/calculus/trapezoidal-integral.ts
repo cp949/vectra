@@ -54,11 +54,8 @@ export function trapezoidalIntegral(f: (x: number) => number, xMin: number, xMax
     throw new RangeError(`trapezoidal partial sum at endpoint pair must be finite, got ${String(sum)}`);
   }
   for (let i = 1; i < binCount - 1; i++) {
+    // dx * i <= span이라 x는 xMin과 xMax 사이에 머물러 항상 finite다.
     const x = xMin + dx * i;
-    // xMin / dx finite + i in [1, binCount - 2]에서 x는 항상 finite. 방어용 가드.
-    if (!Number.isFinite(x)) {
-      throw new RangeError(`integration grid point at index ${i} must be finite, got ${String(x)}`);
-    }
     const value = evaluateAt(f, x, i);
     sum += value;
     if (!Number.isFinite(sum)) {
