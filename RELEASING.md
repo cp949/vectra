@@ -61,24 +61,12 @@ publish가 git commit·tag보다 먼저 실행된다(release-it 21 lifecycle).
 
 설정 파일: [`sub/vectra/.release-it.json`](sub/vectra/.release-it.json)
 
-## showcase와 API 문서 배포
+## API 문서 생성
 
-showcase 데모와 API reference를 GitHub Pages 한 사이트로 배포한다. API 생성기는 `sub/api-docs`(typedoc)다.
+API reference는 로컬에서 생성한다. 배포하지 않는다. 생성기는 `sub/api-docs`(typedoc)다.
 
-| 경로 | 내용 |
-| --- | --- |
-| `https://cp949.github.io/vectra/` | showcase (`apps/showcase`) |
-| `https://cp949.github.io/vectra/api/` | API reference (typedoc) |
-
-- 트리거: `v*` tag push, 또는 수동 실행. workflow는 `.github/workflows/docs.yml`이다.
-- release-it이 tag를 push하면 둘 다 자동으로 갱신된다.
-- 수동 실행: `gh workflow run docs.yml`. 첫 배포와 다시 올릴 때 쓴다.
-- 최초 1회: 저장소 Settings → Pages → Source를 `GitHub Actions`로 바꾼다.
-- showcase 로컬 빌드: `pnpm --filter @repo/showcase build:pages`. 결과는 `apps/showcase/dist/`다.
-  - `--mode pages`가 base를 `/vectra/`로 둔다. 일반 `build`와 `dev`는 `/`다.
-  - 예제 URL은 path 방식(`/vectra/ray-light-field`)이다. Pages는 없는 path에 `404.html`을 응답하므로 `index.html`을 `404.html`로 복사한다. 딥링크는 404 상태로 응답하지만 앱이 뜬다.
-  - 저장소 이름을 바꾸면 `apps/showcase/vite.config.ts`의 `PAGES_BASE`도 바꾼다.
-- API 로컬 생성: `pnpm --filter @repo/api-docs docs:api`. 결과는 `sub/api-docs/docs-api/`다. Git에서 제외한다.
+- 생성: `pnpm --filter @repo/api-docs docs:api`. 결과는 `sub/api-docs/docs-api/`다. Git에서 제외한다.
+- 확인: `docs-api/index.html`을 브라우저로 연다.
 
 typedoc을 `sub/vectra`에 두지 않는 이유:
 

@@ -23,5 +23,4 @@ export default {
   // option 타입은 domain barrel에서 export하지 않는다. 공개 surface는 문서 때문에 바꾸지 않는다.
   validation: { notExported: false },
   readme: 'none',
-  githubPages: true,
 };
