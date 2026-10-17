@@ -15,10 +15,6 @@ export function mean(values: readonly number[]): number {
     throw new RangeError('values must not be empty');
   }
   const sum = sumFiniteValues(values);
-  // length >= 1 + sum finite에서 result는 항상 finite. 방어용 가드.
-  const result = sum / length;
-  if (!Number.isFinite(result)) {
-    throw new RangeError(`mean must be finite, got ${String(result)}`);
-  }
-  return result;
+  // length >= 1이고 sum이 finite라 평균도 finite다.
+  return sum / length;
 }

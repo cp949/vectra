@@ -9,7 +9,7 @@ import { assertValuesArray, assertVarianceMode } from './validate.internal';
  * `RangeError`. 빈 배열은 `RangeError`. `options.mode` 기본 `"population"`. `"population"` denominator는
  * `n`, `"sample"` denominator는 `n - 1`. `mode`가 `"population"`/`"sample"`이 아니면 `RangeError`.
  * `mode: "sample"`에서 `first.length === 1`이면 `RangeError`. 모든 entry는 finite number여야 한다.
- * 위반 시 `RangeError`. 누적 sum, centered delta, centered product, product sum, 나눗셈 결과 중 하나라도
+ * 위반 시 `RangeError`. 누적 sum, centered delta, centered product, product sum 중 하나라도
  * non-finite면 `RangeError`. 결과의 `-0`은 `0`으로 canonicalize한다.
  *
  * @param first covariance를 계산할 첫 vector. finite entry로만 구성된다.
@@ -36,8 +36,5 @@ export function covariance(first: readonly number[], second: readonly number[], 
   const { productSum } = computeCovarianceStats(first, second);
   const denominator = mode === 'sample' ? length - 1 : length;
   const result = productSum / denominator;
-  if (!Number.isFinite(result)) {
-    throw new RangeError(`covariance must be finite, got ${String(result)}`);
-  }
   return Object.is(result, -0) ? 0 : result;
 }

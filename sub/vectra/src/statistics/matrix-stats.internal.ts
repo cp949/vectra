@@ -66,8 +66,8 @@ export function materializeVariables(
 /**
  * variable의 finite-검증된 observation 평균을 계산한다.
  *
- * caller는 `samples`가 모두 finite임을 보장한다. 누적 sum이 non-finite면 `RangeError`. 결과 mean이
- * non-finite면 `RangeError`.
+ * caller는 `samples`가 모두 finite임을 보장한다. 누적 sum이 non-finite면 `RangeError`. caller는
+ * `samples.length >= 1`을 보장한다(평균은 sum이 finite이면 finite다).
  *
  * @param samples 평균을 계산할 finite number 배열
  * @param variableIndex error message용 variable index
@@ -82,9 +82,6 @@ export function computeVariableMean(samples: readonly number[], variableIndex: n
     }
   }
   const mean = sum / length;
-  if (!Number.isFinite(mean)) {
-    throw new RangeError(`variable[${variableIndex}] mean must be finite, got ${String(mean)}`);
-  }
   return mean;
 }
 
@@ -129,8 +126,8 @@ export function computeCenteredDeltas(
 }
 
 /**
- * 두 variable의 centered delta 배열로부터 centered product sum을 계산한다. product 또는 product sum이
- * non-finite면 `RangeError`.
+ * 두 variable의 centered delta 배열로부터 centered product sum을 계산한다. product sum이
+ * non-finite면 `RangeError`. caller는 centered 제곱이 finite로 검증된 delta를 넘겨 product는 finite다.
  *
  * @param deltaA 첫 variable의 centered delta 배열
  * @param deltaB 둘째 variable의 centered delta 배열. `deltaA`와 같은 길이.
@@ -147,11 +144,6 @@ export function computeCenteredProductSum(
   let productSum = 0;
   for (let i = 0; i < length; i++) {
     const product = deltaA[i] * deltaB[i];
-    if (!Number.isFinite(product)) {
-      throw new RangeError(
-        `centered product at variables (${indexA}, ${indexB}) sample ${i} must be finite, got ${String(product)}`
-      );
-    }
     productSum += product;
     if (!Number.isFinite(productSum)) {
       throw new RangeError(

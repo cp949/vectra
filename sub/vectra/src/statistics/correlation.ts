@@ -10,7 +10,8 @@ import { assertValuesArray, assertVarianceMode } from './validate.internal';
  * `TypeError`. 길이가 다르면 `RangeError`. 빈 배열은 `RangeError`. `options.mode` 기본 `"population"`.
  * `mode`가 `"population"`/`"sample"`이 아니면 `RangeError`. `mode: "sample"`에서 `first.length === 1`이면
  * `RangeError`. 모든 entry는 finite number여야 한다. 위반 시 `RangeError`. covariance/standardDeviation
- * 계산이 non-finite면 `RangeError`. `first` 또는 `second`의 variance가 `0`이면 `RangeError`. 결과는
+ * 계산이 non-finite면 `RangeError`. `first` 또는 `second`의 variance가 `0`이면 `RangeError`. 제곱합의 곱이
+ * non-finite이거나 분모가 `0`이어도 `RangeError`. 결과는
  * `[-1, 1]` 범위로 ULP 수준에서 clamp되지 않는다(부동소수점 오차로 경계를 벗어날 수 있음). 결과의 `-0`은
  * `0`으로 canonicalize한다.
  *
@@ -55,8 +56,5 @@ export function correlation(first: readonly number[], second: readonly number[],
     throw new RangeError(`correlation denominator must be finite and non-zero, got ${String(denominator)}`);
   }
   const result = productSum / denominator;
-  if (!Number.isFinite(result)) {
-    throw new RangeError(`correlation must be finite, got ${String(result)}`);
-  }
   return Object.is(result, -0) ? 0 : result;
 }

@@ -76,7 +76,7 @@ export function assertSymmetricMatrix(
  * `cov = L * L^T`이고 `L`은 lower-triangular matrix다. caller는 `cov`가 `assertSymmetricMatrix` 결과임을 보장한다.
  *
  * pivot squared 값(`L[k][k]^2 = cov[k][k] - Σ_{j<k} L[k][j]^2`)이 `epsilon` 이하이면 singular/non-SPD로 `RangeError`.
- * sqrt/division 결과가 non-finite이거나 누적 sum이 non-finite면 `RangeError`. 결과 lower factor는 fresh `number[][]`이다.
+ * division 결과가 non-finite이거나 누적 sum이 non-finite면 `RangeError`. 결과 lower factor는 fresh `number[][]`이다.
  *
  * @param cov symmetric finite square matrix(`n x n`)
  * @param n matrix 한 변의 길이
@@ -114,9 +114,6 @@ export function choleskyFactor(cov: readonly (readonly number[])[], n: number, e
           );
         }
         const root = Math.sqrt(diag);
-        if (!Number.isFinite(root) || root === 0) {
-          throw new RangeError(`Cholesky sqrt at (${r}) must be finite non-zero, got ${String(root)}`);
-        }
         L[r][r] = root;
       } else {
         const numerator = cov[r][c] - sum;

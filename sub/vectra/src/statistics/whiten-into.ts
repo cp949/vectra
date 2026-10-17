@@ -92,9 +92,6 @@ export function whitenInto(
     for (let c = r; c < variableCount; c++) {
       const productSum = computeCenteredProductSum(deltas[r], deltas[c], r, c);
       const value = productSum / denominator;
-      if (!Number.isFinite(value)) {
-        throw new RangeError(`whiten covariance at (${r}, ${c}) must be finite, got ${String(value)}`);
-      }
       cov[r][c] = value;
       cov[c][r] = value;
     }

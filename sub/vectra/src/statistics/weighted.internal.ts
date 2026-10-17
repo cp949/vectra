@@ -6,7 +6,8 @@ import { assertValuesArray } from './validate.internal';
  * `values`/`weights`는 같은 길이의 finite number 배열이어야 한다. array가 아니면 `TypeError`.
  * 빈 배열 또는 length mismatch는 `RangeError`. `values[i]`가 non-finite거나 `weights[i]`가
  * non-finite이거나 음수면 `RangeError`. 단일 패스로 각 entry, `weightedSum = Σ wᵢ·xᵢ`,
- * `totalWeight = Σ wᵢ`, `sumOfSquaredWeights = Σ wᵢ²`의 finite 여부를 매 step 검증한다.
+ * `sumOfSquaredWeights = Σ wᵢ²`의 finite 여부를 매 step 검증한다. `totalWeight = Σ wᵢ`는 앞 index의 `wᵢ²`가
+ * finite로 검증돼 항상 finite다.
  * `totalWeight === 0`이면 `RangeError`. `weightedMean = weightedSum / totalWeight`의 finite도
  * 검증한다.
  *
@@ -52,9 +53,6 @@ export function computeWeightedMean(
       throw new RangeError(`weightedSum must be finite, got ${String(weightedSum)} at index ${i}`);
     }
     totalWeight += w;
-    if (!Number.isFinite(totalWeight)) {
-      throw new RangeError(`totalWeight must be finite, got ${String(totalWeight)} at index ${i}`);
-    }
     const weightSquared = w * w;
     if (!Number.isFinite(weightSquared)) {
       throw new RangeError(`squared weight at index ${i} must be finite, got ${String(weightSquared)}`);

@@ -86,9 +86,6 @@ export function mahalanobisDistance(
     }
   }
 
-  const distance = Math.sqrt(squared);
-  if (!Number.isFinite(distance)) {
-    throw new RangeError(`mahalanobis distance must be finite, got ${String(distance)}`);
-  }
-  return Object.is(distance, -0) ? 0 : distance;
+  // squared는 +0에서 시작해 비음수 항만 더하므로 sqrt 결과는 finite이고 -0이 아니다.
+  return Math.sqrt(squared);
 }

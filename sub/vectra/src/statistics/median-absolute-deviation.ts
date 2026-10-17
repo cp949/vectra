@@ -26,8 +26,5 @@ export function medianAbsoluteDeviation(values: readonly number[]): number {
   }
   deviations.sort((a, b) => a - b);
   const result = medianOfSorted(deviations);
-  if (!Number.isFinite(result)) {
-    throw new RangeError(`medianAbsoluteDeviation must be finite, got ${String(result)}`);
-  }
   return canonicalizeNegativeZero(result);
 }

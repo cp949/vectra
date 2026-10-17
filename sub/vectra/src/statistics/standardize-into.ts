@@ -14,7 +14,7 @@ import { assertValuesArray, assertVarianceMode } from './validate.internal';
  * length === 0 분기가 sample 검증보다 먼저 실행되므로 빈 입력은 RangeError가 아니다.
  * `mode: "sample"`에서 `values.length === 1`이면 `RangeError`.
  * 모든 entry는 finite number여야 한다. 위반 시 `RangeError`. 누적 sum, centered delta, delta 제곱,
- * 제곱합, variance, standardDeviation, z-score 결과가 non-finite면 `RangeError`.
+ * 제곱합이 non-finite면 `RangeError`.
  * `standardDeviation === 0`이면 같은 길이의 zero vector를 commit한다.
  * validation 또는 계산이 실패하면 `out`은 호출 전 상태 그대로 남는다(모든 산술이 끝난 뒤 commit).
  * `out`과 `values`가 같은 배열이어도 안전하다. 결과의 `-0`은 `0`으로 canonicalize한다.
@@ -42,14 +42,8 @@ export function standardizeInto(out: number[], values: readonly number[], option
   const { deltas, squaredSum } = computeMeanWithSquaredSum(values);
   const denominator = mode === 'sample' ? length - 1 : length;
   const varianceValue = squaredSum / denominator;
-  if (!Number.isFinite(varianceValue)) {
-    throw new RangeError(`variance must be finite, got ${String(varianceValue)}`);
-  }
-  // variance >= 0 + finite에서 sqrt는 항상 finite. 방어용 가드.
+  // variance가 finite 비음수라 sqrt도 finite다. |z|는 sqrt(n) 이하로 묶여 나눗셈도 finite다.
   const stddev = Math.sqrt(varianceValue);
-  if (!Number.isFinite(stddev)) {
-    throw new RangeError(`standardDeviation must be finite, got ${String(stddev)}`);
-  }
 
   const temp = new Array<number>(length);
   if (stddev === 0) {
@@ -60,9 +54,6 @@ export function standardizeInto(out: number[], values: readonly number[], option
   } else {
     for (let i = 0; i < length; i++) {
       const z = deltas[i] / stddev;
-      if (!Number.isFinite(z)) {
-        throw new RangeError(`z-score at index ${i} must be finite, got ${String(z)}`);
-      }
       temp[i] = z;
     }
   }

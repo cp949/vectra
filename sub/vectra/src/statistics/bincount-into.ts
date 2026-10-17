@@ -55,9 +55,6 @@ export function bincountInto(out: number[], labels: readonly number[], options?:
   for (let i = 0; i < labels.length; i++) {
     const label = labels[i];
     const next = counts[label] + 1;
-    if (!Number.isSafeInteger(next)) {
-      throw new RangeError(`bincount overflow at label ${label}, got ${String(next)}`);
-    }
     counts[label] = next;
   }
 

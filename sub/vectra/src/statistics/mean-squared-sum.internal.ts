@@ -5,7 +5,7 @@ import { sumFiniteValues } from './validate.internal';
  *
  * 단계별 동작:
  *  1. `sumFiniteValues`로 entry finite와 누적 sum finite를 검증한다.
- *  2. `sum / length`로 평균을 계산하고 finite 여부를 방어 가드한다.
+ *  2. `sum / length`로 평균을 계산한다. sum이 finite이고 length >= 1이라 평균도 finite다.
  *  3. 각 entry에 대해 `delta = value - mean`을 계산해 `deltas[i]`에 저장하고 finite를 검증한다.
  *  4. `delta * delta`가 finite한지, 누적 squared sum이 finite한지 매 step 검증한다.
  *
@@ -22,11 +22,8 @@ export function computeMeanWithSquaredSum(values: readonly number[]): {
 } {
   const length = values.length;
   const sum = sumFiniteValues(values);
-  // length >= 1 + sum finite에서 result는 항상 finite. 방어용 가드.
+  // length >= 1이고 sum이 finite라 평균도 finite다.
   const meanValue = sum / length;
-  if (!Number.isFinite(meanValue)) {
-    throw new RangeError(`mean must be finite, got ${String(meanValue)}`);
-  }
   const deltas = new Array<number>(length);
   let squaredSum = 0;
   for (let i = 0; i < length; i++) {
@@ -64,11 +61,8 @@ export function computeMeanWithSquaredSum(values: readonly number[]): {
 export function computeSquaredSum(values: readonly number[]): number {
   const length = values.length;
   const sum = sumFiniteValues(values);
-  // length >= 1 + sum finite에서 result는 항상 finite. 방어용 가드.
+  // length >= 1이고 sum이 finite라 평균도 finite다.
   const meanValue = sum / length;
-  if (!Number.isFinite(meanValue)) {
-    throw new RangeError(`mean must be finite, got ${String(meanValue)}`);
-  }
   let squaredSum = 0;
   for (let i = 0; i < length; i++) {
     const delta = values[i] - meanValue;

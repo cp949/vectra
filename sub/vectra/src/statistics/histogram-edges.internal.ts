@@ -40,7 +40,7 @@ export function scanFiniteMinMax(values: readonly number[], name: string): { min
  *
  * `min === max`이면 deterministic `[min - 0.5, max + 0.5]`로 확장한 뒤 분할한다.
  *
- * edge 계산 결과가 non-finite면 `RangeError`. 마지막 edge는 산식이 아니라 `max` 직접 기록으로 drift를 회피한다.
+ * span이 non-finite이거나 `0` 이하이면, 또는 edge 계산 결과가 non-finite면 `RangeError`. 마지막 edge는 산식이 아니라 `max` 직접 기록으로 drift를 회피한다.
  *
  * @param min lower bound
  * @param max upper bound. caller는 `min <= max` 보장.
@@ -52,11 +52,6 @@ export function buildUniformBinEdges(min: number, max: number, binCount: number)
   if (lo === hi) {
     lo = min - 0.5;
     hi = max + 0.5;
-    if (!Number.isFinite(lo) || !Number.isFinite(hi)) {
-      throw new RangeError(
-        `histogram bin edge expansion for max === min produced non-finite bound, got [${String(lo)}, ${String(hi)}]`
-      );
-    }
   }
   const span = hi - lo;
   if (!Number.isFinite(span) || span <= 0) {

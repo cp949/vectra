@@ -7,7 +7,8 @@ import { computeMeanWithSquaredSum } from './mean-squared-sum.internal';
  *  1. `computeMeanWithSquaredSum`으로 entry finite, 누적 sum/mean/centered delta/squared sum finite를
  *     검증하고 평균, deltas, squaredSum을 얻는다.
  *  2. 각 entry에 대해 `dCubed = delta³`, `dFourth = delta⁴`를 계산해 finite를 검증한다.
- *  3. `cubedSum`, `fourthSum` 누적이 매 step finite한지 검증한다.
+ *  3. `fourthSum` 누적이 매 step finite한지 검증한다. `cubedSum`은 앞 index의 `|delta|`가 4제곱 검증을
+ *     통과해 1.2e77 이하라 항상 finite다.
  *
  * 어느 단계든 위반 시 `RangeError`. caller는 호출 전 `values`가 array이며 `values.length >= 1`임을
  * 보장한다.
@@ -36,9 +37,6 @@ export function computeCentralMoments(values: readonly number[]): {
       throw new RangeError(`cubed delta at index ${i} must be finite, got ${String(dCubed)}`);
     }
     cubedSum += dCubed;
-    if (!Number.isFinite(cubedSum)) {
-      throw new RangeError(`cubedSum must be finite, got ${String(cubedSum)} at index ${i}`);
-    }
     const dFourth = dSquared * dSquared;
     if (!Number.isFinite(dFourth)) {
       throw new RangeError(`fourth power delta at index ${i} must be finite, got ${String(dFourth)}`);

@@ -12,10 +12,6 @@ import { variance } from './variance';
  */
 export function standardDeviation(values: readonly number[], options?: VarianceOptions): number {
   const varianceValue = variance(values, options);
-  // variance >= 0 + finite에서 sqrt는 항상 finite. 방어용 가드.
-  const result = Math.sqrt(varianceValue);
-  if (!Number.isFinite(result)) {
-    throw new RangeError(`standardDeviation must be finite, got ${String(result)}`);
-  }
-  return result;
+  // variance가 finite 비음수라 sqrt도 finite다.
+  return Math.sqrt(varianceValue);
 }

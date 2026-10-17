@@ -71,9 +71,6 @@ function standardizeDeltasForCorrelation(
       throw new RangeError(`variable[${v}] variance must be non-zero for useCorrelation: true`);
     }
     const variance = sq / denominator;
-    if (!Number.isFinite(variance)) {
-      throw new RangeError(`variable[${v}] variance must be finite, got ${String(variance)}`);
-    }
     const stddev = Math.sqrt(variance);
     // variance underflow 방어: variance > 0이어도 sqrt 결과가 subnormal 경계에서 0이 될 수 있다.
     if (!Number.isFinite(stddev) || stddev === 0) {
@@ -84,9 +81,6 @@ function standardizeDeltasForCorrelation(
     const scaled = new Array<number>(vDeltas.length);
     for (let s = 0; s < vDeltas.length; s++) {
       const value = vDeltas[s] / stddev;
-      if (!Number.isFinite(value)) {
-        throw new RangeError(`variable[${v}] standardized delta at sample ${s} must be finite, got ${String(value)}`);
-      }
       scaled[s] = value;
     }
     deltas[v] = scaled;
@@ -104,9 +98,6 @@ function buildCovarianceMatrix(
     for (let c = r; c < variableCount; c++) {
       const productSum = computeCenteredProductSum(deltas[r], deltas[c], r, c);
       const value = productSum / denominator;
-      if (!Number.isFinite(value)) {
-        throw new RangeError(`pca covariance at (${r}, ${c}) must be finite, got ${String(value)}`);
-      }
       cov[r][c] = value;
       cov[c][r] = value;
     }
@@ -134,11 +125,8 @@ function buildPcaCoreResult(
 
   const explainedVarianceRatio = new Array<number>(rank);
   for (let i = 0; i < rank; i++) {
-    const value = explainedVariance[i] / total;
-    if (!Number.isFinite(value)) {
-      throw new RangeError(`pca explainedVarianceRatio at index ${i} must be finite, got ${String(value)}`);
-    }
-    explainedVarianceRatio[i] = Object.is(value, -0) ? 0 : value;
+    // rank개 값은 모두 epsilon 초과라 양수이고 total 이하다. 비율은 (0, 1]이라 -0이 아니다.
+    explainedVarianceRatio[i] = explainedVariance[i] / total;
   }
 
   return {
@@ -170,7 +158,7 @@ function buildPcaCoreResult(
  * `explainedVarianceRatio`는 descending 순서이고 length === rank. `useCorrelation: false`이면
  * `standardDeviations`는 `undefined`다.
  *
- * 누적 sum / centered delta / centered product / product sum / sqrt / 나눗셈 / eigen 단계 결과가
+ * 누적 sum / centered delta / product sum / stddev / eigen 단계 결과와 explainedVariance 합이
  * non-finite면 `RangeError`. `useCorrelation: true`에서 zero variance variable이 있으면 `RangeError`.
  * Jacobi 수렴 실패 또는 PSD 가정 위반(strict negative eigenvalue)이면 `undefined`.
  *

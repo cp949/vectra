@@ -50,8 +50,5 @@ export function kurtosis(values: readonly number[], options?: VarianceOptions): 
     // (N-1) / ((N-2)(N-3)) * ((N+1) * g2 + 6)
     result = ((length - 1) / ((length - 2) * (length - 3))) * ((length + 1) * populationExcess + 6);
   }
-  if (!Number.isFinite(result)) {
-    throw new RangeError(`kurtosis must be finite, got ${String(result)}`);
-  }
   return canonicalizeNegativeZero(result);
 }

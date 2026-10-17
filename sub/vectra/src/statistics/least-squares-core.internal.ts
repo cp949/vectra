@@ -35,7 +35,7 @@ function finiteDot(a: readonly number[], b: readonly number[], length: number, c
 }
 
 /**
- * vector의 ℓ2 norm을 max-scaling으로 계산한다. 누적 합/division 결과가 non-finite면 `RangeError`.
+ * vector의 ℓ2 norm을 max-scaling으로 계산한다. norm이 non-finite면 `RangeError`(scaling 몫은 `|몫| <= 1`이라 합은 항상 finite다).
  *
  * `length === 0`이거나 모든 entry가 strict `0`이면 `0`을 반환한다. `-0` 입력도 `Math.abs`로 `0`이
  * 되어 norm은 비음의 finite number다.
@@ -55,9 +55,6 @@ function finiteEuclideanNorm(v: readonly number[], length: number, context: stri
   for (let i = 0; i < length; i++) {
     const s = v[i] / max;
     sum += s * s;
-    if (!Number.isFinite(sum)) {
-      throw new RangeError(`least-squares produced non-finite intermediate during ${context} norm, got ${String(sum)}`);
-    }
   }
   const norm = max * Math.sqrt(sum);
   if (!Number.isFinite(norm)) {
@@ -70,7 +67,7 @@ function finiteEuclideanNorm(v: readonly number[], length: number, context: stri
  * `A * x - b` 잔차의 ℓ2 norm을 max-scaling으로 계산한다. 비음의 finite number를 반환한다.
  *
  * row별 잔차 `A[r] · x - b[r]`을 먼저 finite 검증하고, 절대값 최대를 scale로 사용해 누적 제곱을
- * 안정적으로 합산한다. 누적합, division, 곱셈 중 하나라도 non-finite면 `RangeError`. caller는
+ * 안정적으로 합산한다. 곱셈, 누적합, 최종 norm 중 하나라도 non-finite면 `RangeError`(scaling 몫은 `|몫| <= 1`이라 제곱합은 항상 finite다). caller는
  * `A`/`b`/`x`의 shape, finite 검증을 끝낸 뒤 호출한다.
  *
  * @param A coefficient matrix (rectangular finite)
@@ -116,9 +113,6 @@ function computeResidualNorm(
   for (let r = 0; r < rowCount; r++) {
     const s = errors[r] / max;
     scaledSum += s * s;
-    if (!Number.isFinite(scaledSum)) {
-      throw new RangeError(`least-squares residual accumulator overflowed during scaling, got ${String(scaledSum)}`);
-    }
   }
   const residual = max * Math.sqrt(scaledSum);
   if (!Number.isFinite(residual)) {
@@ -210,11 +204,6 @@ function runLeastSquaresCore(
     const newQ = new Array<number>(m);
     for (let i = 0; i < m; i++) {
       const value = (sign * v[i]) / norm;
-      if (!Number.isFinite(value)) {
-        throw new RangeError(
-          `least-squares produced non-finite Q entry at row ${i}, column ${qCols.length}, got ${String(value)}`
-        );
-      }
       newQ[i] = value;
     }
 

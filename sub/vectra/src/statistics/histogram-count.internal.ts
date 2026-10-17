@@ -8,7 +8,7 @@
  * 산출된 bin edge를 사용해 `values`의 histogram count 배열을 산출한다.
  *
  * caller는 `values`가 array이고 `binEdges`가 `resolveHistogramBinEdges` 결과임을 보장한다. entry non-finite,
- * out-of-range value(`findBinIndex < 0`), 누적 count safe integer overflow는 모두 `RangeError`. 결과 count는
+ * out-of-range value(`findBinIndex < 0`)는 `RangeError`. 결과 count는
  * length `binEdges.length - 1`의 fresh `number[]`다.
  *
  * @param values count할 finite number 배열. mutate하지 않는다.
@@ -29,9 +29,6 @@ export function computeHistogramCounts(values: readonly number[], binEdges: read
       throw new RangeError(`values[${i}] (${v}) is out of histogram range [${binEdges[0]}, ${binEdges[binCount]}]`);
     }
     const next = counts[idx] + 1;
-    if (!Number.isSafeInteger(next)) {
-      throw new RangeError(`histogram count overflow at bin ${idx}, got ${String(next)}`);
-    }
     counts[idx] = next;
   }
   return counts;

@@ -31,7 +31,7 @@ import { assertVarianceMode } from './validate.internal';
  *
  * 각 observation `x`에 대해 `centered[v] = x[v] - means[v]`, `useCorrelation: true`이면
  * `centered[v] /= standardDeviations[v]`, `projection[k] = sum_v components[k][v] * centered[v]`를
- * 계산한다. 누적 sum / centering / scaling / projection 결과가 non-finite면 `RangeError`.
+ * 계산한다. centering, scaling, projection 값은 PCA 단계에서 검증한 delta와 단위 벡터로 계산해 항상 finite다.
  *
  * 결과 entry의 `-0`은 `0`으로 canonicalize한다. validation 또는 산술 실패 시 `out`은 호출 전 상태를
  * 유지한다(모든 산술이 끝난 뒤 commit). `out`과 `data`가 같은 nested array여도 안전하다(commit
@@ -96,13 +96,6 @@ export function reduceDimensionsInto(
 
   const { components, means, standardDeviations } = core;
 
-  // observation count가 0이면 빈 matrix commit. variable count > 0 && sample count === 0은 위에서
-  // RangeError로 처리하므로 여기서 도달할 수 없다. 방어 가드로 둔다.
-  if (observationCount === 0) {
-    out.length = 0;
-    return out;
-  }
-
   // temp[observation][component] shape의 projection buffer를 할당한다.
   const temp: number[][] = new Array(observationCount);
   for (let o = 0; o < observationCount; o++) {
@@ -118,31 +111,11 @@ export function reduceDimensionsInto(
         // variables[v][o] = orientation에 맞춰 v번째 variable의 o번째 observation 값.
         const rawValue = variables[v][o];
         let centered = rawValue - means[v];
-        if (!Number.isFinite(centered)) {
-          throw new RangeError(
-            `centered value at observation ${o}, variable ${v} must be finite, got ${String(centered)}`
-          );
-        }
         if (standardDeviations !== undefined) {
           centered = centered / standardDeviations[v];
-          if (!Number.isFinite(centered)) {
-            throw new RangeError(
-              `scaled centered value at observation ${o}, variable ${v} must be finite, got ${String(centered)}`
-            );
-          }
         }
         const term = componentRow[v] * centered;
-        if (!Number.isFinite(term)) {
-          throw new RangeError(
-            `projection term at observation ${o}, component ${k}, variable ${v} must be finite, got ${String(term)}`
-          );
-        }
         sum += term;
-        if (!Number.isFinite(sum)) {
-          throw new RangeError(
-            `projection sum at observation ${o}, component ${k} must be finite, got ${String(sum)} at variable ${v}`
-          );
-        }
       }
       temp[o][k] = sum;
     }

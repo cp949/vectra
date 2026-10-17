@@ -78,9 +78,6 @@ export function normalizeMinMaxInto(
 
   for (let i = 0; i < length; i++) {
     const delta = values[i] - min;
-    if (!Number.isFinite(delta)) {
-      throw new RangeError(`normalizeMinMax delta at index ${i} must be finite, got ${String(delta)}`);
-    }
     const scaled = delta * scale + targetMin;
     if (!Number.isFinite(scaled)) {
       throw new RangeError(`normalizeMinMax result at index ${i} must be finite, got ${String(scaled)}`);

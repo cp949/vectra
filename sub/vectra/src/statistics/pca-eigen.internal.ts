@@ -77,10 +77,10 @@ export function orderEigenDescending(raw: SymmetricEigenResult, n: number, epsil
   for (let i = 0; i < n; i++) {
     const src = order[i];
     const clamped = clampedValues[src];
+    // clamped가 -0이어도 |-0| <= epsilon(>= 0)이라 cleaned는 +0이다.
     const cleaned = Math.abs(clamped) <= epsilon ? 0 : clamped;
-    const canonical = Object.is(cleaned, -0) ? 0 : cleaned;
-    values[i] = canonical;
-    if (canonical > epsilon) {
+    values[i] = cleaned;
+    if (cleaned > epsilon) {
       rank++;
     }
   }
@@ -90,8 +90,8 @@ export function orderEigenDescending(raw: SymmetricEigenResult, n: number, epsil
     const row = new Array<number>(n);
     for (let c = 0; c < n; c++) {
       const v = raw.vectors[c][src];
-      const cleaned = Math.abs(v) <= epsilon ? 0 : v;
-      row[c] = Object.is(cleaned, -0) ? 0 : cleaned;
+      // v가 -0이면 |-0| <= epsilon이라 +0이 되므로 -0이 남지 않는다.
+      row[c] = Math.abs(v) <= epsilon ? 0 : v;
     }
     components[i] = row;
   }

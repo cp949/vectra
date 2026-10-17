@@ -20,7 +20,7 @@ import { assertVarianceMode } from './validate.internal';
  * `0`/`< 2` 경계는 `covarianceMatrixInto`와 같다.
  * 어떤 variable이라도 variance가 `0`이면 `RangeError`. zero variance variable의 diagonal `1`로 덮지
  * 않는다. 결과는 square symmetric matrix이고 diagonal은 모두 `1`이다.
- * 누적 sum, centered delta, centered product, product sum, sqrt, 나눗셈, ratio가 non-finite면
+ * 누적 sum, centered delta, product sum, 제곱합의 곱, 분모(sqrt)가 non-finite이거나 분모가 `0`이면
  * `RangeError`. 결과 entry의 `-0`은 `0`으로 canonicalize한다.
  * validation 또는 산술 실패 시 `out`은 호출 전 상태를 유지한다. `out`과 `data`가 같은 nested array여도
  * 안전하다.
@@ -89,9 +89,6 @@ export function correlationMatrixInto(
         );
       }
       const value = productSum / denominator;
-      if (!Number.isFinite(value)) {
-        throw new RangeError(`correlation at (${r}, ${c}) must be finite, got ${String(value)}`);
-      }
       temp[r][c] = value;
       temp[c][r] = value;
     }

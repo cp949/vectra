@@ -6,7 +6,7 @@ import { sumFiniteValues } from './validate.internal';
  * 단계별 동작:
  *  1. `sumFiniteValues`로 두 vector를 독립 검증한다(entry finite + 누적 sum finite). caller field
  *     이름을 그대로 message에 노출하기 위해 `first`/`second`를 인자로 넘긴다.
- *  2. 두 vector의 평균을 계산하고 finite를 가드한다.
+ *  2. 두 vector의 평균을 계산한다. 누적 sum이 finite이고 length >= 1이라 평균도 finite다.
  *  3. 각 index에 대해 `dx = first[i] - meanX`, `dy = second[i] - meanY`를 계산하고 finite를 검증한다.
  *  4. `dx * dy`, `dx * dx`, `dy * dy`, 각 누적 sum의 finite를 매 step 검증한다.
  *
@@ -34,13 +34,7 @@ export function computeCovarianceStats(
   const sumY = sumFiniteValues(second, 'second');
 
   const meanX = sumX / length;
-  if (!Number.isFinite(meanX)) {
-    throw new RangeError(`first mean must be finite, got ${String(meanX)}`);
-  }
   const meanY = sumY / length;
-  if (!Number.isFinite(meanY)) {
-    throw new RangeError(`second mean must be finite, got ${String(meanY)}`);
-  }
 
   let productSum = 0;
   let squaredSumX = 0;

@@ -48,8 +48,5 @@ export function skewness(values: readonly number[], options?: VarianceOptions): 
   if (mode === 'sample') {
     result = (Math.sqrt(length * (length - 1)) / (length - 2)) * g1;
   }
-  if (!Number.isFinite(result)) {
-    throw new RangeError(`skewness must be finite, got ${String(result)}`);
-  }
   return canonicalizeNegativeZero(result);
 }

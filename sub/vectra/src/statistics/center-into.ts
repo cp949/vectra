@@ -24,11 +24,8 @@ export function centerInto(out: number[], values: readonly number[]): number[] {
   }
 
   const sum = sumFiniteValues(values);
-  // length >= 1 + sum finite에서 result는 항상 finite. 방어용 가드.
+  // length >= 1이고 sum이 finite라 평균도 finite다.
   const meanValue = sum / length;
-  if (!Number.isFinite(meanValue)) {
-    throw new RangeError(`mean must be finite, got ${String(meanValue)}`);
-  }
 
   const temp = new Array<number>(length);
   for (let i = 0; i < length; i++) {

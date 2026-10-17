@@ -16,12 +16,7 @@ import { assertValuesArray } from './validate.internal';
 export function histogram(values: readonly number[], options?: HistogramOptions): HistogramResult {
   assertValuesArray(values, 'values');
   const binEdges = resolveHistogramBinEdges(values, options);
-  const rawCounts = computeHistogramCounts(values, binEdges);
-  // commitSequenceInto와 동일한 -0 canonicalize를 fresh 배열에 적용한다.
-  const counts = new Array<number>(rawCounts.length);
-  for (let i = 0; i < rawCounts.length; i++) {
-    const v = rawCounts[i];
-    counts[i] = Object.is(v, -0) ? 0 : v;
-  }
+  // count는 0에서 1씩 올라 -0이 될 수 없고, 배열은 호출마다 새로 만든다.
+  const counts = computeHistogramCounts(values, binEdges);
   return { counts, binEdges };
 }
