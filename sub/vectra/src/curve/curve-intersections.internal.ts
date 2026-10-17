@@ -367,6 +367,130 @@ export function refineIntersectionParams(
   return [t, u];
 }
 
+/** 끝점 투영 1D Newton 반복 상한. 거리 항을 무시한 근사 Newton이라 선형 수렴하므로 Newton refinement보다 넉넉히 둔다. */
+const PROJECTION_MAX_ITERATIONS = 4;
+
+/** nearEndpointMask 결과에서 parameter 0 끝점에 가깝다는 비트. */
+const NEAR_START = 1;
+
+/** nearEndpointMask 결과에서 parameter 1 끝점에 가깝다는 비트. */
+const NEAR_END = 2;
+
+/**
+ * 수렴 box가 끝점 parameter(0, 1)에 가까운지 비트 마스크로 돌려준다.
+ * 가깝다는 기준은 box span의 SUBDIVISION_DEDUPE_T_FACTOR배다. 거리 epsilon은 쓰지 않는다.
+ * 끝점에 걸친 hit의 이웃 box도 같은 끝점으로 모여 dedupe에서 합쳐진다.
+ */
+function nearEndpointMask(t0: number, t1: number): number {
+  const near = SUBDIVISION_DEDUPE_T_FACTOR * (t1 - t0);
+  return (t0 <= near ? NEAR_START : 0) | (1 - t1 <= near ? NEAR_END : 0);
+}
+
+/**
+ * 곡선 위에서 점 (px, py)에 가장 가까운 parameter를 u0 근처에서 구한다.
+ * g(u) = (C(u) - P) · C'(u) = 0 을 1D Newton으로 푼다. g'(u)의 곡률 항은 거리가 작아 생략한다.
+ * 결과 거리가 sqrt(epsilon2) 이하이고 [0, 1] 안, u0에서 maxShift 이내일 때만 돌려준다.
+ */
+function projectOntoCurve(
+  evalCurve: CurveEvaluator,
+  px: number,
+  py: number,
+  u0: number,
+  maxShift: number,
+  epsilon2: number
+): number | null {
+  const c: [number, number, number, number] = [0, 0, 0, 0];
+  let u = u0;
+  for (let i = 0; i < PROJECTION_MAX_ITERATIONS; i++) {
+    evalCurve(u, c);
+    const speed2 = c[2] * c[2] + c[3] * c[3];
+    // NaN이면 비교가 false라 null을 돌려준다
+    if (!(speed2 > 0)) return null;
+    u -= ((c[0] - px) * c[2] + (c[1] - py) * c[3]) / speed2;
+    if (!(u >= 0 && u <= 1 && Math.abs(u - u0) <= maxShift)) return null;
+  }
+  evalCurve(u, c);
+  const dx = c[0] - px;
+  const dy = c[1] - py;
+  return dx * dx + dy * dy <= epsilon2 ? u : null;
+}
+
+/**
+ * 수렴 box가 한 곡선의 끝점에 걸쳐 있고 그 끝점이 다른 곡선 위에 있으면 끝점 parameter로 snap한다.
+ * 끝점에서 접선이 평행하면 Jacobian이 특이해 Newton이 건너뛰거나 부분 개선에 그치므로 이 경로가 맡는다.
+ *
+ * 1. 끝점-끝점: 양쪽 끝점 좌표 거리가 epsilon 이하이면 두 parameter를 끝점 값으로 둔다.
+ * 2. 끝점-내부: 한 곡선의 끝점을 고정하고 다른 곡선 위 가장 가까운 parameter를 구한다.
+ *
+ * @returns snap한 [tA, tB]. 끝점 hit가 아니면 null.
+ */
+function snapToEndpoints(
+  evalA: CurveEvaluator,
+  evalB: CurveEvaluator,
+  tA0: number,
+  tA1: number,
+  tB0: number,
+  tB1: number,
+  epsilon: number
+): [number, number] | null {
+  const maskA = nearEndpointMask(tA0, tA1);
+  const maskB = nearEndpointMask(tB0, tB1);
+  if (maskA === 0 && maskB === 0) return null;
+
+  const epsilon2 = epsilon * epsilon;
+  const a: [number, number, number, number] = [0, 0, 0, 0];
+  const b: [number, number, number, number] = [0, 0, 0, 0];
+  // 끝점 parameter는 비트 번호와 같다. 0이 NEAR_START, 1이 NEAR_END다.
+  for (let tA = 0; tA <= 1; tA++) {
+    if ((maskA & (tA === 0 ? NEAR_START : NEAR_END)) === 0) continue;
+    evalA(tA, a);
+    for (let tB = 0; tB <= 1; tB++) {
+      if ((maskB & (tB === 0 ? NEAR_START : NEAR_END)) === 0) continue;
+      evalB(tB, b);
+      const dx = a[0] - b[0];
+      const dy = a[1] - b[1];
+      if (dx * dx + dy * dy <= epsilon2) return [tA, tB];
+    }
+  }
+
+  const tAMid = (tA0 + tA1) * 0.5;
+  const tBMid = (tB0 + tB1) * 0.5;
+  const maxShift = NEWTON_MAX_SHIFT_FACTOR * Math.max(tA1 - tA0, tB1 - tB0);
+  for (let tA = 0; tA <= 1; tA++) {
+    if ((maskA & (tA === 0 ? NEAR_START : NEAR_END)) === 0) continue;
+    evalA(tA, a);
+    const tB = projectOntoCurve(evalB, a[0], a[1], tBMid, maxShift, epsilon2);
+    if (tB !== null) return [tA, tB];
+  }
+  for (let tB = 0; tB <= 1; tB++) {
+    if ((maskB & (tB === 0 ? NEAR_START : NEAR_END)) === 0) continue;
+    evalB(tB, b);
+    const tA = projectOntoCurve(evalA, b[0], b[1], tAMid, maxShift, epsilon2);
+    if (tA !== null) return [tA, tB];
+  }
+  return null;
+}
+
+/**
+ * curve × curve 수렴 box의 교차 parameter를 정밀하게 구한다.
+ * 끝점 좌표가 epsilon 이내로 맞으면 끝점 snap이 Newton보다 확실하므로 먼저 시도한다.
+ * 끝점 hit가 아니면 Newton refinement를 적용한다. 둘 다 실패하면 box midpoint를 그대로 돌려준다.
+ */
+export function resolveIntersectionParams(
+  evalA: CurveEvaluator,
+  evalB: CurveEvaluator,
+  tA0: number,
+  tA1: number,
+  tB0: number,
+  tB1: number,
+  epsilon: number
+): [number, number] {
+  return (
+    snapToEndpoints(evalA, evalB, tA0, tA1, tB0, tB1, epsilon) ??
+    refineIntersectionParams(evalA, evalB, (tA0 + tA1) * 0.5, (tB0 + tB1) * 0.5, Math.max(tA1 - tA0, tB1 - tB0))
+  );
+}
+
 /** cubic sub-curve flat 좌표 — [p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y]. */
 export type CubicFlat = [number, number, number, number, number, number, number, number];
 

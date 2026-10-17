@@ -8,7 +8,7 @@ import {
   type QuadFlat,
   quadraticHullBounds,
   quadraticTangent,
-  refineIntersectionParams,
+  resolveIntersectionParams,
   resolveOptions,
   SUBDIVISION_DEDUPE_T_FACTOR,
   SUBDIVISION_KIND_EPSILON_FACTOR,
@@ -21,7 +21,7 @@ import { findCurveOverlap, overlapBoxFilter, pushOverlapHits, quadraticOverlapCu
 /**
  * quadratic × quadratic subdivision 수렴 시 교차점을 계산해 outHits에 push한다.
  * midpoint parameter를 Newton으로 다듬은 뒤 curve A 위에서 원본 좌표로 정밀 계산한다.
- * 교차 종류 판정용 curve B tangent는 bSub local midpoint로 근사한다.
+ * 교차 종류는 다듬은 parameter에서 curve A는 원본, curve B는 bSub의 tangent로 판정한다.
  */
 function onConverge<P extends XYWritable>(
   outHits: IntersectionHit<P>[],
@@ -35,17 +35,17 @@ function onConverge<P extends XYWritable>(
   epsilonT: number,
   makePoint: () => P
 ): void {
-  const tAMid = (tA0 + tA1) * 0.5;
-  const tBMid = (tB0 + tB1) * 0.5;
   const spanA = tA1 - tA0;
   const spanB = tB1 - tB0;
-  // maxDepth에서 멈춘 midpoint는 span 수준 오차가 남으므로 Newton으로 다듬는다
-  const [tA, tB] = refineIntersectionParams(
+  // maxDepth에서 멈춘 midpoint는 span 수준 오차가 남으므로 Newton이나 끝점 snap으로 다듬는다
+  const [tA, tB] = resolveIntersectionParams(
     (t, out) => evalQuadraticInto(origA, t, out),
     subCurveEvaluator(evalQuadraticInto, bSub, tB0, spanB),
-    tAMid,
-    tBMid,
-    Math.max(spanA, spanB)
+    tA0,
+    tA1,
+    tB0,
+    tB1,
+    epsilon
   );
   // 교차점은 원본 curve A의 refine된 parameter로 계산한다
   const [oA0x, oA0y, oA1x, oA1y, oA2x, oA2y] = origA;
@@ -54,9 +54,17 @@ function onConverge<P extends XYWritable>(
   const t2 = tA * tA;
   const px = mt2 * oA0x + 2 * mt * tA * oA1x + t2 * oA2x;
   const py = mt2 * oA0y + 2 * mt * tA * oA1y + t2 * oA2y;
-  // tangent 비교로 교차 종류 판정
-  const [taxDx, taxDy] = quadraticTangent(oA0x, oA0y, oA1x, oA1y, oA2x, oA2y, tAMid);
-  const [tbxDx, tbxDy] = quadraticTangent(bSub[0], bSub[1], bSub[2], bSub[3], bSub[4], bSub[5], 0.5);
+  // 교차 종류는 다듬은 parameter의 tangent로 판정한다. 같은 근으로 모이는 box가 모두 같은 kind를 얻는다
+  const [taxDx, taxDy] = quadraticTangent(oA0x, oA0y, oA1x, oA1y, oA2x, oA2y, tA);
+  const [tbxDx, tbxDy] = quadraticTangent(
+    bSub[0],
+    bSub[1],
+    bSub[2],
+    bSub[3],
+    bSub[4],
+    bSub[5],
+    spanB > 0 ? (tB - tB0) / spanB : 0.5
+  );
   const kindEpsilon = Math.max(epsilon, SUBDIVISION_KIND_EPSILON_FACTOR * Math.max(spanA, spanB));
   const kind = classifyIntersectionKind(taxDx, taxDy, tbxDx, tbxDy, kindEpsilon);
   const dedupeT = Math.max(epsilonT, SUBDIVISION_DEDUPE_T_FACTOR * Math.max(spanA, spanB));
@@ -67,7 +75,8 @@ function onConverge<P extends XYWritable>(
  * 두 quadratic Bezier curve 간 교차점을 outHits에 push한다.
  *
  * subdivision 재귀로 parameter box를 좁혀 교차점을 탐지한다.
- * 수렴 지점은 Newton으로 다듬으며, hit point는 다듬은 parameter로 curve A 위에서 계산한다.
+ * 수렴 지점은 다듬어 기록한다. 끝점이 상대 curve 위에 있으면 끝점 parameter(0, 1)로 snap하고, 아니면 Newton으로 다듬는다.
+ * hit point는 다듬은 parameter로 curve A 위에서 계산한다.
  * 두 curve가 같은 기하 위에서 구간을 공유하면 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다.
  * 겹침 구간 내부는 subdivision하지 않는다. 겹침 밖의 교차는 그대로 탐지한다.
  * dedupe 기준: |tA1-tA2| <= epsilonT && |tB1-tB2| <= epsilonT.
