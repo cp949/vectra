@@ -19,13 +19,13 @@ import type { RegularPolygonOptions, XYInput, XYObjectWritable } from '../types/
  * @param options startAngle/clockwise 옵션. 기본 startAngle = -π/2, clockwise = true
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function regularPolygonInto<Out extends XYObjectWritable[]>(
-  out: Out,
+export function regularPolygonInto(
+  out: XYObjectWritable[],
   center: XYInput,
   radius: number,
   sides: number,
   options?: RegularPolygonOptions
-): Out {
+): XYObjectWritable[] {
   out.length = 0;
   if (!Number.isInteger(sides) || sides < 3) {
     // non-integer, NaN, ±Infinity, < 3 모두 여기서 걸린다.

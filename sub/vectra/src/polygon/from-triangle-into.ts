@@ -13,7 +13,7 @@ import type { TriangleLike, XYObjectWritable } from '../types/index';
  * @param triangle 변환할 triangle (object 또는 `[a, b, c]` tuple, vertex는 XYInput)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function fromTriangleInto<Out extends XYObjectWritable[]>(out: Out, triangle: TriangleLike): Out {
+export function fromTriangleInto(out: XYObjectWritable[], triangle: TriangleLike): XYObjectWritable[] {
   out.length = 0;
 
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);

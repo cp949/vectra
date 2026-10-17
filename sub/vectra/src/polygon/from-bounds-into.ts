@@ -14,7 +14,7 @@ import type { BoundsLike, XYObjectWritable } from '../types/index';
  * @param bounds 변환할 bounds (object 또는 tuple, corner는 XYInput)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function fromBoundsInto<Out extends XYObjectWritable[]>(out: Out, bounds: BoundsLike): Out {
+export function fromBoundsInto(out: XYObjectWritable[], bounds: BoundsLike): XYObjectWritable[] {
   out.length = 0;
 
   const min = readBoundsMin(bounds);

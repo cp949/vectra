@@ -35,11 +35,11 @@ export interface EllipsePointsOptions {
  * @param ellipse boundary를 sampling할 ellipse
  * @param options `segments`/`startAngle`/`clockwise`. 기본 `segments = 64`, `startAngle = 0`, `clockwise = true`
  */
-export function pointsInto<Out extends XYObjectWritable[]>(
-  out: Out,
+export function pointsInto(
+  out: XYObjectWritable[],
   ellipse: EllipseLike,
   options?: EllipsePointsOptions
-): Out {
+): XYObjectWritable[] {
   const segments = options?.segments ?? 64;
   if (!Number.isInteger(segments) || segments < 1) {
     throw new RangeError('pointsInto: segments must be an integer >= 1');

@@ -13,7 +13,7 @@ import type { RectLike, XYObjectWritable } from '../types/index';
  * @param rect 변환할 rect (object 또는 `[x, y, width, height]` tuple)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function fromRectInto<Out extends XYObjectWritable[]>(out: Out, rect: RectLike): Out {
+export function fromRectInto(out: XYObjectWritable[], rect: RectLike): XYObjectWritable[] {
   out.length = 0;
 
   const x = readRectX(rect);

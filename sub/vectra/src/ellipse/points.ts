@@ -18,5 +18,5 @@ import { pointsInto } from './points-into';
  * @param options `segments`/`startAngle`/`clockwise`. 기본 `segments = 64`, `startAngle = 0`, `clockwise = true`
  */
 export function points(ellipse: EllipseLike, options?: EllipsePointsOptions): XYObjectWritable[] {
-  return pointsInto<XYObjectWritable[]>([], ellipse, options);
+  return pointsInto([], ellipse, options);
 }

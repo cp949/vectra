@@ -4,10 +4,12 @@
  * 대상 함수:
  *  - lineCommandsInto, transformCommandsInto : 새 PathCommand를 push하는 path Into
  *  - quadraticLineIntersectionsInto, cubicCubicIntersectionsInto : 새 `{ x, y }` point를 만드는 curve 교차 Into
+ *  - fromRectInto, ellipse pointsInto : 새 `{ x, y }` point를 push하는 polygon·ellipse Into
  *  - tangentPointsFromExternalInto : 새 `{ x, y }` point를 push하는 circle Into
  *
  * 고정하는 계약:
  *  - path Into의 반환 타입은 caller의 좁은 원소 타입(MoveCommand[])을 따르지 않고 PathCommand[]다.
+ *  - point 배열을 채우는 Into의 반환 타입은 caller의 좁은 원소 타입(`{ x, y, id }`)을 따르지 않고 `XYObjectWritable[]`이다.
  *  - point를 만드는 Into는 tuple point 배열(`XYTupleWritable[]`)을 받지 않는다.
  *
  * 거부 검사는 `@ts-expect-error`가 맡는다. 오류가 사라지면 `pnpm typecheck`가 실패한다.
@@ -16,8 +18,10 @@ import { describe, expect, expectTypeOf, test } from 'vitest';
 import { tangentPointsFromExternalInto } from '../../../src/circle/tangent-points-from-external-into';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';
+import { pointsInto as ellipsePointsInto } from '../../../src/ellipse/points-into';
 import { lineCommandsInto } from '../../../src/path/line-commands-into';
 import { transformCommandsInto } from '../../../src/path/transform-commands-into';
+import { fromRectInto } from '../../../src/polygon/from-rect-into';
 import type { IntersectionHit, MoveCommand, PathCommand, XYObjectWritable, XYTupleWritable } from '../../../src/types';
 
 describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
@@ -38,6 +42,19 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
     const transformed = transformCommandsInto(narrow, [{ kind: 'close' }], { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
     expectTypeOf(transformed).toEqualTypeOf<PathCommand[]>();
     expect(transformed.map((command) => command.kind)).toEqual(['close']);
+  });
+
+  test('point 배열 Into에 좁은 원소 배열을 넘겨도 반환 타입은 XYObjectWritable[]이다', () => {
+    const tagged: (XYObjectWritable & { id: string })[] = [];
+    // 배열은 공변이라 인자는 받는다. 대신 반환 타입이 id 없는 실제 원소를 가리지 않는다
+    const rect = fromRectInto(tagged, { x: 0, y: 0, width: 2, height: 1 });
+    expectTypeOf(rect).toEqualTypeOf<XYObjectWritable[]>();
+    expect(rect).toHaveLength(4);
+    expect('id' in rect[0]).toBe(false);
+
+    const ring = ellipsePointsInto(tagged, { center: [0, 0], radiusX: 2, radiusY: 1 }, { segments: 8 });
+    expectTypeOf(ring).toEqualTypeOf<XYObjectWritable[]>();
+    expect(ring).toHaveLength(8);
   });
 
   test('curve 교차 Into는 tuple point를 담는 hit 배열을 받지 않는다', () => {
