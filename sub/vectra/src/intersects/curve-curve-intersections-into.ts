@@ -10,7 +10,8 @@ import { writeCurveCurveHits } from './curve-facade.internal';
  * `curveA.kind`/`curveB.kind` 조합으로 quadratic/cubic kernel을 분기한다.
  * `(cubic, quadratic)`은 `quadraticCubic` kernel을 호출한 뒤 `tA`/`tB`를 swap해 caller 순서를 보존한다.
  * 결과는 flat `{ x, y, kind, tA, tB }`이고 `tA`는 `curveA` parameter, `tB`는 `curveB` parameter `[0, 1]`이다.
- * `kind`는 `cross`/`touch`만 사용한다. subdivision kernel은 approximation이다.
+ * `kind`는 `cross`/`touch`/`overlap`을 사용한다. subdivision kernel은 approximation이다.
+ * 두 curve가 같은 기하 위에서 구간을 공유하면 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다.
  * out을 먼저 비우고 교차점을 push한다. 겹치지 않으면 빈 결과다.
  *
  * @param out 교차점을 기록할 facade hit 배열 (호출 전 내용은 무시되고 비워진다)

@@ -13,6 +13,7 @@ import {
   splitCubic,
   subdivideCurves,
 } from './curve-intersections.internal';
+import { cubicOverlapCurve, findCurveOverlap, overlapBoxFilter, pushOverlapHits } from './curve-overlap.internal';
 
 /**
  * cubic × cubic subdivision 수렴 시 교차점을 계산해 outHits에 push한다.
@@ -56,6 +57,8 @@ function onConverge<P extends XYWritable>(
  *
  * subdivision 재귀로 parameter box를 좁혀 교차점을 탐지한다.
  * hit point는 curve A 위 midpoint parameter로 계산한다.
+ * 두 curve가 같은 기하 위에서 구간을 공유하면 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다.
+ * 겹침 구간 내부는 subdivision하지 않는다. 겹침 밖의 교차는 그대로 탐지한다.
  * dedupe 기준: |tA1-tA2| <= epsilonT && |tB1-tB2| <= epsilonT.
  *
  * @param outHits 결과 배열 (함수 호출 전 비워야 한다)
@@ -99,11 +102,17 @@ export function cubicCubicIntersectionsInto<P extends XYWritable = XYObjectWrita
   const aSub: CubicFlat = [p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y];
   const bSub: CubicFlat = [readX(q0), readY(q0), readX(q1), readY(q1), readX(q2), readY(q2), readX(q3), readY(q3)];
 
+  // 같은 기하 위 겹침 구간은 subdivision이 모든 box를 hit로 쪼개므로 먼저 끝점 2건으로 기록한다
+  const overlapA = cubicOverlapCurve(origA);
+  const overlap = findCurveOverlap(overlapA, cubicOverlapCurve(bSub), epsilon);
+  if (overlap !== null) pushOverlapHits(outHits, overlap, overlapA, makePoint);
+
   subdivideCurves(outHits, aSub, 0, 1, bSub, 0, 1, origA, epsilon, epsilonT, maxDepth, 0, makePoint, {
     hullBoundsA: (sub: CubicFlat) => cubicHullBounds(...sub),
     hullBoundsB: (sub: CubicFlat) => cubicHullBounds(...sub),
     splitA: (sub: CubicFlat) => splitCubic(...sub),
     splitB: (sub: CubicFlat) => splitCubic(...sub),
+    skipBox: overlap === null ? undefined : overlapBoxFilter(overlap),
     onConverge,
   });
 }

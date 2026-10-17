@@ -80,6 +80,19 @@ export function pushHitIfNew<P extends XYWritable = XYObjectWritable>(
   for (const existing of outHits) {
     if (Math.abs(existing.tB - tB) <= epsilonT) return;
   }
+  writeHit(outHits, px, py, kind, tA, tB, makePoint);
+}
+
+/** dedupe 없이 새 IntersectionHit를 생성해 outHits에 push한다. */
+export function writeHit<P extends XYWritable = XYObjectWritable>(
+  outHits: IntersectionHit<P>[],
+  px: number,
+  py: number,
+  kind: IntersectionKind,
+  tA: number,
+  tB: number,
+  makePoint: () => P
+): void {
   const point = makePoint();
   writeXY(point as XYWritable, px, py);
   outHits.push({ point, kind, tA, tB });
@@ -117,9 +130,7 @@ export function pushHitIfNewAB<P extends XYWritable = XYObjectWritable>(
       return;
     }
   }
-  const point = makePoint();
-  writeXY(point as XYWritable, px, py);
-  outHits.push({ point, kind, tA, tB });
+  writeHit(outHits, px, py, kind, tA, tB, makePoint);
 }
 
 /**
@@ -314,6 +325,9 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
   /** curve B sub-curve를 t=0.5에서 두 half로 분할한다. */
   splitB: (sub: B) => [B, B];
 
+  /** true를 반환한 parameter box는 재귀하지 않는다. 겹침 구간 내부 box를 건너뛸 때 쓴다. */
+  skipBox?: (tA0: number, tA1: number, tB0: number, tB1: number) => boolean;
+
   /**
    * subdivision이 수렴(또는 maxDepth 도달)했을 때 호출된다.
    * origA는 재귀 내내 불변인 curve A 원본 좌표 — 정밀 교차점 계산에 사용한다.
@@ -339,6 +353,8 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
  * hull bound가 겹치지 않으면 branch를 중단하고, span이 더 큰 쪽을 매 단계 분할해
  * parameter box를 좁힌다. 수렴(또는 maxDepth 도달) 시 adapters.onConverge에 위임한다.
  *
+ * adapters.skipBox가 true를 반환한 box는 hull 검사 없이 버린다.
+ *
  * 호출자는 각 parameter 구간을 오름차순으로 전달하고 epsilon/epsilonT/maxDepth/depth를
  * 음이 아닌 값으로 보장해야 한다. 일반 호출은 depth=0에서 시작한다. zero-span 구간은
  * 양쪽 span이 epsilonT 이하일 때 즉시 수렴한다.
@@ -360,7 +376,9 @@ export function subdivideCurves<A, B, P extends XYWritable>(
   makePoint: () => P,
   adapters: CurveSubdivisionAdapters<A, B, P>
 ): void {
-  const { hullBoundsA, hullBoundsB, splitA, splitB, onConverge } = adapters;
+  const { hullBoundsA, hullBoundsB, splitA, splitB, skipBox, onConverge } = adapters;
+  if (skipBox?.(tA0, tA1, tB0, tB1)) return;
+
   const [aMinX, aMinY, aMaxX, aMaxY] = hullBoundsA(aSub);
   const [bMinX, bMinY, bMaxX, bMaxY] = hullBoundsB(bSub);
 

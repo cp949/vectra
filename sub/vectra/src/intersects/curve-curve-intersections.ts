@@ -6,7 +6,8 @@ import { curveCurveIntersectionsInto } from './curve-curve-intersections-into';
  *
  * `curveA.kind`/`curveB.kind` 조합으로 quadratic/cubic kernel을 분기한다.
  * 결과는 flat `{ x, y, kind, tA, tB }`이고 `tA`는 `curveA` parameter, `tB`는 `curveB` parameter `[0, 1]`이다.
- * `kind`는 `cross`/`touch`만 사용한다. subdivision kernel은 approximation이다.
+ * `kind`는 `cross`/`touch`/`overlap`을 사용한다. subdivision kernel은 approximation이다.
+ * 두 curve가 같은 기하 위에서 구간을 공유하면 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다.
  * 성능 최적화가 필요하면 `curveCurveIntersectionsInto`를 사용한다.
  *
  *

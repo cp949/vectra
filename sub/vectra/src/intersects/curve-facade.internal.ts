@@ -20,11 +20,11 @@ import type {
 /**
  * kernel `IntersectionKind`를 facade `CurveIntersectionKind`로 좁힌다.
  *
- * 대상 kernel(line×curve, curve×curve, cubic self)은 `cross`/`touch`만 생성한다.
- * 방어적으로 `touch`가 아니면 `cross`로 처리해 overlap/parallel/coincident를 노출하지 않는다.
+ * line×curve, cubic self kernel은 `cross`/`touch`만 생성한다. curve×curve kernel은 `overlap`도 생성한다.
+ * 방어적으로 나머지 kind(parallel/coincident)는 `cross`로 처리해 노출하지 않는다.
  */
 export function toCurveKind(kind: IntersectionKind): CurveIntersectionKind {
-  return kind === 'touch' ? 'touch' : 'cross';
+  return kind === 'touch' || kind === 'overlap' ? kind : 'cross';
 }
 
 /**

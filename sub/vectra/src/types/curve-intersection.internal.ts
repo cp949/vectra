@@ -28,8 +28,8 @@ export type CurveLike =
   | { kind: 'quadratic'; p0: XYInput; p1: XYInput; p2: XYInput }
   | { kind: 'cubic'; p0: XYInput; p1: XYInput; p2: XYInput; p3: XYInput };
 
-/** generic curve relation facade 교차 종류. `cross`=관통, `touch`=접촉. */
-export type CurveIntersectionKind = 'cross' | 'touch';
+/** generic curve relation facade 교차 종류. `cross`=관통, `touch`=접촉, `overlap`=구간 중첩의 양 끝점. */
+export type CurveIntersectionKind = 'cross' | 'touch' | 'overlap';
 
 /**
  * generic curve relation facade 교차 결과 1건.
