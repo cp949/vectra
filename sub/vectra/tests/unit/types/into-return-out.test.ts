@@ -111,6 +111,41 @@ describe('curve·intersects 교차 Into는 out을 반환한다', () => {
     expect(result).toBe(out);
   });
 
+  // 아래 입력은 kernel의 조기 종료·특수 분기를 지난다. 각 분기가 out을 반환하는지 고정한다.
+  const branchCases: HitCase[] = [
+    [
+      'quadraticLine 선형 분기(a === 0)',
+      (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 0] }),
+    ],
+    [
+      'quadraticLine 선형 분기(b === 0)',
+      (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 1] }),
+    ],
+    [
+      'quadraticLine 중근 touch 분기',
+      (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], { origin: [0, 1], direction: [1, 0] }),
+    ],
+    [
+      'cubicLine overlap 분기',
+      (out) => cubicLineIntersectionsInto(out, [0, 0.5], [1, 0.5], [2, 0.5], [3, 0.5], crossing),
+    ],
+    ['cubicSelf loop 없음', (out) => cubicSelfIntersectionsInto(out, [0, 0], [1, 2], [2, 2], [3, 0])],
+  ];
+
+  test.each(branchCases)('%s', (_name, call) => {
+    const out: IntersectionHit[] = [];
+    expect(call(out)).toBe(out);
+  });
+
+  test('quadraticLine 특수 분기가 기대한 hit를 만든다', () => {
+    const linear = quadraticLineIntersectionsInto([], [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 0] });
+    expect(linear.map((hit) => hit.kind)).toEqual(['cross']);
+    const parallel = quadraticLineIntersectionsInto([], [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 1] });
+    expect(parallel).toHaveLength(0);
+    const tangent = quadraticLineIntersectionsInto([], [0, 0], [1, 2], [2, 0], { origin: [0, 1], direction: [1, 0] });
+    expect(tangent.map((hit) => hit.kind)).toEqual(['touch']);
+  });
+
   test('교차 있는 호출은 반환한 배열에 hit가 들어 있다', () => {
     const out: IntersectionHit[] = [];
     expect(quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], crossing)).toHaveLength(2);
@@ -152,6 +187,16 @@ describe('spline polyline Into는 out을 반환한다', () => {
     expectTypeOf(result).toEqualTypeOf<XYObjectWritable[]>();
     expect(result).toBe(out);
     expect(result.length).toBeGreaterThan(0);
+  });
+
+  test.each([
+    ['bspline', bsplinePolylineInto],
+    ['cardinal', cardinalPolylineInto],
+    ['catmullRom', catmullRomPolylineInto],
+  ] as const)('%s steps가 1이면 out을 반환한다', (_name, into) => {
+    const out: XYObjectWritable[] = [];
+    expect(into(out, controlPoints, 1)).toBe(out);
+    expect(out.length).toBeGreaterThan(0);
   });
 
   test.each([

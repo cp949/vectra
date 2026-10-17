@@ -46,18 +46,15 @@ import { splitCommandsAtLength } from './path-slice.internal';
  * @param distance path 시작점부터의 arc-length offset
  * @param options flatten 옵션 (flatness, maxRecursion)
  */
-export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathCommand[]>(
-  outA: OutA,
-  outB: OutB,
+export function splitAtLengthInto(
+  outA: PathCommand[],
+  outB: PathCommand[],
   commands: readonly PathCommand[],
   distance: number,
   options?: PathMeasurementOptions
 ): void {
   // aliasing 대비: outA / outB가 commands와 같은 배열이면 clear 전에 snapshot
-  const snapshot =
-    commands === (outA as readonly PathCommand[]) || commands === (outB as readonly PathCommand[])
-      ? Array.from(commands)
-      : commands;
+  const snapshot = commands === outA || commands === outB ? Array.from(commands) : commands;
 
   outA.length = 0;
   outB.length = 0;
@@ -73,7 +70,7 @@ export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathC
   });
   if (!hasDrawing) {
     for (const cmd of snapshot) {
-      outB.push(cmd as OutB[number]);
+      outB.push(cmd);
     }
     return;
   }
@@ -81,7 +78,7 @@ export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathC
   if (distance <= 0) {
     // 전체 path → outB. reference 보존.
     for (const cmd of snapshot) {
-      outB.push(cmd as OutB[number]);
+      outB.push(cmd);
     }
     return;
   }
@@ -95,7 +92,7 @@ export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathC
     outA.length = 0;
     outB.length = 0;
     for (const cmd of snapshot) {
-      outA.push(cmd as OutA[number]);
+      outA.push(cmd);
     }
   }
 }

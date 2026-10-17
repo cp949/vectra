@@ -184,6 +184,7 @@ Out, ...): Out` 형태가 `vectra`의 "bring your own geometry objects" 철학�
 
 예외:
 
+- 새 원소를 만들어 push하는 collection `Into`는 원소 타입을 제네릭으로 열지 않는다. 출력 배열 타입을 `XYObjectWritable[]`, `PathCommand[]`, `IntersectionHit[]`처럼 고정하고 그 배열을 반환한다. 좁은 원소 타입 `Out`을 받으면 반환 타입이 실제로 push한 원소와 달라진다. 세부는 `docs/internal/api-design.md`의 "Point 배열 출력: clear 후 push가 기본이다"를 따른다.
 - `singleIntersectionInto`처럼 scalar/boolean이 주 반환값인 함수는 `<Out extends WritableShape>
   (...): Out` 형태를 적용하지 않는다. 이런 함수는 `out`에 결과를 기록하지만 반환 타입이 기록
   성공 여부를 나타내므로, generic return으로 바꾸면 기존 의미가 깨진다. 예외 함수는 API surface

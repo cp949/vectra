@@ -229,15 +229,20 @@ point 배열을 `out`으로 받는 collection `xxxInto`는 `out.length = 0` 뒤 
 - 출력 배열의 원소 타입을 제네릭으로 열지 않는다. 함수가 만드는 값이 곧 원소 타입이다. 예: `XYObjectWritable[]`, `PathCommand[]`, `IntersectionHit[]`.
 - 이유: `Out extends MoveCommand[]`처럼 좁은 원소 타입을 받으면 반환 타입이 실제로 push한 command와 달라진다.
 
-예외는 `matrix/transformPointsInto` 하나다. 이 함수는 `out[i]`에 `writeXY`한다.
+예외는 기존 원소를 재사용하는 함수다. 호출 전 `out`의 내용이 결과에 영향을 준다.
 
-- `out[i]`는 tuple, 외부 point class instance일 수 있다. 호출 전에 caller가 준비한다.
-- `out.length < points.length`이면 `RangeError`를 던지고 `out`을 수정하지 않는다.
-- `out.length > points.length`이면 초과 항목을 수정하지 않는다.
-- 같은 index의 입력을 먼저 읽고 기록하므로 `out[i] === points[i]` aliasing만 안전하다.
-- point object를 할당하지 않는다.
+| 함수                                                               | `out.length`가 짧을 때          | `out.length`가 길 때 |
+| ------------------------------------------------------------------ | ------------------------------- | -------------------- |
+| `matrix/transformPointsInto`                                       | `RangeError`. `out`은 수정 안 함 | 초과 항목을 수정 안 함 |
+| `adapter/flat/decodeFlatCoordsInto`, `adapter/flat/fromFloat32ArrayInto` | 새 object를 할당해 채운다 | 초과 항목을 수정 안 함 |
 
-두 방식은 호출 계약이 달라서 한쪽으로 통일하지 않는다. 새 collection `Into`는 clear 후 push를 따른다. 원소 타입을 caller가 정해야 하는 경우에만 index 위치 기록을 쓴다.
+- 공통: `out[i]`가 있으면 `x`, `y`만 덮어쓴다. `out`의 길이를 줄이지 않는다.
+- `matrix/transformPointsInto`: `out[i]`는 tuple, 외부 point class instance일 수 있다. 호출 전에 caller가 준비한다.
+- `matrix/transformPointsInto`: 같은 index의 입력을 먼저 읽고 기록하므로 `out[i] === points[i]` aliasing만 안전하다.
+- `adapter/flat`의 두 함수: `out[i]`는 `XYObjectWritable`이어야 한다. tuple은 받지 않는다.
+- `matrix/transformPointsInto`는 point object를 할당하지 않는다. `adapter/flat`의 두 함수는 `out`이 짧을 때만 할당한다.
+
+새 collection `Into`는 clear 후 push를 따른다. 호출 전 `out`을 재사용하는 buffer로 쓰게 해야 하는 경우에만 원소 재사용을 쓴다.
 
 ## API-009: 좌표 입력 (`XYInput`)
 

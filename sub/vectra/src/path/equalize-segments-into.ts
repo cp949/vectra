@@ -136,16 +136,16 @@ function copyWithPadding(out: PathCommand[], commands: readonly PathCommand[], e
  * @param commands2 두 번째 path command sequence (absolute 전제)
  * @param _options 예약된 measurement 옵션. 현재 동작에 영향을 주지 않는다.
  */
-export function equalizeSegmentsInto<Out1 extends PathCommand[], Out2 extends PathCommand[]>(
-  out1: Out1,
-  out2: Out2,
+export function equalizeSegmentsInto(
+  out1: PathCommand[],
+  out2: PathCommand[],
   commands1: readonly PathCommand[],
   commands2: readonly PathCommand[],
   _options?: PathMeasurementOptions
 ): void {
   // clear 전에 snapshot해 aliasing(out === commands)을 안전하게 처리
-  const snap1 = commands1 === (out1 as readonly PathCommand[]) ? Array.from(commands1) : commands1;
-  const snap2 = commands2 === (out2 as readonly PathCommand[]) ? Array.from(commands2) : commands2;
+  const snap1 = commands1 === out1 ? Array.from(commands1) : commands1;
+  const snap2 = commands2 === out2 ? Array.from(commands2) : commands2;
 
   const n1 = countDrawSegments(snap1);
   const n2 = countDrawSegments(snap2);
