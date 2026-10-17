@@ -77,8 +77,43 @@ describe('circleLensArea', () => {
     const large = circle(0.19114182796329263, 0, 32.241879350729285);
     const area = circleLensArea(small, large);
     expect(Number.isNaN(area)).toBe(false);
-    expect(area / (Math.PI * 32.05073752276599 ** 2)).toBeCloseTo(1, 6);
+    expect(area / (Math.PI * 32.05073752276599 ** 2)).toBeCloseTo(1, 12);
   });
+
+  test.each([
+    { name: '반지름비 2', big: 1, small: 0.5 },
+    { name: '반지름비 1000', big: 1, small: 1e-3 },
+    { name: '반지름비 1e5', big: 1e5, small: 1 },
+    { name: '반지름 규모 1e-3', big: 2e-3, small: 1e-3 },
+  ])(
+    '내접 경계에서 거리 차 1e-12 이내 lens 면적은 작은 disk area와 상대 1e-12 안에서 같다 ($name)',
+    ({ big, small }) => {
+      // d = big - small + 1e-12·small이다. 떨어진 조각의 면적은 d 차이의 1.5제곱에 비례해 1e-18 규모라
+      // 작은 disk area와 double 정밀도에서 같다. acos 기반 공식은 인자 1 근처에서 정밀도가 절반으로 줄어
+      // 상대 오차가 1e-8 규모였다.
+      const d = big - small + small * 1e-12;
+      const expected = Math.PI * small * small;
+      expect(circleLensArea(circle(0, 0, big), circle(d, 0, small)) / expected).toBeCloseTo(1, 12);
+      expect(circleLensArea(circle(0, 0, small), circle(d, 0, big)) / expected).toBeCloseTo(1, 12);
+    }
+  );
+
+  test.each([
+    { name: '반지름비 1000, 중심 거리 큰 반지름', a: [1, 0], b: [1e-3, 1], expected: 1.5704629934532299e-6 },
+    { name: '반지름비 1e6, 중심 거리 큰 반지름', a: [1e3, 0], b: [1e-3, 1e3], expected: 1.5707959934615633e-6 },
+    { name: '외접 직전 얇은 lens', a: [3, 0], b: [2, 4.999999999], expected: 6.5319734578799657e-14 },
+    { name: '내접 직전 반지름비 1000', a: [1, 0], b: [1e-3, 0.9990000001], expected: 3.1415926535301351e-6 },
+  ])(
+    '반지름비가 크거나 경계에 가까운 lens 면적은 80자리 계산값과 상대 1e-12 안에서 같다 ($name)',
+    ({ a, b, expected }) => {
+      // expected는 같은 입력을 80자리 십진수로 계산한 값이다. 표준 공식(acos와 kite 뺄셈)은 이 입력들에서
+      // 큰 항끼리 상쇄해 상대 오차가 1e-3에서 1e14까지 커졌다.
+      const [ra, ax] = a;
+      const [rb, bx] = b;
+      expect(circleLensArea(circle(ax, 0, ra), circle(bx, 0, rb)) / expected).toBeCloseTo(1, 12);
+      expect(circleLensArea(circle(bx, 0, rb), circle(ax, 0, ra)) / expected).toBeCloseTo(1, 12);
+    }
+  );
 
   test('큰 쪽이 첫 번째 인자여도 같은 경계에서 작은 disk area로 수렴한다', () => {
     // beta 쪽 acos 인자가 -1.0000000000000004로 계산되는 배치다.
@@ -86,8 +121,7 @@ describe('circleLensArea', () => {
     const small = circle(4.447257355786861, 0, 56.92417206544429);
     const area = circleLensArea(large, small);
     expect(Number.isNaN(area)).toBe(false);
-    // 경계 근처 상쇄로 상대 오차가 1e-8 규모까지 생긴다.
-    expect(area / (Math.PI * 56.92417206544429 ** 2)).toBeCloseTo(1, 6);
+    expect(area / (Math.PI * 56.92417206544429 ** 2)).toBeCloseTo(1, 12);
   });
 
   test('radius <= 0은 0이다', () => {

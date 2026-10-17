@@ -15,9 +15,9 @@ import type { CircleLike } from '../types';
  * - proper lens: 두 원 중첩 면적의 표준 공식.
  *
  * center distance는 `Math.hypot`로 계산한다. disjoint/containment 경계는 exact 비교로 판정하며
- * near-equality tolerance를 추가하지 않는다. proper lens의 `acos` 인자와 kite 항은 내접 경계 근처
- * 반올림으로 정의역을 벗어나도 `NaN`이 나오지 않게 clamp한다. detail helper와 달리 면적 값을 직접
- * 반환하고 `Into`/companion이 없다.
+ * near-equality tolerance를 추가하지 않는다. proper lens의 중심각은 `atan2`로 구해 내접 경계 근처에서도
+ * 정밀도를 잃지 않고 `NaN`이 나오지 않는다. detail helper와 달리 면적 값을 직접 반환하고
+ * `Into`/companion이 없다.
  *
  * @param a 첫 번째 circle
  * @param b 두 번째 circle
@@ -49,20 +49,51 @@ export function circleLensArea(a: CircleLike, b: CircleLike): number {
     return Math.PI * min * min;
   }
 
-  // proper lens: 두 원 중첩 면적 표준 공식. 마지막 항은 두 교점이 이루는 kite 면적이다.
-  // 내접 경계(d → diff+) 근처에서 acos 인자와 kite 곱은 반올림으로 정의역을 살짝 벗어날 수 있어
-  // [-1, 1]과 [0, ∞)로 clamp한다. 이렇게 하면 면적이 containment의 작은 disk area로 연속 수렴한다.
-  const ra2 = ra * ra;
-  const rb2 = rb * rb;
-  const alpha = Math.acos(clampUnit((d * d + ra2 - rb2) / (2 * d * ra)));
-  const beta = Math.acos(clampUnit((d * d + rb2 - ra2) / (2 * d * rb)));
-  const kite = 0.5 * Math.sqrt(Math.max(0, (-d + ra + rb) * (d + ra - rb) * (d - ra + rb) * (d + ra + rb)));
-  return ra2 * alpha + rb2 * beta - kite;
+  // proper lens: 두 원 중첩 면적 = 각 원의 원호 조각(segment) 면적의 합이다.
+  // 조각 면적은 r²·(2θ - sin 2θ) / 2이고 θ는 중심각의 절반이다. 표준 공식(r²θ 두 항에서 kite를 뺌)은
+  // 외접·내접 근처에서 큰 항끼리 상쇄해 정밀도를 잃고, 반지름비가 크면 어디서든 잃는다.
+  // 그래서 세 가지를 바꾼다.
+  // - Heron 인수 `ra + rb - d`, `d ± (rb - ra)`를 오차 없는 합(twoSum)으로 구해 가까운 수의 차에서 정밀도를 잃지 않는다.
+  // - θ를 acos(인자 1 근처에서 오차 ~sqrt(ε)) 대신 반각 접선 `tan(θa/2) = sqrt(F1·F3 / (F2·F4))`로 구한다.
+  //   F2 = d + ra - rb, F3 = d - ra + rb 처럼 상쇄 없는 곱과 비만 쓴다.
+  // - 조각 형태 `2θ - sin 2θ`는 작은 θ에서 급수로 계산한다.
+  const sumR = ra + rb;
+  const sumErr = twoSumError(ra, rb, sumR);
+  const delta = rb - ra;
+  const deltaErr = twoSumError(rb, -ra, delta);
+  const f1 = sumR - d + sumErr; // ra + rb - d
+  const f2 = d - delta - deltaErr; // d + ra - rb
+  const f3 = d + delta + deltaErr; // d - ra + rb
+  const f4 = d + sumR + sumErr; // d + ra + rb
+  const alpha = 2 * Math.atan(Math.sqrt(f1 / f2) * Math.sqrt(f3 / f4));
+  const beta = 2 * Math.atan(Math.sqrt(f1 / f3) * Math.sqrt(f2 / f4));
+  return (ra * ra * angleMinusSine(2 * alpha)) / 2 + (rb * rb * angleMinusSine(2 * beta)) / 2;
 }
 
-/** acos 인자를 [-1, 1]로 clamp해 near-tangent rounding으로 인한 domain NaN을 막는다. */
-function clampUnit(v: number): number {
-  if (v < -1) return -1;
-  if (v > 1) return 1;
-  return v;
+/**
+ * `a + b`를 `s`로 반올림했을 때 잃은 오차 `(a + b) - s`를 정확히 구한다(Knuth twoSum).
+ *
+ * @param s 호출자가 계산한 `a + b`
+ */
+function twoSumError(a: number, b: number, s: number): number {
+  const bb = s - a;
+  return a - (s - bb) + (b - bb);
+}
+
+/**
+ * `x - sin(x)`를 `x ∈ [0, 2π]`에서 계산한다.
+ *
+ * `x`가 작으면 `x - sin(x)`가 거의 같은 두 수의 차라 유효숫자를 잃는다. `x <= 0.5`에서는
+ * 급수 `x³/3! - x⁵/5! + x⁷/7! - ...`를 12항까지 더해 상대 정밀도를 유지한다.
+ */
+function angleMinusSine(x: number): number {
+  if (x > 0.5) return x - Math.sin(x);
+  const x2 = x * x;
+  let term = (x * x2) / 6;
+  let sum = 0;
+  for (let k = 3; k < 27; k += 2) {
+    sum += term;
+    term = (-term * x2) / ((k + 1) * (k + 2));
+  }
+  return sum;
 }
