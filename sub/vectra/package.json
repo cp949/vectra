@@ -43,7 +43,9 @@
     "test:coverage": "vitest run --coverage --config vitest.config.ts"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "oxc-parser": "^0.154.0",
+    "vitest": "^5.0.5"
   },
   "exports": {
     ".": {
