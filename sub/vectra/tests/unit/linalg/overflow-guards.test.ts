@@ -14,6 +14,7 @@ import { pseudoInverse } from '../../../src/linalg/pseudo-inverse';
 import { qrDecomposition } from '../../../src/linalg/qr-decomposition';
 import { reducedRowEchelonForm } from '../../../src/linalg/reduced-row-echelon-form';
 import { solveByForwardSubstitution } from '../../../src/linalg/solve-by-forward-substitution';
+import { solveByGaussianElimination } from '../../../src/linalg/solve-by-gaussian-elimination';
 import { solveUnderdeterminedSystem } from '../../../src/linalg/solve-underdetermined-system';
 import { solveWithCholeskyDecomposition } from '../../../src/linalg/solve-with-cholesky-decomposition';
 
@@ -175,6 +176,52 @@ describe('SVD 기반 함수의 overflow', () => {
     expect(() => solveUnderdeterminedSystem([[1e-150, 0]], [1e160], { epsilon: 0 })).toThrow(
       /^solveUnderdeterminedSystem candidate accumulator overflowed at row 0, got Infinity$/
     );
+  });
+});
+
+describe('solveByGaussianElimination의 잔차 overflow', () => {
+  test('잔차의 행 곱 하나가 overflow하면 RangeError를 던진다', () => {
+    // 4x3 과결정계다. 풀이 x는 finite지만 셋째 행의 2열 계수 MAX와 x[1]의 곱이 범위를 넘는다.
+    expect(() =>
+      solveByGaussianElimination(
+        [
+          [0, 0.5, 1],
+          [0, 0.5, BIG],
+          [-2, BIG, BIG],
+          [1, -1, -1],
+        ],
+        [1, 0, 0, BIG]
+      )
+    ).toThrow(/^residual computation produced non-finite intermediate at row \d, column \d, got -?Infinity$/);
+  });
+
+  test('잔차의 행 누적이 overflow하면 RangeError를 던진다', () => {
+    // 풀이 x = (-1, 0)이고 둘째·셋째 행의 b가 ±MAX라 행 합이 한 번 더하면 범위를 넘는다.
+    expect(() =>
+      solveByGaussianElimination(
+        [
+          [1, 1],
+          [-1, 0],
+          [-1, -2],
+        ],
+        [-1, BIG, -BIG]
+      )
+    ).toThrow(/^residual computation accumulator overflowed at row \d, got -?Infinity$/);
+  });
+});
+
+describe('잔차 노름의 overflow', () => {
+  test('잔차 두 개가 MAX_VALUE 규모이면 노름이 overflow해 RangeError를 던진다', () => {
+    // rank 1인 A는 b = (MAX, -MAX)의 성분을 못 맞춰 x = 0이 된다. 잔차 (-MAX, MAX)의 노름은 √2·MAX다.
+    expect(() =>
+      solveUnderdeterminedSystem(
+        [
+          [1, 1, 1],
+          [1, 1, 1],
+        ],
+        [BIG, -BIG]
+      )
+    ).toThrow(/^residual norm produced non-finite value, got Infinity$/);
   });
 });
 

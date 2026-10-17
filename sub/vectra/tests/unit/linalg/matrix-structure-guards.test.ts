@@ -52,6 +52,12 @@ describe('chainProduct의 결과 shape 추정', () => {
   test('마지막 행렬의 첫 행이 배열이 아니면 RangeError를 던진다', () => {
     expect(() => chainProduct(bad([[[1]], [5]]))).toThrow(/^matrices\[1\]\[0\] must be an array$/);
   });
+
+  test('빈 행렬끼리의 곱은 빈 행렬이다', () => {
+    // 누적 행렬의 행이 0개이면 곱셈 루프를 건너뛰고 빈 누적을 유지한다.
+    expect(chainProduct([[], []])).toEqual([]);
+    expect(chainProduct([[], [], []])).toEqual([]);
+  });
 });
 
 describe('빈 행렬에 대한 행 연산', () => {

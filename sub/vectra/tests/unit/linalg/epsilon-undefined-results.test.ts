@@ -31,6 +31,19 @@ describe('eig의 고유벡터 실패', () => {
   });
 });
 
+describe('eig의 영공간 벡터 norm 검사', () => {
+  test('epsilon이 영공간 벡터의 norm 이상이면 undefined를 반환한다', () => {
+    const matrix = [
+      [0, 0],
+      [2, 2],
+    ];
+    // 고유값은 0과 2다. lambda = 2의 영공간 벡터는 (0, 1)이라 norm이 1이다.
+    expect(calculateEigenvalues(matrix, { epsilon: 1 })).toEqual([2, 0]);
+    // 단위 길이 벡터는 norm이 epsilon 1 이하라 수치 실패로 본다.
+    expect(eig(matrix, { epsilon: 1 })).toBeUndefined();
+  });
+});
+
 describe('pseudoInverse의 특이값 검사', () => {
   test('A^T A 고유값이 -epsilon보다 작게 반올림되면 undefined를 반환한다', () => {
     // 1x2 행렬은 rank 1이라 A^T A의 한 고유값이 0이어야 한다. 반올림 오차가 -1e-300 아래로 내려간다.
