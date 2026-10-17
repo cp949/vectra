@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 
+- README와 문서의 런타임 지원 표기를 '검증 환경'(Node.js `>=24.18.0`)과 '빌드 target'(ES2020, platform neutral)으로 나눈다. 문서 표기만 바뀐다. `package.json`, 빌드 결과, 공개 API는 그대로이고 `engines`는 추가하지 않는다.
 - `package.json`의 `exports` 각 항목에 `default` 조건을 추가한다. 이전에는 CJS `require('@cp949/vectra/vec')`가 `ERR_PACKAGE_PATH_NOT_EXPORTED`로 실패했다. 이제 `require(esm)`을 지원하는 Node.js(`>=24.18.0`)에서 root와 모든 subpath를 `require()`로 불러올 수 있다. 패키지는 계속 ESM이다. `import`로 쓰는 코드는 영향이 없다.
 - `exports` 각 항목에서 `types` 조건을 첫 번째로 옮긴다. 조건은 순서대로 해석되므로 이전 순서에서는 TypeScript가 `import`를 먼저 만났다. publint 오류 38건이 사라진다.
 - `solveCubic`의 3차 경로가 `eps`를 생략하면 상대 판정을 쓴다. 판별식은 p, q의 반올림 잡음이 전파되는 양 `16·ε·(|q|·S³ + p²·S²)` 이하일 때 중근으로 본다(S는 근 scale). 근 dedupe는 `1e-12·S`이다. 이전에는 판별식 `1e-18`, 근 dedupe `1e-9` 절대값이라 붙은 근을 합쳤다. 예를 들어 근 (0.5, 0.5001, 0.5002)가 `[0.5001]` 하나로 나왔다. `eps`를 생략한 호출만 결과가 바뀌고, `eps`를 명시한 호출은 이전과 같다. 근 간격이 S의 약 1e-5배 이하이거나 켤레 복소근의 허수부가 약 1e-6배 이하이면 중근으로 합친다.

@@ -36,7 +36,8 @@ publish 직전 무엇을 확인해야 하는가를 담는 체크리스트다.
 
 | 항목 | 공식 기준 | Release gate |
 | --- | --- | --- |
-| Runtime | Node.js `>=24.18.0` | `pnpm verify`와 package 단위 검증을 이 기준에서 실행 |
+| 검증 환경 | Node.js `>=24.18.0` | `pnpm verify`와 package 단위 검증을 이 기준에서 실행 |
+| 빌드 target | ES2020, platform neutral | `sub/vectra/tsdown.config.ts`의 `target`, `platform` 유지. 보장 범위는 아니다 |
 | Package format | ESM only | `package.json`의 `"type": "module"`, `exports` 유지 |
 | Import surface | root / domain barrel | contract test로 package import와 subpath import 확인 |
 | Type declarations | `.d.ts` 포함 | `pnpm --filter @cp949/vectra build` 후 `dist/**/*.d.ts` 확인 |

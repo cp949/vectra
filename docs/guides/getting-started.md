@@ -14,7 +14,8 @@ npm install @cp949/vectra
 
 | 항목 | 기준 |
 | --- | --- |
-| Runtime | Node.js `>=24.18.0`에서 검증 |
+| 검증 환경 | Node.js `>=24.18.0`. CI와 contract test 기준이다 |
+| 빌드 target | ES2020, platform neutral. 브라우저와 번들러에서 쓸 수 있다. 보장 범위는 아니다 |
 | Module format | ESM. CJS는 `require(esm)`으로 불러온다 |
 | Dependencies | runtime dependency 없음 |
 | TypeScript | package가 제공하는 `.d.ts` 사용 |
