@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 
+- package README의 Domain 절이 모든 domain을 나열한다. npm 페이지에서 저장소 문서, domain 지도, CHANGELOG로 가는 링크를 추가한다.
 - `isSimple`과 `isSelfIntersecting`의 self-intersection 검사를 빠르게 한다. vertex가 64개 이상이고 `epsilon`을 생략한 호출은 AABB sweep으로 후보 edge 쌍을 줄인다. 원형 4000 vertex는 약 60ms에서 약 0.7ms로, 20000 vertex는 약 1.5초에서 약 4ms로 줄어든다. 동작 변경은 없다. 반환값은 이전과 같다. `epsilon`을 명시한 호출, vertex 64개 미만, edge 길이가 약 1.16e77을 넘거나 NaN·Infinity 좌표가 있는 입력은 이전의 전수 비교를 쓴다. 이미 교차한 polygon은 첫 교차를 일찍 찾는 이전 루프가 더 빠를 수 있다. 정렬과 배열 할당 때문에 vertex 4000개에서 약 0.1ms가 약 0.9ms가 된다.
 - README와 문서의 런타임 지원 표기를 '검증 환경'(Node.js `>=24.18.0`)과 '빌드 target'(ES2020, platform neutral)으로 나눈다. 문서 표기만 바뀐다. `package.json`, 빌드 결과, 공개 API는 그대로이고 `engines`는 추가하지 않는다.
 - `package.json`의 `exports` 각 항목에 `default` 조건을 추가한다. 이전에는 CJS `require('@cp949/vectra/vec')`가 `ERR_PACKAGE_PATH_NOT_EXPORTED`로 실패했다. 이제 `require(esm)`을 지원하는 Node.js(`>=24.18.0`)에서 root와 모든 subpath를 `require()`로 불러올 수 있다. 패키지는 계속 ESM이다. `import`로 쓰는 코드는 영향이 없다.
@@ -33,3 +34,17 @@
 - dist를 root와 domain barrel 단위로만 만든다. leaf 단위 dist 파일은 없어진다. 패키지 파일은 6,079개에서 212개로, 압축 크기는 2.3 MB에서 1.6 MB로 줄어든다. `exports`를 우회해 `dist/<domain>/<leaf>.js`를 직접 import하던 코드는 domain subpath(`@cp949/vectra/<domain>`)로 바꿔야 한다.
 - 개발 의존성을 같은 메이저 안에서 갱신한다. vitest는 5로 올린다.
 - 배포에 `release-it`을 도입한다. [RELEASING.md](RELEASING.md)를 본다.
+
+## [1.0.2] - 2026-08-14
+
+- `int`를 `rng` 없이 호출했고 Web Crypto가 없는 환경이면 `Math.random` 값을 uint32로 바꾼 뒤 rejection sampling으로 정수를 고른다. Web Crypto 경로와 같은 방식이다. 이전에는 `Math.random` 값에 범위를 곱해 버림했다. seed 없이 만든 `createRandomState()`의 `int`도 같다. 버린 값이 있으면 `Math.random`을 다시 부르므로 한 호출이 `Math.random`을 여러 번 부를 수 있다. `rng`를 넘긴 호출, seed를 준 `createRandomState`, Web Crypto가 있는 환경은 바뀌지 않는다.
+- 큰 internal 파일을 기능 단위 module로 나눈다. 공개 export는 그대로다.
+
+## [1.0.1] - 2026-06-05
+
+- npm 레지스트리에서 설치할 수 있는 첫 버전이다. 1.0.0은 배포 기록이 있지만 레지스트리에서 설치할 수 없다.
+
+[Unreleased]: https://github.com/cp949/vectra/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/cp949/vectra/compare/fb75ddf...v1.1.0
+[1.0.2]: https://github.com/cp949/vectra/compare/39a8d19...fb75ddf
+[1.0.1]: https://github.com/cp949/vectra/tree/39a8d19

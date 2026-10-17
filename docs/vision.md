@@ -89,4 +89,4 @@ Broad geometry/math function catalog.
 scene graph, editor state/history, physics engine behavior, animation/tween engine은 영구
 비목표이다.
 
-MVP 이후 구체적인 실행 계획은 [ROADMAP](../ROADMAP.md)에서 관리한다.
+MVP 이후 구체적인 작업은 [GitHub Issues](https://github.com/cp949/vectra/issues)에서 관리한다.

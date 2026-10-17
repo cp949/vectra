@@ -6,7 +6,8 @@ TypeScript geometry/math function catalog.
 좌표와 shape data를 받아 geometry/math 결과를 계산한다.
 
 이 README는 npm package 페이지와 package tarball 안에서 읽히는 문서다.
-repository 전체 구조와 내부 운영 문서는 root README와 `docs/`를 본다.
+repository 전체 구조와 문서는 [GitHub 저장소](https://github.com/cp949/vectra)와 [문서 목차](https://github.com/cp949/vectra/blob/main/docs/README.md)를 본다.
+버전별 변경 사항은 [CHANGELOG](https://github.com/cp949/vectra/blob/main/CHANGELOG.md)를 본다.
 
 ## 설치
 
@@ -145,19 +146,25 @@ console.log(Trianglex.circumcenter(lineTriangle)); // undefined
 
 ## Domain
 
-주요 domain:
-
-- `vec`: 2D vector arithmetic
-- `segment`: finite line segment
-- `rect`, `bounds`, `circle`, `ellipse`, `triangle`: primitive shape
-- `matrix`, `pose2`: 2D transform
-- `polyline`, `polygon`, `path`, `curve`: path/curve 계산
-- `intersects`: cross-shape relation
-- `angle`, `interpolation`, `easing`, `random`: math helper
-- `adapter`, `svg-path`: 외부 format 변환
-- `editor-geometry`: editor-oriented pure geometry
-
 각 domain은 `@cp949/vectra/<domain>` 형태의 subpath로 import한다.
+
+| 분류 | Domain |
+| --- | --- |
+| vector | `vec` |
+| 직선·primitive shape | `segment`, `infinite-line`, `ray`, `rect`, `bounds`, `capsule`, `circle`, `ellipse`, `triangle`, `oriented-rect`, `polygon` |
+| 2D transform | `matrix`, `pose2` |
+| path·curve | `polyline`, `path`, `curve` |
+| cross-shape relation | `intersects` |
+| scalar math | `math`, `angle` |
+| 보간·motion | `interpolation`, `easing`, `motion` |
+| 수치 계산 | `linalg`, `statistics`, `fitting`, `calculus` |
+| random·noise | `random`, `random-state`, `noise` |
+| signed distance | `sdf` |
+| grid | `grid`, `hex-grid` |
+| 외부 format 변환 | `adapter`, `svg-path` |
+| editor-oriented geometry | `editor-geometry` |
+
+domain별 책임은 [Domain 지도](https://github.com/cp949/vectra/blob/main/docs/reference/domains.md)를 본다.
 
 ## 제품 경계
 
