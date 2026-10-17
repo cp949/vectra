@@ -77,7 +77,7 @@ publish 직전 무엇을 확인해야 하는가를 담는 체크리스트다.
 - [ ] `pnpm build` 통과 — dist 산출물이 생성된다
 - [ ] `pnpm test` 통과 — 모든 unit test와 contract test가 통과한다
 - [ ] `pnpm typecheck` 통과 — TypeScript 타입 오류가 없다
-- [ ] `pnpm lint` 통과 — biome lint 오류가 없다
+- [ ] `pnpm lint` 통과 — biome lint, format, import 정렬 오류와 warning이 없다
 - [ ] `pnpm format:check` 통과 — 포맷 오류가 없다
 - [ ] `pnpm verify` (전체 검증 명령) 통과한다
 
