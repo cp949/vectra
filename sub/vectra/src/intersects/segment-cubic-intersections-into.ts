@@ -18,6 +18,7 @@ import type { CurveIntersectionOptions, IntersectionHit, SegmentLike, XYInput } 
  * @param p2 cubic curve 두 번째 제어점
  * @param p3 cubic curve 끝점
  * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function segmentCubicIntersectionsInto(
   outHits: IntersectionHit[],
@@ -27,7 +28,7 @@ export function segmentCubicIntersectionsInto(
   p2: XYInput,
   p3: XYInput,
   options?: CurveIntersectionOptions
-): void {
+): IntersectionHit[] {
   const a = readSegmentA(segment);
   const b = readSegmentB(segment);
   const ax = readX(a);
@@ -48,4 +49,5 @@ export function segmentCubicIntersectionsInto(
     }
     i--;
   }
+  return outHits;
 }

@@ -104,6 +104,7 @@ function onConvergeSelf(
  * @param p2 curve 두 번째 제어점
  * @param p3 curve 끝점
  * @param options intersection kernel 옵션
+ * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function cubicSelfIntersectionsInto(
   outHits: IntersectionHit[],
@@ -112,11 +113,11 @@ export function cubicSelfIntersectionsInto(
   p2: XYInput,
   p3: XYInput,
   options?: CurveIntersectionOptions
-): void {
+): IntersectionHit[] {
   outHits.length = 0;
 
   // loop 형태가 아닌 cubic은 자기 교차점이 없다 — early exit으로 false hit를 방지한다
-  if (cubicClassify(p0, p1, p2, p3) !== 'loop') return;
+  if (cubicClassify(p0, p1, p2, p3) !== 'loop') return outHits;
 
   const { epsilon, epsilonT } = resolveOptions(options);
   const maxDepth = options?.maxDepth ?? DEFAULT_MAX_DEPTH;
@@ -143,4 +144,5 @@ export function cubicSelfIntersectionsInto(
     splitB: (sub: CubicFlat) => splitCubic(...sub),
     onConverge: onConvergeSelf,
   });
+  return outHits;
 }

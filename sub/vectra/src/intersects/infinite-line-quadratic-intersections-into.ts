@@ -14,6 +14,7 @@ import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInp
  * @param p1 quadratic curve 제어점
  * @param p2 quadratic curve 끝점
  * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function infiniteLineQuadraticIntersectionsInto(
   outHits: IntersectionHit[],
@@ -22,6 +23,7 @@ export function infiniteLineQuadraticIntersectionsInto(
   p1: XYInput,
   p2: XYInput,
   options?: CurveIntersectionOptions
-): void {
+): IntersectionHit[] {
   quadraticLineIntersectionsInto(outHits, p0, p1, p2, line, options);
+  return outHits;
 }

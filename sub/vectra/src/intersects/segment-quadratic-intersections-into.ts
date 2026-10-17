@@ -17,6 +17,7 @@ import type { CurveIntersectionOptions, IntersectionHit, SegmentLike, XYInput } 
  * @param p1 quadratic curve 제어점
  * @param p2 quadratic curve 끝점
  * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function segmentQuadraticIntersectionsInto(
   outHits: IntersectionHit[],
@@ -25,7 +26,7 @@ export function segmentQuadraticIntersectionsInto(
   p1: XYInput,
   p2: XYInput,
   options?: CurveIntersectionOptions
-): void {
+): IntersectionHit[] {
   const a = readSegmentA(segment);
   const b = readSegmentB(segment);
   const ax = readX(a);
@@ -46,4 +47,5 @@ export function segmentQuadraticIntersectionsInto(
     }
     i--;
   }
+  return outHits;
 }

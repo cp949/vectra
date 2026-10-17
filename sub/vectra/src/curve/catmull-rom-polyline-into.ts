@@ -1,4 +1,4 @@
-import type { CatmullRomPolylineOptions, XYInput, XYWritable } from '../types';
+import type { CatmullRomPolylineOptions, XYInput, XYObjectWritable } from '../types';
 import { catmullRomPointAtTInto } from './catmull-rom-point-at-t-into';
 
 /**
@@ -10,12 +10,13 @@ import { catmullRomPointAtTInto } from './catmull-rom-point-at-t-into';
  * @param out 결과를 기록할 writable output 배열 (호출 전 내용은 덮어쓴다)
  * @param points control point 배열
  * @param stepsOrOptions 샘플 수 또는 옵션 객체
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function catmullRomPolylineInto(
-  out: XYWritable[],
+  out: XYObjectWritable[],
   points: readonly XYInput[],
   stepsOrOptions?: number | CatmullRomPolylineOptions
-): void {
+): XYObjectWritable[] {
   let steps = 32;
   let alpha = 0.5;
   let closed = false;
@@ -30,12 +31,12 @@ export function catmullRomPolylineInto(
 
   if (points.length < 2) {
     out.length = 0;
-    return;
+    return out;
   }
 
   if (steps <= 0) {
     out.length = 0;
-    return;
+    return out;
   }
 
   if (steps === 1) {
@@ -43,7 +44,7 @@ export function catmullRomPolylineInto(
     catmullRomPointAtTInto(pt, points, 0, { alpha, closed });
     out.length = 0;
     out.push(pt);
-    return;
+    return out;
   }
 
   // steps >= 2: t = i/steps (i = 0, 1, ..., steps-1)
@@ -54,4 +55,5 @@ export function catmullRomPolylineInto(
     catmullRomPointAtTInto(pt, points, t, { alpha, closed });
     out.push(pt);
   }
+  return out;
 }

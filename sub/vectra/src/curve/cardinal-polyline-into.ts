@@ -1,4 +1,4 @@
-import type { CardinalPolylineOptions, XYInput, XYWritable } from '../types';
+import type { CardinalPolylineOptions, XYInput, XYObjectWritable } from '../types';
 import { cardinalPointAtTInto } from './cardinal-point-at-t-into';
 
 /**
@@ -15,12 +15,13 @@ import { cardinalPointAtTInto } from './cardinal-point-at-t-into';
  * @param out 결과를 기록할 writable output 배열 (호출 전 내용은 덮어쓴다)
  * @param points control point 배열
  * @param stepsOrOptions 샘플 수 또는 옵션 객체
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function cardinalPolylineInto(
-  out: XYWritable[],
+  out: XYObjectWritable[],
   points: readonly XYInput[],
   stepsOrOptions?: number | CardinalPolylineOptions
-): void {
+): XYObjectWritable[] {
   let steps = 32;
   let tension = 0;
   let closed = false;
@@ -35,12 +36,12 @@ export function cardinalPolylineInto(
 
   if (points.length < 2) {
     out.length = 0;
-    return;
+    return out;
   }
 
   if (steps <= 0) {
     out.length = 0;
-    return;
+    return out;
   }
 
   if (steps === 1) {
@@ -48,7 +49,7 @@ export function cardinalPolylineInto(
     cardinalPointAtTInto(pt, points, 0, { tension, closed });
     out.length = 0;
     out.push(pt);
-    return;
+    return out;
   }
 
   // steps >= 2: t = i/steps (i = 0, 1, ..., steps-1)
@@ -59,4 +60,5 @@ export function cardinalPolylineInto(
     cardinalPointAtTInto(pt, points, t, { tension, closed });
     out.push(pt);
   }
+  return out;
 }

@@ -14,16 +14,18 @@ import { writeCurveCurveHits } from './curve-facade.internal';
  * @param out 교차점을 기록할 facade hit 배열 (호출 전 내용은 무시되고 비워진다)
  * @param curve quadratic 또는 cubic Bezier curve
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function curveSelfIntersectionsInto(
   out: CurveIntersectionHit[],
   curve: CurveLike,
   options?: CurveIntersectionOptions
-): void {
+): CurveIntersectionHit[] {
   const hits: IntersectionHit[] = [];
   if (curve.kind === 'cubic') {
     cubicSelfIntersectionsInto(hits, curve.p0, curve.p1, curve.p2, curve.p3, options);
   }
   // quadratic Bezier는 자기 교차점이 없다 — 빈 hits로 두고 out을 비운다
   writeCurveCurveHits(out, hits, false);
+  return out;
 }

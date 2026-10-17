@@ -94,6 +94,7 @@ function onConverge(
  * @param q2 curve B 두 번째 제어점
  * @param q3 curve B 끝점
  * @param options intersection kernel 옵션
+ * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function cubicCubicIntersectionsInto(
   outHits: IntersectionHit[],
@@ -106,7 +107,7 @@ export function cubicCubicIntersectionsInto(
   q2: XYInput,
   q3: XYInput,
   options?: CurveIntersectionOptions
-): void {
+): IntersectionHit[] {
   outHits.length = 0;
   const { epsilon, epsilonT } = resolveOptions(options);
   const maxDepth = options?.maxDepth ?? DEFAULT_MAX_DEPTH;
@@ -138,4 +139,5 @@ export function cubicCubicIntersectionsInto(
     skipBox: overlap === null ? undefined : overlapBoxFilter(overlap),
     onConverge,
   });
+  return outHits;
 }

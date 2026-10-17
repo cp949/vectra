@@ -1,4 +1,4 @@
-import type { BSplinePolylineOptions, XYInput, XYWritable } from '../types';
+import type { BSplinePolylineOptions, XYInput, XYObjectWritable } from '../types';
 import { bsplinePointAtTInto } from './bspline-point-at-t-into';
 
 /**
@@ -15,12 +15,13 @@ import { bsplinePointAtTInto } from './bspline-point-at-t-into';
  * @param out 결과를 기록할 writable output 배열 (호출 전 내용은 덮어쓴다). 루프마다 신규 object를 push하므로 out 요소와 points 간 aliasing 없음
  * @param points control point 배열
  * @param stepsOrOptions 샘플 수 또는 옵션 객체
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function bsplinePolylineInto(
-  out: XYWritable[],
+  out: XYObjectWritable[],
   points: readonly XYInput[],
   stepsOrOptions?: number | BSplinePolylineOptions
-): void {
+): XYObjectWritable[] {
   let steps = 32;
   let closed = false;
 
@@ -33,14 +34,14 @@ export function bsplinePolylineInto(
 
   if (steps <= 0) {
     out.length = 0;
-    return;
+    return out;
   }
 
   const n = points.length;
   const spanCount = closed ? n : n - 3;
   if (spanCount <= 0) {
     out.length = 0;
-    return;
+    return out;
   }
 
   out.length = 0;
@@ -50,4 +51,5 @@ export function bsplinePolylineInto(
     bsplinePointAtTInto(pt, points, t, { closed });
     out.push(pt);
   }
+  return out;
 }

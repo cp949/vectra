@@ -18,13 +18,14 @@ import { writeCurveCurveHits } from './curve-facade.internal';
  * @param curveA quadratic 또는 cubic Bezier curve. `tA`의 기준이다.
  * @param curveB quadratic 또는 cubic Bezier curve. `tB`의 기준이다.
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function curveCurveIntersectionsInto(
   out: CurveIntersectionHit[],
   curveA: CurveLike,
   curveB: CurveLike,
   options?: CurveIntersectionOptions
-): void {
+): CurveIntersectionHit[] {
   const hits: IntersectionHit[] = [];
   let swap = false;
 
@@ -81,4 +82,5 @@ export function curveCurveIntersectionsInto(
   }
 
   writeCurveCurveHits(out, hits, swap);
+  return out;
 }

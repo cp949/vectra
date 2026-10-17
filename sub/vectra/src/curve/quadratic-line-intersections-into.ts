@@ -16,6 +16,7 @@ import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-inte
  * @param p2 curve 끝점
  * @param line infinite-line (origin + direction)
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function quadraticLineIntersectionsInto(
   outHits: IntersectionHit[],
@@ -24,11 +25,11 @@ export function quadraticLineIntersectionsInto(
   p2: XYInput,
   line: InfiniteLineLike,
   options?: CurveIntersectionOptions
-): void {
+): IntersectionHit[] {
   outHits.length = 0;
 
   const setup = setupLine(line);
-  if (!setup) return;
+  if (!setup) return outHits;
 
   const { nx, ny, nDotO, epsilon, epsilonT } = { ...setup, ...resolveOptions(options) };
 
@@ -54,7 +55,7 @@ export function quadraticLineIntersectionsInto(
 
   if (a === 0) {
     // linear equation: bt + c = 0
-    if (b === 0) return;
+    if (b === 0) return outHits;
     const t = -c / b;
     if (t >= -epsilonT && t <= 1 + epsilonT) {
       const tClamped = Math.max(0, Math.min(1, t));
@@ -64,7 +65,7 @@ export function quadraticLineIntersectionsInto(
       const kind = tClamped <= epsilonT || tClamped >= 1 - epsilonT ? 'touch' : 'cross';
       pushHitIfNew(outHits, px, py, kind, tA, tClamped, epsilonT, makePoint);
     }
-    return;
+    return outHits;
   }
 
   const discriminant = b * b - 4 * a * c;
@@ -83,10 +84,10 @@ export function quadraticLineIntersectionsInto(
       const tA = computeTA(px, py, setup);
       pushHitIfNew(outHits, px, py, 'touch', tA, tClamped, epsilonT, makePoint);
     }
-    return;
+    return outHits;
   }
 
-  if (discriminant < 0) return;
+  if (discriminant < 0) return outHits;
 
   // 두 근 → cross (단, endpoint이면 touch)
   const roots: number[] = [];
@@ -103,6 +104,7 @@ export function quadraticLineIntersectionsInto(
     const kind = tClamped <= epsilonT || tClamped >= 1 - epsilonT ? 'touch' : 'cross';
     pushHitIfNew(outHits, px, py, kind, tA, tClamped, epsilonT, makePoint);
   }
+  return outHits;
 }
 
 function evaluateQuadraticX(p0x: number, p1x: number, p2x: number, t: number): number {

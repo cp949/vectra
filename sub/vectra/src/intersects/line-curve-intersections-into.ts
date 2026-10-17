@@ -22,13 +22,14 @@ import { writeLineCurveHits } from './curve-facade.internal';
  * @param line infinite-line (origin + direction, 양방향)
  * @param curve quadratic 또는 cubic Bezier curve
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function lineCurveIntersectionsInto(
   out: CurveIntersectionHit[],
   line: InfiniteLineLike,
   curve: CurveLike,
   options?: CurveIntersectionOptions
-): void {
+): CurveIntersectionHit[] {
   const hits: IntersectionHit[] = [];
   if (curve.kind === 'quadratic') {
     quadraticLineIntersectionsInto(hits, curve.p0, curve.p1, curve.p2, line, options);
@@ -36,4 +37,5 @@ export function lineCurveIntersectionsInto(
     cubicLineIntersectionsInto(hits, curve.p0, curve.p1, curve.p2, curve.p3, line, options);
   }
   writeLineCurveHits(out, hits);
+  return out;
 }

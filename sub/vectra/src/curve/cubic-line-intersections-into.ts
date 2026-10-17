@@ -20,6 +20,7 @@ const COEFFICIENT_REL_EPS = 1e-12;
  * @param p3 curve 끝점
  * @param line infinite-line (origin + direction)
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function cubicLineIntersectionsInto(
   outHits: IntersectionHit[],
@@ -29,11 +30,11 @@ export function cubicLineIntersectionsInto(
   p3: XYInput,
   line: InfiniteLineLike,
   options?: CurveIntersectionOptions
-): void {
+): IntersectionHit[] {
   outHits.length = 0;
 
   const setup = setupLine(line);
-  if (!setup) return;
+  if (!setup) return outHits;
 
   const { ox, oy, nx, ny, nDotO, epsilon, epsilonT } = { ...setup, ...resolveOptions(options) };
 
@@ -86,7 +87,7 @@ export function cubicLineIntersectionsInto(
     Math.abs(cc) <= coefficientNoise &&
     Math.abs(cd) <= coefficientNoise
   ) {
-    return;
+    return outHits;
   }
 
   // endpoint를 solver보다 먼저 명시적으로 확인한다.
@@ -129,6 +130,7 @@ export function cubicLineIntersectionsInto(
 
     pushHitIfNew(outHits, px, py, kind, tA, t, epsilonT, makePoint);
   }
+  return outHits;
 }
 
 function evaluateCubicX(p0x: number, p1x: number, p2x: number, p3x: number, t: number): number {
