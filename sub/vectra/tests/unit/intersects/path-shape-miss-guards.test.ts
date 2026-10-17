@@ -100,3 +100,22 @@ describe('통째로 도형 안에 있는 open path', () => {
     expect(intersectsPathTriangle(openFromOrigin, triangle)).toBe(true);
   });
 });
+
+describe('closed path 경계에서 epsilon 이내로 벗어난 triangle 꼭짓점', () => {
+  // 변 교차 검사는 정확한 기하로 판정하고 꼭짓점 포함 검사는 DEFAULT_EPSILON(1e-9) 허용오차를 둔다.
+  // 꼭짓점이 경계 바깥 1e-10에 있으면 변은 만나지 않지만 포함 검사는 true를 반환한다.
+  test('b 꼭짓점이 경계 바깥 1e-10이면 true를 반환한다', () => {
+    const triangle = { a: { x: -5, y: 4 }, b: { x: -1e-10, y: 5 }, c: { x: -5, y: 6 } };
+    expect(intersectsPathTriangle(bigSquarePath, triangle)).toBe(true);
+  });
+
+  test('c 꼭짓점이 경계 바깥 1e-10이면 true를 반환한다', () => {
+    const triangle = { a: { x: -5, y: 4 }, b: { x: -5, y: 6 }, c: { x: -1e-10, y: 5 } };
+    expect(intersectsPathTriangle(bigSquarePath, triangle)).toBe(true);
+  });
+
+  test('꼭짓점이 경계 바깥 1e-8이면 false를 반환한다', () => {
+    const triangle = { a: { x: -5, y: 4 }, b: { x: -1e-8, y: 5 }, c: { x: -5, y: 6 } };
+    expect(intersectsPathTriangle(bigSquarePath, triangle)).toBe(false);
+  });
+});
