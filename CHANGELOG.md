@@ -7,6 +7,7 @@
 
 ## [Unreleased]
 
+- `solveCubic`의 3차 경로가 `eps`를 생략하면 상대 판정을 쓴다. 판별식은 `|D| <= 1e-12·((q/2)² + |p/3|³)`, 근 dedupe는 `1e-12·근 scale`로 본다. 이전에는 판별식 `1e-18`, 근 dedupe `1e-9` 절대값이라 붙은 근을 합쳤다. 예를 들어 근 (0.5, 0.5001, 0.5002)가 `[0.5001]` 하나로 나왔다. `eps`를 생략한 호출만 결과가 바뀌고, `eps`를 명시한 호출은 이전과 같다. 허수부가 근 크기의 약 1e-6배 이하인 근접 허근쌍은 중근으로 합쳐 2개를 반환할 수 있다.
 - curve×curve 교차(`quadraticQuadraticIntersectionsInto`, `quadraticCubicIntersectionsInto`, `cubicCubicIntersectionsInto`, `curveCurveIntersections(Into)`)가 같은 기하 위에서 겹치는 두 곡선을 처리한다. 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다. 이전에는 hit가 최대 16384건 나오고 계산이 10초 이상 걸렸다.
 - `CurveIntersectionKind`에 `'overlap'`을 추가한다. `kind`를 exhaustive하게 분기하던 코드는 `'overlap'` 분기를 추가해야 한다.
 - curve×curve 교차(`quadraticQuadraticIntersectionsInto`, `quadraticCubicIntersectionsInto`, `cubicCubicIntersectionsInto`, `cubicSelfIntersectionsInto`, `curveCurveIntersections(Into)`)의 `tA`, `tB`, `point` 정밀도를 높인다. subdivision이 `maxDepth`에서 멈춰 약 1.5e-5에 머물던 오차를 수렴 지점의 Newton refinement로 1e-9 수준까지 줄인다. 한 곡선의 끝점이 상대 곡선 위에 있으면(이음매, 공유 끝점, 끝점이 내부에 닿는 경우) `tA` 또는 `tB`를 정확히 0, 1로 snap한다. 내부에서 접선이 평행하게 닿는 접촉은 보정 없이 기존 값을 쓴다. 한 근을 여러 hit로 나누던 중복도 줄어든다. `kind`는 보정한 parameter의 tangent로 판정해 근 주변 stray box 때문에 `cross`가 `touch`로 바뀌는 오분류가 줄어든다.
