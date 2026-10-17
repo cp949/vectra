@@ -452,9 +452,8 @@ function projectOntoCurve(
   for (let i = 0; i < PROJECTION_MAX_ITERATIONS; i++) {
     evalCurve(u, c);
     const speed2 = c[2] * c[2] + c[3] * c[3];
-    // NaN이면 비교가 false라 null을 돌려준다
-    if (!(speed2 > 0)) return null;
     u -= ((c[0] - px) * c[2] + (c[1] - py) * c[3]) / speed2;
+    // speed2가 0이면 0/0 또는 ±Infinity라 u가 NaN이거나 [0, 1] 밖이다. speed2가 NaN이어도 같다. 모두 여기서 null이다.
     if (!(u >= 0 && u <= 1 && Math.abs(u - u0) <= maxShift)) return null;
   }
   evalCurve(u, c);
