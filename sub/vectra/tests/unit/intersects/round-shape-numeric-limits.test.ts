@@ -111,9 +111,37 @@ describe('solveQuarticReal의 빈 근 반환', () => {
     // x⁴ + 5x² + 4: z = x²의 근이 -1, -4라 실근이 없다.
     expect(solveQuarticReal(1, 0, 5, 0, 4, EPS)).toEqual([]);
   });
+});
 
-  test('q가 eps를 간신히 넘고 resolvent 양수근이 eps 이하이면 빈 근을 반환한다', () => {
-    // x⁴ + x² + 1e-11 x: q=1e-11이 eps 위라 일반 경로로 가지만 resolvent 양수근이 1e-22 규모다.
-    expect(solveQuarticReal(1, 0, 1, 1e-11, 0, EPS)).toEqual([]);
+describe('solveQuarticReal의 작은 resolvent 근', () => {
+  const EPS = 1e-12;
+
+  test('q가 eps를 간신히 넘어 resolvent 양수근이 eps 이하여도 실근을 잃지 않는다', () => {
+    // x⁴ + x² + 1e-11 x = x (x³ + x + 1e-11)의 실근은 0과 약 -1e-11이다.
+    // q=1e-11이 eps 위라 일반 경로로 가지만 resolvent 양수근이 1e-22 규모라 cubic solver가 못 구한다.
+    // 두 실근이 1e-11 안에 붙어 있어 근 하나(약 -5e-12)로 합쳐 돌려준다.
+    const roots = solveQuarticReal(1, 0, 1, 1e-11, 0, EPS);
+    expect(roots).toHaveLength(1);
+    expect(Math.abs(roots[0])).toBeLessThanOrEqual(1e-11);
+  });
+
+  test('작은 resolvent 근 경로에서도 큰 실근 한 쌍은 그대로 구한다', () => {
+    // x⁴ - x² + 1e-11 x의 실근은 약 -1, 0, 1이다. resolvent 근이 작아도 세 근이 모두 나온다.
+    const roots = solveQuarticReal(1, 0, -1, 1e-11, 0, EPS).sort((a, b) => a - b);
+    expect(roots).toHaveLength(3);
+    expect(roots[0]).toBeCloseTo(-1, 9);
+    expect(Math.abs(roots[1])).toBeLessThanOrEqual(1e-11);
+    expect(roots[2]).toBeCloseTo(1, 9);
+  });
+
+  test('p² - 4r이 0이면 q를 무시한 biquadratic으로 처리한다', () => {
+    // (x² + 0.5)² + 1.2e-12 x: p² - 4r = 0이라 resolvent 근이 q/√2 ≈ 8.5e-13으로 eps 아래다.
+    // 근의 작은 값 근사가 성립하지 않아 biquadratic으로 보내며, 실근이 없다.
+    expect(solveQuarticReal(1, 0, 1, 1.2e-12, 0.25, EPS)).toEqual([]);
+  });
+
+  test('실근이 없는 quartic은 작은 resolvent 근 경로에서도 빈 근을 반환한다', () => {
+    // x⁴ + x² + 1e-11 x + 1은 모든 x에서 양수다.
+    expect(solveQuarticReal(1, 0, 1, 1e-11, 1, EPS)).toEqual([]);
   });
 });

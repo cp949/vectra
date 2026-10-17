@@ -32,17 +32,7 @@ export function solveQuarticReal(c4: number, c3: number, c2: number, c1: number,
   const roots: number[] = [];
 
   if (Math.abs(q) <= eps) {
-    // biquadratic y⁴ + p y² + r = 0 — q ≈ 0일 때 z = y²에 대한 2차식
-    const zRoots = solveQuadraticReal(1, p, r, eps);
-    for (const z of zRoots) {
-      if (z > eps) {
-        const s = Math.sqrt(z);
-        roots.push(s + shift, -s + shift);
-      } else if (z > -eps) {
-        roots.push(shift);
-      }
-    }
-    return roots;
+    return solveBiquadraticRoots(p, r, shift, eps);
   }
 
   // resolvent cubic z³ + 2p z² + (p² - 4r) z - q² = 0의 양수 근 z를 찾는다.
@@ -54,9 +44,14 @@ export function solveQuarticReal(c4: number, c3: number, c2: number, c1: number,
     if (candidate > z) z = candidate;
   }
   if (z <= eps) {
-    // 도달 불가 가드: q ≠ 0이면 위 IVT로 양수근이 보장된다. 여기에 도달하면 수치 실패이며,
-    // 이 경로는 실제 biquadratic 케이스(q ≈ 0)가 아니므로 안전하게 빈 근으로 처리한다.
-    return roots;
+    // 양수근은 있지만 cubic solver의 절대 허용오차(eps)에 가려 z가 eps 이하로 나왔다. q가 작을 때
+    // 흔하다(z ≈ q² / (p² - 4r)). 빈 근을 돌려주면 실근을 잃으므로 Newton으로 z를 다시 구한다.
+    // p² - 4r ≤ 0이면 작은 z의 근사가 성립하지 않아 q를 무시한 biquadratic으로 처리한다.
+    const discriminantTerm = p * p - 4 * r;
+    if (!(discriminantTerm > 0)) {
+      return solveBiquadraticRoots(p, r, shift, eps);
+    }
+    z = refineSmallResolventRoot(p, discriminantTerm, q);
   }
 
   const sqrtZ = Math.sqrt(z);
@@ -69,6 +64,42 @@ export function solveQuarticReal(c4: number, c3: number, c2: number, c1: number,
   for (const y of solveQuadraticReal(1, -sqrtZ, t2, eps)) roots.push(y + shift);
 
   return roots;
+}
+
+/**
+ * depressed quartic `y⁴ + p y² + r = 0`(q ≈ 0)의 실근을 `x = y + shift`로 되돌려 반환한다.
+ *
+ * `z = y²`에 대한 2차식을 풀고, `z`가 `eps` 이내면 중근 하나로 본다.
+ */
+function solveBiquadraticRoots(p: number, r: number, shift: number, eps: number): number[] {
+  const roots: number[] = [];
+  const zRoots = solveQuadraticReal(1, p, r, eps);
+  for (const z of zRoots) {
+    if (z > eps) {
+      const s = Math.sqrt(z);
+      roots.push(s + shift, -s + shift);
+    } else if (z > -eps) {
+      roots.push(shift);
+    }
+  }
+  return roots;
+}
+
+/**
+ * resolvent cubic `z³ + 2p z² + D z - q² = 0`의 작은 양수근을 Newton으로 구한다.
+ *
+ * `D = p² - 4r > 0`이고 `q`가 작아 근이 0 근처일 때 쓴다. 초기값은 `z ≈ q² / D`다.
+ * 3회 반복한다. 근이 `eps` 이하로 작아 도함수 `3z² + 4p z + D`가 `D`에 가깝고 0이 되지 않는다.
+ */
+function refineSmallResolventRoot(p: number, discriminantTerm: number, q: number): number {
+  const qSquared = q * q;
+  let z = qSquared / discriminantTerm;
+  for (let i = 0; i < 3; i++) {
+    const value = ((z + 2 * p) * z + discriminantTerm) * z - qSquared;
+    const slope = (3 * z + 4 * p) * z + discriminantTerm;
+    z -= value / slope;
+  }
+  return z;
 }
 
 /**

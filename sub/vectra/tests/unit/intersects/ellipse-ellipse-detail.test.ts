@@ -373,3 +373,36 @@ describe('ellipseEllipseDetail — 1보다 작은 좌표 scale', () => {
     }
   });
 });
+
+describe('ellipseEllipseDetail의 근접 퇴화 교차', () => {
+  // 중심과 반지름이 1e-10 규모로 어긋난 두 ellipse다. quartic의 q 계수가 작아 resolvent 양수근이
+  // solver 절대 허용오차 아래로 내려가며, 예전에는 실근을 버려 교점 두 개를 놓쳤다.
+  type Quad = [cx: number, cy: number, rx: number, ry: number];
+  const CASES: Array<{ name: string; a: Quad; b: Quad }> = [
+    {
+      name: '한 ellipse가 다른 ellipse 아래쪽 끝을 파고든다',
+      a: [0.999999, 0, 2.0000000001, 2.5],
+      b: [0.9999999999, 3, 2.5, 0.9999999999],
+    },
+    {
+      name: '세로로 엇갈린 두 ellipse가 좌우 두 점에서 만난다',
+      a: [3, 1.5, 1.4999999999, 2.00000001],
+      b: [2.99999999, -1e-8, 1.5, 2.4999999999],
+    },
+    {
+      name: '가로로 엇갈린 두 ellipse가 위아래 두 점에서 만난다',
+      a: [2.99999999, 0, 0.5, 1.5],
+      b: [3.00000001, 2, 2.000000000001, 1.999999],
+    },
+  ];
+
+  test.each(CASES)('$name', ({ a, b }) => {
+    const detail = ellipseEllipseDetail(E(...a), E(...b), EPS);
+    expect(detail.kind).toBe('two-point');
+    if (detail.kind !== 'two-point') return;
+    for (const p of detail.points) {
+      expect(residual(p.x, p.y, ...a)).toBeLessThan(1e-6);
+      expect(residual(p.x, p.y, ...b)).toBeLessThan(1e-6);
+    }
+  });
+});
