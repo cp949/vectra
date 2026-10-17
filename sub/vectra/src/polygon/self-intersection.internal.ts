@@ -69,7 +69,6 @@ export function ringSelfIntersects(pts: readonly XYInput[], epsilon: number | un
  */
 export function ringHasZeroLengthEdge(pts: readonly XYInput[], epsilon: number): boolean {
   const n = pts.length;
-  if (n === 0) return false;
 
   const thresholdSq = epsilon * epsilon;
   for (let i = 0; i < n; i++) {
