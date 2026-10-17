@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 import { wrapRadians } from './wrap-radians';
 
 /**
@@ -11,7 +11,7 @@ import { wrapRadians } from './wrap-radians';
  * @param to 목표 angle (radian)
  */
 export function angleDelta(from: number, to: number): number {
-  assertFiniteNumbers([from, to]);
+  assertFinite2(from, to);
 
   return wrapRadians(to - from);
 }

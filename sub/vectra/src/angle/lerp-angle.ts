@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite3 } from '../math/range.internal';
 
 /**
  * 두 angle 사이를 단순 선형 보간한다.
@@ -13,7 +13,7 @@ import { assertFiniteNumbers } from '../math/range.internal';
  * @param t clamp하지 않는 보간 비율
  */
 export function lerpAngle(from: number, to: number, t: number): number {
-  assertFiniteNumbers([from, to, t]);
+  assertFinite3(from, to, t);
 
   return from + (to - from) * t;
 }

@@ -1,5 +1,5 @@
 import { periodicPhase } from './periodic.internal';
-import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.internal';
+import { assertFinite1, assertPositiveFiniteNumber } from './range.internal';
 
 /**
  * t를 half-open range [0, length)로 wrap한 phase를 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.interna
  * @param length 주기 길이. 양수 finite number여야 한다.
  */
 export function cycle(t: number, length: number): number {
-  assertFiniteNumbers([t]);
+  assertFinite1(t);
   assertPositiveFiniteNumber(length);
 
   return periodicPhase(t, length);

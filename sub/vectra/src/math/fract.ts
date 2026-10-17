@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /**
  * value의 소수 부분을 반환한다.
@@ -8,7 +8,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param value 소수 부분을 구할 scalar 값
  */
 export function fract(value: number): number {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
 
   return value - Math.trunc(value);
 }

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite1 } from '../math/range.internal';
 import { wrapRadiansPositive } from './wrap-radians-positive';
 
 const QUARTER_PI = Math.PI / 4;
@@ -14,7 +14,7 @@ const OCTANT_COUNT = 8;
  * @param angle 판정할 angle (radian)
  */
 export function octant(angle: number): 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 {
-  assertFiniteNumbers([angle]);
+  assertFinite1(angle);
 
   const wrapped = wrapRadiansPositive(angle);
   const bucket = Math.floor(wrapped / QUARTER_PI);

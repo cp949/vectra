@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /** toFixedPrecision의 options object 형태. */
 export interface ToFixedPrecisionOptions {
@@ -16,7 +16,7 @@ export interface ToFixedPrecisionOptions {
  * @param digitsOrOptions 소수점 자릿수 또는 options object. 생략 시 6.
  */
 export function toFixedPrecision(value: number, digitsOrOptions?: number | ToFixedPrecisionOptions): number {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
 
   let digits = 6;
 

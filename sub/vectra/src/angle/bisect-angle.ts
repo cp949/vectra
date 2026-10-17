@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 import { angleDelta } from './angle-delta';
 
 /**
@@ -12,7 +12,7 @@ import { angleDelta } from './angle-delta';
  * @param b 목표 angle (radian)
  */
 export function bisectAngle(a: number, b: number): number {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
 
   return a + angleDelta(a, b) / 2;
 }

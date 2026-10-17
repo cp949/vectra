@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite3 } from './range.internal';
 
 /**
  * percent 비율을 target range의 scalar 값으로 변환한다.
@@ -11,7 +11,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param max `percent === 1`일 때의 target 값
  */
 export function fromPercent(percent: number, min: number, max: number): number {
-  assertFiniteNumbers([percent, min, max]);
+  assertFinite3(percent, min, max);
 
   return min + (max - min) * percent;
 }

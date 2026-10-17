@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite4 } from './range.internal';
 import { solveQuadratic } from './solve-quadratic';
 
 /**
@@ -39,7 +39,7 @@ const CUBIC_NOISE_FACTOR = 16;
  * @param eps 절대 tolerance. 생략하면 상대 판정(위 설명)을 쓴다.
  */
 export function solveCubic(a: number, b: number, c: number, d: number, eps?: number): number[] {
-  assertFiniteNumbers([a, b, c, d]);
+  assertFinite4(a, b, c, d);
 
   if (a === 0) return solveQuadratic(b, c, d, eps);
 

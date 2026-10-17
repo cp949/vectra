@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, roundingFactor } from './range.internal';
+import { assertFinite1, roundingFactor } from './range.internal';
 
 /**
  * value를 base ** place 정밀도에 맞춰 내림한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers, roundingFactor } from './range.internal';
  * @param base 정밀도 scale의 밑
  */
 export function floorTo(value: number, place: number, base = 10): number {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
   const factor = roundingFactor(place, base);
 
   return Math.floor(value * factor) / factor;

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite3 } from '../math/range.internal';
 import { wrapRadiansPositive } from './wrap-radians-positive';
 
 /**
@@ -17,7 +17,7 @@ import { wrapRadiansPositive } from './wrap-radians-positive';
  * @param end CCW 호의 끝 angle (radian)
  */
 export function isAngleBetween(angle: number, start: number, end: number): boolean {
-  assertFiniteNumbers([angle, start, end]);
+  assertFinite3(angle, start, end);
 
   // angle - start와 end - start를 모두 [0, 2π) 범위로 정규화해 호환 비교한다.
   // wrapRadians([-π, π))을 쓰면 π 경계에서 -π로 매핑돼 false를 잘못 반환한다.

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /**
  * value의 절댓값을 반환한다.
@@ -8,7 +8,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param value 절댓값을 구할 scalar 값
  */
 export function abs(value: number): number {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
 
   return Math.abs(value);
 }

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from '../math/range.internal';
+import { assertFinite2, assertNonNegativeFiniteNumber } from '../math/range.internal';
 import { angleDelta } from './angle-delta';
 
 /**
@@ -15,7 +15,7 @@ import { angleDelta } from './angle-delta';
  * @param epsilon 허용할 절대 angular tolerance (기본값: 0)
  */
 export function nearAngle(a: number, b: number, epsilon = 0): boolean {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
   assertNonNegativeFiniteNumber(epsilon);
 
   return Math.abs(angleDelta(a, b)) <= epsilon;

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite3 } from '../math/range.internal';
 import { angleDelta } from './angle-delta';
 
 /**
@@ -15,7 +15,7 @@ import { angleDelta } from './angle-delta';
  * @param t clamp하지 않는 보간 비율
  */
 export function shortestLerpAngle(from: number, to: number, t: number): number {
-  assertFiniteNumbers([from, to, t]);
+  assertFinite3(from, to, t);
 
   return from + angleDelta(from, to) * t;
 }

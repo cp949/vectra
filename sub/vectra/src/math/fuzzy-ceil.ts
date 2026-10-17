@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.internal';
+import { assertFinite1, assertNonNegativeFiniteNumber } from './range.internal';
 
 /**
  * epsilon 이내로 이전 정수에 가까운 값을 보정해 ceil한다.
@@ -11,7 +11,7 @@ import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.inte
  * @param epsilon 이전 정수에 가까운 값을 보정할 절대 오차
  */
 export function fuzzyCeil(value: number, epsilon = DEFAULT_EPSILON): number {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
   assertNonNegativeFiniteNumber(epsilon);
 
   return Math.ceil(value - epsilon);

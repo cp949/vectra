@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 
 /**
  * axisAngle을 축으로 angle scalar를 반사한 값을 반환한다.
@@ -11,7 +11,7 @@ import { assertFiniteNumbers } from '../math/range.internal';
  * @param axisAngle 반사 축이 되는 angle (radian)
  */
 export function reflectAngle(angle: number, axisAngle: number): number {
-  assertFiniteNumbers([angle, axisAngle]);
+  assertFinite2(angle, axisAngle);
 
   const reflected = 2 * axisAngle - angle;
 

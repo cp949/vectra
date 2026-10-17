@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertNonZeroOrderedRange, clampScalar, inverseLerpRaw } from './interpolation.internal';
+import { assertFinite3, assertNonZeroOrderedRange, clampScalar, inverseLerpRaw } from './interpolation.internal';
 
 /**
  * ordered source range [a, b]에서 value가 차지하는 비율을 반환한다.
@@ -13,7 +13,7 @@ import { assertFiniteNumbers, assertNonZeroOrderedRange, clampScalar, inverseLer
  * @param value 비율로 변환할 scalar 값
  */
 export function inverseLerp(a: number, b: number, value: number): number {
-  assertFiniteNumbers([a, b, value]);
+  assertFinite3(a, b, value);
   assertNonZeroOrderedRange(a, b);
 
   return inverseLerpRaw(a, b, value);
@@ -32,7 +32,7 @@ export function inverseLerp(a: number, b: number, value: number): number {
  * @param value 비율로 변환할 scalar 값
  */
 export function inverseLerpClamped(a: number, b: number, value: number): number {
-  assertFiniteNumbers([a, b, value]);
+  assertFinite3(a, b, value);
   assertNonZeroOrderedRange(a, b);
 
   return clampScalar(inverseLerpRaw(a, b, value), 0, 1);

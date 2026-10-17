@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 import { rawSweepCw } from './sweep.internal';
 
 /**
@@ -12,7 +12,7 @@ import { rawSweepCw } from './sweep.internal';
  * @param to 끝 angle (radian)
  */
 export function clockwiseSweep(from: number, to: number): number {
-  assertFiniteNumbers([from, to]);
+  assertFinite2(from, to);
 
   return rawSweepCw(from, to);
 }

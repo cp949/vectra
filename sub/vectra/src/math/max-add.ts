@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite3 } from './range.internal';
 
 /**
  * value에 amount를 더하되 max를 넘지 않게 제한한다.
@@ -10,7 +10,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param max 반환값이 넘지 않을 상한
  */
 export function maxAdd(value: number, amount: number, max: number): number {
-  assertFiniteNumbers([value, amount, max]);
+  assertFinite3(value, amount, max);
 
   return Math.min(value + amount, max);
 }

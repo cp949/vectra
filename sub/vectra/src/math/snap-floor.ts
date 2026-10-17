@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.internal';
+import { assertFinite2, assertPositiveFiniteNumber } from './range.internal';
 
 /**
  * value보다 크지 않은 gap 단위로 값을 맞춘다.
@@ -10,7 +10,7 @@ import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.interna
  * @param start snap grid의 기준점
  */
 export function snapFloor(value: number, gap: number, start = 0): number {
-  assertFiniteNumbers([value, start]);
+  assertFinite2(value, start);
   assertPositiveFiniteNumber(gap);
 
   return start + Math.floor((value - start) / gap) * gap;

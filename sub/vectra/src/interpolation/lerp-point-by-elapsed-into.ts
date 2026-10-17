@@ -1,6 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
-import { assertFiniteNumbers, assertPositiveDuration } from './interpolation.internal';
+import { assertFinite5, assertPositiveDuration } from './interpolation.internal';
 
 /**
  * raw 경과 시간 진행 비율로 보간한 좌표를 out에 기록하고 out을 반환한다.
@@ -28,7 +28,7 @@ export function lerpPointByElapsedInto<Out extends XYWritable>(
   const ay = readY(a);
   const bx = readX(b);
   const by = readY(b);
-  assertFiniteNumbers([ax, ay, bx, by, elapsed]);
+  assertFinite5(ax, ay, bx, by, elapsed);
   assertPositiveDuration(duration);
 
   const t = elapsed / duration;

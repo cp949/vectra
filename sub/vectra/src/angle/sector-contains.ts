@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite3 } from '../math/range.internal';
 import { rawSweepCcw, rawSweepCw } from './sweep.internal';
 
 /**
@@ -20,7 +20,7 @@ import { rawSweepCcw, rawSweepCw } from './sweep.internal';
  * @param direction sector 방향. `'ccw'` (counter-clockwise) 또는 `'cw'` (clockwise). 기본값 `'ccw'`
  */
 export function sectorContains(angle: number, start: number, end: number, direction: 'ccw' | 'cw' = 'ccw'): boolean {
-  assertFiniteNumbers([angle, start, end]);
+  assertFinite3(angle, start, end);
 
   if (direction !== 'ccw' && direction !== 'cw') {
     throw new RangeError('direction must be "ccw" or "cw"');

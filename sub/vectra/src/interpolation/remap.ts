@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertNonZeroOrderedRange, clampScalar } from './interpolation.internal';
+import { assertFinite5, assertNonZeroOrderedRange, clampScalar } from './interpolation.internal';
 
 /**
  * value를 source range에서 target range로 선형 변환한다.
@@ -16,7 +16,7 @@ import { assertFiniteNumbers, assertNonZeroOrderedRange, clampScalar } from './i
  * @param toMax target range의 끝값
  */
 export function remap(value: number, fromMin: number, fromMax: number, toMin: number, toMax: number): number {
-  assertFiniteNumbers([value, fromMin, fromMax, toMin, toMax]);
+  assertFinite5(value, fromMin, fromMax, toMin, toMax);
   assertNonZeroOrderedRange(fromMin, fromMax);
 
   return toMin + ((value - fromMin) / (fromMax - fromMin)) * (toMax - toMin);
@@ -37,7 +37,7 @@ export function remap(value: number, fromMin: number, fromMax: number, toMin: nu
  * @param toMax target range의 끝값
  */
 export function remapClamped(value: number, fromMin: number, fromMax: number, toMin: number, toMax: number): number {
-  assertFiniteNumbers([value, fromMin, fromMax, toMin, toMax]);
+  assertFinite5(value, fromMin, fromMax, toMin, toMax);
   assertNonZeroOrderedRange(fromMin, fromMax);
 
   // source value를 source range로 clamp한 뒤 remap한다

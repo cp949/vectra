@@ -1,6 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite5 } from './interpolation.internal';
 
 /**
  * 4개의 코너 좌표로 이루어진 grid에서 bilinear interpolation 결과를 out에 기록하고 out을 반환한다.
@@ -36,7 +36,8 @@ export function bilerpPointInto<Out extends XYWritable>(
   const y01 = readY(p01);
   const x11 = readX(p11);
   const y11 = readY(p11);
-  assertFiniteNumbers([x00, y00, x10, y10, x01, y01, x11, y11, tx, ty]);
+  assertFinite5(x00, y00, x10, y10, x01);
+  assertFinite5(y01, x11, y11, tx, ty);
 
   // x 방향 1차 보간: lerp(p00, p10, tx), lerp(p01, p11, tx)
   const lx0x = x00 + (x10 - x00) * tx;

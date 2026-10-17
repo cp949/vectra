@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /**
  * cancellation-resistant `Math.sqrt(1 + x) - 1`을 반환한다.
@@ -11,7 +11,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param x `1 + x`의 제곱근에서 1을 뺄 scalar 값. `x >= -1`이어야 한다.
  */
 export function sqrt1pm1(x: number): number {
-  assertFiniteNumbers([x]);
+  assertFinite1(x);
 
   if (x < -1) {
     throw new RangeError('math sqrt1pm1 argument must be >= -1');

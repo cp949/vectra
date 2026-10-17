@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertPositiveDuration, clampScalar, lerpRaw } from './interpolation.internal';
+import { assertFinite3, assertPositiveDuration, clampScalar, lerpRaw } from './interpolation.internal';
 
 /**
  * 경과 시간 진행 비율을 `[0, 1]`로 clamp한 뒤 a와 b 사이를 보간한다.
@@ -14,7 +14,7 @@ import { assertFiniteNumbers, assertPositiveDuration, clampScalar, lerpRaw } fro
  * @param duration 전체 구간 길이. finite이고 `> 0`이어야 한다
  */
 export function clampedLerpByElapsed(a: number, b: number, elapsed: number, duration: number): number {
-  assertFiniteNumbers([a, b, elapsed]);
+  assertFinite3(a, b, elapsed);
   assertPositiveDuration(duration);
 
   // elapsed progress를 [0, 1]로 clamp한 뒤 lerp한다

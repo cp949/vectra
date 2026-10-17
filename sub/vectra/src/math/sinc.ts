@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 import { sinPiCore } from './trig.internal';
 
 /**
@@ -12,7 +12,7 @@ import { sinPiCore } from './trig.internal';
  * @param x sinc를 평가할 finite scalar 값. `Math.PI * x`가 overflow되는 magnitude는 `RangeError`.
  */
 export function sinc(x: number): number {
-  assertFiniteNumbers([x]);
+  assertFinite1(x);
 
   if (x === 0) {
     return 1;

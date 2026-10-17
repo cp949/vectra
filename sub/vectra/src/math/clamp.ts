@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertOrderedRange } from './range.internal';
+import { assertFinite3, assertOrderedRange } from './range.internal';
 
 /**
  * value를 ordered closed range [min, max]로 제한한다.
@@ -11,7 +11,7 @@ import { assertFiniteNumbers, assertOrderedRange } from './range.internal';
  * @param max closed range의 상한
  */
 export function clamp(value: number, min: number, max: number): number {
-  assertFiniteNumbers([value, min, max]);
+  assertFinite3(value, min, max);
   assertOrderedRange(min, max);
 
   return Math.min(Math.max(value, min), max);

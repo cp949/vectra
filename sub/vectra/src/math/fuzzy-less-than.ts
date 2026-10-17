@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.internal';
+import { assertFinite2, assertNonNegativeFiniteNumber } from './range.internal';
 
 /**
  * a가 b + epsilon보다 작으면 true를 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.inte
  * @param epsilon 덜 엄격한 less-than 비교에 허용할 절대 오차
  */
 export function fuzzyLessThan(a: number, b: number, epsilon = DEFAULT_EPSILON): boolean {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
   assertNonNegativeFiniteNumber(epsilon);
 
   return a < b + epsilon;

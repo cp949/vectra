@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite2 } from './range.internal';
 
 /**
  * 두 scalar 값 사이의 절대 차이를 반환한다.
@@ -9,7 +9,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param b 차이를 측정할 두 번째 값
  */
 export function difference(a: number, b: number): number {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
 
   return Math.abs(a - b);
 }
