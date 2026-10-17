@@ -1,4 +1,5 @@
 import { readX, readY } from '../internal/xy';
+import { pushStableRoots } from '../math/quadratic-roots.internal';
 import type {
   CurveIntersectionOptions,
   InfiniteLineLike,
@@ -60,12 +61,9 @@ export function quadraticLineIntersectionsInto<P extends XYWritable = XYObjectWr
   // 기본값은 XYObjectWritable이므로 {} as P로 초기화한다
   const makePoint = (): P => ({}) as P;
 
-  // 다항식 계수 degeneracy 판정용 — 좌표 공간 epsilon(1e-9)보다 타이트하게 수치 noise만 차단
-  const INTERNAL_EPS = 1e-12;
-
-  if (Math.abs(a) < INTERNAL_EPS) {
+  if (a === 0) {
     // linear equation: bt + c = 0
-    if (Math.abs(b) < INTERNAL_EPS) return;
+    if (b === 0) return;
     const t = -c / b;
     if (t >= -epsilonT && t <= 1 + epsilonT) {
       const tClamped = Math.max(0, Math.min(1, t));
@@ -80,10 +78,11 @@ export function quadraticLineIntersectionsInto<P extends XYWritable = XYObjectWr
 
   const discriminant = b * b - 4 * a * c;
 
-  if (discriminant < -epsilon) return;
-
-  // discriminant ∈ (-epsilon, epsilon) 구간은 수치 noise로 허수가 된 근 — 중근으로 처리
-  if (Math.abs(discriminant) <= epsilon) {
+  // 판별식은 길이² 단위라 길이 단위 epsilon과 직접 비교하면 좌표 scale에 따라 결과가 바뀐다.
+  // 정점(t = -b/2a)과 직선 사이 거리로 바꿔 epsilon과 비교한다.
+  // 법선 n = (-dy, dx)는 정규화하지 않아 |D| / (4|a|)는 거리 × |direction|이다. 그래서 √dd로 나눈다.
+  // 정점이 epsilon 이내이면 수치 noise로 허수가 된 근도 중근으로 본다.
+  if (Math.abs(discriminant) <= 4 * Math.abs(a) * epsilon * Math.sqrt(setup.dd)) {
     // 중근 → touch
     const t = -b / (2 * a);
     if (t >= -epsilonT && t <= 1 + epsilonT) {
@@ -96,12 +95,15 @@ export function quadraticLineIntersectionsInto<P extends XYWritable = XYObjectWr
     return;
   }
 
-  // 두 근 → cross (단, endpoint이면 touch)
-  const sqrtD = Math.sqrt(Math.max(0, discriminant));
-  const t1 = (-b - sqrtD) / (2 * a);
-  const t2 = (-b + sqrtD) / (2 * a);
+  if (discriminant < 0) return;
 
-  for (const t of [t1, t2]) {
+  // 두 근 → cross (단, endpoint이면 touch)
+  const roots: number[] = [];
+  pushStableRoots(roots, a, b, c, Math.sqrt(discriminant));
+  // hit 순서는 (-b - √D) / 2a, (-b + √D) / 2a 순이던 기존 결과와 같게 둔다. a < 0이면 tB 내림차순이다.
+  if (a < 0) roots.reverse();
+
+  for (const t of roots) {
     if (t < -epsilonT || t > 1 + epsilonT) continue;
     const tClamped = Math.max(0, Math.min(1, t));
     const px = evaluateQuadraticX(p0x, p1x, p2x, tClamped);

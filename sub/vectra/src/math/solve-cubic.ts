@@ -6,18 +6,21 @@ import { solveQuadratic } from './solve-quadratic';
  *
  * Cardano 공식 기반으로 구한 뒤 근삼분 정렬해 반환한다. 중복근은 eps tolerance로 판정한다.
  * 근이 없으면 빈 배열을 반환한다. a === 0이면 2차 방정식으로 fallback한다.
+ * fallback에서 eps를 생략하면 {@link solveQuadratic}의 상대 판정을 쓴다.
  * 모든 계수는 finite number여야 한다.
  *
  * @param a 3차항 계수
  * @param b 2차항 계수
  * @param c 1차항 계수
  * @param d 상수항
- * @param eps 중복근 판정 tolerance. 기본값 1e-9
+ * @param eps 중복근 판정 tolerance. 생략하면 3차 경로는 1e-9, a === 0 fallback은 상대 판정을 쓴다.
  */
-export function solveCubic(a: number, b: number, c: number, d: number, eps = 1e-9): number[] {
+export function solveCubic(a: number, b: number, c: number, d: number, eps?: number): number[] {
   assertFiniteNumbers([a, b, c, d]);
 
   if (a === 0) return solveQuadratic(b, c, d, eps);
+
+  const tolerance = eps ?? 1e-9;
 
   // Cardano 공식 — depressed cubic t³ + pt + q = 0으로 치환
   const A = b / a;
@@ -28,7 +31,7 @@ export function solveCubic(a: number, b: number, c: number, d: number, eps = 1e-
   const q = (2 * A * A * A) / 27 - (A * B) / 3 + C;
 
   const discriminant = (q / 2) ** 2 + (p / 3) ** 3;
-  const discriminantEps = eps * eps;
+  const discriminantEps = tolerance * tolerance;
 
   const shift = -A / 3;
 
@@ -55,7 +58,7 @@ export function solveCubic(a: number, b: number, c: number, d: number, eps = 1e-
     const u = Math.cbrt(-q / 2);
     const r1 = 2 * u + shift;
     const r2 = -u + shift;
-    if (Math.abs(r1 - r2) <= eps) {
+    if (Math.abs(r1 - r2) <= tolerance) {
       roots = [r1];
     } else {
       roots = [r1, r2].sort((x, y) => x - y);
@@ -64,7 +67,7 @@ export function solveCubic(a: number, b: number, c: number, d: number, eps = 1e-
 
   // 중복근 eps 판정으로 deduplicate
   return roots.reduce<number[]>((acc, r) => {
-    if (acc.length === 0 || Math.abs(r - (acc[acc.length - 1] as number)) > eps) {
+    if (acc.length === 0 || Math.abs(r - (acc[acc.length - 1] as number)) > tolerance) {
       acc.push(r);
     }
     return acc;

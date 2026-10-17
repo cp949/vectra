@@ -1,3 +1,5 @@
+import { pushStableRoots } from '../math/quadratic-roots.internal';
+
 /**
  * 4차 방정식 `c4 x⁴ + c3 x³ + c2 x² + c1 x + c0 = 0`의 실수 근을 반환한다.
  *
@@ -113,6 +115,10 @@ export function solveCubicReal(a: number, b: number, c: number, d: number, eps: 
  * 2차 방정식 `a x² + b x + c = 0`의 실수 근을 반환한다.
  *
  * `a ≈ 0`이면 1차로 downgrade한다. discriminant가 `-eps` 미만이면 근 없음.
+ * 두 근은 `q = -0.5·(b + sign(b)·√D)`로 상쇄 없이 계산한다.
+ *
+ * 입력 계수는 ellipse a 정규화 좌표에서 O(1) 크기 값끼리 빼서 얻는다. 그래서 `eps`는 계수 scale이 아니라
+ * 그 상쇄 잡음 바닥이다. 상대 판정으로 바꾸면 near-tangent에서 실근을 놓친다(fuzz로 확인). 절대 비교를 유지한다.
  */
 export function solveQuadraticReal(a: number, b: number, c: number, eps: number): number[] {
   if (Math.abs(a) <= eps) {
@@ -122,6 +128,7 @@ export function solveQuadraticReal(a: number, b: number, c: number, eps: number)
   const disc = b * b - 4 * a * c;
   if (disc < -eps) return [];
   if (disc <= eps) return [-b / (2 * a)];
-  const sqrtD = Math.sqrt(disc);
-  return [(-b - sqrtD) / (2 * a), (-b + sqrtD) / (2 * a)];
+  const roots: number[] = [];
+  pushStableRoots(roots, a, b, c, Math.sqrt(disc));
+  return roots;
 }

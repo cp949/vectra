@@ -410,6 +410,46 @@ describe('math solver - solveQuadratic', () => {
   test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {
     expect(() => solveQuadratic(value, 0, 0)).toThrow(RangeError);
   });
+
+  test('b가 매우 크면 작은 근을 상쇄 없이 구한다', () => {
+    // x² + 1e8·x + 1 = 0. 작은 근은 -1e-8에 가깝다(이전 구현은 -7.45e-9, 오차 25%).
+    const roots = solveQuadratic(1, 1e8, 1);
+    expect(roots).toHaveLength(2);
+    expect(Math.abs((roots[1] as number) + 1e-8) / 1e-8).toBeLessThan(1e-15);
+  });
+
+  test('eps를 생략하면 계수 scale과 무관하게 서로 다른 두 근을 구분한다', () => {
+    // 이전 구현은 D = 1e-12 <= 1e-10이라 [1.5] 중복근으로 합쳤다.
+    for (const s of [1e-8, 1e-6, 1, 1e8]) {
+      const roots = solveQuadratic(1 * s, -3 * s, 2 * s);
+      expect(roots).toHaveLength(2);
+      expect(Math.abs((roots[0] as number) - 1)).toBeLessThan(1e-12);
+      expect(Math.abs((roots[1] as number) - 2)).toBeLessThan(1e-12);
+    }
+  });
+
+  test('eps를 생략하면 계수 scale과 무관하게 중복근을 하나로 합친다', () => {
+    for (const s of [1e-8, 1, 1e8]) {
+      const roots = solveQuadratic(1 * s, -2 * s, 1 * s);
+      expect(roots).toHaveLength(1);
+      expect(Math.abs((roots[0] as number) - 1)).toBeLessThan(1e-12);
+    }
+  });
+
+  test('eps를 명시하면 기존 판별식 절대 판정을 유지한다', () => {
+    // D = 1e-12 <= eps 1e-10 → 중복근 [-b/2a].
+    expect(solveQuadratic(1e-6, -3e-6, 2e-6, 1e-10)).toEqual([1.5]);
+    // D = 1 <= eps 1.5 → 중복근.
+    expect(solveQuadratic(1, -3, 2, 1.5)).toEqual([1.5]);
+  });
+
+  test('eps를 명시하면 판별식이 -eps 미만일 때만 근이 없다', () => {
+    // x² + 1 → D = -4. eps 1이면 D < -eps라 근이 없고, eps 5이면 D >= -eps라 중복근으로 본다.
+    expect(solveQuadratic(1, 0, 1, 1)).toEqual([]);
+    const roots = solveQuadratic(1, 0, 1, 5);
+    expect(roots).toHaveLength(1);
+    expect(roots[0]).toBeCloseTo(0, 12);
+  });
 });
 
 describe('math solver - solveCubic', () => {
@@ -444,6 +484,20 @@ describe('math solver - solveCubic', () => {
     expect(roots).toHaveLength(2);
     expect(roots[0]).toBeCloseTo(2);
     expect(roots[1]).toBeCloseTo(3);
+  });
+
+  test('a === 0이고 eps를 생략하면 계수 scale과 무관하게 두 근을 구분한다', () => {
+    for (const s of [1e-8, 1e-6, 1, 1e8]) {
+      const roots = solveCubic(0, 1 * s, -3 * s, 2 * s);
+      expect(roots).toHaveLength(2);
+      expect(Math.abs((roots[0] as number) - 1)).toBeLessThan(1e-12);
+      expect(Math.abs((roots[1] as number) - 2)).toBeLessThan(1e-12);
+    }
+  });
+
+  test('a === 0이고 eps를 명시하면 2차 fallback도 기존 절대 판정을 유지한다', () => {
+    // D = 1e-12 <= eps 1e-9 → 중복근 [1.5].
+    expect(solveCubic(0, 1e-6, -3e-6, 2e-6, 1e-9)).toEqual([1.5]);
   });
 
   test.each(nonFiniteValues)('finite하지 않은 인자 %s는 RangeError를 던진다', (value) => {

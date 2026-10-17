@@ -119,6 +119,27 @@ describe('cubicBoundsInto', () => {
   });
 });
 
+describe('cubicBoundsInto - 좌표 scale 불변성', () => {
+  // x(t)는 interior 극소 t = 1 - √2/2 에서 -(√2 - 1)/2 · s, y(t)는 t = 0.5 에서 극대 0.375 · s를 갖는다.
+  const MIN_X = -(Math.SQRT2 - 1) / 2;
+
+  it.each([1e-8, 1e-7, 1e-5, 1, 1e8])('좌표 scale %s에서도 interior extrema가 bounds에 반영된다', (s) => {
+    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    cubicBoundsInto(out, { x: 0, y: 0 }, { x: -0.5 * s, y: 0.5 * s }, { x: 0, y: 0.5 * s }, { x: 0.5 * s, y: 0 });
+    expect(relErr(out.min.x, MIN_X * s)).toBeLessThan(1e-12);
+    expect(relErr(out.max.x, 0.5 * s)).toBeLessThan(1e-12);
+    expect(out.min.y).toBe(0);
+    expect(relErr(out.max.y, 0.375 * s)).toBeLessThan(1e-12);
+  });
+
+  it.each([1e-8, 1e-7, 1, 1e8])('좌표 scale %s에서 cubicExtrema의 t는 scale과 무관하다', (s) => {
+    const t = cubicExtrema({ x: 0, y: 0 }, { x: -0.5 * s, y: 0.5 * s }, { x: 0, y: 0.5 * s }, { x: 0.5 * s, y: 0 });
+    expect(t).toHaveLength(2);
+    expect(relErr(t[0] as number, 1 - Math.SQRT1_2)).toBeLessThan(1e-12);
+    expect(relErr(t[1] as number, 0.5)).toBeLessThan(1e-12);
+  });
+});
+
 describe('cubicBounds', () => {
   it('interior extrema cubic에서 cubicBoundsInto와 같은 bounds를 새 object로 반환한다', () => {
     const p0 = { x: 0, y: 0 };

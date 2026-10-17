@@ -1,32 +1,12 @@
+import { quadraticRootsInUnitInto } from '../math/quadratic-roots.internal';
+
 /**
  * quadratic 방정식 at² + bt + c = 0의 실근을 out에 push한다.
  * closedUnit=true이면 [0,1] closed interval, false이면 (0,1) open interval로 한정한다.
- * a가 near-zero이면 linear 방정식으로 처리한다.
+ * a === 0이면 linear 방정식으로 처리한다. 중복근 판정은 계수 scale 기준 상대값이다.
  */
 export function solveQuadratic(out: number[], a: number, b: number, c: number, closedUnit = false): void {
-  const EPS = 1e-12;
-
-  if (Math.abs(a) < EPS) {
-    if (Math.abs(b) < EPS) return;
-    const t = -c / b;
-    if (closedUnit ? t >= 0 && t <= 1 : t > 0 && t < 1) out.push(t);
-    return;
-  }
-
-  const discriminant = b * b - 4 * a * c;
-  if (discriminant < 0) return;
-
-  if (discriminant < EPS) {
-    const t = -b / (2 * a);
-    if (closedUnit ? t >= 0 && t <= 1 : t > 0 && t < 1) out.push(t);
-    return;
-  }
-
-  const sqrtD = Math.sqrt(discriminant);
-  const t1 = (-b - sqrtD) / (2 * a);
-  const t2 = (-b + sqrtD) / (2 * a);
-  if (closedUnit ? t1 >= 0 && t1 <= 1 : t1 > 0 && t1 < 1) out.push(t1);
-  if (closedUnit ? t2 >= 0 && t2 <= 1 : t2 > 0 && t2 < 1) out.push(t2);
+  quadraticRootsInUnitInto(out, a, b, c, closedUnit);
 }
 
 /**
@@ -94,32 +74,8 @@ function cbrtSigned(x: number): number {
 
 /**
  * quadratic 방정식 at² + bt + c = 0의 근을 (0, 1) 범위로 한정하여 out에 push한다.
- * a가 near-zero이면 linear 방정식으로 처리한다.
+ * a === 0이면 linear 방정식으로 처리한다. 중복근 판정은 계수 scale 기준 상대값이다.
  */
 export function solveQuadraticInOpenUnit(out: number[], a: number, b: number, c: number): void {
-  const EPS = 1e-12;
-
-  if (Math.abs(a) < EPS) {
-    // linear: bt + c = 0
-    if (Math.abs(b) < EPS) return;
-    const t = -c / b;
-    if (t > 0 && t < 1) out.push(t);
-    return;
-  }
-
-  const discriminant = b * b - 4 * a * c;
-  if (discriminant < 0) return;
-
-  if (discriminant < EPS) {
-    // 중근
-    const t = -b / (2 * a);
-    if (t > 0 && t < 1) out.push(t);
-    return;
-  }
-
-  const sqrtD = Math.sqrt(discriminant);
-  const t1 = (-b - sqrtD) / (2 * a);
-  const t2 = (-b + sqrtD) / (2 * a);
-  if (t1 > 0 && t1 < 1) out.push(t1);
-  if (t2 > 0 && t2 < 1) out.push(t2);
+  quadraticRootsInUnitInto(out, a, b, c, false);
 }

@@ -127,4 +127,80 @@ describe('quadraticLineIntersectionsInto', () => {
     expect(hits1[0].point.x).toBeCloseTo(hits2[0].point.x, 9);
     expect(hits1[0].point.y).toBeCloseTo(hits2[0].point.y, 9);
   });
+  test.each([1e-8, 1e-5, 1, 1e8])('좌표 scale %s에서도 대칭 quadratic과 horizontal line은 cross 두 개다', (s) => {
+    // 정점-직선 거리 0.5·s가 epsilon(기본 1e-9)보다 크면 접선이 아니라 두 점에서 교차한다.
+    // 이전 구현은 판별식(길이² 단위)을 epsilon과 직접 비교해 s=1e-5에서 touch 하나로 합쳤다.
+    const hits: IntersectionHit[] = [];
+    quadraticLineIntersectionsInto(
+      hits,
+      { x: 0, y: 0 },
+      { x: 0.5 * s, y: 2 * s },
+      { x: 1 * s, y: 0 },
+      { origin: { x: 0, y: 0.5 * s }, direction: { x: 1, y: 0 } }
+    );
+    expect(hits).toHaveLength(2);
+    expect(hits[0].kind).toBe('cross');
+    expect(hits[1].kind).toBe('cross');
+    const ts = hits.map((h) => h.tB).sort((a, b) => a - b);
+    expect(ts[0]).toBeCloseTo((2 - Math.SQRT2) / 4, 9);
+    expect(ts[1]).toBeCloseTo((2 + Math.SQRT2) / 4, 9);
+  });
+
+  test('정점이 epsilon 이내로 직선에 못 미치면 scale과 무관하게 touch다', () => {
+    // curve 최저점 y=0, line y=-1e-4·s. 간격 1e-4·s가 epsilon(1e-3·s) 이내면 touch 하나다.
+    for (const s of [1e-5, 1, 1e5]) {
+      const hits: IntersectionHit[] = [];
+      quadraticLineIntersectionsInto(
+        hits,
+        { x: 0, y: 1 * s },
+        { x: 0.5 * s, y: -1 * s },
+        { x: 1 * s, y: 1 * s },
+        { origin: { x: 0, y: -1e-4 * s }, direction: { x: 1, y: 0 } },
+        { epsilon: 1e-3 * s }
+      );
+      expect(hits).toHaveLength(1);
+      expect(hits[0].kind).toBe('touch');
+    }
+  });
+
+  test.each([1e-3, 1, 1e3])('direction 길이 %s배에도 정점-직선 거리 판정은 같다', (len) => {
+    // curve 최저점 y=0, line y=-1e-4. 간격 1e-4가 epsilon(1e-3) 이내면 direction 길이와 무관하게 touch다.
+    const hits: IntersectionHit[] = [];
+    quadraticLineIntersectionsInto(
+      hits,
+      { x: 0, y: 1 },
+      { x: 0.5, y: -1 },
+      { x: 1, y: 1 },
+      { origin: { x: 0, y: -1e-4 }, direction: { x: len, y: 0 } },
+      { epsilon: 1e-3 }
+    );
+    expect(hits).toHaveLength(1);
+    expect(hits[0].kind).toBe('touch');
+
+    // epsilon이 간격보다 작으면 hit가 없다.
+    quadraticLineIntersectionsInto(
+      hits,
+      { x: 0, y: 1 },
+      { x: 0.5, y: -1 },
+      { x: 1, y: 1 },
+      { origin: { x: 0, y: -1e-4 }, direction: { x: len, y: 0 } },
+      { epsilon: 1e-5 }
+    );
+    expect(hits).toHaveLength(0);
+  });
+
+  test('정점이 epsilon보다 멀리 직선에 못 미치면 scale과 무관하게 hit가 없다', () => {
+    for (const s of [1e-5, 1, 1e5]) {
+      const hits: IntersectionHit[] = [];
+      quadraticLineIntersectionsInto(
+        hits,
+        { x: 0, y: 1 * s },
+        { x: 0.5 * s, y: -1 * s },
+        { x: 1 * s, y: 1 * s },
+        { origin: { x: 0, y: -1e-4 * s }, direction: { x: 1, y: 0 } },
+        { epsilon: 1e-5 * s }
+      );
+      expect(hits).toHaveLength(0);
+    }
+  });
 });

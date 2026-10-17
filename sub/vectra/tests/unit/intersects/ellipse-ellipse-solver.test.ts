@@ -44,6 +44,17 @@ describe('solveQuadraticReal', () => {
   test('a ≈ 0 그리고 b ≈ 0 → 근 없음', () => {
     expectRoots(solveQuadraticReal(0, 0, 5, EPS), []);
   });
+
+  test('판별식이 절대 eps 이하이면 중복근으로 본다 — 정규화 좌표의 상쇄 잡음 바닥', () => {
+    // D = 4e-13 <= eps 1e-12. 계수를 상대값으로 보면 서로 다른 두 근이지만 절대 eps로는 중복근이다.
+    expectRoots(solveQuadraticReal(1, -2, 1 - 1e-13, EPS), [1]);
+  });
+
+  test('b가 매우 크면 작은 근을 상쇄 없이 구한다', () => {
+    const roots = [...solveQuadraticReal(1, 1e8, 1, EPS)].sort((a, b) => a - b);
+    expect(roots).toHaveLength(2);
+    expect(Math.abs((roots[1] as number) + 1e-8) / 1e-8).toBeLessThan(1e-15);
+  });
 });
 
 describe('solveCubicReal', () => {
