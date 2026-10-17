@@ -20,7 +20,7 @@ const CUBIC_NOISE_FACTOR = 16;
  *
  * Cardano 공식 기반으로 구한 뒤 근삼분 정렬해 반환한다. 중복근은 단일 원소로 반환한다.
  * a === 0이면 2차 방정식으로 fallback한다. fallback에서 eps를 생략하면 {@link solveQuadratic}의 상대 판정을 쓴다.
- * 모든 계수는 finite number여야 한다.
+ * 모든 계수는 finite number여야 한다. 근 0은 `-0`이 아니라 `+0`으로 반환한다.
  *
  * `eps`를 생략하면 3차 경로도 상대 판정을 쓴다. 계수 전체나 근 전체의 scale이 바뀌어도 결과가 같다.
  * - `rootScale = max(|A|, √|B|, ∛|C|)`이다. A, B, C는 monic 계수 `b/a, c/a, d/a`이다.
@@ -41,7 +41,7 @@ const CUBIC_NOISE_FACTOR = 16;
 export function solveCubic(a: number, b: number, c: number, d: number, eps?: number): number[] {
   assertFiniteNumbers([a, b, c, d]);
 
-  if (a === 0) return solveQuadratic(b, c, d, eps);
+  if (a === 0) return solveQuadratic(b, c, d, eps).map(toPositiveZero);
 
   // Cardano 공식 — depressed cubic t³ + pt + q = 0으로 치환
   const A = b / a;
@@ -109,8 +109,13 @@ export function solveCubic(a: number, b: number, c: number, d: number, eps?: num
   // 중복근 eps 판정으로 deduplicate
   return roots.reduce<number[]>((acc, r) => {
     if (acc.length === 0 || Math.abs(r - (acc[acc.length - 1] as number)) > tolerance) {
-      acc.push(r);
+      acc.push(toPositiveZero(r));
     }
     return acc;
   }, []);
+}
+
+/** -0을 +0으로 바꾼다. IEEE 754에서 `-0 + 0`은 `+0`이고 다른 값은 그대로다. */
+function toPositiveZero(x: number): number {
+  return x + 0;
 }

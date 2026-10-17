@@ -121,10 +121,32 @@ describe('math solver - solveCubic eps 생략 시 상대 판정', () => {
     }
   });
 
-  test('b, c, d가 모두 0이면 0 하나를 반환한다', () => {
-    // 중근 분기가 shift = -A/3에서 -0을 만들 수 있어 값으로 비교한다.
-    expectRootsNear(solveCubic(1, 0, 0, 0), [0], 0);
-    expectRootsNear(solveCubic(-3, 0, 0, 0), [0], 0);
+  test('b, c, d가 모두 0이면 +0 하나를 반환한다', () => {
+    // 중근 분기가 shift = -A/3에서 -0을 만들던 사례다. Object.is로 부호까지 확인한다.
+    for (const roots of [solveCubic(1, 0, 0, 0), solveCubic(-3, 0, 0, 0), solveCubic(1e-14, 0, 0, 0)]) {
+      expect(roots).toHaveLength(1);
+      expect(Object.is(roots[0], 0)).toBe(true);
+    }
+  });
+
+  test('근이 0인 다른 경우도 -0을 반환하지 않는다', () => {
+    // x³ - x → 근 -1, 0, 1. x³ → 3중근 0. x²(x - 1) → 중근 0과 단근 1.
+    for (const roots of [solveCubic(1, 0, -1, 0), solveCubic(1, -1, 0, 0), solveCubic(-1, 0, 1, 0)]) {
+      for (const r of roots) expect(Object.is(r, -0)).toBe(false);
+    }
+  });
+
+  test('a가 0인 fallback 경로도 -0을 반환하지 않는다', () => {
+    // solveLinear(1, 0)이 -0을 만드는 경로다.
+    for (const roots of [solveCubic(0, 0, 1, 0), solveCubic(0, 0, 2, 0), solveCubic(0, 1, 0, 0)]) {
+      expect(roots).toHaveLength(1);
+      expect(Object.is(roots[0], 0)).toBe(true);
+    }
+  });
+
+  test('eps를 명시해도 -0을 반환하지 않는다', () => {
+    expect(Object.is(solveCubic(1, 0, 0, 0, 1e-9)[0], 0)).toBe(true);
+    expect(Object.is(solveCubic(1, 0, 0, 0, 0)[0], 0)).toBe(true);
   });
 
   test('a가 0이면 2차 방정식으로 푼다', () => {
