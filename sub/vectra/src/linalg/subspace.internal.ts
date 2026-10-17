@@ -103,7 +103,7 @@ export function buildRrefNullSpaceBasis(
         );
       }
       const cleaned = Math.abs(raw) <= epsilon ? 0 : raw;
-      vector[pc] = Object.is(cleaned, -0) ? 0 : cleaned;
+      vector[pc] = cleaned;
     }
     basis[i] = vector;
   }

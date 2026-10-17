@@ -58,7 +58,7 @@ export function calculateEigenvalues(matrix: MatLike, options?: IterationOptions
   if (n === 1) {
     const v = matrix[0][0];
     const cleaned = Math.abs(v) <= resolved.epsilon ? 0 : v;
-    return [Object.is(cleaned, -0) ? 0 : cleaned];
+    return [cleaned];
   }
 
   if (n === 2) {

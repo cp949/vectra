@@ -58,12 +58,6 @@ export function buildPseudoInverseFromSvd(
   n: number,
   epsilon: number
 ): number[][] {
-  // 모든 호출자(`pseudoInverseInto`, `solveUnderdeterminedSystem`)는 m === 0 && n === 0 fast path를
-  // 사전 차단하므로 이 분기는 방어용이다. extractMatrixShape이 one-sided zero shape를 reject하므로
-  // 도달 시 m === 0 ↔ n === 0이 보장된다.
-  if (m === 0 && n === 0) {
-    return [];
-  }
   const { leftSingularVectors, singularValues, rightSingularVectors, rank } = svd;
   const result: number[][] = new Array(n);
   for (let r = 0; r < n; r++) {
@@ -83,19 +77,10 @@ export function buildPseudoInverseFromSvd(
       let sum = 0;
       const uRow = leftSingularVectors[c];
       for (let k = 0; k < rank; k++) {
-        const term = (vRow[k] * uRow[k]) / singularValues[k];
-        if (!Number.isFinite(term)) {
-          throw new RangeError(
-            `pseudo-inverse accumulator produced non-finite term at [${r}][${c}], k=${k}, got ${String(term)}`
-          );
-        }
-        sum += term;
-        if (!Number.isFinite(sum)) {
-          throw new RangeError(`pseudo-inverse accumulator overflowed at [${r}][${c}], k=${k}, got ${String(sum)}`);
-        }
+        // |v|, |u| <= 1이고 특이값은 sqrt(Number.MIN_VALUE) = 2.2e-162 이상이라 항은 4.5e161 이하다.
+        sum += (vRow[k] * uRow[k]) / singularValues[k];
       }
-      const cleaned = Math.abs(sum) <= epsilon ? 0 : sum;
-      resultRow[c] = Object.is(cleaned, -0) ? 0 : cleaned;
+      resultRow[c] = Math.abs(sum) <= epsilon ? 0 : sum;
     }
   }
   return result;
@@ -120,9 +105,6 @@ export function computeLinearResidualNorm(
   m: number,
   n: number
 ): number {
-  if (m === 0) {
-    return 0;
-  }
   let maxAbs = 0;
   const residuals = new Array<number>(m);
   for (let r = 0; r < m; r++) {
@@ -151,9 +133,6 @@ export function computeLinearResidualNorm(
   for (let r = 0; r < m; r++) {
     const scaled = residuals[r] / maxAbs;
     sumOfSquares += scaled * scaled;
-    if (!Number.isFinite(sumOfSquares)) {
-      throw new RangeError(`residual norm accumulator overflowed at row ${r}, got ${String(sumOfSquares)}`);
-    }
   }
   const norm = maxAbs * Math.sqrt(sumOfSquares);
   if (!Number.isFinite(norm)) {

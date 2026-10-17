@@ -116,27 +116,22 @@ export function performTriangularSubstitution(
  * caller가 `lower`의 lower triangular 구조 검증(upper 영역 `column > row` abs `<= epsilon` 등)을
  * 이미 수행했다고 가정한다. 이 helper는 비-삼각 영역 cleanup check를 따로 하지 않는다.
  *
- * diagonal abs가 `epsilon` 이하이면 singular로 보고 `undefined`. 누적 합산 또는 division 결과가
- * non-finite면 `RangeError`. 반환 entry에 `-0`은 남기지 않는다(`v === 0`이면 `+0`으로 canonicalize).
- * `rows === 0`이면 `[]`을 반환한다.
+ * caller가 forward 단계(`performTriangularSubstitution`)에서 같은 `lower`의 diagonal abs가
+ * `epsilon`을 넘는지 이미 확인했다고 가정한다. 이 helper는 singular 판정을 하지 않는다. 누적 합산 또는
+ * division 결과가 non-finite면 `RangeError`. 반환 entry에 `-0`은 남기지 않는다(`v === 0`이면 `+0`으로
+ * canonicalize). `rows === 0`이면 `[]`을 반환한다.
  *
- * @param lower 이미 검증된 lower triangular square matrix
+ * @param lower 이미 검증된 lower triangular square matrix. diagonal abs가 모두 `epsilon`을 넘는다.
  * @param rows substitution 차원
  * @param rhs 길이가 `rows`인 finite RHS vector
- * @param epsilon diagonal zero 판정 tolerance
  * @param matrixName error message에 사용할 matrix 인자 이름
  */
 export function performLowerTransposeBackwardSubstitution(
   lower: MatLike,
   rows: number,
   rhs: readonly number[],
-  epsilon: number,
   matrixName: string
-): number[] | undefined {
-  if (rows === 0) {
-    return [];
-  }
-
+): number[] {
   const x = new Array<number>(rows);
   for (let i = rows - 1; i >= 0; i--) {
     let sum = rhs[i];
@@ -155,11 +150,7 @@ export function performLowerTransposeBackwardSubstitution(
         );
       }
     }
-    const diagonal = lower[i][i];
-    if (Math.abs(diagonal) <= epsilon) {
-      return undefined;
-    }
-    const v = sum / diagonal;
+    const v = sum / lower[i][i];
     if (!Number.isFinite(v)) {
       throw new RangeError(
         `${matrixName} transpose substitution produced non-finite solution entry at row ${i}, got ${String(v)}`

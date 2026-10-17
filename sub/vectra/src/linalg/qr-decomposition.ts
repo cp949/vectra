@@ -52,18 +52,10 @@ function finiteEuclideanNorm(v: readonly number[], m: number): number {
     if (abs > max) max = abs;
   }
   if (max === 0) return 0;
-  // safety net. v[i] 모두 사전 검증된 finite이고 max = max(|v[i]|) 누적이라 finite. 사전 검증 정책이
-  // 바뀌면 silent Infinity 대신 RangeError로 막는다.
-  if (!Number.isFinite(max)) {
-    throw new RangeError(`QR decomposition produced non-finite max during norm, got ${String(max)}`);
-  }
   let sum = 0;
   for (let i = 0; i < m; i++) {
     const s = v[i] / max;
     sum += s * s;
-    if (!Number.isFinite(sum)) {
-      throw new RangeError(`QR decomposition produced non-finite intermediate during norm, got ${String(sum)}`);
-    }
   }
   const norm = max * Math.sqrt(sum);
   if (!Number.isFinite(norm)) {
@@ -105,7 +97,8 @@ function projectOntoExistingColumns(
 function commitProjectionColumn(rRows: number[][], rColumn: readonly number[], column: number): void {
   for (let k = 0; k < rRows.length; k++) {
     const coeff = rColumn[k];
-    rRows[k][column] = Object.is(coeff, -0) ? 0 : coeff;
+    // finiteDot의 합은 +0에서 시작해 -0이 되지 않는다.
+    rRows[k][column] = coeff;
   }
 }
 
@@ -121,19 +114,11 @@ function getQrColumnSign(v: readonly number[], rows: number): 1 | -1 {
   return 1;
 }
 
-function createSignedUnitColumn(
-  v: readonly number[],
-  rows: number,
-  sign: 1 | -1,
-  norm: number,
-  rank: number
-): number[] {
+function createSignedUnitColumn(v: readonly number[], rows: number, sign: 1 | -1, norm: number): number[] {
   const newQ = new Array<number>(rows);
   for (let i = 0; i < rows; i++) {
+    // norm >= max|v[i]|이고 norm > 0이라 |value| <= 1이다.
     const value = (sign * v[i]) / norm;
-    if (!Number.isFinite(value)) {
-      throw new RangeError(`QR decomposition produced non-finite Q entry at [${i}][${rank}], got ${String(value)}`);
-    }
     newQ[i] = Object.is(value, -0) ? 0 : value;
   }
   return newQ;
@@ -158,12 +143,11 @@ function appendIndependentQrColumn(
   norm: number
 ): void {
   const sign = getQrColumnSign(v, rows);
-  const newQ = createSignedUnitColumn(v, rows, sign, norm, qCols.length);
+  const newQ = createSignedUnitColumn(v, rows, sign, norm);
   const newRRow = createZeroRow(columns);
 
   commitProjectionColumn(rRows, rColumn, column);
-  const diagonal = sign * norm;
-  newRRow[column] = Object.is(diagonal, -0) ? 0 : diagonal;
+  newRRow[column] = sign * norm;
 
   qCols.push(newQ);
   rRows.push(newRRow);
@@ -175,8 +159,7 @@ function buildOrthogonalMatrix(qCols: readonly (readonly number[])[], rows: numb
   for (let i = 0; i < rows; i++) {
     const row = new Array<number>(rank);
     for (let k = 0; k < rank; k++) {
-      const value = qCols[k][i];
-      row[k] = Object.is(value, -0) ? 0 : value;
+      row[k] = qCols[k][i];
     }
     orthogonal[i] = row;
   }

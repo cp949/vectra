@@ -78,12 +78,7 @@ export function computeNullspaceUnitVectorForLambda(
     break;
   }
   // pivotColumns.length < n임이 위 분기에서 보장되므로, descending c 루프가 반드시 free column을
-  // 하나 찾는다. lastFreeCol === -1은 caller invariant 위반이라 silent undefined로 흘리지 않는다.
-  if (lastFreeCol === -1) {
-    throw new RangeError(
-      `nullspace invariant violated: pivotColumns.length=${pivotColumns.length} < n=${n} 인데 free column을 찾지 못함`
-    );
-  }
+  // 하나 찾는다.
 
   const vector = new Array<number>(n);
   for (let i = 0; i < n; i++) {
@@ -94,13 +89,8 @@ export function computeNullspaceUnitVectorForLambda(
     const pc = pivotColumns[i];
     const pr = pivotRows[i];
     const coeff = temp[pr][lastFreeCol];
-    const value = -coeff;
-    if (!Number.isFinite(value)) {
-      throw new RangeError(
-        `eigenvector back-substitution produced non-finite value at column ${pc}, got ${String(value)}`
-      );
-    }
-    vector[pc] = value;
+    // elimination이 모든 entry의 finite를 보장하므로 -coeff도 finite다.
+    vector[pc] = -coeff;
   }
 
   let normSquared = 0;
@@ -111,9 +101,6 @@ export function computeNullspaceUnitVectorForLambda(
     }
   }
   const norm = Math.sqrt(normSquared);
-  if (!Number.isFinite(norm)) {
-    throw new RangeError(`eigenvector norm produced non-finite value, got ${String(norm)}`);
-  }
   if (norm <= epsilon) {
     return undefined;
   }
@@ -122,12 +109,9 @@ export function computeNullspaceUnitVectorForLambda(
 
   const out = new Array<number>(n);
   for (let i = 0; i < n; i++) {
+    // vector[lastFreeCol] = 1이라 norm >= 1이고 |vector[i]| <= norm이므로 scaled는 finite다.
     const scaled = (sign * vector[i]) / norm;
-    if (!Number.isFinite(scaled)) {
-      throw new RangeError(`eigenvector normalization produced non-finite value at index ${i}, got ${String(scaled)}`);
-    }
-    const cleaned = Math.abs(scaled) <= epsilon ? 0 : scaled;
-    out[i] = Object.is(cleaned, -0) ? 0 : cleaned;
+    out[i] = Math.abs(scaled) <= epsilon ? 0 : scaled;
   }
   return out;
 }

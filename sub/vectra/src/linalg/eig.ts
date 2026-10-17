@@ -68,8 +68,7 @@ export function eig(matrix: MatLike, options?: IterationOptions): EigenDecomposi
   if (n === 1) {
     const v = matrix[0][0];
     const cleaned = Math.abs(v) <= epsilon ? 0 : v;
-    const value = Object.is(cleaned, -0) ? 0 : cleaned;
-    return { values: [value], vectors: [[1]] };
+    return { values: [cleaned], vectors: [[1]] };
   }
 
   // symmetric 경로는 모든 n >= 2를 Jacobi로 통합한다. multiplicity > 1 eigenvalue에서도 Jacobi의

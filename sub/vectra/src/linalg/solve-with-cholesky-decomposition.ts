@@ -59,5 +59,5 @@ export function solveWithCholeskyDecomposition(
   if (y === undefined) {
     return undefined;
   }
-  return performLowerTransposeBackwardSubstitution(decomposition.lower, n, y, epsilon, 'decomposition.lower');
+  return performLowerTransposeBackwardSubstitution(decomposition.lower, n, y, 'decomposition.lower');
 }

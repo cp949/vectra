@@ -65,7 +65,7 @@ function finalize(raw: JacobiSymmetricEigenRawResult, n: number, epsilon: number
   for (let i = 0; i < n; i++) {
     const v = raw.values[i];
     const cleaned = Math.abs(v) <= epsilon ? 0 : v;
-    values[i] = Object.is(cleaned, -0) ? 0 : cleaned;
+    values[i] = cleaned;
   }
   const vectors = raw.vectors;
   for (let r = 0; r < n; r++) {
@@ -73,7 +73,7 @@ function finalize(raw: JacobiSymmetricEigenRawResult, n: number, epsilon: number
     for (let c = 0; c < n; c++) {
       const v = row[c];
       const cleaned = Math.abs(v) <= epsilon ? 0 : v;
-      row[c] = Object.is(cleaned, -0) ? 0 : cleaned;
+      row[c] = cleaned;
     }
   }
   return { values, vectors };
@@ -93,7 +93,7 @@ export function applyColumnSignConvention(vectors: number[][], n: number, k: num
     for (let r = 0; r < n; r++) {
       const v = sign * vectors[r][col];
       const cleaned = Math.abs(v) <= epsilon ? 0 : v;
-      vectors[r][col] = Object.is(cleaned, -0) ? 0 : cleaned;
+      vectors[r][col] = cleaned;
     }
   }
 }
@@ -164,24 +164,15 @@ export function twoByTwoRealEigenvalues(
     clampedD = discriminant;
   }
 
+  // trace²와 discriminant가 finite라 |trace|와 sqrt(discriminant)는 각각 1.4e154 이하다. 두 값의 합과 차도 finite다.
   const sqrtD = Math.sqrt(clampedD);
-  if (!Number.isFinite(sqrtD)) {
-    throw new RangeError(`2x2 eigenvalue sqrt produced non-finite value, got ${String(sqrtD)}`);
-  }
-
   const e1Raw = (trace + sqrtD) / 2;
   const e2Raw = (trace - sqrtD) / 2;
-  if (!Number.isFinite(e1Raw) || !Number.isFinite(e2Raw)) {
-    throw new RangeError(
-      `2x2 eigenvalue computation produced non-finite result, got (${String(e1Raw)}, ${String(e2Raw)})`
-    );
-  }
   const e1 = cleanupZero(e1Raw, epsilon);
   const e2 = cleanupZero(e2Raw, epsilon);
   return [e1, e2];
 }
 
 function cleanupZero(value: number, epsilon: number): number {
-  const cleaned = Math.abs(value) <= epsilon ? 0 : value;
-  return Object.is(cleaned, -0) ? 0 : cleaned;
+  return Math.abs(value) <= epsilon ? 0 : value;
 }

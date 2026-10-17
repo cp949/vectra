@@ -57,7 +57,8 @@ export function chainProductInto<Out extends MatWritable>(out: Out, matrices: re
     const b = matrices[step];
     const bColumns = shapes[step][1];
     const sharedDim = accColumns;
-    if (accRows === 0 || bColumns === 0) {
+    // one-sided zero shape는 거부되므로 b의 열이 0이면 b는 빈 행렬이고, 열 수 검사를 통과한 acc도 비어 있다.
+    if (accRows === 0) {
       acc = [];
       accRows = 0;
       accColumns = 0;

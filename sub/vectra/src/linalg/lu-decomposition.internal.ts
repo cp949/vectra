@@ -66,21 +66,12 @@ export function decomposeFiniteSquareMatrixLU(
     const pivotRow = temp[k];
     for (let i = k + 1; i < n; i++) {
       const row = temp[i];
+      // partial pivoting이라 |row[k]| <= |pivot|이고 |pivot| > epsilon >= 0이므로 |factor| <= 1이다.
       const factor = row[k] / pivot;
-      if (!Number.isFinite(factor)) {
-        throw new RangeError(`LU decomposition produced non-finite multiplier at [${i}][${k}], got ${String(factor)}`);
-      }
       row[k] = factor;
       for (let j = k + 1; j < n; j++) {
-        const term = factor * pivotRow[j];
-        // safety net. partial pivoting하에서 |factor| <= 1이라 |term| <= |pivotRow[j]| finite.
-        // pivoting 정책이 바뀌면 silent NaN 대신 RangeError로 막는다.
-        if (!Number.isFinite(term)) {
-          throw new RangeError(
-            `LU decomposition produced non-finite intermediate at [${i}][${j}], got ${String(term)}`
-          );
-        }
-        const v = row[j] - term;
+        // |factor| <= 1이라 factor * pivotRow[j]는 finite다.
+        const v = row[j] - factor * pivotRow[j];
         if (!Number.isFinite(v)) {
           throw new RangeError(`LU decomposition produced non-finite value at [${i}][${j}], got ${String(v)}`);
         }

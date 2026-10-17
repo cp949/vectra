@@ -77,9 +77,6 @@ export function multiplyFiniteSquareMatrices(
   b: readonly (readonly number[])[],
   n: number
 ): number[][] {
-  if (n === 0) {
-    return [];
-  }
   const out: number[][] = new Array(n);
   for (let i = 0; i < n; i++) {
     const rowA = a[i];
@@ -115,9 +112,6 @@ export function multiplyFiniteSquareMatrices(
  * @param epsilon pivot zero 판정과 elimination zero cleanup tolerance
  */
 export function invertFiniteSquareMatrix(matrix: MatLike, n: number, epsilon: number): number[][] | undefined {
-  if (n === 0) {
-    return [];
-  }
   const augmentedColumns = 2 * n;
   const temp: number[][] = new Array(n);
   for (let r = 0; r < n; r++) {

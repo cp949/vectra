@@ -53,19 +53,11 @@ export function computeThinSingularValueDecomposition(
   const entries: SingularEntry[] = new Array(n);
   for (let i = 0; i < n; i++) {
     const lambda = values[i];
-    let clamped: number;
+    // jacobi가 |lambda| <= epsilon을 0으로 정리하므로 lambda는 0 이상이거나 -epsilon 미만이다.
     if (lambda < -epsilon) {
       return undefined;
-    } else if (lambda < 0) {
-      clamped = 0;
-    } else {
-      clamped = lambda;
     }
-    const sigma = Math.sqrt(clamped);
-    if (!Number.isFinite(sigma)) {
-      throw new RangeError(`SVD singular value sqrt produced non-finite value at index ${i}, got ${String(sigma)}`);
-    }
-    entries[i] = { sigma, column: i };
+    entries[i] = { sigma: Math.sqrt(lambda), column: i };
   }
 
   entries.sort((a, b) => b.sigma - a.sigma);
@@ -103,26 +95,22 @@ export function computeThinSingularValueDecomposition(
     for (let r = 0; r < n; r++) {
       const v = sign * vectors[r][sourceColumn];
       const cleaned = Math.abs(v) <= epsilon ? 0 : v;
-      rightSingularVectors[r][k] = Object.is(cleaned, -0) ? 0 : cleaned;
+      rightSingularVectors[r][k] = cleaned;
     }
 
     for (let r = 0; r < m; r++) {
       let sum = 0;
       const aRow = matrix[r];
       for (let c = 0; c < n; c++) {
+        // |A 원소| <= 1.3e154(A^T A가 finite)이고 |vectors| <= 1이라 합은 finite다.
         sum += aRow[c] * (sign * vectors[c][sourceColumn]);
-        if (!Number.isFinite(sum)) {
-          throw new RangeError(
-            `SVD left singular vector accumulator overflowed at row ${r}, column index ${k}, got ${String(sum)}`
-          );
-        }
       }
       const u = sum / sigma;
       if (!Number.isFinite(u)) {
         throw new RangeError(`SVD left singular vector produced non-finite value at [${r}][${k}], got ${String(u)}`);
       }
       const cleaned = Math.abs(u) <= epsilon ? 0 : u;
-      leftSingularVectors[r][k] = Object.is(cleaned, -0) ? 0 : cleaned;
+      leftSingularVectors[r][k] = cleaned;
     }
   }
 

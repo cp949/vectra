@@ -10,9 +10,8 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  *
  * - 빈 matrix `[]`(`shape = [0, 0]`)는 `0`을 반환한다.
  * - rank 0(zero matrix)는 `0`을 반환한다.
- * - 그 외에는 SVD singular value를 누적해 합을 반환한다. 매 step에서 누적 합이 finite인지 확인한다.
- * - 누적 합이 non-finite(Infinity)이면 `RangeError`. SVD core 자체의 sigma는 sqrt 결과로 finite이
- *   보장되므로, 누적 합 overflow만 별도로 체크한다.
+ * - 그 외에는 SVD singular value를 누적해 합을 반환한다. 각 sigma는 `A^T A`가 finite라 1.4e154 이하이므로
+ *   합도 finite다.
  *
  * 검증 순서: `resolveIterationOptions` → `extractMatrixShape(matrix)` → `assertFiniteMatrixEntries`
  * → SVD 계산 → 분기. Jacobi convergence 실패와 음수 eigenvalue 같은 numeric failure는 `undefined`.
@@ -43,11 +42,9 @@ export function nuclearNorm(matrix: MatLike, options?: IterationOptions): number
     return 0;
   }
   let sum = 0;
+  // 특이값은 각각 ||A||_F 이하이고 A^T A가 finite라 ||A||_F는 1.4e154 이하다. 합이 overflow하려면 항이 1e154개 필요하다.
   for (let k = 0; k < rank; k++) {
     sum += singularValues[k];
-    if (!Number.isFinite(sum)) {
-      throw new RangeError(`nuclearNorm singular value accumulator overflowed at index ${k}, got ${String(sum)}`);
-    }
   }
   return sum;
 }

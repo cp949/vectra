@@ -186,10 +186,8 @@ function computeResidual(A: MatLike, b: VecLike, solution: number[], rows: numbe
   let scaledSum = 0;
   for (let r = 0; r < rows; r++) {
     const s = errors[r] / max;
+    // |s| <= 1이라 scaledSum은 rows 이하다.
     scaledSum += s * s;
-    if (!Number.isFinite(scaledSum)) {
-      throw new RangeError(`residual computation accumulator overflowed during scaling, got ${String(scaledSum)}`);
-    }
   }
   const residual = max * Math.sqrt(scaledSum);
   if (!Number.isFinite(residual)) {

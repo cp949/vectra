@@ -79,8 +79,7 @@ export function solveUnderdeterminedSystem(A: MatLike, b: VecLike, options?: Ite
         );
       }
     }
-    const cleaned = Math.abs(sum) <= resolved.epsilon ? 0 : sum;
-    x[r] = Object.is(cleaned, -0) ? 0 : cleaned;
+    x[r] = Math.abs(sum) <= resolved.epsilon ? 0 : sum;
   }
 
   const residual = computeLinearResidualNorm(A, x, b, m, n);

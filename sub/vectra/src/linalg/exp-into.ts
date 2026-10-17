@@ -40,11 +40,8 @@ function scaleSquareMatrix(matrix: readonly (readonly number[])[], n: number, fa
     const src = matrix[r];
     const row = new Array<number>(n);
     for (let c = 0; c < n; c++) {
-      const v = src[c] * factor;
-      if (!Number.isFinite(v)) {
-        throw new RangeError(`scaled matrix entry at [${r}][${c}] must be a finite number, got ${String(v)}`);
-      }
-      row[c] = v;
+      // factor는 1 이하의 2의 거듭제곱이라 곱은 finite다.
+      row[c] = src[c] * factor;
     }
     out[r] = row;
   }
@@ -71,11 +68,8 @@ function divideSquareMatrixInPlace(matrix: number[][], n: number, divisor: numbe
   for (let r = 0; r < n; r++) {
     const row = matrix[r];
     for (let c = 0; c < n; c++) {
-      const v = row[c] / divisor;
-      if (!Number.isFinite(v)) {
-        throw new RangeError(`matrix exponential term entry at [${r}][${c}] must be a finite number, got ${String(v)}`);
-      }
-      row[c] = v;
+      // divisor는 1 이상의 항 번호라 나눗셈 결과는 finite다.
+      row[c] = row[c] / divisor;
     }
   }
 }

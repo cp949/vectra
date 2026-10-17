@@ -20,9 +20,8 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  * `{ sign: 0, logAbsDet: Number.NEGATIVE_INFINITY }`를 반환한다. 이 `-Infinity`는 정의된 결과이며
  * `RangeError`로 분류하지 않는다.
  * elimination 도중 결과 entry가 finite number가 아니면 `RangeError`.
- * `logAbsDet` 누적이 non-finite(NaN/+Infinity)이면 `RangeError`. singular 경로의 `-Infinity`는
- * 누적 결과가 아니라 직접 반환 값이므로 이 규칙에서 제외한다.
- * non-singular 결과의 `logAbsDet`에는 `-0`이 남지 않는다(`+0`으로 canonicalize).
+ * non-singular 결과의 `logAbsDet`은 항상 finite다. pivot이 finite이고 `epsilon`보다 커서 각 `log`가
+ * ±745 이내이므로 누적도 finite다. `-0`은 남지 않는다.
  *
  * 결과는 fixed plain object를 직접 반환한다(`*Into` variant를 제공하지 않는다).
  *
@@ -54,14 +53,9 @@ export function slogDet(matrix: MatLike, options?: PivotOptions): SLogDetResult 
       sign = (sign === 1 ? -1 : 1) as -1 | 1;
     }
     const abs = Math.abs(pivot);
-    // pivot은 elimination 결과 |pivot| > epsilon이 보장되어 log 입력이 0 이하가 되지 않는다.
-    // 누적 합도 finite step의 합이라 정상 입력에서는 finite를 벗어나지 않지만, 방어용으로 매
-    // step overflow 가드를 둔다.
+    // pivot은 elimination 결과 finite이고 |pivot| > epsilon >= 0이라 log는 finite다. 각 항이 ±745 이내라
+    // 합도 finite다. 초기값이 +0이고 Math.log는 -0을 내지 않으므로 합에 -0이 남지 않는다.
     logAbsDet += Math.log(abs);
-    if (!Number.isFinite(logAbsDet)) {
-      throw new RangeError(`slogDet log-abs accumulator overflowed at diagonal ${i}, got ${String(logAbsDet)}`);
-    }
   }
-  const cleanedLog = Object.is(logAbsDet, -0) ? 0 : logAbsDet;
-  return { sign, logAbsDet: cleanedLog };
+  return { sign, logAbsDet };
 }

@@ -83,8 +83,7 @@ export function choleskyDecomposition(matrix: MatLike, options?: PivotOptions): 
         }
       }
       const remainder = matrix[i][j] - sum;
-      // safety net. matrix[i][j]와 sum 모두 finite 보장(사전 검증 + sum loop의 finite check)이라
-      // 현재 가정 아래에서는 unreachable. 검증 순서가 바뀌면 silent NaN 대신 RangeError로 막는다.
+      // matrix[i][j]와 sum은 각각 finite지만 부호가 다르고 크기가 MAX_VALUE 규모면 뺄셈이 overflow한다.
       if (!Number.isFinite(remainder)) {
         throw new RangeError(
           `choleskyDecomposition produced non-finite remainder at [${i}][${j}], got ${String(remainder)}`
@@ -94,15 +93,8 @@ export function choleskyDecomposition(matrix: MatLike, options?: PivotOptions): 
         if (remainder <= epsilon) {
           return undefined;
         }
-        const diag = Math.sqrt(remainder);
-        // safety net. remainder > epsilon >= 0이고 finite라 Math.sqrt는 항상 finite. epsilon 0 허용 등
-        // 가정 변경 시 silent NaN 대신 RangeError로 막는다.
-        if (!Number.isFinite(diag)) {
-          throw new RangeError(
-            `choleskyDecomposition produced non-finite diagonal at [${i}][${i}], got ${String(diag)}`
-          );
-        }
-        lRowI[i] = diag;
+        // remainder > epsilon >= 0이고 finite라 sqrt는 finite다.
+        lRowI[i] = Math.sqrt(remainder);
       } else {
         const value = remainder / lRowJ[j];
         if (!Number.isFinite(value)) {

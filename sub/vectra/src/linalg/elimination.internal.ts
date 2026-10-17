@@ -172,12 +172,8 @@ export function eliminateRows(
         continue;
       }
       const row = temp[r];
+      // reduced는 finite entry 그대로다. 아니면 pivot이 열의 최대 절댓값이라 |factor| <= 1이다.
       const factor = reduced ? row[c] : row[c] / pivotValue;
-      if (!Number.isFinite(factor)) {
-        throw new RangeError(
-          `matrix elimination produced non-finite factor at row ${r}, column ${c}, got ${String(factor)}`
-        );
-      }
       if (factor === 0) {
         row[c] = 0;
         continue;
