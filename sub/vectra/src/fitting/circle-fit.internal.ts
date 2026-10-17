@@ -154,17 +154,14 @@ export function fitCircleAlgebraic(
   if (!Number.isFinite(radiusSquared) || radiusSquared <= epsilon) {
     return undefined;
   }
+  // radiusSquared는 epsilon(0 이상)보다 큰 finite라 radius도 양의 finite다.
   const radius = Math.sqrt(radiusSquared);
-  if (!Number.isFinite(radius) || radius === 0) {
-    return undefined;
-  }
 
   // center를 원래 frame으로 되돌린다.
+  // point가 3개 이상이라 finite한 meanX, meanY는 MAX_VALUE / 3 이하다. localCenter는 radiusSquared가
+  // finite라 1.4e154 이하다. 합은 overflow하지 않는다. mean이 non-finite이면 위 solver가 먼저 undefined를 돌려준다.
   const centerX = localCenterX + meanX;
   const centerY = localCenterY + meanY;
-  if (!Number.isFinite(centerX) || !Number.isFinite(centerY)) {
-    return undefined;
-  }
 
   return {
     centerX: centerX === 0 ? 0 : centerX,

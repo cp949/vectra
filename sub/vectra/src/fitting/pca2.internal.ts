@@ -96,7 +96,8 @@ function canonicalizeAxisSign(out: [number, number], x: number, y: number): void
   let sign = 1;
   if (x !== 0) {
     sign = x < 0 ? -1 : 1;
-  } else if (y !== 0) {
+  } else {
+    // 호출자가 unit vector를 넘기므로 x === 0이면 y !== 0이다.
     sign = y < 0 ? -1 : 1;
   }
   const rx = sign * x;
@@ -186,11 +187,9 @@ export function computePrincipalAxes(
   if (!Number.isFinite(length) || length === 0) {
     return undefined;
   }
+  // length가 finite이고 0이 아니면 length >= max(|primaryX|, |primaryY|)라 ux, uy도 finite다.
   const ux = primaryX / length;
   const uy = primaryY / length;
-  if (!Number.isFinite(ux) || !Number.isFinite(uy)) {
-    return undefined;
-  }
 
   const primary: [number, number] = [0, 0];
   const secondary: [number, number] = [0, 0];
