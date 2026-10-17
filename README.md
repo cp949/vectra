@@ -86,7 +86,7 @@ pnpm examples:coverage:test
 pnpm examples:typecheck
 ```
 
-`pnpm verify`는 위 governance gate와 workspace `typecheck`, `lint`, `format:check`, `test`, `build`를 실행한다.
+`pnpm verify`는 위 governance gate와 workspace `typecheck`, `typecheck:examples`, `lint`, `format:check`, `test`, `build`를 실행한다.
 
 Release readiness 후보:
 
