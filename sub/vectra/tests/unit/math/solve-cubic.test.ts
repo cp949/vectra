@@ -28,12 +28,15 @@ function expectRootsNear(actual: number[], expected: number[], tolerance: number
   }
 }
 
-/** 근 간격이 작아 이전 구현이 붙은 근을 합치던 재현 사례. tolerance는 최소 근 간격의 30%다. */
+/**
+ * 근 간격이 작아 이전 구현이 붙은 근을 합치던 재현 사례. tolerance는 최소 근 간격의 30%다.
+ * 간격이 근 크기의 약 1e-5배 이하이면 계수 반올림 잡음과 구분되지 않아 다루지 않는다.
+ */
 const closeRootCases: { name: string; roots: Roots3; tolerance: number }[] = [
   { name: '0.5 근처 간격 1e-4', roots: [0.5, 0.5001, 0.5002], tolerance: 3e-5 },
   { name: '1e-6 크기 근', roots: [1e-6, 2e-6, 3e-6], tolerance: 3e-7 },
   { name: '0 포함 간격 1e-4', roots: [0, 1e-4, 2e-4], tolerance: 3e-5 },
-  { name: '0.5 근처 간격 1e-5', roots: [0.5, 0.50001, 0.50002], tolerance: 3e-6 },
+  { name: '0.5 근처 간격 5e-5', roots: [0.5, 0.50005, 0.5001], tolerance: 1.5e-5 },
 ];
 
 describe('math solver - solveCubic eps 생략 시 상대 판정', () => {
@@ -78,6 +81,36 @@ describe('math solver - solveCubic eps 생략 시 상대 판정', () => {
     expectRootsNear(solveCubic(...coefficientsOf([1, 1, 3])), [1, 3], 1e-6);
     for (const scale of [1e-14, 1e8]) {
       expectRootsNear(solveCubic(...coefficientsOf([1, 1, 3], scale)), [1, 3], 1e-6);
+    }
+  });
+
+  test('근 크기에 비해 간격이 작은 중근과 단근도 근 두 개로 구분한다', () => {
+    // 판별식 잡음이 근 크기의 6제곱에 비례해 상대 임계 1e-12를 넘던 사례다. 이전에는 단근만 반환했다.
+    const cases: { roots: Roots3; expected: number[] }[] = [
+      { roots: [9, 9, 9.5], expected: [9, 9.5] },
+      { roots: [5.5, 5.5, 6.2], expected: [5.5, 6.2] },
+      { roots: [7.1, 7.1, 3.3], expected: [3.3, 7.1] },
+    ];
+    for (const { roots, expected } of cases) {
+      for (const scale of [1e-14, 1, 1e8]) {
+        expectRootsNear(solveCubic(...coefficientsOf(roots, scale)), expected, 1e-5);
+      }
+    }
+  });
+
+  test('실수 근 하나와 허수부가 작은 켤레 복소근은 실근 하나만 반환한다', () => {
+    // (x - 1)(x² - x + 0.25 + h²). h = 1e-6은 잡음 한계(약 1e-6) 안쪽이라 근 하나로 확정한다.
+    const h = 1e-6;
+    const c = 0.25 + h * h;
+    for (const scale of [1e-14, 1, 1e8]) {
+      expectRootsNear(solveCubic(scale, -2 * scale, (c + 1) * scale, -c * scale), [1], 1e-5);
+    }
+  });
+
+  test('계수 반올림 때문에 정확하지 않은 3중근도 하나로 합친다', () => {
+    // 0.3³은 이진 표현이 정확하지 않다. 상쇄 잡음으로 q가 0이 아니어도 근 하나를 정확히 구한다.
+    for (const scale of [1e-14, 1, 1e8]) {
+      expectRootsNear(solveCubic(...coefficientsOf([0.3, 0.3, 0.3], scale)), [0.3], 1e-9);
     }
   });
 
