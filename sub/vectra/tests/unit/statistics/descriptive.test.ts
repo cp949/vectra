@@ -43,6 +43,17 @@ describe('mean — basic case', () => {
   });
 });
 
+describe('mean — signed zero', () => {
+  test('음의 subnormal 합을 나눠 -0이 되면 +0으로 canonicalize된다', () => {
+    // -5e-324 / 2는 반올림 tie가 짝수(0)로 가서 부호만 남은 -0이 된다.
+    expect(mean([-5e-324, 0])).toBe(0);
+  });
+
+  test('음수 평균은 부호를 유지한다', () => {
+    expect(mean([-5e-324, -5e-324])).toBe(-5e-324);
+  });
+});
+
 describe('mean — invalid input', () => {
   test('빈 배열은 RangeError', () => {
     expect(() => mean([])).toThrow(RangeError);
