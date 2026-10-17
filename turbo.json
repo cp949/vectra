@@ -35,7 +35,7 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["^build", "build"],
+      "dependsOn": ["^build"],
       "outputs": [],
       "inputs": ["src/**/*.ts", "tests/**/*.ts", "vitest.config.*"]
     },
