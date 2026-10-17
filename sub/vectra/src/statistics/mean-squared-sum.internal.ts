@@ -46,3 +46,43 @@ export function computeMeanWithSquaredSum(values: readonly number[]): {
   }
   return { mean: meanValue, deltas, squaredSum };
 }
+
+/**
+ * `values`의 centered delta 제곱합만 계산한다. deltas 배열을 할당하지 않는다.
+ *
+ * `computeMeanWithSquaredSum(values).squaredSum`과 같은 값, 같은 `RangeError`(메시지, 검사 순서)를
+ * 낸다. deltas가 필요 없는 caller(예: `variance`)가 쓴다. caller는 호출 전 `values`가 array이며
+ * `values.length >= 1`임을 보장한다.
+ *
+ * `computeMeanWithSquaredSum`과 본문이 같다. 공통 helper로 합치면 deltas 경로(`standardize`,
+ * `skewness`, `kurtosis`)가 느려져 복제했다. 한쪽을 고치면 다른 쪽도 고쳐야 하고,
+ * `mean-squared-sum-internal.test.ts`가 두 결과의 일치를 검증한다.
+ *
+ * @param values 제곱합을 계산할 number 배열.
+ * @returns 제곱합.
+ */
+export function computeSquaredSum(values: readonly number[]): number {
+  const length = values.length;
+  const sum = sumFiniteValues(values);
+  // length >= 1 + sum finite에서 result는 항상 finite. 방어용 가드.
+  const meanValue = sum / length;
+  if (!Number.isFinite(meanValue)) {
+    throw new RangeError(`mean must be finite, got ${String(meanValue)}`);
+  }
+  let squaredSum = 0;
+  for (let i = 0; i < length; i++) {
+    const delta = values[i] - meanValue;
+    if (!Number.isFinite(delta)) {
+      throw new RangeError(`centered entry at index ${i} must be finite, got ${String(delta)}`);
+    }
+    const squared = delta * delta;
+    if (!Number.isFinite(squared)) {
+      throw new RangeError(`squared delta at index ${i} must be finite, got ${String(squared)}`);
+    }
+    squaredSum += squared;
+    if (!Number.isFinite(squaredSum)) {
+      throw new RangeError(`squared sum must be finite, got ${String(squaredSum)} at index ${i}`);
+    }
+  }
+  return squaredSum;
+}

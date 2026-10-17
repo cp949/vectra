@@ -1,4 +1,4 @@
-import { computeMeanWithSquaredSum } from './mean-squared-sum.internal';
+import { computeSquaredSum } from './mean-squared-sum.internal';
 import type { VarianceOptions } from './types';
 import { assertValuesArray, assertVarianceMode } from './validate.internal';
 
@@ -27,7 +27,7 @@ export function variance(values: readonly number[], options?: VarianceOptions): 
     throw new RangeError(`sample variance requires values.length >= 2, got ${length}`);
   }
 
-  const { squaredSum } = computeMeanWithSquaredSum(values);
+  const squaredSum = computeSquaredSum(values);
   const denominator = mode === 'sample' ? length - 1 : length;
   const result = squaredSum / denominator;
   if (!Number.isFinite(result)) {
