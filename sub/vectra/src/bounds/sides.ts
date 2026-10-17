@@ -16,7 +16,5 @@ import { sidesInto } from './sides-into';
  * @param bounds 변을 읽을 bounds
  */
 export function sides(bounds: BoundsLike): SegmentWritable<XYObjectWritable, XYObjectWritable>[] {
-  const out: SegmentWritable<XYObjectWritable, XYObjectWritable>[] = [];
-  sidesInto(out, bounds);
-  return out;
+  return sidesInto([], bounds);
 }

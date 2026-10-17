@@ -1,4 +1,3 @@
-import type { XYObjectWritable } from '../../types/index';
 import { fromFloat32ArrayInto } from './from-float32-array-into';
 
 /**
@@ -13,7 +12,5 @@ import { fromFloat32ArrayInto } from './from-float32-array-into';
  * @returns decode된 `{ x, y }` 배열
  */
 export function fromFloat32Array(flat: Float32Array): { x: number; y: number }[] {
-  const out: XYObjectWritable[] = [];
-  fromFloat32ArrayInto(out, flat);
-  return out;
+  return fromFloat32ArrayInto([], flat);
 }

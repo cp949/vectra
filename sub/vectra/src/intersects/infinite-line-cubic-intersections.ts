@@ -25,7 +25,5 @@ export function infiniteLineCubicIntersections(
   p3: XYInput,
   options?: CurveIntersectionOptions
 ): IntersectionHit[] {
-  const out: IntersectionHit[] = [];
-  infiniteLineCubicIntersectionsInto(out, line, p0, p1, p2, p3, options);
-  return out;
+  return infiniteLineCubicIntersectionsInto([], line, p0, p1, p2, p3, options);
 }

@@ -17,7 +17,5 @@ export function bsplinePolyline(
   points: readonly XYInput[],
   stepsOrOptions?: number | BSplinePolylineOptions
 ): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
-  bsplinePolylineInto(out, points, stepsOrOptions);
-  return out;
+  return bsplinePolylineInto([], points, stepsOrOptions);
 }

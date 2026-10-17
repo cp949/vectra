@@ -20,8 +20,12 @@ import type { RectLike, SegmentWritable, XYObjectWritable } from '../types';
  *
  * @param out 변을 push할 writable array
  * @param rect 변을 읽을 rect
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function sidesInto(out: SegmentWritable<XYObjectWritable, XYObjectWritable>[], rect: RectLike): void {
+export function sidesInto(
+  out: SegmentWritable<XYObjectWritable, XYObjectWritable>[],
+  rect: RectLike
+): SegmentWritable<XYObjectWritable, XYObjectWritable>[] {
   // aliasing 안전 - 모든 입력 좌표를 먼저 읽은 후 기록한다
   const x = readRectX(rect);
   const y = readRectY(rect);
@@ -36,4 +40,5 @@ export function sidesInto(out: SegmentWritable<XYObjectWritable, XYObjectWritabl
     { a: { x: r, y: b }, b: { x, y: b } }, // bottom
     { a: { x, y: b }, b: { x, y } } // left
   );
+  return out;
 }

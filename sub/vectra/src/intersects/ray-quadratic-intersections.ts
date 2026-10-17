@@ -23,7 +23,5 @@ export function rayQuadraticIntersections(
   p2: XYInput,
   options?: CurveIntersectionOptions
 ): IntersectionHit[] {
-  const out: IntersectionHit[] = [];
-  rayQuadraticIntersectionsInto(out, ray, p0, p1, p2, options);
-  return out;
+  return rayQuadraticIntersectionsInto([], ray, p0, p1, p2, options);
 }

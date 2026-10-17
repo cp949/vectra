@@ -14,7 +14,5 @@ import { curveSelfIntersectionsInto } from './curve-self-intersections-into';
  * @returns 새로 만든 facade hit 배열. 자기 교차점이 없으면 빈 배열.
  */
 export function curveSelfIntersections(curve: CurveLike, options?: CurveIntersectionOptions): CurveIntersectionHit[] {
-  const out: CurveIntersectionHit[] = [];
-  curveSelfIntersectionsInto(out, curve, options);
-  return out;
+  return curveSelfIntersectionsInto([], curve, options);
 }

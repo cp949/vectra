@@ -1,4 +1,3 @@
-import type { XYObjectWritable } from '../../types/index';
 import { decodeFlatCoordsInto } from './decode-flat-coords-into';
 
 /**
@@ -12,7 +11,5 @@ import { decodeFlatCoordsInto } from './decode-flat-coords-into';
  * @returns decode된 `{ x, y }` 배열
  */
 export function decodeFlatCoords(flat: readonly number[]): { x: number; y: number }[] {
-  const out: XYObjectWritable[] = [];
-  decodeFlatCoordsInto(out, flat);
-  return out;
+  return decodeFlatCoordsInto([], flat);
 }

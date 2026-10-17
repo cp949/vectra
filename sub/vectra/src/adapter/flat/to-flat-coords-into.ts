@@ -16,11 +16,13 @@ import type { XYInput } from '../../types/index';
  *
  * @param out - 결과를 기록할 number 배열 (index 0부터 덮어씀)
  * @param points - 변환할 XYInput 배열
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function toFlatCoordsInto(out: number[], points: readonly XYInput[]): void {
+export function toFlatCoordsInto(out: number[], points: readonly XYInput[]): number[] {
   for (let i = 0; i < points.length; i++) {
     const p = points[i];
     out[i * 2] = readX(p);
     out[i * 2 + 1] = readY(p);
   }
+  return out;
 }

@@ -15,7 +15,5 @@ import { cornersInto } from './corners-into';
  * @param bounds corner를 읽을 bounds
  */
 export function corners(bounds: BoundsLike): { x: number; y: number }[] {
-  const out: { x: number; y: number }[] = [];
-  cornersInto(out, bounds);
-  return out;
+  return cornersInto([], bounds);
 }

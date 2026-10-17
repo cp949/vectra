@@ -21,7 +21,5 @@ export function segmentCurveIntersections(
   curve: CurveLike,
   options?: CurveIntersectionOptions
 ): CurveIntersectionHit[] {
-  const out: CurveIntersectionHit[] = [];
-  segmentCurveIntersectionsInto(out, segment, curve, options);
-  return out;
+  return segmentCurveIntersectionsInto([], segment, curve, options);
 }

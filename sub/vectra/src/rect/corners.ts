@@ -12,7 +12,5 @@ import { cornersInto } from './corners-into';
  * @param rect corner를 읽을 rect
  */
 export function corners(rect: RectLike): { x: number; y: number }[] {
-  const out: { x: number; y: number }[] = [];
-  cornersInto(out, rect);
-  return out;
+  return cornersInto([], rect);
 }

@@ -25,7 +25,5 @@ export function rayCubicIntersections(
   p3: XYInput,
   options?: CurveIntersectionOptions
 ): IntersectionHit[] {
-  const out: IntersectionHit[] = [];
-  rayCubicIntersectionsInto(out, ray, p0, p1, p2, p3, options);
-  return out;
+  return rayCubicIntersectionsInto([], ray, p0, p1, p2, p3, options);
 }

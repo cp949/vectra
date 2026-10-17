@@ -18,8 +18,9 @@ import type { RectLike } from '../types';
  *
  * @param out corner point를 push할 writable array
  * @param rect corner를 읽을 rect
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function cornersInto(out: { x: number; y: number }[], rect: RectLike): void {
+export function cornersInto(out: { x: number; y: number }[], rect: RectLike): { x: number; y: number }[] {
   // aliasing 안전 - 모든 입력 좌표를 먼저 읽은 후 기록한다
   const x = readRectX(rect);
   const y = readRectY(rect);
@@ -34,4 +35,5 @@ export function cornersInto(out: { x: number; y: number }[], rect: RectLike): vo
     { x: r, y: b }, // bottomRight
     { x, y: b } // bottomLeft
   );
+  return out;
 }

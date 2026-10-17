@@ -15,8 +15,9 @@ import type { XYObjectWritable } from '../../types/index';
  *
  * @param out - 결과를 기록할 XYObjectWritable 배열
  * @param flat - `[x0, y0, x1, y1, ...]` 형태의 flat 좌표 number 배열
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function decodeFlatCoordsInto(out: XYObjectWritable[], flat: readonly number[]): void {
+export function decodeFlatCoordsInto(out: XYObjectWritable[], flat: readonly number[]): XYObjectWritable[] {
   // 홀수 길이이면 Math.floor로 완전한 쌍 수만 처리
   const count = Math.floor(flat.length / 2);
   for (let i = 0; i < count; i++) {
@@ -29,4 +30,5 @@ export function decodeFlatCoordsInto(out: XYObjectWritable[], flat: readonly num
       out[i] = { x, y };
     }
   }
+  return out;
 }

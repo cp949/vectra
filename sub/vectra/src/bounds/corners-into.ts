@@ -20,8 +20,9 @@ import type { BoundsLike } from '../types';
  *
  * @param out corner point를 push할 writable array
  * @param bounds corner를 읽을 bounds
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function cornersInto(out: { x: number; y: number }[], bounds: BoundsLike): void {
+export function cornersInto(out: { x: number; y: number }[], bounds: BoundsLike): { x: number; y: number }[] {
   // aliasing 안전 - 모든 입력 좌표를 먼저 읽은 후 기록한다
   const min = readBoundsMin(bounds);
   const max = readBoundsMax(bounds);
@@ -38,4 +39,5 @@ export function cornersInto(out: { x: number; y: number }[], bounds: BoundsLike)
     { x: maxX, y: maxY }, // bottomRight
     { x: minX, y: maxY } // bottomLeft
   );
+  return out;
 }

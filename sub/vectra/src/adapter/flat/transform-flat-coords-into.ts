@@ -18,8 +18,9 @@ import { applyMatrixInto } from './flat-matrix.internal';
  * @param out - 결과를 기록할 number 배열 (index 0부터 덮어씀)
  * @param flat - `[x0, y0, x1, y1, ...]` 형태의 flat 좌표 number 배열
  * @param matrix - 적용할 2D affine transform matrix
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function transformFlatCoordsInto(out: number[], flat: readonly number[], matrix: MatrixLike): void {
+export function transformFlatCoordsInto(out: number[], flat: readonly number[], matrix: MatrixLike): number[] {
   const count = Math.floor(flat.length / 2);
   for (let i = 0; i < count; i++) {
     // 포인트 i를 먼저 읽고 기록 — aliasing 시에도 순서 보장
@@ -27,4 +28,5 @@ export function transformFlatCoordsInto(out: number[], flat: readonly number[], 
     const y = flat[i * 2 + 1];
     applyMatrixInto(out, i * 2, x, y, matrix);
   }
+  return out;
 }

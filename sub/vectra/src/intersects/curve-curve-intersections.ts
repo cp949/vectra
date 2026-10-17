@@ -22,7 +22,5 @@ export function curveCurveIntersections(
   curveB: CurveLike,
   options?: CurveIntersectionOptions
 ): CurveIntersectionHit[] {
-  const out: CurveIntersectionHit[] = [];
-  curveCurveIntersectionsInto(out, curveA, curveB, options);
-  return out;
+  return curveCurveIntersectionsInto([], curveA, curveB, options);
 }

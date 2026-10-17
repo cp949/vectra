@@ -17,7 +17,5 @@ import { toFlatCoordsInto } from './to-flat-coords-into';
  * @returns `[x0, y0, x1, y1, ...]` 형태의 number 배열
  */
 export function toFlatCoords(points: readonly XYInput[]): number[] {
-  const out: number[] = new Array(points.length * 2);
-  toFlatCoordsInto(out, points);
-  return out;
+  return toFlatCoordsInto(new Array<number>(points.length * 2), points);
 }

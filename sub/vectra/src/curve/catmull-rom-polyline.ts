@@ -16,7 +16,5 @@ export function catmullRomPolyline(
   points: readonly XYInput[],
   stepsOrOptions?: number | CatmullRomPolylineOptions
 ): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
-  catmullRomPolylineInto(out, points, stepsOrOptions);
-  return out;
+  return catmullRomPolylineInto([], points, stepsOrOptions);
 }

@@ -23,7 +23,5 @@ export function infiniteLineQuadraticIntersections(
   p2: XYInput,
   options?: CurveIntersectionOptions
 ): IntersectionHit[] {
-  const out: IntersectionHit[] = [];
-  infiniteLineQuadraticIntersectionsInto(out, line, p0, p1, p2, options);
-  return out;
+  return infiniteLineQuadraticIntersectionsInto([], line, p0, p1, p2, options);
 }

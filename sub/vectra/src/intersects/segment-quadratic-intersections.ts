@@ -24,7 +24,5 @@ export function segmentQuadraticIntersections(
   p2: XYInput,
   options?: CurveIntersectionOptions
 ): IntersectionHit[] {
-  const out: IntersectionHit[] = [];
-  segmentQuadraticIntersectionsInto(out, segment, p0, p1, p2, options);
-  return out;
+  return segmentQuadraticIntersectionsInto([], segment, p0, p1, p2, options);
 }

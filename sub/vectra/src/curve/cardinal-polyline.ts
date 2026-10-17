@@ -16,7 +16,5 @@ export function cardinalPolyline(
   points: readonly XYInput[],
   stepsOrOptions?: number | CardinalPolylineOptions
 ): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
-  cardinalPolylineInto(out, points, stepsOrOptions);
-  return out;
+  return cardinalPolylineInto([], points, stepsOrOptions);
 }

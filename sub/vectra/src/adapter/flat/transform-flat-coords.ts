@@ -20,7 +20,5 @@ import { transformFlatCoordsInto } from './transform-flat-coords-into';
  * @returns matrix가 적용된 `[x0, y0, x1, y1, ...]` 형태의 number 배열
  */
 export function transformFlatCoords(flat: readonly number[], matrix: MatrixLike): number[] {
-  const out: number[] = new Array(flat.length);
-  transformFlatCoordsInto(out, flat, matrix);
-  return out;
+  return transformFlatCoordsInto(new Array<number>(flat.length), flat, matrix);
 }

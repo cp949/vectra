@@ -15,7 +15,5 @@ import { sidesInto } from './sides-into';
  * @param rect 변을 읽을 rect
  */
 export function sides(rect: RectLike): SegmentWritable<XYObjectWritable, XYObjectWritable>[] {
-  const out: SegmentWritable<XYObjectWritable, XYObjectWritable>[] = [];
-  sidesInto(out, rect);
-  return out;
+  return sidesInto([], rect);
 }

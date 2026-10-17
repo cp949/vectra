@@ -1,4 +1,4 @@
-import type { RectLike, XYWritable } from '../types';
+import type { RectLike } from '../types';
 import { perimeterPointsInto } from './perimeter-points-into';
 
 /**
@@ -25,7 +25,5 @@ export function perimeterPoints(
   rect: RectLike,
   options: { count: number; wrap?: boolean } | { step: number; wrap?: boolean }
 ): { x: number; y: number }[] {
-  const out: XYWritable[] = [];
-  perimeterPointsInto(out, rect, options);
-  return out as { x: number; y: number }[];
+  return perimeterPointsInto([], rect, options);
 }

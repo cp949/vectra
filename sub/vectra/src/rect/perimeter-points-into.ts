@@ -1,5 +1,5 @@
 import { readRectHeight, readRectWidth } from '../internal/rect';
-import type { RectLike, XYWritable } from '../types';
+import type { RectLike, XYObjectWritable } from '../types';
 import { perimeterPointInto } from './perimeter-point-into';
 
 /**
@@ -24,12 +24,13 @@ import { perimeterPointInto } from './perimeter-point-into';
  * @param out point를 push할 writable array
  * @param rect 기준 rect
  * @param options `{ count, wrap? }` 또는 `{ step, wrap? }` 형태의 sampling 옵션
+ * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function perimeterPointsInto(
-  out: XYWritable[],
+  out: XYObjectWritable[],
   rect: RectLike,
   options: { count: number; wrap?: boolean } | { step: number; wrap?: boolean }
-): void {
+): XYObjectWritable[] {
   // 입력 유효성을 먼저 검사한다 (empty rect 여부와 무관하게)
   if ('count' in options) {
     const { count } = options;
@@ -50,7 +51,7 @@ export function perimeterPointsInto(
 
   // empty rect: perimeter가 없으므로 push하지 않는다
   if (w <= 0 || h <= 0) {
-    return;
+    return out;
   }
 
   const wrapOpt = { wrap: options.wrap };
@@ -73,4 +74,5 @@ export function perimeterPointsInto(
       dist += step;
     }
   }
+  return out;
 }

@@ -26,7 +26,5 @@ export function segmentCubicIntersections(
   p3: XYInput,
   options?: CurveIntersectionOptions
 ): IntersectionHit[] {
-  const out: IntersectionHit[] = [];
-  segmentCubicIntersectionsInto(out, segment, p0, p1, p2, p3, options);
-  return out;
+  return segmentCubicIntersectionsInto([], segment, p0, p1, p2, p3, options);
 }

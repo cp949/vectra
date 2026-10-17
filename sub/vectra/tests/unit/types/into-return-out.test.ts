@@ -1,9 +1,10 @@
 /**
- * 배열을 채우는 curve·intersects Into의 반환값 테스트.
+ * 배열을 채우는 Into의 반환값 테스트.
  *
  * 대상 함수:
  *  - curve : *IntersectionsInto 6종, bspline·cardinal·catmullRom PolylineInto
  *  - intersects : line·segment·ray × quadratic·cubic 교차 6종, curve facade 교차 4종
+ *  - adapter flat 변환 5종, bounds·rect·oriented-rect의 cornersInto·sidesInto, rect perimeterPointsInto
  *
  * 고정하는 계약:
  *  - 반환값은 입력 out과 같은 참조다 (ADR 0006).
@@ -13,6 +14,13 @@
  * polygon 교차 Into가 배열을 반환하는 규칙과 맞춘다.
  */
 import { describe, expect, expectTypeOf, test } from 'vitest';
+import { decodeFlatCoordsInto } from '../../../src/adapter/flat/decode-flat-coords-into';
+import { fromFloat32ArrayInto } from '../../../src/adapter/flat/from-float32-array-into';
+import { toFlatCoordsInto } from '../../../src/adapter/flat/to-flat-coords-into';
+import { toFloat32ArrayInto } from '../../../src/adapter/flat/to-float32-array-into';
+import { transformFlatCoordsInto } from '../../../src/adapter/flat/transform-flat-coords-into';
+import { cornersInto as boundsCornersInto } from '../../../src/bounds/corners-into';
+import { sidesInto as boundsSidesInto } from '../../../src/bounds/sides-into';
 import { bsplinePolylineInto } from '../../../src/curve/bspline-polyline-into';
 import { cardinalPolylineInto } from '../../../src/curve/cardinal-polyline-into';
 import { catmullRomPolylineInto } from '../../../src/curve/catmull-rom-polyline-into';
@@ -32,7 +40,18 @@ import { rayQuadraticIntersectionsInto } from '../../../src/intersects/ray-quadr
 import { segmentCubicIntersectionsInto } from '../../../src/intersects/segment-cubic-intersections-into';
 import { segmentCurveIntersectionsInto } from '../../../src/intersects/segment-curve-intersections-into';
 import { segmentQuadraticIntersectionsInto } from '../../../src/intersects/segment-quadratic-intersections-into';
-import type { CurveIntersectionHit, CurveLike, IntersectionHit, XYObjectWritable } from '../../../src/types';
+import { cornersInto as orientedRectCornersInto } from '../../../src/oriented-rect/corners-into';
+import { cornersInto as rectCornersInto } from '../../../src/rect/corners-into';
+import { perimeterPointsInto } from '../../../src/rect/perimeter-points-into';
+import { sidesInto as rectSidesInto } from '../../../src/rect/sides-into';
+import type {
+  CurveIntersectionHit,
+  CurveLike,
+  IntersectionHit,
+  SegmentWritable,
+  XYObjectWritable,
+  XYTupleWritable,
+} from '../../../src/types';
 
 // y = 0.5 직선은 이 곡선들을 가로지른다. y = 10 직선은 만나지 않는다.
 const crossing = { origin: [0, 0.5], direction: [1, 0] } as const;
@@ -155,5 +174,89 @@ describe('spline polyline Into는 out을 반환한다', () => {
     const result = into(out, [[0, 0]], 4);
     expect(result).toBe(out);
     expect(result).toHaveLength(0);
+  });
+});
+
+describe('adapter·shape 배열 Into는 out을 반환한다', () => {
+  const rect = { x: 0, y: 0, width: 4, height: 2 };
+  const bounds = { min: [0, 0], max: [4, 2] } as const;
+  const orientedRect = { center: [0, 0], size: [4, 2], angle: 0 } as const;
+  const points = [
+    [0, 0],
+    [1, 2],
+  ] as const;
+  const matrix = { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 };
+
+  test('decodeFlatCoordsInto, fromFloat32ArrayInto는 point 배열을 반환한다', () => {
+    const decoded: XYObjectWritable[] = [];
+    expect(decodeFlatCoordsInto(decoded, [0, 0, 1, 2])).toBe(decoded);
+    expect(decoded).toHaveLength(2);
+
+    const fromFloat: XYObjectWritable[] = [];
+    expect(fromFloat32ArrayInto(fromFloat, new Float32Array([0, 0, 1, 2]))).toBe(fromFloat);
+    expect(fromFloat).toHaveLength(2);
+  });
+
+  test('toFlatCoordsInto, transformFlatCoordsInto는 number 배열을 반환한다', () => {
+    const flat: number[] = [];
+    expect(toFlatCoordsInto(flat, points)).toBe(flat);
+    expect(flat).toEqual([0, 0, 1, 2]);
+
+    const transformed: number[] = [];
+    expect(transformFlatCoordsInto(transformed, [0, 0, 1, 2], matrix)).toBe(transformed);
+    expect(transformed).toEqual([1, 1, 3, 5]);
+  });
+
+  test('toFloat32ArrayInto는 Float32Array를 반환한다', () => {
+    const out = new Float32Array(4);
+    const result = toFloat32ArrayInto(out, points);
+    expectTypeOf(result).toEqualTypeOf<Float32Array>();
+    expect(result).toBe(out);
+    expect(Array.from(out)).toEqual([0, 0, 1, 2]);
+  });
+
+  test('cornersInto는 4개 corner를 담은 out을 반환한다', () => {
+    const fromRect: { x: number; y: number }[] = [];
+    expect(rectCornersInto(fromRect, rect)).toBe(fromRect);
+    expect(fromRect).toHaveLength(4);
+
+    const fromBounds: { x: number; y: number }[] = [];
+    expect(boundsCornersInto(fromBounds, bounds)).toBe(fromBounds);
+    expect(fromBounds).toHaveLength(4);
+
+    const fromOriented: XYObjectWritable[] = [];
+    expect(orientedRectCornersInto(fromOriented, orientedRect)).toBe(fromOriented);
+    expect(fromOriented).toHaveLength(4);
+  });
+
+  test('sidesInto는 4개 side를 담은 out을 반환한다', () => {
+    const fromRect: SegmentWritable<XYObjectWritable, XYObjectWritable>[] = [];
+    expect(rectSidesInto(fromRect, rect)).toBe(fromRect);
+    expect(fromRect).toHaveLength(4);
+
+    const fromBounds: SegmentWritable<XYObjectWritable, XYObjectWritable>[] = [];
+    expect(boundsSidesInto(fromBounds, bounds)).toBe(fromBounds);
+    expect(fromBounds).toHaveLength(4);
+  });
+
+  test('perimeterPointsInto는 XYObjectWritable[]을 반환한다', () => {
+    const out: XYObjectWritable[] = [];
+    const result = perimeterPointsInto(out, rect, { count: 4 });
+    expectTypeOf(result).toEqualTypeOf<XYObjectWritable[]>();
+    expect(result).toBe(out);
+    expect(result).toHaveLength(4);
+  });
+
+  test('perimeterPointsInto는 empty rect에서도 out을 반환한다', () => {
+    const out: XYObjectWritable[] = [];
+    expect(perimeterPointsInto(out, { x: 0, y: 0, width: 0, height: 2 }, { count: 4 })).toBe(out);
+    expect(out).toHaveLength(0);
+  });
+
+  test('perimeterPointsInto는 tuple 배열을 받지 않는다', () => {
+    const tuples: XYTupleWritable[] = [];
+    // @ts-expect-error 항상 object를 push하므로 tuple 배열은 거짓이 된다
+    perimeterPointsInto(tuples, rect, { count: 4 });
+    expect(tuples.every((p) => !Array.isArray(p))).toBe(true);
   });
 });
