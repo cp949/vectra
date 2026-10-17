@@ -152,6 +152,54 @@ export function boundsOverlap(
 }
 
 /**
+ * base curve의 fat line 기준으로 other control polygon이 한쪽 바깥에 있는지 본다.
+ * fat line은 base 양 끝을 잇는 직선과, base control point signed distance의 범위로 만든 띠다.
+ * convex hull 성질로 두 curve는 각자의 control polygon 안에 있다. other가 띠 밖 한쪽이면 만나지 않는다.
+ * 양 끝이 epsilon 안으로 겹쳐 직선을 정할 수 없으면 판정하지 않는다.
+ *
+ * @param base flat 좌표 [x0, y0, ..., xn, yn]
+ * @param other flat 좌표
+ */
+function fatLineSeparates(base: readonly number[], other: readonly number[], epsilon: number): boolean {
+  const last = base.length - 2;
+  const x0 = base[0];
+  const y0 = base[1];
+  const dx = base[last] - x0;
+  const dy = base[last + 1] - y0;
+  const length = Math.hypot(dx, dy);
+  if (!(length > epsilon)) return false;
+  const nx = -dy / length;
+  const ny = dx / length;
+
+  // 양 끝은 직선 위라 distance 0이다. 범위는 0을 포함한다
+  let baseMin = 0;
+  let baseMax = 0;
+  for (let i = 2; i < last; i += 2) {
+    const d = (base[i] - x0) * nx + (base[i + 1] - y0) * ny;
+    if (d < baseMin) baseMin = d;
+    if (d > baseMax) baseMax = d;
+  }
+  let otherMin = Number.POSITIVE_INFINITY;
+  let otherMax = Number.NEGATIVE_INFINITY;
+  for (let i = 0; i < other.length; i += 2) {
+    const d = (other[i] - x0) * nx + (other[i + 1] - y0) * ny;
+    if (d < otherMin) otherMin = d;
+    if (d > otherMax) otherMax = d;
+  }
+  return otherMin > baseMax + epsilon || otherMax < baseMin - epsilon;
+}
+
+/**
+ * 두 control polygon이 서로의 fat line 기준으로 떨어져 있으면 true를 반환한다.
+ * AABB는 기울어진 sub-curve를 넓게 감싼다. 거의 평행하게 지나가는 두 curve는 maxDepth까지 AABB가 겹친다.
+ * 그 box들이 근 주변 중복 hit나 근이 없는 곳의 hit로 남는다.
+ * fat line 폭은 sub-curve 곡률 수준이라 이런 box 쌍을 얕은 깊이에서 걸러 낸다.
+ */
+function fatLinesSeparated(a: readonly number[], b: readonly number[], epsilon: number): boolean {
+  return fatLineSeparates(a, b, epsilon) || fatLineSeparates(b, a, epsilon);
+}
+
+/**
  * quadratic Bezier의 control point hull AABB를 반환한다.
  * 실제 curve AABB보다 보수적이지만 subdivision이 깊어질수록 수렴한다.
  */
@@ -590,7 +638,7 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
 
 /**
  * curve × curve subdivision 재귀 kernel.
- * hull bound가 겹치지 않으면 branch를 중단하고, span이 더 큰 쪽을 매 단계 분할해
+ * hull bound가 겹치지 않거나 fat line으로 떨어져 있으면 branch를 중단하고, span이 더 큰 쪽을 매 단계 분할해
  * parameter box를 좁힌다. 수렴(또는 maxDepth 도달) 시 adapters.onConverge에 위임한다.
  *
  * adapters.skipBox가 true를 반환한 box는 hull 검사 없이 버린다.
@@ -599,7 +647,7 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
  * 음이 아닌 값으로 보장해야 한다. 일반 호출은 depth=0에서 시작한다. zero-span 구간은
  * 양쪽 span이 epsilonT 이하일 때 즉시 수렴한다.
  */
-export function subdivideCurves<A, B, P extends XYWritable>(
+export function subdivideCurves<A extends readonly number[], B extends readonly number[], P extends XYWritable>(
   outHits: IntersectionHit<P>[],
   aSub: A,
   tA0: number,
@@ -623,6 +671,7 @@ export function subdivideCurves<A, B, P extends XYWritable>(
   const [bMinX, bMinY, bMaxX, bMaxY] = hullBoundsB(bSub);
 
   if (!boundsOverlap(aMinX, aMinY, aMaxX, aMaxY, bMinX, bMinY, bMaxX, bMaxY, epsilon)) return;
+  if (fatLinesSeparated(aSub, bSub, epsilon)) return;
 
   const spanA = tA1 - tA0;
   const spanB = tB1 - tB0;

@@ -5,6 +5,7 @@
  * - quadratic×quadratic, quadratic×cubic, cubic×cubic, cubic self 각 1건씩 기준 근과 비교한다.
  * - 내부 접선 접촉(touch)은 Jacobian이 특이하므로 refinement를 건너뛰고 기존 판정을 유지하는지 확인한다.
  * - 끝점에서 접선이 평행하게 만나는 교차는 Newton 대신 끝점 parameter(0, 1)로 snap해 정확한 값을 얻는지 확인한다.
+ * - 거의 평행한 두 곡선은 AABB가 maxDepth까지 겹친다. fat line 검사로 근 주변 중복 hit와 근 없는 hit가 사라지는지 확인한다.
  *
  * 기준 근은 원본 control point에서 double Newton을 60회 돌려 얻은 값이다.
  */
@@ -16,7 +17,7 @@ import { cubicSplit } from '../../../src/curve/cubic-split';
 import { quadraticCubicIntersectionsInto } from '../../../src/curve/quadratic-cubic-intersections-into';
 import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to-cubic';
 import { quadraticQuadraticIntersectionsInto } from '../../../src/curve/quadratic-quadratic-intersections-into';
-import type { IntersectionHit } from '../../../src/types';
+import type { IntersectionHit, XYObjectWritable } from '../../../src/types';
 
 const TOL = 1e-9;
 
@@ -26,6 +27,20 @@ const TOL = 1e-9;
  */
 function sortByTA(hits: readonly IntersectionHit[]): IntersectionHit[] {
   return [...hits].sort((a, b) => a.tA - b.tA);
+}
+
+/**
+ * 점을 center 기준으로 degrees만큼 회전한 좌표를 반환한다.
+ * 곡선 위 한 점을 중심으로 돌린 복사본은 그 점에서 원본과 얕은 각도로 교차한다.
+ */
+function rotateAbout(point: XYObjectWritable, center: XYObjectWritable, degrees: number): XYObjectWritable {
+  const theta = (degrees * Math.PI) / 180;
+  const dx = point.x - center.x;
+  const dy = point.y - center.y;
+  return {
+    x: center.x + dx * Math.cos(theta) - dy * Math.sin(theta),
+    y: center.y + dx * Math.sin(theta) + dy * Math.cos(theta),
+  };
 }
 
 describe('curve × curve 교차 정밀도', () => {
@@ -256,5 +271,82 @@ describe('접선이 평행한 끝점 교차는 끝점 parameter로 snap한다', 
     expect(hits[0].tA).toBeLessThan(1);
     expect(hits[0].tA).toBeCloseTo(0.99999999, 9);
     expect(hits[0].tB).toBeCloseTo(0.5, 9);
+  });
+});
+
+describe('거의 평행한 두 곡선은 maxDepth box를 hit로 남기지 않는다', () => {
+  // parabola를 t=0.3 위의 점 (30, 42)를 중심으로 0.2° 돌린 복사본. 두 곡선은 t=u=0.3에서만 만난다.
+  const PARABOLA = [
+    { x: 0, y: 0 },
+    { x: 50, y: 100 },
+    { x: 100, y: 0 },
+  ];
+  const CENTER = { x: 30, y: 42 };
+  const ROTATED = PARABOLA.map((point) => rotateAbout(point, CENTER, 0.2));
+
+  test('0.2° 회전한 parabola와의 quadratic × quadratic 교차는 hit 1건이다', () => {
+    const hits: IntersectionHit[] = [];
+    quadraticQuadraticIntersectionsInto(
+      hits,
+      PARABOLA[0],
+      PARABOLA[1],
+      PARABOLA[2],
+      ROTATED[0],
+      ROTATED[1],
+      ROTATED[2]
+    );
+
+    expect(hits).toHaveLength(1);
+    expect(hits[0].tA).toBeCloseTo(0.3, 9);
+    expect(hits[0].tB).toBeCloseTo(0.3, 9);
+    expect(hits[0].point.x).toBeCloseTo(30, 7);
+    expect(hits[0].point.y).toBeCloseTo(42, 7);
+  });
+
+  test('0.2° 회전한 차수 올림 cubic과의 quadratic × cubic 교차는 hit 1건이다', () => {
+    const cubic = quadraticElevateToCubic(PARABOLA[0], PARABOLA[1], PARABOLA[2]);
+    const [q0, q1, q2, q3] = [cubic.p0, cubic.p1, cubic.p2, cubic.p3].map((point) => rotateAbout(point, CENTER, 0.2));
+    const hits: IntersectionHit[] = [];
+    quadraticCubicIntersectionsInto(hits, PARABOLA[0], PARABOLA[1], PARABOLA[2], q0, q1, q2, q3);
+
+    expect(hits).toHaveLength(1);
+    expect(hits[0].tA).toBeCloseTo(0.3, 9);
+    expect(hits[0].tB).toBeCloseTo(0.3, 9);
+  });
+
+  test('거의 평행하게 교차하는 cubic × cubic은 hit 1건이다', () => {
+    // B는 A의 양 끝만 y로 ∓0.01 옮겼다. 차이 y = 0.01·(t³ - (1-t)³)이라 t=u=0.5에서만 만난다.
+    const hits: IntersectionHit[] = [];
+    cubicCubicIntersectionsInto(
+      hits,
+      { x: 0, y: 0 },
+      { x: 30, y: 2 },
+      { x: 70, y: -1 },
+      { x: 100, y: 0 },
+      { x: 0, y: -0.01 },
+      { x: 30, y: 2 },
+      { x: 70, y: -1 },
+      { x: 100, y: 0.01 }
+    );
+
+    expect(hits).toHaveLength(1);
+    expect(hits[0].tA).toBeCloseTo(0.5, 9);
+    expect(hits[0].tB).toBeCloseTo(0.5, 9);
+  });
+
+  test('1e-4 간격으로 나란히 지나가는 두 parabola는 만나지 않으므로 hit가 없다', () => {
+    // B는 A를 y로 1e-4 올린 복사본이다. 어디서도 만나지 않는다.
+    const hits: IntersectionHit[] = [];
+    quadraticQuadraticIntersectionsInto(
+      hits,
+      PARABOLA[0],
+      PARABOLA[1],
+      PARABOLA[2],
+      { x: 0, y: 1e-4 },
+      { x: 50, y: 100 + 1e-4 },
+      { x: 100, y: 1e-4 }
+    );
+
+    expect(hits).toHaveLength(0);
   });
 });
