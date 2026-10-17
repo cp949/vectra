@@ -5,8 +5,10 @@ import type { CurveSpeed } from './curve-speed.internal';
  * 5점 Gauss-Legendre 적분 node와 weight.
  * 구간 [-1, 1] 기준이다. 곡선별 adapter(`curve-speed.internal`)가 가져다 쓴다.
  */
-export const GL5_NODES = [0, 0.5384693101, -0.5384693101, 0.9061798459, -0.9061798459] as const;
-export const GL5_WEIGHTS = [0.5688888889, 0.4786286705, 0.4786286705, 0.2369268851, 0.2369268851] as const;
+export const GL5_NODES = [0, 0.5384693101056831, -0.5384693101056831, 0.906179845938664, -0.906179845938664] as const;
+export const GL5_WEIGHTS = [
+  0.5688888888888889, 0.47862867049936647, 0.47862867049936647, 0.23692688505618908, 0.23692688505618908,
+] as const;
 
 /**
  * 곡선 전체 구간 [from, to]의 arc length를 반환한다.
