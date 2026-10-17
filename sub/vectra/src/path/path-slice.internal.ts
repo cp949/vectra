@@ -47,6 +47,11 @@ function writeSplitSegment(
  * 발생한다. 이 함수는 outA / outB가 비어 있는 상태로 시작한다고 가정하고, split 전 commands는
  * outA에, split 후 commands는 outB에 기록한다.
  *
+ * 길이 척도가 둘이다.
+ * - segment 선택(`distance < cumulativeLen + segLen`)은 `measureSegmentLength`, 즉 flatten 폴리라인 길이다.
+ * - segment 안의 t는 `local`을 곡선 호 길이로 해석해 `*TAtLength`(GL5)로 구한다.
+ * - 폴리라인이 곡선보다 짧아 분할점이 `pointAtLength` 위치와 어긋날 수 있다. 크기는 `splitAtLengthInto` JSDoc에 있다.
+ *
  * empty path / move-only path / `distance <= 0` / `distance >= totalLength` 같은 경계 처리는
  * caller(`splitAtLengthInto`)가 담당한다. 여기서는 split 발생 케이스만 처리한다.
  *
