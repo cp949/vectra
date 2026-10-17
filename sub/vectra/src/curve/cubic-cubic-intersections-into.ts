@@ -6,18 +6,22 @@ import {
   cubicHullBounds,
   cubicTangent,
   DEFAULT_MAX_DEPTH,
+  evalCubicInto,
   pushHitIfNewAB,
+  refineIntersectionParams,
   resolveOptions,
   SUBDIVISION_DEDUPE_T_FACTOR,
   SUBDIVISION_KIND_EPSILON_FACTOR,
   splitCubic,
+  subCurveEvaluator,
   subdivideCurves,
 } from './curve-intersections.internal';
 import { cubicOverlapCurve, findCurveOverlap, overlapBoxFilter, pushOverlapHits } from './curve-overlap.internal';
 
 /**
  * cubic × cubic subdivision 수렴 시 교차점을 계산해 outHits에 push한다.
- * curve A 위 tAMid에서 원본 좌표로 정밀 계산하고, curve B tangent는 bSub local midpoint로 근사한다.
+ * midpoint parameter를 Newton으로 다듬은 뒤 curve A 위에서 원본 좌표로 정밀 계산한다.
+ * 교차 종류 판정용 curve B tangent는 bSub local midpoint로 근사한다.
  */
 function onConverge<P extends XYWritable>(
   outHits: IntersectionHit<P>[],
@@ -35,28 +39,36 @@ function onConverge<P extends XYWritable>(
   const tBMid = (tB0 + tB1) * 0.5;
   const spanA = tA1 - tA0;
   const spanB = tB1 - tB0;
+  // maxDepth에서 멈춘 midpoint는 span 수준 오차가 남으므로 Newton으로 다듬는다
+  const [tA, tB] = refineIntersectionParams(
+    (t, out) => evalCubicInto(origA, t, out),
+    subCurveEvaluator(evalCubicInto, bSub, tB0, spanB),
+    tAMid,
+    tBMid,
+    Math.max(spanA, spanB)
+  );
   const [oA0x, oA0y, oA1x, oA1y, oA2x, oA2y, oA3x, oA3y] = origA;
-  const mt = 1 - tAMid;
+  const mt = 1 - tA;
   const mt2 = mt * mt;
   const mt3 = mt2 * mt;
-  const t2 = tAMid * tAMid;
-  const t3 = t2 * tAMid;
-  const px = mt3 * oA0x + 3 * mt2 * tAMid * oA1x + 3 * mt * t2 * oA2x + t3 * oA3x;
-  const py = mt3 * oA0y + 3 * mt2 * tAMid * oA1y + 3 * mt * t2 * oA2y + t3 * oA3y;
+  const t2 = tA * tA;
+  const t3 = t2 * tA;
+  const px = mt3 * oA0x + 3 * mt2 * tA * oA1x + 3 * mt * t2 * oA2x + t3 * oA3x;
+  const py = mt3 * oA0y + 3 * mt2 * tA * oA1y + 3 * mt * t2 * oA2y + t3 * oA3y;
   // tangent 비교로 교차 종류 판정
   const [taxDx, taxDy] = cubicTangent(oA0x, oA0y, oA1x, oA1y, oA2x, oA2y, oA3x, oA3y, tAMid);
   const [tbxDx, tbxDy] = cubicTangent(bSub[0], bSub[1], bSub[2], bSub[3], bSub[4], bSub[5], bSub[6], bSub[7], 0.5);
   const kindEpsilon = Math.max(epsilon, SUBDIVISION_KIND_EPSILON_FACTOR * Math.max(spanA, spanB));
   const kind = classifyIntersectionKind(taxDx, taxDy, tbxDx, tbxDy, kindEpsilon);
   const dedupeT = Math.max(epsilonT, SUBDIVISION_DEDUPE_T_FACTOR * Math.max(spanA, spanB));
-  pushHitIfNewAB(outHits, px, py, kind, tAMid, tBMid, dedupeT, makePoint);
+  pushHitIfNewAB(outHits, px, py, kind, tA, tB, dedupeT, makePoint);
 }
 
 /**
  * 두 cubic Bezier curve 간 교차점을 outHits에 push한다.
  *
  * subdivision 재귀로 parameter box를 좁혀 교차점을 탐지한다.
- * hit point는 curve A 위 midpoint parameter로 계산한다.
+ * 수렴 지점은 Newton으로 다듬으며, hit point는 다듬은 parameter로 curve A 위에서 계산한다.
  * 두 curve가 같은 기하 위에서 구간을 공유하면 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다.
  * 겹침 구간 내부는 subdivision하지 않는다. 겹침 밖의 교차는 그대로 탐지한다.
  * dedupe 기준: |tA1-tA2| <= epsilonT && |tB1-tB2| <= epsilonT.

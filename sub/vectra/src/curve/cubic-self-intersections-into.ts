@@ -3,11 +3,14 @@ import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritab
 import { cubicClassify } from './cubic-classify';
 import {
   type CubicFlat,
+  type CurveEvaluator,
   classifyIntersectionKind,
   cubicHullBounds,
   cubicTangent,
   DEFAULT_MAX_DEPTH,
+  evalCubicInto,
   pushHitIfNewAB,
+  refineIntersectionParams,
   resolveOptions,
   SUBDIVISION_DEDUPE_T_FACTOR,
   SUBDIVISION_KIND_EPSILON_FACTOR,
@@ -19,6 +22,7 @@ import {
  * self-intersection subdivision 수렴 시 교차점을 계산해 outHits에 push한다.
  * curveLeft(tA ∈ [tA0, tA1])와 curveRight(tB ∈ [tB0, tB1])는 같은 원본 curve(origA)를 공유하므로
  * bSub는 쓰지 않고 origA에서 tAMid/tBMid를 각각 정밀 계산한다.
+ * 필터를 통과한 midpoint는 Newton으로 다듬은 뒤 hit로 기록한다.
  * split boundary(tA1 ≈ tB0 ≈ 0.5)와 endpoint-to-endpoint(closed loop의 t=0/t=1)에서만 만나는
  * false hit는 제거한다.
  */
@@ -57,8 +61,8 @@ function onConvergeSelf<P extends XYWritable>(
   const mtA3 = mtA2 * mtA;
   const tA2 = tAMid * tAMid;
   const tA3 = tA2 * tAMid;
-  const px = mtA3 * oA0x + 3 * mtA2 * tAMid * oA1x + 3 * mtA * tA2 * oA2x + tA3 * oA3x;
-  const py = mtA3 * oA0y + 3 * mtA2 * tAMid * oA1y + 3 * mtA * tA2 * oA2y + tA3 * oA3y;
+  const midPx = mtA3 * oA0x + 3 * mtA2 * tAMid * oA1x + 3 * mtA * tA2 * oA2x + tA3 * oA3x;
+  const midPy = mtA3 * oA0y + 3 * mtA2 * tAMid * oA1y + 3 * mtA * tA2 * oA2y + tA3 * oA3y;
 
   // tB 기준 curve point 계산
   const mtB = 1 - tBMid;
@@ -68,7 +72,7 @@ function onConvergeSelf<P extends XYWritable>(
   const tB3 = tB2 * tBMid;
   const qx = mtB3 * oA0x + 3 * mtB2 * tBMid * oA1x + 3 * mtB * tB2 * oA2x + tB3 * oA3x;
   const qy = mtB3 * oA0y + 3 * mtB2 * tBMid * oA1y + 3 * mtB * tB2 * oA2y + tB3 * oA3y;
-  const dist2 = (px - qx) * (px - qx) + (py - qy) * (py - qy);
+  const dist2 = (midPx - qx) * (midPx - qx) + (midPy - qy) * (midPy - qy);
   // 수렴 완료(isConverged) 시에만 dist2 필터를 적용한다.
   // maxDepth 도달 시에는 span이 아직 클 수 있으므로 false hit 필터를 bypass하고 항상 push한다.
   if (isConverged && dist2 > epsilon) return;
@@ -78,7 +82,13 @@ function onConvergeSelf<P extends XYWritable>(
   const kindEpsilon = Math.max(epsilon, SUBDIVISION_KIND_EPSILON_FACTOR * Math.max(spanA, spanB));
   const kind = classifyIntersectionKind(taxDx, taxDy, tbxDx, tbxDy, kindEpsilon);
   const dedupeT = Math.max(epsilonT, SUBDIVISION_DEDUPE_T_FACTOR * Math.max(spanA, spanB));
-  pushHitIfNewAB(outHits, px, py, kind, tAMid, tBMid, dedupeT, makePoint);
+
+  // maxDepth에서 멈춘 midpoint는 span 수준 오차가 남으므로 Newton으로 다듬는다
+  const evalOrig: CurveEvaluator = (t, out) => evalCubicInto(origA, t, out);
+  const [tA, tB] = refineIntersectionParams(evalOrig, evalOrig, tAMid, tBMid, Math.max(spanA, spanB));
+  const hitOut: [number, number, number, number] = [0, 0, 0, 0];
+  evalCubicInto(origA, tA, hitOut);
+  pushHitIfNewAB(outHits, hitOut[0], hitOut[1], kind, tA, tB, dedupeT, makePoint);
 }
 
 /**

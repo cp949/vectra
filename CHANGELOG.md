@@ -9,6 +9,7 @@
 
 - curve×curve 교차(`quadraticQuadraticIntersectionsInto`, `quadraticCubicIntersectionsInto`, `cubicCubicIntersectionsInto`, `curveCurveIntersections(Into)`)가 같은 기하 위에서 겹치는 두 곡선을 처리한다. 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다. 이전에는 hit가 최대 16384건 나오고 계산이 10초 이상 걸렸다.
 - `CurveIntersectionKind`에 `'overlap'`을 추가한다. `kind`를 exhaustive하게 분기하던 코드는 `'overlap'` 분기를 추가해야 한다.
+- curve×curve 교차(`quadraticQuadraticIntersectionsInto`, `quadraticCubicIntersectionsInto`, `cubicCubicIntersectionsInto`, `cubicSelfIntersectionsInto`, `curveCurveIntersections(Into)`)의 `tA`, `tB`, `point` 정밀도를 높인다. subdivision이 `maxDepth`에서 멈춰 약 1.5e-5에 머물던 오차를 수렴 지점의 Newton refinement로 1e-9 수준까지 줄인다. 접선이 평행한 접촉은 보정 없이 기존 값을 쓴다. 한 근을 여러 hit로 나누던 중복도 줄어든다.
 - linalg `rowEchelonForm`과 `rowEchelonFormInto`가 `-0` 입력에서 `-0`을 남기던 문제를 고친다. JSDoc 약속대로 `0`을 반환한다.
 - curve GL5 적분 상수를 소수 10자리에서 double 정밀도의 정확한 값으로 고친다. 곡선 길이와 `tAtLength` 결과가 약 1e-10 달라진다. 직선 곡선의 길이가 chord와 일치한다.
 

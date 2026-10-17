@@ -6,15 +6,19 @@ import {
   cubicHullBounds,
   cubicTangent,
   DEFAULT_MAX_DEPTH,
+  evalCubicInto,
+  evalQuadraticInto,
   pushHitIfNewAB,
   type QuadFlat,
   quadraticHullBounds,
   quadraticTangent,
+  refineIntersectionParams,
   resolveOptions,
   SUBDIVISION_DEDUPE_T_FACTOR,
   SUBDIVISION_KIND_EPSILON_FACTOR,
   splitCubic,
   splitQuadratic,
+  subCurveEvaluator,
   subdivideCurves,
 } from './curve-intersections.internal';
 import {
@@ -27,8 +31,8 @@ import {
 
 /**
  * quadratic × cubic subdivision 수렴 시 교차점을 계산해 outHits에 push한다.
- * curve A(quadratic) 위 tAMid에서 원본 좌표로 정밀 계산하고, curve B(cubic) tangent는
- * bSub local midpoint로 근사한다.
+ * midpoint parameter를 Newton으로 다듬은 뒤 curve A(quadratic) 위에서 원본 좌표로 정밀 계산한다.
+ * 교차 종류 판정용 curve B(cubic) tangent는 bSub local midpoint로 근사한다.
  */
 function onConverge<P extends XYWritable>(
   outHits: IntersectionHit<P>[],
@@ -46,12 +50,20 @@ function onConverge<P extends XYWritable>(
   const tBMid = (tB0 + tB1) * 0.5;
   const spanA = tA1 - tA0;
   const spanB = tB1 - tB0;
+  // maxDepth에서 멈춘 midpoint는 span 수준 오차가 남으므로 Newton으로 다듬는다
+  const [tA, tB] = refineIntersectionParams(
+    (t, out) => evalQuadraticInto(origA, t, out),
+    subCurveEvaluator(evalCubicInto, bSub, tB0, spanB),
+    tAMid,
+    tBMid,
+    Math.max(spanA, spanB)
+  );
   const [oA0x, oA0y, oA1x, oA1y, oA2x, oA2y] = origA;
-  const mt = 1 - tAMid;
+  const mt = 1 - tA;
   const mt2 = mt * mt;
-  const t2 = tAMid * tAMid;
-  const px = mt2 * oA0x + 2 * mt * tAMid * oA1x + t2 * oA2x;
-  const py = mt2 * oA0y + 2 * mt * tAMid * oA1y + t2 * oA2y;
+  const t2 = tA * tA;
+  const px = mt2 * oA0x + 2 * mt * tA * oA1x + t2 * oA2x;
+  const py = mt2 * oA0y + 2 * mt * tA * oA1y + t2 * oA2y;
   // curve A(quadratic) tangent
   const [taxDx, taxDy] = quadraticTangent(oA0x, oA0y, oA1x, oA1y, oA2x, oA2y, tAMid);
   // curve B(cubic) tangent — bSub의 local midpoint에서 계산한다
@@ -59,7 +71,7 @@ function onConverge<P extends XYWritable>(
   const kindEpsilon = Math.max(epsilon, SUBDIVISION_KIND_EPSILON_FACTOR * Math.max(spanA, spanB));
   const kind = classifyIntersectionKind(taxDx, taxDy, tbxDx, tbxDy, kindEpsilon);
   const dedupeT = Math.max(epsilonT, SUBDIVISION_DEDUPE_T_FACTOR * Math.max(spanA, spanB));
-  pushHitIfNewAB(outHits, px, py, kind, tAMid, tBMid, dedupeT, makePoint);
+  pushHitIfNewAB(outHits, px, py, kind, tA, tB, dedupeT, makePoint);
 }
 
 /**
@@ -67,7 +79,7 @@ function onConverge<P extends XYWritable>(
  *
  * subdivision 재귀로 parameter box를 좁혀 교차점을 탐지한다.
  * tA는 quadratic curve A의 parameter, tB는 cubic curve B의 parameter이다.
- * hit point는 curve A 위 midpoint parameter로 계산한다.
+ * 수렴 지점은 Newton으로 다듬으며, hit point는 다듬은 parameter로 curve A 위에서 계산한다.
  * 두 curve가 같은 기하 위에서 구간을 공유하면 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록한다.
  * 겹침 구간 내부는 subdivision하지 않는다. 겹침 밖의 교차는 그대로 탐지한다.
  *

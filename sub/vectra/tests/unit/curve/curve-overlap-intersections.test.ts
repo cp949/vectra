@@ -108,6 +108,8 @@ describe('quadraticQuadraticIntersectionsInto overlap', () => {
 
     expect(hits).toHaveLength(1);
     expect(hits[0].kind).not.toBe('overlap');
+    // 공유 끝점에서 접선이 평행해 Newton refinement를 건너뛴다.
+    // 오차는 subdivision span(약 1.5e-5)에 머문다. y는 기울기 4배라 6e-5가 된다.
     expect(hits[0].point.x).toBeCloseTo(2, 3);
     expect(hits[0].point.y).toBeCloseTo(4, 3);
   });

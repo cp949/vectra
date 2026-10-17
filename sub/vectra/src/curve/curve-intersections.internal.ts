@@ -251,6 +251,122 @@ export function classifyIntersectionKind(
   return relCross < epsilon ? 'touch' : 'cross';
 }
 
+/** Newton refinement 반복 상한. 수렴 지점에서 시작하므로 2회면 double 정밀도에 닿는다. */
+const NEWTON_MAX_ITERATIONS = 3;
+
+/**
+ * Newton step이 시작 parameter에서 벗어날 수 있는 최대 거리를 box span의 몇 배로 볼지 정한다.
+ * 얕은 각도로 교차하면 box 중점에서 실제 근까지 span의 수십 배가 떨어질 수 있다.
+ * 너무 작으면 보정을 거절당한 box가 보정된 hit 옆에 중복 hit로 남는다.
+ */
+const NEWTON_MAX_SHIFT_FACTOR = 64;
+
+/** Jacobian을 특이로 보는 상대 임계값. |A' × B'| / (|A'||B'|) 즉 두 tangent 사이 sin 값이다. */
+const NEWTON_SINGULAR_FACTOR = 1e-6;
+
+/** 곡선 평가 결과 [x, y, dx/dt, dy/dt]를 out에 쓴다. */
+export type CurveEvaluator = (t: number, out: [number, number, number, number]) => void;
+
+/** quadratic Bezier의 위치와 1차 미분을 out에 쓴다. */
+export function evalQuadraticInto(p: QuadFlat, t: number, out: [number, number, number, number]): void {
+  const mt = 1 - t;
+  out[0] = mt * mt * p[0] + 2 * mt * t * p[2] + t * t * p[4];
+  out[1] = mt * mt * p[1] + 2 * mt * t * p[3] + t * t * p[5];
+  out[2] = 2 * mt * (p[2] - p[0]) + 2 * t * (p[4] - p[2]);
+  out[3] = 2 * mt * (p[3] - p[1]) + 2 * t * (p[5] - p[3]);
+}
+
+/** cubic Bezier의 위치와 1차 미분을 out에 쓴다. */
+export function evalCubicInto(p: CubicFlat, t: number, out: [number, number, number, number]): void {
+  const mt = 1 - t;
+  const a = mt * mt * mt;
+  const b = 3 * mt * mt * t;
+  const c = 3 * mt * t * t;
+  const d = t * t * t;
+  out[0] = a * p[0] + b * p[2] + c * p[4] + d * p[6];
+  out[1] = a * p[1] + b * p[3] + c * p[5] + d * p[7];
+  const da = 3 * mt * mt;
+  const db = 6 * mt * t;
+  const dc = 3 * t * t;
+  out[2] = da * (p[2] - p[0]) + db * (p[4] - p[2]) + dc * (p[6] - p[4]);
+  out[3] = da * (p[3] - p[1]) + db * (p[5] - p[3]) + dc * (p[7] - p[5]);
+}
+
+/**
+ * subdivision sub-curve를 원본 parameter 기준 evaluator로 감싼다.
+ * sub는 원본 구간 [t0, t0 + span]을 local [0, 1]로 담고 있다.
+ * 미분은 chain rule에 따라 span으로 나눈다.
+ */
+export function subCurveEvaluator<S>(
+  evalLocal: (sub: S, t: number, out: [number, number, number, number]) => void,
+  sub: S,
+  t0: number,
+  span: number
+): CurveEvaluator {
+  return (t, out) => {
+    evalLocal(sub, (t - t0) / span, out);
+    out[2] /= span;
+    out[3] /= span;
+  };
+}
+
+/**
+ * 수렴 지점 (tA, tB)에서 F(t, u) = A(t) - B(u) = 0 을 2D Newton으로 다듬는다.
+ * subdivision은 maxDepth에서 멈춰 parameter 정밀도가 span 수준에 그치므로 그 뒤에 보정한다.
+ *
+ * 다음이면 step을 버리고 직전 값을 유지한다.
+ * - Jacobian이 특이하다 (touch, 평행 tangent).
+ * - 새 값이 [0, 1] 밖이거나 시작점에서 maxShift보다 멀다.
+ * - 잔차 |F|²가 줄지 않는다.
+ *
+ * @param span 수렴 box의 parameter span. 시작점에서 허용하는 최대 이동량(span의 배수)을 정한다.
+ * @returns 다듬은 [tA, tB]. 한 번도 받아들이지 못하면 입력 값 그대로다.
+ */
+export function refineIntersectionParams(
+  evalA: CurveEvaluator,
+  evalB: CurveEvaluator,
+  tA: number,
+  tB: number,
+  span: number
+): [number, number] {
+  const maxShift = NEWTON_MAX_SHIFT_FACTOR * span;
+  const a: [number, number, number, number] = [0, 0, 0, 0];
+  const b: [number, number, number, number] = [0, 0, 0, 0];
+  let t = tA;
+  let u = tB;
+  evalA(t, a);
+  evalB(u, b);
+  let fx = a[0] - b[0];
+  let fy = a[1] - b[1];
+  let residual = fx * fx + fy * fy;
+
+  for (let i = 0; i < NEWTON_MAX_ITERATIONS; i++) {
+    const det = b[2] * a[3] - a[2] * b[3];
+    const scale = Math.hypot(a[2], a[3]) * Math.hypot(b[2], b[3]);
+    // NaN이면 비교가 false라 아래 조건을 통과하지 못한다
+    if (!(Math.abs(det) > NEWTON_SINGULAR_FACTOR * scale)) break;
+
+    const nextT = t + (fx * b[3] - b[2] * fy) / det;
+    const nextU = u + (a[3] * fx - a[2] * fy) / det;
+    if (!(nextT >= 0 && nextT <= 1 && nextU >= 0 && nextU <= 1)) break;
+    if (!(Math.abs(nextT - tA) <= maxShift && Math.abs(nextU - tB) <= maxShift)) break;
+
+    evalA(nextT, a);
+    evalB(nextU, b);
+    const nextFx = a[0] - b[0];
+    const nextFy = a[1] - b[1];
+    const nextResidual = nextFx * nextFx + nextFy * nextFy;
+    if (!(nextResidual < residual)) break;
+
+    t = nextT;
+    u = nextU;
+    fx = nextFx;
+    fy = nextFy;
+    residual = nextResidual;
+  }
+  return [t, u];
+}
+
 /** cubic sub-curve flat 좌표 — [p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y]. */
 export type CubicFlat = [number, number, number, number, number, number, number, number];
 
