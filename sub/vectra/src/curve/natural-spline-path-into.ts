@@ -14,7 +14,7 @@ import { naturalSplineCubicSegments } from './natural-spline.internal';
  * @param points natural spline이 통과할 입력 point 배열
  * @returns out
  */
-export function naturalSplinePathInto<Out extends PathCommand[]>(out: Out, points: readonly XYInput[]): Out {
+export function naturalSplinePathInto(out: PathCommand[], points: readonly XYInput[]): PathCommand[] {
   out.length = 0;
   if (points.length < 2) return out;
   const { segments, segCount } = naturalSplineCubicSegments(points);

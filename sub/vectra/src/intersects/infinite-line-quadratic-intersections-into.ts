@@ -1,12 +1,5 @@
 import { quadraticLineIntersectionsInto } from '../curve/quadratic-line-intersections-into';
-import type {
-  CurveIntersectionOptions,
-  InfiniteLineLike,
-  IntersectionHit,
-  XYInput,
-  XYObjectWritable,
-  XYWritable,
-} from '../types';
+import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput } from '../types';
 
 /**
  * infinite-line과 quadratic Bezier curve의 교차점을 outHits에 push한다.
@@ -22,8 +15,8 @@ import type {
  * @param p2 quadratic curve 끝점
  * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
  */
-export function infiniteLineQuadraticIntersectionsInto<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function infiniteLineQuadraticIntersectionsInto(
+  outHits: IntersectionHit[],
   line: InfiniteLineLike,
   p0: XYInput,
   p1: XYInput,

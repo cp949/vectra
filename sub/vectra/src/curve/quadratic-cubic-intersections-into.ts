@@ -1,5 +1,5 @@
 import { readX, readY } from '../internal/xy';
-import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritable, XYWritable } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritable } from '../types';
 import {
   type CubicFlat,
   classifyIntersectionKind,
@@ -34,8 +34,8 @@ import {
  * midpoint parameter를 Newton으로 다듬은 뒤 curve A(quadratic) 위에서 원본 좌표로 정밀 계산한다.
  * 교차 종류는 다듬은 parameter에서 curve A는 원본, curve B(cubic)는 bSub의 tangent로 판정한다.
  */
-function onConverge<P extends XYWritable>(
-  outHits: IntersectionHit<P>[],
+function onConverge(
+  outHits: IntersectionHit[],
   tA0: number,
   tA1: number,
   tB0: number,
@@ -44,7 +44,7 @@ function onConverge<P extends XYWritable>(
   bSub: CubicFlat,
   epsilon: number,
   epsilonT: number,
-  makePoint: () => P
+  makePoint: () => XYObjectWritable
 ): void {
   const spanA = tA1 - tA0;
   const spanB = tB1 - tB0;
@@ -104,8 +104,8 @@ function onConverge<P extends XYWritable>(
  * @param q3 cubic curve B 끝점
  * @param options intersection kernel 옵션
  */
-export function quadraticCubicIntersectionsInto<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function quadraticCubicIntersectionsInto(
+  outHits: IntersectionHit[],
   p0: XYInput,
   p1: XYInput,
   p2: XYInput,
@@ -118,7 +118,7 @@ export function quadraticCubicIntersectionsInto<P extends XYWritable = XYObjectW
   outHits.length = 0;
   const { epsilon, epsilonT } = resolveOptions(options);
   const maxDepth = options?.maxDepth ?? DEFAULT_MAX_DEPTH;
-  const makePoint = () => ({ x: 0, y: 0 }) as unknown as P;
+  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
 
   const p0x = readX(p0);
   const p0y = readY(p0);

@@ -12,17 +12,17 @@ import type { PathCommand, RectLike } from '../types/index';
  * @param rect 기록할 rect ({ x, y, width, height } object 또는 4-tuple)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function rectCommandsInto<Out extends PathCommand[]>(out: Out, rect: RectLike): Out {
+export function rectCommandsInto(out: PathCommand[], rect: RectLike): PathCommand[] {
   const x = readRectX(rect);
   const y = readRectY(rect);
   const w = readRectWidth(rect);
   const h = readRectHeight(rect);
 
   out.length = 0;
-  out.push({ kind: 'move', x, y } as Out[number]);
-  out.push({ kind: 'line', x: x + w, y } as Out[number]);
-  out.push({ kind: 'line', x: x + w, y: y + h } as Out[number]);
-  out.push({ kind: 'line', x, y: y + h } as Out[number]);
-  out.push({ kind: 'close' } as Out[number]);
+  out.push({ kind: 'move', x, y });
+  out.push({ kind: 'line', x: x + w, y });
+  out.push({ kind: 'line', x: x + w, y: y + h });
+  out.push({ kind: 'line', x, y: y + h });
+  out.push({ kind: 'close' });
   return out;
 }

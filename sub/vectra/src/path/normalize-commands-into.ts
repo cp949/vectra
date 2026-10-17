@@ -14,7 +14,7 @@ import type { PathCommand } from '../types/index';
  * @param commands - 정규화할 입력 command sequence
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function normalizeCommandsInto<Out extends PathCommand[]>(out: Out, commands: readonly PathCommand[]): Out {
+export function normalizeCommandsInto(out: PathCommand[], commands: readonly PathCommand[]): PathCommand[] {
   // output aliasing 대비: out === commands인 경우를 안전하게 처리하기 위해 먼저 snapshot
   const snapshot = commands === (out as readonly PathCommand[]) ? Array.from(commands) : commands;
 

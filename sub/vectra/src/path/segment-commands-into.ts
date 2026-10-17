@@ -13,6 +13,6 @@ import { lineCommandsInto } from './line-commands-into';
  * @param segment 두 endpoint로 표현하는 structural segment (`{ a, b }` 또는 `[a, b]`)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function segmentCommandsInto<Out extends PathCommand[]>(out: Out, segment: SegmentLike): Out {
+export function segmentCommandsInto(out: PathCommand[], segment: SegmentLike): PathCommand[] {
   return lineCommandsInto(out, readSegmentA(segment), readSegmentB(segment));
 }

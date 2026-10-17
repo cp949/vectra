@@ -1,14 +1,7 @@
 import { quadraticLineIntersectionsInto } from '../curve/quadratic-line-intersections-into';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
-import type {
-  CurveIntersectionOptions,
-  IntersectionHit,
-  RayLike,
-  XYInput,
-  XYObjectWritable,
-  XYWritable,
-} from '../types';
+import type { CurveIntersectionOptions, IntersectionHit, RayLike, XYInput } from '../types';
 
 /**
  * ray와 quadratic Bezier curve의 교차점을 outHits에 push한다.
@@ -24,8 +17,8 @@ import type {
  * @param p2 quadratic curve 끝점
  * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
  */
-export function rayQuadraticIntersectionsInto<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function rayQuadraticIntersectionsInto(
+  outHits: IntersectionHit[],
   ray: RayLike,
   p0: XYInput,
   p1: XYInput,

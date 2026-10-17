@@ -51,11 +51,11 @@ function endpointOf(cmd: PathCommand): { x: number; y: number } | undefined {
  * @param options removeDuplicates / removeCollinear / tolerance
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function sanitizeCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function sanitizeCommandsInto(
+  out: PathCommand[],
   commands: readonly PathCommand[],
   options?: SanitizeCommandsOptions
-): Out {
+): PathCommand[] {
   const removeDuplicates = options?.removeDuplicates ?? false;
   const removeCollinear = options?.removeCollinear ?? false;
   const tolerance = options?.tolerance ?? 1e-10;
@@ -129,7 +129,7 @@ export function sanitizeCommandsInto<Out extends PathCommand[]>(
     removeCollinearCommandsInto(out, stage1, { angleTolerance: tolerance });
   } else {
     for (const cmd of stage1) {
-      out.push(cmd as Out[number]);
+      out.push(cmd);
     }
   }
 

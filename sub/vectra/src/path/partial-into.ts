@@ -30,13 +30,13 @@ import { splitAtLengthInto } from './split-at-length-into';
  * @param options flatten 옵션 (flatness, maxRecursion)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function partialInto<Out extends PathCommand[]>(
-  out: Out,
+export function partialInto(
+  out: PathCommand[],
   commands: readonly PathCommand[],
   start: number,
   end: number,
   options?: PathMeasurementOptions
-): Out {
+): PathCommand[] {
   // aliasing 대비: out === commands인 경우 clear 전에 snapshot
   const snapshot = commands === (out as readonly PathCommand[]) ? Array.from(commands) : commands;
 
@@ -61,7 +61,7 @@ export function partialInto<Out extends PathCommand[]>(
 
   if (cs === 0 && ce === 1) {
     for (const cmd of snapshot) {
-      out.push(cmd as Out[number]);
+      out.push(cmd);
     }
     return out;
   }
@@ -78,7 +78,7 @@ export function partialInto<Out extends PathCommand[]>(
   splitAtLengthInto(partial, tail, suffix, (ce - cs) * total, options);
 
   for (const cmd of partial) {
-    out.push(cmd as Out[number]);
+    out.push(cmd);
   }
   return out;
 }

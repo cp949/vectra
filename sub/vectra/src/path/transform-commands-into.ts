@@ -37,12 +37,12 @@ export interface TransformCommandsOptions {
  * @param options arc 처리 방식 옵션. 생략 시 `arcHandling: 'keep'`.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function transformCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function transformCommandsInto(
+  out: PathCommand[],
   commands: readonly PathCommand[],
   matrix: MatrixLike,
   options?: TransformCommandsOptions
-): Out {
+): PathCommand[] {
   const arcHandling = options?.arcHandling ?? 'keep';
 
   // clear 전에 snapshot해 aliasing(out === commands)을 안전하게 처리
@@ -67,9 +67,9 @@ export function transformCommandsInto<Out extends PathCommand[]>(
 
   for (const cmd of snapshot) {
     if (cmd.kind === 'move') {
-      out.push({ kind: 'move', x: mapX(cmd.x, cmd.y), y: mapY(cmd.x, cmd.y) } as Out[number]);
+      out.push({ kind: 'move', x: mapX(cmd.x, cmd.y), y: mapY(cmd.x, cmd.y) });
     } else if (cmd.kind === 'line') {
-      out.push({ kind: 'line', x: mapX(cmd.x, cmd.y), y: mapY(cmd.x, cmd.y) } as Out[number]);
+      out.push({ kind: 'line', x: mapX(cmd.x, cmd.y), y: mapY(cmd.x, cmd.y) });
     } else if (cmd.kind === 'quadratic') {
       out.push({
         kind: 'quadratic',
@@ -77,7 +77,7 @@ export function transformCommandsInto<Out extends PathCommand[]>(
         y1: mapY(cmd.x1, cmd.y1),
         x: mapX(cmd.x, cmd.y),
         y: mapY(cmd.x, cmd.y),
-      } as Out[number]);
+      });
     } else if (cmd.kind === 'cubic') {
       out.push({
         kind: 'cubic',
@@ -87,7 +87,7 @@ export function transformCommandsInto<Out extends PathCommand[]>(
         y2: mapY(cmd.x2, cmd.y2),
         x: mapX(cmd.x, cmd.y),
         y: mapY(cmd.x, cmd.y),
-      } as Out[number]);
+      });
     } else if (cmd.kind === 'arc') {
       if (arcHandling === 'error') {
         throw new Error(
@@ -106,10 +106,10 @@ export function transformCommandsInto<Out extends PathCommand[]>(
         sweep: cmd.sweep,
         x: mapX(cmd.x, cmd.y),
         y: mapY(cmd.x, cmd.y),
-      } as Out[number]);
+      });
     } else {
       // close: 좌표 없음, kind만 보존한 새 marker push
-      out.push({ kind: 'close' } as Out[number]);
+      out.push({ kind: 'close' });
     }
   }
 

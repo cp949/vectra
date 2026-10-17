@@ -15,11 +15,11 @@ import { catmullRomGetPoints, catmullRomKnotsFromPoints, catmullRomSegmentCount 
  * @param options alpha(0=uniform, 0.5=centripetal, 1=chordal), closed 옵션
  * @returns out
  */
-export function catmullRomPathInto<Out extends PathCommand[]>(
-  out: Out,
+export function catmullRomPathInto(
+  out: PathCommand[],
   points: readonly XYInput[],
   options?: CatmullRomOptions
-): Out {
+): PathCommand[] {
   const alpha = options?.alpha ?? 0.5;
   const closed = options?.closed ?? false;
   const n = points.length;
@@ -68,9 +68,9 @@ export function catmullRomPathInto<Out extends PathCommand[]>(
     const c2x = x2 - T2x / 3;
     const c2y = y2 - T2y / 3;
 
-    if (si === 0) out.push({ kind: 'move', x: x1, y: y1 } as Out[number]);
-    out.push({ kind: 'cubic', x1: c1x, y1: c1y, x2: c2x, y2: c2y, x: x2, y: y2 } as Out[number]);
+    if (si === 0) out.push({ kind: 'move', x: x1, y: y1 });
+    out.push({ kind: 'cubic', x1: c1x, y1: c1y, x2: c2x, y2: c2y, x: x2, y: y2 });
   }
-  if (closed) out.push({ kind: 'close' } as Out[number]);
+  if (closed) out.push({ kind: 'close' });
   return out;
 }

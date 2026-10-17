@@ -13,6 +13,6 @@ import { writeStepPath } from './step.internal';
  * @param points step path가 통과할 입력 point 배열
  * @returns out
  */
-export function stepAfterPathInto<Out extends PathCommand[]>(out: Out, points: readonly XYInput[]): Out {
+export function stepAfterPathInto(out: PathCommand[], points: readonly XYInput[]): PathCommand[] {
   return writeStepPath(out, points, 'after');
 }

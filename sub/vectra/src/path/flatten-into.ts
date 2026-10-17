@@ -15,10 +15,10 @@ import { flattenPathInto } from './flatten.internal';
  * @param options - flatten 옵션 (flatness, maxRecursion)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function flattenInto<Out extends XYObjectWritable[]>(
-  out: Out,
+export function flattenInto(
+  out: XYObjectWritable[],
   commands: readonly PathCommand[],
   options?: PathFlattenOptions
-): Out {
+): XYObjectWritable[] {
   return flattenPathInto(out, commands, options);
 }

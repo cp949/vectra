@@ -24,13 +24,13 @@ import type { CubicThroughOptions, PathCommand, XYInput } from '../types/index';
  * @param options through 점 parameter / control handle 배율 옵션 (기본 `t = 0.5`, `controlScale = 1`)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function cubicThroughCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function cubicThroughCommandsInto(
+  out: PathCommand[],
   from: XYInput,
   through: XYInput,
   to: XYInput,
   options?: CubicThroughOptions
-): Out {
+): PathCommand[] {
   const t = options?.t ?? 0.5;
   const controlScale = options?.controlScale ?? 1;
   const fx = readX(from);
@@ -49,7 +49,7 @@ export function cubicThroughCommandsInto<Out extends PathCommand[]>(
   const y2 = ty + (thy - ty) * k2;
 
   out.length = 0;
-  out.push({ kind: 'move', x: fx, y: fy } as Out[number]);
-  out.push({ kind: 'cubic', x1, y1, x2, y2, x: tx, y: ty } as Out[number]);
+  out.push({ kind: 'move', x: fx, y: fy });
+  out.push({ kind: 'cubic', x1, y1, x2, y2, x: tx, y: ty });
   return out;
 }

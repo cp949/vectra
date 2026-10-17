@@ -16,7 +16,7 @@ import { parsePathDataInto } from './parse-path-data-into';
  * @param out subpath 배열을 기록할 mutable PathCommand[][] 배열. 성공 시 clear 후 push. parse 실패 시 수정하지 않는다.
  * @param data SVG path data string (예: "M 10 20 L 30 40 Z")
  */
-export function parseSubpathsInto<Out extends PathCommand[][]>(out: Out, data: string): boolean {
+export function parseSubpathsInto(out: PathCommand[][], data: string): boolean {
   const tmp: PathCommand[] = [];
 
   if (!parsePathDataInto(tmp, data)) {
@@ -28,7 +28,7 @@ export function parseSubpathsInto<Out extends PathCommand[][]>(out: Out, data: s
 
   out.length = 0;
   for (const subpath of subpathsOut) {
-    out.push(subpath as Out[number]);
+    out.push(subpath);
   }
 
   return true;

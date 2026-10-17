@@ -19,7 +19,7 @@ import { rectCommandsInto } from './rect-commands-into';
  * @param radius corner radius. uniform. clamp 후 사용
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function roundedRectCommandsInto<Out extends PathCommand[]>(out: Out, rect: RectLike, radius: number): Out {
+export function roundedRectCommandsInto(out: PathCommand[], rect: RectLike, radius: number): PathCommand[] {
   const x = readRectX(rect);
   const y = readRectY(rect);
   const w = readRectWidth(rect);
@@ -41,9 +41,9 @@ export function roundedRectCommandsInto<Out extends PathCommand[]>(out: Out, rec
 
   out.length = 0;
   // 시작점: 위쪽 edge 시작. (x0 + r, y0)
-  out.push({ kind: 'move', x: x0 + r, y: y0 } as Out[number]);
+  out.push({ kind: 'move', x: x0 + r, y: y0 });
   // 위쪽 edge → (x1 - r, y0)
-  out.push({ kind: 'line', x: x1 - r, y: y0 } as Out[number]);
+  out.push({ kind: 'line', x: x1 - r, y: y0 });
   // right-top corner: (x1 - r, y0) → (x1, y0 + r)
   out.push({
     kind: 'cubic',
@@ -53,9 +53,9 @@ export function roundedRectCommandsInto<Out extends PathCommand[]>(out: Out, rec
     y2: y0 + r - k,
     x: x1,
     y: y0 + r,
-  } as Out[number]);
+  });
   // 오른쪽 edge → (x1, y1 - r)
-  out.push({ kind: 'line', x: x1, y: y1 - r } as Out[number]);
+  out.push({ kind: 'line', x: x1, y: y1 - r });
   // right-bottom corner: (x1, y1 - r) → (x1 - r, y1)
   out.push({
     kind: 'cubic',
@@ -65,9 +65,9 @@ export function roundedRectCommandsInto<Out extends PathCommand[]>(out: Out, rec
     y2: y1,
     x: x1 - r,
     y: y1,
-  } as Out[number]);
+  });
   // 아래쪽 edge → (x0 + r, y1)
-  out.push({ kind: 'line', x: x0 + r, y: y1 } as Out[number]);
+  out.push({ kind: 'line', x: x0 + r, y: y1 });
   // left-bottom corner: (x0 + r, y1) → (x0, y1 - r)
   out.push({
     kind: 'cubic',
@@ -77,9 +77,9 @@ export function roundedRectCommandsInto<Out extends PathCommand[]>(out: Out, rec
     y2: y1 - r + k,
     x: x0,
     y: y1 - r,
-  } as Out[number]);
+  });
   // 왼쪽 edge → (x0, y0 + r)
-  out.push({ kind: 'line', x: x0, y: y0 + r } as Out[number]);
+  out.push({ kind: 'line', x: x0, y: y0 + r });
   // left-top corner: (x0, y0 + r) → (x0 + r, y0)
   out.push({
     kind: 'cubic',
@@ -89,7 +89,7 @@ export function roundedRectCommandsInto<Out extends PathCommand[]>(out: Out, rec
     y2: y0,
     x: x0 + r,
     y: y0,
-  } as Out[number]);
-  out.push({ kind: 'close' } as Out[number]);
+  });
+  out.push({ kind: 'close' });
   return out;
 }

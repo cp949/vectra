@@ -17,7 +17,7 @@ import type { PathCommand } from '../types/index';
  * @param commands 분리할 입력 command sequence
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function splitSubpathsInto<Out extends PathCommand[][]>(out: Out, commands: readonly PathCommand[]): Out {
+export function splitSubpathsInto(out: PathCommand[][], commands: readonly PathCommand[]): PathCommand[][] {
   out.length = 0;
 
   if (commands.length === 0) {
@@ -29,14 +29,14 @@ export function splitSubpathsInto<Out extends PathCommand[][]>(out: Out, command
   for (const cmd of commands) {
     if (cmd.kind === 'move') {
       current = [cmd];
-      out.push(current as Out[number]);
+      out.push(current);
       continue;
     }
 
     if (current === null) {
       // 첫 command가 MoveCommand가 아니면 암묵적 origin move로 subpath를 연다
       current = [{ kind: 'move' as const, x: 0, y: 0 }];
-      out.push(current as Out[number]);
+      out.push(current);
     }
 
     current.push(cmd);

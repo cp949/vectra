@@ -15,7 +15,7 @@ import { monotoneCubicSegments } from './monotone.internal';
  * @param points y축이 strict monotonic인 입력 point 배열
  * @returns out
  */
-export function monotoneYPathInto<Out extends PathCommand[]>(out: Out, points: readonly XYInput[]): Out {
+export function monotoneYPathInto(out: PathCommand[], points: readonly XYInput[]): PathCommand[] {
   out.length = 0;
   if (points.length < 2) return out;
   const { segments, segCount } = monotoneCubicSegments(points, 'y');

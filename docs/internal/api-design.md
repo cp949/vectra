@@ -226,6 +226,8 @@ point 배열을 `out`으로 받는 collection `xxxInto`는 `out.length = 0` 뒤 
 - 새 object를 만든다. caller가 쥐고 있던 이전 원소를 수정하지 않는다.
 - polyline·polygon의 `transformPointsInto`는 입력과 `out`이 같은 배열이어도 안전하다.
 - 대가로 호출마다 point object를 할당한다.
+- 출력 배열의 원소 타입을 제네릭으로 열지 않는다. 함수가 만드는 값이 곧 원소 타입이다. 예: `XYObjectWritable[]`, `PathCommand[]`, `IntersectionHit[]`.
+- 이유: `Out extends MoveCommand[]`처럼 좁은 원소 타입을 받으면 반환 타입이 실제로 push한 command와 달라진다.
 
 예외는 `matrix/transformPointsInto` 하나다. 이 함수는 `out[i]`에 `writeXY`한다.
 

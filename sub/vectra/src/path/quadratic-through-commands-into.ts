@@ -19,13 +19,13 @@ import type { PathCommand, QuadraticThroughOptions, XYInput } from '../types/ind
  * @param options through 점의 parameter 위치 옵션 (기본 `t = 0.5`)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function quadraticThroughCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function quadraticThroughCommandsInto(
+  out: PathCommand[],
   from: XYInput,
   through: XYInput,
   to: XYInput,
   options?: QuadraticThroughOptions
-): Out {
+): PathCommand[] {
   const t = options?.t ?? 0.5;
   const fx = readX(from);
   const fy = readY(from);
@@ -40,7 +40,7 @@ export function quadraticThroughCommandsInto<Out extends PathCommand[]>(
   const y1 = (thy - u * u * fy - t * t * ty) / denom;
 
   out.length = 0;
-  out.push({ kind: 'move', x: fx, y: fy } as Out[number]);
-  out.push({ kind: 'quadratic', x1, y1, x: tx, y: ty } as Out[number]);
+  out.push({ kind: 'move', x: fx, y: fy });
+  out.push({ kind: 'quadratic', x1, y1, x: tx, y: ty });
   return out;
 }

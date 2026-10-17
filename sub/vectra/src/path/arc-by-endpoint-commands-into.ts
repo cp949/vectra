@@ -14,13 +14,9 @@ import type { ArcCommand, PathCommand, XYInput } from '../types/index';
  * @param arcCommand SVG endpoint arc command. push 시 같은 reference로 공유된다
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function arcByEndpointCommandsInto<Out extends PathCommand[]>(
-  out: Out,
-  from: XYInput,
-  arcCommand: ArcCommand
-): Out {
+export function arcByEndpointCommandsInto(out: PathCommand[], from: XYInput, arcCommand: ArcCommand): PathCommand[] {
   out.length = 0;
-  out.push({ kind: 'move', x: readX(from), y: readY(from) } as Out[number]);
-  out.push(arcCommand as Out[number]);
+  out.push({ kind: 'move', x: readX(from), y: readY(from) });
+  out.push(arcCommand);
   return out;
 }

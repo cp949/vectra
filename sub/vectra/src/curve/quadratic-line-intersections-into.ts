@@ -1,13 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import { pushStableRoots } from '../math/quadratic-roots.internal';
-import type {
-  CurveIntersectionOptions,
-  InfiniteLineLike,
-  IntersectionHit,
-  XYInput,
-  XYObjectWritable,
-  XYWritable,
-} from '../types';
+import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput, XYObjectWritable } from '../types';
 import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-intersections.internal';
 
 /**
@@ -24,8 +17,8 @@ import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-inte
  * @param line infinite-line (origin + direction)
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
  */
-export function quadraticLineIntersectionsInto<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function quadraticLineIntersectionsInto(
+  outHits: IntersectionHit[],
   p0: XYInput,
   p1: XYInput,
   p2: XYInput,
@@ -57,9 +50,7 @@ export function quadraticLineIntersectionsInto<P extends XYWritable = XYObjectWr
   const b = 2 * (n1 - n0);
   const c = n0 - nDotO;
 
-  // makePoint factory — caller의 P generic에 맞춰 object를 생성한다
-  // 기본값은 XYObjectWritable이므로 {} as P로 초기화한다
-  const makePoint = (): P => ({}) as P;
+  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
 
   if (a === 0) {
     // linear equation: bt + c = 0

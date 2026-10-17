@@ -65,7 +65,7 @@ describe('curve subdivision - subdivideCurves trunk', () => {
     // 겹치지 않는 branch는 split과 수렴 콜백 전에 제거돼야 한다.
     const calls: Array<[number, number, number, number]> = [];
     const outHits: IntersectionHit[] = [];
-    subdivideCurves<Range, Range, IntersectionHit['point']>(
+    subdivideCurves<Range, Range>(
       outHits,
       [0, 10],
       0,
@@ -94,7 +94,7 @@ describe('curve subdivision - subdivideCurves trunk', () => {
     // 한쪽 span만 계속 줄이는 회귀도 잡도록 양쪽 최종 span을 모두 검증한다.
     const calls: Array<[number, number, number, number]> = [];
     const outHits: IntersectionHit[] = [];
-    subdivideCurves<Range, Range, IntersectionHit['point']>(
+    subdivideCurves<Range, Range>(
       outHits,
       [0, 10],
       0,
@@ -127,7 +127,7 @@ describe('curve subdivision - subdivideCurves trunk', () => {
     // depth 제한은 epsilonT 수렴보다 우선하는 강제 종료 계약이다.
     const calls: Array<[number, number, number, number]> = [];
     const outHits: IntersectionHit[] = [];
-    subdivideCurves<Range, Range, IntersectionHit['point']>(
+    subdivideCurves<Range, Range>(
       outHits,
       [0, 10],
       0,
@@ -157,29 +157,14 @@ describe('curve subdivision - subdivideCurves trunk', () => {
     const origA: Range = [100, 200];
     const converged: Array<{ origA: Range; bSub: Range }> = [];
 
-    subdivideCurves<Range, Range, IntersectionHit['point']>(
-      [],
-      [2, 6],
-      0,
-      0.25,
-      [0, 8],
-      0,
-      0.5,
-      origA,
-      0,
-      0.25,
-      10,
-      0,
-      () => ({ x: 0, y: 0 }),
-      {
-        hullBoundsA: rangeHullBounds,
-        hullBoundsB: rangeHullBounds,
-        splitA: splitRange,
-        splitB: splitRange,
-        onConverge: (_outHits, _tA0, _tA1, _tB0, _tB1, receivedOrigA, currentBSub) =>
-          converged.push({ origA: receivedOrigA, bSub: currentBSub }),
-      }
-    );
+    subdivideCurves<Range, Range>([], [2, 6], 0, 0.25, [0, 8], 0, 0.5, origA, 0, 0.25, 10, 0, () => ({ x: 0, y: 0 }), {
+      hullBoundsA: rangeHullBounds,
+      hullBoundsB: rangeHullBounds,
+      splitA: splitRange,
+      splitB: splitRange,
+      onConverge: (_outHits, _tA0, _tA1, _tB0, _tB1, receivedOrigA, currentBSub) =>
+        converged.push({ origA: receivedOrigA, bSub: currentBSub }),
+    });
 
     expect(converged).toHaveLength(2);
     expect(converged[0].origA).toBe(origA);

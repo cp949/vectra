@@ -17,6 +17,6 @@ import type { PathCommand, PolylineLike } from '../types';
  * @param outCommands command를 기록할 mutable PathCommand 배열
  * @param polyline 변환할 polyline
  */
-export function toPathInto<Out extends PathCommand[]>(outCommands: Out, polyline: PolylineLike): Out {
+export function toPathInto(outCommands: PathCommand[], polyline: PolylineLike): PathCommand[] {
   return writePolylineCommandsInto(outCommands, polyline);
 }

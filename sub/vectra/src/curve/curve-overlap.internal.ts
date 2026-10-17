@@ -1,4 +1,4 @@
-import type { IntersectionHit, XYWritable } from '../types';
+import type { IntersectionHit, XYObjectWritable } from '../types';
 import {
   type BezierClosestLocationCore,
   findCubicClosestLocation,
@@ -217,11 +217,11 @@ export function findCurveOverlap(a: OverlapCurve, b: OverlapCurve, epsilon: numb
 }
 
 /** 겹침 구간 양 끝점을 `kind: 'overlap'` hit로 기록한다. 좌표는 curve A 위에서 계산한다. */
-export function pushOverlapHits<P extends XYWritable>(
-  outHits: IntersectionHit<P>[],
+export function pushOverlapHits(
+  outHits: IntersectionHit[],
   overlap: CurveOverlap,
   a: OverlapCurve,
-  makePoint: () => P
+  makePoint: () => XYObjectWritable
 ): void {
   const [x0, y0] = a.pointAt(overlap.tA0);
   writeHit(outHits, x0, y0, 'overlap', overlap.tA0, overlap.tB0, makePoint);

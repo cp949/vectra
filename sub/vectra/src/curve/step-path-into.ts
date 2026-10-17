@@ -16,11 +16,11 @@ import { resolveStepMode, writeStepPath } from './step.internal';
  * @param options step elbow mode 옵션. mode 기본값 'middle'.
  * @returns out
  */
-export function stepPathInto<Out extends PathCommand[]>(
-  out: Out,
+export function stepPathInto(
+  out: PathCommand[],
   points: readonly XYInput[],
   options?: StepCurveOptions
-): Out {
+): PathCommand[] {
   const mode = resolveStepMode(options?.mode);
   return writeStepPath(out, points, mode);
 }

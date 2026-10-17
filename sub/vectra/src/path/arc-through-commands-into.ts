@@ -28,12 +28,12 @@ import { lineCommandsInto } from './line-commands-into';
  * @param to 끝점 (XYInput)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function arcThroughCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function arcThroughCommandsInto(
+  out: PathCommand[],
   from: XYInput,
   through: XYInput,
   to: XYInput
-): Out {
+): PathCommand[] {
   const ax = readX(from);
   const ay = readY(from);
   const bx = readX(through);
@@ -91,7 +91,7 @@ export function arcThroughCommandsInto<Out extends PathCommand[]>(
   const handleK = (4 / 3) * Math.tan(dAngle / 4);
 
   out.length = 0;
-  out.push({ kind: 'move', x: ax, y: ay } as Out[number]);
+  out.push({ kind: 'move', x: ax, y: ay });
 
   let currentAngle = angleFrom;
   let p0x = ax;
@@ -114,7 +114,7 @@ export function arcThroughCommandsInto<Out extends PathCommand[]>(
     const p2x = p3x - r * handleK * -sinB;
     const p2y = p3y - r * handleK * cosB;
 
-    out.push({ kind: 'cubic', x1: p1x, y1: p1y, x2: p2x, y2: p2y, x: p3x, y: p3y } as Out[number]);
+    out.push({ kind: 'cubic', x1: p1x, y1: p1y, x2: p2x, y2: p2y, x: p3x, y: p3y });
 
     currentAngle = nextAngle;
     p0x = p3x;

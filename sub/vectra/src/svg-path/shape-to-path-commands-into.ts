@@ -62,7 +62,7 @@ import type {
  * @param shape 변환할 structural SVG shape input
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function shapeToPathCommandsInto<Out extends PathCommand[]>(out: Out, shape: SvgShapeLike): Out {
+export function shapeToPathCommandsInto(out: PathCommand[], shape: SvgShapeLike): PathCommand[] {
   switch (shape.kind) {
     case 'line':
       return writeLine(out, shape);
@@ -80,15 +80,15 @@ export function shapeToPathCommandsInto<Out extends PathCommand[]>(out: Out, sha
 }
 
 /** line shape를 move + line 2 command로 기록한다. */
-function writeLine<Out extends PathCommand[]>(out: Out, shape: SvgLineShapeLike): Out {
+function writeLine(out: PathCommand[], shape: SvgLineShapeLike): PathCommand[] {
   out.length = 0;
-  out.push({ kind: 'move', x: shape.x1, y: shape.y1 } as Out[number]);
-  out.push({ kind: 'line', x: shape.x2, y: shape.y2 } as Out[number]);
+  out.push({ kind: 'move', x: shape.x1, y: shape.y1 });
+  out.push({ kind: 'line', x: shape.x2, y: shape.y2 });
   return out;
 }
 
 /** rect shape를 sharp 또는 rounded rect command sequence로 기록한다. */
-function writeRect<Out extends PathCommand[]>(out: Out, shape: SvgRectShapeLike): Out {
+function writeRect(out: PathCommand[], shape: SvgRectShapeLike): PathCommand[] {
   const x = shape.x;
   const y = shape.y;
   const w = shape.width;
@@ -116,13 +116,13 @@ function writeRect<Out extends PathCommand[]>(out: Out, shape: SvgRectShapeLike)
 }
 
 /** sharp rect를 move + 3 line + close 5 command로 기록한다. */
-function writeSharpRect<Out extends PathCommand[]>(out: Out, x: number, y: number, w: number, h: number): Out {
+function writeSharpRect(out: PathCommand[], x: number, y: number, w: number, h: number): PathCommand[] {
   out.length = 0;
-  out.push({ kind: 'move', x, y } as Out[number]);
-  out.push({ kind: 'line', x: x + w, y } as Out[number]);
-  out.push({ kind: 'line', x: x + w, y: y + h } as Out[number]);
-  out.push({ kind: 'line', x, y: y + h } as Out[number]);
-  out.push({ kind: 'close' } as Out[number]);
+  out.push({ kind: 'move', x, y });
+  out.push({ kind: 'line', x: x + w, y });
+  out.push({ kind: 'line', x: x + w, y: y + h });
+  out.push({ kind: 'line', x, y: y + h });
+  out.push({ kind: 'close' });
   return out;
 }
 
@@ -133,15 +133,15 @@ function writeSharpRect<Out extends PathCommand[]>(out: Out, x: number, y: numbe
  * 우상 corner → 오른쪽 edge → 우하 corner → 아래쪽 edge → 좌하 corner → 왼쪽 edge → 좌상 corner → close.
  * corner cubic handle 길이는 `Kx = rx * KAPPA`, `Ky = ry * KAPPA`로 비대칭 가능하다.
  */
-function writeRoundedRect<Out extends PathCommand[]>(
-  out: Out,
+function writeRoundedRect(
+  out: PathCommand[],
   x: number,
   y: number,
   w: number,
   h: number,
   rx: number,
   ry: number
-): Out {
+): PathCommand[] {
   const kx = KAPPA * rx;
   const ky = KAPPA * ry;
   const x0 = x;
@@ -151,9 +151,9 @@ function writeRoundedRect<Out extends PathCommand[]>(
 
   out.length = 0;
   // 시작점: 위쪽 edge 시작 (x0 + rx, y0)
-  out.push({ kind: 'move', x: x0 + rx, y: y0 } as Out[number]);
+  out.push({ kind: 'move', x: x0 + rx, y: y0 });
   // 위쪽 edge → (x1 - rx, y0)
-  out.push({ kind: 'line', x: x1 - rx, y: y0 } as Out[number]);
+  out.push({ kind: 'line', x: x1 - rx, y: y0 });
   // right-top corner: (x1 - rx, y0) → (x1, y0 + ry)
   out.push({
     kind: 'cubic',
@@ -163,9 +163,9 @@ function writeRoundedRect<Out extends PathCommand[]>(
     y2: y0 + ry - ky,
     x: x1,
     y: y0 + ry,
-  } as Out[number]);
+  });
   // 오른쪽 edge → (x1, y1 - ry)
-  out.push({ kind: 'line', x: x1, y: y1 - ry } as Out[number]);
+  out.push({ kind: 'line', x: x1, y: y1 - ry });
   // right-bottom corner: (x1, y1 - ry) → (x1 - rx, y1)
   out.push({
     kind: 'cubic',
@@ -175,9 +175,9 @@ function writeRoundedRect<Out extends PathCommand[]>(
     y2: y1,
     x: x1 - rx,
     y: y1,
-  } as Out[number]);
+  });
   // 아래쪽 edge → (x0 + rx, y1)
-  out.push({ kind: 'line', x: x0 + rx, y: y1 } as Out[number]);
+  out.push({ kind: 'line', x: x0 + rx, y: y1 });
   // left-bottom corner: (x0 + rx, y1) → (x0, y1 - ry)
   out.push({
     kind: 'cubic',
@@ -187,9 +187,9 @@ function writeRoundedRect<Out extends PathCommand[]>(
     y2: y1 - ry + ky,
     x: x0,
     y: y1 - ry,
-  } as Out[number]);
+  });
   // 왼쪽 edge → (x0, y0 + ry)
-  out.push({ kind: 'line', x: x0, y: y0 + ry } as Out[number]);
+  out.push({ kind: 'line', x: x0, y: y0 + ry });
   // left-top corner: (x0, y0 + ry) → (x0 + rx, y0)
   out.push({
     kind: 'cubic',
@@ -199,28 +199,28 @@ function writeRoundedRect<Out extends PathCommand[]>(
     y2: y0,
     x: x0 + rx,
     y: y0,
-  } as Out[number]);
-  out.push({ kind: 'close' } as Out[number]);
+  });
+  out.push({ kind: 'close' });
   return out;
 }
 
 /** circle shape를 move + 4 cubic + close 6 command로 기록한다 (clockwise). */
-function writeCircle<Out extends PathCommand[]>(out: Out, shape: SvgCircleShapeLike): Out {
+function writeCircle(out: PathCommand[], shape: SvgCircleShapeLike): PathCommand[] {
   return ellipseArcInto(out, shape.cx, shape.cy, shape.r, shape.r, true);
 }
 
 /** ellipse shape를 move + 4 cubic + close 6 command로 기록한다 (clockwise). */
-function writeEllipse<Out extends PathCommand[]>(out: Out, shape: SvgEllipseShapeLike): Out {
+function writeEllipse(out: PathCommand[], shape: SvgEllipseShapeLike): PathCommand[] {
   return ellipseArcInto(out, shape.cx, shape.cy, shape.rx, shape.ry, true);
 }
 
 /** polyline shape를 move + line × (N - 1) command로 기록한다. */
-function writePolyline<Out extends PathCommand[]>(out: Out, shape: SvgPolylineShapeLike): Out {
+function writePolyline(out: PathCommand[], shape: SvgPolylineShapeLike): PathCommand[] {
   return writePolylinePoints(out, shape.points, false);
 }
 
 /** polygon shape를 move + line × (N - 1) + close command로 기록한다. */
-function writePolygon<Out extends PathCommand[]>(out: Out, shape: SvgPolygonShapeLike): Out {
+function writePolygon(out: PathCommand[], shape: SvgPolygonShapeLike): PathCommand[] {
   return writePolylinePoints(out, shape.points, true);
 }
 
@@ -229,17 +229,17 @@ function writePolygon<Out extends PathCommand[]>(out: Out, shape: SvgPolygonShap
  *
  * 점 0개는 빈 out으로 둔다 (close 추가 없음).
  */
-function writePolylinePoints<Out extends PathCommand[]>(out: Out, points: readonly XYInput[], close: boolean): Out {
+function writePolylinePoints(out: PathCommand[], points: readonly XYInput[], close: boolean): PathCommand[] {
   out.length = 0;
   if (points.length === 0) {
     return out;
   }
-  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) } as Out[number]);
+  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) });
   for (let i = 1; i < points.length; i++) {
-    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) } as Out[number]);
+    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) });
   }
   if (close) {
-    out.push({ kind: 'close' } as Out[number]);
+    out.push({ kind: 'close' });
   }
   return out;
 }

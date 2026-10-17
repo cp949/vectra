@@ -39,11 +39,11 @@ export interface PathFromEllipseOptions {
  * @param options segments / startAngle / clockwise
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function fromEllipseInto<Out extends PathCommand[]>(
-  out: Out,
+export function fromEllipseInto(
+  out: PathCommand[],
   ellipse: EllipseLike,
   options?: PathFromEllipseOptions
-): Out {
+): PathCommand[] {
   const segments = options?.segments ?? 64;
   if (!Number.isInteger(segments) || segments < 1) {
     throw new RangeError('fromEllipseInto: segments must be an integer >= 1');
@@ -67,13 +67,13 @@ export function fromEllipseInto<Out extends PathCommand[]>(
   // 첫 점은 MoveCommand
   const firstX = cx + Math.cos(startAngle) * rx;
   const firstY = cy + Math.sin(startAngle) * ry;
-  out.push({ kind: 'move', x: firstX, y: firstY } as Out[number]);
+  out.push({ kind: 'move', x: firstX, y: firstY });
 
   for (let i = 1; i < segments; i++) {
     const angle = startAngle + step * i;
-    out.push({ kind: 'line', x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry } as Out[number]);
+    out.push({ kind: 'line', x: cx + Math.cos(angle) * rx, y: cy + Math.sin(angle) * ry });
   }
 
-  out.push({ kind: 'close' } as Out[number]);
+  out.push({ kind: 'close' });
   return out;
 }

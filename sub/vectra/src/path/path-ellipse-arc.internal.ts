@@ -48,21 +48,21 @@ export function ellipseArcCurvature(rx: number, ry: number, theta: number): numb
  * @param ry y축 반경
  * @param clockwise true면 SVG y-down clockwise 방향, false면 counter-clockwise
  */
-export function ellipseArcInto<Out extends PathCommand[]>(
-  out: Out,
+export function ellipseArcInto(
+  out: PathCommand[],
   cx: number,
   cy: number,
   rx: number,
   ry: number,
   clockwise: boolean
-): Out {
+): PathCommand[] {
   // s = +1이면 y-down clockwise, -1이면 counter-clockwise. handle 길이 = kappa * 반경.
   const s = clockwise ? 1 : -1;
   const ox = KAPPA * rx;
   const oy = KAPPA * ry;
 
   out.length = 0;
-  out.push({ kind: 'move', x: cx + rx, y: cy } as Out[number]);
+  out.push({ kind: 'move', x: cx + rx, y: cy });
 
   // (cx+rx, cy) → (cx, cy+s·ry)
   out.push({
@@ -73,7 +73,7 @@ export function ellipseArcInto<Out extends PathCommand[]>(
     y2: cy + s * ry,
     x: cx,
     y: cy + s * ry,
-  } as Out[number]);
+  });
   // → (cx-rx, cy)
   out.push({
     kind: 'cubic',
@@ -83,7 +83,7 @@ export function ellipseArcInto<Out extends PathCommand[]>(
     y2: cy + s * oy,
     x: cx - rx,
     y: cy,
-  } as Out[number]);
+  });
   // → (cx, cy-s·ry)
   out.push({
     kind: 'cubic',
@@ -93,7 +93,7 @@ export function ellipseArcInto<Out extends PathCommand[]>(
     y2: cy - s * ry,
     x: cx,
     y: cy - s * ry,
-  } as Out[number]);
+  });
   // → (cx+rx, cy)
   out.push({
     kind: 'cubic',
@@ -103,8 +103,8 @@ export function ellipseArcInto<Out extends PathCommand[]>(
     y2: cy - s * oy,
     x: cx + rx,
     y: cy,
-  } as Out[number]);
+  });
 
-  out.push({ kind: 'close' } as Out[number]);
+  out.push({ kind: 'close' });
   return out;
 }

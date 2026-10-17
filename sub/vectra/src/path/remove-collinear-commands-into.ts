@@ -27,11 +27,11 @@ export interface RemoveCollinearOptions {
  * @param options angleTolerance(radian, 기본 1e-10)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function removeCollinearCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function removeCollinearCommandsInto(
+  out: PathCommand[],
   commands: readonly PathCommand[],
   options?: RemoveCollinearOptions
-): Out {
+): PathCommand[] {
   // aliasing 대비: out === commands일 때 clear 전에 snapshot
   const snapshot = commands === (out as readonly PathCommand[]) ? Array.from(commands) : commands;
 
@@ -75,7 +75,7 @@ export function removeCollinearCommandsInto<Out extends PathCommand[]>(
       // B를 보존: 이번 Line이 새 last가 되고, 직전 last가 A가 된다
       beforeX = lastX;
       beforeY = lastY;
-      out.push(cmd as PathCommand as Out[number]);
+      out.push(cmd as PathCommand);
       lastX = cmd.x;
       lastY = cmd.y;
       lastIsLine = true;
@@ -83,7 +83,7 @@ export function removeCollinearCommandsInto<Out extends PathCommand[]>(
     }
 
     // line 외 command는 collinear 대상 아님 — 그대로 통과
-    out.push(cmd as Out[number]);
+    out.push(cmd);
     lastIsLine = false;
 
     // close는 좌표 field가 없다. close 직후 LineCommand는 lastIsLine=false라

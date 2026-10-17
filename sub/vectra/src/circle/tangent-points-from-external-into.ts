@@ -1,6 +1,6 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY } from '../internal/xy';
-import type { CircleLike, XYInput, XYObjectWritable, XYWritable } from '../types';
+import type { CircleLike, XYInput, XYObjectWritable } from '../types';
 
 /**
  * 외부 점에서 원까지의 접선점 2개를 out에 기록한다.
@@ -14,11 +14,11 @@ import type { CircleLike, XYInput, XYObjectWritable, XYWritable } from '../types
  * @param circle 대상 원
  * @param externalPoint 외부 점
  */
-export function tangentPointsFromExternalInto<P extends XYWritable = XYObjectWritable>(
-  out: P[],
+export function tangentPointsFromExternalInto(
+  out: XYObjectWritable[],
   circle: CircleLike,
   externalPoint: XYInput
-): P[] {
+): XYObjectWritable[] {
   out.length = 0;
 
   const r = readCircleRadius(circle);
@@ -42,7 +42,7 @@ export function tangentPointsFromExternalInto<P extends XYWritable = XYObjectWri
 
   if (distSq === rSq) {
     // 경계 위 — 접선점 1개 (externalPoint 자체)
-    const p = { x: px, y: py } as P;
+    const p = { x: px, y: py };
     out.push(p);
     return out;
   }
@@ -66,8 +66,8 @@ export function tangentPointsFromExternalInto<P extends XYWritable = XYObjectWri
   const p2x = cx + r * (ux * cosA + uy * sinA);
   const p2y = cy + r * (-ux * sinA + uy * cosA);
 
-  const obj1 = { x: p1x, y: p1y } as P;
-  const obj2 = { x: p2x, y: p2y } as P;
+  const obj1 = { x: p1x, y: p1y };
+  const obj2 = { x: p2x, y: p2y };
   out.push(obj1, obj2);
 
   return out;

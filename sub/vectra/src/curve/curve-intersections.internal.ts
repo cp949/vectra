@@ -67,15 +67,15 @@ export function computeTA(px: number, py: number, setup: LineSetup): number {
  * 새 IntersectionHit를 생성해 outHits에 push한다.
  * 이미 등록된 hit와 |tB1 - tB2| <= epsilonT 이면 추가하지 않는다.
  */
-export function pushHitIfNew<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function pushHitIfNew(
+  outHits: IntersectionHit[],
   px: number,
   py: number,
   kind: IntersectionKind,
   tA: number,
   tB: number,
   epsilonT: number,
-  makePoint: () => P
+  makePoint: () => XYObjectWritable
 ): void {
   for (const existing of outHits) {
     if (Math.abs(existing.tB - tB) <= epsilonT) return;
@@ -84,14 +84,14 @@ export function pushHitIfNew<P extends XYWritable = XYObjectWritable>(
 }
 
 /** dedupe 없이 새 IntersectionHit를 생성해 outHits에 push한다. */
-export function writeHit<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function writeHit(
+  outHits: IntersectionHit[],
   px: number,
   py: number,
   kind: IntersectionKind,
   tA: number,
   tB: number,
-  makePoint: () => P
+  makePoint: () => XYObjectWritable
 ): void {
   const point = makePoint();
   writeXY(point as XYWritable, px, py);
@@ -114,15 +114,15 @@ export function resolveOptions(options: CurveIntersectionOptions | undefined): {
  * 이미 등록된 hit와 (tA, tB) 쌍이 모두 epsilonT 이내이면 추가하지 않는다.
  * curve × curve subdivision kernel 전용 — line kernel의 pushHitIfNew와 dedupe 기준이 다르다.
  */
-export function pushHitIfNewAB<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function pushHitIfNewAB(
+  outHits: IntersectionHit[],
   px: number,
   py: number,
   kind: IntersectionKind,
   tA: number,
   tB: number,
   epsilonT: number,
-  makePoint: () => P
+  makePoint: () => XYObjectWritable
 ): void {
   for (const existing of outHits) {
     if (Math.abs(existing.tA - tA) <= epsilonT && Math.abs(existing.tB - tB) <= epsilonT) {
@@ -600,7 +600,7 @@ export function splitQuadratic(
 }
 
 /** curve × curve subdivision kernel에 주입하는 타입별 adapter 묶음. */
-export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
+export interface CurveSubdivisionAdapters<A, B> {
   /** curve A sub-curve의 control point hull AABB. */
   hullBoundsA: (sub: A) => [number, number, number, number];
 
@@ -623,7 +623,7 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
    * self-intersection처럼 A/B가 같은 원본을 공유하는 경우 bSub는 무시해도 된다.
    */
   onConverge: (
-    outHits: IntersectionHit<P>[],
+    outHits: IntersectionHit[],
     tA0: number,
     tA1: number,
     tB0: number,
@@ -632,7 +632,7 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
     bSub: B,
     epsilon: number,
     epsilonT: number,
-    makePoint: () => P
+    makePoint: () => XYObjectWritable
   ) => void;
 }
 
@@ -647,8 +647,8 @@ export interface CurveSubdivisionAdapters<A, B, P extends XYWritable> {
  * 음이 아닌 값으로 보장해야 한다. 일반 호출은 depth=0에서 시작한다. zero-span 구간은
  * 양쪽 span이 epsilonT 이하일 때 즉시 수렴한다.
  */
-export function subdivideCurves<A extends readonly number[], B extends readonly number[], P extends XYWritable>(
-  outHits: IntersectionHit<P>[],
+export function subdivideCurves<A extends readonly number[], B extends readonly number[]>(
+  outHits: IntersectionHit[],
   aSub: A,
   tA0: number,
   tA1: number,
@@ -661,8 +661,8 @@ export function subdivideCurves<A extends readonly number[], B extends readonly 
   epsilonT: number,
   maxDepth: number,
   depth: number,
-  makePoint: () => P,
-  adapters: CurveSubdivisionAdapters<A, B, P>
+  makePoint: () => XYObjectWritable,
+  adapters: CurveSubdivisionAdapters<A, B>
 ): void {
   const { hullBoundsA, hullBoundsB, splitA, splitB, skipBox, onConverge } = adapters;
   if (skipBox?.(tA0, tA1, tB0, tB1)) return;

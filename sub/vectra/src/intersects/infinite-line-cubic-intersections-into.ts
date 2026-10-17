@@ -1,12 +1,5 @@
 import { cubicLineIntersectionsInto } from '../curve/cubic-line-intersections-into';
-import type {
-  CurveIntersectionOptions,
-  InfiniteLineLike,
-  IntersectionHit,
-  XYInput,
-  XYObjectWritable,
-  XYWritable,
-} from '../types';
+import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput } from '../types';
 
 /**
  * infinite-line과 cubic Bezier curve의 교차점을 outHits에 push한다.
@@ -23,8 +16,8 @@ import type {
  * @param p3 cubic curve 끝점
  * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
  */
-export function infiniteLineCubicIntersectionsInto<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function infiniteLineCubicIntersectionsInto(
+  outHits: IntersectionHit[],
   line: InfiniteLineLike,
   p0: XYInput,
   p1: XYInput,

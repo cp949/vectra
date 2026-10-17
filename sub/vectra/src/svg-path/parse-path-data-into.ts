@@ -13,7 +13,7 @@ import { parseTokens, tokenize } from './svg-path-parser.internal';
  * @param out parse 결과를 기록할 PathCommand 배열. 성공 시 clear 후 push. data 문자열의 내용과 reference를 공유하지 않는다.
  * @param data SVG path data string (예: "M 10 20 L 30 40 Z")
  */
-export function parsePathDataInto<Out extends PathCommand[]>(out: Out, data: string): boolean {
+export function parsePathDataInto(out: PathCommand[], data: string): boolean {
   const tokens = tokenize(data);
   const commands = parseTokens(tokens);
 

@@ -13,7 +13,7 @@ import type { PathCommand, PolygonLike } from '../types/index';
  * @param polygon 기록할 polygon (`readonly XYInput[]` 또는 `{ points }` object)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function polygonCommandsInto<Out extends PathCommand[]>(out: Out, polygon: PolygonLike): Out {
+export function polygonCommandsInto(out: PathCommand[], polygon: PolygonLike): PathCommand[] {
   const points = readPolygonPoints(polygon);
 
   // clear 전에 길이를 읽어 두면 out과 무관하게 안전하다 (구조상 aliasing 불가).
@@ -23,10 +23,10 @@ export function polygonCommandsInto<Out extends PathCommand[]>(out: Out, polygon
     return out;
   }
 
-  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) } as Out[number]);
+  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) });
   for (let i = 1; i < points.length; i++) {
-    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) } as Out[number]);
+    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) });
   }
-  out.push({ kind: 'close' } as Out[number]);
+  out.push({ kind: 'close' });
   return out;
 }

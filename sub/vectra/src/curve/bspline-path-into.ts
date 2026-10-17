@@ -12,11 +12,11 @@ import { bsplineGetPoints, bsplineSegmentCount } from './bspline.internal';
  * @param options closed 여부 등 옵션
  * @returns out
  */
-export function bsplinePathInto<Out extends PathCommand[]>(
-  out: Out,
+export function bsplinePathInto(
+  out: PathCommand[],
   points: readonly XYInput[],
   options?: BSplineOptions
-): Out {
+): PathCommand[] {
   const closed = options?.closed ?? false;
   const n = points.length;
   const spanCount = bsplineSegmentCount(n, closed);
@@ -34,9 +34,9 @@ export function bsplinePathInto<Out extends PathCommand[]>(
     const c2y = (y1 + 2 * y2) / 3;
     const c3x = (x1 + 4 * x2 + x3) / 6;
     const c3y = (y1 + 4 * y2 + y3) / 6;
-    if (i === 0) out.push({ kind: 'move', x: c0x, y: c0y } as Out[number]);
-    out.push({ kind: 'cubic', x1: c1x, y1: c1y, x2: c2x, y2: c2y, x: c3x, y: c3y } as Out[number]);
+    if (i === 0) out.push({ kind: 'move', x: c0x, y: c0y });
+    out.push({ kind: 'cubic', x1: c1x, y1: c1y, x2: c2x, y2: c2y, x: c3x, y: c3y });
   }
-  if (closed) out.push({ kind: 'close' } as Out[number]);
+  if (closed) out.push({ kind: 'close' });
   return out;
 }

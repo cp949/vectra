@@ -80,11 +80,11 @@ function splitForReverse(commands: readonly PathCommand[]): Subpath[] {
  * @param _options 예약된 옵션. 현재 동작에 영향을 주지 않는다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function reverseCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function reverseCommandsInto(
+  out: PathCommand[],
   commands: readonly PathCommand[],
   _options?: ReverseCommandsOptions
-): Out {
+): PathCommand[] {
   // clear 전에 분해해 aliasing(out === commands)을 안전하게 처리
   const subpaths = commands.length === 0 ? [] : splitForReverse(commands);
 
@@ -96,13 +96,13 @@ export function reverseCommandsInto<Out extends PathCommand[]>(
 
     if (sp.draws.length === 0) {
       // Move만 있는 single point subpath → 그대로
-      out.push({ kind: 'move', x: sp.startX, y: sp.startY } as Out[number]);
+      out.push({ kind: 'move', x: sp.startX, y: sp.startY });
       continue;
     }
 
     // 새 시작점 = 원래 마지막 draw endpoint
     const last = sp.draws[sp.draws.length - 1];
-    out.push({ kind: 'move', x: last.x, y: last.y } as Out[number]);
+    out.push({ kind: 'move', x: last.x, y: last.y });
 
     // draw를 역순으로 순회. draw i는 prevPoint(i) → draws[i].endpoint를 그린다.
     // 반전 시 draws[i]는 draws[i].endpoint → prevPoint(i)로 향한다.
@@ -113,12 +113,12 @@ export function reverseCommandsInto<Out extends PathCommand[]>(
       const prevY = i === 0 ? sp.startY : sp.draws[i - 1].y;
 
       if (d.kind === 'line') {
-        out.push({ kind: 'line', x: prevX, y: prevY } as Out[number]);
+        out.push({ kind: 'line', x: prevX, y: prevY });
       } else if (d.kind === 'quadratic') {
-        out.push({ kind: 'quadratic', x1: d.x1, y1: d.y1, x: prevX, y: prevY } as Out[number]);
+        out.push({ kind: 'quadratic', x1: d.x1, y1: d.y1, x: prevX, y: prevY });
       } else if (d.kind === 'cubic') {
         // control point 순서 swap
-        out.push({ kind: 'cubic', x1: d.x2, y1: d.y2, x2: d.x1, y2: d.y1, x: prevX, y: prevY } as Out[number]);
+        out.push({ kind: 'cubic', x1: d.x2, y1: d.y2, x2: d.x1, y2: d.y1, x: prevX, y: prevY });
       } else {
         // arc: endpoint를 시작점으로, sweep 방향 flip
         out.push({
@@ -130,12 +130,12 @@ export function reverseCommandsInto<Out extends PathCommand[]>(
           sweep: !d.sweep,
           x: prevX,
           y: prevY,
-        } as Out[number]);
+        });
       }
     }
 
     if (sp.closed) {
-      out.push({ kind: 'close' } as Out[number]);
+      out.push({ kind: 'close' });
     }
   }
 

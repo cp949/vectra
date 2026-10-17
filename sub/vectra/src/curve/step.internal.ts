@@ -82,20 +82,16 @@ export function writeStepPolyline(out: XYWritable[], points: readonly XYInput[],
  * @param mode 정규화된 step elbow mode
  * @returns out
  */
-export function writeStepPath<Out extends PathCommand[]>(
-  out: Out,
-  points: readonly XYInput[],
-  mode: StepCurveMode
-): Out {
+export function writeStepPath(out: PathCommand[], points: readonly XYInput[], mode: StepCurveMode): PathCommand[] {
   out.length = 0;
   if (points.length < 2) return out;
   let first = true;
   forEachStepVertex(points, mode, (x, y) => {
     if (first) {
-      out.push({ kind: 'move', x, y } as Out[number]);
+      out.push({ kind: 'move', x, y });
       first = false;
     } else {
-      out.push({ kind: 'line', x, y } as Out[number]);
+      out.push({ kind: 'line', x, y });
     }
   });
   return out;

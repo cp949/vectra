@@ -1,5 +1,5 @@
 import { readX, readY } from '../internal/xy';
-import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritable, XYWritable } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritable } from '../types';
 import { cubicClassify } from './cubic-classify';
 import {
   type CubicFlat,
@@ -26,8 +26,8 @@ import {
  * split boundary(tA1 ≈ tB0 ≈ 0.5)와 endpoint-to-endpoint(closed loop의 t=0/t=1)에서만 만나는
  * false hit는 제거한다.
  */
-function onConvergeSelf<P extends XYWritable>(
-  outHits: IntersectionHit<P>[],
+function onConvergeSelf(
+  outHits: IntersectionHit[],
   tA0: number,
   tA1: number,
   tB0: number,
@@ -36,7 +36,7 @@ function onConvergeSelf<P extends XYWritable>(
   _bSub: CubicFlat,
   epsilon: number,
   epsilonT: number,
-  makePoint: () => P
+  makePoint: () => XYObjectWritable
 ): void {
   const tAMid = (tA0 + tA1) * 0.5;
   const tBMid = (tB0 + tB1) * 0.5;
@@ -105,8 +105,8 @@ function onConvergeSelf<P extends XYWritable>(
  * @param p3 curve 끝점
  * @param options intersection kernel 옵션
  */
-export function cubicSelfIntersectionsInto<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function cubicSelfIntersectionsInto(
+  outHits: IntersectionHit[],
   p0: XYInput,
   p1: XYInput,
   p2: XYInput,
@@ -120,7 +120,7 @@ export function cubicSelfIntersectionsInto<P extends XYWritable = XYObjectWritab
 
   const { epsilon, epsilonT } = resolveOptions(options);
   const maxDepth = options?.maxDepth ?? DEFAULT_MAX_DEPTH;
-  const makePoint = () => ({ x: 0, y: 0 }) as unknown as P;
+  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
 
   const p0x = readX(p0);
   const p0y = readY(p0);

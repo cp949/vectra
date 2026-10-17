@@ -30,12 +30,12 @@ function copyCommand(command: PathCommand): PathCommand {
  * @param options flatten 옵션 (flatness 기본 0.5, maxRecursion 기본 32) — direction 판정에 사용한다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function orientCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function orientCommandsInto(
+  out: PathCommand[],
   commands: readonly PathCommand[],
   clockwise: boolean,
   options?: PathMeasurementOptions
-): Out {
+): PathCommand[] {
   if (commands.length === 0) {
     out.length = 0;
     return out;
@@ -47,7 +47,7 @@ export function orientCommandsInto<Out extends PathCommand[]>(
     // clear 전에 snapshot해 aliasing(out === commands)을 안전하게 처리
     const snapshot = commands === (out as readonly PathCommand[]) ? Array.from(commands) : commands;
     out.length = 0;
-    for (const cmd of snapshot) out.push(copyCommand(cmd) as Out[number]);
+    for (const cmd of snapshot) out.push(copyCommand(cmd));
     return out;
   }
 

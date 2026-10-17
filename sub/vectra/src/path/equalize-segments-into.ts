@@ -25,7 +25,7 @@ function countDrawSegments(commands: readonly PathCommand[]): number {
  * 사이 morph/interpolation이 cubic space 안에 머물러 morph 시점 command-kind
  * 보정이 불필요하기 때문이다.
  */
-function copyWithPadding<Out extends PathCommand[]>(out: Out, commands: readonly PathCommand[], extra: number): void {
+function copyWithPadding(out: PathCommand[], commands: readonly PathCommand[], extra: number): void {
   out.length = 0;
 
   // 시작점 추적: 첫 command가 Move가 아니면 암묵적 origin (normalize 정책과 일치)
@@ -37,14 +37,14 @@ function copyWithPadding<Out extends PathCommand[]>(out: Out, commands: readonly
   // draw가 없으면 (empty / Move-only) 시작점에 zero-length cubic을 전부 삽입한다.
   if (drawTotal === 0) {
     for (const cmd of commands) {
-      out.push(cmd as Out[number]);
+      out.push(cmd);
       if (cmd.kind === 'move') {
         curX = cmd.x;
         curY = cmd.y;
       }
     }
     for (let i = 0; i < extra; i++) {
-      out.push({ kind: 'cubic', x1: curX, y1: curY, x2: curX, y2: curY, x: curX, y: curY } as Out[number]);
+      out.push({ kind: 'cubic', x1: curX, y1: curY, x2: curX, y2: curY, x: curX, y: curY });
     }
     return;
   }
@@ -61,13 +61,13 @@ function copyWithPadding<Out extends PathCommand[]>(out: Out, commands: readonly
 
   const pushPaddingAt = (x: number, y: number, count: number): void => {
     for (let k = 0; k < count; k++) {
-      out.push({ kind: 'cubic', x1: x, y1: y, x2: x, y2: y, x, y } as Out[number]);
+      out.push({ kind: 'cubic', x1: x, y1: y, x2: x, y2: y, x, y });
     }
   };
 
   for (const cmd of commands) {
     if (cmd.kind === 'move') {
-      out.push(cmd as Out[number]);
+      out.push(cmd);
       curX = cmd.x;
       curY = cmd.y;
       subX = cmd.x;
@@ -79,7 +79,7 @@ function copyWithPadding<Out extends PathCommand[]>(out: Out, commands: readonly
 
     if (cmd.kind === 'close') {
       const noOp = prevWasMove || !subpathOpen;
-      out.push(cmd as Out[number]);
+      out.push(cmd);
       if (!noOp) {
         // Close도 draw segment 1개. 경계에서 비례 분산 삽입.
         const before = insertedUpTo(drawIndex);
@@ -104,7 +104,7 @@ function copyWithPadding<Out extends PathCommand[]>(out: Out, commands: readonly
       subY = curY;
       subpathOpen = true;
     }
-    out.push(cmd as Out[number]);
+    out.push(cmd);
     curX = cmd.x;
     curY = cmd.y;
     const before = insertedUpTo(drawIndex);

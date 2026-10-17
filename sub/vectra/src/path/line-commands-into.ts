@@ -12,9 +12,9 @@ import type { PathCommand, XYInput } from '../types/index';
  * @param to 끝점 (XYLike 또는 XYTuple)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function lineCommandsInto<Out extends PathCommand[]>(out: Out, from: XYInput, to: XYInput): Out {
+export function lineCommandsInto(out: PathCommand[], from: XYInput, to: XYInput): PathCommand[] {
   out.length = 0;
-  out.push({ kind: 'move', x: readX(from), y: readY(from) } as Out[number]);
-  out.push({ kind: 'line', x: readX(to), y: readY(to) } as Out[number]);
+  out.push({ kind: 'move', x: readX(from), y: readY(from) });
+  out.push({ kind: 'line', x: readX(to), y: readY(to) });
   return out;
 }

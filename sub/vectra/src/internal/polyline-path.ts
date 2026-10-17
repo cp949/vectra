@@ -14,7 +14,7 @@ import { readX, readY } from './xy';
  * @param out command를 기록할 mutable PathCommand 배열
  * @param polyline 기록할 polyline (`readonly XYInput[]` 또는 `{ points }` object)
  */
-export function writePolylineCommandsInto<Out extends PathCommand[]>(out: Out, polyline: PolylineLike): Out {
+export function writePolylineCommandsInto(out: PathCommand[], polyline: PolylineLike): PathCommand[] {
   const points = readPolylinePoints(polyline);
 
   // out과 polyline은 서로 다른 element type이라 구조상 aliasing이 불가능하다. clear 후 바로 채운다.
@@ -24,9 +24,9 @@ export function writePolylineCommandsInto<Out extends PathCommand[]>(out: Out, p
     return out;
   }
 
-  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) } as Out[number]);
+  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) });
   for (let i = 1; i < points.length; i++) {
-    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) } as Out[number]);
+    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) });
   }
   return out;
 }

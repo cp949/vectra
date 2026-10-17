@@ -20,11 +20,11 @@ export type { EllipseArcOptions };
  * @param options 진행 방향 옵션. 생략 시 `clockwise: true`.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function ellipseCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function ellipseCommandsInto(
+  out: PathCommand[],
   ellipse: EllipseLike,
   options?: EllipseArcOptions
-): Out {
+): PathCommand[] {
   const center = readEllipseCenter(ellipse);
   const rx = readEllipseRadiusX(ellipse);
   const ry = readEllipseRadiusY(ellipse);

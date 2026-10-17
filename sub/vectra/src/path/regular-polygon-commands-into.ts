@@ -17,13 +17,13 @@ import type { PathCommand, RegularPolygonOptions, XYInput } from '../types/index
  * @param options startAngle/clockwise 옵션
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function regularPolygonCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function regularPolygonCommandsInto(
+  out: PathCommand[],
   center: XYInput,
   radius: number,
   sides: number,
   options?: RegularPolygonOptions
-): Out {
+): PathCommand[] {
   out.length = 0;
   if (!Number.isInteger(sides) || sides < 3) {
     // non-integer, NaN, ±Infinity, < 3 모두 여기서 걸린다.
@@ -43,15 +43,15 @@ export function regularPolygonCommandsInto<Out extends PathCommand[]>(
     kind: 'move',
     x: cx + vertexRadius * Math.cos(startAngle),
     y: cy + vertexRadius * Math.sin(startAngle),
-  } as Out[number]);
+  });
   for (let i = 1; i < sides; i++) {
     const angle = startAngle + step * i;
     out.push({
       kind: 'line',
       x: cx + vertexRadius * Math.cos(angle),
       y: cy + vertexRadius * Math.sin(angle),
-    } as Out[number]);
+    });
   }
-  out.push({ kind: 'close' } as Out[number]);
+  out.push({ kind: 'close' });
   return out;
 }

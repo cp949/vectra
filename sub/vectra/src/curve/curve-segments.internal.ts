@@ -24,14 +24,14 @@ export function assertSamplesPerSegment(steps: number): void {
  * @param segCount segment 수
  * @returns out
  */
-export function cubicSegmentsToPathInto<Out extends PathCommand[]>(
-  out: Out,
+export function cubicSegmentsToPathInto(
+  out: PathCommand[],
   segments: readonly number[],
   segCount: number
-): Out {
+): PathCommand[] {
   out.length = 0;
   if (segCount <= 0) return out;
-  out.push({ kind: 'move', x: segments[0], y: segments[1] } as Out[number]);
+  out.push({ kind: 'move', x: segments[0], y: segments[1] });
   for (let s = 0; s < segCount; s++) {
     const o = s * 8;
     out.push({
@@ -42,7 +42,7 @@ export function cubicSegmentsToPathInto<Out extends PathCommand[]>(
       y2: segments[o + 5],
       x: segments[o + 6],
       y: segments[o + 7],
-    } as Out[number]);
+    });
   }
   return out;
 }

@@ -6,11 +6,11 @@ import { createSegmentFlattener } from './segment-flattener.internal';
  * commands를 out point 배열에 polyline으로 기록하고 out을 반환한다.
  * public `flattenInto`와 path relation helper가 같은 flatten 정책을 공유한다.
  */
-export function flattenPathInto<Out extends XYObjectWritable[]>(
-  out: Out,
+export function flattenPathInto(
+  out: XYObjectWritable[],
   commands: readonly PathCommand[],
   options?: PathFlattenOptions
-): Out {
+): XYObjectWritable[] {
   out.length = 0;
 
   if (commands.length === 0) {
@@ -20,7 +20,7 @@ export function flattenPathInto<Out extends XYObjectWritable[]>(
   const flattener = createSegmentFlattener(options);
 
   const pushPoint = (x: number, y: number): void => {
-    out.push({ x, y } as Out[number]);
+    out.push({ x, y });
   };
 
   const lastPointEquals = (x: number, y: number): boolean => {

@@ -13,6 +13,6 @@ import type { PathCommand, PolylineLike } from '../types/index';
  * @param polyline 기록할 polyline (`readonly XYInput[]` 또는 `{ points }` object)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function polylineCommandsInto<Out extends PathCommand[]>(out: Out, polyline: PolylineLike): Out {
+export function polylineCommandsInto(out: PathCommand[], polyline: PolylineLike): PathCommand[] {
   return writePolylineCommandsInto(out, polyline);
 }

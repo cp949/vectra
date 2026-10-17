@@ -19,14 +19,14 @@ import type { PathCommand, StarOptions, XYInput } from '../types/index';
  * @param options startAngle/clockwise 옵션
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function starCommandsInto<Out extends PathCommand[]>(
-  out: Out,
+export function starCommandsInto(
+  out: PathCommand[],
   center: XYInput,
   innerRadius: number,
   outerRadius: number,
   points: number,
   options?: StarOptions
-): Out {
+): PathCommand[] {
   out.length = 0;
   if (!Number.isInteger(points) || points < 3) {
     // non-integer, NaN, ±Infinity, < 3 모두 여기서 걸린다.
@@ -46,12 +46,12 @@ export function starCommandsInto<Out extends PathCommand[]>(
     kind: 'move',
     x: cx + outerRadius * Math.cos(startAngle),
     y: cy + outerRadius * Math.sin(startAngle),
-  } as Out[number]);
+  });
   for (let i = 1; i < total; i++) {
     const angle = startAngle + step * i;
     const r = i % 2 === 0 ? outerRadius : innerRadius;
-    out.push({ kind: 'line', x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) } as Out[number]);
+    out.push({ kind: 'line', x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
   }
-  out.push({ kind: 'close' } as Out[number]);
+  out.push({ kind: 'close' });
   return out;
 }

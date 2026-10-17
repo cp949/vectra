@@ -19,10 +19,10 @@ import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types
  * @param commands flatten할 path command sequence
  * @param options flatten 옵션 (flatness, maxRecursion)
  */
-export function fromPathInto<Out extends XYObjectWritable[]>(
-  outPoints: Out,
+export function fromPathInto(
+  outPoints: XYObjectWritable[],
   commands: readonly PathCommand[],
   options?: PathFlattenOptions
-): Out {
+): XYObjectWritable[] {
   return flattenPathInto(outPoints, commands, options);
 }

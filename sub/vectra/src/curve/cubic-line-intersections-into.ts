@@ -1,12 +1,5 @@
 import { readX, readY } from '../internal/xy';
-import type {
-  CurveIntersectionOptions,
-  InfiniteLineLike,
-  IntersectionHit,
-  XYInput,
-  XYObjectWritable,
-  XYWritable,
-} from '../types';
+import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput, XYObjectWritable } from '../types';
 import { solveCubicInClosedUnit } from './cubic-solve.internal';
 import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-intersections.internal';
 
@@ -28,8 +21,8 @@ const COEFFICIENT_REL_EPS = 1e-12;
  * @param line infinite-line (origin + direction)
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
  */
-export function cubicLineIntersectionsInto<P extends XYWritable = XYObjectWritable>(
-  outHits: IntersectionHit<P>[],
+export function cubicLineIntersectionsInto(
+  outHits: IntersectionHit[],
   p0: XYInput,
   p1: XYInput,
   p2: XYInput,
@@ -83,7 +76,7 @@ export function cubicLineIntersectionsInto<P extends XYWritable = XYObjectWritab
   const normalLength = Math.hypot(nx, ny);
   const coefficientNoise = COEFFICIENT_REL_EPS * normalLength * coordinateScale;
 
-  const makePoint = (): P => ({}) as P;
+  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
 
   // curve 전체가 line 위에 놓이는 overlap case는 현재 result type이 interval을 표현하지 못한다.
   // endpoint touch로 축약하면 caller가 finite point 교차로 오해하므로 hit 없음으로 둔다.

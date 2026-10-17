@@ -20,11 +20,11 @@ import {
  * @param options tension(0=기본), closed 옵션
  * @returns out
  */
-export function cardinalPathInto<Out extends PathCommand[]>(
-  out: Out,
+export function cardinalPathInto(
+  out: PathCommand[],
   points: readonly XYInput[],
   options?: CardinalOptions
-): Out {
+): PathCommand[] {
   const tension = options?.tension ?? 0;
   const closed = options?.closed ?? false;
   const n = points.length;
@@ -39,9 +39,9 @@ export function cardinalPathInto<Out extends PathCommand[]>(
     const [x0, y0, x1, y1, x2, y2, x3, y3] = cardinalGetPoints(points, si, closed);
     const [, , c1x, c1y, c2x, c2y, c3x, c3y] = cardinalSegmentToCubic(x0, y0, x1, y1, x2, y2, x3, y3, clampedTension);
 
-    if (si === 0) out.push({ kind: 'move', x: x1, y: y1 } as Out[number]);
-    out.push({ kind: 'cubic', x1: c1x, y1: c1y, x2: c2x, y2: c2y, x: c3x, y: c3y } as Out[number]);
+    if (si === 0) out.push({ kind: 'move', x: x1, y: y1 });
+    out.push({ kind: 'cubic', x1: c1x, y1: c1y, x2: c2x, y2: c2y, x: c3x, y: c3y });
   }
-  if (closed) out.push({ kind: 'close' } as Out[number]);
+  if (closed) out.push({ kind: 'close' });
   return out;
 }
