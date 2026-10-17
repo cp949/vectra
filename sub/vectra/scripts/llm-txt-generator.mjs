@@ -39,7 +39,9 @@ function extractExportNames(sourceText) {
     }
   }
 
-  for (const match of sourceText.matchAll(/export\s+(?:declare\s+)?(?:function|type|interface|class|const|enum)\s+([A-Za-z_$][\w$]*)/g)) {
+  for (const match of sourceText.matchAll(
+    /export\s+(?:declare\s+)?(?:function|type|interface|class|const|enum)\s+([A-Za-z_$][\w$]*)/g
+  )) {
     const name = match[1];
     if (!names.includes(name)) {
       names.push(name);
