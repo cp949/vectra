@@ -43,10 +43,8 @@ export function solveAsaInto<Out extends SideSet>(
     return false;
   }
 
+  // 0 < includedOppositeAngle <= Math.PI라 Math.sin 결과는 양수다 (Math.sin(Math.PI)는 1.22e-16).
   const includedSine = Math.sin(includedOppositeAngle);
-  if (includedSine <= 0) {
-    return false;
-  }
 
   out.a = (sideBetween * Math.sin(oppositeAngle)) / includedSine;
   out.b = (sideBetween * Math.sin(otherAngle)) / includedSine;
