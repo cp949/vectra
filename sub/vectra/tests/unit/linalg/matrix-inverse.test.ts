@@ -333,4 +333,18 @@ describe('inverse — square matrix inverse (companion)', () => {
   test('custom epsilon으로 작은 pivot을 singular로 판정한다', () => {
     expect(inverse([[1e-12]], { epsilon: 1e-9 })).toBeUndefined();
   });
+
+  test('결과 entry에 -0이 남지 않는다', () => {
+    // inverse = [[-1, 0], [0, -1]]. 0 자리에 -0이 남지 않아야 한다.
+    const result = inverse([
+      [-1, -0],
+      [-0, -1],
+    ]);
+    expect(result).toEqual([
+      [-1, 0],
+      [0, -1],
+    ]);
+    expect(Object.is(result?.[0][1], -0)).toBe(false);
+    expect(Object.is(result?.[1][0], -0)).toBe(false);
+  });
 });

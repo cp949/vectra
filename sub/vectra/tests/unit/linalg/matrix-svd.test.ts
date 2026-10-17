@@ -420,6 +420,15 @@ describe('singularValueDecomposition — convergence cap / -0 cleanup', () => {
     }
   });
 
+  test('right singular vector의 0 성분에도 -0이 남지 않는다', () => {
+    // 정규화 전 값이 -0인 성분이 right singular vector에 생기는 입력이다.
+    const result = singularValueDecomposition([[-1, 2, 0]]);
+    expect(result).toBeDefined();
+    if (result === undefined) return;
+    expect(result.rightSingularVectors[2][0]).toBe(0);
+    expect(Object.is(result.rightSingularVectors[2][0], -0)).toBe(false);
+  });
+
   test('1x1 matrix [[a]]는 singular value [|a|]를 반환한다', () => {
     const result = singularValueDecomposition([[7]]);
     expect(result).toBeDefined();

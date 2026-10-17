@@ -466,44 +466,12 @@
       "to": "path/distance-to-point.ts"
     },
     {
-      "from": "path/closest-point-into.ts",
-      "to": "curve/arc-flatten-into.ts"
-    },
-    {
-      "from": "path/closest-point-into.ts",
-      "to": "curve/cubic-flatten-into.ts"
-    },
-    {
-      "from": "path/closest-point-into.ts",
-      "to": "curve/endpoint-arc-to-center-into.ts"
-    },
-    {
-      "from": "path/closest-point-into.ts",
-      "to": "curve/quadratic-flatten-into.ts"
-    },
-    {
       "from": "path/contains-point.ts",
       "to": "path/flatten-into.ts"
     },
     {
       "from": "path/curvature-at-length.ts",
       "to": "curve/endpoint-arc-to-center-into.ts"
-    },
-    {
-      "from": "path/distance-to-point.ts",
-      "to": "curve/arc-flatten-into.ts"
-    },
-    {
-      "from": "path/distance-to-point.ts",
-      "to": "curve/cubic-flatten-into.ts"
-    },
-    {
-      "from": "path/distance-to-point.ts",
-      "to": "curve/endpoint-arc-to-center-into.ts"
-    },
-    {
-      "from": "path/distance-to-point.ts",
-      "to": "curve/quadratic-flatten-into.ts"
     },
     {
       "from": "path/draw-direction.ts",
@@ -516,22 +484,6 @@
     {
       "from": "path/is-path-command-list.ts",
       "to": "path/is-path-command.ts"
-    },
-    {
-      "from": "path/length.ts",
-      "to": "curve/arc-flatten-into.ts"
-    },
-    {
-      "from": "path/length.ts",
-      "to": "curve/cubic-flatten-into.ts"
-    },
-    {
-      "from": "path/length.ts",
-      "to": "curve/endpoint-arc-to-center-into.ts"
-    },
-    {
-      "from": "path/length.ts",
-      "to": "curve/quadratic-flatten-into.ts"
     },
     {
       "from": "path/normal-at-length-into.ts",
@@ -554,44 +506,12 @@
       "to": "path/split-at-length-into.ts"
     },
     {
-      "from": "path/point-at-length-into.ts",
-      "to": "curve/arc-flatten-into.ts"
-    },
-    {
-      "from": "path/point-at-length-into.ts",
-      "to": "curve/cubic-flatten-into.ts"
-    },
-    {
-      "from": "path/point-at-length-into.ts",
-      "to": "curve/endpoint-arc-to-center-into.ts"
-    },
-    {
-      "from": "path/point-at-length-into.ts",
-      "to": "curve/quadratic-flatten-into.ts"
-    },
-    {
       "from": "path/point-at-length-ratio-into.ts",
       "to": "path/length.ts"
     },
     {
       "from": "path/point-at-length-ratio-into.ts",
       "to": "path/point-at-length-into.ts"
-    },
-    {
-      "from": "path/properties-at-length.ts",
-      "to": "curve/arc-flatten-into.ts"
-    },
-    {
-      "from": "path/properties-at-length.ts",
-      "to": "curve/cubic-flatten-into.ts"
-    },
-    {
-      "from": "path/properties-at-length.ts",
-      "to": "curve/endpoint-arc-to-center-into.ts"
-    },
-    {
-      "from": "path/properties-at-length.ts",
-      "to": "curve/quadratic-flatten-into.ts"
     },
     {
       "from": "path/rounded-rect-commands-into.ts",

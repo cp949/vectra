@@ -1,11 +1,8 @@
-import { arcFlattenInto } from '../curve/arc-flatten-into';
-import { cubicFlattenInto } from '../curve/cubic-flatten-into';
-import { endpointArcToCenterInto } from '../curve/endpoint-arc-to-center-into';
-import { quadraticFlattenInto } from '../curve/quadratic-flatten-into';
 import { segDistSq } from '../internal/polyline';
 import { readX, readY } from '../internal/xy';
-import type { CenterArcWritable, PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable } from '../types/index';
+import type { PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 interface DistanceSearchState {
   hasCandidate: boolean;
@@ -55,23 +52,7 @@ export function distanceToPoint(
 
   const qx = readX(point);
   const qy = readY(point);
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
-  // curve segment를 flatten할 때 재사용하는 임시 버퍼
-  const curveBuffer: XYObjectWritable[] = [];
-  // arc endpoint→center 변환 결과를 담는 재사용 구조체
-  const centerArcBuf: CenterArcWritable = {
-    cx: 0,
-    cy: 0,
-    rx: 0,
-    ry: 0,
-    xRotation: 0,
-    startAngle: 0,
-    endAngle: 0,
-    sweep: false,
-  };
+  const flattener = createSegmentFlattener(options);
 
   let hasSegment = false;
   const state: DistanceSearchState = { hasCandidate: false, minDistSq: Infinity };
@@ -99,42 +80,8 @@ export function distanceToPoint(
       return;
     }
 
-    if (seg.kind === 'quadratic') {
-      // quadratic: 이 segment만 flatten한 뒤 polyline에서 탐색
-      const cmd = seg.command;
-      quadraticFlattenInto(
-        curveBuffer,
-        { x: seg.fromX, y: seg.fromY },
-        { x: cmd.x1, y: cmd.y1 },
-        { x: cmd.x, y: cmd.y },
-        flatOpts
-      );
-      updateMinDistSqFromPolyline(curveBuffer, qx, qy, state);
-      return;
-    }
-
-    if (seg.kind === 'cubic') {
-      // cubic: 이 segment만 flatten한 뒤 polyline에서 탐색
-      const cmd = seg.command;
-      cubicFlattenInto(
-        curveBuffer,
-        { x: seg.fromX, y: seg.fromY },
-        { x: cmd.x1, y: cmd.y1 },
-        { x: cmd.x2, y: cmd.y2 },
-        { x: cmd.x, y: cmd.y },
-        flatOpts
-      );
-      updateMinDistSqFromPolyline(curveBuffer, qx, qy, state);
-      return;
-    }
-
-    if (seg.kind === 'arc') {
-      // arc: endpoint form → center form 변환 후 flatten하여 탐색
-      endpointArcToCenterInto(centerArcBuf, { x: seg.fromX, y: seg.fromY }, seg.command);
-      arcFlattenInto(curveBuffer, centerArcBuf, flatOpts);
-      updateMinDistSqFromPolyline(curveBuffer, qx, qy, state);
-      return;
-    }
+    // 곡선: 이 segment만 flatten한 뒤 polyline에서 탐색
+    updateMinDistSqFromPolyline(flattener.flatten(seg), qx, qy, state);
   });
 
   if (!hasSegment) {

@@ -1,23 +1,6 @@
 import type { CenterArcLike, LengthOptions } from '../types';
-import { isDegenerateRadii } from './arc.internal';
-
-const GL5_NODES = [0, 0.5384693101, -0.5384693101, 0.9061798459, -0.9061798459] as const;
-const GL5_WEIGHTS = [0.5688888889, 0.4786286705, 0.4786286705, 0.2369268851, 0.2369268851] as const;
-
-function speedAtTheta(rx: number, ry: number, theta: number): number {
-  return Math.hypot(rx * Math.sin(theta), ry * Math.cos(theta));
-}
-
-function integrateSegment(rx: number, ry: number, a: number, b: number): number {
-  const halfLen = (b - a) * 0.5;
-  const mid = (a + b) * 0.5;
-  let sum = 0;
-  for (let i = 0; i < GL5_NODES.length; i++) {
-    const theta = halfLen * GL5_NODES[i] + mid;
-    sum += GL5_WEIGHTS[i] * speedAtTheta(rx, ry, theta);
-  }
-  return halfLen * sum;
-}
+import { centerArcSpeed } from './curve-speed.internal';
+import { speedLengthAtT } from './speed-length.internal';
 
 /**
  * center form arc의 t=0부터 t까지의 arc length를 반환한다.
@@ -32,25 +15,5 @@ function integrateSegment(rx: number, ry: number, a: number, b: number): number 
  * @param options.segments θ 구간 분할 수. 기본값: 12
  */
 export function arcLengthAtT(centerArc: CenterArcLike, t: number, options?: LengthOptions): number {
-  if (t <= 0) return 0;
-
-  const { rx, ry, startAngle, endAngle } = centerArc;
-
-  if (isDegenerateRadii(rx, ry)) return 0;
-  if (startAngle === endAngle) return 0;
-
-  const tClamped = t >= 1 ? 1 : t;
-  const thetaEnd = startAngle + (endAngle - startAngle) * tClamped;
-
-  const segments = options?.segments ?? 12;
-  const step = (thetaEnd - startAngle) / segments;
-  let total = 0;
-
-  for (let i = 0; i < segments; i++) {
-    const a = startAngle + i * step;
-    const b = startAngle + (i + 1) * step;
-    total += integrateSegment(rx, ry, a, b);
-  }
-
-  return Math.abs(total);
+  return speedLengthAtT(centerArcSpeed(centerArc), t, options);
 }

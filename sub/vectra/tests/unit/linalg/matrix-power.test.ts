@@ -465,4 +465,21 @@ describe('pow — matrix power (companion)', () => {
   test('intermediate overflow는 RangeError를 던진다', () => {
     expect(() => pow([[Number.MAX_VALUE]], 4)).toThrow(RangeError);
   });
+
+  test('exponent 1의 입력 -0은 0으로 canonicalize한다', () => {
+    // exponent 1은 곱셈 없이 deep copy라 입력 -0이 그대로 남을 수 있다.
+    const result = pow(
+      [
+        [1, -0],
+        [-0, 1],
+      ],
+      1
+    );
+    expect(result).toEqual([
+      [1, 0],
+      [0, 1],
+    ]);
+    expect(Object.is(result[0][1], -0)).toBe(false);
+    expect(Object.is(result[1][0], -0)).toBe(false);
+  });
 });

@@ -1,6 +1,7 @@
 import { polylineTotalLength } from '../internal/polyline';
-import type { PathCommand, PathLocation, PathMeasurementOptions, XYObjectWritable } from '../types/index';
-import { createCenterArcBuf, flattenDrawSegmentInto, forEachDrawSegment } from './path-segments.internal';
+import type { PathCommand, PathLocation, PathMeasurementOptions } from '../types/index';
+import { forEachDrawSegment } from './path-segments.internal';
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 /**
  * `PathLocation`이 가리키는 path 위치까지의 cumulative arc-length를 반환한다.
@@ -30,12 +31,7 @@ export function lengthAtLocation(
   if (!Number.isInteger(segmentIndex) || segmentIndex < 0) return undefined;
   if (!Number.isFinite(t)) return undefined;
 
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
-  const segBuf: XYObjectWritable[] = [];
-  const centerArcBuf = createCenterArcBuf();
+  const flattener = createSegmentFlattener(options);
 
   const clampedT = Math.max(0, Math.min(1, t));
 
@@ -48,8 +44,7 @@ export function lengthAtLocation(
     if (found) return;
 
     drawIndex += 1;
-    flattenDrawSegmentInto(segBuf, seg, flatOpts, centerArcBuf);
-    const segLen = polylineTotalLength(segBuf);
+    const segLen = polylineTotalLength(flattener.flatten(seg));
 
     if (drawIndex === segmentIndex) {
       result = cumulativeLen + clampedT * segLen;

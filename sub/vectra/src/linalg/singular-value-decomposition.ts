@@ -24,6 +24,7 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  *
  * thin SVD 결과 shape: `leftSingularVectors`는 `m x rank`, `rightSingularVectors`는 `n x rank`,
  * `singularValues.length === rank`. `rank === 0`이면 세 collection 모두 `[]`이다.
+ * 결과 entry의 `-0`은 `+0`으로 canonicalize한다.
  *
  * 결과는 fixed plain object를 직접 반환한다(`*Into` variant를 제공하지 않는다).
  *

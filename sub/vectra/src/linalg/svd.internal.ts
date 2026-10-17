@@ -1,3 +1,4 @@
+import { firstNonZeroSignOfColumn } from '../internal/first-nonzero-sign';
 import { jacobiSymmetricEigen, type ResolvedIterationOptions } from './jacobi-eigen.internal';
 import type { MatLike, MatrixShape, SingularValueDecomposition } from './types';
 
@@ -97,14 +98,7 @@ export function computeThinSingularValueDecomposition(
     const sourceColumn = entries[k].column;
     singularValues[k] = sigma;
 
-    let sign = 1;
-    for (let r = 0; r < n; r++) {
-      const v = vectors[r][sourceColumn];
-      if (v !== 0) {
-        sign = v < 0 ? -1 : 1;
-        break;
-      }
-    }
+    const sign = firstNonZeroSignOfColumn(vectors, sourceColumn, n);
 
     for (let r = 0; r < n; r++) {
       const v = sign * vectors[r][sourceColumn];

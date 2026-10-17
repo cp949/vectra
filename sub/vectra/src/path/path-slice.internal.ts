@@ -1,5 +1,5 @@
-import type { CenterArcWritable, PathCommand, XYObjectWritable } from '../types/index';
-import { createCenterArcBuf, type DrawSegment, forEachDrawSegment } from './path-segments.internal';
+import type { CenterArcWritable, PathCommand, PathMeasurementOptions } from '../types/index';
+import { type DrawSegment, forEachDrawSegment } from './path-segments.internal';
 import { writeArcSplit } from './path-slice-arc-writer.internal';
 import { writeCubicSplit, writeQuadraticSplit } from './path-slice-curve-writers.internal';
 import { writeCloseSplit, writeLineSplit } from './path-slice-line-writers.internal';
@@ -8,6 +8,7 @@ import {
   appendRemainingCommands,
   measureSegmentLength,
 } from './path-slice-shared.internal';
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 /**
  * splitAtLengthInto에서 두 path command sequence(outA, outB)를 만들기 위한 path-local
@@ -46,9 +47,15 @@ function writeSplitSegment(
  * 발생한다. 이 함수는 outA / outB가 비어 있는 상태로 시작한다고 가정하고, split 전 commands는
  * outA에, split 후 commands는 outB에 기록한다.
  *
+ * 길이 척도가 둘이다.
+ * - segment 선택(`distance < cumulativeLen + segLen`)은 `measureSegmentLength`, 즉 flatten 폴리라인 길이다.
+ * - segment 안의 t는 `local`을 곡선 호 길이로 해석해 `*TAtLength`(GL5)로 구한다.
+ * - 폴리라인이 곡선보다 짧아 분할점이 `pointAtLength` 위치와 어긋날 수 있다. 크기는 `splitAtLengthInto` JSDoc에 있다.
+ *
  * empty path / move-only path / `distance <= 0` / `distance >= totalLength` 같은 경계 처리는
  * caller(`splitAtLengthInto`)가 담당한다. 여기서는 split 발생 케이스만 처리한다.
  *
+ * @param options flatten 옵션 (flatness, maxRecursion). 기본값은 flattener가 채운다.
  * @returns split 발생 시 true. distance가 어떤 segment 안에서도 발견되지 않으면 false (caller가
  *   distance >= totalLength fallback을 적용해야 한다).
  */
@@ -57,11 +64,10 @@ export function splitCommandsAtLength(
   outB: PathCommand[],
   commands: readonly PathCommand[],
   distance: number,
-  flatOpts: { flatness: number; maxRecursion: number }
+  options?: PathMeasurementOptions
 ): boolean {
-  // segBuf, centerArcBuf는 함수 로컬 재사용 버퍼 — 모듈 레벨 상태 금지
-  const segBuf: XYObjectWritable[] = [];
-  const centerArcBuf: CenterArcWritable = createCenterArcBuf();
+  // flattener는 함수 로컬 재사용 버퍼를 소유한다 — 모듈 레벨 상태 금지
+  const flattener = createSegmentFlattener(options);
 
   // 입력 command가 commands에서 어느 인덱스에 있는지 추적할 수는 없다 (forEachDrawSegment는
   // index를 노출하지 않음). 따라서 각 visit마다 split이 발생했는지 표시하고, split 발생 후
@@ -84,12 +90,12 @@ export function splitCommandsAtLength(
     // 누적한다. 이미 처리한 command는 건너뛴다.
     scanIndex = appendCommandsBeforeSegment(outA, commands, scanIndex, seg);
 
-    const segLen = measureSegmentLength(seg, segBuf, centerArcBuf, flatOpts);
+    const segLen = measureSegmentLength(seg, flattener);
 
     if (distance < cumulativeLen + segLen) {
       // split 발생: 이 segment를 두 부분으로 나눠 outA, outB에 각각 push
       const local = Math.max(0, distance - cumulativeLen);
-      writeSplitSegment(outA, outB, seg, local, segLen, centerArcBuf);
+      writeSplitSegment(outA, outB, seg, local, segLen, flattener.centerArc);
 
       split = true;
       // split이 발생한 segment command의 다음 인덱스를 기록

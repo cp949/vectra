@@ -203,4 +203,16 @@ describe('rankBasis — companion', () => {
     expect(result.length).toBe(1);
     expect(result[0]).toEqual([1, 2]);
   });
+
+  test('basis entry의 -0은 +0으로 canonicalize', () => {
+    const result = rankBasis([
+      [-0, 1],
+      [1, 1],
+    ]);
+    expect(result).toEqual([
+      [0, 1],
+      [1, 1],
+    ]);
+    expect(Object.is(result[0][0], -0)).toBe(false);
+  });
 });

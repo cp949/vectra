@@ -2,13 +2,62 @@
  * linalg row echelon form unit test.
  *
  * rowEchelonForm(Into) — rectangular wide/tall, zero column skip, row swap 케이스, singular matrix,
- *                        -0 cleanup, overflow reject, aliasing 허용.
+ *                        -0 cleanup, 입력 -0 canonicalize, overflow reject, aliasing 허용.
  * 공통                 — invalid epsilon(음수/NaN/Infinity), output capacity 부족, 빈 matrix.
  */
 
 import { describe, expect, test } from 'vitest';
 import { rowEchelonForm } from '../../../src/linalg/row-echelon-form';
 import { rowEchelonFormInto } from '../../../src/linalg/row-echelon-form-into';
+
+/**
+ * matrix의 모든 entry가 `-0`이 아님을 `Object.is`로 검증한다.
+ */
+function expectNoNegativeZero(matrix: readonly (readonly number[])[]): void {
+  for (const row of matrix) {
+    for (const value of row) {
+      expect(Object.is(value, -0)).toBe(false);
+    }
+  }
+}
+
+// elimination이 다시 쓰지 않는 항목에 입력 `-0`이 남는 케이스.
+const NEGATIVE_ZERO_INPUT_CASES = [
+  { name: '1x2 오른쪽 열', input: [[1, -0]], expected: [[1, 0]] },
+  {
+    name: 'pivot row 오른쪽 열',
+    input: [
+      [1, -0],
+      [0, 1],
+    ],
+    expected: [
+      [1, 0],
+      [0, 1],
+    ],
+  },
+  {
+    name: '아래쪽 행 오른쪽 열',
+    input: [
+      [1, 2, 3],
+      [0, 1, -0],
+    ],
+    expected: [
+      [1, 2, 3],
+      [0, 1, 0],
+    ],
+  },
+  {
+    name: 'row swap 뒤 pivot row',
+    input: [
+      [-0, 1],
+      [1, -0],
+    ],
+    expected: [
+      [1, 0],
+      [0, 1],
+    ],
+  },
+];
 
 describe('rowEchelonFormInto — REF (Into)', () => {
   test('3x3 nonsingular matrix에서 upper triangular 결과를 반환한다', () => {
@@ -111,6 +160,13 @@ describe('rowEchelonFormInto — REF (Into)', () => {
     expect(Object.is(out[1][1], -0)).toBe(false);
   });
 
+  test.each(NEGATIVE_ZERO_INPUT_CASES)('입력 -0은 0으로 canonicalize한다: $name', ({ input, expected }) => {
+    const out = input.map((row) => row.map(() => 9));
+    rowEchelonFormInto(out, input);
+    expect(out).toEqual(expected);
+    expectNoNegativeZero(out);
+  });
+
   test('overflow 결과는 RangeError를 던지고 out을 수정하지 않는다', () => {
     const out: number[][] = [
       [9, 9],
@@ -190,5 +246,11 @@ describe('rowEchelonForm — REF (companion)', () => {
 
   test('빈 matrix는 빈 배열을 반환한다', () => {
     expect(rowEchelonForm([])).toEqual([]);
+  });
+
+  test.each(NEGATIVE_ZERO_INPUT_CASES)('입력 -0은 0으로 canonicalize한다: $name', ({ input, expected }) => {
+    const result = rowEchelonForm(input);
+    expect(result).toEqual(expected);
+    expectNoNegativeZero(result);
   });
 });

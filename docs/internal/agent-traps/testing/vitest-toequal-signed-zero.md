@@ -57,8 +57,13 @@ signed-zero가 발생할 수 있는 builder 패턴:
 - `-a / b` 같은 나눗셈 (피제수가 0이면 `-0`).
 - `-Math.sin(0)` 같은 trig 호출 (`Math.sin(0) === 0` → `-0`).
 
-builder JSDoc에는 "부호 반전 산술은 입력이 `0`일 때 JS의 signed-zero 규칙에 따라 `-0`을 그대로
-기록한다" 식의 한 줄 주석을 둔다. API surface 문서도 마찬가지.
+JSDoc이 `-0`에 침묵한 함수는 (b)다. JS signed-zero 결과를 그대로 기록한다. JSDoc에 적지 않아도 된다.
+API surface 문서도 마찬가지다.
+
+"부호 반전 산술은 입력이 `0`일 때 `-0`을 그대로 기록한다" 식의 한 줄을 적으면 명시적 (b)다.
+이 경우 테스트는 `Object.is(..., -0)` pin으로 고정한다.
+
+`-0` 출력 정책 전반은 [ADR 0008](../../adr/0008-negative-zero-output-policy.md)을 따른다.
 
 ## 관련 작업
 

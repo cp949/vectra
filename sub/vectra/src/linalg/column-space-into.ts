@@ -10,6 +10,7 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  * thin SVD의 left singular vectors `U`(`m x rank`)에서 column `i`를 row-vector basis로 전치해
  * 사용한다. basis row 개수는 `rank`이며 각 row 길이는 `m`이다. SVD policy를 따라 각 basis vector는
  * unit length이고 서로 orthogonal이다. column이 span하는 부분 공간은 input column space와 일치한다.
+ * 결과 entry의 `-0`은 `+0`으로 canonicalize한다.
  *
  * 검증 순서: `resolveIterationOptions` → `extractMatrixShape(matrix)` → `assertFiniteMatrixEntries`
  * → SVD 계산 → `out` capacity 검증 → commit. 어느 단계 실패도 `out`을 호출 전 상태 그대로 둔다.

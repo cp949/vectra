@@ -120,6 +120,17 @@ describe('backwardSubstituteAugmentedMatrix — 정상 입력', () => {
   test('1x2 augmented `[[a, b]]`는 [b/a]를 반환한다', () => {
     expect(backwardSubstituteAugmentedMatrix([[2, 10]])).toEqual([5]);
   });
+
+  test('solution에 -0이 남지 않는다', () => {
+    // `-0 / 1`과 `0 / -1`은 모두 -0이다.
+    const fromNegativeZeroRhs = backwardSubstituteAugmentedMatrix([[1, -0]]);
+    expect(fromNegativeZeroRhs).toEqual([0]);
+    expect(Object.is(fromNegativeZeroRhs?.[0], -0)).toBe(false);
+
+    const fromNegativeDiagonal = backwardSubstituteAugmentedMatrix([[-1, 0]]);
+    expect(fromNegativeDiagonal).toEqual([0]);
+    expect(Object.is(fromNegativeDiagonal?.[0], -0)).toBe(false);
+  });
 });
 
 describe('backwardSubstituteAugmentedMatrix — singular', () => {

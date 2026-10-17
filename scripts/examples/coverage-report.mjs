@@ -3,7 +3,7 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import ts from 'typescript';
+import { parseSync } from 'oxc-parser';
 
 const DEFAULT_OUTPUT = 'docs/internal/examples/coverage.md';
 const DEFAULT_EXCEPTIONS = 'docs/internal/examples/coverage-exceptions.json';
@@ -170,10 +170,6 @@ async function readCoverageExceptions(repoRoot, relativePath = DEFAULT_EXCEPTION
   return exceptions;
 }
 
-function getModuleSpecifier(node) {
-  return ts.isStringLiteral(node.moduleSpecifier) ? node.moduleSpecifier.text : '';
-}
-
 function parseVectraSpecifier(specifier) {
   const prefix = '@cp949/vectra/';
   if (!specifier.startsWith(prefix)) {
@@ -187,42 +183,37 @@ function parseVectraSpecifier(specifier) {
   };
 }
 
-function collectImportedFunctionBindings(source, exportMap) {
+function collectImportedFunctionBindings(program, exportMap) {
   const localFunctions = new Map();
   const namespaceDomains = new Map();
   const namespaceLeafs = new Map();
 
-  for (const statement of source.statements) {
-    if (!ts.isImportDeclaration(statement) || !statement.importClause) {
+  for (const statement of program.body) {
+    if (statement.type !== 'ImportDeclaration') {
       continue;
     }
 
-    const parsed = parseVectraSpecifier(getModuleSpecifier(statement));
+    const parsed = parseVectraSpecifier(statement.source.value);
     if (!parsed) {
       continue;
     }
 
-    const bindings = statement.importClause.namedBindings;
-    if (!bindings) {
-      continue;
-    }
-
-    if (ts.isNamespaceImport(bindings)) {
-      if (parsed.leaf) {
-        namespaceLeafs.set(bindings.name.text, toPackageLeaf(parsed.domain, parsed.leaf));
-      } else {
-        namespaceDomains.set(bindings.name.text, parsed.domain);
+    for (const specifier of statement.specifiers) {
+      if (specifier.type === 'ImportNamespaceSpecifier') {
+        if (parsed.leaf) {
+          namespaceLeafs.set(specifier.local.name, toPackageLeaf(parsed.domain, parsed.leaf));
+        } else {
+          namespaceDomains.set(specifier.local.name, parsed.domain);
+        }
+        continue;
       }
-      continue;
-    }
 
-    if (!ts.isNamedImports(bindings)) {
-      continue;
-    }
+      if (specifier.type !== 'ImportSpecifier') {
+        continue;
+      }
 
-    for (const element of bindings.elements) {
-      const importedName = element.propertyName?.text ?? element.name.text;
-      const localName = element.name.text;
+      const importedName = specifier.imported.name ?? specifier.imported.value;
+      const localName = specifier.local.name;
       const leaf = parsed.leaf
         ? toPackageLeaf(parsed.domain, parsed.leaf)
         : exportMap.get(`${parsed.domain}/${importedName}`);
@@ -237,24 +228,29 @@ function collectImportedFunctionBindings(source, exportMap) {
 }
 
 function collectCalledLeafs(sourceText, exportMap) {
-  const source = ts.createSourceFile('source.exam.ts', sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-  const { localFunctions, namespaceDomains, namespaceLeafs } = collectImportedFunctionBindings(source, exportMap);
+  const { program } = parseSync('source.exam.ts', sourceText);
+  const { localFunctions, namespaceDomains, namespaceLeafs } = collectImportedFunctionBindings(program, exportMap);
   const used = new Set();
 
   function visit(node) {
-    if (ts.isCallExpression(node)) {
-      const expression = node.expression;
+    if (node.type === 'CallExpression') {
+      const expression = node.callee;
 
-      if (ts.isIdentifier(expression)) {
-        const leaf = localFunctions.get(expression.text);
+      if (expression.type === 'Identifier') {
+        const leaf = localFunctions.get(expression.name);
         if (leaf) {
           used.add(leaf);
         }
       }
 
-      if (ts.isPropertyAccessExpression(expression) && ts.isIdentifier(expression.expression)) {
-        const namespaceName = expression.expression.text;
-        const functionName = expression.name.text;
+      if (
+        expression.type === 'MemberExpression' &&
+        !expression.computed &&
+        expression.object.type === 'Identifier' &&
+        expression.property.type === 'Identifier'
+      ) {
+        const namespaceName = expression.object.name;
+        const functionName = expression.property.name;
         const domain = namespaceDomains.get(namespaceName);
         const namespaceLeaf = namespaceLeafs.get(namespaceName);
 
@@ -271,10 +267,20 @@ function collectCalledLeafs(sourceText, exportMap) {
       }
     }
 
-    ts.forEachChild(node, visit);
+    for (const value of Object.values(node)) {
+      if (Array.isArray(value)) {
+        for (const child of value) {
+          if (child && typeof child.type === 'string') {
+            visit(child);
+          }
+        }
+      } else if (value && typeof value.type === 'string') {
+        visit(value);
+      }
+    }
   }
 
-  visit(source);
+  visit(program);
 
   return [...used].sort();
 }

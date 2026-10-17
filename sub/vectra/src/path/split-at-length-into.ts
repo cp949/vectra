@@ -27,6 +27,17 @@ import { splitCommandsAtLength } from './path-slice.internal';
  *   `centerArcToEndpointInto`로 endpoint form으로 재변환. split 결과의 `rx`/`ry`/`xRotation`은 SVG
  *   radius correction이 적용된 값이다.
  *
+ * 길이 척도 (segment 선택과 segment 안의 t가 서로 다르다):
+ * - segment 선택: flatten 폴리라인 길이(`measureSegmentLength`)의 누적값으로 고른다. `pointAtLength`와 같은 척도다.
+ * - segment 안의 t: `quadraticTAtLength` / `cubicTAtLength` / `arcTAtLength`가 곡선 호 길이(GL5 적분)로 구한다.
+ * - flatten 폴리라인은 곡선보다 짧다. 같은 `local` 값이 두 척도에서 다른 위치를 가리킨다.
+ * - 그래서 분할점이 같은 distance의 `pointAtLength` 위치와 어긋날 수 있다.
+ * - 어긋남은 quadratic / cubic / arc segment 안에서만 생긴다. line / close는 일치한다.
+ * - 관측값: 기본 옵션(flatness 0.5)에서 곡선 2개짜리 path의 분할점과 `pointAtLength` 위치 거리를 쟀다.
+ *   고정 path 6개(cubic 2개, quadratic 2개, cubic+quadratic, 길이 32–400)는 0.06–0.20 좌표 단위였다.
+ *   무작위 path 300개(좌표 ±100, 지점 60곳 표본)의 최대는 cubic 2개 약 0.21, quadratic 2개 약 0.30이었다.
+ *   arc는 측정하지 않았다. 관측값이며 상한 보장이 아니다.
+ *
  * dual collection output 함수이므로 반환값이 없다 (`void`).
  *
  * @param outA 0~distance 구간을 기록할 mutable PathCommand 배열
@@ -42,10 +53,6 @@ export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathC
   distance: number,
   options?: PathMeasurementOptions
 ): void {
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-
   // aliasing 대비: outA / outB가 commands와 같은 배열이면 clear 전에 snapshot
   const snapshot =
     commands === (outA as readonly PathCommand[]) || commands === (outB as readonly PathCommand[])
@@ -79,7 +86,7 @@ export function splitAtLengthInto<OutA extends PathCommand[], OutB extends PathC
     return;
   }
 
-  const split = splitCommandsAtLength(outA, outB, snapshot, distance, flatOpts);
+  const split = splitCommandsAtLength(outA, outB, snapshot, distance, options);
 
   if (!split) {
     // distance >= totalLength fallback: outA에 전체 path. splitCommandsAtLength가 split 없이 끝나면

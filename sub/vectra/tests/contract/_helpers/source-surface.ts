@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import ts from 'typescript';
+import { type BindingPattern, type ModuleExportName, parseSync } from 'oxc-parser';
 
 export type LeafExportEntry = {
   exportName: string;
@@ -44,61 +44,70 @@ function listFiles(dirPath: string): string[] {
   });
 }
 
-function isRuntimeExportModifier(statement: ts.Statement): boolean {
-  return (
-    ts.canHaveModifiers(statement) &&
-    (ts.getModifiers(statement) ?? []).some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
-  );
-}
-
-function exportedBindingNames(name: ts.BindingName): string[] {
-  if (ts.isIdentifier(name)) {
-    return [name.text];
+function exportedBindingNames(pattern: BindingPattern | null): string[] {
+  if (!pattern) {
+    return [];
   }
 
-  return name.elements.flatMap((element) => {
-    if (ts.isOmittedExpression(element)) {
+  switch (pattern.type) {
+    case 'Identifier':
+      return [pattern.name];
+    case 'ObjectPattern':
+      return pattern.properties.flatMap((property) =>
+        exportedBindingNames(property.type === 'RestElement' ? property.argument : property.value)
+      );
+    case 'ArrayPattern':
+      return pattern.elements.flatMap((element) =>
+        exportedBindingNames(element?.type === 'RestElement' ? element.argument : element)
+      );
+    case 'AssignmentPattern':
+      return exportedBindingNames(pattern.left);
+    default:
       return [];
-    }
+  }
+}
 
-    return exportedBindingNames(element.name);
-  });
+function moduleExportName(name: ModuleExportName): string {
+  return name.type === 'Identifier' ? name.name : name.value;
 }
 
 function runtimeExportNamesFromSource(filePath: string): string[] {
   const sourceText = readFileSync(filePath, 'utf8');
-  const sourceFile = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const { program } = parseSync(filePath, sourceText);
   const exportNames: string[] = [];
 
-  for (const statement of sourceFile.statements) {
-    if (ts.isExportDeclaration(statement)) {
-      if (statement.isTypeOnly || !statement.exportClause || !ts.isNamedExports(statement.exportClause)) {
-        continue;
-      }
+  for (const statement of program.body) {
+    // `export *`는 이름을 알 수 없으므로 건너뛴다. 타입 전용 export도 건너뛴다.
+    if (statement.type !== 'ExportNamedDeclaration' || statement.exportKind === 'type') {
+      continue;
+    }
 
-      for (const element of statement.exportClause.elements) {
-        if (!element.isTypeOnly) {
-          exportNames.push(element.name.text);
+    for (const specifier of statement.specifiers) {
+      if (specifier.exportKind !== 'type') {
+        exportNames.push(moduleExportName(specifier.exported));
+      }
+    }
+
+    const declaration = statement.declaration;
+
+    if (!declaration) {
+      continue;
+    }
+
+    switch (declaration.type) {
+      case 'FunctionDeclaration':
+      case 'TSDeclareFunction':
+      case 'ClassDeclaration':
+      case 'TSEnumDeclaration':
+        if (declaration.id) {
+          exportNames.push(declaration.id.name);
         }
-      }
-      continue;
-    }
-
-    if (!isRuntimeExportModifier(statement)) {
-      continue;
-    }
-
-    if (ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement) || ts.isEnumDeclaration(statement)) {
-      if (statement.name) {
-        exportNames.push(statement.name.text);
-      }
-      continue;
-    }
-
-    if (ts.isVariableStatement(statement)) {
-      for (const declaration of statement.declarationList.declarations) {
-        exportNames.push(...exportedBindingNames(declaration.name));
-      }
+        break;
+      case 'VariableDeclaration':
+        for (const declarator of declaration.declarations) {
+          exportNames.push(...exportedBindingNames(declarator.id));
+        }
+        break;
     }
   }
 

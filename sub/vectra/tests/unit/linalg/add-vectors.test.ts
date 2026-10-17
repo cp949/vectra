@@ -50,4 +50,17 @@ describe('addVectorsInto / addVectors — element-wise sum', () => {
     addVectorsInto(out, [-0], [0]);
     expect(Object.is(out[0], -0)).toBe(false);
   });
+
+  test('-0 + -0 결과도 0으로 canonicalize한다(Into, companion)', () => {
+    // -0 + 0은 +0이라 -0을 만들지 못한다. -0 + -0만 -0이다.
+    expect(Object.is(-0 + -0, -0)).toBe(true);
+    const out = [9, 9];
+    addVectorsInto(out, [-0, 1], [-0, 2]);
+    expect(Object.is(out[0], -0)).toBe(false);
+    expect(out).toEqual([0, 3]);
+
+    const result = addVectors([-0, 1], [-0, 2]);
+    expect(Object.is(result[0], -0)).toBe(false);
+    expect(result).toEqual([0, 3]);
+  });
 });

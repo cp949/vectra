@@ -1,5 +1,6 @@
 import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types/index';
-import { createCenterArcBuf, flattenDrawSegmentInto, forEachDrawSegment } from './path-segments.internal';
+import { forEachDrawSegment } from './path-segments.internal';
+import { createSegmentFlattener } from './segment-flattener.internal';
 
 /**
  * commands를 out point 배열에 polyline으로 기록하고 out을 반환한다.
@@ -16,11 +17,7 @@ export function flattenPathInto<Out extends XYObjectWritable[]>(
     return out;
   }
 
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
-  const flatOpts = { flatness, maxRecursion };
-  const curveBuffer: XYObjectWritable[] = [];
-  const centerArcBuf = createCenterArcBuf();
+  const flattener = createSegmentFlattener(options);
 
   const pushPoint = (x: number, y: number): void => {
     out.push({ x, y } as Out[number]);
@@ -36,7 +33,7 @@ export function flattenPathInto<Out extends XYObjectWritable[]>(
       pushPoint(seg.fromX, seg.fromY);
     }
 
-    flattenDrawSegmentInto(curveBuffer, seg, flatOpts, centerArcBuf);
+    const curveBuffer = flattener.flatten(seg);
 
     for (let i = 1; i < curveBuffer.length; i++) {
       pushPoint(curveBuffer[i].x, curveBuffer[i].y);

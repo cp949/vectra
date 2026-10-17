@@ -42,13 +42,16 @@ const D = 2 * area2x;   // raw 좌표 전개 2*(ax*(by-cy)+...) 금지
 ```
 
 - circumcenter numerator(`a2*(by-cy)+...`)는 그대로 둔다. 분모만 guard 값에 묶는다.
-- circumcenter를 division하는 모든 triangle leaf는 같은 정책을 공유한다(family 일관성).
+- 위 guard와 `D`는 `src/internal/triangle-circumcenter.ts`의 `solveTriangleCircumcenter`가 소유한다.
+- circumcenter를 division하는 모든 triangle leaf는 이 kernel을 거친다(family 일관성).
   `eulerLineInto`/`orthocenterInto`/`circumcenterInto`/`circumcircleInto`/`circumradius`/
-  `ninePointCircleInto`. 하나만 고치면 "동일 실패 정책" 계약이 깨진다.
+  `ninePointCircleInto`. 새 leaf는 guard와 `D`를 직접 계산하지 않고 kernel을 호출한다.
+- kernel은 외심 `(x, y)`만 계산한다. 반지름, vertex 합 같은 파생값은 leaf가 계산한다.
+- kernel은 `out`에만 쓴다. leaf는 `out`을 건드리기 전에 vertex 좌표를 읽는다(aliasing 안전).
 - guard가 denominator 자체인 패턴(`const D = ...; if (D === 0) return ...`)은 mismatch가 없다
-  (`circle/from-three-points-into.ts`). 이 패턴은 그대로 둔다.
-- near-collinear(`signedArea2x ≈ 1e-14`이지만 ≠0) 회귀 테스트를 둔다: `result !== false` 단언 +
-  endpoint 유한 단언.
+  (`circle/from-three-points-into.ts`). 이 패턴은 그대로 둔다. kernel로 옮기지 않는다.
+- near-collinear(`signedArea2x ≈ 1e-14`이지만 ≠0) 회귀 테스트는 kernel 테스트가 소유한다
+  (`tests/unit/internal/triangle-circumcenter.test.ts`): `result === true` 단언 + 외심 유한 단언.
 
 ## 관련 작업
 

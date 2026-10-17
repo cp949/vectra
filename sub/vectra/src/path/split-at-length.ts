@@ -24,6 +24,8 @@ export interface PathSplitResult {
  * - `+Infinity` / `-Infinity` distance: 각각 distance >= totalLength / distance <= 0 분기로 처리.
  *
  * Segment-level split 정책은 `splitAtLengthInto` JSDoc을 참고한다.
+ * 길이 척도 혼용 주의: segment 선택은 flatten 폴리라인 길이로, segment 안의 t는 곡선 호 길이로 구한다.
+ * 분할점이 같은 distance의 `pointAtLength` 위치와 어긋날 수 있다. 크기와 조건은 `splitAtLengthInto`에 있다.
  * 성능 최적화가 필요하면 `splitAtLengthInto`를 사용한다.
  *
  *

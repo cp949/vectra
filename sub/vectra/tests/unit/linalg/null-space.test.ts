@@ -203,4 +203,11 @@ describe('nullSpace — companion', () => {
       [-1, 0, 1],
     ]);
   });
+
+  test('결과 entry의 -0은 +0으로 canonicalize', () => {
+    // free column 계수 `-rref[0][1]`이 -0이 되는 입력이다.
+    const result = nullSpace([[1, 0]]);
+    expect(result).toEqual([[0, 1]]);
+    expect(Object.is(result[0][0], -0)).toBe(false);
+  });
 });

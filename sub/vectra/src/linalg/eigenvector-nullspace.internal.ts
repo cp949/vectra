@@ -1,3 +1,4 @@
+import { firstNonZeroSign } from '../internal/first-nonzero-sign';
 import { eliminateRows } from './elimination.internal';
 
 /**
@@ -117,14 +118,7 @@ export function computeNullspaceUnitVectorForLambda(
     return undefined;
   }
 
-  let sign = 1;
-  for (let i = 0; i < n; i++) {
-    const v = vector[i];
-    if (v !== 0) {
-      sign = v < 0 ? -1 : 1;
-      break;
-    }
-  }
+  const sign = firstNonZeroSign(vector);
 
   const out = new Array<number>(n);
   for (let i = 0; i < n; i++) {

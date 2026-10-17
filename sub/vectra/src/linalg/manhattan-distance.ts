@@ -17,5 +17,5 @@ export function manhattanDistance(a: VecLike, b: VecLike): number {
       throw new RangeError(`Manhattan distance accumulation must be finite at index ${i}`);
     }
   }
-  return Object.is(sum, -0) ? 0 : sum;
+  return sum;
 }
