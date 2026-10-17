@@ -1,5 +1,5 @@
 import { periodicPingPong } from './periodic.internal';
-import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.internal';
+import { assertFinite1, assertPositiveFiniteNumber } from './range.internal';
 
 /**
  * t를 closed range [0, length]로 fold한 값을 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.interna
  * @param length 왕복 구간의 한쪽 길이. 양수 finite number여야 한다.
  */
 export function pingPong(t: number, length: number): number {
-  assertFiniteNumbers([t]);
+  assertFinite1(t);
   assertPositiveFiniteNumber(length);
 
   if (!Number.isFinite(2 * length)) {

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from '../math/range.internal';
+import { assertFinite2, assertNonNegativeFiniteNumber } from '../math/range.internal';
 import { angleDelta } from './angle-delta';
 
 /**
@@ -15,7 +15,7 @@ import { angleDelta } from './angle-delta';
  * @param maxDelta 최대 이동 radian (0 이상)
  */
 export function moveTowardAngle(current: number, target: number, maxDelta: number): number {
-  assertFiniteNumbers([current, target]);
+  assertFinite2(current, target);
   assertNonNegativeFiniteNumber(maxDelta);
 
   const delta = angleDelta(current, target);

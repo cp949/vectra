@@ -1,5 +1,5 @@
 import { periodicPhase } from './periodic.internal';
-import { assertFiniteNumbers, assertStrictOrderedRange } from './range.internal';
+import { assertFinite3, assertStrictOrderedRange } from './range.internal';
 
 /**
  * value를 half-open range [min, max)로 wrap한 결과를 반환한다.
@@ -13,7 +13,7 @@ import { assertFiniteNumbers, assertStrictOrderedRange } from './range.internal'
  * @param max half-open range의 제외 상한
  */
 export function wrapRange(value: number, min: number, max: number): number {
-  assertFiniteNumbers([value, min, max]);
+  assertFinite3(value, min, max);
   assertStrictOrderedRange(min, max);
 
   return min + periodicPhase(value - min, max - min);

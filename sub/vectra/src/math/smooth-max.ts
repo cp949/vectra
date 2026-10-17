@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.internal';
+import { assertFinite2, assertPositiveFiniteNumber } from './range.internal';
 import { smoothBlendOffset } from './smooth-min-max.internal';
 
 /**
@@ -15,7 +15,7 @@ import { smoothBlendOffset } from './smooth-min-max.internal';
  * @param k smoothing 폭. 클수록 두 값이 더 넓게 섞인다.
  */
 export function smoothMax(a: number, b: number, k: number): number {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
   assertPositiveFiniteNumber(k);
 
   const result = Math.max(a, b) + smoothBlendOffset(a, b, k);

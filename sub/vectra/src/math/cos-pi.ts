@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 import { cosPiCore } from './trig.internal';
 
 /**
@@ -13,7 +13,7 @@ import { cosPiCore } from './trig.internal';
  * @param x π 배수로 평가할 finite scalar 값. arbitrary-large magnitude는 reduction 정확도가 떨어진다.
  */
 export function cosPi(x: number): number {
-  assertFiniteNumbers([x]);
+  assertFinite1(x);
 
   return cosPiCore(x);
 }

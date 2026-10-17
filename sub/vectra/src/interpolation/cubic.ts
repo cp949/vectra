@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, clampScalar } from './interpolation.internal';
+import { assertFinite5, clampScalar } from './interpolation.internal';
 
 /**
  * 3차 Bézier scalar 보간값을 반환한다.
@@ -14,7 +14,7 @@ import { assertFiniteNumbers, clampScalar } from './interpolation.internal';
  * @param t clamp하지 않는 보간 비율
  */
 export function cubic(a: number, b: number, c: number, d: number, t: number): number {
-  assertFiniteNumbers([a, b, c, d, t]);
+  assertFinite5(a, b, c, d, t);
 
   const u = 1 - t;
 
@@ -35,7 +35,7 @@ export function cubic(a: number, b: number, c: number, d: number, t: number): nu
  * @param t `[0, 1]`로 clamp되는 보간 비율
  */
 export function cubicClamped(a: number, b: number, c: number, d: number, t: number): number {
-  assertFiniteNumbers([a, b, c, d, t]);
+  assertFinite5(a, b, c, d, t);
 
   const clampedT = clampScalar(t, 0, 1);
   const u = 1 - clampedT;

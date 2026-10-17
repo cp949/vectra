@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertPositiveDuration, lerpRaw } from './interpolation.internal';
+import { assertFinite3, assertPositiveDuration, lerpRaw } from './interpolation.internal';
 
 /**
  * raw 경과 시간 진행 비율로 a와 b 사이를 보간한다.
@@ -14,7 +14,7 @@ import { assertFiniteNumbers, assertPositiveDuration, lerpRaw } from './interpol
  * @param duration 전체 구간 길이. finite이고 `> 0`이어야 한다
  */
 export function lerpByElapsed(a: number, b: number, elapsed: number, duration: number): number {
-  assertFiniteNumbers([a, b, elapsed]);
+  assertFinite3(a, b, elapsed);
   assertPositiveDuration(duration);
 
   return lerpRaw(a, b, elapsed / duration);

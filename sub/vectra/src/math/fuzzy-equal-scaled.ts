@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.internal';
+import { assertFinite2, assertNonNegativeFiniteNumber } from './range.internal';
 
 /**
  * 두 scalar 값이 scale-adaptive tolerance 기준으로 근사하게 같은지 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.inte
  * @param scale scale adaptive factor. 기본값 0.5
  */
 export function fuzzyEqualScaled(a: number, b: number, epsilon = 1e-10, scale = 0.5): boolean {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
   assertNonNegativeFiniteNumber(epsilon);
   assertNonNegativeFiniteNumber(scale);
 

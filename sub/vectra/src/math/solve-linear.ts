@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite2 } from './range.internal';
 
 /**
  * 1차 방정식 ax + b = 0의 해를 반환한다.
@@ -10,7 +10,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param b 상수항
  */
 export function solveLinear(a: number, b: number): number {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
 
   if (a === 0) return Number.NaN;
 

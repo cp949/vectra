@@ -1,3 +1,5 @@
+const FINITE_NUMBERS_MESSAGE = 'math arguments must be finite numbers';
+
 /**
  * values가 모두 finite number인지 검증한다.
  *
@@ -6,8 +8,63 @@
 export function assertFiniteNumbers(values: readonly number[]): void {
   for (const value of values) {
     if (!Number.isFinite(value)) {
-      throw new RangeError('math arguments must be finite numbers');
+      throw new RangeError(FINITE_NUMBERS_MESSAGE);
     }
+  }
+}
+
+/**
+ * 인자 1개가 finite number인지 검증한다.
+ *
+ * `assertFiniteNumbers`와 같은 검사를 임시 배열 할당 없이 수행한다.
+ */
+export function assertFinite1(a: number): void {
+  if (!Number.isFinite(a)) {
+    throw new RangeError(FINITE_NUMBERS_MESSAGE);
+  }
+}
+
+/**
+ * 인자 2개가 모두 finite number인지 검증한다.
+ *
+ * `assertFiniteNumbers`와 같은 검사를 임시 배열 할당 없이 수행한다.
+ */
+export function assertFinite2(a: number, b: number): void {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    throw new RangeError(FINITE_NUMBERS_MESSAGE);
+  }
+}
+
+/**
+ * 인자 3개가 모두 finite number인지 검증한다.
+ *
+ * `assertFiniteNumbers`와 같은 검사를 임시 배열 할당 없이 수행한다.
+ */
+export function assertFinite3(a: number, b: number, c: number): void {
+  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) {
+    throw new RangeError(FINITE_NUMBERS_MESSAGE);
+  }
+}
+
+/**
+ * 인자 4개가 모두 finite number인지 검증한다.
+ *
+ * `assertFiniteNumbers`와 같은 검사를 임시 배열 할당 없이 수행한다.
+ */
+export function assertFinite4(a: number, b: number, c: number, d: number): void {
+  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c) || !Number.isFinite(d)) {
+    throw new RangeError(FINITE_NUMBERS_MESSAGE);
+  }
+}
+
+/**
+ * 인자 5개가 모두 finite number인지 검증한다.
+ *
+ * `assertFiniteNumbers`와 같은 검사를 임시 배열 할당 없이 수행한다.
+ */
+export function assertFinite5(a: number, b: number, c: number, d: number, e: number): void {
+  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c) || !Number.isFinite(d) || !Number.isFinite(e)) {
+    throw new RangeError(FINITE_NUMBERS_MESSAGE);
   }
 }
 
@@ -40,7 +97,7 @@ export function assertNonNegativeFiniteNumber(value: number): void {
  * `base ** place`가 overflow되거나 0으로 underflow되면 RangeError를 던진다.
  */
 export function roundingFactor(place: number, base: number): number {
-  assertFiniteNumbers([place, base]);
+  assertFinite2(place, base);
 
   if (!Number.isSafeInteger(place)) {
     throw new RangeError('math rounding place must be a safe integer');

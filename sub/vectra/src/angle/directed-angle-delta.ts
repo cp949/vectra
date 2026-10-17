@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 
 /**
  * 두 angle의 signed delta를 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers } from '../math/range.internal';
  * @param to 목표 angle (radian)
  */
 export function directedAngleDelta(from: number, to: number): number {
-  assertFiniteNumbers([from, to]);
+  assertFinite2(from, to);
 
   return to - from;
 }

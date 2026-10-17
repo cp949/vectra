@@ -1,5 +1,5 @@
 import { readX, readY } from '../internal/xy';
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 import type { XYInput } from '../types';
 
 /**
@@ -14,6 +14,6 @@ import type { XYInput } from '../types';
 export function fromVector(input: XYInput): number {
   const x = readX(input);
   const y = readY(input);
-  assertFiniteNumbers([x, y]);
+  assertFinite2(x, y);
   return Math.atan2(y, x);
 }

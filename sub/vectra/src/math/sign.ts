@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /**
  * value의 부호를 반환한다.
@@ -8,7 +8,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param value 부호를 구할 scalar 값
  */
 export function sign(value: number): number {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
 
   return Math.sign(value);
 }

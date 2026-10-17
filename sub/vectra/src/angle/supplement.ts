@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite1 } from '../math/range.internal';
 
 /**
  * angle의 supplement (보각)를 반환한다.
@@ -9,7 +9,7 @@ import { assertFiniteNumbers } from '../math/range.internal';
  * @param angle 보각을 계산할 angle (radian)
  */
 export function supplement(angle: number): number {
-  assertFiniteNumbers([angle]);
+  assertFinite1(angle);
 
   return Math.PI - angle;
 }

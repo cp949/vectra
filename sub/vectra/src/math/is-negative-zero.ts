@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /**
  * value가 `-0`이면 true를 반환한다.
@@ -9,7 +9,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param value 판정할 scalar 값
  */
 export function isNegativeZero(value: number): boolean {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
 
   return Object.is(value, -0);
 }

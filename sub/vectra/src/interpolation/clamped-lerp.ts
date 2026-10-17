@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, clampScalar, lerpRaw } from './interpolation.internal';
+import { assertFinite3, clampScalar, lerpRaw } from './interpolation.internal';
 
 /**
  * t를 `[0, 1]`로 clamp한 뒤 a와 b 사이의 선형 보간값을 반환한다.
@@ -13,7 +13,7 @@ import { assertFiniteNumbers, clampScalar, lerpRaw } from './interpolation.inter
  * @param t `[0, 1]`로 clamp되는 보간 비율
  */
 export function clampedLerp(a: number, b: number, t: number): number {
-  assertFiniteNumbers([a, b, t]);
+  assertFinite3(a, b, t);
 
   // t를 [0, 1]로 clamp한 뒤 lerp한다
   const clampedT = clampScalar(t, 0, 1);
