@@ -17,5 +17,5 @@ export function squaredDistance(a: VecLike, b: VecLike): number {
       throw new RangeError(`squared distance accumulation must be finite at index ${i}`);
     }
   }
-  return Object.is(sum, -0) ? 0 : sum;
+  return sum;
 }
