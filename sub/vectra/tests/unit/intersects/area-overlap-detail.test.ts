@@ -96,6 +96,10 @@ describe('rectRectAreaOverlapDetail', () => {
     expect(rectRectAreaOverlapDetail(rect(0, 0, 10, 10), rect(2, 2, 4, 4))).toEqual({ kind: 'contains' });
   });
 
+  test('두 번째 rect가 첫 번째를 포함해도 contains다', () => {
+    expect(rectRectAreaOverlapDetail(rect(2, 2, 4, 4), rect(0, 0, 10, 10))).toEqual({ kind: 'contains' });
+  });
+
   test('완전히 같은 rect는 contains다', () => {
     expect(rectRectAreaOverlapDetail(rect(0, 0, 4, 4), rect(0, 0, 4, 4))).toEqual({ kind: 'contains' });
   });

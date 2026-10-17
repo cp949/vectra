@@ -71,6 +71,25 @@ describe('circleLensArea', () => {
     expect(area).toBeLessThan(Math.PI * 4);
   });
 
+  test('내접 경계 바로 바깥에서 acos 인자가 -1 아래로 반올림돼도 작은 disk area로 수렴한다', () => {
+    // d는 |ra - rb|보다 몇 ulp 큰 값이다. (d² + ra² - rb²) / (2·d·ra)가 -1.0000000000000064로 계산된다.
+    const small = circle(0, 0, 32.05073752276599);
+    const large = circle(0.19114182796329263, 0, 32.241879350729285);
+    const area = circleLensArea(small, large);
+    expect(Number.isNaN(area)).toBe(false);
+    expect(area / (Math.PI * 32.05073752276599 ** 2)).toBeCloseTo(1, 6);
+  });
+
+  test('큰 쪽이 첫 번째 인자여도 같은 경계에서 작은 disk area로 수렴한다', () => {
+    // beta 쪽 acos 인자가 -1.0000000000000004로 계산되는 배치다.
+    const large = circle(0, 0, 61.37142942123115);
+    const small = circle(4.447257355786861, 0, 56.92417206544429);
+    const area = circleLensArea(large, small);
+    expect(Number.isNaN(area)).toBe(false);
+    // 경계 근처 상쇄로 상대 오차가 1e-8 규모까지 생긴다.
+    expect(area / (Math.PI * 56.92417206544429 ** 2)).toBeCloseTo(1, 6);
+  });
+
   test('radius <= 0은 0이다', () => {
     expect(circleLensArea(circle(0, 0, 0), circle(0, 0, 3))).toBe(0);
     expect(circleLensArea(circle(0, 0, -1), circle(0, 0, 3))).toBe(0);

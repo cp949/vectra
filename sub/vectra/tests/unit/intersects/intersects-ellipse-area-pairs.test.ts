@@ -24,6 +24,13 @@ describe('ellipse.intersectsCircle - 기본 교차 판정', () => {
     ).toBe(false);
   });
 
+  test('circle 중심이 ellipse 밖이어도 ellipse 중심이 circle 안에 있으면 true를 반환한다', () => {
+    // 큰 circle (0,0) r=5가 작은 ellipse (3,0) rx=1 ry=1을 통째로 포함한다. circle 중심은 ellipse 밖이다.
+    expect(
+      intersectsEllipseCircle({ center: { x: 3, y: 0 }, radiusX: 1, radiusY: 1 }, { center: { x: 0, y: 0 }, radius: 5 })
+    ).toBe(true);
+  });
+
   test('완전히 분리된 경우 false를 반환한다', () => {
     // ellipse (0,0) rx=2 ry=1, circle center (10,0) r=1 — 완전 분리
     expect(

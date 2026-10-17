@@ -43,6 +43,10 @@ describe('circleRectClosestPoint inside center', () => {
     expect(closest(circle(5, 8, 1), rect(0, 0, 10, 10))).toEqual([true, 5, 10]);
   });
 
+  test('center가 top edge에 가장 가까우면 top edge로 투영한다', () => {
+    expect(closest(circle(5, 1, 1), rect(0, 0, 10, 10))).toEqual([true, 5, 0]);
+  });
+
   test('exact center tie는 left edge로 deterministic하게 고정한다', () => {
     expect(closest(circle(5, 5, 1), rect(0, 0, 10, 10))).toEqual([true, 0, 5]);
   });
@@ -71,6 +75,13 @@ describe('circleRectClosestPoint failure', () => {
   test('non-finite rect는 false + out 미수정이다', () => {
     const out: XYObjectWritable = { x: 99, y: 99 };
     expect(circleRectClosestPointInto(out, circle(5, 5, 1), rect(Number.NaN, 0, 10, 10))).toBe(false);
+    expect(out).toEqual({ x: 99, y: 99 });
+  });
+
+  test('non-finite center는 false + out 미수정이다', () => {
+    const out: XYObjectWritable = { x: 99, y: 99 };
+    expect(circleRectClosestPointInto(out, circle(Number.NaN, 5, 1), rect(0, 0, 10, 10))).toBe(false);
+    expect(circleRectClosestPointInto(out, circle(5, Number.POSITIVE_INFINITY, 1), rect(0, 0, 10, 10))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
 

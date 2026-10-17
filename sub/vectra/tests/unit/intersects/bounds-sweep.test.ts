@@ -228,6 +228,44 @@ describe('boundsSweep Into / companion', () => {
     expect(result.hit).toBe(true);
   });
 
+  test('boundsSweepBoundsInto는 moving bounds 좌표가 비유한이면 no-hit을 기록한다', () => {
+    const out = freshOut();
+    const result = boundsSweepBoundsInto(out, bounds(Number.NaN, -1, 1, 1), { x: 10, y: 0 }, bounds(9, -10, 19, 10));
+    expect(result).toBe(out);
+    expect(result.hit).toBe(false);
+    expect(result.time).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  test('boundsSweepBoundsInto는 moving bounds가 무한대로 뻗으면 no-hit을 기록한다', () => {
+    const out = freshOut();
+    const result = boundsSweepBoundsInto(
+      out,
+      bounds(Number.NEGATIVE_INFINITY, -1, 1, 1),
+      { x: 10, y: 0 },
+      bounds(9, -10, 19, 10)
+    );
+    expect(result.hit).toBe(false);
+    expect(result.time).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  test('boundsSweepBoundsInto는 target bounds 좌표가 비유한이면 no-hit을 기록한다', () => {
+    const out = freshOut();
+    const result = boundsSweepBoundsInto(
+      out,
+      bounds(-1, -1, 1, 1),
+      { x: 10, y: 0 },
+      bounds(9, -10, Number.POSITIVE_INFINITY, 10)
+    );
+    expect(result.hit).toBe(false);
+    expect(Number.isNaN(result.contact.x)).toBe(true);
+  });
+
+  test('boundsSweepBoundsInto는 target이 넓이 0이면 no-hit을 기록한다', () => {
+    const out = freshOut();
+    expect(boundsSweepBoundsInto(out, bounds(-1, -1, 1, 1), { x: 10, y: 0 }, bounds(9, -10, 9, 10)).hit).toBe(false);
+    expect(boundsSweepBoundsInto(out, bounds(-1, -1, 1, 1), { x: 10, y: 0 }, bounds(9, 5, 19, 5)).hit).toBe(false);
+  });
+
   test('companion은 새 detail object와 새 nested object를 반환한다', () => {
     const a = boundsSweepPoint({ x: 0, y: 5 }, { x: 20, y: 0 }, bounds(10, 0, 20, 10));
     const b = boundsSweepPoint({ x: 0, y: 5 }, { x: 20, y: 0 }, bounds(10, 0, 20, 10));
