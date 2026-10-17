@@ -51,6 +51,14 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.ts'],
       exclude: ['src/**/*.d.ts'],
+      // 전역 기준이다. shared와 isolated 두 project의 합산에 적용한다.
+      // 실측(statements 97.32, branches 93.43, functions 97.45, lines 97.86)에서 약 2%p 아래로 둔다.
+      thresholds: {
+        statements: 95,
+        branches: 91,
+        functions: 95,
+        lines: 95,
+      },
     },
   },
 });
