@@ -1,3 +1,4 @@
+import { crossWithin } from '../internal/numeric';
 import { readPolygonPoints } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
 import type { PolygonLike } from '../types';
@@ -12,19 +13,21 @@ import type { PolygonLike } from '../types';
  * - structural empty(point 수 `< 3`)는 `false`.
  * - consecutive repeated point가 만드는 outgoing edge zero-length(`outX === 0 && outY === 0`)는 `false`.
  * - 인접 edge 벡터의 cross product 부호가 모든 non-zero turn에서 같으면 `true`, 섞이면 `false`.
- *   `Math.abs(cross) <= epsilon`인 collinear turn은 sign 판단에서 제외한다.
+ *   collinear turn은 sign 판단에서 제외한다. `epsilon`을 생략하면 `|cross| <= 1e-9·|in|·|out|`(turn 각의 sin 기준)이라
+ *   좌표 scale에 불변이다. `epsilon`을 명시하면 `|cross| <= epsilon` 절대 비교를 쓴다.
  * - collinear-only zero-area polygon(모든 turn이 collinear)은 `false`(같은 부호 non-zero turn이 없음).
  * - CW/CCW orientation은 같은 결과(모든 cross 부호가 함께 뒤집힘).
  * - self-intersecting bow-tie처럼 turn 부호가 섞이는 입력은 `false`.
  *
- * `epsilon` 기본값은 `1e-9`다. `epsilon`과 좌표 non-finite에 runtime validation을 추가하지 않는다.
+ * `epsilon`과 좌표 non-finite에 runtime validation을 추가하지 않는다.
  * `NaN`이나 negative `epsilon`, non-finite 좌표는 JS 비교와 산술 결과를 그대로 따른다(`NaN` epsilon이면
  * `Math.abs(cross) <= NaN`이 항상 false라 모든 turn이 sign 판단에 포함된다).
+ * 인접 edge 길이² 곱이 오버플로하면(edge 길이 약 1e77 이상) 상대 임계를 만들 수 없어 `1e-9` 절대 비교를 쓴다.
  *
  * @param polygon convex 여부를 확인할 polygon
- * @param epsilon collinear turn으로 볼 cross product 절대값 threshold (기본값 `1e-9`)
+ * @param epsilon collinear turn으로 볼 cross product 절대값 threshold. 생략하면 `1e-9·|in|·|out|`
  */
-export function isConvex(polygon: PolygonLike, epsilon = 1e-9): boolean {
+export function isConvex(polygon: PolygonLike, epsilon?: number): boolean {
   const pts = readPolygonPoints(polygon);
   const n = pts.length;
   if (n < 3) return false;
@@ -47,7 +50,7 @@ export function isConvex(polygon: PolygonLike, epsilon = 1e-9): boolean {
     if (outX === 0 && outY === 0) return false;
 
     const cross = inX * outY - inY * outX;
-    if (Math.abs(cross) <= epsilon) continue;
+    if (crossWithin(cross, epsilon, inX * inX + inY * inY, outX * outX + outY * outY)) continue;
 
     const s = cross > 0 ? 1 : -1;
     if (sign === 0) {

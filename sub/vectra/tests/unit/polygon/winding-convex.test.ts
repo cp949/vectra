@@ -282,8 +282,8 @@ describe('polygon light query - isConvex', () => {
     expect(isConvex(CCW_SQUARE, Number.NEGATIVE_INFINITY)).toBe(true);
   });
 
-  test('큰 좌표 scale에서도 절대 epsilon(1e-9) 기준으로 convex를 판정한다', () => {
-    // cross가 거대해져 1e-9 collinear gate가 사실상 무력화되지만 same-sign이면 true.
+  test('큰 좌표 scale에서도 same-sign turn이면 convex로 판정한다', () => {
+    // cross가 거대해도 collinear gate는 sin θ 기준이라 모든 turn이 같은 부호로 센다.
     expect(
       isConvex({
         points: [
