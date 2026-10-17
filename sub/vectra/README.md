@@ -74,7 +74,8 @@ import * as Circlex from '@cp949/vectra/circle';
 import * as Intersectx from '@cp949/vectra/intersects';
 ```
 
-root import는 package-level metadata 같은 편의 export용이다.
+root는 type 재export와 `VECTRA_PACKAGE_NAME`만 제공한다.
+함수는 domain subpath에서 import한다.
 
 ```ts
 import { VECTRA_PACKAGE_NAME } from '@cp949/vectra';

@@ -14,7 +14,7 @@
 
 | 문서 | 읽는 때 |
 | --- | --- |
-| [Import 방식](./guides/imports.md) | root import와 domain barrel import를 선택할 때 |
+| [Import 방식](./guides/imports.md) | root(type·metadata)와 domain subpath를 구분할 때 |
 | [Output과 Into](./guides/outputs-and-into.md) | allocation과 caller-owned output 재사용을 선택할 때 |
 | [Input과 Shape](./guides/inputs-and-shapes.md) | `{ x, y }`, tuple, shape input 규칙을 확인할 때 |
 | [Degenerate와 Numeric Policy](./guides/degen-and-numeric-policy.md) | sentinel, `RangeError`, epsilon 처리를 확인할 때 |
