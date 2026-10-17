@@ -1,6 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite5 } from './interpolation.internal';
 
 /**
  * a와 b 사이의 선형 보간 좌표를 out에 기록하고 out을 반환한다.
@@ -19,7 +19,7 @@ export function lerpPointInto<Out extends XYWritable>(out: Out, a: XYInput, b: X
   const ay = readY(a);
   const bx = readX(b);
   const by = readY(b);
-  assertFiniteNumbers([ax, ay, bx, by, t]);
+  assertFinite5(ax, ay, bx, by, t);
   // a/b 읽기 완료 후 out에 쓰므로 aliasing safe
   return writeXY(out, ax + (bx - ax) * t, ay + (by - ay) * t);
 }

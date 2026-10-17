@@ -1,6 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite5 } from './interpolation.internal';
 
 /**
  * current를 target 방향으로 최대 maxDistance만큼 이동한 좌표를 out에 기록하고 out을 반환한다.
@@ -27,7 +27,7 @@ export function moveTowardPointInto<Out extends XYWritable>(
   const cy = readY(current);
   const tx = readX(target);
   const ty = readY(target);
-  assertFiniteNumbers([cx, cy, tx, ty, maxDistance]);
+  assertFinite5(cx, cy, tx, ty, maxDistance);
 
   if (maxDistance < 0) {
     throw new RangeError('moveTowardPoint maxDistance must be non-negative');

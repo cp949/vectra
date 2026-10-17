@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /**
  * value를 0에서 멀어지는 방향으로 정수 반올림한다.
@@ -8,7 +8,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param value 0에서 멀어지는 방향으로 반올림할 값
  */
 export function roundAwayFromZero(value: number): number {
-  assertFiniteNumbers([value]);
+  assertFinite1(value);
 
   if (value === 0) {
     return 0;

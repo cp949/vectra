@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite1, assertFinite5 } from './interpolation.internal';
 import { assertNonNegativeDt, assertPositiveAngularFrequency, springStep } from './motion.internal';
 import type { SpringLerpOptions, SpringMotionResult } from './types';
 
@@ -39,7 +39,8 @@ export function springLerp(
   const angularFrequency = options?.angularFrequency ?? DEFAULT_ANGULAR_FREQUENCY;
   const dampingRatio = options?.dampingRatio ?? DEFAULT_DAMPING_RATIO;
 
-  assertFiniteNumbers([current, target, velocity, dt, angularFrequency, dampingRatio]);
+  assertFinite5(current, target, velocity, dt, angularFrequency);
+  assertFinite1(dampingRatio);
   assertNonNegativeDt(dt);
   assertPositiveAngularFrequency(angularFrequency);
 

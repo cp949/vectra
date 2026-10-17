@@ -1,5 +1,5 @@
 import { periodicPhase } from './periodic.internal';
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite1 } from './range.internal';
 
 /**
  * 주기 1의 sawtooth wave phase를 반환한다.
@@ -10,7 +10,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param t sample할 scalar 값
  */
 export function sawtoothWave(t: number): number {
-  assertFiniteNumbers([t]);
+  assertFinite1(t);
 
   return periodicPhase(t, 1);
 }

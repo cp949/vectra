@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from '../math/range.internal';
+import { assertFinite2, assertNonNegativeFiniteNumber } from '../math/range.internal';
 import { angleDelta } from './angle-delta';
 
 /**
@@ -15,7 +15,7 @@ import { angleDelta } from './angle-delta';
  * @param epsilon near-equal 판정 tolerance (기본값: 0)
  */
 export function turnDirection(from: number, to: number, epsilon = 0): -1 | 0 | 1 {
-  assertFiniteNumbers([from, to]);
+  assertFinite2(from, to);
   assertNonNegativeFiniteNumber(epsilon);
 
   const delta = angleDelta(from, to);

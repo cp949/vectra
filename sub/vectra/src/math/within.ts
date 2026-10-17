@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertOrderedRange } from './range.internal';
+import { assertFinite3, assertOrderedRange } from './range.internal';
 
 /**
  * value가 ordered closed range [min, max] 안에 있으면 true를 반환한다.
@@ -11,7 +11,7 @@ import { assertFiniteNumbers, assertOrderedRange } from './range.internal';
  * @param max closed range의 상한
  */
 export function within(value: number, min: number, max: number): boolean {
-  assertFiniteNumbers([value, min, max]);
+  assertFinite3(value, min, max);
   assertOrderedRange(min, max);
 
   return value >= min && value <= max;

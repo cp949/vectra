@@ -1,5 +1,5 @@
 import { pushStableRoots, quadraticRoots } from './quadratic-roots.internal';
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite3 } from './range.internal';
 import { solveLinear } from './solve-linear';
 
 /**
@@ -20,7 +20,7 @@ import { solveLinear } from './solve-linear';
  * @param eps 판별식 절대 tolerance. 생략하면 상대 판정(위 설명)을 쓴다.
  */
 export function solveQuadratic(a: number, b: number, c: number, eps?: number): number[] {
-  assertFiniteNumbers([a, b, c]);
+  assertFinite3(a, b, c);
 
   if (a === 0) {
     const r = solveLinear(b, c);

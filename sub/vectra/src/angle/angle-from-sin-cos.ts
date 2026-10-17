@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 import { rawAngleFromSinCos } from './angle-from-sin-cos.internal';
 
 /**
@@ -13,7 +13,7 @@ import { rawAngleFromSinCos } from './angle-from-sin-cos.internal';
  * @param cos angle의 cosine 값
  */
 export function angleFromSinCos(sin: number, cos: number): number {
-  assertFiniteNumbers([sin, cos]);
+  assertFinite2(sin, cos);
 
   return rawAngleFromSinCos(sin, cos);
 }

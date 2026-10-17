@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite3 } from './interpolation.internal';
 
 /**
  * current를 target 방향으로 최대 maxDelta만큼 이동한 값을 반환한다.
@@ -14,7 +14,7 @@ import { assertFiniteNumbers } from './interpolation.internal';
  * @param maxDelta 최대 이동량. 0 이상의 finite number여야 한다.
  */
 export function moveToward(current: number, target: number, maxDelta: number): number {
-  assertFiniteNumbers([current, target, maxDelta]);
+  assertFinite3(current, target, maxDelta);
 
   if (maxDelta < 0) {
     throw new RangeError('moveToward maxDelta must be non-negative');

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite2 } from './range.internal';
 
 /**
  * a를 b로 나눈 뒤 floor한 floor division 값을 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param b 제수. 0이면 RangeError.
  */
 export function floorDiv(a: number, b: number): number {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
 
   if (b === 0) {
     throw new RangeError('floorDiv divisor must not be zero');

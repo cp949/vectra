@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, lerpRaw } from './interpolation.internal';
+import { assertFinite3, lerpRaw } from './interpolation.internal';
 
 /**
  * a와 b 사이의 선형 보간값을 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers, lerpRaw } from './interpolation.internal';
  * @param t clamp하지 않는 보간 비율
  */
 export function unclampedLerp(a: number, b: number, t: number): number {
-  assertFiniteNumbers([a, b, t]);
+  assertFinite3(a, b, t);
 
   return lerpRaw(a, b, t);
 }

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertPositiveFiniteNumber } from './range.internal';
+import { assertFinite2, assertPositiveFiniteNumber } from './range.internal';
 import { snapScalar } from './snap.internal';
 
 /**
@@ -12,7 +12,7 @@ import { snapScalar } from './snap.internal';
  * @param start snap grid의 기준점
  */
 export function snapTo(value: number, gap: number, start = 0): number {
-  assertFiniteNumbers([value, start]);
+  assertFinite2(value, start);
   assertPositiveFiniteNumber(gap);
 
   return snapScalar(value, gap, start);

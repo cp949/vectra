@@ -1,6 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite4 } from './interpolation.internal';
 
 /**
  * a와 b의 중점을 out에 기록하고 out을 반환한다.
@@ -18,7 +18,7 @@ export function midpointInto<Out extends XYWritable>(out: Out, a: XYInput, b: XY
   const ay = readY(a);
   const bx = readX(b);
   const by = readY(b);
-  assertFiniteNumbers([ax, ay, bx, by]);
+  assertFinite4(ax, ay, bx, by);
   // a/b 읽기 완료 후 out에 쓰므로 aliasing safe
   return writeXY(out, ax + (bx - ax) * 0.5, ay + (by - ay) * 0.5);
 }

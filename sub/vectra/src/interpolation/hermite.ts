@@ -1,5 +1,5 @@
 import type { CardinalTangentOptions } from '../types';
-import { assertFiniteNumbers, clampScalar } from './interpolation.internal';
+import { assertFinite1, assertFinite3, assertFinite5, clampScalar } from './interpolation.internal';
 
 /**
  * cubic Hermite basis로 scalar 보간값을 반환한다.
@@ -22,7 +22,7 @@ import { assertFiniteNumbers, clampScalar } from './interpolation.internal';
  * @param t clamp하지 않는 보간 비율
  */
 export function cubicHermite(a: number, tangentA: number, b: number, tangentB: number, t: number): number {
-  assertFiniteNumbers([a, tangentA, b, tangentB, t]);
+  assertFinite5(a, tangentA, b, tangentB, t);
   return cubicHermiteRaw(a, tangentA, b, tangentB, t);
 }
 
@@ -40,7 +40,7 @@ export function cubicHermite(a: number, tangentA: number, b: number, tangentB: n
  * @param t `[0, 1]`로 clamp되는 보간 비율
  */
 export function cubicHermiteClamped(a: number, tangentA: number, b: number, tangentB: number, t: number): number {
-  assertFiniteNumbers([a, tangentA, b, tangentB, t]);
+  assertFinite5(a, tangentA, b, tangentB, t);
   return cubicHermiteRaw(a, tangentA, b, tangentB, clampScalar(t, 0, 1));
 }
 
@@ -59,7 +59,7 @@ export function cubicHermiteClamped(a: number, tangentA: number, b: number, tang
 export function tangentCardinal(prev: number, next: number, options?: CardinalTangentOptions): number {
   const tension = options?.tension ?? 0;
 
-  assertFiniteNumbers([prev, next, tension]);
+  assertFinite3(prev, next, tension);
 
   if (tension < 0 || tension > 1) {
     throw new RangeError('tension must be in [0, 1]');
@@ -97,7 +97,7 @@ export function cubicHermiteFromPoints(
   const tangentA = tangentCardinal(prev, b, options);
   const tangentB = tangentCardinal(a, next, options);
 
-  assertFiniteNumbers([t]);
+  assertFinite1(t);
 
   return cubicHermiteRaw(a, tangentA, b, tangentB, t);
 }
@@ -128,7 +128,7 @@ export function cubicHermiteFromPointsClamped(
   const tangentA = tangentCardinal(prev, b, options);
   const tangentB = tangentCardinal(a, next, options);
 
-  assertFiniteNumbers([t]);
+  assertFinite1(t);
 
   const ct = clampScalar(t, 0, 1);
 

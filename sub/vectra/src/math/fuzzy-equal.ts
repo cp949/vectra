@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.internal';
+import { assertFinite2, assertNonNegativeFiniteNumber } from './range.internal';
 
 /**
  * 두 scalar 값의 절대 차이가 epsilon 이하이면 true를 반환한다.
@@ -12,7 +12,7 @@ import { assertFiniteNumbers, assertNonNegativeFiniteNumber } from './range.inte
  * @param epsilon 허용할 절대 오차
  */
 export function fuzzyEqual(a: number, b: number, epsilon = DEFAULT_EPSILON): boolean {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
   assertNonNegativeFiniteNumber(epsilon);
 
   return Math.abs(a - b) <= epsilon;

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite2 } from '../math/range.internal';
 import { rawSweepCcw, rawSweepCw } from './sweep.internal';
 
 /**
@@ -15,7 +15,7 @@ import { rawSweepCcw, rawSweepCw } from './sweep.internal';
  * @param direction 방향. `'ccw'` 또는 `'cw'`. 기본값 `'ccw'`
  */
 export function isReflexSweep(from: number, to: number, direction: 'ccw' | 'cw' = 'ccw'): boolean {
-  assertFiniteNumbers([from, to]);
+  assertFinite2(from, to);
 
   if (direction !== 'ccw' && direction !== 'cw') {
     throw new RangeError('direction must be "ccw" or "cw"');

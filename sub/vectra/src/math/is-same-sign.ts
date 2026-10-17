@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite2 } from './range.internal';
 
 /**
  * 두 값의 sign bit가 같으면 true를 반환한다.
@@ -10,7 +10,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param b 비교할 둘째 scalar 값
  */
 export function isSameSign(a: number, b: number): boolean {
-  assertFiniteNumbers([a, b]);
+  assertFinite2(a, b);
 
   const aNegative = a < 0 || Object.is(a, -0);
   const bNegative = b < 0 || Object.is(b, -0);

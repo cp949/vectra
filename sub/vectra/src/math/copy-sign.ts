@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite2 } from './range.internal';
 
 /**
  * magnitude의 절댓값에 signSource의 sign bit를 적용해 반환한다.
@@ -10,7 +10,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param signSource 적용할 sign bit를 가져올 scalar 값
  */
 export function copySign(magnitude: number, signSource: number): number {
-  assertFiniteNumbers([magnitude, signSource]);
+  assertFinite2(magnitude, signSource);
 
   const absMagnitude = Math.abs(magnitude);
   const negative = signSource < 0 || Object.is(signSource, -0);

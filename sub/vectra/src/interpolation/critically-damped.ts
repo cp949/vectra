@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite5 } from './interpolation.internal';
 import { assertNonNegativeDt, assertPositiveAngularFrequency, criticallyDampedStep } from './motion.internal';
 import type { CriticallyDampedOptions, SpringMotionResult } from './types';
 
@@ -34,7 +34,7 @@ export function criticallyDamped(
 ): SpringMotionResult {
   const angularFrequency = options?.angularFrequency ?? DEFAULT_ANGULAR_FREQUENCY;
 
-  assertFiniteNumbers([current, target, velocity, dt, angularFrequency]);
+  assertFinite5(current, target, velocity, dt, angularFrequency);
   assertNonNegativeDt(dt);
   assertPositiveAngularFrequency(angularFrequency);
 

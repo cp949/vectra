@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './interpolation.internal';
+import { assertFinite4 } from './interpolation.internal';
 import { assertNonNegativeDt } from './motion.internal';
 
 /**
@@ -21,7 +21,7 @@ import { assertNonNegativeDt } from './motion.internal';
  * @param dt 시간 간격. 0 이상의 finite number여야 한다.
  */
 export function exponentialDecay(current: number, target: number, decayRate: number, dt: number): number {
-  assertFiniteNumbers([current, target, decayRate, dt]);
+  assertFinite4(current, target, decayRate, dt);
 
   if (decayRate < 0) {
     throw new RangeError('exponentialDecay decayRate must be non-negative');

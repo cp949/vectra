@@ -1,4 +1,4 @@
-import { assertFiniteNumbers, assertNonZeroOrderedRange } from './range.internal';
+import { assertFinite3, assertNonZeroOrderedRange } from './range.internal';
 
 /**
  * ordered source range [a, b]에서 value가 차지하는 비율을 반환한다.
@@ -11,7 +11,7 @@ import { assertFiniteNumbers, assertNonZeroOrderedRange } from './range.internal
  * @param value 비율로 변환할 scalar 값
  */
 export function inverseLerp(a: number, b: number, value: number): number {
-  assertFiniteNumbers([a, b, value]);
+  assertFinite3(a, b, value);
   assertNonZeroOrderedRange(a, b);
 
   return (value - a) / (b - a);

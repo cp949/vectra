@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from './range.internal';
+import { assertFinite3 } from './range.internal';
 
 /**
  * value에서 amount를 빼되 min보다 작아지지 않게 제한한다.
@@ -10,7 +10,7 @@ import { assertFiniteNumbers } from './range.internal';
  * @param min 반환값이 내려가지 않을 하한
  */
 export function minSub(value: number, amount: number, min: number): number {
-  assertFiniteNumbers([value, amount, min]);
+  assertFinite3(value, amount, min);
 
   return Math.max(value - amount, min);
 }

@@ -1,4 +1,4 @@
-import { assertFiniteNumbers } from '../math/range.internal';
+import { assertFinite3 } from '../math/range.internal';
 import { wrapRadiansPositive } from './wrap-radians-positive';
 
 /**
@@ -15,7 +15,7 @@ import { wrapRadiansPositive } from './wrap-radians-positive';
  * @param end CCW interval 끝 angle (radian, inclusive)
  */
 export function clampAngle(angle: number, start: number, end: number): number {
-  assertFiniteNumbers([angle, start, end]);
+  assertFinite3(angle, start, end);
 
   const intervalSweep = wrapRadiansPositive(end - start);
 
