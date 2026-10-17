@@ -15,7 +15,7 @@ npm install @cp949/vectra
 | 항목 | 기준 |
 | --- | --- |
 | Runtime | Node.js `>=24.18.0`에서 검증 |
-| Module format | ESM only |
+| Module format | ESM. CJS는 `require(esm)`으로 불러온다 |
 | Dependencies | runtime dependency 없음 |
 | TypeScript | package가 제공하는 `.d.ts` 사용 |
 | Coordinates | `{ x, y }` object 또는 readonly `[x, y]` tuple |

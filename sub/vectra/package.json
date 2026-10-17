@@ -35,6 +35,7 @@
     "lint:fix": "biome check --write build-entrypoints.ts tsdown.config.ts src tests",
     "format": "biome check --write build-entrypoints.ts tsdown.config.ts src tests",
     "format:check": "biome format build-entrypoints.ts tsdown.config.ts src tests",
+    "lint:package": "npx --yes publint@0.3.25 . && npx --yes @arethetypeswrong/cli@0.18.5 --pack . --profile esm-only",
     "surface:check": "vitest run --config vitest.config.ts tests/contract/source-surface-drift.test.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
@@ -46,156 +47,194 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/index.js"
     },
     "./types": {
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/types/index.js",
-      "types": "./dist/types/index.d.ts"
+      "default": "./dist/types/index.js"
     },
     "./vec": {
+      "types": "./dist/vec/index.d.ts",
       "import": "./dist/vec/index.js",
-      "types": "./dist/vec/index.d.ts"
+      "default": "./dist/vec/index.js"
     },
     "./segment": {
+      "types": "./dist/segment/index.d.ts",
       "import": "./dist/segment/index.js",
-      "types": "./dist/segment/index.d.ts"
+      "default": "./dist/segment/index.js"
     },
     "./rect": {
+      "types": "./dist/rect/index.d.ts",
       "import": "./dist/rect/index.js",
-      "types": "./dist/rect/index.d.ts"
+      "default": "./dist/rect/index.js"
     },
     "./bounds": {
+      "types": "./dist/bounds/index.d.ts",
       "import": "./dist/bounds/index.js",
-      "types": "./dist/bounds/index.d.ts"
+      "default": "./dist/bounds/index.js"
     },
     "./capsule": {
+      "types": "./dist/capsule/index.d.ts",
       "import": "./dist/capsule/index.js",
-      "types": "./dist/capsule/index.d.ts"
+      "default": "./dist/capsule/index.js"
     },
     "./circle": {
+      "types": "./dist/circle/index.d.ts",
       "import": "./dist/circle/index.js",
-      "types": "./dist/circle/index.d.ts"
+      "default": "./dist/circle/index.js"
     },
     "./ellipse": {
+      "types": "./dist/ellipse/index.d.ts",
       "import": "./dist/ellipse/index.js",
-      "types": "./dist/ellipse/index.d.ts"
+      "default": "./dist/ellipse/index.js"
     },
     "./matrix": {
+      "types": "./dist/matrix/index.d.ts",
       "import": "./dist/matrix/index.js",
-      "types": "./dist/matrix/index.d.ts"
+      "default": "./dist/matrix/index.js"
     },
     "./polyline": {
+      "types": "./dist/polyline/index.d.ts",
       "import": "./dist/polyline/index.js",
-      "types": "./dist/polyline/index.d.ts"
+      "default": "./dist/polyline/index.js"
     },
     "./polygon": {
+      "types": "./dist/polygon/index.d.ts",
       "import": "./dist/polygon/index.js",
-      "types": "./dist/polygon/index.d.ts"
+      "default": "./dist/polygon/index.js"
     },
     "./triangle": {
+      "types": "./dist/triangle/index.d.ts",
       "import": "./dist/triangle/index.js",
-      "types": "./dist/triangle/index.d.ts"
+      "default": "./dist/triangle/index.js"
     },
     "./oriented-rect": {
+      "types": "./dist/oriented-rect/index.d.ts",
       "import": "./dist/oriented-rect/index.js",
-      "types": "./dist/oriented-rect/index.d.ts"
+      "default": "./dist/oriented-rect/index.js"
     },
     "./pose2": {
+      "types": "./dist/pose2/index.d.ts",
       "import": "./dist/pose2/index.js",
-      "types": "./dist/pose2/index.d.ts"
+      "default": "./dist/pose2/index.js"
     },
     "./intersects": {
+      "types": "./dist/intersects/index.d.ts",
       "import": "./dist/intersects/index.js",
-      "types": "./dist/intersects/index.d.ts"
+      "default": "./dist/intersects/index.js"
     },
     "./random": {
+      "types": "./dist/random/index.d.ts",
       "import": "./dist/random/index.js",
-      "types": "./dist/random/index.d.ts"
+      "default": "./dist/random/index.js"
     },
     "./random-state": {
+      "types": "./dist/random-state/index.d.ts",
       "import": "./dist/random-state/index.js",
-      "types": "./dist/random-state/index.d.ts"
+      "default": "./dist/random-state/index.js"
     },
     "./path": {
+      "types": "./dist/path/index.d.ts",
       "import": "./dist/path/index.js",
-      "types": "./dist/path/index.d.ts"
+      "default": "./dist/path/index.js"
     },
     "./math": {
+      "types": "./dist/math/index.d.ts",
       "import": "./dist/math/index.js",
-      "types": "./dist/math/index.d.ts"
+      "default": "./dist/math/index.js"
     },
     "./curve": {
+      "types": "./dist/curve/index.d.ts",
       "import": "./dist/curve/index.js",
-      "types": "./dist/curve/index.d.ts"
+      "default": "./dist/curve/index.js"
     },
     "./svg-path": {
+      "types": "./dist/svg-path/index.d.ts",
       "import": "./dist/svg-path/index.js",
-      "types": "./dist/svg-path/index.d.ts"
+      "default": "./dist/svg-path/index.js"
     },
     "./infinite-line": {
+      "types": "./dist/infinite-line/index.d.ts",
       "import": "./dist/infinite-line/index.js",
-      "types": "./dist/infinite-line/index.d.ts"
+      "default": "./dist/infinite-line/index.js"
     },
     "./ray": {
+      "types": "./dist/ray/index.d.ts",
       "import": "./dist/ray/index.js",
-      "types": "./dist/ray/index.d.ts"
+      "default": "./dist/ray/index.js"
     },
     "./angle": {
+      "types": "./dist/angle/index.d.ts",
       "import": "./dist/angle/index.js",
-      "types": "./dist/angle/index.d.ts"
+      "default": "./dist/angle/index.js"
     },
     "./interpolation": {
+      "types": "./dist/interpolation/index.d.ts",
       "import": "./dist/interpolation/index.js",
-      "types": "./dist/interpolation/index.d.ts"
+      "default": "./dist/interpolation/index.js"
     },
     "./easing": {
+      "types": "./dist/easing/index.d.ts",
       "import": "./dist/easing/index.js",
-      "types": "./dist/easing/index.d.ts"
+      "default": "./dist/easing/index.js"
     },
     "./adapter": {
+      "types": "./dist/adapter/index.d.ts",
       "import": "./dist/adapter/index.js",
-      "types": "./dist/adapter/index.d.ts"
+      "default": "./dist/adapter/index.js"
     },
     "./editor-geometry": {
+      "types": "./dist/editor-geometry/index.d.ts",
       "import": "./dist/editor-geometry/index.js",
-      "types": "./dist/editor-geometry/index.d.ts"
+      "default": "./dist/editor-geometry/index.js"
     },
     "./linalg": {
+      "types": "./dist/linalg/index.d.ts",
       "import": "./dist/linalg/index.js",
-      "types": "./dist/linalg/index.d.ts"
+      "default": "./dist/linalg/index.js"
     },
     "./calculus": {
+      "types": "./dist/calculus/index.d.ts",
       "import": "./dist/calculus/index.js",
-      "types": "./dist/calculus/index.d.ts"
+      "default": "./dist/calculus/index.js"
     },
     "./statistics": {
+      "types": "./dist/statistics/index.d.ts",
       "import": "./dist/statistics/index.js",
-      "types": "./dist/statistics/index.d.ts"
+      "default": "./dist/statistics/index.js"
     },
     "./grid": {
+      "types": "./dist/grid/index.d.ts",
       "import": "./dist/grid/index.js",
-      "types": "./dist/grid/index.d.ts"
+      "default": "./dist/grid/index.js"
     },
     "./hex-grid": {
+      "types": "./dist/hex-grid/index.d.ts",
       "import": "./dist/hex-grid/index.js",
-      "types": "./dist/hex-grid/index.d.ts"
+      "default": "./dist/hex-grid/index.js"
     },
     "./motion": {
+      "types": "./dist/motion/index.d.ts",
       "import": "./dist/motion/index.js",
-      "types": "./dist/motion/index.d.ts"
+      "default": "./dist/motion/index.js"
     },
     "./noise": {
+      "types": "./dist/noise/index.d.ts",
       "import": "./dist/noise/index.js",
-      "types": "./dist/noise/index.d.ts"
+      "default": "./dist/noise/index.js"
     },
     "./sdf": {
+      "types": "./dist/sdf/index.d.ts",
       "import": "./dist/sdf/index.js",
-      "types": "./dist/sdf/index.d.ts"
+      "default": "./dist/sdf/index.js"
     },
     "./fitting": {
+      "types": "./dist/fitting/index.d.ts",
       "import": "./dist/fitting/index.js",
-      "types": "./dist/fitting/index.d.ts"
+      "default": "./dist/fitting/index.js"
     }
   },
   "files": [

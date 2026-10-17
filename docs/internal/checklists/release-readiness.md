@@ -60,6 +60,8 @@ publish 직전 무엇을 확인해야 하는가를 담는 체크리스트다.
 - [ ] 공개 root/domain barrel build entry에 대응하는 `exports` 항목이 존재한다
 - [ ] `exports`에 선언된 모든 경로가 build entry로 파생된다
 - [ ] 새로 추가된 domain barrel이 두 파일 모두에 반영되어 있다
+- [ ] 각 `exports` 항목은 `types`, `import`, `default` 순서다. contract test `package-exports.test.ts`가 확인한다
+- [ ] `pnpm --filter @cp949/vectra lint:package`(publint, attw)가 통과한다. attw는 node10, node16-cjs 해석을 무시한다
 
 현재 `exports`는 38개다. root 1개와 domain barrel 37개다.
 

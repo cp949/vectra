@@ -19,7 +19,7 @@ npm install @cp949/vectra
 | 항목 | 기준 |
 | --- | --- |
 | Runtime | Node.js `>=24.18.0`에서 검증 |
-| Module format | ESM only |
+| Module format | ESM. CJS는 `require()`로 불러온다 (아래 "CJS에서 사용" 참고) |
 | Dependencies | runtime dependency 없음 |
 | Package metadata | `sideEffects: false` |
 | Import | root, `types`, domain subpath export |
@@ -42,6 +42,25 @@ const length = Segmentx.length([a, b]);
 
 console.log(sum); // { x: 3, y: 4 }
 console.log(length); // 5
+```
+
+## CJS에서 사용
+
+패키지는 ESM이다. `exports`의 `default` 조건이 같은 ESM 파일을 가리킨다.
+CJS는 `require(esm)`으로 불러온다. 지원 범위의 Node.js `>=24.18.0`에서 기본으로 동작한다.
+
+```js
+const Vecx = require('@cp949/vectra/vec');
+
+console.log(Vecx.add({ x: 1, y: 2 }, { x: 3, y: 4 })); // { x: 4, y: 6 }
+```
+
+`require(esm)`을 지원하지 않는 환경에서는 dynamic import를 쓴다.
+
+```js
+import('@cp949/vectra/vec').then((Vecx) => {
+  console.log(Vecx.add({ x: 1, y: 2 }, { x: 3, y: 4 }));
+});
 ```
 
 ## Import

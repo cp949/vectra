@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+- `package.json`의 `exports` 각 항목에 `default` 조건을 추가한다. 이전에는 CJS `require('@cp949/vectra/vec')`가 `ERR_PACKAGE_PATH_NOT_EXPORTED`로 실패했다. 이제 `require(esm)`을 지원하는 Node.js(`>=24.18.0`)에서 root와 모든 subpath를 `require()`로 불러올 수 있다. 패키지는 계속 ESM이다. `import`로 쓰는 코드는 영향이 없다.
+- `exports` 각 항목에서 `types` 조건을 첫 번째로 옮긴다. 조건은 순서대로 해석되므로 이전 순서에서는 TypeScript가 `import`를 먼저 만났다. publint 오류 38건이 사라진다.
 - `solveCubic`의 3차 경로가 `eps`를 생략하면 상대 판정을 쓴다. 판별식은 p, q의 반올림 잡음이 전파되는 양 `16·ε·(|q|·S³ + p²·S²)` 이하일 때 중근으로 본다(S는 근 scale). 근 dedupe는 `1e-12·S`이다. 이전에는 판별식 `1e-18`, 근 dedupe `1e-9` 절대값이라 붙은 근을 합쳤다. 예를 들어 근 (0.5, 0.5001, 0.5002)가 `[0.5001]` 하나로 나왔다. `eps`를 생략한 호출만 결과가 바뀌고, `eps`를 명시한 호출은 이전과 같다. 근 간격이 S의 약 1e-5배 이하이거나 켤레 복소근의 허수부가 약 1e-6배 이하이면 중근으로 합친다.
 - `solveCubic`이 근 0을 `-0`으로 반환하던 문제를 고친다. `b = c = d = 0`이나 `a = 0` fallback에서 나오던 `-0`이 `+0`이 된다. 값은 같고 `Object.is`로 비교하는 코드만 영향을 받는다.
 - `solveLinear`와 `solveQuadratic`이 해 0을 `-0`으로 반환하던 문제를 고친다. `solveLinear(1, 0)`, `solveQuadratic(0, 1, 0)`, `eps`를 명시한 중복근 `solveQuadratic(1, 0, 0, 1e-9)`가 `+0`을 반환한다. 값은 같고 `Object.is`로 비교하는 코드만 영향을 받는다.

@@ -37,6 +37,9 @@ jobs:
       - name: Build vectra package
         run: pnpm --filter @cp949/vectra build
 
+      - name: Lint package exports (publint, attw)
+        run: pnpm --filter @cp949/vectra lint:package
+
       - name: Check npm package contents
         working-directory: sub/vectra
         run: npm pack --dry-run
