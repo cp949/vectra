@@ -315,6 +315,29 @@ describe('ellipse Euclidean 최근접점 - 중심과 퇴화 입력', () => {
   });
 });
 
+describe('ellipse Euclidean 최근접점 - 극단 축비와 먼 점', () => {
+  test('축비 1e20 ellipse에서 1e300 거리의 점은 major vertex로 투영된다', () => {
+    // 하한 (p - k) / b가 1e320으로 overflow해 NaN이 나오던 입력이다.
+    const result = closestPoint(makeEllipse(0, 0, 1, 1e-20), { x: 1e300, y: 1e100 });
+    expect(result.x).toBeCloseTo(1, 12);
+    expect(Math.abs(result.y)).toBeLessThanOrEqual(1e-20);
+  });
+
+  test('축비 1e300 ellipse 안쪽의 subnormal 높이 점은 바로 위 boundary로 투영된다', () => {
+    // q가 subnormal이라 Newton 도함수의 q² / w³ 항이 overflow하던 입력이다. x가 0.02 어긋났다.
+    const result = closestPoint(makeEllipse(0, 0, 1, 1e-300), { x: -0.35540056228637695, y: 1.4354338645935e-310 });
+    expect(result.x).toBeCloseTo(-0.35540056228637695, 14);
+    expect(result.y).toBeGreaterThan(0);
+  });
+
+  test('major 반지름의 1e300배보다 먼 점도 그 방향 법선이 닿는 점으로 투영된다', () => {
+    // dx / major가 overflow하던 입력이다. 방향 (1, 1)의 법선은 tanθ = 1/2에서 닿는다.
+    const result = closestPoint(makeEllipse(0, 0, 2e-300, 1e-300), { x: 1e20, y: 1e20 });
+    expect(result.x / 2e-300).toBeCloseTo(Math.cos(Math.atan(0.5)), 12);
+    expect(result.y / 1e-300).toBeCloseTo(Math.sin(Math.atan(0.5)), 12);
+  });
+});
+
 describe('ellipse Euclidean 최근접점 - epsilon', () => {
   test('큰 epsilon으로 호출해도 boundary 위의 유한한 점을 반환한다', () => {
     const result = closestPoint(makeEllipse(0, 0, 2, 1), { x: 3, y: 2 }, 1);

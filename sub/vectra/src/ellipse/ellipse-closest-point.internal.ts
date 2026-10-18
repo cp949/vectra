@@ -6,6 +6,9 @@
  * empty ellipse 분기는 각 leaf module에서 처리한다.
  */
 
+/** major 반지름 대비 이보다 먼 점은 방향만 남긴다. */
+const FAR_LIMIT = 1e300;
+
 /**
  * ellipse boundary에서 (dx, dy)에 Euclidean 거리가 가장 가까운 점의 angle θ를 계산한다.
  *
@@ -16,8 +19,13 @@
  * 최근접점의 법선 조건은 G(w) = (p / (k + b w))² + (q / w)² - 1 = 0으로 모인다.
  * w는 법선 거리에 해당하는 양수 매개변수다.
  * b²를 직접 쓰지 않으므로 b가 1e-300 규모여도 underflow하지 않는다.
- * G는 w > 0에서 감소하는 볼록 함수다. 하한에서 시작하는 Newton 반복은 근을 넘지 않고 단조롭게 수렴한다.
- * 수렴 판정: |Δw| <= epsilon * w. 64회 반복 상한.
+ * 실제로는 w를 범위가 안전한 매개변수 t로 바꿔 푼다.
+ * - p > k: t = b w. 하한 p - k가 양수다. (p - k) / b처럼 overflow하지 않는다.
+ * - p <= k: t = w / q = 1 / sin φ. q가 subnormal이어도 정밀도를 잃지 않는다.
+ * G는 t > 0에서 감소하는 볼록 함수다. 하한에서 시작하는 Newton 반복은 근을 넘지 않고 단조롭게 수렴한다.
+ * Newton 보정은 t에 대한 비율로 계산한다. 도함수를 그대로 쓰면 t가 작을 때 overflow한다.
+ * 수렴 판정: |Δt| <= epsilon * t. 64회 반복 상한.
+ * major 반지름의 1e300배보다 먼 점은 방향만 남겨 p, q의 overflow를 막는다.
  * fallback: 수렴 실패 시 마지막 반복 값을 사용한다.
  *
  * 특수 입력:
@@ -36,8 +44,14 @@ export function ellipseClosestPointAngle(dx: number, dy: number, rx: number, ry:
   const swapped = rx < ry;
   const major = swapped ? ry : rx;
   const b = (swapped ? rx : ry) / major;
-  const p = Math.abs(swapped ? dy : dx) / major;
-  const q = Math.abs(swapped ? dx : dy) / major;
+  let p = Math.abs(swapped ? dy : dx) / major;
+  let q = Math.abs(swapped ? dx : dy) / major;
+  // 먼 점은 방향만 남겨 거리를 major의 1e300배로 줄인다. 각도 변화는 1e-300 rad 규모다.
+  if (!(p <= FAR_LIMIT && q <= FAR_LIMIT)) {
+    const far = Math.max(Math.abs(dx), Math.abs(dy));
+    p = (Math.abs(swapped ? dy : dx) / far) * FAR_LIMIT;
+    q = (Math.abs(swapped ? dx : dy) / far) * FAR_LIMIT;
+  }
 
   // center에서는 두 minor vertex가 동률이다. 양의 방향을 고른다. rx === ry이면 θ = 0이다.
   if (p === 0 && q === 0) return rx > ry ? Math.PI / 2 : 0;
@@ -62,18 +76,22 @@ export function ellipseClosestPointAngle(dx: number, dy: number, rx: number, ry:
     cosPhi = 0;
     sinPhi = 1;
   } else {
-    // 하한은 두 항이 각각 1을 넘지 않는 조건에서 나온다. 이 지점에서 G(w) >= 0이다.
-    let w = Math.max(q, (p - evolute) / b);
+    // G(t) = (p / (k + scale t))² + (offset / t)² - 1을 푼다. p > k이면 t = b w, 아니면 t = w / q다.
+    const outside = p > evolute;
+    const scale = outside ? 1 : b * q;
+    const offset = outside ? b * q : 1;
+    // 하한은 두 항이 각각 1을 넘지 않는 조건에서 나온다. 이 지점에서 G(t) >= 0이다.
+    let t = outside ? Math.max(offset, p - evolute) : 1;
     for (let i = 0; i < 64; i++) {
-      const d0 = evolute + b * w;
+      const d0 = evolute + scale * t;
       const u = p / d0;
-      const v = q / w;
-      const step = (u * u + v * v - 1) / (-2 * ((b * u * u) / d0 + (v * v) / w));
-      w -= step;
-      if (Math.abs(step) <= epsilon * w) break;
+      const v = offset / t;
+      const ratio = (u * u + v * v - 1) / (2 * ((scale * t * u * u) / d0 + v * v));
+      t += t * ratio;
+      if (Math.abs(ratio) <= epsilon) break;
     }
-    cosPhi = p / (evolute + b * w);
-    sinPhi = q / w;
+    cosPhi = p / (evolute + scale * t);
+    sinPhi = offset / t;
   }
 
   // 접기 전 사분면 부호를 복원한다. 0은 양수로 본다.
