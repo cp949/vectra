@@ -108,7 +108,27 @@ function circumcircle(
 }
 
 /**
- * quarter-point error metric으로 tolerance 충족 여부를 판정하고, 충족 시 arc를 push한다.
+ * center-form으로 재구성한 시작점·끝점과 segment 끝점 사이 거리의 최대값을 반환한다.
+ *
+ * circumcircle은 수학적으로 두 끝점을 지난다. 이 오차는 cx, cy, startAngle, endAngle의 반올림에서만 생긴다.
+ * 반지름이 크면 r·ulp(startAngle)만으로 errorTolerance를 넘는다.
+ */
+function centerFormEndpointError(
+  circle: { cx: number; cy: number; r: number; startAngle: number; span: number },
+  sx: number,
+  sy: number,
+  ex: number,
+  ey: number
+): number {
+  const { cx, cy, r, startAngle } = circle;
+  const endAngle = startAngle + circle.span;
+  const startError = Math.hypot(cx + r * Math.cos(startAngle) - sx, cy + r * Math.sin(startAngle) - sy);
+  const endError = Math.hypot(cx + r * Math.cos(endAngle) - ex, cy + r * Math.sin(endAngle) - ey);
+  return startError > endError ? startError : endError;
+}
+
+/**
+ * quarter-point 표본 오차와 끝점 재구성 오차의 최대값으로 tolerance 충족 여부를 판정하고, 충족 시 arc를 push한다.
  *
  * tolerance를 만족하지 못하면 false를 반환한다 — 호출자(subdivideCubicToTolerance)가 재분할 여부를 결정한다.
  * err이 non-finite이거나 out.length가 maxSegments에 도달하면 RangeError를 던진다.
@@ -124,6 +144,7 @@ function tryEmitArcFromSegment(
   r: number,
   startAngle: number,
   span: number,
+  endpointError: number,
   errorTolerance: number,
   maxSegments: number
 ): boolean {
@@ -133,7 +154,10 @@ function tryEmitArcFromSegment(
   const dq3y = q3y - cy;
   const err1 = Math.abs(Math.hypot(dq1x, dq1y) - r);
   const err3 = Math.abs(Math.hypot(dq3x, dq3y) - r);
-  const err = err1 > err3 ? err1 : err3;
+  let err = err1 > err3 ? err1 : err3;
+  if (endpointError > err) {
+    err = endpointError;
+  }
 
   if (!Number.isFinite(err)) {
     throw new RangeError('cubicToArcsInto: non-finite error metric');
@@ -217,7 +241,9 @@ export function subdivideCubicToTolerance(
 
     const { cx, cy, r, startAngle, span } = circle;
 
-    // error metric: quarter-point 표본의 point-to-circle deviation 최대값
+    // error metric: quarter-point 표본의 point-to-circle deviation과 끝점 재구성 오차의 최대값
+    // 거의 직선인 segment는 재분할해도 반지름이 그대로라 끝점 오차가 줄지 않는다.
+    // 대신 현이 짧아져 circumcircle이 null이 되고 collinear 경로로 수렴한다.
     cubicPointAtTInto(scratch, p0, p1, p2, p3, t0 + tSpan * 0.25);
     const q1x = scratch.x;
     const q1y = scratch.y;
@@ -236,6 +262,7 @@ export function subdivideCubicToTolerance(
       r,
       startAngle,
       span,
+      centerFormEndpointError(circle, sx, sy, ex, ey),
       errorTolerance,
       maxSegments
     );
