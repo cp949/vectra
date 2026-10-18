@@ -44,13 +44,15 @@ export function ellipseClosestPointAngle(dx: number, dy: number, rx: number, ry:
   const swapped = rx < ry;
   const major = swapped ? ry : rx;
   const b = (swapped ? rx : ry) / major;
-  let p = Math.abs(swapped ? dy : dx) / major;
-  let q = Math.abs(swapped ? dx : dy) / major;
+  const along = Math.abs(swapped ? dy : dx);
+  const across = Math.abs(swapped ? dx : dy);
+  let p = along / major;
+  let q = across / major;
   // 먼 점은 방향만 남겨 거리를 major의 1e300배로 줄인다. 각도 변화는 1e-300 rad 규모다.
   if (!(p <= FAR_LIMIT && q <= FAR_LIMIT)) {
-    const far = Math.max(Math.abs(dx), Math.abs(dy));
-    p = (Math.abs(swapped ? dy : dx) / far) * FAR_LIMIT;
-    q = (Math.abs(swapped ? dx : dy) / far) * FAR_LIMIT;
+    const far = Math.max(along, across);
+    p = (along / far) * FAR_LIMIT;
+    q = (across / far) * FAR_LIMIT;
   }
 
   // center에서는 두 minor vertex가 동률이다. 양의 방향을 고른다. rx === ry이면 θ = 0이다.
