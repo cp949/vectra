@@ -1,13 +1,9 @@
 import type { EllipseEllipseDetail, PointRelationDetail, XYObjectWritable } from '../types';
 import { canonTurn, ellipseResidual, type Hit, pointInEllipseClosedN } from './ellipse-ellipse-conic.internal';
-import { solveQuadraticReal, solveQuarticReal } from './ellipse-ellipse-solver.internal';
+import { pushQuarticRootCandidates } from './ellipse-ellipse-solver.internal';
 
 export type { Hit } from './ellipse-ellipse-conic.internal';
 export { canonTurn, ellipseResidual, pointInEllipseClosedN } from './ellipse-ellipse-conic.internal';
-// 분할된 solver/conic helper를 동일 경로에서 노출하는 re-export 배럴.
-// 소비처는 ellipseEllipseDetailXY만 import하지만, helper도 sibling .internal. 경계에서
-// 재노출해 import 경로를 단일화한다.
-export { solveCubicReal, solveQuadraticReal, solveQuarticReal } from './ellipse-ellipse-solver.internal';
 
 // Newton 최대 반복. 정상 seed는 step-size break로 1~2회에 끝난다. wrong-sign seed가
 // 실제 교점으로 이주하는 경우 완전 수렴까지 더 필요하므로(미수렴 시 dedupe가 못 합쳐
@@ -15,15 +11,21 @@ export { solveCubicReal, solveQuadraticReal, solveQuarticReal } from './ellipse-
 // 종료하므로 큰 값이어도 정상 케이스 비용은 늘지 않는다.
 const NEWTON_MAX_ITER = 64;
 
+const TWO_PI = Math.PI * 2;
+
+// 같은 접촉 판정에서 두 hit 사이 호를 검사하는 위치(호 길이 비율).
+const CONTACT_SAMPLES = [0.25, 0.5, 0.75] as const;
+
 /**
  * 두 axis-aligned ellipse boundary의 교차 관계 detail을 raw 좌표/반지름에서 계산한다.
  *
  * `ellipseEllipseDetail`이 호출하는 source of truth다. empty(rx/ry ≤ 0)와 non-finite
  * center/radius는 boolean relation 성격에 맞춰 `none`으로 처리한다. 분기 tolerance(`epsilon`,
  * 절대값)와 좌표 dedupe/residual tolerance를 의미상 분리한다. 계산은 공통 scale로 정규화하되
- * center offset은 정규화 전에 직접 차분해 local offset 손실을 피한다. quartic root에서 복원한
- * 교점은 양쪽 ellipse 방정식 residual 가드를 통과한 점만 채택하고, 최종 좌표가 non-finite이면
- * 그 점을 버린다.
+ * center offset은 정규화 전에 직접 차분해 local offset 손실을 피한다. quartic root는 ellipse a의
+ * x 범위로 한정해 구한다. root에서 복원한 교점은 양쪽 ellipse 방정식 residual 가드를 통과한 점만
+ * 채택하고, 최종 좌표가 non-finite이면 그 점을 버린다. 두 경계가 residual tolerance 안에 붙어 있는
+ * 구간의 점은 한 접촉으로 합친다.
  *
  * @param epsilon 분기·tangent·containment 판정 임계값(절대)
  */
@@ -97,15 +99,13 @@ export function ellipseEllipseDetailXY(
   // 분기 epsilonN보다 느슨한 임계를 쓴다.
   const dedupeTol = Math.max(epsilonN, 1e-7);
   const residualTol = Math.max(epsilonN * 8, 1e-7);
-  // solver 전용 임계: monic 정규화된 계수 frame에서 leading-coeff downgrade와 중근 판정
-  // 기준이다. 정규화 후 계수는 O(1)이므로 float64 분해능(~2.2e-16)보다 충분히 큰 1e-12로
-  // 두어 진짜 0 계수/중근은 잡고 정상 근은 보존한다.
+  // δ ≈ 0 분기 판정과 Newton polish의 Jacobian 특이·수렴 판정 임계다. 정규화 후 계수는 O(1)이므로
+  // float64 분해능(~2.2e-16)보다 충분히 큰 1e-12로 둔다.
   const solveEps = 1e-12;
 
   const hits: Hit[] = [];
 
   const pushHit = (rawX: number, rawY: number): void => {
-    if (!Number.isFinite(rawX) || !Number.isFinite(rawY)) return;
     // 두 ellipse 방정식 {E_a=0, E_b=0}에 대한 2D Newton polish.
     // 두 ellipse가 거의 접하면(near-tangency) x root가 ill-conditioned라 quartic이 돌려준
     // x가 약간 부정확하고, ellipse a 기준 ±복원 y는 정확해도 ellipse b residual이 residualTol을
@@ -147,42 +147,73 @@ export function ellipseEllipseDetailXY(
   const P = alpha - (beta * A1) / B1;
   const Q = gamma;
   const R = epsC + beta / B1;
-  // y2는 제곱 frame(거리²)이므로 선형 거리 임계 dedupeTol이 아니라 그 제곱(y2Tol)과 비교한다.
-  const y2Tol = dedupeTol * dedupeTol;
+  // x 후보는 아래에서 [-nrax, nrax] 안으로 한정한다. 꼭짓점 근처 근은 반올림으로 nrax를 살짝 넘어
+  // y2가 음수가 될 수 있다. 버리지 않고 y = 0에서 시작해 Newton polish와 residual 가드에 맡긴다.
   const pushFromX = (x: number): void => {
     const y2 = (1 - A1 * x * x) / B1;
-    if (y2 < -y2Tol) return;
     const yy = Math.sqrt(Math.max(0, y2));
     pushHit(x, yy);
     if (yy > dedupeTol) pushHit(x, -yy);
   };
 
-  let xRoots: number[];
+  // ellipse a 위의 점이라 x ∈ [-nrax, nrax]다. 이 구간으로 한정해 근을 구한다.
+  // Ferrari 공식은 최고차 계수가 0에 가깝거나(두 ellipse 축비가 같음) 두 교점이 x를 공유하면(δ ≈ 0)
+  // 실근을 잃는다. 구간 한정 solver는 계수로 나누지 않아 두 경우 모두 근 후보를 낸다.
+  // 구간은 반올림으로 nrax를 넘는 꼭짓점 근을 담도록 조금 넓힌다.
+  const xMax = nrax * (1 + 1e-9);
+  const xCandidates: number[] = [];
+  const xTangents: number[] = [];
   if (Math.abs(delta) <= solveEps) {
     // δ ≈ 0: 차분 conic에 y 항 없음 → P x² + Q x + R = 0.
-    xRoots = solveQuadraticReal(P, Q, R, solveEps);
+    pushQuarticRootCandidates(xCandidates, xTangents, R, Q, P, 0, 0, -xMax, xMax);
   } else {
     // δ ≠ 0: E_a 대입 B1·(P x²+Q x+R)² + δ²·(A1 x² - 1) = 0의 x root.
     const d2 = delta * delta;
-    xRoots = solveQuarticReal(
-      B1 * P * P,
-      B1 * 2 * P * Q,
-      B1 * (Q * Q + 2 * P * R) + d2 * A1,
-      B1 * 2 * Q * R,
+    pushQuarticRootCandidates(
+      xCandidates,
+      xTangents,
       B1 * R * R - d2,
-      solveEps
+      B1 * 2 * Q * R,
+      B1 * (Q * Q + 2 * P * R) + d2 * A1,
+      B1 * 2 * P * Q,
+      B1 * P * P,
+      -xMax,
+      xMax
     );
   }
-  for (const x of xRoots) pushFromX(x);
+  for (const x of xCandidates) pushFromX(x);
+  // 잡음에 가려 부호 변화 없이 붙은 두 근은 임계점 양쪽에 거의 대칭으로 놓인다.
+  // 임계점 시드로 찾은 점을 임계점 기준으로 뒤집어 반대쪽 근도 시드한다. 중근이면 같은 점으로 수렴해 dedupe된다.
+  for (const x of xTangents) {
+    const first = hits.length;
+    pushFromX(x);
+    const last = hits.length;
+    for (let i = first; i < last; i++) pushFromX(2 * x - (hits[i] as Hit).x);
+  }
 
-  // 정규화 좌표 거리 기준 dedupe
+  // 두 hit 사이 ellipse a 호가 ellipse b에서 residualTol 안에 머물면 같은 접촉으로 본다.
+  // 접선 근처에서는 두 경계가 길게 붙어 있어 residual 가드를 통과한 점이 dedupeTol보다 멀리 흩어진다.
+  // 거리만으로 합치면 한 접촉이 여러 점이 되어 4점을 넘을 수 있다.
+  const sameContact = (h: Hit, k: Hit): boolean => {
+    const th = Math.atan2(h.y / nray, h.x / nrax);
+    let dt = Math.atan2(k.y / nray, k.x / nrax) - th;
+    if (dt > Math.PI) dt -= TWO_PI;
+    else if (dt < -Math.PI) dt += TWO_PI;
+    for (const f of CONTACT_SAMPLES) {
+      const t = th + dt * f;
+      if (ellipseResidual(nrax * Math.cos(t), nray * Math.sin(t), ox, oy, A2, B2) > residualTol) return false;
+    }
+    return true;
+  };
+
+  // 정규화 좌표 거리 또는 같은 접촉 기준 dedupe
   const distinct: Hit[] = [];
   for (const h of hits) {
     let dup = false;
     for (const k of distinct) {
       const dx = h.x - k.x;
       const dy = h.y - k.y;
-      if (dx * dx + dy * dy <= dedupeTol * dedupeTol) {
+      if (dx * dx + dy * dy <= dedupeTol * dedupeTol || sameContact(h, k)) {
         dup = true;
         break;
       }

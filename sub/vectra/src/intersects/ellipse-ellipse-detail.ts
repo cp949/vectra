@@ -23,6 +23,9 @@ import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
  * (finite는 `Number.isFinite`로 별도 검사). 계산은 공통 scale로 정규화하되 center offset은
  * 정규화 전에 직접 차분해 local offset 손실을 피하고, 차분 conic을 quartic으로 환원해 최대 4점을
  * 모두 계산한다. 각 교점은 양쪽 ellipse 방정식 residual 가드를 통과한 점만 채택한다.
+ * residual 가드 임계는 `max(8·epsilon, 1e-7·scale)` 규모다. `scale`은 두 radius와 center offset 중 최댓값이다.
+ * 그래서 두 경계 간격이 이 임계 이하인 근접 접촉은 실제 교점이 없어도 `point`로 나올 수 있다.
+ * 경계가 이 임계 안에 붙어 있는 구간의 점은 한 접점으로 합친다.
  * `epsilon`은 절대 임계값이며 두 radius보다 충분히 작다고 가정한다. radius가 `epsilon` 규모 이하면
  * 분리/접선 경계가 합쳐져 분류가 틀어질 수 있다.
  * 결과는 매 호출 새 plain object를 반환하며 입력 center object를 재사용하지 않는다.

@@ -1,6 +1,6 @@
 /**
  * circle·ellipse 교차 계산이 수치 한계에서 쓰는 fallback 경로를 확인하는 테스트.
- * 좌표 복원 중 overflow, 비유한 교점 후보, 각도 turn의 1.0 접힘, quartic solver의 빈 근 반환을 다룬다.
+ * 좌표 복원 중 overflow, 비유한 교점 후보, 각도 turn의 1.0 접힘을 다룬다.
  * 극단 입력의 결과는 현재 구현의 documented fallback을 고정한 것이다.
  */
 import { describe, expect, test } from 'vitest';
@@ -9,7 +9,6 @@ import { circleCircleDetail } from '../../../src/intersects/circle-circle-detail
 import { circleCircleIntersectionsInto } from '../../../src/intersects/circle-circle-intersections-into';
 import { ellipseCircleIntersectionsInto } from '../../../src/intersects/ellipse-circle-intersections-into';
 import { ellipseEllipseDetail } from '../../../src/intersects/ellipse-ellipse-detail';
-import { solveQuarticReal } from '../../../src/intersects/ellipse-ellipse-solver.internal';
 
 const BIG = Number.MAX_VALUE;
 
@@ -74,7 +73,7 @@ describe('turn 접힘', () => {
 });
 
 describe('ellipse 교차의 수치 한계 fallback', () => {
-  test('ellipseEllipseDetail은 반지름 격차가 1e154인 동심 입력의 비유한 후보를 버리고 contains를 반환한다', () => {
+  test('ellipseEllipseDetail은 반지름 격차가 1e154인 동심 입력에서 계수가 overflow해도 contains를 반환한다', () => {
     expect(ellipseEllipseDetail(ellipse(0, 0, 1, 1), ellipse(0, 0, 1, 1e154))).toEqual({ kind: 'contains' });
   });
 
@@ -101,47 +100,5 @@ describe('ellipse 교차의 수치 한계 fallback', () => {
       expect(Math.hypot(p.x, p.y)).toBeCloseTo(3, 9);
       expect((p.x / 5) ** 2 + (p.y / 2) ** 2).toBeCloseTo(1, 9);
     }
-  });
-});
-
-describe('solveQuarticReal의 빈 근 반환', () => {
-  const EPS = 1e-12;
-
-  test('biquadratic에서 z가 모두 음수이면 실근이 없다', () => {
-    // x⁴ + 5x² + 4: z = x²의 근이 -1, -4라 실근이 없다.
-    expect(solveQuarticReal(1, 0, 5, 0, 4, EPS)).toEqual([]);
-  });
-});
-
-describe('solveQuarticReal의 작은 resolvent 근', () => {
-  const EPS = 1e-12;
-
-  test('q가 eps를 간신히 넘어 resolvent 양수근이 eps 이하여도 실근을 잃지 않는다', () => {
-    // x⁴ + x² + 1e-11 x = x (x³ + x + 1e-11)의 실근은 0과 약 -1e-11이다.
-    // q=1e-11이 eps 위라 일반 경로로 가지만 resolvent 양수근이 1e-22 규모라 cubic solver가 못 구한다.
-    // 두 실근이 1e-11 안에 붙어 있어 근 하나(약 -5e-12)로 합쳐 돌려준다.
-    const roots = solveQuarticReal(1, 0, 1, 1e-11, 0, EPS);
-    expect(roots).toHaveLength(1);
-    expect(Math.abs(roots[0])).toBeLessThanOrEqual(1e-11);
-  });
-
-  test('작은 resolvent 근 경로에서도 큰 실근 한 쌍은 그대로 구한다', () => {
-    // x⁴ - x² + 1e-11 x의 실근은 약 -1, 0, 1이다. resolvent 근이 작아도 세 근이 모두 나온다.
-    const roots = solveQuarticReal(1, 0, -1, 1e-11, 0, EPS).sort((a, b) => a - b);
-    expect(roots).toHaveLength(3);
-    expect(roots[0]).toBeCloseTo(-1, 9);
-    expect(Math.abs(roots[1])).toBeLessThanOrEqual(1e-11);
-    expect(roots[2]).toBeCloseTo(1, 9);
-  });
-
-  test('p² - 4r이 0이면 q를 무시한 biquadratic으로 처리한다', () => {
-    // (x² + 0.5)² + 1.2e-12 x: p² - 4r = 0이라 resolvent 근이 q/√2 ≈ 8.5e-13으로 eps 아래다.
-    // 근의 작은 값 근사가 성립하지 않아 biquadratic으로 보내며, 실근이 없다.
-    expect(solveQuarticReal(1, 0, 1, 1.2e-12, 0.25, EPS)).toEqual([]);
-  });
-
-  test('실근이 없는 quartic은 작은 resolvent 근 경로에서도 빈 근을 반환한다', () => {
-    // x⁴ + x² + 1e-11 x + 1은 모든 x에서 양수다.
-    expect(solveQuarticReal(1, 0, 1, 1e-11, 1, EPS)).toEqual([]);
   });
 });
