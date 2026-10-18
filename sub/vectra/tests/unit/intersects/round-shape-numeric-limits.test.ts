@@ -77,8 +77,13 @@ describe('ellipse 교차의 수치 한계 fallback', () => {
     expect(ellipseEllipseDetail(ellipse(0, 0, 1, 1), ellipse(0, 0, 1, 1e154))).toEqual({ kind: 'contains' });
   });
 
-  test('ellipseEllipseDetail은 Newton 보정이 비유한 값이 되는 후보를 버리고 contains를 반환한다', () => {
+  test('ellipseEllipseDetail은 반지름 격차가 1e154이고 x 반지름도 다른 동심 입력에서 contains를 반환한다', () => {
     expect(ellipseEllipseDetail(ellipse(0, 0, 1, 1), ellipse(0, 0, 2, 1e154))).toEqual({ kind: 'contains' });
+  });
+
+  test('ellipseEllipseDetail은 Newton 보정이 비유한 값이 되는 후보를 버리고 none을 반환한다', () => {
+    // a의 x 반지름 1e-200은 정규화 후 제곱의 역수가 Infinity라 Newton 보정이 NaN이 된다.
+    expect(ellipseEllipseDetail(ellipse(0, 0, 1e-200, 1), ellipse(0, -10, 1e-7, 1e-4))).toEqual({ kind: 'none' });
   });
 
   test('ellipseEllipseDetail은 복원한 교점 좌표가 비유한이면 none을 반환한다', () => {

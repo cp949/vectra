@@ -3,7 +3,8 @@
  *
  * pushConicQuarticRootCandidates는 `B·u² + E·u + D·(A x² - 1)`, `u = P x² + Q x + R` 형태의 식을 푼다.
  * 정렬·중복 제거 없이 후보를 push하므로 test는 정렬한 뒤 기대 근과 비교한다.
- * 최고차 계수가 0에 가까운 경우, 부호를 바꾸지 않는 중근, 구간 끝의 근, 변곡점 분기를 다룬다.
+ * 최고차 계수가 0에 가까운 경우, 전개하면 반올림에 묻히는 작은 항, 부호를 바꾸지 않는 중근,
+ * 구간 끝의 근, 변곡점 분기를 다룬다.
  */
 import { describe, expect, test } from 'vitest';
 import {
@@ -57,6 +58,11 @@ describe('pushConicQuarticRootCandidates', () => {
     expectRoots(candidates(FOUR_ROOTS, 1.5, 3.5), [2, 3]);
   });
 
+  test('변곡점 하나만 구간 안에 있어도 근을 구한다', () => {
+    // 변곡점은 2.5 ± √(5/12) ≈ 1.855, 3.145다. [2.5, 5]에는 뒤쪽 하나만 들어온다.
+    expectRoots(candidates(FOUR_ROOTS, 2.5, 5), [3, 4]);
+  });
+
   test('biquadratic의 대칭 근을 구한다', () => {
     // (x² - 2.5)² - 2.25 = (x² - 1)(x² - 4)
     expectRoots(candidates(form({ P: 1, R: -2.5, B: 1, D: 2.25 }), -3, 3), [-2, -1, 1, 2]);
@@ -65,6 +71,13 @@ describe('pushConicQuarticRootCandidates', () => {
   test('최고차 계수가 1e-20 규모여도 구간 안의 근을 잃지 않는다', () => {
     // 1e-20·x⁴ + x² - 0.25: 큰 근 두 개는 구간 밖이고 ±0.5만 구간 안에 있다.
     expectRoots(candidates(form({ P: 1, B: 1e-20, E: 1, D: 0.25 }), -1, 1), [-0.5, 0.5]);
+  });
+
+  test('전개하면 반올림에 묻히는 작은 항이 만드는 가까운 두 근을 구한다', () => {
+    // 2.5e7·(1e6 (x - 0.4)²)² + 100 (x² - 1): 전개 계수는 1e19 규모이고 100 규모 항이 반올림에 묻힌다.
+    // 그대로 계산하면 0.4 ± 4.3e-5의 두 근이 나온다.
+    const f = form({ P: 1e6, Q: -8e5, R: 1.6e5, B: 2.5e7, D: 100, A: 1 });
+    expectRoots(candidates(f, -1, 1), [0.399957185660731, 0.400042813466397]);
   });
 
   test('2차식은 E 항만으로 푼다', () => {
