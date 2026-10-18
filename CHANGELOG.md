@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-18
+
 - package README의 Domain 절이 모든 domain을 나열한다. npm 페이지에서 저장소 문서, domain 지도, CHANGELOG로 가는 링크를 추가한다.
 - `isSimple`과 `isSelfIntersecting`의 self-intersection 검사를 빠르게 한다. vertex가 64개 이상이고 `epsilon`을 생략한 호출은 AABB sweep으로 후보 edge 쌍을 줄인다. 원형 4000 vertex는 약 60ms에서 약 0.7ms로, 20000 vertex는 약 1.5초에서 약 4ms로 줄어든다. 동작 변경은 없다. 반환값은 이전과 같다. `epsilon`을 명시한 호출, vertex 64개 미만, edge 길이가 약 1.16e77을 넘거나 NaN·Infinity 좌표가 있는 입력은 이전의 전수 비교를 쓴다. 이미 교차한 polygon은 첫 교차를 일찍 찾는 이전 루프가 더 빠를 수 있다. 정렬과 배열 할당 때문에 vertex 4000개에서 약 0.1ms가 약 0.9ms가 된다.
 - README와 문서의 런타임 지원 표기를 '검증 환경'(Node.js `>=24.18.0`)과 '빌드 target'(ES2020, platform neutral)으로 나눈다. 문서 표기만 바뀐다. `package.json`, 빌드 결과, 공개 API는 그대로이고 `engines`는 추가하지 않는다.
@@ -55,7 +57,8 @@
 
 - npm 레지스트리에서 설치할 수 있는 첫 버전이다. 1.0.0은 배포 기록이 있지만 레지스트리에서 설치할 수 없다.
 
-[Unreleased]: https://github.com/cp949/vectra/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/cp949/vectra/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/cp949/vectra/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cp949/vectra/compare/fb75ddf...v1.1.0
 [1.0.2]: https://github.com/cp949/vectra/compare/39a8d19...fb75ddf
 [1.0.1]: https://github.com/cp949/vectra/tree/39a8d19
