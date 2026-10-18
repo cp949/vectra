@@ -64,17 +64,10 @@ export function validateCubicToArcsInputs(
   };
 }
 
-const TWO_PI = 2 * Math.PI;
-
-/** from에서 to까지 반시계로 잰 각도를 [0, 2π)로 돌려준다. */
-function relativeAngle(from: number, to: number): number {
-  return (((to - from) % TWO_PI) + TWO_PI) % TWO_PI;
-}
-
 /**
- * 세 점을 지나는 circumcircle의 center와 반지름을 반환한다.
+ * 세 점을 지나는 circumcircle의 center, 반지름, 시작 각도, 부호 있는 중심각을 반환한다.
  *
- * collinear이거나 반지름이 유효하지 않거나 두 끝점의 중심각이 0이면 null을 반환한다.
+ * collinear이거나 반지름이 유효하지 않거나 endAngle이 startAngle로 반올림되면 null을 반환한다.
  */
 function circumcircle(
   x0: number,
@@ -83,8 +76,14 @@ function circumcircle(
   y1: number,
   x2: number,
   y2: number
-): { cx: number; cy: number; r: number } | null {
-  const D = 2 * (x0 * (y1 - y2) + x1 * (y2 - y0) + x2 * (y0 - y1));
+): { cx: number; cy: number; r: number; startAngle: number; span: number } | null {
+  const ux = x1 - x0;
+  const uy = y1 - y0;
+  const vx = x2 - x1;
+  const vy = y2 - y1;
+  // 현 벡터의 cross다. D와 중심각이 같은 값을 써서 D ≠ 0이면 중심각도 0이 아니다.
+  const turn = ux * vy - uy * vx;
+  const D = 2 * turn;
   const s0 = x0 * x0 + y0 * y0;
   const s1 = x1 * x1 + y1 * y1;
   const s2 = x2 * x2 + y2 * y2;
@@ -96,28 +95,26 @@ function circumcircle(
   if (!Number.isFinite(cx) || !Number.isFinite(cy) || !Number.isFinite(r) || !(r > 0)) {
     return null;
   }
-  // 반지름이 각도 해상도를 넘으면 두 끝점이 중심에서 같은 각도로 보여 arc의 중심각이 0이 된다.
-  // 끝점이 달라도 한 점으로 붕괴하므로 collinear와 같이 null로 둔다.
-  if (relativeAngle(Math.atan2(y0 - cy, x0 - cx), Math.atan2(y2 - cy, x2 - cx)) === 0) {
+  // 중심각은 가운데 점에서 꺾이는 각의 2배다(원주각 정리). 현 벡터로 구해 r이 커도 정밀도를 잃지 않는다.
+  // 절대 각도의 차를 [0, 2π)로 접으면 작은 음수 각폭이 2π로 반올림돼 원 한 바퀴 arc가 된다.
+  const startAngle = Math.atan2(y0 - cy, x0 - cx);
+  const span = 2 * Math.atan2(turn, ux * vx + uy * vy);
+  // 반지름이 각도 해상도를 넘으면 endAngle이 startAngle로 반올림된다.
+  // 끝점이 달라도 arc가 한 점으로 붕괴하므로 collinear와 같이 null로 둔다.
+  if (startAngle + span === startAngle) {
     return null;
   }
-  return { cx, cy, r };
+  return { cx, cy, r, startAngle, span };
 }
 
 /**
- * quarter-point error metric으로 tolerance 충족 여부를 판정하고, 충족 시 angle-unwrap 후 arc를 push한다.
+ * quarter-point error metric으로 tolerance 충족 여부를 판정하고, 충족 시 arc를 push한다.
  *
  * tolerance를 만족하지 못하면 false를 반환한다 — 호출자(subdivideCubicToTolerance)가 재분할 여부를 결정한다.
  * err이 non-finite이거나 out.length가 maxSegments에 도달하면 RangeError를 던진다.
  */
 function tryEmitArcFromSegment(
   out: CenterArcWritable[],
-  sx: number,
-  sy: number,
-  mx: number,
-  my: number,
-  ex: number,
-  ey: number,
   q1x: number,
   q1y: number,
   q3x: number,
@@ -125,6 +122,8 @@ function tryEmitArcFromSegment(
   cx: number,
   cy: number,
   r: number,
+  startAngle: number,
+  span: number,
   errorTolerance: number,
   maxSegments: number
 ): boolean {
@@ -148,19 +147,10 @@ function tryEmitArcFromSegment(
     throw new RangeError('cubicToArcsInto: maxSegments exceeded');
   }
 
-  const startAngle = Math.atan2(sy - cy, sx - cx);
-  const rawEndAngle = Math.atan2(ey - cy, ex - cx);
-  const midAngle = Math.atan2(my - cy, mx - cx);
-  // midpoint 각도로 진행 방향을 정한 뒤 endAngle을 unwrap한다.
   // center-arc 규약: consumer는 sweep flag가 아니라 (endAngle - startAngle)로 보간하므로
-  // 이 차이가 진행 방향과 각폭을 담아야 한다. raw atan2 endAngle은 -π 경계에서 부호가 뒤집힌다.
-  // relEnd는 circumcircle이 0을 걸러내므로 항상 양수다.
-  const relMid = relativeAngle(startAngle, midAngle);
-  const relEnd = relativeAngle(startAngle, rawEndAngle);
-  const sweep = relMid < relEnd;
-  const endAngle = startAngle + (sweep ? relEnd : relEnd - TWO_PI);
-
-  out.push({ cx, cy, rx: r, ry: r, xRotation: 0, startAngle, endAngle, sweep });
+  // 이 차이가 진행 방향과 각폭을 담아야 한다. span은 circumcircle이 0을 걸러내므로 0이 아니다.
+  const endAngle = startAngle + span;
+  out.push({ cx, cy, rx: r, ry: r, xRotation: 0, startAngle, endAngle, sweep: span > 0 });
 
   return true;
 }
@@ -225,7 +215,7 @@ export function subdivideCubicToTolerance(
       continue;
     }
 
-    const { cx, cy, r } = circle;
+    const { cx, cy, r, startAngle, span } = circle;
 
     // error metric: quarter-point 표본의 point-to-circle deviation 최대값
     cubicPointAtTInto(scratch, p0, p1, p2, p3, t0 + tSpan * 0.25);
@@ -237,12 +227,6 @@ export function subdivideCubicToTolerance(
 
     const accepted = tryEmitArcFromSegment(
       out,
-      sx,
-      sy,
-      mx,
-      my,
-      ex,
-      ey,
       q1x,
       q1y,
       q3x,
@@ -250,6 +234,8 @@ export function subdivideCubicToTolerance(
       cx,
       cy,
       r,
+      startAngle,
+      span,
       errorTolerance,
       maxSegments
     );
