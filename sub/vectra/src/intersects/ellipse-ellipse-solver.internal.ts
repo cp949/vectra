@@ -37,7 +37,7 @@ export function solveQuarticReal(c4: number, c3: number, c2: number, c1: number,
 
   // resolvent cubic z³ + 2p z² + (p² - 4r) z - q² = 0의 양수 근 z를 찾는다.
   // q ≠ 0 분기이므로 이 cubic은 z=0에서 -q² < 0, z→∞에서 +∞이라 IVT로 양수근이
-  // 항상 존재한다. 따라서 아래 z 선택은 양수 근을 반드시 찾는다.
+  // 항상 존재한다. cubic solver가 작은 양수근을 놓치면 아래에서 다시 구한다.
   const resolvent = solveCubicReal(1, 2 * p, p * p - 4 * r, -q * q, eps);
   let z = 0;
   for (const candidate of resolvent) {
@@ -88,8 +88,10 @@ function solveBiquadraticRoots(p: number, r: number, shift: number, eps: number)
 /**
  * resolvent cubic `z³ + 2p z² + D z - q² = 0`의 작은 양수근을 Newton으로 구한다.
  *
- * `D = p² - 4r > 0`이고 `q`가 작아 근이 0 근처일 때 쓴다. 초기값은 `z ≈ q² / D`다.
- * 3회 반복한다. 근이 `eps` 이하로 작아 도함수 `3z² + 4p z + D`가 `D`에 가깝고 0이 되지 않는다.
+ * `D = p² - 4r > 0`이고 `q`가 작아 근이 0 근처일 때 쓴다. 초기값은 작은 근의 근사 `z ≈ q² / D`다.
+ * 3회 반복한다. 초기값의 상대 오차는 약 `2p q² / D²`다. 이 값이 작으면 3회로 수렴한다.
+ * `D`가 `q` 규모로 작으면 초기값이 근보다 훨씬 커서 수렴하지 않는다.
+ * 이때 quartic은 실근이 없거나, 참 `z`로 분해한 근과 같은 근을 낸다. 근접 퇴화 입력 6550건에서 확인했다.
  */
 function refineSmallResolventRoot(p: number, discriminantTerm: number, q: number): number {
   const qSquared = q * q;
