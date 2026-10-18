@@ -1,6 +1,6 @@
 import type { EllipseEllipseDetail, PointRelationDetail, XYObjectWritable } from '../types';
 import { canonTurn, ellipseResidual, type Hit, pointInEllipseClosedN } from './ellipse-ellipse-conic.internal';
-import { pushQuarticRootCandidates } from './ellipse-ellipse-solver.internal';
+import { pushConicQuarticRootCandidates } from './ellipse-ellipse-solver.internal';
 
 export type { Hit } from './ellipse-ellipse-conic.internal';
 export { canonTurn, ellipseResidual, pointInEllipseClosedN } from './ellipse-ellipse-conic.internal';
@@ -165,31 +165,15 @@ export function ellipseEllipseDetailXY(
   const xTangents: number[] = [];
   if (Math.abs(delta) <= solveEps) {
     // δ ≈ 0: 차분 conic에 y 항 없음 → P x² + Q x + R = 0.
-    pushQuarticRootCandidates(xCandidates, xTangents, R, Q, P, 0, 0, -xMax, xMax);
+    pushConicQuarticRootCandidates(xCandidates, xTangents, { P, Q, R, B: 0, E: 1, D: 0, A: 0 }, -xMax, xMax);
   } else {
     // δ ≠ 0: E_a 대입 B1·(P x²+Q x+R)² + δ²·(A1 x² - 1) = 0의 x root.
-    const d2 = delta * delta;
-    pushQuarticRootCandidates(
-      xCandidates,
-      xTangents,
-      B1 * R * R - d2,
-      B1 * 2 * Q * R,
-      B1 * (Q * Q + 2 * P * R) + d2 * A1,
-      B1 * 2 * P * Q,
-      B1 * P * P,
-      -xMax,
-      xMax
-    );
+    // 단항식 계수로 전개하지 않는다. 납작한 ellipse에서 δ² 항이 전개 계수의 반올림에 묻힌다.
+    const f = { P, Q, R, B: B1, E: 0, D: delta * delta, A: A1 };
+    pushConicQuarticRootCandidates(xCandidates, xTangents, f, -xMax, xMax);
   }
   for (const x of xCandidates) pushFromX(x);
-  // 잡음에 가려 부호 변화 없이 붙은 두 근은 임계점 양쪽에 거의 대칭으로 놓인다.
-  // 임계점 시드로 찾은 점을 임계점 기준으로 뒤집어 반대쪽 근도 시드한다. 중근이면 같은 점으로 수렴해 dedupe된다.
-  for (const x of xTangents) {
-    const first = hits.length;
-    pushFromX(x);
-    const last = hits.length;
-    for (let i = first; i < last; i++) pushFromX(2 * x - (hits[i] as Hit).x);
-  }
+  for (const x of xTangents) pushFromX(x);
 
   // 두 hit 사이 ellipse a 호가 ellipse b에서 residualTol 안에 머물면 같은 접촉으로 본다.
   // 접선 근처에서는 두 경계가 길게 붙어 있어 residual 가드를 통과한 점이 dedupeTol보다 멀리 흩어진다.
@@ -206,19 +190,24 @@ export function ellipseEllipseDetailXY(
     return true;
   };
 
-  // 정규화 좌표 거리 또는 같은 접촉 기준 dedupe
+  // 정규화 좌표 거리 또는 같은 접촉 기준 dedupe. 중복이면 양쪽 residual 합이 작은 점을 남긴다.
+  // 부호가 틀린 y 시드에서 출발한 Newton은 다른 교점으로 옮겨 가며 덜 수렴한 점을 먼저 낼 수 있다.
+  const hitResidual = (h: Hit): number =>
+    ellipseResidual(h.x, h.y, 0, 0, A1, B1) + ellipseResidual(h.x, h.y, ox, oy, A2, B2);
   const distinct: Hit[] = [];
   for (const h of hits) {
-    let dup = false;
-    for (const k of distinct) {
+    let dup = -1;
+    for (let i = 0; i < distinct.length; i++) {
+      const k = distinct[i] as Hit;
       const dx = h.x - k.x;
       const dy = h.y - k.y;
       if (dx * dx + dy * dy <= dedupeTol * dedupeTol || sameContact(h, k)) {
-        dup = true;
+        dup = i;
         break;
       }
     }
-    if (!dup) distinct.push(h);
+    if (dup < 0) distinct.push(h);
+    else if (hitResidual(h) < hitResidual(distinct[dup] as Hit)) distinct[dup] = h;
   }
 
   if (distinct.length === 0) {
