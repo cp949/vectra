@@ -375,8 +375,8 @@ describe('ellipseEllipseDetail — 1보다 작은 좌표 scale', () => {
 });
 
 describe('ellipseEllipseDetail의 근접 퇴화 교차', () => {
-  // 중심과 반지름이 1e-10 규모로 어긋난 두 ellipse다. quartic의 q 계수가 작아 resolvent 양수근이
-  // solver 절대 허용오차 아래로 내려가며, 예전에는 실근을 버려 교점 두 개를 놓쳤다.
+  // 중심과 반지름이 1e-10 규모로 어긋난 두 ellipse다. 예전 Ferrari solver에서는 quartic의 q 계수가 작아
+  // resolvent 양수근이 절대 허용오차 아래로 내려갔고, 실근을 버려 교점 두 개를 놓쳤다.
   type Quad = [cx: number, cy: number, rx: number, ry: number];
   const CASES: Array<{ name: string; a: Quad; b: Quad }> = [
     {
@@ -404,5 +404,117 @@ describe('ellipseEllipseDetail의 근접 퇴화 교차', () => {
       expect(residual(p.x, p.y, ...a)).toBeLessThan(1e-6);
       expect(residual(p.x, p.y, ...b)).toBeLessThan(1e-6);
     }
+  });
+});
+
+describe('ellipseEllipseDetail의 조건이 나쁜 quartic', () => {
+  // 격자 좌표에 1e-6–1e-12 섭동을 준 입력이다. 정답 교점은 유리수 정확 산술로 구했다.
+  type Quad = [cx: number, cy: number, rx: number, ry: number];
+  type XY = [x: number, y: number];
+  const CASES: Array<{ name: string; a: Quad; b: Quad; expected: XY[] }> = [
+    {
+      // 두 ellipse의 축비가 같아 x 소거 quartic의 최고차 계수가 1e-20 규모다.
+      name: '축비가 같은 두 ellipse가 바깥에서 두 점에서 만난다',
+      a: [2.5, 0.5, 2.5, 2.5],
+      b: [0.5, 2.5, 0.5, 0.49999999999],
+      expected: [
+        [1, 2.5],
+        [0.500000000008, 2.00000000001],
+      ],
+    },
+    {
+      name: '축비가 같은 작은 ellipse가 큰 ellipse 경계를 넘는다',
+      a: [2.5, 2.499999999999, 2.4999999999, 2.5],
+      b: [1, 2, 1, 1],
+      expected: [
+        [0.018875050101, 2.193374850189],
+        [0.331124950138, 1.25662514996],
+      ],
+    },
+    {
+      // 중심 y가 1e-7만 달라 두 교점이 거의 같은 x를 공유한다. quartic의 x근이 중근에 가깝다.
+      name: '중심 높이가 거의 같은 두 ellipse가 위아래 두 점에서 만난다',
+      a: [1, 3.0000001, 1.4999999, 2.4999999999],
+      b: [2.5, 3, 1, 1.50000001],
+      expected: [
+        [2.225217899132, 1.557740203333],
+        [2.225217970857, 4.442259827413],
+      ],
+    },
+    {
+      name: '중심 높이가 거의 같고 한쪽이 납작한 두 ellipse가 위아래 두 점에서 만난다',
+      a: [1.000000000001, 0, 2, 0.5],
+      b: [2.50000000001, -0.000001, 2.500001, 1.5],
+      expected: [
+        [0.114257467428, -0.448292605755],
+        [0.114258583267, 0.448292743548],
+      ],
+    },
+    {
+      // 두 교점이 3e-3 떨어져 있고 그 사이 호가 3.6e-6 깊이로 파고든다.
+      name: '얕게 겹친 두 ellipse의 가까운 두 교점을 모두 구한다',
+      a: [1.499999, 1.5, 2, 0.9999999],
+      b: [1.5, 3, 1, 0.500001],
+      expected: [
+        [1.501548858579, 2.499999599742],
+        [1.498450474756, 2.499999600259],
+      ],
+    },
+    {
+      // 두 ellipse 모두 축비가 1000 규모로 납작하다. quartic 계수가 1e12 규모라 1.2e-4 간격 두 근 사이의 골이
+      // 계산 잡음에 묻혀 부호 변화가 보이지 않는다.
+      name: '납작한 두 ellipse가 가까운 두 점에서 엇갈린다',
+      a: [-1e-12, 1.999999999, 2, 0.001],
+      b: [1, 2.499999, 0.002, 0.500001],
+      expected: [
+        [1.0001177954333, 2.0008659903965],
+        [0.999882199956, 2.0008660584071],
+      ],
+    },
+    {
+      // 교점이 a의 오른쪽 꼭짓점에서 y로 8e-7 떨어져 있다. x근이 반지름을 반올림 오차만큼 넘을 수 있다.
+      name: 'ellipse 꼭짓점 바로 옆의 교점을 버리지 않는다',
+      a: [1.5, 0.5000000001, 2.500001, 2.5000001],
+      b: [2.5, 2.5, 2.50000000001, 2.4999999],
+      expected: [
+        [4.000001, 0.500000829996],
+        [-1e-11, 2.500000530092],
+      ],
+    },
+  ];
+
+  test.each(CASES)('$name', ({ a, b, expected }) => {
+    const detail = ellipseEllipseDetail(E(...a), E(...b), EPS);
+    expect(detail.kind).toBe('two-point');
+    if (detail.kind !== 'two-point') return;
+    for (const [x, y] of expected) {
+      expect(detail.points.some((p) => Math.hypot(p.x - x, p.y - y) <= 1e-9)).toBe(true);
+    }
+    for (const p of detail.points) {
+      expect(residual(p.x, p.y, ...a)).toBeLessThan(1e-9);
+      expect(residual(p.x, p.y, ...b)).toBeLessThan(1e-9);
+    }
+  });
+
+  test('경계가 붙어 있는 구간의 점들을 한 접촉으로 합쳐 4점을 넘기지 않는다', () => {
+    // a 위쪽 끝 (1, 2.5)에서 b 위쪽 끝이 1e-12 차이로 겹친다. 이 접촉 구간 안의 점들이 1e-7 dedupe를
+    // 빠져나가 예전에는 실제 교점 2개와 함께 5점을 냈다.
+    const a: Quad = [1, 1, 1.5, 1.5];
+    const b: Quad = [0.999999999999, 0, 0.50000001, 2.499999999999];
+    const detail = ellipseEllipseDetail(E(...a), E(...b), EPS);
+    expect(detail.kind === 'two-point' || detail.kind === 'multi-point').toBe(true);
+    if (detail.kind !== 'two-point' && detail.kind !== 'multi-point') return;
+    expect(detail.points.length).toBeLessThanOrEqual(3);
+    const crossings: XY[] = [
+      [0.50699334143, -0.416666663194],
+      [1.493006658568, -0.416666663195],
+    ];
+    for (const [x, y] of crossings) {
+      expect(detail.points.some((p) => Math.hypot(p.x - x, p.y - y) <= 1e-9)).toBe(true);
+    }
+    // 남는 점은 위쪽 접촉 하나뿐이다.
+    const rest = detail.points.filter((p) => p.y > 0);
+    expect(rest.length).toBeLessThanOrEqual(1);
+    for (const p of rest) expect(Math.hypot(p.x - 1, p.y - 2.5)).toBeLessThan(1e-4);
   });
 });
