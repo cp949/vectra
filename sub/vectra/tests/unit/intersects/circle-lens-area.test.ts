@@ -38,7 +38,7 @@ describe('circleLensArea', () => {
   });
 
   test('내접 경계 근처 large-radius 입력도 NaN 없이 작은 disk area로 수렴한다', () => {
-    // acos 인자가 반올림으로 1을 살짝 넘겨 NaN이 나오던 회귀. clamp로 막는다.
+    // 옛 acos 공식에서 인자가 반올림으로 1을 살짝 넘겨 NaN이 나오던 회귀다.
     const ra = 840.546718504574;
     const rb = 948.7338215087397;
     const d = 108.18710300416572; // diff보다 ~2.8e-14 큼 → proper lens 분기
@@ -71,8 +71,8 @@ describe('circleLensArea', () => {
     expect(area).toBeLessThan(Math.PI * 4);
   });
 
-  test('내접 경계 바로 바깥에서 acos 인자가 -1 아래로 반올림돼도 작은 disk area로 수렴한다', () => {
-    // d는 |ra - rb|보다 몇 ulp 큰 값이다. (d² + ra² - rb²) / (2·d·ra)가 -1.0000000000000064로 계산된다.
+  test('내접 경계 바로 바깥의 lens 면적은 작은 disk area로 수렴한다', () => {
+    // d는 |ra - rb|보다 몇 ulp 큰 값이다. 옛 acos 공식의 인자 (d² + ra² - rb²) / (2·d·ra)가 -1.0000000000000064로 계산됐다.
     const small = circle(0, 0, 32.05073752276599);
     const large = circle(0.19114182796329263, 0, 32.241879350729285);
     const area = circleLensArea(small, large);
@@ -116,12 +116,25 @@ describe('circleLensArea', () => {
   );
 
   test('큰 쪽이 첫 번째 인자여도 같은 경계에서 작은 disk area로 수렴한다', () => {
-    // beta 쪽 acos 인자가 -1.0000000000000004로 계산되는 배치다.
+    // 옛 acos 공식에서 beta 쪽 인자가 -1.0000000000000004로 계산되던 배치다.
     const large = circle(0, 0, 61.37142942123115);
     const small = circle(4.447257355786861, 0, 56.92417206544429);
     const area = circleLensArea(large, small);
     expect(Number.isNaN(area)).toBe(false);
     expect(area / (Math.PI * 56.92417206544429 ** 2)).toBeCloseTo(1, 12);
+  });
+
+  test('반지름이 같고 중심 거리가 반지름의 1e-308배보다 작아도 면적은 원 하나의 면적이다', () => {
+    // 비 f1 / f2가 Infinity로 넘치는 배치다. 비를 그대로 곱하면 NaN이나 2배 면적이 나왔다.
+    expect(circleLensArea(circle(0, 0, 1), circle(5e-324, 0, 1)) / Math.PI).toBeCloseTo(1, 12);
+    expect(circleLensArea(circle(0, 0, 1), circle(1e-310, 0, 1)) / Math.PI).toBeCloseTo(1, 12);
+    expect(circleLensArea(circle(0, 0, 1e20), circle(1e-305, 0, 1e20)) / (Math.PI * 1e40)).toBeCloseTo(1, 12);
+  });
+
+  test('반지름이 1e154를 넘어도 면적이 유한하면 유한한 값을 반환한다', () => {
+    // expected는 120자리 십진수 계산값이다. r²을 먼저 구하면 Infinity가 나왔다.
+    const area = circleLensArea(circle(0, 0, 1e155), circle(1.99e155, 0, 1e155));
+    expect(area / 1.332332886470164e307).toBeCloseTo(1, 12);
   });
 
   test('radius <= 0은 0이다', () => {

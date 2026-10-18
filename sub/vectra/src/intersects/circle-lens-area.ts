@@ -12,7 +12,7 @@ import type { CircleLike } from '../types';
  * - disjoint, external tangent(`d === r1 + r2`): `0`(면적 중첩 없음).
  * - internal tangent(`d === |r1 - r2|`, `d > 0`), strict containment(`d < |r1 - r2|`), concentric: 작은 disk area.
  * - coincident equal circles(`d === 0`, 같은 반지름): full circle area.
- * - proper lens: 두 원 중첩 면적의 표준 공식.
+ * - proper lens: 두 원호 조각(segment) 면적의 합.
  *
  * center distance는 `Math.hypot`로 계산한다. disjoint/containment 경계는 exact 비교로 판정하며
  * near-equality tolerance를 추가하지 않는다. proper lens의 중심각은 `atan2`로 구해 내접 경계 근처에서도
@@ -57,17 +57,23 @@ export function circleLensArea(a: CircleLike, b: CircleLike): number {
   // - θ를 acos(인자 1 근처에서 오차 ~sqrt(ε)) 대신 반각 접선 `tan(θa/2) = sqrt(F1·F3 / (F2·F4))`로 구한다.
   //   F2 = d + ra - rb, F3 = d - ra + rb 처럼 상쇄 없는 곱과 비만 쓴다.
   // - 조각 형태 `2θ - sin 2θ`는 작은 θ에서 급수로 계산한다.
-  const sumR = ra + rb;
-  const sumErr = twoSumError(ra, rb, sumR);
+  const sumErr = twoSumError(ra, rb, sum);
   const delta = rb - ra;
   const deltaErr = twoSumError(rb, -ra, delta);
-  const f1 = sumR - d + sumErr; // ra + rb - d
+  const f1 = sum - d + sumErr; // ra + rb - d
   const f2 = d - delta - deltaErr; // d + ra - rb
   const f3 = d + delta + deltaErr; // d - ra + rb
-  const f4 = d + sumR + sumErr; // d + ra + rb
-  const alpha = 2 * Math.atan(Math.sqrt(f1 / f2) * Math.sqrt(f3 / f4));
-  const beta = 2 * Math.atan(Math.sqrt(f1 / f3) * Math.sqrt(f2 / f4));
-  return (ra * ra * angleMinusSine(2 * alpha)) / 2 + (rb * rb * angleMinusSine(2 * beta)) / 2;
+  const f4 = d + sum + sumErr; // d + ra + rb
+  // 비 f1 / f2는 d가 반지름의 1e-308배보다 작으면 Infinity로 넘친다. 그러면 Infinity·0이 NaN이 된다.
+  // 인수별 sqrt를 곱해 atan2에 넘긴다.
+  const s1 = Math.sqrt(f1);
+  const s2 = Math.sqrt(f2);
+  const s3 = Math.sqrt(f3);
+  const s4 = Math.sqrt(f4);
+  const alpha = 2 * Math.atan2(s1 * s3, s2 * s4);
+  const beta = 2 * Math.atan2(s1 * s2, s3 * s4);
+  // r²을 먼저 구하면 r > 1.3e154에서 넘친다. 조각 형태 값에 r을 한 번씩 곱한다.
+  return ra * ((ra * angleMinusSine(2 * alpha)) / 2) + rb * ((rb * angleMinusSine(2 * beta)) / 2);
 }
 
 /**
