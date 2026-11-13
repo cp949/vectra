@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "docs:api": "typedoc --options ./typedoc.config.mjs",
-    "lint": "biome check --error-on-warnings .",
-    "lint:fix": "biome check --write .",
-    "format": "biome check --write .",
-    "format:check": "biome format ."
+    "lint": "oxlint -c ../../.oxlintrc.json --deny-warnings . && oxfmt --check .",
+    "lint:fix": "oxlint -c ../../.oxlintrc.json --fix . && oxfmt .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check ."
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
     "typedoc": "0.28.20",
     "typescript": "~6.0.3"
   }

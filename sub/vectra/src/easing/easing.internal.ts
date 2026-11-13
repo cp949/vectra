@@ -20,12 +20,7 @@ export {
   elasticOutRaw,
 } from './easing-parametric-raw.internal';
 // ─── shaping raw group re-export ────────────────────────────────────────────────
-export {
-  biasRaw,
-  cliffRaw,
-  logisticNormalizedRaw,
-  seatRaw,
-} from './easing-shaping-raw.internal';
+export { biasRaw, cliffRaw, logisticNormalizedRaw, seatRaw } from './easing-shaping-raw.internal';
 // ─── standard raw group re-export ───────────────────────────────────────────────
 export {
   bounceOutRaw,

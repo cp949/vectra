@@ -11,7 +11,8 @@
 package.json
 pnpm-workspace.yaml
 turbo.json
-biome.json
+.oxlintrc.json
+.oxfmtrc.json
 sub/
   typescript-config/
   vectra/

@@ -8,7 +8,7 @@ import type { XYInput } from '../types';
  *
  * @param input 유한성을 검사할 벡터
  */
-// biome-ignore lint/suspicious/noShadowRestrictedNames: public API name mirrors Number.isFinite semantics for vectors.
+// public API name mirrors Number.isFinite semantics for vectors.
 export function isFinite(input: XYInput): boolean {
   return Number.isFinite(readX(input)) && Number.isFinite(readY(input));
 }

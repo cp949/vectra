@@ -37,7 +37,7 @@ export function ExampleSearchPopup<RuntimeSeed>({
   const categoryMap = useMemo(() => new Map(categories.map((c) => [c.id, c.title])), [categories]);
 
   // query 변경 시 포커스 첫 항목으로 리셋
-  // biome-ignore lint/correctness/useExhaustiveDependencies: query가 변경될 때만 포커스 리셋
+  // query가 변경될 때만 포커스 리셋
   useEffect(() => {
     setFocusedIndex(0);
   }, [query]);
