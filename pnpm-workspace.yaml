@@ -5,6 +5,9 @@ packages:
 allowBuilds:
   esbuild: true
 
+minimumReleaseAgeExclude:
+  - '@cp949/console-feed@3.7.5'
+
 overrides:
   basic-ftp: 6.2.3
   dompurify: 3.4.17

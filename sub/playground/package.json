@@ -26,7 +26,7 @@
     "react-dom": ">=19"
   },
   "dependencies": {
-    "@cp949/console-feed": "3.7.4",
+    "@cp949/console-feed": "3.7.5",
     "@cp949/react-highlight-words": "^0.1.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",

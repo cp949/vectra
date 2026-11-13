@@ -390,8 +390,8 @@ importers:
   sub/playground:
     dependencies:
       '@cp949/console-feed':
-        specifier: 3.7.4
-        version: 3.7.4(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react-inspector@9.0.0(react@19.3.1))(react@19.3.1)
+        specifier: 3.7.5
+        version: 3.7.5(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react-inspector@9.0.0(react@19.3.1))(react@19.3.1)
       '@cp949/react-highlight-words':
         specifier: ^0.1.0
         version: 0.1.0(react@19.3.1)
@@ -546,9 +546,9 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@cp949/console-feed@3.7.4':
-    resolution: {integrity: sha512-Y5K9Ki0RCMvF3ZhBYnv6wwGpAGkToxhTTs0+TAWxCLL3B5mxLgyiCQkRLH8dL2khhLjCiKfA58Q2/CD8OVe7YA==}
-    engines: {node: ^22.18.0 || ^24.11.0 || >=26.0.0}
+  '@cp949/console-feed@3.7.5':
+    resolution: {integrity: sha512-qoRMHytCBWxA6dO3toSQVBsi8CodBU5H9zFS+Hg6770MlPuygb61v9DtHVppY4I1NW5modiTM5WvDYd7UzrTng==}
+    engines: {node: '>=24.18.0'}
     peerDependencies:
       '@emotion/react': ^11.14.0
       '@emotion/styled': ^11.14.1
@@ -3254,7 +3254,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@cp949/console-feed@3.7.4(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react-inspector@9.0.0(react@19.3.1))(react@19.3.1)':
+  '@cp949/console-feed@3.7.5(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react-inspector@9.0.0(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.3.0)(react@19.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)
