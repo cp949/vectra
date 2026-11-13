@@ -2,5 +2,9 @@ packages:
   - sub/*
   - apps/*
 
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true
+
+overrides:
+  basic-ftp: 6.2.3
+  dompurify: 3.4.17

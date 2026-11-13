@@ -59,7 +59,7 @@ trap promotion 갯수 검증: 결과 문서에 적힌 trap 갯수와 `git log --
 
 본 작업에서 다음 trap 파일이 신규 생성되어 `docs/internal/agent-traps/index.md`에 등록되었다.
 
-1. `docs/internal/agent-traps/typescript/nan-self-comparison-biome.md` — TASK-03 `side.ts` 구현에서 발견.
+1. `docs/internal/agent-traps/typescript/nan-self-comparison-oxlint.md` — TASK-03 `side.ts` 구현에서 발견.
 2. `docs/internal/agent-traps/typescript/literal-union-return-nan-input.md` — TASK-01 정책 결정에서 발견.
 3. `docs/internal/agent-traps/domain/signed-distance-formula-absolute-value.md` — TASK-01 검토에서 발견.
 4. `docs/internal/agent-traps/workflow/plan-domain-survey-barrel-check.md` — 01-계획.md 초안에서 발견.

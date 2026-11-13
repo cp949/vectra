@@ -76,7 +76,7 @@ export function alignmentGuidesInto(
 
   // valueOrder 순서대로 out에 push한다 (입력 bounds insertion order 기준)
   for (const value of valueOrder) {
-    // biome-ignore lint/style/noNonNullAssertion: valueOrder에서 값을 가져왔으므로 항상 존재한다
+    // valueOrder에서 값을 가져왔으므로 항상 존재한다
     const indices = valueMap.get(value)!;
     out.push({ axis, value, kind, itemIndices: indices });
   }

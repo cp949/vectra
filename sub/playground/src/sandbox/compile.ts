@@ -75,7 +75,7 @@ function parseStaticImports(source: string): readonly ParsedImport[] {
   const importRe = /^[ \t]*import\s+(?:(type)\s+)?([\s\S]*?from\s+)?['"]([^'"]+)['"]\s*;?/gm;
 
   let match: RegExpExecArray | null;
-  // biome-ignore lint/suspicious/noAssignInExpressions: 정규식 루프 관용구
+  // 정규식 루프 관용구
   while ((match = importRe.exec(source)) !== null) {
     const isTypeOnly = Boolean(match[1]);
     // 타입 전용 import는 번환 불필요 → specifier만 기록하지 않음 (sucrase가 제거)

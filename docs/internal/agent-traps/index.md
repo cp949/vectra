@@ -18,7 +18,7 @@
 - [Euclidean 거리/길이는 `Math.sqrt(dx * dx + dy * dy)` 대신 `Math.hypot(dx, dy)`를 쓴다](./typescript/euclidean-distance-hypot.md)
 - [absolute coordinate를 normalize한 뒤 빼면 local offset이 사라진다](./typescript/scale-normalized-difference-precision-loss.md)
 - [literal union 반환 타입 함수의 NaN 입력 처리 정책 누락: `-1 | 0 | 1` 타입에 NaN을 반환할 수 없으므로 정책을 명시한다](./typescript/literal-union-return-nan-input.md)
-- [NaN 자기비교(`x !== x`)는 biome `suspicious/noSelfCompare` 오류: `Number.isNaN(x)` 사용](./typescript/nan-self-comparison-biome.md)
+- [NaN 자기비교(`x !== x`)는 oxlint `eslint/no-self-compare` 오류: `Number.isNaN(x)` 사용](./typescript/nan-self-comparison-oxlint.md)
 - [`Infinity * 0 = NaN`을 분기 진술 없이 JSDoc에 "pass-through"로 일반화: `r * (1 - cos(θ/2))` 같은 곱셈 수식에서 한 인수가 ±Infinity, 다른 인수가 0이면 결과는 NaN. 일반화 표현은 회귀 회로](./typescript/infinity-times-zero-nan-in-jsdoc.md)
 
 ## Testing / Verification
@@ -46,7 +46,6 @@
 - [예제 coverage는 leaf 파일 단위라 type export도 같이 covered로 보인다](./examples/coverage-leaf-level-type-export.md)
 - [단일 흐름 가드 토큰을 예제 자기 주석이 먼저 포함한다](./examples/guard-token-in-own-comment.md)
 - [Write로 생성한 예제 파일 끝에 `</content>` 닫는 태그가 새어 들어간다](./examples/write-tool-stray-content-tag.md)
-- [예제 `source.exam.ts` 포맷은 `biome check`가 아니라 `biome format`으로 고친다 (`check`는 예제 경로를 ignore)](./examples/biome-format-exam-file-check-ignored.md)
 - [uncovered alias leaf는 개념이 비어 있다는 뜻이 아니다](./examples/alias-leaf-duplicate-concept.md)
 - [각도 → 벡터 구성 예제는 입력이 점이면 두 점 함수로 붕괴한다](./examples/from-angle-scalar-input-not-point.md)
 - [`singleIntersection*`는 "첫 hit"가 아니라 "교점이 정확히 1개"일 때만 점을 준다](./examples/single-intersection-exactly-one-not-first-hit.md)

@@ -58,13 +58,7 @@ export type {
   RotatedEllipseTuple,
   RotatedEllipseWritable,
 } from './ellipse.internal';
-export type {
-  GridCellLike,
-  GridCellObjectLike,
-  GridCellTuple,
-  GridCellWritable,
-  GridSpecLike,
-} from './grid.internal';
+export type { GridCellLike, GridCellObjectLike, GridCellTuple, GridCellWritable, GridSpecLike } from './grid.internal';
 export type {
   HexAxialLike,
   HexAxialTuple,
@@ -196,11 +190,4 @@ export type {
   TriangleTuple,
   TriangleWritable,
 } from './triangle.internal';
-export type {
-  XYInput,
-  XYLike,
-  XYObjectWritable,
-  XYTuple,
-  XYTupleWritable,
-  XYWritable,
-} from './xy.internal';
+export type { XYInput, XYLike, XYObjectWritable, XYTuple, XYTupleWritable, XYWritable } from './xy.internal';

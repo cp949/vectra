@@ -16,10 +16,10 @@
     "build": "tsdown",
     "test": "vitest run --config vitest.config.ts",
     "typecheck": "tsc --noEmit",
-    "lint": "biome check --error-on-warnings .",
-    "lint:fix": "biome check --write .",
-    "format": "biome check --write .",
-    "format:check": "biome format ."
+    "lint": "oxlint -c ../../.oxlintrc.json --deny-warnings . && oxfmt --check .",
+    "lint:fix": "oxlint -c ../../.oxlintrc.json --fix . && oxfmt .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check ."
   },
   "peerDependencies": {
     "react": ">=19",
@@ -38,14 +38,15 @@
     "sucrase": "^3.35.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
     "@repo/typescript-config": "workspace:*",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "esbuild": "0.28.2",
-    "tsdown": "^0.23.1",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "tsdown": "^0.23.7",
     "typescript": "^7.0.2",
-    "vite": "^8.3.4",
-    "vitest": "^5.0.5"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   }
 }

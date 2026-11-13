@@ -87,7 +87,7 @@ pnpm examples:coverage:test
 pnpm examples:typecheck
 ```
 
-`pnpm verify`는 위 governance gate, 루트 `pnpm lint`(`biome ci --error-on-warnings .`: lint, format, import 정렬, warning), workspace `typecheck`, `typecheck:examples`, `test`, `build`를 실행한다.
+`pnpm verify`는 위 governance gate, 루트 `pnpm lint`(`oxlint --deny-warnings . && oxfmt --check .`: lint, format, warning), workspace `typecheck`, `typecheck:examples`, `test`, `build`를 실행한다.
 
 Release readiness 후보:
 
@@ -137,6 +137,6 @@ pnpm release-it
 | --- | --- |
 | 검증 환경 | Node.js `>=24.18.0`. CI와 contract test 기준이다 |
 | 빌드 target | ES2020, platform neutral. 브라우저와 번들러에서 쓸 수 있다. 보장 범위는 아니다 |
-| Package manager | `pnpm@10.17.1` |
+| Package manager | `pnpm@12.18.0` |
 | Module format | ESM |
 | Runtime dependencies | `@cp949/vectra` 기준 없음 |
