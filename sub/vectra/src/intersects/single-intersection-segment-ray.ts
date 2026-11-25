@@ -1,8 +1,5 @@
-import { lineFamilyIntersectionPoint, rayToLineFamilyParam, segmentToLineFamilyParam } from '../internal/line-family';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
 import type { RayLike, SegmentLike, XYObjectWritable } from '../types';
+import { singleIntersectionSegmentRayInto } from './single-intersection-segment-ray-into';
 
 /**
  * segment와 ray의 단일 교점을 새 object로 반환한다.
@@ -22,14 +19,6 @@ export function singleIntersectionSegmentRay(
   ray: RayLike,
   epsilon?: number
 ): XYObjectWritable | undefined {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const origin = readRayOrigin(ray);
-  const dir = readRayDirection(ray);
-
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const rayParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-
   const out: XYObjectWritable = { x: 0, y: 0 };
-  return lineFamilyIntersectionPoint(out, lineParam, rayParam, epsilon) ? out : undefined;
+  return singleIntersectionSegmentRayInto(out, line, ray, epsilon) ? out : undefined;
 }

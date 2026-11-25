@@ -1,7 +1,7 @@
 /**
- * 좌표 input이 배열이 아닌 object인지 판별하는 guard.
+ * 좌표·shape input이 배열이 아닌 object인지 판별하는 guard.
  *
- * vec의 산술 함수가 object 입력만 받았을 때 field를 함수 안에서 직접 읽는 경로를 고르는 데 쓴다.
+ * vec의 산술 함수와 ray 점 반환 함수가 object 입력만 받았을 때 field를 함수 안에서 직접 읽는 경로를 고르는 데 쓴다.
  * 공유 `readX`/`readY`는 라이브러리 전체가 feedback을 공유해 `input.x` 인라인 캐시가 여러 모양을 본다.
  * 이 guard를 쓰는 함수는 field를 자기 본문에서 읽으므로 캐시에는 그 함수가 받은 object 모양만 남는다.
  *
@@ -10,7 +10,18 @@
  * - x field를 가진 배열도 tuple로 취급한다.
  */
 
-import type { XYInput, XYLike, XYObjectWritable, XYWritable } from '../types';
+import type {
+  CircleLike,
+  CircleObjectLike,
+  RayLike,
+  RayObjectLike,
+  SegmentLike,
+  SegmentObjectLike,
+  XYInput,
+  XYLike,
+  XYObjectWritable,
+  XYWritable,
+} from '../types';
 
 /** input이 배열이 아니면 true를 반환한다. */
 export function isXYObject(input: XYInput): input is XYLike {
@@ -20,4 +31,19 @@ export function isXYObject(input: XYInput): input is XYLike {
 /** out이 배열이 아니면 true를 반환한다. */
 export function isXYObjectWritable(out: XYWritable): out is XYObjectWritable {
   return !Array.isArray(out);
+}
+
+/** segment가 배열이 아니면 true를 반환한다. */
+export function isSegmentObject(segment: SegmentLike): segment is SegmentObjectLike {
+  return !Array.isArray(segment);
+}
+
+/** ray가 배열이 아니면 true를 반환한다. */
+export function isRayObject(ray: RayLike): ray is RayObjectLike {
+  return !Array.isArray(ray);
+}
+
+/** circle이 배열이 아니면 true를 반환한다. */
+export function isCircleObject(circle: CircleLike): circle is CircleObjectLike {
+  return !Array.isArray(circle);
 }

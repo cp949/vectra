@@ -1,6 +1,7 @@
-import { lineFamilyIntersectionPoint, rayToLineFamilyParam, segmentToLineFamilyParam } from '../internal/line-family';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
+import { segmentRayPointInto } from '../internal/segment-ray-point.internal';
 import { readSegmentA, readSegmentB } from '../internal/segment';
+import { isRayObject, isSegmentObject, isXYObject } from '../internal/xy-object.internal';
 import { readX, readY } from '../internal/xy';
 import type { RayLike, SegmentLike, XYWritable } from '../types';
 
@@ -22,13 +23,42 @@ export function singleIntersectionSegmentRayInto(
   ray: RayLike,
   epsilon?: number
 ): boolean {
+  // 모두 object 입력이면 좌표를 이 함수에서 직접 읽는다
+  if (isSegmentObject(line) && isRayObject(ray)) {
+    const a = line.a;
+    const b = line.b;
+    const origin = ray.origin;
+    const dir = ray.direction;
+    if (isXYObject(a) && isXYObject(b) && isXYObject(origin) && isXYObject(dir)) {
+      return segmentRayPointInto(out, a.x, a.y, b.x, b.y, origin.x, origin.y, dir.x, dir.y, epsilon);
+    }
+  }
+
+  return singleIntersectionSegmentRayIntoShared(out, line, ray, epsilon);
+}
+
+/** tuple 입력이 있을 때 공유 reader로 읽는 경로. */
+function singleIntersectionSegmentRayIntoShared(
+  out: XYWritable,
+  line: SegmentLike,
+  ray: RayLike,
+  epsilon: number | undefined
+): boolean {
   const a = readSegmentA(line);
   const b = readSegmentB(line);
   const origin = readRayOrigin(ray);
   const dir = readRayDirection(ray);
 
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const rayParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-
-  return lineFamilyIntersectionPoint(out, lineParam, rayParam, epsilon);
+  return segmentRayPointInto(
+    out,
+    readX(a),
+    readY(a),
+    readX(b),
+    readY(b),
+    readX(origin),
+    readY(origin),
+    readX(dir),
+    readY(dir),
+    epsilon
+  );
 }

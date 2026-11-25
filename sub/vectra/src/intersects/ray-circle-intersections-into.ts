@@ -1,8 +1,9 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { lineFamilyEllipseIntersectionPoints } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
+import { rayCirclePointsInto } from '../internal/ray-circle-points.internal';
 import { readX, readY } from '../internal/xy';
+import { isCircleObject, isRayObject, isXYObject } from '../internal/xy-object.internal';
 import type { CircleLike, RayLike, XYObjectWritable } from '../types';
 
 /**
@@ -31,20 +32,49 @@ export function rayCircleIntersectionsInto(
   circle: CircleLike,
   epsilon = DEFAULT_EPSILON
 ): XYObjectWritable[] {
+  // 모두 object 입력이면 좌표를 이 함수에서 직접 읽는다
+  if (isRayObject(ray) && isCircleObject(circle)) {
+    const origin = ray.origin;
+    const direction = ray.direction;
+    const center = circle.center;
+    if (isXYObject(origin) && isXYObject(direction) && isXYObject(center)) {
+      const radius = circle.radius;
+      return rayCirclePointsInto(
+        outPoints,
+        origin.x,
+        origin.y,
+        direction.x,
+        direction.y,
+        center.x,
+        center.y,
+        radius,
+        epsilon
+      );
+    }
+  }
+
+  return rayCircleIntersectionsIntoShared(outPoints, ray, circle, epsilon);
+}
+
+/** tuple 입력이 있을 때 공유 reader로 읽는 경로. */
+function rayCircleIntersectionsIntoShared(
+  outPoints: XYObjectWritable[],
+  ray: RayLike,
+  circle: CircleLike,
+  epsilon: number
+): XYObjectWritable[] {
   const origin = readRayOrigin(ray);
   const direction = readRayDirection(ray);
   const center = readCircleCenter(circle);
   const radius = readCircleRadius(circle);
-  return lineFamilyEllipseIntersectionPoints(
+  return rayCirclePointsInto(
     outPoints,
     readX(origin),
     readY(origin),
     readX(direction),
     readY(direction),
-    'ray',
     readX(center),
     readY(center),
-    radius,
     radius,
     epsilon
   );
