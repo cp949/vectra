@@ -1,7 +1,6 @@
 import { raySegmentHitTXY } from '../internal/ray-hit-t.internal';
 import { readRayDirectionX, readRayDirectionY, readRayOriginX, readRayOriginY } from '../internal/ray-scalar.internal';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
+import { hitX, hitY, hitSegmentA, hitSegmentB } from '../internal/ray-hit-t-read.internal';
 import type { RayLike, SegmentLike } from '../types';
 
 /**
@@ -28,17 +27,17 @@ import type { RayLike, SegmentLike } from '../types';
  * @param epsilon 평행 판정 임계값. 생략하면 `sin θ <= 1e-9`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function raySegmentHitT(ray: RayLike, segment: SegmentLike, tMin = 0, epsilon?: number): number {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
+  const a = hitSegmentA(segment);
+  const b = hitSegmentB(segment);
   return raySegmentHitTXY(
     readRayOriginX(ray),
     readRayOriginY(ray),
     readRayDirectionX(ray),
     readRayDirectionY(ray),
-    readX(a),
-    readY(a),
-    readX(b),
-    readY(b),
+    hitX(a),
+    hitY(a),
+    hitX(b),
+    hitY(b),
     tMin,
     epsilon
   );

@@ -1,6 +1,6 @@
 import { rayBoxHitTXY } from '../internal/ray-hit-t.internal';
+import { hitRectHeight, hitRectWidth, hitRectX, hitRectY } from '../internal/ray-hit-t-read.internal';
 import { readRayDirectionX, readRayDirectionY, readRayOriginX, readRayOriginY } from '../internal/ray-scalar.internal';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
 import type { RayLike, RectLike } from '../types';
 
 /**
@@ -26,12 +26,12 @@ import type { RayLike, RectLike } from '../types';
  * @param tMin 허용하는 가장 작은 `t`. 생략하면 `0`이다.
  */
 export function rayRectHitT(ray: RayLike, rect: RectLike, tMin = 0): number {
-  const width = readRectWidth(rect);
-  const height = readRectHeight(rect);
+  const width = hitRectWidth(rect);
+  const height = hitRectHeight(rect);
   if (width <= 0 || height <= 0) return Infinity;
 
-  const x = readRectX(rect);
-  const y = readRectY(rect);
+  const x = hitRectX(rect);
+  const y = hitRectY(rect);
   return rayBoxHitTXY(
     readRayOriginX(ray),
     readRayOriginY(ray),

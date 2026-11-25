@@ -1,8 +1,7 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { rayEllipseHitTXY } from '../internal/ray-hit-t.internal';
 import { readRayDirectionX, readRayDirectionY, readRayOriginX, readRayOriginY } from '../internal/ray-scalar.internal';
-import { readX, readY } from '../internal/xy';
+import { hitX, hitY, hitCircleCenter, hitCircleRadius } from '../internal/ray-hit-t-read.internal';
 import type { CircleLike, RayLike } from '../types';
 
 /**
@@ -29,15 +28,15 @@ import type { CircleLike, RayLike } from '../types';
  * @param epsilon discriminant tangent 판정 임계값. 생략하면 `1e-9`다.
  */
 export function rayCircleHitT(ray: RayLike, circle: CircleLike, tMin = 0, epsilon = DEFAULT_EPSILON): number {
-  const center = readCircleCenter(circle);
-  const radius = readCircleRadius(circle);
+  const center = hitCircleCenter(circle);
+  const radius = hitCircleRadius(circle);
   return rayEllipseHitTXY(
     readRayOriginX(ray),
     readRayOriginY(ray),
     readRayDirectionX(ray),
     readRayDirectionY(ray),
-    readX(center),
-    readY(center),
+    hitX(center),
+    hitY(center),
     radius,
     radius,
     tMin,

@@ -1,7 +1,6 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { rayBoxHitTXY } from '../internal/ray-hit-t.internal';
 import { readRayDirectionX, readRayDirectionY, readRayOriginX, readRayOriginY } from '../internal/ray-scalar.internal';
-import { readX, readY } from '../internal/xy';
+import { hitX, hitY, hitBoundsMax, hitBoundsMin } from '../internal/ray-hit-t-read.internal';
 import type { BoundsLike, RayLike } from '../types';
 
 /**
@@ -25,12 +24,12 @@ import type { BoundsLike, RayLike } from '../types';
  * @param tMin 허용하는 가장 작은 `t`. 생략하면 `0`이다.
  */
 export function rayBoundsHitT(ray: RayLike, bounds: BoundsLike, tMin = 0): number {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const x0 = readX(min);
-  const y0 = readY(min);
-  const x1 = readX(max);
-  const y1 = readY(max);
+  const min = hitBoundsMin(bounds);
+  const max = hitBoundsMax(bounds);
+  const x0 = hitX(min);
+  const y0 = hitY(min);
+  const x1 = hitX(max);
+  const y1 = hitY(max);
   if (x1 < x0 || y1 < y0) return Infinity;
 
   return rayBoxHitTXY(

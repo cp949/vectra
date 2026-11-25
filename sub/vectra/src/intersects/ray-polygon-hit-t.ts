@@ -1,7 +1,6 @@
-import { readPolygonPoints } from '../internal/polygon';
 import { raySegmentHitTXY } from '../internal/ray-hit-t.internal';
 import { readRayDirectionX, readRayDirectionY, readRayOriginX, readRayOriginY } from '../internal/ray-scalar.internal';
-import { readX, readY } from '../internal/xy';
+import { hitX, hitY, hitPolygonPoints } from '../internal/ray-hit-t-read.internal';
 import type { PolygonLike, RayLike } from '../types';
 
 /**
@@ -28,7 +27,7 @@ import type { PolygonLike, RayLike } from '../types';
  * @param epsilon edge 평행 판정 임계값. 생략하면 `sin θ <= 1e-9`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function rayPolygonHitT(ray: RayLike, polygon: PolygonLike, tMin = 0, epsilon?: number): number {
-  const points = readPolygonPoints(polygon);
+  const points = hitPolygonPoints(polygon);
   const n = points.length;
   if (n < 3) return Infinity;
 
@@ -38,12 +37,12 @@ export function rayPolygonHitT(ray: RayLike, polygon: PolygonLike, tMin = 0, eps
   const dy = readRayDirectionY(ray);
 
   // 마지막 점에서 첫 점으로 닫는 edge부터 시작해 각 점을 한 번만 읽는다.
-  let ax = readX(points[n - 1]);
-  let ay = readY(points[n - 1]);
+  let ax = hitX(points[n - 1]);
+  let ay = hitY(points[n - 1]);
   let best = Infinity;
   for (let i = 0; i < n; i++) {
-    const bx = readX(points[i]);
-    const by = readY(points[i]);
+    const bx = hitX(points[i]);
+    const by = hitY(points[i]);
     const t = raySegmentHitTXY(ox, oy, dx, dy, ax, ay, bx, by, tMin, epsilon);
     if (t < best) best = t;
     ax = bx;

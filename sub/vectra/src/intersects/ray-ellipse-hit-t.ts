@@ -1,8 +1,13 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { rayEllipseHitTXY } from '../internal/ray-hit-t.internal';
 import { readRayDirectionX, readRayDirectionY, readRayOriginX, readRayOriginY } from '../internal/ray-scalar.internal';
-import { readX, readY } from '../internal/xy';
+import {
+  hitX,
+  hitY,
+  hitEllipseCenter,
+  hitEllipseRadiusX,
+  hitEllipseRadiusY,
+} from '../internal/ray-hit-t-read.internal';
 import type { EllipseLike, RayLike } from '../types';
 
 /**
@@ -27,16 +32,16 @@ import type { EllipseLike, RayLike } from '../types';
  * @param epsilon discriminant tangent 판정 임계값. 생략하면 `1e-9`다.
  */
 export function rayEllipseHitT(ray: RayLike, ellipse: EllipseLike, tMin = 0, epsilon = DEFAULT_EPSILON): number {
-  const center = readEllipseCenter(ellipse);
+  const center = hitEllipseCenter(ellipse);
   return rayEllipseHitTXY(
     readRayOriginX(ray),
     readRayOriginY(ray),
     readRayDirectionX(ray),
     readRayDirectionY(ray),
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    hitX(center),
+    hitY(center),
+    hitEllipseRadiusX(ellipse),
+    hitEllipseRadiusY(ellipse),
     tMin,
     epsilon
   );
