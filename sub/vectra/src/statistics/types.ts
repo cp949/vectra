@@ -53,6 +53,7 @@ export interface CovarianceMatrixOptions extends VarianceOptions {
  * `maxIterations` 안에 수렴하지 못하면 `undefined`를 반환한다.
  *
  * `tolerance`는 반복 수렴 판정에만 사용한다. 0 이상 finite number가 아니면 `RangeError`. 기본 `1e-10`.
+ * `0`이면 off-diagonal이 모두 정확히 0이 될 때까지 반복하고, `maxIterations` 안에 0이 되지 못하면 `undefined`를 반환한다.
  *
  * `epsilon`은 rank 판정, negative eigenvalue clamp, zero cleanup에만 사용한다. input/result finite
  * validation에는 사용하지 않는다. 0 이상 finite number가 아니면 `RangeError`. 기본 `1e-9`.

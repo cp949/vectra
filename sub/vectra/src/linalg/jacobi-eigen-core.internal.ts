@@ -33,8 +33,11 @@ export interface JacobiEigenResult {
  *
  * Givens rotation은 numerically stable formula를 쓴다(`theta = (Aqq - App) / (2 * Apq)`,
  * `t = sign(theta) / (|theta| + sqrt(theta^2 + 1))`). `maxAbs > tolerance >= 0`이라 step에 들어가는
- * 시점에 `Apq != 0`이 보장된다. 누적 합 / 곱 / sqrt 결과가 non-finite면 `RangeError`. 결과 entry는
- * `Math.abs(value) <= epsilon`이면 `0`으로 cleanup하고 `-0`은 `+0`으로 canonicalize한다.
+ * 시점에 `Apq != 0`이 보장된다.
+ * `|Apq|`가 대각 차이보다 극단적으로 작아 `theta`가 overflow하면 `t = Apq / (Aqq - App)`로 rotation을
+ * 이어 간다. `tolerance: 0`이면 off-diagonal이 0에 가까워질 때 이 경우가 생긴다.
+ * 대각 차이 자체가 overflow하거나 누적 합 / 곱 / sqrt 결과가 non-finite면 `RangeError`.
+ * 결과 entry는 `Math.abs(value) <= epsilon`이면 `0`으로 cleanup하고 `-0`은 `+0`으로 canonicalize한다.
  *
  * @param matrix symmetric finite square matrix
  * @param n matrix 크기. `>= 1`.

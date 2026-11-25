@@ -2,7 +2,7 @@
  * internal helper의 경계·퇴화·overflow 분기 테스트.
  *
  * 검증 항목:
- *  1. Jacobi 회전 단계의 overflow를 RangeError로 알린다.
+ *  1. Jacobi 회전 단계의 overflow를 RangeError로 알리고, pivot이 극단적으로 작아 생기는 theta overflow는 회전을 이어 간다.
  *  2. line-family가 한쪽만 퇴화(방향 0)한 경우의 교점·원 교점·ellipse 접점 판정.
  *  3. line-family crop이 만나지 않는 직사각형을 거른다.
  *  4. 가시성 ray가 퇴화 입력을 건너뛴다.
@@ -40,17 +40,34 @@ describe('jacobiSymmetricEigenRaw overflow', () => {
     ).toThrow(/non-finite theta/);
   });
 
-  test('theta는 유한하지만 분모가 overflow하면 denominator 오류를 던진다', () => {
-    expect(() =>
-      jacobiSymmetricEigenRaw(
-        [
-          [0, 0.5],
-          [0.5, 0.75 * MAX],
-        ],
-        2,
-        JACOBI
-      )
-    ).toThrow(/non-finite denominator/);
+  test('theta는 유한하지만 분모가 overflow하면 Apq / (Aqq - App)로 회전한다', () => {
+    const raw = jacobiSymmetricEigenRaw(
+      [
+        [0, 0.5],
+        [0.5, 0.75 * MAX],
+      ],
+      2,
+      JACOBI
+    );
+    expect(raw).toBeDefined();
+    expect(Math.abs(raw!.values[0])).toBeLessThan(1e-308);
+    expect(raw!.values[1]).toBe(0.75 * MAX);
+  });
+
+  test('대각 차이는 유한하고 pivot이 극단적으로 작아 theta가 overflow하면 rotation을 계속한다', () => {
+    const raw = jacobiSymmetricEigenRaw(
+      [
+        [1, 1e-320],
+        [1e-320, 2],
+      ],
+      2,
+      { maxIterations: 5, tolerance: 0, errorPrefix: 'guard test' }
+    );
+    expect(raw?.values).toEqual([1, 2]);
+    expect(raw?.vectors).toEqual([
+      [1, 1e-320],
+      [-1e-320, 1],
+    ]);
   });
 
   test('회전한 대각 원소가 overflow하면 diagonal 오류를 던진다', () => {

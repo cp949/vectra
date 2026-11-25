@@ -102,6 +102,18 @@ interface JacobiRotation {
   readonly s: number;
 }
 
+/**
+ * pivot `(p, q)`를 0으로 만드는 Givens rotation parameter `(c, s)`를 계산한다.
+ *
+ * 기본 식은 `theta = (Aqq - App) / (2 * Apq)`, `t = sign(theta) / (|theta| + sqrt(theta^2 + 1))`이다.
+ *
+ * `|Apq|`가 대각 차이보다 극단적으로 작으면 `theta` 또는 분모가 overflow한다.
+ * 대각 차이가 유한하면 이 경우 `t = Apq / (Aqq - App)`를 쓴다. `|theta|`가 매우 클 때 `1 / (2 * theta)`와 같은 값이다.
+ * 이때 `|t|`는 `2^-1022` 이하라 `hypot(t, 1)`이 1로 반올림되므로 `c = 1`, `s = t`다.
+ * `tolerance: 0`이면 비대각 원소가 0에 가까워질 때까지 반복하므로 이 경우가 생긴다.
+ *
+ * 대각 차이 자체가 overflow하면 `RangeError`를 던진다.
+ */
 function computeJacobiRotation(
   working: readonly (readonly number[])[],
   p: number,
@@ -112,14 +124,17 @@ function computeJacobiRotation(
   const aqq = working[q][q];
   const apq = working[p][q];
 
-  const theta = (aqq - app) / (2 * apq);
+  const diff = aqq - app;
+  const theta = diff / (2 * apq);
   if (!Number.isFinite(theta)) {
+    if (Number.isFinite(diff)) {
+      return { c: 1, s: apq / diff };
+    }
     throw new RangeError(`${errorPrefix} produced non-finite theta at (${p}, ${q}), got ${String(theta)}`);
   }
   const denomMag = Math.abs(theta) + Math.hypot(theta, 1);
-  // denomMag >= 1이라 0이 될 수 없다. overflow만 확인한다.
   if (!Number.isFinite(denomMag)) {
-    throw new RangeError(`${errorPrefix} produced non-finite denominator at (${p}, ${q}), got ${String(denomMag)}`);
+    return { c: 1, s: apq / diff };
   }
   const t = theta >= 0 ? 1 / denomMag : -1 / denomMag;
   const c = 1 / Math.hypot(t, 1);

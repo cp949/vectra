@@ -45,6 +45,8 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  * 2 ~ 4.4 sweep에 수렴한다. 상한 안에 수렴하지 못하면 `undefined`다. 이 계약은 그대로다.
  *
  * `tolerance`는 symmetric `n >= 2` 경로의 Jacobi off-diagonal convergence 판정에만 사용한다.
+ * `tolerance: 0`이면 off-diagonal이 모두 정확히 0이 될 때까지 반복한다. `maxIterations` 안에 0이 되지
+ * 못하면 `undefined`다. 이미 대각인 matrix는 rotation 없이 수렴한다.
  * `epsilon`은 symmetry 판정, 2x2 discriminant clamp 경계, 2x2 repeated 판정, nullspace pivot 판정,
  * diagonal zero cleanup, normalization zero 판정, result zero cleanup, column sign convention에
  * 쓰인다. input/result finite validation에는 둘 다 사용하지 않는다.

@@ -142,7 +142,8 @@ export interface EigenDecomposition {
  *   1 sweep이므로 10 sweep이다. `n <= 5`는 `100`이다. `n = 60`은 17700, `n = 100`은 49500이다.
  * - `tolerance`: 반복 convergence 판정. 0 이상 finite number. NaN, Infinity, 음수는 `RangeError`.
  *   미지정 시 default `1e-10`. Jacobi off-diagonal max abs가 이 값 이하이면 수렴으로 본다.
- *   input/result finite validation에는 사용하지 않는다.
+ *   `0`이면 off-diagonal이 모두 정확히 0이 될 때까지 반복한다. `maxIterations` 안에 0이 되지 못하면
+ *   `undefined`를 반환한다. input/result finite validation에는 사용하지 않는다.
  * - `epsilon`: zero/rank/nullspace/cleanup 판정. 0 이상 finite number. NaN, Infinity, 음수는
  *   `RangeError`. 미지정 시 default `1e-9`. 2x2 discriminant clamp 경계, symmetry 지원 여부,
  *   nullspace pivot 판정, sigma rank 판정, result zero cleanup에 쓰인다. input/result finite
