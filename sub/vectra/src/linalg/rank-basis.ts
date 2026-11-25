@@ -14,7 +14,7 @@ import type { IterationOptions, MatLike } from './types';
  * `RangeError`. 모든 entry는 finite number여야 한다. 위반 시 `RangeError`.
  *
  * @param matrix rank basis를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`tolerance=1e-10`, `epsilon=1e-9`). `maxIterations`는 검증만 하고 계산에 쓰지 않는다.
  */
 export function rankBasis(matrix: MatLike, options?: IterationOptions): number[][] {
   // worst-case rank는 min(m, n). seed는 min(rows, columns)개 row, 각 길이 rows로 준비한다.

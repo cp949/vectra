@@ -31,7 +31,7 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  *
  * @param out basis를 기록할 writable matrix. 실패 시 수정되지 않는다.
  * @param matrix rank basis를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`tolerance=1e-10`, `epsilon=1e-9`). `maxIterations`는 검증만 하고 계산에 쓰지 않는다.
  */
 export function rankBasisInto<Out extends MatWritable>(out: Out, matrix: MatLike, options?: IterationOptions): Out {
   const resolved = resolveIterationOptions(options, 'options');

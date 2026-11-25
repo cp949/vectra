@@ -16,7 +16,7 @@ import type { IterationOptions, MatLike } from './types';
  * `options.maxIterations`/`options.tolerance`/`options.epsilon` 검증 정책은 `nullSpaceInto`와 같다.
  *
  * @param matrix nullspace를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`tolerance=1e-10`, `epsilon=1e-9`). `maxIterations`는 검증만 하고 계산에 쓰지 않는다.
  */
 export function nullSpace(matrix: MatLike, options?: IterationOptions): number[][] {
   // seed는 RREF 결과를 모르므로 worst-case(columns 길이의 row를 column 수만큼)로 준비한다.
