@@ -8,7 +8,8 @@ import type { RayLike, SegmentLike, XYObjectWritable } from '../types';
  * segment와 ray의 단일 교점을 새 object로 반환한다.
  *
  * 교점이 있으면 `{ x, y }` object를 반환하고, 없으면 undefined를 반환한다.
- * collinear/parallel 또는 zero-length segment이면 undefined를 반환한다.
+ * collinear/parallel이면 undefined를 반환한다.
+ * zero-length segment는 점으로 환원한다. 그 점이 ray 위에 있으면 그 점을, 아니면 undefined를 반환한다.
  * allocating companion — Into leaf를 거치지 않고 internal helper를 직접 호출한다.
  *
  * @param line 교점을 구할 segment

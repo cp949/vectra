@@ -8,7 +8,7 @@ import type { RayLike, SegmentLike, XYWritable } from '../types';
  * segment와 ray의 단일 교점을 out에 기록하고 true를 반환한다.
  *
  * 교점이 없거나 collinear/parallel이면 false를 반환하고 out을 수정하지 않는다.
- * zero-length segment이면 false.
+ * zero-length segment는 점으로 환원한다. 그 점이 ray 위에 있으면 그 점을 기록하고 true, 아니면 false.
  *
  * @param out 교점 좌표를 기록할 writable output
  * @param line 교점을 구할 segment
