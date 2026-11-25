@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import { isXYObject } from '../internal/xy-object.internal';
+import type { XYInput, XYLike, XYTuple } from '../types';
 
 /**
  * input 벡터의 Euclidean 길이를 반환한다.
@@ -7,5 +7,18 @@ import type { XYInput } from '../types';
  * @param input 길이를 측정할 벡터
  */
 export function length(input: XYInput): number {
-  return Math.hypot(readX(input), readY(input));
+  // object 입력만 받았으면 field를 이 함수에서 직접 읽는다
+  if (isXYObject(input)) {
+    return Math.hypot(input.x, input.y);
+  }
+
+  return lengthShared(input);
+}
+
+/** 배열 입력이 있을 때 쓰는 경로. 판별을 이 함수 안에서 직접 해 inlining 비용을 줄인다. */
+function lengthShared(input: XYInput): number {
+  return Math.hypot(
+    Array.isArray(input) ? (input as XYTuple)[0] : (input as XYLike).x,
+    Array.isArray(input) ? (input as XYTuple)[1] : (input as XYLike).y
+  );
 }

@@ -42,6 +42,14 @@ function isXYTuple(input: XYInput): input is readonly [number, number] {
 - polygon `area` 계열 1000회(24점): 공유 reader 약 1.7ms, 전용 field 우선 약 0.17ms(단일 모양)·0.8~0.9ms(섞음), 전용 `Array.isArray` 우선 약 0.3ms(모든 경우).
 - `ray*HitT`의 전용 reader는 field 우선이다. 전용 reader를 만들 때는 같은 가족에 모양을 섞은 프로세스를 먼저 재고 방식을 고른다.
 
+짧은 함수는 reader 파일 대신 함수 안에서 판별한다(`vec` 산술 함수, ray 점 반환 함수).
+
+- `Array.isArray`로 입력과 output이 모두 object인지 먼저 본다. 맞으면 `a.x`를 함수 본문에서 직접 읽는다. 아니면 별도 함수로 보낸다.
+- 이 함수의 `.x` 인라인 캐시에는 object 모양만 남는다. tuple은 캐시에 들어가지 않는다. 입력 해석은 공유 reader와 같다.
+- 배열 경로는 `readX`를 부르지 않고 `Array.isArray`로 직접 판별한다. 배열 경로를 reader 호출로 쓰면 inlining 예산을 먼저 쓴다.
+- 배열 경로가 warm-up에서 자주 불리면 V8이 그 경로를 object 경로 대신 inline한다. 호출자 안의 주 함수가 inline되지 않는다.
+- 은하 3000(subInto, lengthSq, addScaledInto), 다른 함수와 같은 함수를 여러 모양으로 먼저 부른 프로세스: 배열 경로가 reader 호출이면 이전 구현의 약 0.86배, 직접 판별이면 약 1.45배다.
+
 ## 관련 작업
 
 - `S1-RM-001: Internal XY primitive helpers`

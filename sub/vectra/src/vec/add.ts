@@ -1,3 +1,4 @@
+import { isXYObject } from '../internal/xy-object.internal';
 import type { XYInput, XYObjectWritable } from '../types';
 import { addInto } from './add-into';
 
@@ -8,5 +9,6 @@ import { addInto } from './add-into';
  * @param b 더할 두 번째 벡터
  */
 export function add(a: XYInput, b: XYInput): XYObjectWritable {
+  if (isXYObject(a) && isXYObject(b)) return { x: a.x + b.x, y: a.y + b.y };
   return addInto({ x: 0, y: 0 }, a, b);
 }

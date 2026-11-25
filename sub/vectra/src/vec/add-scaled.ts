@@ -1,3 +1,4 @@
+import { isXYObject } from '../internal/xy-object.internal';
 import type { XYInput, XYObjectWritable } from '../types';
 import { addScaledInto } from './add-scaled-into';
 
@@ -11,5 +12,6 @@ import { addScaledInto } from './add-scaled-into';
  * @param scalar b에 곱할 스칼라값
  */
 export function addScaled(a: XYInput, b: XYInput, scalar: number): XYObjectWritable {
+  if (isXYObject(a) && isXYObject(b)) return { x: a.x + b.x * scalar, y: a.y + b.y * scalar };
   return addScaledInto({ x: 0, y: 0 }, a, b, scalar);
 }

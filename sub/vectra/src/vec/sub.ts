@@ -1,3 +1,4 @@
+import { isXYObject } from '../internal/xy-object.internal';
 import type { XYInput, XYObjectWritable } from '../types';
 import { subInto } from './sub-into';
 
@@ -8,5 +9,6 @@ import { subInto } from './sub-into';
  * @param b 감산 벡터
  */
 export function sub(a: XYInput, b: XYInput): XYObjectWritable {
+  if (isXYObject(a) && isXYObject(b)) return { x: a.x - b.x, y: a.y - b.y };
   return subInto({ x: 0, y: 0 }, a, b);
 }
