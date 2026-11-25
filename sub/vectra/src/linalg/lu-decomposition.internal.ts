@@ -32,7 +32,9 @@ export function decomposeFiniteSquareMatrixLU(
     return { lower: [], upper: [], permutation: [], swaps: 0 };
   }
 
-  const temp = deepCopyMatrix(matrix, n, n);
+  // elimination은 `upper` 한 장에서 진행한다. 대각 아래에는 multiplier를 둔다. 끝나면 multiplier를
+  // `lower`로 옮기고 그 자리를 0으로 만든다. L과 U를 따로 둘 뿐 별도 작업 복사본은 만들지 않는다.
+  const upper = deepCopyMatrix(matrix, n, n);
 
   const permutation = new Array<number>(n);
   for (let i = 0; i < n; i++) {
@@ -42,9 +44,9 @@ export function decomposeFiniteSquareMatrixLU(
 
   for (let k = 0; k < n; k++) {
     let maxRow = k;
-    let maxAbs = Math.abs(temp[k][k]);
+    let maxAbs = Math.abs(upper[k][k]);
     for (let r = k + 1; r < n; r++) {
-      const a = Math.abs(temp[r][k]);
+      const a = Math.abs(upper[r][k]);
       if (a > maxAbs) {
         maxAbs = a;
         maxRow = r;
@@ -54,21 +56,26 @@ export function decomposeFiniteSquareMatrixLU(
       return undefined;
     }
     if (maxRow !== k) {
-      const tmpRow = temp[k];
-      temp[k] = temp[maxRow];
-      temp[maxRow] = tmpRow;
+      const tmpRow = upper[k];
+      upper[k] = upper[maxRow];
+      upper[maxRow] = tmpRow;
       const tmpP = permutation[k];
       permutation[k] = permutation[maxRow];
       permutation[maxRow] = tmpP;
       swaps++;
     }
-    const pivot = temp[k][k];
-    const pivotRow = temp[k];
+    const pivot = upper[k][k];
+    const pivotRow = upper[k];
     for (let i = k + 1; i < n; i++) {
-      const row = temp[i];
+      const row = upper[i];
       // partial pivoting이라 |row[k]| <= |pivot|이고 |pivot| > epsilon >= 0이므로 |factor| <= 1이다.
       const factor = row[k] / pivot;
       row[k] = factor;
+      // factor가 0이면 row[j] - 0 * pivotRow[j]는 row[j]와 같다(pivotRow[j]는 finite다). 0의 부호만
+      // 달라질 수 있고, 그 부호는 다른 값에 영향을 주지 않으며 결과를 만들 때 canonicalize한다.
+      if (factor === 0) {
+        continue;
+      }
       for (let j = k + 1; j < n; j++) {
         // |factor| <= 1이라 factor * pivotRow[j]는 finite다.
         const v = row[j] - factor * pivotRow[j];
@@ -81,25 +88,20 @@ export function decomposeFiniteSquareMatrixLU(
   }
 
   const lower: number[][] = new Array(n);
-  const upper: number[][] = new Array(n);
   for (let i = 0; i < n; i++) {
-    const tempRow = temp[i];
+    const uRow = upper[i];
     const lRow = new Array<number>(n);
-    const uRow = new Array<number>(n);
-    for (let j = 0; j < n; j++) {
-      if (j < i) {
-        lRow[j] = canonicalizeSignedZero(tempRow[j]);
-        uRow[j] = 0;
-      } else if (j === i) {
-        lRow[j] = 1;
-        uRow[j] = canonicalizeSignedZero(tempRow[j]);
-      } else {
-        lRow[j] = 0;
-        uRow[j] = canonicalizeSignedZero(tempRow[j]);
-      }
+    for (let j = 0; j < i; j++) {
+      lRow[j] = canonicalizeSignedZero(uRow[j]);
+      uRow[j] = 0;
+    }
+    lRow[i] = 1;
+    uRow[i] = canonicalizeSignedZero(uRow[i]);
+    for (let j = i + 1; j < n; j++) {
+      lRow[j] = 0;
+      uRow[j] = canonicalizeSignedZero(uRow[j]);
     }
     lower[i] = lRow;
-    upper[i] = uRow;
   }
 
   return { lower, upper, permutation, swaps };

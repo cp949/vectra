@@ -30,6 +30,7 @@ import {
  * `options.epsilon`은 0 이상 finite number여야 한다. 미지정 시 default(`1e-9`). 위반 시
  * `RangeError`. epsilon 검증은 다른 input 검증보다 먼저 수행한다.
  * `epsilon`은 pivot zero 판정, elimination zero cleanup, pivot/RHS zero 분류에만 쓰인다.
+ * 절대 tolerance라 계수가 `1e-9` 안팎이면 pivot이 zero로 판정되어 `underdetermined`가 될 수 있다.
  * input/result finite validation과 residual 계산에는 사용하지 않는다.
  *
  * `A = []`, `b = []`는 unknown count 0인 unique solution `{ type: 'unique', solution: [] }`을

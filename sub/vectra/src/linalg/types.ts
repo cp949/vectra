@@ -63,6 +63,8 @@ export interface NormOptions {
  *
  * `epsilon`은 partial pivoting 후보의 absolute value가 zero pivot인지 판정하는 tolerance다.
  * 미지정 또는 `undefined`이면 default(`1e-9`)를 사용한다. 0 이상 finite number만 허용한다.
+ * matrix scale에 비례하지 않는 절대 tolerance다. 계수가 `1e-9` 안팎이면 정상 pivot도 zero로 판정되어
+ * `underdetermined`나 LU `undefined`가 될 수 있다. 그런 scale에서는 `epsilon`을 더 작게 지정한다.
  * input/result finite validation에는 사용하지 않는다. pivot 판정과 elimination 잔여 cleanup에만
  * 영향을 준다.
  */

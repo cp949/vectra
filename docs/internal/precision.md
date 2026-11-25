@@ -78,6 +78,23 @@ throw는 validation이 켜져 있을 때 invalid argument 같은 programmer erro
 numeric input 처리는 caller 또는 adapter 책임으로 둔 domain이 있다. 새 domain은 이 정책을
 명시적으로 유지하거나 예외를 API surface 문서에 기록한다.
 
+## linalg 소거 결과의 비트 동일성
+
+`solveByGaussianElimination`은 `[A | b]`를 Gauss-Jordan(RREF)으로 소거한다. `luDecomposition`은 partial
+pivoting Doolittle이다. 두 함수의 속도 개선은 반환값을 비트 단위로 보존하는 변경만 한다.
+
+- RREF 소거를 REF와 역대입으로 바꾸면 약 n³/2 연산이 n³/3으로 줄어든다. 그러나 `solution`의 마지막 비트가
+  달라진다. 소거 순서가 바뀌면 같은 값의 반올림이 달라지기 때문이다.
+- `epsilon` 정리는 소거 중 닿는 원소에만 일어난다. 연산을 건너뛰면 정리 시점이 달라져 분류가 바뀔 수 있다.
+  0 원소는 건너뛸 수 있다. 0이 아닌 작은 원소는 건너뛸 수 없다.
+- 그래서 `solveByGaussianElimination`의 소거 비용은 줄이지 않는다. 더 빠른 풀이가 필요하면 `luDecomposition`과
+  `solveWithLuFactorization`을 쓰거나 별도 함수로 제공한다. 결과의 마지막 비트가 다르다는 점을 문서에 적는다.
+- `-0`의 부호는 다른 값에 영향을 주지 않는다. 결과를 만들 때 `+0`으로 정리하는 한 0 multiplier의 갱신을 건너뛸 수 있다.
+
+linalg의 finite entry 검증은 `typeof value === 'number' && value - value === 0`이다. 배열에서 읽은 값에
+`Number.isFinite`를 쓰면 같은 검사가 몇 배 느리고 값을 boxing한다(Node.js 24.21, 120 x 120 matrix 두 개에서
+약 0.24ms 대 0.05ms). `typeof` 확인이 없으면 `'1'`, `null`, `true`가 통과하므로 빼지 않는다.
+
 ## Topology Predicate 정책
 
 ### epsilon은 topology sign 판단 근거로 부적합하다
