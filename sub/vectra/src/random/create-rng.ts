@@ -52,18 +52,20 @@ const seedState = (normalized: string): [number, number, number, number] => [
  */
 export const createRng = (seed: RandomSeed): RandomSource => {
   const normalized = normalizeSeed(seed);
-  let [a, b, c, d] = seedState(normalized);
+  // 상태를 int32로 유지한다. uint32 변환(`>>>= 0`)을 하면 큰 값이 힙 숫자로 할당돼 느리다.
+  // 비트 패턴은 uint32 구현과 같고, 출력만 `>>> 0`으로 uint32화한다.
+  const [s0, s1, s2, s3] = seedState(normalized);
+  let a = s0 | 0;
+  let b = s1 | 0;
+  let c = s2 | 0;
+  let d = s3 | 0;
 
   return () => {
     // sfc32 한 스텝
-    a >>>= 0;
-    b >>>= 0;
-    c >>>= 0;
-    d >>>= 0;
     const t = (a + b) | 0;
     a = b ^ (b >>> 9);
     b = (c + (c << 3)) | 0;
-    c = ((c << 21) | (c >>> 11)) >>> 0;
+    c = (c << 21) | (c >>> 11);
     d = (d + 1) | 0;
     const result = (t + d) | 0;
     c = (c + result) | 0;
