@@ -18,6 +18,46 @@ describe('internal XY primitive helpers', () => {
     expect(readY(input)).toBe(9);
   });
 
+  test('0, 음수, -0, NaN 좌표도 object와 tuple에서 그대로 읽는다', () => {
+    // x가 undefined인지로 분기하므로 falsy 좌표가 tuple 읽기로 새면 안 된다
+    expect(readX({ x: 0, y: 0 })).toBe(0);
+    expect(Object.is(readX({ x: -0, y: -0 }), -0)).toBe(true);
+    expect(Object.is(readY({ x: -0, y: -0 }), -0)).toBe(true);
+    expect(readX({ x: -5, y: -6 })).toBe(-5);
+    expect(readX({ x: NaN, y: NaN })).toBeNaN();
+    expect(readY({ x: NaN, y: NaN })).toBeNaN();
+
+    expect(readX([0, 0])).toBe(0);
+    expect(Object.is(readY([-0, -0]), -0)).toBe(true);
+    expect(readY([NaN, NaN])).toBeNaN();
+    expect(readX([Infinity, -Infinity])).toBe(Infinity);
+    expect(readY([Infinity, -Infinity])).toBe(-Infinity);
+  });
+
+  test('class instance 좌표와 Array 하위 class tuple에서 x와 y를 읽는다', () => {
+    class Point {
+      constructor(
+        public x: number,
+        public y: number
+      ) {}
+    }
+    class PairArray extends Array<number> {}
+    const pair = PairArray.of(4, 8) as unknown as XYInput;
+
+    expect(readX(new Point(1, 2))).toBe(1);
+    expect(readY(new Point(1, 2))).toBe(2);
+    expect(readX(pair)).toBe(4);
+    expect(readY(pair)).toBe(8);
+  });
+
+  test('배열과 x,y field를 동시에 가진 hybrid 값은 읽을 때 field를 우선한다', () => {
+    // field 우선 읽기 정책 고정: 이전 구현은 Array.isArray 분기로 인덱스를 읽었다
+    const hybrid = Object.assign([1, 2] as [number, number], { x: 10, y: 20 });
+
+    expect(readX(hybrid)).toBe(10);
+    expect(readY(hybrid)).toBe(20);
+  });
+
   test('object output에 좌표를 기록하고 같은 객체를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
 

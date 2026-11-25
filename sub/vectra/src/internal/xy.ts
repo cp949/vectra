@@ -1,9 +1,4 @@
-import type { XYInput, XYObjectWritable, XYTupleWritable, XYWritable } from '../types';
-
-/** input이 tuple 좌표이면 true를 반환한다. */
-function isXYTuple(input: XYInput): input is readonly [number, number] {
-  return Array.isArray(input);
-}
+import type { XYInput, XYLike, XYObjectWritable, XYTuple, XYTupleWritable, XYWritable } from '../types';
 
 /** out이 mutable tuple 좌표이면 true를 반환한다. */
 function isXYTupleWritable(out: XYWritable): out is XYTupleWritable {
@@ -13,23 +8,30 @@ function isXYTupleWritable(out: XYWritable): out is XYTupleWritable {
 /**
  * XYInput에서 x 좌표를 읽는다.
  *
- * tuple input은 index 0을, object input은 x field를 읽는다.
+ * x field가 있으면 그 값을, 없으면 index 0을 읽는다.
+ * `Array.isArray` 분기보다 hot loop에서 빠르므로 field를 먼저 읽는다.
+ * x field를 가진 배열은 object input으로 취급한다.
  *
  * @param input x 좌표를 읽을 structural point
  */
 export function readX(input: XYInput): number {
-  return isXYTuple(input) ? input[0] : input.x;
+  // union 좁히기 한계로 캐스트 — x field가 없으면 tuple이다
+  const x = (input as XYLike).x;
+  return x !== undefined ? x : (input as XYTuple)[0];
 }
 
 /**
  * XYInput에서 y 좌표를 읽는다.
  *
- * tuple input은 index 1을, object input은 y field를 읽는다.
+ * y field가 있으면 그 값을, 없으면 index 1을 읽는다.
+ * y field를 가진 배열은 object input으로 취급한다.
  *
  * @param input y 좌표를 읽을 structural point
  */
 export function readY(input: XYInput): number {
-  return isXYTuple(input) ? input[1] : input.y;
+  // union 좁히기 한계로 캐스트 — y field가 없으면 tuple이다
+  const y = (input as XYLike).y;
+  return y !== undefined ? y : (input as XYTuple)[1];
 }
 
 /**
