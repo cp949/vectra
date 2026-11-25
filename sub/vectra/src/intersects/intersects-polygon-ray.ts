@@ -1,5 +1,5 @@
 import { rayToLineFamilyParam } from '../internal/line-family';
-import { lineFamilyPolygonIntersects } from '../internal/polygon-relation';
+import { lineFamilyPolygonIntersects } from '../internal/polygon-line-family-hit.internal';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
 import type { PolygonLike, RayLike } from '../types';

@@ -1,6 +1,13 @@
-import { lineFamilyIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
+import { lineFamilyIntersects } from '../internal/line-family';
+import {
+  fillSegmentParam,
+  lineHitParamA,
+  lineHitParamB,
+  lineHitSegmentA,
+  lineHitSegmentB,
+  lineHitX,
+  lineHitY,
+} from '../internal/line-hit-read.internal';
 import type { SegmentLike } from '../types';
 
 /**
@@ -16,13 +23,13 @@ import type { SegmentLike } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function intersectsSegmentSegment(a: SegmentLike, b: SegmentLike, epsilon?: number): boolean {
-  const aa = readSegmentA(a);
-  const ab = readSegmentB(a);
-  const ba = readSegmentA(b);
-  const bb = readSegmentB(b);
+  const aa = lineHitSegmentA(a);
+  const ab = lineHitSegmentB(a);
+  const ba = lineHitSegmentA(b);
+  const bb = lineHitSegmentB(b);
   return lineFamilyIntersects(
-    segmentToLineFamilyParam(readX(aa), readY(aa), readX(ab), readY(ab)),
-    segmentToLineFamilyParam(readX(ba), readY(ba), readX(bb), readY(bb)),
+    fillSegmentParam(lineHitParamA, lineHitX(aa), lineHitY(aa), lineHitX(ab), lineHitY(ab)),
+    fillSegmentParam(lineHitParamB, lineHitX(ba), lineHitY(ba), lineHitX(bb), lineHitY(bb)),
     epsilon
   );
 }

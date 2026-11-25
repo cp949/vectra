@@ -1,39 +1,7 @@
 import type { PolygonLike, PolylineLike } from '../types';
-import { type LineFamilyParam, lineFamilyIntersects, segmentToLineFamilyParam } from './line-family';
-import { DEFAULT_EPSILON } from './numeric';
 import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from './polygon';
 import { readPolylinePoints } from './polyline';
 import { readX, readY } from './xy';
-
-/**
- * line-family와 polygon이 교차하면 true를 반환한다.
- *
- * polygon의 모든 edge를 segment로 순회해 line-family와 교차하는지 확인한다.
- * edge 교차가 없고 segment인 경우 origin이 polygon 내부에 있으면 true(완전 포함).
- * pts.length < 3이면 empty polygon으로 false를 반환한다.
- */
-export function lineFamilyPolygonIntersects(
-  line: LineFamilyParam,
-  polygon: PolygonLike,
-  epsilon: number | undefined
-): boolean {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
-  if (n < 3) return false;
-
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    const ax = readX(pts[i]);
-    const ay = readY(pts[i]);
-    const bx = readX(pts[j]);
-    const by = readY(pts[j]);
-    if (lineFamilyIntersects(line, segmentToLineFamilyParam(ax, ay, bx, by), epsilon)) return true;
-  }
-
-  // segment가 polygon 내부에 완전히 포함된 경우: edge 교차 없이도 true
-  if (line.kind !== 'finite') return false;
-  return polygonContainsPoint(pts, line.ox, line.oy, epsilon ?? DEFAULT_EPSILON);
-}
 
 /**
  * polygon과 polyline이 교차하면 true를 반환한다.

@@ -1,8 +1,15 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { lineFamilyCircleIntersects, segmentToLineFamilyParam } from '../internal/line-family';
+import { lineFamilyCircleIntersects } from '../internal/line-family';
+import {
+  fillSegmentParam,
+  lineHitCircleCenter,
+  lineHitCircleRadius,
+  lineHitParamA,
+  lineHitSegmentA,
+  lineHitSegmentB,
+  lineHitX,
+  lineHitY,
+} from '../internal/line-hit-read.internal';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
 import type { CircleLike, SegmentLike } from '../types';
 
 /**
@@ -16,9 +23,15 @@ import type { CircleLike, SegmentLike } from '../types';
  * @param epsilon 부동소수점 비교에 사용할 tolerance
  */
 export function intersectsCircleSegment(circle: CircleLike, line: SegmentLike, epsilon = DEFAULT_EPSILON): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const center = readCircleCenter(circle);
-  return lineFamilyCircleIntersects(lineParam, readX(center), readY(center), readCircleRadius(circle), epsilon);
+  const a = lineHitSegmentA(line);
+  const b = lineHitSegmentB(line);
+  const lineParam = fillSegmentParam(lineHitParamA, lineHitX(a), lineHitY(a), lineHitX(b), lineHitY(b));
+  const center = lineHitCircleCenter(circle);
+  return lineFamilyCircleIntersects(
+    lineParam,
+    lineHitX(center),
+    lineHitY(center),
+    lineHitCircleRadius(circle),
+    epsilon
+  );
 }

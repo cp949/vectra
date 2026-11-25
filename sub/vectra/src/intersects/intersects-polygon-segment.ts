@@ -1,7 +1,12 @@
-import { segmentToLineFamilyParam } from '../internal/line-family';
-import { lineFamilyPolygonIntersects } from '../internal/polygon-relation';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
+import {
+  fillSegmentParam,
+  lineHitParamA,
+  lineHitSegmentA,
+  lineHitSegmentB,
+  lineHitX,
+  lineHitY,
+} from '../internal/line-hit-read.internal';
+import { lineFamilyPolygonIntersects } from '../internal/polygon-line-family-hit.internal';
 import type { PolygonLike, SegmentLike } from '../types';
 
 /**
@@ -20,8 +25,8 @@ import type { PolygonLike, SegmentLike } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function intersectsPolygonSegment(polygon: PolygonLike, line: SegmentLike, epsilon?: number): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
+  const a = lineHitSegmentA(line);
+  const b = lineHitSegmentB(line);
+  const lineParam = fillSegmentParam(lineHitParamA, lineHitX(a), lineHitY(a), lineHitX(b), lineHitY(b));
   return lineFamilyPolygonIntersects(lineParam, polygon, epsilon);
 }

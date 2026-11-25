@@ -1,6 +1,6 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam } from '../internal/line-family';
-import { lineFamilyPolygonIntersects } from '../internal/polygon-relation';
+import { lineFamilyPolygonIntersects } from '../internal/polygon-line-family-hit.internal';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, PolygonLike } from '../types';
 
