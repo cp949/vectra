@@ -24,6 +24,7 @@
 | API-013 | 같은 계산이 둘 이상의 domain에서 자연스러우면 cross-domain equivalent를 허용한다. |
 | API-014 | 각도는 radian을 기본 단위로 사용한다. |
 | API-015 | Random 함수는 `rng?: () => number`를 받고 object 결과는 `Into`로 기록한다. |
+| API-016 | 입력 전체 스캔이 호출 비용을 지배하는 조회는 사전 계산 입력을 받는 별도 함수로 제공한다. |
 
 ## API-001: 기본 방향
 
@@ -469,3 +470,23 @@ distributions         = uniform, normal, exponential, triangular, poisson 등
 geometry sampling     = pointOnSegmentInto, pointInRectInto, pointInCircleInto 등
 generator boundary    = createRng(seed), rng state export/import 후보
 ```
+
+## API-016: 반복 조회용 사전 계산 입력
+
+입력 전체 스캔이 호출 비용을 지배하는 조회는 사전 계산 입력을 받는 별도 함수로 제공한다.
+
+- 기존 함수의 동작과 시그니처는 바꾸지 않는다. 기존 함수의 검증은 JSDoc 계약이다.
+- 이름은 기존 이름에 `ByTable`을 붙인다. 예: `pointAtLengthInto` → `pointAtLengthByTableInto`.
+- 새 함수는 기존 함수와 같은 결과를 낸다. 결과 차이는 `±1e-12` 안이어야 한다.
+- `Into`와 allocating companion 쌍은 API-004~008을 그대로 따른다.
+- 검증을 생략하는 공개 함수(`unchecked`, `unsafe`류)를 만들지 않는다.
+  - 이유: 검증하는 함수와 이름만 다른 동등 함수가 생긴다. 호출자가 검증 생략을 고르면 NaN이 조용히 전파된다.
+  - 대신 표를 한 번 검증하고 조회 함수를 돌려주는 factory를 둔다. 예: `interpolation/createTableSampler`.
+  - 선례: `random/createRng`, `noise/createNoise2`. 반환값은 객체가 아니라 함수다.
+  - factory는 입력 표를 복사한다. 검증 뒤에 호출자가 표를 바꿔도 검증 결과가 깨지지 않는다.
+- polyline domain은 좌표 non-finite를 검증하지 않는다. 이 정책 때문에 `polyline/*ByTable*`은 표 내용을 검증하지 않는다.
+- 표 개수가 vertex 개수와 다르면 `RangeError`다. O(1)로 확인할 수 있고 오래된 표를 쓴 실수를 잡는다.
+- 표 내용(비단조, NaN)은 O(n)이라 확인하지 않는다. 결과는 정의되지 않고 throw하지 않는다. 표를 다시 만드는 것은 호출자 책임이다.
+- 새 조회 함수는 기존 함수의 segment 선택 규칙을 그대로 따른다. 예: boundary에서 앞쪽 non-zero segment.
+- `normalAtLengthInto`의 사전 계산 버전은 두지 않는다. `tangentAtLengthByTableInto`의 결과 `(tx, ty)`에서 `(-ty, tx)`를 만들면 된다.
+  point와 normal이 함께 필요하면 `frameAtLengthByTableInto`를 쓴다.
