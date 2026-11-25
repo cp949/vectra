@@ -36,6 +36,12 @@ function isXYTuple(input: XYInput): input is readonly [number, number] {
 - `Array.isArray`가 tuple 경로와 object 경로의 인라인 캐시를 나눈다.
 - 변형 `i[0]` 우선, `i.length === 2` 판별도 오염된 프로세스에서 `Array.isArray`보다 느렸다.
 
+공유 reader가 느린 이유는 다른 호출자의 입력 모양이 캐시를 오염시키는 것이다. 한 함수 가족만 부르는 전용 reader 파일로 나누면 이 오염을 피한다.
+
+- 전용 reader는 `Array.isArray` 우선으로 쓴다. field 우선은 같은 가족을 객체와 tuple로 섞어 부르면 느려진다.
+- polygon `area` 계열 1000회(24점): 공유 reader 약 1.7ms, 전용 field 우선 약 0.17ms(단일 모양)·0.8~0.9ms(섞음), 전용 `Array.isArray` 우선 약 0.3ms(모든 경우).
+- `ray*HitT`의 전용 reader는 field 우선이다. 전용 reader를 만들 때는 같은 가족에 모양을 섞은 프로세스를 먼저 재고 방식을 고른다.
+
 ## 관련 작업
 
 - `S1-RM-001: Internal XY primitive helpers`

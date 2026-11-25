@@ -1,5 +1,6 @@
-import { readPolygonPoints, shoelace2x } from '../internal/polygon';
-import { readX, readY, writeXY } from '../internal/xy';
+import { readPolygonPoints } from '../internal/polygon';
+import { areaX, areaY } from '../internal/polygon-area-read.internal';
+import { writeXY } from '../internal/xy';
 import type { PolygonLike, XYWritable } from '../types';
 
 /**
@@ -20,42 +21,47 @@ export function centroidInto(out: XYWritable, polygon: PolygonLike): boolean {
   if (n === 0) return false;
 
   if (n === 1) {
-    writeXY(out, readX(pts[0]), readY(pts[0]));
+    writeXY(out, areaX(pts[0]), areaY(pts[0]));
     return true;
   }
 
   if (n === 2) {
-    writeXY(out, (readX(pts[0]) + readX(pts[1])) / 2, (readY(pts[0]) + readY(pts[1])) / 2);
+    writeXY(out, (areaX(pts[0]) + areaX(pts[1])) / 2, (areaY(pts[0]) + areaY(pts[1])) / 2);
     return true;
   }
 
-  // n >= 3: area-weighted centroid or arithmetic mean fallback
-  const twoA = shoelace2x(pts);
-
-  if (twoA === 0) {
-    // arithmetic mean fallback
-    let sumX = 0;
-    let sumY = 0;
-    for (let i = 0; i < n; i++) {
-      sumX += readX(pts[i]);
-      sumY += readY(pts[i]);
-    }
-    writeXY(out, sumX / n, sumY / n);
-    return true;
-  }
-
-  // area-weighted centroid via shoelace accumulation
+  // n >= 3: 한 번 순회로 2배 signed area, area-weighted 합, 산술 평균 합을 함께 구한다.
+  const first = pts[0];
+  const x0 = areaX(first);
+  const y0 = areaY(first);
+  let xi = x0;
+  let yi = y0;
+  let twoA = 0;
   let cx = 0;
   let cy = 0;
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    const xi = readX(pts[i]);
-    const yi = readY(pts[i]);
-    const xj = readX(pts[j]);
-    const yj = readY(pts[j]);
+  let sumX = 0;
+  let sumY = 0;
+  for (let i = 1; i <= n; i++) {
+    let xj = x0;
+    let yj = y0;
+    if (i < n) {
+      const p = pts[i];
+      xj = areaX(p);
+      yj = areaY(p);
+    }
     const cross = xi * yj - xj * yi;
+    twoA += cross;
     cx += (xi + xj) * cross;
     cy += (yi + yj) * cross;
+    sumX += xi;
+    sumY += yi;
+    xi = xj;
+    yi = yj;
+  }
+
+  if (twoA === 0) {
+    writeXY(out, sumX / n, sumY / n);
+    return true;
   }
 
   writeXY(out, cx / (3 * twoA), cy / (3 * twoA));
