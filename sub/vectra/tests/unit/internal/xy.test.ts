@@ -19,7 +19,7 @@ describe('internal XY primitive helpers', () => {
   });
 
   test('0, 음수, -0, NaN 좌표도 object와 tuple에서 그대로 읽는다', () => {
-    // x가 undefined인지로 분기하므로 falsy 좌표가 tuple 읽기로 새면 안 된다
+    // falsy 좌표가 분기를 바꾸면 안 된다
     expect(readX({ x: 0, y: 0 })).toBe(0);
     expect(Object.is(readX({ x: -0, y: -0 }), -0)).toBe(true);
     expect(Object.is(readY({ x: -0, y: -0 }), -0)).toBe(true);
@@ -50,12 +50,12 @@ describe('internal XY primitive helpers', () => {
     expect(readY(pair)).toBe(8);
   });
 
-  test('배열과 x,y field를 동시에 가진 hybrid 값은 읽을 때 field를 우선한다', () => {
-    // field 우선 읽기 정책 고정: 이전 구현은 Array.isArray 분기로 인덱스를 읽었다
+  test('배열과 x,y field를 동시에 가진 hybrid 값은 tuple로 읽는다', () => {
+    // Array.isArray 우선 판별 정책 고정: field는 무시하고 index를 읽는다
     const hybrid = Object.assign([1, 2] as [number, number], { x: 10, y: 20 });
 
-    expect(readX(hybrid)).toBe(10);
-    expect(readY(hybrid)).toBe(20);
+    expect(readX(hybrid)).toBe(1);
+    expect(readY(hybrid)).toBe(2);
   });
 
   test('object output에 좌표를 기록하고 같은 객체를 반환한다', () => {
