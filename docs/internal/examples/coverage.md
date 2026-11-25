@@ -10,10 +10,10 @@ pnpm examples:coverage:write
 
 ## 요약
 
-- 전체 public leaf: 1926
+- 전체 public leaf: 1935
 - covered: 652
 - excepted: 0
-- uncovered: 1274
+- uncovered: 1283
 - 예제 수: 171
 
 ## 표
@@ -614,6 +614,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/interpolation/bilerp-point-into` | `bilerpPointInto` | `pixi:bilinear-warp-grid` |  | covered |
 | `@cp949/vectra/interpolation/clamped-lerp` | `clampedLerp` |  |  | uncovered |
 | `@cp949/vectra/interpolation/clamped-lerp-by-elapsed` | `clampedLerpByElapsed` |  |  | uncovered |
+| `@cp949/vectra/interpolation/create-table-sampler` | `createTableSampler` |  |  | uncovered |
 | `@cp949/vectra/interpolation/critically-damped` | `criticallyDamped` |  |  | uncovered |
 | `@cp949/vectra/interpolation/cubic` | `cubic` |  |  | uncovered |
 | `@cp949/vectra/interpolation/cubic` | `cubicClamped` |  |  | uncovered |
@@ -1340,6 +1341,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/polyline/cumulative-lengths-into` | `cumulativeLengthsInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/distance-to-point` | `distanceToPoint` | `pixi:curve-sampling-workbench`, `pixi:polyline-distance-probe` |  | covered |
 | `@cp949/vectra/polyline/frame-at-length` | `frameAtLength` |  |  | uncovered |
+| `@cp949/vectra/polyline/frame-at-length-by-table` | `frameAtLengthByTable` |  |  | uncovered |
+| `@cp949/vectra/polyline/frame-at-length-by-table-into` | `frameAtLengthByTableInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/frame-at-length-into` | `frameAtLengthInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/from-path` | `fromPath` |  |  | uncovered |
 | `@cp949/vectra/polyline/from-path-into` | `fromPathInto` |  |  | uncovered |
@@ -1353,8 +1356,12 @@ pnpm examples:coverage:write
 | `@cp949/vectra/polyline/point-at-index` | `pointAtIndex` |  |  | uncovered |
 | `@cp949/vectra/polyline/point-at-index-into` | `pointAtIndexInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/point-at-length` | `pointAtLength` | `pixi:polyline-path-walk` |  | covered |
+| `@cp949/vectra/polyline/point-at-length-by-table` | `pointAtLengthByTable` |  |  | uncovered |
+| `@cp949/vectra/polyline/point-at-length-by-table-into` | `pointAtLengthByTableInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/point-at-length-into` | `pointAtLengthInto` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/point-at-length-ratio` | `pointAtLengthRatio` | `pixi:curve-sampling-workbench`, `pixi:polyline-length-ratio` |  | covered |
+| `@cp949/vectra/polyline/point-at-length-ratio-by-table` | `pointAtLengthRatioByTable` |  |  | uncovered |
+| `@cp949/vectra/polyline/point-at-length-ratio-by-table-into` | `pointAtLengthRatioByTableInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/point-at-length-ratio-into` | `pointAtLengthRatioInto` | `pixi:curve-sampling-workbench`, `pixi:polyline-length-ratio` |  | covered |
 | `@cp949/vectra/polyline/polyline-from` | `polylineFrom` |  |  | uncovered |
 | `@cp949/vectra/polyline/reverse-points` | `reversePoints` |  |  | uncovered |
@@ -1379,6 +1386,8 @@ pnpm examples:coverage:write
 | `@cp949/vectra/polyline/tangent-at-index` | `tangentAtIndex` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/tangent-at-index-into` | `tangentAtIndexInto` | `pixi:polyline-path-walk` |  | covered |
 | `@cp949/vectra/polyline/tangent-at-length` | `tangentAtLength` |  |  | uncovered |
+| `@cp949/vectra/polyline/tangent-at-length-by-table` | `tangentAtLengthByTable` |  |  | uncovered |
+| `@cp949/vectra/polyline/tangent-at-length-by-table-into` | `tangentAtLengthByTableInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/tangent-at-length-into` | `tangentAtLengthInto` |  |  | uncovered |
 | `@cp949/vectra/polyline/tangents` | `tangents` | `pixi:curve-sampling-workbench`, `pixi:polyline-vertex-tangents` |  | covered |
 | `@cp949/vectra/polyline/tangents-into` | `tangentsInto` | `pixi:curve-sampling-workbench`, `pixi:polyline-vertex-tangents` |  | covered |

@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 
+- 같은 polyline에서 arclength 위치를 자주 조회하는 호출을 위해 `polyline` domain에 `pointAtLengthByTable(Into)`, `pointAtLengthRatioByTable(Into)`, `tangentAtLengthByTable(Into)`, `frameAtLengthByTable(Into)`를 추가한다. `cumulativeLengthsInto`로 누적 길이 표를 한 번 만들어 두고 넘기면, 호출마다 polyline 전체를 두 번 순회하던 `pointAtLengthInto` 같은 기존 함수와 같은 결과를 이분 탐색으로 얻는다. 꼭짓점 2018개 polyline에서 `pointAtLengthInto` 한 번이 약 69µs였고, `pointAtLengthByTableInto`는 약 70ns다(Node.js 24.21, 무작위 length 1000개). 표 개수가 vertex 개수와 다르면 `RangeError`를 던진다. 표 내용(비단조, NaN)은 검증하지 않으며 그 경우 결과는 정의되지 않는다. 기존 함수의 동작은 그대로다.
+- `interpolation` domain에 `createTableSampler(table, options?)`를 추가한다. 표를 생성할 때 한 번만 검증하고 복사해, `t` 위치 값을 조회하는 함수를 돌려준다. 조회 결과는 같은 인자의 `sampleTableAt`과 같다. `sampleTableAt`은 호출마다 표 전체를 finite 검사하므로 2018개 표에서 약 5.0µs였고, 반환 함수는 표 길이와 무관하게 약 7ns다(같은 환경). `sampleTableAt`의 동작은 그대로다.
+
 ## [1.2.0] - 2026-10-18
 
 - package README의 Domain 절이 모든 domain을 나열한다. npm 페이지에서 저장소 문서, domain 지도, CHANGELOG로 가는 링크를 추가한다.

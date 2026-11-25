@@ -13,3 +13,9 @@ export {
 } from './polyline-length-tangent.internal';
 export { readPolylinePoints } from './polyline-read.internal';
 export { polylineSampleAtLengthInto } from './polyline-sampling.internal';
+export {
+  assertCumulativeLengthsMatch,
+  findSegmentIndexByLength,
+  polylineSampleAtLengthByTableInto,
+  polylineSegmentTangentAtLengthByTableInto,
+} from './polyline-table-sampling.internal';

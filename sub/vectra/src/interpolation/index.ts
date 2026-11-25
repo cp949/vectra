@@ -2,6 +2,7 @@ export { bilerpPoint } from './bilerp-point';
 export { bilerpPointInto } from './bilerp-point-into';
 export { clampedLerp } from './clamped-lerp';
 export { clampedLerpByElapsed } from './clamped-lerp-by-elapsed';
+export { createTableSampler } from './create-table-sampler';
 export { criticallyDamped } from './critically-damped';
 export { cubic, cubicClamped } from './cubic';
 export { exponentialDecay } from './exponential-decay';

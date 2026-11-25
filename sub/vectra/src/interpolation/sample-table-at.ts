@@ -1,5 +1,5 @@
 import type { SampleTableOptions } from '../types';
-import { assertFiniteNumbers, lerpRaw } from './interpolation.internal';
+import { assertFiniteNumbers, lookupTable } from './interpolation.internal';
 
 /**
  * 균등 parameter interval의 scalar sample 배열에서 `t` 위치의 값을 반환한다.
@@ -41,43 +41,5 @@ export function sampleTableAt(table: readonly number[], t: number, options?: Sam
     throw new RangeError(`sampleTableAt: unknown interpolation mode "${String(interpolation)}"`);
   }
 
-  const extrapolate = options?.extrapolate ?? false;
-  const n = table.length;
-
-  if (n === 1) {
-    return table[0];
-  }
-
-  // out-of-range 외삽은 interpolation mode와 무관하게 boundary segment slope를 사용한다.
-  if (extrapolate) {
-    if (t < 0) {
-      const position = t * (n - 1);
-      return lerpRaw(table[0], table[1], position);
-    }
-    if (t > 1) {
-      const position = t * (n - 1);
-      const localT = position - (n - 2);
-      return lerpRaw(table[n - 2], table[n - 1], localT);
-    }
-  }
-
-  // clamp t to [0, 1]
-  const clampedT = Math.min(1, Math.max(0, t));
-
-  const position = clampedT * (n - 1);
-
-  if (interpolation === 'nearest') {
-    const idx = Math.max(0, Math.min(n - 1, Math.round(position)));
-    return table[idx];
-  }
-
-  const lower = Math.floor(position);
-  const upper = Math.ceil(position);
-
-  if (lower === upper) {
-    return table[lower];
-  }
-
-  const localT = position - lower;
-  return lerpRaw(table[lower], table[upper], localT);
+  return lookupTable(table, t, interpolation, options?.extrapolate ?? false);
 }

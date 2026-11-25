@@ -128,3 +128,60 @@ export function lerpRaw(a: number, b: number, t: number): number {
 export function inverseLerpRaw(a: number, b: number, value: number): number {
   return (value - a) / (b - a);
 }
+
+/**
+ * 균등 간격 sample 표에서 `t` 위치의 값을 계산한다.
+ *
+ * `sampleTableAt`과 `createTableSampler`가 공유한다. validation 없이 계산만 수행한다.
+ * 호출자가 `table.length >= 1`, 모든 원소 finite, `t` finite, 유효한 `interpolation`을 보장해야 한다.
+ *
+ * @param table 균등 parameter interval의 scalar sample 배열
+ * @param t 보간 위치. `[0, 1]`이 표 전체 범위다.
+ * @param interpolation 보간 방법
+ * @param extrapolate `true`이면 `[0, 1]` 밖을 경계 segment slope로 선형 외삽한다.
+ */
+export function lookupTable(
+  table: ArrayLike<number>,
+  t: number,
+  interpolation: 'linear' | 'nearest',
+  extrapolate: boolean
+): number {
+  const n = table.length;
+
+  if (n === 1) {
+    return table[0];
+  }
+
+  // out-of-range 외삽은 interpolation mode와 무관하게 boundary segment slope를 사용한다.
+  if (extrapolate) {
+    if (t < 0) {
+      const position = t * (n - 1);
+      return lerpRaw(table[0], table[1], position);
+    }
+    if (t > 1) {
+      const position = t * (n - 1);
+      const localT = position - (n - 2);
+      return lerpRaw(table[n - 2], table[n - 1], localT);
+    }
+  }
+
+  // clamp t to [0, 1]
+  const clampedT = Math.min(1, Math.max(0, t));
+
+  const position = clampedT * (n - 1);
+
+  if (interpolation === 'nearest') {
+    const idx = Math.max(0, Math.min(n - 1, Math.round(position)));
+    return table[idx];
+  }
+
+  const lower = Math.floor(position);
+  const upper = Math.ceil(position);
+
+  if (lower === upper) {
+    return table[lower];
+  }
+
+  const localT = position - lower;
+  return lerpRaw(table[lower], table[upper], localT);
+}
