@@ -25,6 +25,7 @@
 | API-014 | 각도는 radian을 기본 단위로 사용한다. |
 | API-015 | Random 함수는 `rng?: () => number`를 받고 object 결과는 `Into`로 기록한다. |
 | API-016 | 입력 전체 스캔이 호출 비용을 지배하는 조회는 사전 계산 입력을 받는 별도 함수로 제공한다. |
+| API-017 | ray 교점 거리 조회는 `t`를 직접 반환하고, 교점이 없으면 `Infinity`를 반환한다. |
 
 ## API-001: 기본 방향
 
@@ -490,3 +491,27 @@ generator boundary    = createRng(seed), rng state export/import 후보
 - 새 조회 함수는 기존 함수의 segment 선택 규칙을 그대로 따른다. 예: boundary에서 앞쪽 non-zero segment.
 - `normalAtLengthInto`의 사전 계산 버전은 두지 않는다. `tangentAtLengthByTableInto`의 결과 `(tx, ty)`에서 `(-ty, tx)`를 만들면 된다.
   point와 normal이 함께 필요하면 `frameAtLengthByTableInto`를 쓴다.
+
+## API-017: ray 교점 매개변수 조회
+
+반복 호출에서 가장 가까운 물체를 고르는 용도로, 교점 좌표 대신 `origin + t * direction`의 `t`를 돌려준다.
+
+- `t`는 scalar다. API-005에 따라 직접 반환한다. `Into`와 allocating companion을 두지 않는다.
+- 이름은 `ray<Shape>HitT`다. 예: `rayCircleHitT`, `raySegmentHitT`. 위치는 `intersects` domain이다.
+- 시그니처는 `(ray, shape, tMin = 0, epsilon?)`다. 교점 판정에 epsilon이 필요 없는 `rayRectHitT`, `rayBoundsHitT`는 `epsilon`이 없다.
+- 결과는 `t ≥ tMin`인 가장 작은 교점의 `t`다. 교점이 없으면 `Infinity`다.
+  - 이유: `t < best`와 `Math.min`에 그대로 쓴다. `NaN`은 `Math.min`을 오염시킨다.
+  - non-finite 입력은 throw하지 않는다. 비교가 모두 false가 되어 `Infinity`가 된다.
+- `t`와 `tMin`은 `ray.direction` 길이 단위다. direction을 정규화하지 않는다.
+- `tMin`은 inclusive다. 반사·굴절 직후 출발 면(`t ≈ 0`)을 거르는 용도다.
+  - 점을 반환하는 기존 함수는 출발 면을 거를 수 없다. 예: `closestRayPolygonIntersectionInto`는 변 위에서 떠난 ray에 `t = 0`을 반환한다.
+  - 거리 상한(`tMax`)은 두지 않는다. 호출자가 `t < best`로 거른다.
+- origin이 도형 안쪽이면 exit 교점의 `t`다. tangent는 접점의 `t`다.
+- 평행 판정은 기존 점 반환 함수와 같다. 평행이면 교점이 없다. collinear overlap도 교점으로 보지 않는다.
+  - segment 파라미터는 `[0, 1]` closed 구간을 정확 비교한다. 끝점 접촉은 교점이다.
+  - `rayPolygonHitT`는 edge마다 segment 규칙을 적용한 최솟값이다. collinear edge 양 끝의 이웃 edge가 vertex 교점을 만든다.
+  - circle과 ellipse는 discriminant가 `±epsilon²` 안이면 tangent로 본다.
+  - rect와 bounds는 closed box다. 모서리·변 접촉은 교점이다.
+- `tMin = 0`일 때 `origin + t * direction`은 기존 점 반환 함수의 첫 교점과 같아야 한다. `±1e-9` 안이며 시험이 난수 입력으로 고정한다.
+- 여러 물체 중 가장 가까운 것을 고르는 일은 호출자가 한다. 물체 순회와 순위 매기기는 제품 범위 밖이다. [제품 범위](./product-scope.md)의 "Spatial and query"를 따른다.
+- 구현은 객체를 만들지 않는다. tuple ray에서도 배열을 만들지 않으려고 `src/internal/ray-scalar.internal.ts`의 scalar reader를 쓴다.
