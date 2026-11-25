@@ -35,6 +35,8 @@ export type SubstitutionRhsReader = (rowIndex: number) => number;
  * @param epsilon diagonal zero / 비-삼각 영역 zero 판정 tolerance
  * @param forward `true`이면 forward, `false`이면 backward substitution
  * @param matrixName error message에 사용할 matrix 인자 이름
+ * @param triangularChecked `true`이면 비-삼각 영역 검사를 건너뛴다. caller가 같은 `epsilon`으로 같은
+ *   영역을 이미 검증했을 때만 쓴다. 기본 `false`.
  */
 export function performTriangularSubstitution(
   matrix: MatLike,
@@ -42,30 +44,15 @@ export function performTriangularSubstitution(
   rhs: SubstitutionRhsReader,
   epsilon: number,
   forward: boolean,
-  matrixName: string
+  matrixName: string,
+  triangularChecked = false
 ): number[] | undefined {
   if (rows === 0) {
     return [];
   }
 
-  // 비-삼각 영역(upper for forward, lower for backward)에 epsilon보다 큰 entry가 있는지 검사한다.
-  for (let r = 0; r < rows; r++) {
-    const row = matrix[r];
-    if (forward) {
-      for (let c = r + 1; c < rows; c++) {
-        const v = row[c];
-        if (Math.abs(v) > epsilon) {
-          throw new RangeError(`${matrixName} is not lower triangular: [${r}][${c}] = ${String(v)} exceeds epsilon`);
-        }
-      }
-    } else {
-      for (let c = 0; c < r; c++) {
-        const v = row[c];
-        if (Math.abs(v) > epsilon) {
-          throw new RangeError(`${matrixName} is not upper triangular: [${r}][${c}] = ${String(v)} exceeds epsilon`);
-        }
-      }
-    }
+  if (!triangularChecked) {
+    assertNonTriangularRegionZero(matrix, rows, epsilon, forward, matrixName);
   }
 
   const x = new Array<number>(rows);
@@ -102,6 +89,42 @@ export function performTriangularSubstitution(
     x[i] = v === 0 ? 0 : v;
   }
   return x;
+}
+
+/**
+ * 비-삼각 영역(forward는 upper, backward는 lower)에 `epsilon`보다 큰 entry가 있으면 `RangeError`를 던진다.
+ *
+ * @param matrix 검사할 square matrix
+ * @param rows 한 변 길이
+ * @param epsilon zero 판정 tolerance
+ * @param forward `true`이면 upper 영역, `false`이면 lower 영역을 검사한다.
+ * @param matrixName error message에 사용할 matrix 인자 이름
+ */
+function assertNonTriangularRegionZero(
+  matrix: MatLike,
+  rows: number,
+  epsilon: number,
+  forward: boolean,
+  matrixName: string
+): void {
+  for (let r = 0; r < rows; r++) {
+    const row = matrix[r];
+    if (forward) {
+      for (let c = r + 1; c < rows; c++) {
+        const v = row[c];
+        if (Math.abs(v) > epsilon) {
+          throw new RangeError(`${matrixName} is not lower triangular: [${r}][${c}] = ${String(v)} exceeds epsilon`);
+        }
+      }
+    } else {
+      for (let c = 0; c < r; c++) {
+        const v = row[c];
+        if (Math.abs(v) > epsilon) {
+          throw new RangeError(`${matrixName} is not upper triangular: [${r}][${c}] = ${String(v)} exceeds epsilon`);
+        }
+      }
+    }
+  }
 }
 
 /**

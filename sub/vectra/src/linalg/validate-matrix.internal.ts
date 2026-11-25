@@ -76,6 +76,10 @@ export function assertSameMatrixShape(aShape: MatrixShape, bShape: MatrixShape, 
  *
  * caller가 `extractMatrixShape`로 얻은 shape를 함께 전달해 중복 length 탐색을 피한다.
  *
+ * finite 판정은 `Number.isFinite`와 같다. number가 아니면 거부한다. number는 `value - value === 0`일
+ * 때만 통과한다. NaN과 ±Infinity는 차가 NaN이다. 배열에서 읽은 값에는 `Number.isFinite`보다
+ * 이 형태가 몇 배 빠르다.
+ *
  * @param matrix 검증할 matrix
  * @param shape 이미 검증된 matrix shape
  * @param name error message에 사용할 인자 이름
@@ -86,7 +90,7 @@ export function assertFiniteMatrixEntries(matrix: MatLike, shape: MatrixShape, n
     const row = matrix[r];
     for (let c = 0; c < columns; c++) {
       const value = row[c];
-      if (!Number.isFinite(value)) {
+      if (typeof value !== 'number' || value - value !== 0) {
         throw new RangeError(`${name}[${r}][${c}] must be a finite number, got ${String(value)}`);
       }
     }

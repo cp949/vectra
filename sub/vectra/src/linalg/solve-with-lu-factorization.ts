@@ -73,6 +73,8 @@ export function solveWithLuFactorization(
     return [];
   }
 
+  // 비-삼각 영역은 위의 assertUnitLowerTriangular, assertUpperTriangular가 같은 epsilon으로 검증했으므로
+  // substitution이 다시 검사하지 않게 한다.
   // P*b를 만든다. permutation[i]는 factorized row i가 원본 row의 어느 index인지 가리킨다.
   const permutation = factorization.permutation;
   const y = performTriangularSubstitution(
@@ -81,12 +83,21 @@ export function solveWithLuFactorization(
     (r) => b[permutation[r]],
     epsilon,
     true,
-    'factorization.lower'
+    'factorization.lower',
+    true
   );
   // unit diagonal이라 forward 단계에서는 singular branch가 발생하지 않는다. 그래도 helper 결과를
   // 그대로 전파해 가정 변경에 안전하게 둔다.
   if (y === undefined) {
     return undefined;
   }
-  return performTriangularSubstitution(factorization.upper, n, (r) => y[r], epsilon, false, 'factorization.upper');
+  return performTriangularSubstitution(
+    factorization.upper,
+    n,
+    (r) => y[r],
+    epsilon,
+    false,
+    'factorization.upper',
+    true
+  );
 }

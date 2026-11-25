@@ -17,13 +17,15 @@ export function assertFiniteNumber(value: number, name: string): void {
 /**
  * vector의 모든 entry가 finite number인지 검증한다. 위반 시 `RangeError`.
  *
+ * 판정 방식은 `assertFiniteMatrixEntries`와 같다.
+ *
  * @param vector 검증할 vector
  * @param name error message에 사용할 인자 이름
  */
 export function assertFiniteVector(vector: VecLike, name: string): void {
   for (let i = 0; i < vector.length; i++) {
     const value = vector[i];
-    if (!Number.isFinite(value)) {
+    if (typeof value !== 'number' || value - value !== 0) {
       throw new RangeError(`${name}[${i}] must be a finite number, got ${String(value)}`);
     }
   }
