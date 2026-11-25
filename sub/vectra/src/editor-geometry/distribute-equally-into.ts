@@ -65,6 +65,8 @@ export function distributeEquallyInto<Point extends XYWritable>(
   // gap-x/y: 중간 item 크기의 합과 equalGap을 미리 구한다.
   // items가 겹치면 totalSpace < 0이 될 수 있고 equalGap이 음수가 되는 경우도 있다.
   let gapEqualGap = 0;
+  // 첫 중간 item의 target. 다음 item은 이전 target에 이전 item 크기와 equalGap을 차례로 더해 얻는다.
+  let gapAccum = 0;
   const gapItemSizes: number[] = [];
   if (kind === 'gap-x' || kind === 'gap-y') {
     let middleContentSize = 0;
@@ -75,6 +77,7 @@ export function distributeEquallyInto<Point extends XYWritable>(
     }
     const totalSpace = last.minVal - first.maxVal;
     gapEqualGap = (totalSpace - middleContentSize) / (n - 1);
+    gapAccum = first.maxVal + gapEqualGap;
   }
 
   // edge / center 분기에서만 필요한 사전 계산
@@ -96,12 +99,12 @@ export function distributeEquallyInto<Point extends XYWritable>(
       targetAxis = targetCenter - halfSize;
     } else {
       // gap-x / gap-y: first.maxVal + equalGap + 이전 middle item 누적 크기 + (i-1)*equalGap
-      let accum = first.maxVal + gapEqualGap;
-      for (let j = 0; j < i - 1; j++) {
-        accum += gapItemSizes[j];
-        accum += gapEqualGap;
+      // 이전 item까지의 합을 이어 간다. 더하는 순서는 item마다 처음부터 더할 때와 같다.
+      if (i > 1) {
+        gapAccum += gapItemSizes[i - 2];
+        gapAccum += gapEqualGap;
       }
-      targetAxis = accum;
+      targetAxis = gapAccum;
     }
 
     const point = factory();
