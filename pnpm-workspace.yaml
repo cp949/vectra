@@ -11,3 +11,9 @@ minimumReleaseAgeExclude:
 overrides:
   basic-ftp: 6.2.6
   dompurify: 3.4.17
+
+permissions:
+  pixi.js:
+    skills: true
+  tsdown:
+    skills: true
