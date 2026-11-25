@@ -1,5 +1,5 @@
 import { firstNonZeroSignOfColumn } from '../internal/first-nonzero-sign';
-import type { ResolvedIterationOptions } from '../internal/iteration-options';
+import { defaultJacobiMaxIterations, type ResolvedIterationOptions } from '../internal/iteration-options';
 import { type JacobiSymmetricEigenRawResult, jacobiSymmetricEigenRaw } from '../internal/jacobi-symmetric-eigen';
 
 /** Jacobi 결과. 수렴하지 못한 경우 `undefined`. */
@@ -28,7 +28,8 @@ export interface JacobiEigenResult {
  *  4. max abs가 `tolerance` 이하면 수렴으로 보고 종료한다.
  *  5. 그렇지 않으면 `A[p][q]`를 0으로 만드는 Givens rotation parameter `(c, s)`를 계산해 `A`의
  *     `p`/`q` row + column과 `V`의 `p`/`q` column에 적용한다.
- *  6. `maxIterations` 안에 수렴하지 못하면 `undefined`.
+ *  6. `maxIterations` 안에 수렴하지 못하면 `undefined`. 반복 한 번은 rotation 한 번이다.
+ *     `resolved.maxIterations`가 `undefined`이면 `defaultJacobiMaxIterations(n)`을 쓴다.
  *
  * Givens rotation은 numerically stable formula를 쓴다(`theta = (Aqq - App) / (2 * Apq)`,
  * `t = sign(theta) / (|theta| + sqrt(theta^2 + 1))`). `maxAbs > tolerance >= 0`이라 step에 들어가는
@@ -44,9 +45,9 @@ export function jacobiSymmetricEigen(
   n: number,
   resolved: ResolvedIterationOptions
 ): JacobiEigenResult | undefined {
-  const { maxIterations, tolerance, epsilon } = resolved;
+  const { tolerance, epsilon } = resolved;
   const raw = jacobiSymmetricEigenRaw(matrix, n, {
-    maxIterations,
+    maxIterations: resolved.maxIterations ?? defaultJacobiMaxIterations(n),
     tolerance,
     errorPrefix: 'Jacobi rotation',
   });

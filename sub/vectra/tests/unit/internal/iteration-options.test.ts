@@ -9,6 +9,8 @@ import {
   DEFAULT_ITERATION_EPSILON,
   DEFAULT_ITERATION_MAX,
   DEFAULT_ITERATION_TOLERANCE,
+  DEFAULT_JACOBI_SWEEPS,
+  defaultJacobiMaxIterations,
   resolveIterationOptions,
 } from '../../../src/internal/iteration-options';
 
@@ -19,17 +21,17 @@ describe('internal iteration-options — resolveIterationOptions', () => {
     expect(DEFAULT_ITERATION_EPSILON).toBe(1e-9);
   });
 
-  test('undefined options는 세 필드 default를 채운다', () => {
+  test('undefined options는 tolerance와 epsilon default를 채우고 maxIterations는 비워 둔다', () => {
     expect(resolveIterationOptions(undefined, 'options')).toEqual({
-      maxIterations: DEFAULT_ITERATION_MAX,
+      maxIterations: undefined,
       tolerance: DEFAULT_ITERATION_TOLERANCE,
       epsilon: DEFAULT_ITERATION_EPSILON,
     });
   });
 
-  test('빈 options도 세 필드 default를 채운다', () => {
+  test('빈 options도 maxIterations는 비워 둔다', () => {
     expect(resolveIterationOptions({}, 'options')).toEqual({
-      maxIterations: DEFAULT_ITERATION_MAX,
+      maxIterations: undefined,
       tolerance: DEFAULT_ITERATION_TOLERANCE,
       epsilon: DEFAULT_ITERATION_EPSILON,
     });
@@ -42,12 +44,12 @@ describe('internal iteration-options — resolveIterationOptions', () => {
       epsilon: DEFAULT_ITERATION_EPSILON,
     });
     expect(resolveIterationOptions({ tolerance: 0.5 }, 'options')).toEqual({
-      maxIterations: DEFAULT_ITERATION_MAX,
+      maxIterations: undefined,
       tolerance: 0.5,
       epsilon: DEFAULT_ITERATION_EPSILON,
     });
     expect(resolveIterationOptions({ epsilon: 0.25 }, 'options')).toEqual({
-      maxIterations: DEFAULT_ITERATION_MAX,
+      maxIterations: undefined,
       tolerance: DEFAULT_ITERATION_TOLERANCE,
       epsilon: 0.25,
     });
@@ -110,5 +112,24 @@ describe('internal iteration-options — resolveIterationOptions', () => {
     const resolved = resolveIterationOptions({ tolerance: -0, epsilon: -0 }, 'options');
     expect(Object.is(resolved.tolerance, -0)).toBe(true);
     expect(Object.is(resolved.epsilon, -0)).toBe(true);
+  });
+});
+
+describe('internal iteration-options — defaultJacobiMaxIterations', () => {
+  test('sweep 수 상수는 10이다', () => {
+    expect(DEFAULT_JACOBI_SWEEPS).toBe(10);
+  });
+
+  test('n <= 5는 이전 고정 기본값 100이다', () => {
+    for (const n of [1, 2, 3, 4, 5]) {
+      expect(defaultJacobiMaxIterations(n)).toBe(100);
+    }
+  });
+
+  test('n > 5는 10 sweep(10 * n * (n - 1) / 2)회다', () => {
+    expect(defaultJacobiMaxIterations(6)).toBe(150);
+    expect(defaultJacobiMaxIterations(20)).toBe(1900);
+    expect(defaultJacobiMaxIterations(60)).toBe(17700);
+    expect(defaultJacobiMaxIterations(100)).toBe(49500);
   });
 });

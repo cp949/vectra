@@ -23,8 +23,9 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  *  4. `n >= 3`은 symmetric matrix만 처리한다. symmetry 위반(`|a[i][j] - a[j][i]| > epsilon`)은
  *     unsupported spectrum 경로로 `undefined`. nonsymmetric general QR/Schur 경로는 본 함수 범위
  *     밖이다.
- *  5. symmetric matrix는 cyclic Jacobi rotation으로 처리한다. `maxIterations` 안에 수렴하지 못하면
- *     `undefined`. 결과 diagonal은 Jacobi 결과 순서를 그대로 따른다(정렬하지 않는다).
+ *  5. symmetric matrix는 cyclic Jacobi rotation으로 처리한다. `maxIterations`(rotation 횟수, 미지정이면
+ *     `max(100, 10 * n * (n - 1) / 2)`) 안에 수렴하지 못하면 `undefined`.
+ *     결과 diagonal은 Jacobi 결과 순서를 그대로 따른다(정렬하지 않는다).
  *
  * `matrix`는 rectangular nested square nested array여야 한다. ragged matrix와 `rows !== columns`는
  * `RangeError`. 모든 entry는 finite number여야 한다. 위반 시 `RangeError`.
@@ -39,7 +40,7 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  * 면 `RangeError`.
  *
  * @param matrix square finite matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function calculateEigenvalues(matrix: MatLike, options?: IterationOptions): number[] | undefined {
   const resolved = resolveIterationOptions(options, 'options');

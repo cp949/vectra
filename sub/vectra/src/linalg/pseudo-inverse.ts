@@ -19,7 +19,7 @@ import type { IterationOptions, MatLike } from './types';
  * 결과는 input row 참조를 공유하지 않는 fresh storage이며 entry에는 `-0`이 남지 않는다.
  *
  * @param matrix pseudo-inverse를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function pseudoInverse(matrix: MatLike, options?: IterationOptions): number[][] | undefined {
   const rows = matrix.length;

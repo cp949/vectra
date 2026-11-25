@@ -39,6 +39,11 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  * `options.maxIterations`는 positive safe integer, `options.tolerance`와 `options.epsilon`은 0 이상
  * finite number여야 한다. 위반 시 `RangeError`. options 검증은 다른 input 검증보다 먼저 수행한다.
  *
+ * 반복 상한 `options.maxIterations`는 Jacobi rotation 횟수다(sweep이 아니다). 지정하면 그 값을 그대로
+ * 쓴다. 미지정이면 `max(100, 10 * n * (n - 1) / 2)`회다. `n * (n - 1) / 2`회가 1 sweep이므로 10 sweep이다.
+ * 예: `n = 20`은 1900, `n = 60`은 17700, `n = 100`은 49500. 무작위 조밀 symmetric matrix는 약
+ * 2 ~ 4.4 sweep에 수렴한다. 상한 안에 수렴하지 못하면 `undefined`다. 이 계약은 그대로다.
+ *
  * `tolerance`는 symmetric `n >= 2` 경로의 Jacobi off-diagonal convergence 판정에만 사용한다.
  * `epsilon`은 symmetry 판정, 2x2 discriminant clamp 경계, 2x2 repeated 판정, nullspace pivot 판정,
  * diagonal zero cleanup, normalization zero 판정, result zero cleanup, column sign convention에
@@ -48,7 +53,7 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  * `values`와 `vectors`는 input matrix 참조를 공유하지 않는 fresh storage이며 `-0`이 남지 않는다.
  *
  * @param matrix square finite matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function eig(matrix: MatLike, options?: IterationOptions): EigenDecomposition | undefined {
   const resolved = resolveIterationOptions(options, 'options');

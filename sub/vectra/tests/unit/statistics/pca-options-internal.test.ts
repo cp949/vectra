@@ -6,17 +6,13 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import {
-  DEFAULT_ITERATION_EPSILON,
-  DEFAULT_ITERATION_MAX,
-  DEFAULT_ITERATION_TOLERANCE,
-} from '../../../src/internal/iteration-options';
+import { DEFAULT_ITERATION_EPSILON, DEFAULT_ITERATION_TOLERANCE } from '../../../src/internal/iteration-options';
 import { resolvePCAOptions } from '../../../src/statistics/pca-options.internal';
 
 describe('statistics pca-options.internal — resolvePCAOptions', () => {
   test('undefined options는 반복 옵션 default와 useCorrelation false를 채운다', () => {
     expect(resolvePCAOptions(undefined, 'options')).toEqual({
-      maxIterations: DEFAULT_ITERATION_MAX,
+      maxIterations: undefined,
       tolerance: DEFAULT_ITERATION_TOLERANCE,
       epsilon: DEFAULT_ITERATION_EPSILON,
       useCorrelation: false,

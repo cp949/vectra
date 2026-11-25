@@ -36,7 +36,7 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  *
  * @param out basis를 기록할 writable matrix. 실패 또는 `undefined` 반환 시 수정되지 않는다.
  * @param matrix column space를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function columnSpaceInto<Out extends MatWritable>(
   out: Out,

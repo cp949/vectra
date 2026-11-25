@@ -25,7 +25,7 @@ import type { IterationOptions, MatLike } from './types';
  * 반환 값에서 `Infinity`는 정의된 결과(singular / rank-deficient)이며 validation 오류와 구분된다.
  *
  * @param matrix condition number를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function conditionNumber(matrix: MatLike, options?: IterationOptions): number | undefined {
   const context = prepareSvdForPseudoInverse(matrix, options);

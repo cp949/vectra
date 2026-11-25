@@ -22,9 +22,9 @@ import { assertVarianceMode } from './validate.internal';
  * centered delta, centered product, product sum, sqrt, 나눗셈, eigen 단계 결과가 non-finite면
  * `RangeError`.
  *
- * symmetric eigen은 cyclic Jacobi rotation으로 계산한다. `options.maxIterations` 기본 `100`(positive
- * safe integer), `options.tolerance` 기본 `1e-10`(0 이상 finite, 반복 수렴 판정에만 사용),
- * `options.epsilon` 기본 `1e-9`(0 이상 finite, rank 판정 / negative eigenvalue clamp / zero cleanup에만
+ * symmetric eigen은 cyclic Jacobi rotation으로 계산한다. `options.maxIterations`(positive safe integer)는
+ * rotation 수이고 기본 `max(100, 10 * n * (n - 1) / 2)`(`n`은 variable 수), `options.tolerance` 기본
+ * `1e-10`(0 이상 finite, 반복 수렴 판정에만 사용), `options.epsilon` 기본 `1e-9`(0 이상 finite, rank 판정 / negative eigenvalue clamp / zero cleanup에만
  * 사용). 다른 finite validation에는 `epsilon`/`tolerance`를 사용하지 않는다. `maxIterations` 안에
  * 수렴하지 못하거나 PSD 가정에 어긋나는 strict negative eigenvalue가 나오면 `undefined`.
  *
@@ -37,8 +37,8 @@ import { assertVarianceMode } from './validate.internal';
  *
  * @param data PCA를 계산할 matrix. row-major rectangular finite number matrix.
  * @param options 옵션. `orientation` 기본 `"columns"`, `mode` 기본 `"population"`,
- *   `useCorrelation` 기본 `false`, `maxIterations` 기본 `100`, `tolerance` 기본 `1e-10`, `epsilon`
- *   기본 `1e-9`.
+ *   `useCorrelation` 기본 `false`, `maxIterations` 기본 `max(100, 10 * n * (n - 1) / 2)`,
+ *   `tolerance` 기본 `1e-10`, `epsilon` 기본 `1e-9`.
  */
 export function pca(data: readonly (readonly number[])[], options?: PCAOptions): PCAResult | undefined {
   const orientation = options?.orientation ?? 'columns';

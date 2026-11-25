@@ -1,4 +1,5 @@
 import { firstNonZeroSign } from '../internal/first-nonzero-sign';
+import { defaultJacobiMaxIterations } from '../internal/iteration-options';
 import { type JacobiSymmetricEigenRawResult, jacobiSymmetricEigenRaw } from '../internal/jacobi-symmetric-eigen';
 import type { ResolvedPCAOptions } from './pca-options.internal';
 
@@ -23,9 +24,9 @@ export function jacobiSymmetricEigen(
   n: number,
   resolved: ResolvedPCAOptions
 ): SymmetricEigenResult | undefined {
-  const { maxIterations, tolerance } = resolved;
+  const { tolerance } = resolved;
   return jacobiSymmetricEigenRaw(matrix, n, {
-    maxIterations,
+    maxIterations: resolved.maxIterations ?? defaultJacobiMaxIterations(n),
     tolerance,
     errorPrefix: 'PCA Jacobi rotation',
   });

@@ -48,8 +48,9 @@ export interface CovarianceMatrixOptions extends VarianceOptions {
  * 표준편차로 나눠 표준화한 뒤 covariance(=correlation) matrix를 분해한다. `useCorrelation: true`에서
  * variance가 `0`인 variable이 있으면 `RangeError`.
  *
- * `maxIterations`는 symmetric eigen 반복의 최대 sweep 수다. positive safe integer가 아니면
- * `RangeError`. 기본 `100`. `maxIterations` 안에 수렴하지 못하면 `undefined`를 반환한다.
+ * `maxIterations`는 symmetric eigen 반복의 최대 rotation 수다. positive safe integer가 아니면
+ * `RangeError`. 미지정 시 `variable` 수 `n`으로 `max(100, 10 * n * (n - 1) / 2)`다.
+ * `maxIterations` 안에 수렴하지 못하면 `undefined`를 반환한다.
  *
  * `tolerance`는 반복 수렴 판정에만 사용한다. 0 이상 finite number가 아니면 `RangeError`. 기본 `1e-10`.
  *
@@ -60,7 +61,7 @@ export interface PCAOptions extends CovarianceMatrixOptions {
   /** correlation 기반 PCA 사용 여부. 기본 `false`. */
   readonly useCorrelation?: boolean;
 
-  /** symmetric eigen 반복의 최대 sweep 수. 기본 `100`. */
+  /** symmetric eigen 반복의 최대 rotation 수. 미지정 시 `max(100, 10 * n * (n - 1) / 2)`. */
   readonly maxIterations?: number;
 
   /** 반복 수렴 판정 tolerance. 기본 `1e-10`. */

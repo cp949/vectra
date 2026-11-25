@@ -134,8 +134,10 @@ export interface EigenDecomposition {
  * 분기를 잘못 선택한다.
  *
  * - `maxIterations`: 반복 상한. positive safe integer. 0 이하, 비정수, safe integer 범위 밖은
- *   `RangeError`. 미지정 시 default `100`. 이 횟수 안에 수렴하지 않으면 결과 미생성으로
- *   `undefined`를 반환한다.
+ *   `RangeError`. 지정하면 그 값을 그대로 쓴다. 이 횟수 안에 수렴하지 않으면 결과 미생성으로
+ *   `undefined`를 반환한다. Jacobi 경로에서 반복 한 번은 rotation 한 번이다.
+ *   미지정 시 matrix 크기 `n`으로 계산한다. `max(100, 10 * n * (n - 1) / 2)`회이고, `n * (n - 1) / 2`회가
+ *   1 sweep이므로 10 sweep이다. `n <= 5`는 `100`이다. `n = 60`은 17700, `n = 100`은 49500이다.
  * - `tolerance`: 반복 convergence 판정. 0 이상 finite number. NaN, Infinity, 음수는 `RangeError`.
  *   미지정 시 default `1e-10`. Jacobi off-diagonal max abs가 이 값 이하이면 수렴으로 본다.
  *   input/result finite validation에는 사용하지 않는다.
@@ -145,7 +147,7 @@ export interface EigenDecomposition {
  *   validation에는 사용하지 않는다.
  */
 export interface IterationOptions {
-  /** 반복 상한. 기본 `100`. positive safe integer만 허용한다. */
+  /** 반복 상한. 미지정 시 Jacobi 경로는 `max(100, 10 * n * (n - 1) / 2)`. positive safe integer만 허용한다. */
   readonly maxIterations?: number;
 
   /** convergence 판정 허용 오차. 기본 `1e-10`. 0 이상 finite number만 허용한다. */

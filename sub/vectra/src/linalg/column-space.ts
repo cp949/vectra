@@ -17,7 +17,7 @@ import type { IterationOptions, MatLike } from './types';
  *
  * clamp/정규화/fallback 정책은 `columnSpaceInto`와 동일하다.
  * @param matrix column space를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function columnSpace(matrix: MatLike, options?: IterationOptions): number[][] | undefined {
   // worst-case rank는 min(m, n). seed는 min(rows, columns)개 row, 각 길이 rows로 준비한다.

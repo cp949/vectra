@@ -40,7 +40,7 @@ import {
  *
  * @param A coefficient matrix. `A.rows < A.columns`.
  * @param b right-hand side vector. `b.length === A.rows`.
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function solveUnderdeterminedSystem(A: MatLike, b: VecLike, options?: IterationOptions): number[] | undefined {
   const resolved = resolveIterationOptions(options, 'options');

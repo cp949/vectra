@@ -26,7 +26,7 @@ import { assertFiniteMatrixEntries, extractMatrixShape } from './validate.intern
  * 결과는 fixed scalar를 직접 반환한다(`*Into` variant를 제공하지 않는다).
  *
  * @param matrix spectral norm을 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function spectralNorm(matrix: MatLike, options?: IterationOptions): number | undefined {
   const resolved = resolveIterationOptions(options, 'options');

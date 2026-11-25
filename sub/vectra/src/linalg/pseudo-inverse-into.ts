@@ -31,7 +31,7 @@ import type { IterationOptions, MatLike, MatWritable } from './types';
  *
  * @param out pseudo-inverse를 기록할 writable matrix. 실패 또는 `undefined` 반환 시 수정되지 않는다.
  * @param matrix pseudo-inverse를 계산할 source matrix
- * @param options 반복 옵션. 미지정 시 default(`maxIterations=100`, `tolerance=1e-10`, `epsilon=1e-9`).
+ * @param options 반복 옵션. 미지정 시 default(`maxIterations`는 matrix 크기별 규칙, `tolerance=1e-10`, `epsilon=1e-9`).
  */
 export function pseudoInverseInto<Out extends MatWritable>(
   out: Out,
