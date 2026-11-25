@@ -1,5 +1,6 @@
 import type { CatmullRomPolylineOptions, XYInput, XYObjectWritable } from '../types';
 import { catmullRomPointAtTInto } from './catmull-rom-point-at-t-into';
+import { catmullRomKnotsFromPoints, catmullRomPointAtTByKnotsInto } from './catmull-rom.internal';
 
 /**
  * Catmull-Rom 곡선을 steps개 점으로 샘플링해 out에 기록한다.
@@ -48,11 +49,14 @@ export function catmullRomPolylineInto(
   }
 
   // steps >= 2: t = i/steps (i = 0, 1, ..., steps-1)
+  // knot 표는 점 수에 비례한 비용이라 샘플마다 만들지 않고 한 번만 만든다.
   out.length = 0;
+  let knots: number[] | undefined;
   for (let i = 0; i < steps; i++) {
     const t = i / steps;
     const pt = { x: 0, y: 0 };
-    catmullRomPointAtTInto(pt, points, t, { alpha, closed });
+    if (knots === undefined) knots = catmullRomKnotsFromPoints(points, alpha, closed);
+    catmullRomPointAtTByKnotsInto(pt, points, knots, t, closed);
     out.push(pt);
   }
   return out;
