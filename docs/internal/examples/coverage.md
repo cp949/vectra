@@ -10,10 +10,10 @@ pnpm examples:coverage:write
 
 ## 요약
 
-- 전체 public leaf: 1935
+- 전체 public leaf: 1941
 - covered: 652
 - excepted: 0
-- uncovered: 1283
+- uncovered: 1289
 - 예제 수: 171
 
 ## 표
@@ -771,22 +771,28 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/polygon-polygon-intersects` | `polygonPolygonIntersects` |  |  | uncovered |
 | `@cp949/vectra/intersects/polyline-polyline-intersections` | `polylinePolylineIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/polyline-polyline-intersections-into` | `polylinePolylineIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-bounds-hit-t` | `rayBoundsHitT` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-bounds-intersections` | `rayBoundsIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-bounds-intersections-into` | `rayBoundsIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-circle-hit-t` | `rayCircleHitT` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-circle-intersections` | `rayCircleIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-circle-intersections-into` | `rayCircleIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-cubic-intersections` | `rayCubicIntersections` | `pixi:ray-cubic-hits`, `pixi:raycast-workbench` |  | covered |
 | `@cp949/vectra/intersects/ray-cubic-intersections-into` | `rayCubicIntersectionsInto` | `pixi:ray-cubic-hits`, `pixi:raycast-workbench` |  | covered |
+| `@cp949/vectra/intersects/ray-ellipse-hit-t` | `rayEllipseHitT` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-ellipse-intersections` | `rayEllipseIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-ellipse-intersections-into` | `rayEllipseIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-polygon-hit-t` | `rayPolygonHitT` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-polygon-intersections` | `rayPolygonIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-polygon-intersections-into` | `rayPolygonIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-polygon-overlap-intervals` | `rayPolygonOverlapIntervals` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-polygon-overlap-intervals-into` | `rayPolygonOverlapIntervalsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-quadratic-intersections` | `rayQuadraticIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-quadratic-intersections-into` | `rayQuadraticIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-rect-hit-t` | `rayRectHitT` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-rect-intersections` | `rayRectIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-rect-intersections-into` | `rayRectIntersectionsInto` |  |  | uncovered |
+| `@cp949/vectra/intersects/ray-segment-hit-t` | `raySegmentHitT` |  |  | uncovered |
 | `@cp949/vectra/intersects/rays-from-point-to-polygon` | `raysFromPointToPolygon` |  |  | uncovered |
 | `@cp949/vectra/intersects/rays-from-point-to-polygon-into` | `raysFromPointToPolygonInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/rect-rect-area-overlap-detail` | `rectRectAreaOverlapDetail` |  |  | uncovered |

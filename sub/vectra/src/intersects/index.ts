@@ -175,15 +175,19 @@ export { polygonPolygonIntersects } from './polygon-polygon-intersects';
 export { polylinePolylineIntersections } from './polyline-polyline-intersections';
 export { polylinePolylineIntersectionsInto } from './polyline-polyline-intersections-into';
 // line-family × bounds intersection point collection
+export { rayBoundsHitT } from './ray-bounds-hit-t';
 export { rayBoundsIntersections } from './ray-bounds-intersections';
 export { rayBoundsIntersectionsInto } from './ray-bounds-intersections-into';
+export { rayCircleHitT } from './ray-circle-hit-t';
 export { rayCircleIntersections } from './ray-circle-intersections';
 export { rayCircleIntersectionsInto } from './ray-circle-intersections-into';
 export { rayCubicIntersections } from './ray-cubic-intersections';
 export { rayCubicIntersectionsInto } from './ray-cubic-intersections-into';
+export { rayEllipseHitT } from './ray-ellipse-hit-t';
 export { rayEllipseIntersections } from './ray-ellipse-intersections';
 export { rayEllipseIntersectionsInto } from './ray-ellipse-intersections-into';
 // line-family × polygon intersection point collection
+export { rayPolygonHitT } from './ray-polygon-hit-t';
 export { rayPolygonIntersections } from './ray-polygon-intersections';
 export { rayPolygonIntersectionsInto } from './ray-polygon-intersections-into';
 // line-family × polygon collinear overlap interval collection
@@ -192,8 +196,11 @@ export { rayPolygonOverlapIntervalsInto } from './ray-polygon-overlap-intervals-
 export { rayQuadraticIntersections } from './ray-quadratic-intersections';
 export { rayQuadraticIntersectionsInto } from './ray-quadratic-intersections-into';
 // line-family × rect intersection point collection
+export { rayRectHitT } from './ray-rect-hit-t';
 export { rayRectIntersections } from './ray-rect-intersections';
 export { rayRectIntersectionsInto } from './ray-rect-intersections-into';
+// ray × shape 첫 hit의 ray parameter
+export { raySegmentHitT } from './ray-segment-hit-t';
 // visibility / ray casting
 export { raysFromPointToPolygon } from './rays-from-point-to-polygon';
 export { raysFromPointToPolygonInto } from './rays-from-point-to-polygon-into';
