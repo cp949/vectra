@@ -1,6 +1,5 @@
-import { polylineSampleAtLengthInto, polylineTotalLength, readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import { readPolylinePoints } from '../internal/polyline';
+import type { PolylineLike, XYLike, XYObjectWritable, XYTuple } from '../types';
 
 /**
  * polyline에서 arc-length 기준 균등하게 count개 point를 샘플링해 outPoints에 기록한다.
@@ -37,16 +36,30 @@ export function sampleFixedCountInto(
     return outPoints;
   }
 
-  const snapshot: XYObjectWritable[] = new Array(n);
+  // 좌표와 누적 길이를 한 번 순회로 만든다. outPoints가 polyline과 같은 배열이어도 안전하도록 clear 전에 모두 읽는다.
+  // 입력 판별은 본문에서 직접 한다. 공유 readX/readY의 인라인 캐시는 라이브러리 전체의 입력 모양을 본다.
+  const xs: number[] = new Array(n);
+  const ys: number[] = new Array(n);
+  // cum[i]는 vertex i까지의 누적 길이다. `polylineTotalLength`와 같은 순서로 더한다(Math.hypot은 pointDist와 같다).
+  const cum: number[] = new Array(n);
+  let acc = 0;
+  cum[0] = 0;
   for (let i = 0; i < n; i++) {
-    snapshot[i] = { x: readX(pts[i]), y: readY(pts[i]) };
+    const p = pts[i];
+    const x = Array.isArray(p) ? (p as XYTuple)[0] : (p as XYLike).x;
+    const y = Array.isArray(p) ? (p as XYTuple)[1] : (p as XYLike).y;
+    xs[i] = x;
+    ys[i] = y;
+    if (i > 0) {
+      acc += Math.hypot(x - xs[i - 1], y - ys[i - 1]);
+      cum[i] = acc;
+    }
   }
-
-  const totalLen = polylineTotalLength(snapshot);
+  const totalLen = acc;
 
   // 시작점 좌표
-  const x0 = snapshot[0].x;
-  const y0 = snapshot[0].y;
+  const x0 = xs[0];
+  const y0 = ys[0];
 
   outPoints.length = 0;
 
@@ -64,11 +77,39 @@ export function sampleFixedCountInto(
   }
 
   // count >= 2: 시작점과 끝점 포함, 균등 간격
-  const tmp = { x: 0, y: 0 };
+  // target은 비감소다. 그래서 `cum[seg] >= target`인 첫 segment를 앞으로만 움직이며 찾는다.
+  // 이전 구현은 샘플마다 처음부터 순회했고 같은 조건(`acc + segLen >= target`, 마지막 segment는 무조건)으로 골랐다.
+  // target이 NaN이면 어떤 비교도 거짓이라 마지막 segment가 선택된다. 이 경우는 sweep 위치를 바꾸지 않는다.
+  const last = n - 1;
+  const denom = count - 1;
+  let sweep = 1;
+  let cached = -1; // 아래 값을 계산해 둔 segment index
+  let ax = 0;
+  let ay = 0;
+  let dx = 0;
+  let dy = 0;
+  let segLen = 0;
   for (let i = 0; i < count; i++) {
-    const target = (i / (count - 1)) * totalLen;
-    polylineSampleAtLengthInto(tmp, snapshot, target);
-    outPoints.push({ x: tmp.x, y: tmp.y });
+    const target = (i / denom) * totalLen;
+    let seg = last;
+    if (!Number.isNaN(target)) {
+      while (sweep < last && !(cum[sweep] >= target)) sweep++;
+      seg = sweep;
+    }
+    if (seg !== cached) {
+      cached = seg;
+      ax = xs[seg - 1];
+      ay = ys[seg - 1];
+      dx = xs[seg] - ax;
+      dy = ys[seg] - ay;
+      segLen = Math.hypot(dx, dy);
+    }
+    if (segLen === 0) {
+      outPoints.push({ x: ax, y: ay });
+    } else {
+      const localT = Math.max(0, Math.min(1, (target - cum[seg - 1]) / segLen));
+      outPoints.push({ x: ax + localT * dx, y: ay + localT * dy });
+    }
   }
 
   return outPoints;
