@@ -60,10 +60,15 @@ jobs:
       - name: Verify release gates
         run: pnpm release:check
 
-      # 태그 push에서만 실제로 배포한다. 수동 실행은 --dry-run이다.
+      # 태그 push에서만 실제로 배포한다.
       # prepublishOnly가 dist와 llm.txt를 다시 빌드한다.
       - name: Publish
+        if: github.ref_type == 'tag'
         working-directory: sub/vectra
-        env:
-          DRY_RUN: ${{ github.ref_type == 'tag' && '' || '--dry-run' }}
-        run: npm publish --provenance --access public $DRY_RUN
+        run: npm publish --provenance --access public
+
+      # 수동 실행은 배포 없이 --dry-run만 한다.
+      - name: Publish (dry-run)
+        if: github.ref_type != 'tag'
+        working-directory: sub/vectra
+        run: npm publish --provenance --access public --dry-run
