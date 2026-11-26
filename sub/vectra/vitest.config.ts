@@ -22,6 +22,9 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    // 이전 구현과 비교하는 무작위 등가성 테스트는 단독으로 1~2초가 든다.
+    // 배포 검사(pnpm release:check)는 turbo가 여러 패키지 테스트를 병렬로 돌려 5초 기본값을 넘긴다.
+    testTimeout: 30_000,
     server: {
       deps: {
         external: [distPattern],
