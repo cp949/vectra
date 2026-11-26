@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-26
+
 - 동작 변경: `tolerance: 0`으로 Jacobi 반복을 돌리면 `RangeError`(`non-finite theta` 또는 `non-finite denominator`)가 나던 문제를 고친다. `tolerance`는 문서와 검증이 0 이상 finite number를 허용하는데, 0이면 off-diagonal이 정확히 0이 될 때까지 반복하다가 subnormal에 가까운 값에서 `theta = (Aqq - App) / (2 * Apq)`가 overflow했다. 이제 대각 차이가 유한하면 `t = Apq / (Aqq - App)`로 rotation을 이어 가고, 정확히 0이 되면 수렴한다. `maxIterations` 안에 0이 되지 못하면 이전 계약대로 `undefined`를 반환한다. `eig`, `calculateEigenvalues`, `singularValueDecomposition`과 이를 쓰는 `pseudoInverse`, `columnSpace`, `conditionNumber`, `spectralNorm`, `nuclearNorm`, `solveUnderdeterminedSystem`, `pca`, `reduceDimensions`가 같은 경로라 모두 고쳐진다. `tolerance > 0`에서 결과가 나오던 입력은 비트 단위로 같다. 무작위 symmetric matrix(크기 2~24), 블록대각, 대각, 이미 수렴한 matrix로 확인했다. 이전에 던지던 입력만 값을 반환한다. 대각 차이 자체가 overflow하는 입력은 `non-finite theta`를 계속 던진다. `theta`가 유한하지만 분모가 overflow해 `non-finite denominator`를 던지던 입력은 이제 값을 반환한다.
 - 동작 변경: Jacobi 반복을 쓰는 `eig`가 `maxIterations`를 생략하면 matrix 크기에 비례한 반복 상한을 쓴다. 이전에는 크기와 무관하게 `100`이었다. 반복 한 번은 rotation 한 번이라 무작위 조밀 symmetric matrix는 10차(약 160회)부터 상한을 넘어, 수렴하는 입력에도 조용히 `undefined`를 반환했다. 필요한 rotation은 약 `1.0 ~ 2.2 n²`회다(10, 20, 40, 60, 100차에서 약 160, 690, 2900, 6600, 18900회). 새 기본값은 `max(100, 10 * n * (n - 1) / 2)`회, 곧 10 sweep이다(20차 1900, 60차 17700, 100차 49500). `calculateEigenvalues`, `singularValueDecomposition`과 이를 쓰는 `pseudoInverse`, `columnSpace`, `conditionNumber`, `spectralNorm`, `nuclearNorm`, `solveUnderdeterminedSystem`, `pca`도 같은 Jacobi 반복이라 같은 기본값을 쓴다. `maxIterations`를 생략한 호출만 결과가 바뀌고, 명시한 `maxIterations`는 이전과 같다. 상한 안에 수렴하지 못하면 `undefined`를 반환하는 계약도 그대로다. 이전에 수렴하던 입력의 결과는 비트 단위로 같다. 이전에 `undefined`였던 입력 중 새 상한 안에 수렴하는 것은 값을 반환한다. `n <= 5`의 기본값은 `100`으로 같다. 수렴하지 않는 입력의 실패까지 걸리는 시간은 늘어난다.
 - 같은 polyline에서 arclength 위치를 자주 조회하는 호출을 위해 `polyline` domain에 `pointAtLengthByTable(Into)`, `pointAtLengthRatioByTable(Into)`, `tangentAtLengthByTable(Into)`, `frameAtLengthByTable(Into)`를 추가한다. `cumulativeLengthsInto`로 누적 길이 표를 한 번 만들어 두고 넘기면, 호출마다 polyline 전체를 두 번 순회하던 `pointAtLengthInto` 같은 기존 함수와 같은 결과를 이분 탐색으로 얻는다. 꼭짓점 2018개 polyline에서 `pointAtLengthInto` 한 번이 약 69µs였고, `pointAtLengthByTableInto`는 약 70ns다(Node.js 24.21, 무작위 length 1000개). 표 개수가 vertex 개수와 다르면 `RangeError`를 던진다. 표 내용(비단조, NaN)은 검증하지 않으며 그 경우 결과는 정의되지 않는다. 기존 함수의 동작은 그대로다.
@@ -75,7 +77,8 @@
 
 - npm 레지스트리에서 설치할 수 있는 첫 버전이다. 1.0.0은 배포 기록이 있지만 레지스트리에서 설치할 수 없다.
 
-[Unreleased]: https://github.com/cp949/vectra/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/cp949/vectra/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/cp949/vectra/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/cp949/vectra/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cp949/vectra/compare/fb75ddf...v1.1.0
 [1.0.2]: https://github.com/cp949/vectra/compare/39a8d19...fb75ddf
