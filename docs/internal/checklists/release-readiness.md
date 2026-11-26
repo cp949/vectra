@@ -218,8 +218,8 @@ pnpm release-it
 
 - `pnpm release:check` (`verify`(빌드 포함), `test:contract`, `lint:package`, `npm pack --dry-run`)
 - version bump와 `CHANGELOG.md` 갱신
-- `pnpm publish`
 - 배포 commit, `v<version>` tag 생성, push
+- 태그 push가 `.github/workflows/release.yml`을 실행해 `npm publish --provenance`로 배포한다. npm 배포는 release-it이 아니라 이 워크플로가 한다.
 
 ---
 
