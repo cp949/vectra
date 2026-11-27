@@ -13,10 +13,20 @@ import { expandToIncludePointInto } from '../../../src/bounds/expand-to-include-
 import { fromCenterInto } from '../../../src/bounds/from-center-into';
 import { fromPointsInto } from '../../../src/bounds/from-points-into';
 import { fromRectInto } from '../../../src/bounds/from-rect-into';
-import type { Bounds, BoundsWritable, PointWritable } from '../../../src/types/flat-shapes.internal';
+import type { Bounds, BoundsPadding, BoundsWritable, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 test('centerInto는 평평한 경계 상자를 받는다', () => {
   expectTypeOf(centerInto).parameter(1).toEqualTypeOf<Bounds>();
+});
+
+test('expandBySidesInto는 네 방향 필드가 모두 필수인 padding을 받는다', () => {
+  expectTypeOf(expandBySidesInto).parameter(2).toEqualTypeOf<BoundsPadding>();
+  expectTypeOf<BoundsPadding>().toEqualTypeOf<{
+    readonly top: number;
+    readonly right: number;
+    readonly bottom: number;
+    readonly left: number;
+  }>();
 });
 
 /** 네 경계 좌표와 호출자 상태를 담는 출력 객체다. */
@@ -69,7 +79,7 @@ test('복사와 초기화, 확장 Into 함수는 경계 상자 출력의 구체 
     copyInto(out, bounds),
     emptyInto(out),
     expandByInto(out, bounds, 1),
-    expandBySidesInto(out, bounds, { left: 1 }),
+    expandBySidesInto(out, bounds, { top: 0, right: 0, bottom: 0, left: 1 }),
     expandToIncludeBoundsInto(out, bounds, bounds),
     expandToIncludePointInto(out, bounds, point),
   ];

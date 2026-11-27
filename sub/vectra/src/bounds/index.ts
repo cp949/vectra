@@ -1,4 +1,4 @@
-export type { BoundsPaddingLike } from '../types';
+export type { BoundsPadding } from '../types/flat-shapes.internal';
 export { boundsFrom } from './bounds-from';
 export { centerInto } from './center-into';
 export { closestPoint } from './closest-point';

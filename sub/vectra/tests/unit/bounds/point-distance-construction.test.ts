@@ -237,21 +237,15 @@ describe('expandBySidesInto', () => {
     expect(out).toEqual({ minX: -2, minY: 1, maxX: 10, maxY: 11 });
   });
 
-  test('누락 field는 0으로 처리한다', () => {
+  test('0인 방향은 해당 경계를 그대로 둔다', () => {
     const out = makeBounds();
-    expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: 5 });
+    expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: 5, right: 0, bottom: 0, left: 0 });
     expect(out).toEqual({ minX: 2, minY: -3, maxX: 8, maxY: 8 });
-  });
-
-  test('빈 padding object는 bounds를 그대로 복사한다', () => {
-    const out = makeBounds();
-    expandBySidesInto(out, makeBounds(2, 2, 8, 8), {});
-    expect(out).toEqual({ minX: 2, minY: 2, maxX: 8, maxY: 8 });
   });
 
   test('음수 padding은 deflate이며 inverted 결과를 허용한다', () => {
     const out = makeBounds();
-    expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: -10, bottom: -10 });
+    expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: -10, right: 0, bottom: -10, left: 0 });
     // minY = 2 - (-10) = 12, maxY = 8 + (-10) = -2 → inverted
     expect(out.minY).toBe(12);
     expect(out.maxY).toBe(-2);
@@ -265,14 +259,18 @@ describe('expandBySidesInto', () => {
 
   test('sentinel bounds에도 raw 산식을 적용한다', () => {
     const out = makeBounds();
-    expandBySidesInto(out, { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }, { top: 5, bottom: 5 });
+    expandBySidesInto(
+      out,
+      { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity },
+      { top: 5, right: 0, bottom: 5, left: 0 }
+    );
     expect(out.minX).toBe(Infinity);
     expect(out.maxX).toBe(-Infinity);
   });
 
   test('반환값이 out의 동일 참조이다', () => {
     const out = makeBounds();
-    const result = expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: 1 });
+    const result = expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: 1, right: 0, bottom: 0, left: 0 });
     expect(result).toBe(out);
   });
 });
@@ -286,7 +284,7 @@ describe('expandBySides', () => {
   });
 
   test('음수 padding은 deflate이다', () => {
-    const result = expandBySides(makeBounds(2, 2, 8, 8), { left: -5 });
+    const result = expandBySides(makeBounds(2, 2, 8, 8), { top: 0, right: 0, bottom: 0, left: -5 });
     expect(result.minX).toBe(7);
   });
 });

@@ -52,6 +52,7 @@
 - 호출자가 넘기는 옵션 객체는 평평한 필드를 쓴다.
   - `GridSpec`: `{ originX, originY, cellWidth, cellHeight }`.
   - `HexLayout`: `{ originX, originY, size, orientation }`.
+  - `BoundsPadding`: `{ top, right, bottom, left }`.
   - 모든 필드는 필수다. 필드를 생략한 객체와 채운 객체는 shape가 다르다.
   - `cellSize: number | XYInput` 같은 값 union은 없앤다.
 - SVG shape의 `points`는 점 목록 규칙을 따른다. `polygon`은 `Polygon`, `polyline`은 `Polyline`이다.

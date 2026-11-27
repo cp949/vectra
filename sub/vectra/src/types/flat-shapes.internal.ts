@@ -187,6 +187,14 @@ export interface HexLayout {
   readonly orientation: HexOrientation;
 }
 
+/** 네 방향 확장량이다. 모든 필드는 필수다. */
+export interface BoundsPadding {
+  readonly top: number;
+  readonly right: number;
+  readonly bottom: number;
+  readonly left: number;
+}
+
 export interface QuadraticCurveWritable {
   kind: 'quadratic';
   x0: number;
