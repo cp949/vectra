@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints, flatIntersectionOptions } from '../internal/legacy-curve.internal';
 import { cubicSelfIntersectionsInto } from '../curve/cubic-self-intersections-into';
 import type { CurveIntersectionHit, CurveIntersectionOptions, CurveLike, IntersectionHit } from '../types';
 import { writeCurveCurveHits } from './curve-facade.internal';
@@ -23,7 +24,11 @@ export function curveSelfIntersectionsInto(
 ): CurveIntersectionHit[] {
   const hits: IntersectionHit[] = [];
   if (curve.kind === 'cubic') {
-    cubicSelfIntersectionsInto(hits, curve.p0, curve.p1, curve.p2, curve.p3, options);
+    cubicSelfIntersectionsInto(
+      hits,
+      flatCubicFromLegacyPoints(curve.p0, curve.p1, curve.p2, curve.p3),
+      flatIntersectionOptions(options)
+    );
   }
   // quadratic Bezier는 자기 교차점이 없다 — 빈 hits로 두고 out을 비운다
   writeCurveCurveHits(out, hits, false);

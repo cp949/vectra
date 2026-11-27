@@ -13,14 +13,8 @@ describe('cubicCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 2, y: 3 },
-      { x: -2, y: 3 },
-      { x: 4, y: 0 },
-      { x: 0, y: 3 },
-      { x: 2, y: 0 },
-      { x: -2, y: 0 },
-      { x: 4, y: 3 }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 2, y1: 3, x2: -2, y2: 3, x3: 4, y3: 0 },
+      { kind: 'cubic', x0: 0, y0: 3, x1: 2, y1: 0, x2: -2, y2: 0, x3: 4, y3: 3 }
     );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     for (const h of hits) {
@@ -37,14 +31,8 @@ describe('cubicCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.3, y: 1 },
-      { x: 0.7, y: 1 },
-      { x: 1, y: 0 },
-      { x: 0, y: 0.5 },
-      { x: 0.3, y: 0.5 },
-      { x: 0.7, y: 0.5 },
-      { x: 1, y: 0.5 }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0.3, y1: 1, x2: 0.7, y2: 1, x3: 1, y3: 0 },
+      { kind: 'cubic', x0: 0, y0: 0.5, x1: 0.3, y1: 0.5, x2: 0.7, y2: 0.5, x3: 1, y3: 0.5 }
     );
     expect(hits).toHaveLength(2);
     expect(hits[0].point.y).toBeCloseTo(0.5, 4);
@@ -55,14 +43,8 @@ describe('cubicCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicCubicIntersectionsInto(
       hits,
-      { x: 0, y: 10 },
-      { x: 1, y: 11 },
-      { x: 2, y: 11 },
-      { x: 3, y: 10 },
-      { x: 0, y: 0 },
-      { x: 1, y: -1 },
-      { x: 2, y: -1 },
-      { x: 3, y: 0 }
+      { kind: 'cubic', x0: 0, y0: 10, x1: 1, y1: 11, x2: 2, y2: 11, x3: 3, y3: 10 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: -1, x2: 2, y2: -1, x3: 3, y3: 0 }
     );
     expect(hits).toHaveLength(0);
   });

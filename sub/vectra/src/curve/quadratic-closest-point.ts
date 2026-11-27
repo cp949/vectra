@@ -1,4 +1,5 @@
-import type { ClosestPointOptions, XYInput, XYObjectWritable } from '../types';
+import type { ClosestPointOptions } from '../types';
+import type { Point, PointWritable, QuadraticCurve } from '../types/flat-shapes.internal';
 import { quadraticClosestPointInto } from './quadratic-closest-point-into';
 
 /**
@@ -12,18 +13,14 @@ import { quadraticClosestPointInto } from './quadratic-closest-point-into';
  * oversized finite 좌표로 내부 `distanceSquared`가 `Infinity`가 되어도 `bx(t)`/`by(t)`는
  * finite 좌표를 그대로 반환한다.
  *
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param point 투영 기준 점
  * @param options 수치 최적화 옵션
  */
 export function quadraticClosestPoint(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  point: XYInput,
-  options?: ClosestPointOptions
-): XYObjectWritable {
-  return quadraticClosestPointInto({ x: 0, y: 0 }, p0, p1, p2, point, options);
+  curve: QuadraticCurve,
+  point: Point,
+  options?: Required<ClosestPointOptions>
+): PointWritable {
+  return quadraticClosestPointInto({ x: 0, y: 0 }, curve, point, options);
 }

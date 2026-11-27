@@ -1,3 +1,8 @@
+import {
+  flatQuadraticFromLegacyPoints,
+  flatLineFromLegacy,
+  flatIntersectionOptions,
+} from '../internal/legacy-curve.internal';
 import { quadraticLineIntersectionsInto } from '../curve/quadratic-line-intersections-into';
 import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput } from '../types';
 
@@ -24,6 +29,11 @@ export function infiniteLineQuadraticIntersectionsInto(
   p2: XYInput,
   options?: CurveIntersectionOptions
 ): IntersectionHit[] {
-  quadraticLineIntersectionsInto(outHits, p0, p1, p2, line, options);
+  quadraticLineIntersectionsInto(
+    outHits,
+    flatQuadraticFromLegacyPoints(p0, p1, p2),
+    flatLineFromLegacy(line),
+    flatIntersectionOptions(options)
+  );
   return outHits;
 }

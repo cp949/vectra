@@ -1,4 +1,3 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve의 공개 경로로 닿는 경계·퇴화 분기 테스트.
  *
@@ -9,6 +8,12 @@ import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.in
  *  4. quadraticLineIntersectionsInto의 선형·중근 경계.
  *  5. endpointArcToCenterInto의 반지름 퇴화와 수치 underflow.
  */
+import {
+  flatQuadraticFromLegacyPoints,
+  flatLineFromLegacy,
+  flatCubicFromLegacyPoints,
+} from '../../../src/internal/legacy-curve.internal';
+
 import { describe, expect, test } from 'vitest';
 import { cubicExtrema } from '../../../src/curve/cubic-extrema';
 import { cubicIsLinear } from '../../../src/curve/cubic-is-linear';
@@ -132,7 +137,11 @@ describe('quadraticLineIntersectionsInto 경계', () => {
 
   /** 직선처럼 놓인 quadratic과 수직선의 교차를 구한다. */
   function hitsAt(x: number): IntersectionHit[] {
-    return quadraticLineIntersectionsInto([], straight[0], straight[1], straight[2], verticalLineAt(x));
+    return quadraticLineIntersectionsInto(
+      [],
+      flatQuadraticFromLegacyPoints(straight[0], straight[1], straight[2]),
+      flatLineFromLegacy(verticalLineAt(x))
+    );
   }
 
   test('선형 방정식의 근이 시작점이면 touch로 분류한다', () => {
@@ -161,13 +170,11 @@ describe('quadraticLineIntersectionsInto 경계', () => {
     // y(t) = (t - 2)²의 중근 t = 2는 [0, 1] 밖이다.
     const hits = quadraticLineIntersectionsInto(
       [],
-      { x: 0, y: 4 },
-      { x: 1, y: 2 },
-      { x: 2, y: 1 },
-      {
+      { kind: 'quadratic', x0: 0, y0: 4, x1: 1, y1: 2, x2: 2, y2: 1 },
+      flatLineFromLegacy({
         origin: { x: 0, y: 0 },
         direction: { x: 1, y: 0 },
-      }
+      })
     );
     expect(hits).toEqual([]);
   });

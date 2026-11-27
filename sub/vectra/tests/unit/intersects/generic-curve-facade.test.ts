@@ -5,6 +5,11 @@
  * flat shape 기준 동치 결과를 내는지, result가 nested `point` 없이 `CurveIntersectionHit` flat
  * shape인지 검증한다. line/segment는 `tLine`/`tCurve`, curve/self는 `tA`/`tB`를 기록한다.
  */
+import {
+  flatQuadraticFromLegacyPoints,
+  flatLineFromLegacy,
+  flatCubicFromLegacyPoints,
+} from '../../../src/internal/legacy-curve.internal';
 
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
@@ -41,7 +46,7 @@ describe('lineCurveIntersectionsInto', () => {
   test('quadratic 결과가 기존 quadraticLine kernel과 flat shape 기준 동치다', () => {
     const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
     const ref: IntersectionHit[] = [];
-    quadraticLineIntersectionsInto(ref, Q0, Q1, Q2, line);
+    quadraticLineIntersectionsInto(ref, flatQuadraticFromLegacyPoints(Q0, Q1, Q2), flatLineFromLegacy(line));
 
     const out: CurveIntersectionHit[] = [];
     lineCurveIntersectionsInto(out, line, QUADRATIC);
@@ -60,7 +65,7 @@ describe('lineCurveIntersectionsInto', () => {
   test('cubic 결과가 기존 cubicLine kernel과 flat shape 기준 동치다', () => {
     const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
     const ref: IntersectionHit[] = [];
-    cubicLineIntersectionsInto(ref, C0, C1, C2, C3, line);
+    cubicLineIntersectionsInto(ref, flatCubicFromLegacyPoints(C0, C1, C2, C3), flatLineFromLegacy(line));
 
     const out: CurveIntersectionHit[] = [];
     lineCurveIntersectionsInto(out, line, CUBIC);
@@ -236,7 +241,11 @@ describe('curveCurveIntersectionsInto', () => {
 
   test('quadratic × quadratic 결과가 기존 kernel과 동치다', () => {
     const ref: IntersectionHit[] = [];
-    quadraticQuadraticIntersectionsInto(ref, QA.p0, QA.p1, QA.p2, QB.p0, QB.p1, QB.p2);
+    quadraticQuadraticIntersectionsInto(
+      ref,
+      flatQuadraticFromLegacyPoints(QA.p0, QA.p1, QA.p2),
+      flatQuadraticFromLegacyPoints(QB.p0, QB.p1, QB.p2)
+    );
 
     const out: CurveIntersectionHit[] = [];
     curveCurveIntersectionsInto(out, QA, QB);
@@ -253,7 +262,11 @@ describe('curveCurveIntersectionsInto', () => {
 
   test('quadratic × cubic 결과가 기존 kernel과 동치다', () => {
     const ref: IntersectionHit[] = [];
-    quadraticCubicIntersectionsInto(ref, QA.p0, QA.p1, QA.p2, CB.p0, CB.p1, CB.p2, CB.p3);
+    quadraticCubicIntersectionsInto(
+      ref,
+      flatQuadraticFromLegacyPoints(QA.p0, QA.p1, QA.p2),
+      flatCubicFromLegacyPoints(CB.p0, CB.p1, CB.p2, CB.p3)
+    );
 
     const out: CurveIntersectionHit[] = [];
     curveCurveIntersectionsInto(out, QA, CB);
@@ -271,7 +284,11 @@ describe('curveCurveIntersectionsInto', () => {
   test('cubic × quadratic은 caller order에 맞게 tA/tB를 swap한다', () => {
     // 기준: quadraticCubic(quadratic=QA, cubic=CB) → tA=quadratic param, tB=cubic param
     const ref: IntersectionHit[] = [];
-    quadraticCubicIntersectionsInto(ref, QA.p0, QA.p1, QA.p2, CB.p0, CB.p1, CB.p2, CB.p3);
+    quadraticCubicIntersectionsInto(
+      ref,
+      flatQuadraticFromLegacyPoints(QA.p0, QA.p1, QA.p2),
+      flatCubicFromLegacyPoints(CB.p0, CB.p1, CB.p2, CB.p3)
+    );
 
     // facade는 (cubic=CB, quadratic=QA) 순서 — tA=cubic param, tB=quadratic param이어야 한다
     const out: CurveIntersectionHit[] = [];
@@ -303,7 +320,11 @@ describe('curveCurveIntersectionsInto', () => {
       p3: { x: 1, y: 0.5 },
     } as const satisfies CurveLike;
     const ref: IntersectionHit[] = [];
-    cubicCubicIntersectionsInto(ref, ca.p0, ca.p1, ca.p2, ca.p3, cb.p0, cb.p1, cb.p2, cb.p3);
+    cubicCubicIntersectionsInto(
+      ref,
+      flatCubicFromLegacyPoints(ca.p0, ca.p1, ca.p2, ca.p3),
+      flatCubicFromLegacyPoints(cb.p0, cb.p1, cb.p2, cb.p3)
+    );
 
     const out: CurveIntersectionHit[] = [];
     curveCurveIntersectionsInto(out, ca, cb);
@@ -372,7 +393,7 @@ describe('curveSelfIntersectionsInto', () => {
 
   test('self-intersecting cubic 결과가 기존 kernel과 동치다', () => {
     const ref: IntersectionHit[] = [];
-    cubicSelfIntersectionsInto(ref, LOOP.p0, LOOP.p1, LOOP.p2, LOOP.p3);
+    cubicSelfIntersectionsInto(ref, flatCubicFromLegacyPoints(LOOP.p0, LOOP.p1, LOOP.p2, LOOP.p3));
 
     const out: CurveIntersectionHit[] = [];
     curveSelfIntersectionsInto(out, LOOP);

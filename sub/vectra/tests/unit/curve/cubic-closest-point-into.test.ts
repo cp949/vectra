@@ -7,6 +7,7 @@
  * - 대칭 case에서 curve 최고점이 최근접점.
  * - out을 반환한다 (Into variant).
  */
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 
 import { describe, expect, it } from 'vitest';
 import { cubicClosestLocation } from '../../../src/curve/cubic-closest-location';
@@ -26,7 +27,7 @@ describe('cubicClosestPointInto', () => {
     const p2 = { x: 20 / 3, y: 0 };
     const p3 = { x: 10, y: 0 };
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, { x: 5, y: 4 });
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: 5, y: 4 });
     expect(relErr(out.x, 5)).toBeLessThan(1e-5);
     expect(Math.abs(out.y)).toBeLessThan(1e-5);
   });
@@ -37,7 +38,7 @@ describe('cubicClosestPointInto', () => {
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, { x: -10, y: 0 });
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: -10, y: 0 });
     expect(relErr(out.x, 0)).toBeLessThan(1e-6);
     expect(relErr(out.y, 0)).toBeLessThan(1e-6);
   });
@@ -48,7 +49,7 @@ describe('cubicClosestPointInto', () => {
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, { x: 100, y: 0 });
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: 100, y: 0 });
     expect(relErr(out.x, 4)).toBeLessThan(1e-6);
     expect(relErr(out.y, 0)).toBeLessThan(1e-6);
   });
@@ -63,7 +64,7 @@ describe('cubicClosestPointInto', () => {
     const expectedX = 0.125 * 0 + 0.375 * 1 + 0.375 * 3 + 0.125 * 4;
     const expectedY = 0.125 * 0 + 0.375 * 6 + 0.375 * 6 + 0.125 * 0;
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, { x: expectedX, y: 100 });
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: expectedX, y: 100 });
     expect(relErr(out.x, expectedX)).toBeLessThan(1e-5);
     expect(relErr(out.y, expectedY)).toBeLessThan(1e-5);
   });
@@ -75,7 +76,7 @@ describe('cubicClosestPointInto', () => {
     const p3 = { x: 5, y: 0 };
     const query = { x: 2, y: 3 };
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, query);
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), query);
     const found = Math.hypot(out.x - query.x, out.y - query.y);
 
     for (let i = 0; i <= 100; i++) {
@@ -92,33 +93,17 @@ describe('cubicClosestPointInto', () => {
     const out = { x: 0, y: 0 };
     const ret = cubicClosestPointInto(
       out,
-      { x: 0, y: 0 },
-      { x: 1, y: 3 },
-      { x: 3, y: 3 },
-      { x: 4, y: 0 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 3, x2: 3, y2: 3, x3: 4, y3: 0 },
       { x: 2, y: 2 }
     );
     expect(ret).toBe(out);
-  });
-
-  it('tuple XYInput을 받는다', () => {
-    const out1 = { x: 0, y: 0 };
-    const out2 = { x: 0, y: 0 };
-    const query = { x: 2, y: 2 };
-    cubicClosestPointInto(out1, { x: 0, y: 0 }, { x: 1, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 0 }, query);
-    cubicClosestPointInto(out2, [0, 0], [1, 3], [3, 3], [4, 0], [2, 2]);
-    expect(Math.abs(out1.x - out2.x)).toBeLessThan(1e-10);
-    expect(Math.abs(out1.y - out2.y)).toBeLessThan(1e-10);
   });
 });
 
 describe('cubicClosestPoint', () => {
   it('새 {x, y}를 반환한다', () => {
     const result = cubicClosestPoint(
-      { x: 0, y: 0 },
-      { x: 10 / 3, y: 0 },
-      { x: 20 / 3, y: 0 },
-      { x: 10, y: 0 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 10 / 3, y1: 0, x2: 20 / 3, y2: 0, x3: 10, y3: 0 },
       { x: 5, y: 4 }
     );
     expect(typeof result.x).toBe('number');
@@ -137,8 +122,8 @@ describe('cubicClosestPointInto vs cubicClosestLocation 회귀', () => {
     const p3 = { x: 5, y: 0 };
     const query = { x: 2, y: 3 };
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, query);
-    const loc = cubicClosestLocation(p0, p1, p2, p3, query);
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), query);
+    const loc = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), query);
     expect(Math.abs(out.x - loc.point.x)).toBeLessThan(1e-12);
     expect(Math.abs(out.y - loc.point.y)).toBeLessThan(1e-12);
   });

@@ -1,4 +1,5 @@
-import type { IntersectionHit, XYObjectWritable } from '../types';
+import type { IntersectionHit } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import {
   type BezierClosestLocationCore,
   findCubicClosestLocation,
@@ -48,7 +49,7 @@ const OVERLAP_SAMPLE_COUNT = 16;
 const OVERLAP_PARAM_SLACK = 1e-9;
 
 /** endpoint projection용 closest-location 옵션. 겹침 검증은 기본 `1e-8`보다 촘촘한 수렴이 필요하다. */
-const OVERLAP_CLOSEST_OPTIONS = { tolerance: 1e-14 };
+const OVERLAP_CLOSEST_OPTIONS = { tolerance: 1e-14, maxIterations: 20, sampleCount: 11 };
 
 interface OverlapCandidate {
   tA: number;
@@ -221,7 +222,7 @@ export function pushOverlapHits(
   outHits: IntersectionHit[],
   overlap: CurveOverlap,
   a: OverlapCurve,
-  makePoint: () => XYObjectWritable
+  makePoint: () => PointWritable
 ): void {
   const [x0, y0] = a.pointAt(overlap.tA0);
   writeHit(outHits, x0, y0, 'overlap', overlap.tA0, overlap.tB0, makePoint);

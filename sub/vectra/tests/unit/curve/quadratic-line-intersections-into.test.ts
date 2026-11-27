@@ -1,6 +1,7 @@
 /**
  * quadraticLineIntersectionsInto 단위 테스트.
  */
+import { flatLineFromLegacy, flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 
 import { describe, expect, test } from 'vitest';
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';
@@ -13,10 +14,8 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 },
-      { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } })
     );
     expect(hits).toHaveLength(2);
     expect(hits[0].kind).toBe('cross');
@@ -34,10 +33,8 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 1 },
-      { x: 0.5, y: -1 },
-      { x: 1, y: 1 },
-      { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }
+      { kind: 'quadratic', x0: 0, y0: 1, x1: 0.5, y1: -1, x2: 1, y2: 1 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })
     );
     expect(hits).toHaveLength(1);
     expect(hits[0].kind).toBe('touch');
@@ -50,20 +47,22 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 1 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 1 },
-      { origin: { x: 0, y: -1 }, direction: { x: 1, y: 0 } }
+      { kind: 'quadratic', x0: 0, y0: 1, x1: 0.5, y1: 2, x2: 1, y2: 1 },
+      flatLineFromLegacy({ origin: { x: 0, y: -1 }, direction: { x: 1, y: 0 } })
     );
     expect(hits).toHaveLength(0);
   });
 
   test('tuple 형식의 line input을 읽는다', () => {
     const hits: IntersectionHit[] = [];
-    quadraticLineIntersectionsInto(hits, { x: 0, y: 0 }, { x: 0.5, y: 2 }, { x: 1, y: 0 }, [
-      [0, 0.5],
-      [1, 0],
-    ] as const);
+    quadraticLineIntersectionsInto(
+      hits,
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 },
+      flatLineFromLegacy([
+        [0, 0.5],
+        [1, 0],
+      ] as const)
+    );
     expect(hits).toHaveLength(2);
     expect(hits[0].point.y).toBeCloseTo(0.5, 9);
     expect(hits[1].point.y).toBeCloseTo(0.5, 9);
@@ -74,10 +73,8 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.5, y: 1 },
-      { x: 1, y: 0.5 },
-      { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 1, x2: 1, y2: 0.5 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })
     );
     const endpointHit = hits.find((h) => h.tB < 1e-6);
     expect(endpointHit).toBeDefined();
@@ -89,10 +86,8 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 0.5 },
-      { x: 0.5, y: 1 },
-      { x: 1, y: 0 },
-      { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }
+      { kind: 'quadratic', x0: 0, y0: 0.5, x1: 0.5, y1: 1, x2: 1, y2: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })
     );
     const endpointHit = hits.find((h) => h.tB > 1 - 1e-6);
     expect(endpointHit).toBeDefined();
@@ -103,10 +98,8 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.5, y: 1 },
-      { x: 1, y: 0 },
-      { origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 1, x2: 1, y2: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } })
     );
     expect(hits).toHaveLength(0);
   });
@@ -118,8 +111,16 @@ describe('quadraticLineIntersectionsInto', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 0.5, y: 2 };
     const p2 = { x: 1, y: 0 };
-    quadraticLineIntersectionsInto(hits1, p0, p1, p2, { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } });
-    quadraticLineIntersectionsInto(hits2, p0, p1, p2, { origin: { x: 0, y: 0.5 }, direction: { x: 100, y: 0 } });
+    quadraticLineIntersectionsInto(
+      hits1,
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
+      flatLineFromLegacy({ origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } })
+    );
+    quadraticLineIntersectionsInto(
+      hits2,
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
+      flatLineFromLegacy({ origin: { x: 0, y: 0.5 }, direction: { x: 100, y: 0 } })
+    );
     expect(hits1).toHaveLength(2);
     expect(hits2).toHaveLength(2);
     expect(hits1[0].tB).toBeCloseTo(hits2[0].tB, 9);
@@ -133,10 +134,8 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.5 * s, y: 2 * s },
-      { x: 1 * s, y: 0 },
-      { origin: { x: 0, y: 0.5 * s }, direction: { x: 1, y: 0 } }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5 * s, y1: 2 * s, x2: 1 * s, y2: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0.5 * s }, direction: { x: 1, y: 0 } })
     );
     expect(hits).toHaveLength(2);
     expect(hits[0].kind).toBe('cross');
@@ -152,11 +151,9 @@ describe('quadraticLineIntersectionsInto', () => {
       const hits: IntersectionHit[] = [];
       quadraticLineIntersectionsInto(
         hits,
-        { x: 0, y: 1 * s },
-        { x: 0.5 * s, y: -1 * s },
-        { x: 1 * s, y: 1 * s },
-        { origin: { x: 0, y: -1e-4 * s }, direction: { x: 1, y: 0 } },
-        { epsilon: 1e-3 * s }
+        { kind: 'quadratic', x0: 0, y0: 1 * s, x1: 0.5 * s, y1: -1 * s, x2: 1 * s, y2: 1 * s },
+        flatLineFromLegacy({ origin: { x: 0, y: -1e-4 * s }, direction: { x: 1, y: 0 } }),
+        { epsilon: 1e-3 * s, epsilonT: 1e-10, maxDepth: 32 }
       );
       expect(hits).toHaveLength(1);
       expect(hits[0].kind).toBe('touch');
@@ -168,11 +165,9 @@ describe('quadraticLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 1 },
-      { x: 0.5, y: -1 },
-      { x: 1, y: 1 },
-      { origin: { x: 0, y: -1e-4 }, direction: { x: len, y: 0 } },
-      { epsilon: 1e-3 }
+      { kind: 'quadratic', x0: 0, y0: 1, x1: 0.5, y1: -1, x2: 1, y2: 1 },
+      flatLineFromLegacy({ origin: { x: 0, y: -1e-4 }, direction: { x: len, y: 0 } }),
+      { epsilon: 1e-3, epsilonT: 1e-10, maxDepth: 32 }
     );
     expect(hits).toHaveLength(1);
     expect(hits[0].kind).toBe('touch');
@@ -180,11 +175,9 @@ describe('quadraticLineIntersectionsInto', () => {
     // epsilon이 간격보다 작으면 hit가 없다.
     quadraticLineIntersectionsInto(
       hits,
-      { x: 0, y: 1 },
-      { x: 0.5, y: -1 },
-      { x: 1, y: 1 },
-      { origin: { x: 0, y: -1e-4 }, direction: { x: len, y: 0 } },
-      { epsilon: 1e-5 }
+      { kind: 'quadratic', x0: 0, y0: 1, x1: 0.5, y1: -1, x2: 1, y2: 1 },
+      flatLineFromLegacy({ origin: { x: 0, y: -1e-4 }, direction: { x: len, y: 0 } }),
+      { epsilon: 1e-5, epsilonT: 1e-10, maxDepth: 32 }
     );
     expect(hits).toHaveLength(0);
   });
@@ -194,11 +187,9 @@ describe('quadraticLineIntersectionsInto', () => {
       const hits: IntersectionHit[] = [];
       quadraticLineIntersectionsInto(
         hits,
-        { x: 0, y: 1 * s },
-        { x: 0.5 * s, y: -1 * s },
-        { x: 1 * s, y: 1 * s },
-        { origin: { x: 0, y: -1e-4 * s }, direction: { x: 1, y: 0 } },
-        { epsilon: 1e-5 * s }
+        { kind: 'quadratic', x0: 0, y0: 1 * s, x1: 0.5 * s, y1: -1 * s, x2: 1 * s, y2: 1 * s },
+        flatLineFromLegacy({ origin: { x: 0, y: -1e-4 * s }, direction: { x: 1, y: 0 } }),
+        { epsilon: 1e-5 * s, epsilonT: 1e-10, maxDepth: 32 }
       );
       expect(hits).toHaveLength(0);
     }

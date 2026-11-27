@@ -14,6 +14,8 @@
  *
  * 거부 검사는 `@ts-expect-error`가 맡는다. 오류가 사라지면 `pnpm typecheck`가 실패한다.
  */
+import { flatLineFromLegacy } from '../../../src/internal/legacy-curve.internal';
+
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { tangentPointsFromExternalInto } from '../../../src/circle/tangent-points-from-external-into';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
@@ -53,11 +55,19 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
   });
 
   test('curve 교차 Into는 tuple point를 담는 hit 배열을 받지 않는다', () => {
-    const tupleHits: IntersectionHit<XYTupleWritable>[] = [];
-    // @ts-expect-error hit.point는 항상 object이므로 tuple point 배열은 거짓이 된다
-    quadraticLineIntersectionsInto(tupleHits, [0, 0], [1, 2], [2, 0], { origin: [0, 0.5], direction: [1, 0] });
-    // @ts-expect-error 같은 이유로 curve×curve 교차도 받지 않는다
-    cubicCubicIntersectionsInto(tupleHits, [0, 0], [1, 2], [2, 2], [3, 0], [0, 1], [1, -1], [2, 3], [3, 1]);
+    const tupleHits: (Omit<IntersectionHit, 'point'> & { point: XYTupleWritable })[] = [];
+    quadraticLineIntersectionsInto(
+      // @ts-expect-error hit.point는 항상 object이므로 tuple point 배열은 거짓이 된다
+      tupleHits,
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+      flatLineFromLegacy({ origin: [0, 0.5], direction: [1, 0] })
+    );
+    cubicCubicIntersectionsInto(
+      // @ts-expect-error 같은 이유로 curve×curve 교차도 받지 않는다
+      tupleHits,
+      { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 2, x3: 3, y3: 0 },
+      { kind: 'cubic', x0: 0, y0: 1, x1: 1, y1: -1, x2: 2, y2: 3, x3: 3, y3: 1 }
+    );
     // 타입이 거짓이라도 런타임 값은 object다
     expect(tupleHits.length).toBeGreaterThan(0);
     expect(tupleHits.every((hit) => !Array.isArray(hit.point))).toBe(true);
@@ -65,7 +75,11 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
 
   test('curve 교차 Into가 만든 hit.point는 object다', () => {
     const hits: IntersectionHit[] = [];
-    quadraticLineIntersectionsInto(hits, [0, 0], [1, 2], [2, 0], { origin: [0, 0.5], direction: [1, 0] });
+    quadraticLineIntersectionsInto(
+      hits,
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+      flatLineFromLegacy({ origin: [0, 0.5], direction: [1, 0] })
+    );
     expect(hits).toHaveLength(2);
     for (const hit of hits) {
       expectTypeOf(hit.point).toEqualTypeOf<XYObjectWritable>();

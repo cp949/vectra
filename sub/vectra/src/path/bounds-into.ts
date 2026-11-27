@@ -112,7 +112,7 @@ export function boundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
       includeBounds(outObj, scratchBounds);
     } else {
       // arc: endpoint form → center form 변환 후 extrema 계산
-      endpointArcToCenterInto(centerArcBuf, [fromX, fromY], seg.command);
+      endpointArcToCenterInto(centerArcBuf, { x: fromX, y: fromY }, seg.command);
       arcBoundsInto(scratchBounds, centerArcBuf);
       includeBounds(outObj, scratchBounds);
     }

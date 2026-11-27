@@ -1,6 +1,7 @@
 /**
  * cubicLineIntersectionsInto 단위 테스트.
  */
+import { flatLineFromLegacy, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 
 import { describe, expect, test } from 'vitest';
 import { cubicLineIntersectionsInto } from '../../../src/curve/cubic-line-intersections-into';
@@ -12,11 +13,8 @@ describe('cubicLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 2, y: 3 },
-      { x: -2, y: 3 },
-      { x: 0, y: 6 },
-      { origin: { x: 0, y: 1.5 }, direction: { x: 1, y: 0 } }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 2, y1: 3, x2: -2, y2: 3, x3: 0, y3: 6 },
+      flatLineFromLegacy({ origin: { x: 0, y: 1.5 }, direction: { x: 1, y: 0 } })
     );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     for (const h of hits) {
@@ -29,11 +27,8 @@ describe('cubicLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0, y: 4 },
-      { x: 0, y: -4 },
-      { x: 0, y: 0 },
-      { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 4, x2: 0, y2: -4, x3: 0, y3: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })
     );
     expect(hits.length).toBe(3);
     for (const h of hits) {
@@ -46,11 +41,8 @@ describe('cubicLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      { x: 0, y: 1 },
-      { x: 0.3, y: 2 },
-      { x: 0.7, y: 2 },
-      { x: 1, y: 1 },
-      { origin: { x: 0, y: -1 }, direction: { x: 1, y: 0 } }
+      { kind: 'cubic', x0: 0, y0: 1, x1: 0.3, y1: 2, x2: 0.7, y2: 2, x3: 1, y3: 1 },
+      flatLineFromLegacy({ origin: { x: 0, y: -1 }, direction: { x: 1, y: 0 } })
     );
     expect(hits).toHaveLength(0);
   });
@@ -60,11 +52,8 @@ describe('cubicLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.3, y: 1 },
-      { x: 0.7, y: 1 },
-      { x: 1, y: 0.5 },
-      { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0.3, y1: 1, x2: 0.7, y2: 1, x3: 1, y3: 0.5 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })
     );
     const endpointHit = hits.find((h) => h.tB < 1e-6);
     expect(endpointHit).toBeDefined();
@@ -76,11 +65,8 @@ describe('cubicLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      { x: 0, y: 0.5 },
-      { x: 0.3, y: 1 },
-      { x: 0.7, y: 1 },
-      { x: 1, y: 0 },
-      { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }
+      { kind: 'cubic', x0: 0, y0: 0.5, x1: 0.3, y1: 1, x2: 0.7, y2: 1, x3: 1, y3: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })
     );
     const endpointHit = hits.find((h) => h.tB > 1 - 1e-6);
     expect(endpointHit).toBeDefined();
@@ -91,11 +77,8 @@ describe('cubicLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 1, y: 0 },
-      { x: 2, y: 0 },
-      { x: 3, y: 0 },
-      { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })
     );
     expect(hits).toHaveLength(0);
   });
@@ -104,11 +87,8 @@ describe('cubicLineIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.3, y: 1 },
-      { x: 0.7, y: 1 },
-      { x: 1, y: 0 },
-      { origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0.3, y1: 1, x2: 0.7, y2: 1, x3: 1, y3: 0 },
+      flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } })
     );
     expect(hits).toHaveLength(0);
   });
@@ -120,8 +100,16 @@ describe('cubicLineIntersectionsInto', () => {
     const p1 = { x: 0.3, y: 2 };
     const p2 = { x: 0.7, y: 2 };
     const p3 = { x: 1, y: 0 };
-    cubicLineIntersectionsInto(hits1, p0, p1, p2, p3, { origin: { x: 0, y: 1 }, direction: { x: 1, y: 0 } });
-    cubicLineIntersectionsInto(hits2, p0, p1, p2, p3, { origin: { x: 0, y: 1 }, direction: { x: 50, y: 0 } });
+    cubicLineIntersectionsInto(
+      hits1,
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
+      flatLineFromLegacy({ origin: { x: 0, y: 1 }, direction: { x: 1, y: 0 } })
+    );
+    cubicLineIntersectionsInto(
+      hits2,
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
+      flatLineFromLegacy({ origin: { x: 0, y: 1 }, direction: { x: 50, y: 0 } })
+    );
     expect(hits1.length).toBe(hits2.length);
     for (let i = 0; i < hits1.length; i++) {
       expect(hits1[i].tB).toBeCloseTo(hits2[i].tB, 9);
@@ -132,10 +120,14 @@ describe('cubicLineIntersectionsInto', () => {
 
   test('tuple line input을 읽는다', () => {
     const hits: IntersectionHit[] = [];
-    cubicLineIntersectionsInto(hits, { x: 0, y: 0 }, { x: 0.3, y: 2 }, { x: 0.7, y: 2 }, { x: 1, y: 0 }, [
-      [0, 1],
-      [1, 0],
-    ] as const);
+    cubicLineIntersectionsInto(
+      hits,
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0.3, y1: 2, x2: 0.7, y2: 2, x3: 1, y3: 0 },
+      flatLineFromLegacy([
+        [0, 1],
+        [1, 0],
+      ] as const)
+    );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     for (const h of hits) {
       expect(h.point.y).toBeCloseTo(1, 6);
@@ -159,12 +151,9 @@ describe('cubicLineIntersectionsInto 좌표 scale 불변성', () => {
     const hits: IntersectionHit[] = [];
     cubicLineIntersectionsInto(
       hits,
-      p0,
-      p1,
-      p2,
-      p3,
-      { origin: { x: origin[0] * s, y: origin[1] * s }, direction: { x: 1, y: 0 } },
-      { epsilon: 1e-9 * s }
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
+      flatLineFromLegacy({ origin: { x: origin[0] * s, y: origin[1] * s }, direction: { x: 1, y: 0 } }),
+      { epsilon: 1e-9 * s, epsilonT: 1e-10, maxDepth: 32 }
     );
     return [...hits].sort((a, b) => a.tB - b.tB);
   }
@@ -216,11 +205,8 @@ describe('cubicLineIntersectionsInto 좌표 scale 불변성', () => {
       const hits: IntersectionHit[] = [];
       cubicLineIntersectionsInto(
         hits,
-        { x: 0, y: 5e-10 },
-        { x: 1, y: 1 },
-        { x: 2, y: 1 },
-        { x: 3, y: 2 },
-        { origin: { x: 0, y: 0 }, direction: { x: length, y: 0 } }
+        { kind: 'cubic', x0: 0, y0: 5e-10, x1: 1, y1: 1, x2: 2, y2: 1, x3: 3, y3: 2 },
+        flatLineFromLegacy({ origin: { x: 0, y: 0 }, direction: { x: length, y: 0 } })
       );
       expect(
         hits.map((h) => [h.kind, h.tB]),

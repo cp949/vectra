@@ -1,4 +1,3 @@
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve × curve 교차 kernel의 overlap 계약을 검증한다.
  *
@@ -6,6 +5,7 @@ import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../
  * 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록해야 한다.
  * 대상: quadraticQuadratic / quadraticCubic / cubicCubic kernel과 curveCurve facade.
  */
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
@@ -74,7 +74,11 @@ function cubicSubCurve(points: typeof LOOP_CUBIC, t0: number, t1: number) {
 describe('quadraticQuadraticIntersectionsInto overlap', () => {
   test('완전히 같은 두 quadratic은 양 끝점 overlap hit 2건만 기록한다', () => {
     const hits: IntersectionHit[] = [];
-    quadraticQuadraticIntersectionsInto(hits, ...PARABOLA_0_2, ...PARABOLA_0_2);
+    quadraticQuadraticIntersectionsInto(
+      hits,
+      flatQuadraticFromLegacyPoints(PARABOLA_0_2[0], PARABOLA_0_2[1], PARABOLA_0_2[2]),
+      flatQuadraticFromLegacyPoints(PARABOLA_0_2[0], PARABOLA_0_2[1], PARABOLA_0_2[2])
+    );
 
     expect(hits).toHaveLength(2);
     const [start, end] = sortByTA(hits);
@@ -91,7 +95,11 @@ describe('quadraticQuadraticIntersectionsInto overlap', () => {
   test('같은 parabola 위 부분 구간이 겹치면 겹침 구간 양 끝점을 기록한다', () => {
     // A는 x∈[0,2], B는 x∈[1,3]. 겹침은 x∈[1,2]로 tA∈[0.5,1], tB∈[0,0.5]다.
     const hits: IntersectionHit[] = [];
-    quadraticQuadraticIntersectionsInto(hits, ...PARABOLA_0_2, ...PARABOLA_1_3);
+    quadraticQuadraticIntersectionsInto(
+      hits,
+      flatQuadraticFromLegacyPoints(PARABOLA_0_2[0], PARABOLA_0_2[1], PARABOLA_0_2[2]),
+      flatQuadraticFromLegacyPoints(PARABOLA_1_3[0], PARABOLA_1_3[1], PARABOLA_1_3[2])
+    );
 
     expect(hits).toHaveLength(2);
     const [start, end] = sortByTA(hits);
@@ -110,7 +118,11 @@ describe('quadraticQuadraticIntersectionsInto overlap', () => {
   test('같은 parabola 위에서 끝점만 맞닿으면 overlap이 아니라 hit 1건이다', () => {
     // A는 x∈[0,2], B는 x∈[2,3]. 공유점 (2,4) 하나뿐이다.
     const hits: IntersectionHit[] = [];
-    quadraticQuadraticIntersectionsInto(hits, ...PARABOLA_0_2, ...PARABOLA_2_3);
+    quadraticQuadraticIntersectionsInto(
+      hits,
+      flatQuadraticFromLegacyPoints(PARABOLA_0_2[0], PARABOLA_0_2[1], PARABOLA_0_2[2]),
+      flatQuadraticFromLegacyPoints(PARABOLA_2_3[0], PARABOLA_2_3[1], PARABOLA_2_3[2])
+    );
 
     expect(hits).toHaveLength(1);
     expect(hits[0].kind).not.toBe('overlap');
@@ -124,12 +136,8 @@ describe('quadraticQuadraticIntersectionsInto overlap', () => {
     const hits: IntersectionHit[] = [];
     quadraticQuadraticIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 1, y: 2 },
-      { x: 2, y: 0 },
-      { x: 0, y: 0 },
-      { x: 1, y: -2 },
-      { x: 2, y: 0 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: -2, x2: 2, y2: 0 }
     );
 
     expect(hits).toHaveLength(2);
@@ -140,7 +148,11 @@ describe('quadraticQuadraticIntersectionsInto overlap', () => {
 describe('cubicCubicIntersectionsInto overlap', () => {
   test('완전히 같은 두 cubic은 양 끝점 overlap hit 2건만 기록한다', () => {
     const hits: IntersectionHit[] = [];
-    cubicCubicIntersectionsInto(hits, ...S_CUBIC, ...S_CUBIC);
+    cubicCubicIntersectionsInto(
+      hits,
+      flatCubicFromLegacyPoints(S_CUBIC[0], S_CUBIC[1], S_CUBIC[2], S_CUBIC[3]),
+      flatCubicFromLegacyPoints(S_CUBIC[0], S_CUBIC[1], S_CUBIC[2], S_CUBIC[3])
+    );
 
     expect(hits).toHaveLength(2);
     const [start, end] = sortByTA(hits);
@@ -151,7 +163,11 @@ describe('cubicCubicIntersectionsInto overlap', () => {
   test('방향이 반대인 같은 cubic은 tA와 tB가 반대로 대응한다', () => {
     const reversed = [S_CUBIC[3], S_CUBIC[2], S_CUBIC[1], S_CUBIC[0]] as const;
     const hits: IntersectionHit[] = [];
-    cubicCubicIntersectionsInto(hits, ...S_CUBIC, ...reversed);
+    cubicCubicIntersectionsInto(
+      hits,
+      flatCubicFromLegacyPoints(S_CUBIC[0], S_CUBIC[1], S_CUBIC[2], S_CUBIC[3]),
+      flatCubicFromLegacyPoints(reversed[0], reversed[1], reversed[2], reversed[3])
+    );
 
     expect(hits).toHaveLength(2);
     const [start, end] = sortByTA(hits);
@@ -168,7 +184,11 @@ describe('cubicCubicIntersectionsInto overlap', () => {
       { x: 0, y: 0 },
     ] as const;
     const hits: IntersectionHit[] = [];
-    cubicCubicIntersectionsInto(hits, ...closed, ...closed);
+    cubicCubicIntersectionsInto(
+      hits,
+      flatCubicFromLegacyPoints(closed[0], closed[1], closed[2], closed[3]),
+      flatCubicFromLegacyPoints(closed[0], closed[1], closed[2], closed[3])
+    );
 
     expect(hits).toHaveLength(2);
     const [start, end] = sortByTA(hits);
@@ -181,7 +201,11 @@ describe('cubicCubicIntersectionsInto overlap', () => {
     const a = cubicSubCurve(LOOP_CUBIC, 0, 0.6);
     const b = cubicSubCurve(LOOP_CUBIC, 0.4, 1);
     const hits: IntersectionHit[] = [];
-    cubicCubicIntersectionsInto(hits, ...a, ...b);
+    cubicCubicIntersectionsInto(
+      hits,
+      flatCubicFromLegacyPoints(a[0], a[1], a[2], a[3]),
+      flatCubicFromLegacyPoints(b[0], b[1], b[2], b[3])
+    );
 
     const overlaps = sortByTA(hits.filter((hit) => hit.kind === 'overlap'));
     const others = hits.filter((hit) => hit.kind !== 'overlap');
@@ -203,11 +227,18 @@ describe('quadraticCubicIntersectionsInto overlap', () => {
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
-      ...PARABOLA_0_2,
-      { x: cubic.x0, y: cubic.y0 },
-      { x: cubic.x1, y: cubic.y1 },
-      { x: cubic.x2, y: cubic.y2 },
-      { x: cubic.x3, y: cubic.y3 }
+      flatQuadraticFromLegacyPoints(PARABOLA_0_2[0], PARABOLA_0_2[1], PARABOLA_0_2[2]),
+      {
+        kind: 'cubic',
+        x0: cubic.x0,
+        y0: cubic.y0,
+        x1: cubic.x1,
+        y1: cubic.y1,
+        x2: cubic.x2,
+        y2: cubic.y2,
+        x3: cubic.x3,
+        y3: cubic.y3,
+      }
     );
 
     expect(hits).toHaveLength(2);

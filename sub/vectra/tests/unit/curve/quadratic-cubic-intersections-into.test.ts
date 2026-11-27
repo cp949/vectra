@@ -13,13 +13,8 @@ describe('quadraticCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 },
-      { x: 0, y: 1 },
-      { x: 0.3, y: 1 },
-      { x: 0.7, y: 1 },
-      { x: 1, y: 1 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 },
+      { kind: 'cubic', x0: 0, y0: 1, x1: 0.3, y1: 1, x2: 0.7, y2: 1, x3: 1, y3: 1 }
     );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     for (const h of hits) {
@@ -34,13 +29,8 @@ describe('quadraticCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
-      { x: 0, y: 5 },
-      { x: 0.5, y: 6 },
-      { x: 1, y: 5 },
-      { x: 0, y: 0 },
-      { x: 0.3, y: 0 },
-      { x: 0.7, y: 0 },
-      { x: 1, y: 0 }
+      { kind: 'quadratic', x0: 0, y0: 5, x1: 0.5, y1: 6, x2: 1, y2: 5 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0.3, y1: 0, x2: 0.7, y2: 0, x3: 1, y3: 0 }
     );
     expect(hits).toHaveLength(0);
   });
@@ -49,13 +39,8 @@ describe('quadraticCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 },
-      { x: 0, y: 1 },
-      { x: 0.3, y: 1 },
-      { x: 0.7, y: 1 },
-      { x: 1, y: 1 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 },
+      { kind: 'cubic', x0: 0, y0: 1, x1: 0.3, y1: 1, x2: 0.7, y2: 1, x3: 1, y3: 1 }
     );
     expect(hits).toHaveLength(1);
     expect(hits[0].kind).toBe('touch');

@@ -7,13 +7,13 @@
  * - 대칭 case에서 t=0.5 위치 점이 최근접점.
  * - 동거리 query에서 작은 t를 선택하는 tie-break.
  * - 모든 control point가 같은 degenerate point curve.
- * - tuple XYInput을 받는다.
  * - distance와 distanceSquared 일관성: `distance ** 2 ≈ distanceSquared`.
  * - sampleCount invalid 정책: 정수가 아니거나 2 미만이거나 non-finite이면 endpoint만 비교한다.
  * - tolerance/maxIterations invalid 정책: 정책상 invalid이면 default로 fallback한다 (maxIterations=Infinity hang 회피 포함).
  * - oversized finite 좌표에서 distanceSquared가 Infinity여도 result는 반환한다.
  * - 기존 quadraticClosestPointInto / cubicClosestPointInto와 회귀 일치 (S2-RM-020).
  */
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 
 import { describe, expect, it } from 'vitest';
 import { cubicClosestLocation } from '../../../src/curve/cubic-closest-location';
@@ -63,7 +63,7 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 5, y: 0 };
     const p2 = { x: 10, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 5, y: 3 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), { x: 5, y: 3 });
     expect(relErr(result.point.x, 5)).toBeLessThan(1e-6);
     expect(Math.abs(result.point.y)).toBeLessThan(1e-6);
     expect(relErr(result.t, 0.5)).toBeLessThan(1e-6);
@@ -74,7 +74,7 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: -10, y: 0 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), { x: -10, y: 0 });
     expect(result.t).toBe(0);
     expect(result.point).toEqual({ x: 0, y: 0 });
     expect(relErr(result.distance, 10)).toBeLessThan(1e-12);
@@ -84,7 +84,7 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 100, y: 0 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), { x: 100, y: 0 });
     expect(result.t).toBe(1);
     expect(result.point).toEqual({ x: 4, y: 0 });
     expect(relErr(result.distance, 96)).toBeLessThan(1e-12);
@@ -95,7 +95,7 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 2, y: 10 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), { x: 2, y: 10 });
     expect(relErr(result.t, 0.5)).toBeLessThan(1e-5);
     expect(relErr(result.point.x, 2)).toBeLessThan(1e-5);
     expect(relErr(result.point.y, 2)).toBeLessThan(1e-5);
@@ -107,14 +107,14 @@ describe('quadraticClosestLocation', () => {
     // 알고리즘은 endpoint t=0을 best로 초기화하고 strict `<` 비교라 모든 sample이 갱신을
     // 일으키지 않는다 → t=0이 결정적으로 선택된다.
     const p = { x: 1, y: 0 };
-    const result = quadraticClosestLocation(p, p, p, { x: 1, y: 0 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p, p, p), { x: 1, y: 0 });
     expect(result.distance).toBeLessThan(1e-12);
     expect(result.t).toBe(0);
   });
 
   it('degenerate point curve (모든 control이 같은 점)에서 거리와 t를 반환한다', () => {
     const p = { x: 3, y: 4 };
-    const result = quadraticClosestLocation(p, p, p, { x: 0, y: 0 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p, p, p), { x: 0, y: 0 });
     expect(Math.abs(result.point.x - 3)).toBeLessThan(1e-12);
     expect(Math.abs(result.point.y - 4)).toBeLessThan(1e-12);
     // 모든 control이 같은 점이라 모든 t에서 거리가 동일. tie-break으로 t=0이 결정된다.
@@ -123,17 +123,11 @@ describe('quadraticClosestLocation', () => {
     expect(relErr(result.distanceSquared, 25)).toBeLessThan(1e-12);
   });
 
-  it('tuple XYInput을 받는다', () => {
-    const r1 = quadraticClosestLocation({ x: 0, y: 0 }, { x: 2, y: 3 }, { x: 4, y: 0 }, { x: 3, y: 2 });
-    const r2 = quadraticClosestLocation([0, 0], [2, 3], [4, 0], [3, 2]);
-    expect(Math.abs(r1.point.x - r2.point.x)).toBeLessThan(1e-10);
-    expect(Math.abs(r1.point.y - r2.point.y)).toBeLessThan(1e-10);
-    expect(Math.abs(r1.t - r2.t)).toBeLessThan(1e-10);
-    expect(Math.abs(r1.distance - r2.distance)).toBeLessThan(1e-10);
-  });
-
   it('distance ** 2 ≈ distanceSquared', () => {
-    const result = quadraticClosestLocation({ x: 0, y: 0 }, { x: 1, y: 3 }, { x: 5, y: 1 }, { x: 2, y: 2 });
+    const result = quadraticClosestLocation(
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 3, x2: 5, y2: 1 },
+      { x: 2, y: 2 }
+    );
     const sqOfDist = result.distance * result.distance;
     expect(Math.abs(sqOfDist - result.distanceSquared)).toBeLessThan(Math.max(1, result.distanceSquared) * 1e-12);
   });
@@ -142,7 +136,7 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 4 };
     const p2 = { x: 6, y: 2 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 3, y: 1 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), { x: 3, y: 1 });
     const evald = quadEval(p0, p1, p2, result.t);
     expect(Math.abs(result.point.x - evald.x)).toBeLessThan(1e-9);
     expect(Math.abs(result.point.y - evald.y)).toBeLessThan(1e-9);
@@ -155,7 +149,11 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 2, y: 10 }, { sampleCount: 1 });
+    const result = quadraticClosestLocation(
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
+      { x: 2, y: 10 },
+      { sampleCount: 1, tolerance: 1e-8, maxIterations: 20 }
+    );
     // endpoint 두 점 (0,0)과 (4,0)은 query=(2,10)에 대해 정확히 동거리.
     // tie-break으로 t=0이 선택된다.
     expect(result.t === 0 || result.t === 1).toBe(true);
@@ -168,7 +166,11 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 2, y: 10 }, { sampleCount: 0 });
+    const result = quadraticClosestLocation(
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
+      { x: 2, y: 10 },
+      { sampleCount: 0, tolerance: 1e-8, maxIterations: 20 }
+    );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(10);
   });
@@ -177,7 +179,11 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 2, y: 10 }, { sampleCount: Number.NaN });
+    const result = quadraticClosestLocation(
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
+      { x: 2, y: 10 },
+      { sampleCount: Number.NaN, tolerance: 1e-8, maxIterations: 20 }
+    );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(10);
   });
@@ -187,13 +193,9 @@ describe('quadraticClosestLocation', () => {
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
     const result = quadraticClosestLocation(
-      p0,
-      p1,
-      p2,
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
       { x: 2, y: 10 },
-      {
-        sampleCount: Number.POSITIVE_INFINITY,
-      }
+      { sampleCount: Number.POSITIVE_INFINITY, tolerance: 1e-8, maxIterations: 20 }
     );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(10);
@@ -205,7 +207,11 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 2, y: 10 }, { sampleCount: 2.5 });
+    const result = quadraticClosestLocation(
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
+      { x: 2, y: 10 },
+      { sampleCount: 2.5, tolerance: 1e-8, maxIterations: 20 }
+    );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(10);
   });
@@ -214,7 +220,7 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 1e200, y: 1e200 });
+    const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), { x: 1e200, y: 1e200 });
     expect(result.distanceSquared).toBe(Number.POSITIVE_INFINITY);
     expect(result.distance).toBe(Number.POSITIVE_INFINITY);
     // curve 위 어디든 finite point이므로 result.point는 finite.
@@ -228,7 +234,11 @@ describe('quadraticClosestLocation', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticClosestLocation(p0, p1, p2, { x: 2, y: 10 }, { maxIterations: Number.POSITIVE_INFINITY });
+    const result = quadraticClosestLocation(
+      flatQuadraticFromLegacyPoints(p0, p1, p2),
+      { x: 2, y: 10 },
+      { maxIterations: Number.POSITIVE_INFINITY, tolerance: 1e-8, sampleCount: 11 }
+    );
     expect(Number.isFinite(result.t)).toBe(true);
     expect(Number.isFinite(result.distance)).toBe(true);
     // 대칭 curve 위쪽 query는 interior minimum이라 endpoint 거리(>10)보다 작아야 한다.
@@ -240,9 +250,13 @@ describe('quadraticClosestLocation', () => {
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
     const query = { x: 2, y: 10 };
-    const ref = quadraticClosestLocation(p0, p1, p2, query);
+    const ref = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), query);
     for (const bad of [Number.NaN, -1, 0.5]) {
-      const result = quadraticClosestLocation(p0, p1, p2, query, { maxIterations: bad });
+      const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), query, {
+        maxIterations: bad,
+        tolerance: 1e-8,
+        sampleCount: 11,
+      });
       expect(Math.abs(result.t - ref.t)).toBeLessThan(1e-10);
       expect(Math.abs(result.distance - ref.distance)).toBeLessThan(1e-10);
     }
@@ -253,9 +267,13 @@ describe('quadraticClosestLocation', () => {
     const p1 = { x: 2, y: 4 };
     const p2 = { x: 4, y: 0 };
     const query = { x: 2, y: 10 };
-    const ref = quadraticClosestLocation(p0, p1, p2, query);
+    const ref = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), query);
     for (const bad of [Number.NaN, -1, Number.POSITIVE_INFINITY]) {
-      const result = quadraticClosestLocation(p0, p1, p2, query, { tolerance: bad });
+      const result = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), query, {
+        tolerance: bad,
+        maxIterations: 20,
+        sampleCount: 11,
+      });
       expect(Math.abs(result.t - ref.t)).toBeLessThan(1e-10);
       expect(Math.abs(result.distance - ref.distance)).toBeLessThan(1e-10);
     }
@@ -269,7 +287,7 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 10 / 3, y: 0 };
     const p2 = { x: 20 / 3, y: 0 };
     const p3 = { x: 10, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 5, y: 4 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: 5, y: 4 });
     expect(relErr(result.point.x, 5)).toBeLessThan(1e-5);
     expect(Math.abs(result.point.y)).toBeLessThan(1e-5);
     expect(relErr(result.t, 0.5)).toBeLessThan(1e-4);
@@ -281,7 +299,7 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: -10, y: 0 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: -10, y: 0 });
     expect(result.t).toBe(0);
     expect(result.point).toEqual({ x: 0, y: 0 });
     expect(relErr(result.distance, 10)).toBeLessThan(1e-12);
@@ -292,7 +310,7 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 100, y: 0 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: 100, y: 0 });
     expect(result.t).toBe(1);
     expect(result.point).toEqual({ x: 4, y: 0 });
     expect(relErr(result.distance, 96)).toBeLessThan(1e-12);
@@ -305,7 +323,7 @@ describe('cubicClosestLocation', () => {
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
     const expected = cubicEval(p0, p1, p2, p3, 0.5);
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: expected.x, y: 100 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: expected.x, y: 100 });
     expect(relErr(result.t, 0.5)).toBeLessThan(1e-4);
     expect(relErr(result.point.x, expected.x)).toBeLessThan(1e-5);
     expect(relErr(result.point.y, expected.y)).toBeLessThan(1e-5);
@@ -317,7 +335,7 @@ describe('cubicClosestLocation', () => {
     // 알고리즘은 endpoint t=0을 best로 초기화하고 strict `<` 비교라 모든 sample이 갱신을
     // 일으키지 않는다 → t=0이 결정적으로 선택된다.
     const p = { x: 5, y: 0 };
-    const result = cubicClosestLocation(p, p, p, p, { x: 5, y: 0 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p, p, p, p), { x: 5, y: 0 });
     expect(result.distance).toBeLessThan(1e-9);
     expect(result.t).toBe(0);
   });
@@ -327,7 +345,7 @@ describe('cubicClosestLocation', () => {
     // cubic Bezier evaluation의 ULP 잡음으로 interior t에서 거리²가 미세하게 양수일 수 있어도
     // endpoint t=0의 거리²=0이 strict minimum이라 갱신되지 않는다 → t=0 결정.
     const p = { x: 3, y: 4 };
-    const result = cubicClosestLocation(p, p, p, p, { x: 3, y: 4 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p, p, p, p), { x: 3, y: 4 });
     expect(Math.abs(result.point.x - 3)).toBeLessThan(1e-12);
     expect(Math.abs(result.point.y - 4)).toBeLessThan(1e-12);
     expect(result.t).toBe(0);
@@ -339,7 +357,7 @@ describe('cubicClosestLocation', () => {
     // 떨어진 query에서는 ULP 잡음이 sq를 endpoint 25보다 미세하게 작게 만들 수 있어
     // tie-break보다 strict minimum이 발동될 수 있다. t 결정성 단언은 하지 않는다.
     const p = { x: 3, y: 4 };
-    const result = cubicClosestLocation(p, p, p, p, { x: 0, y: 0 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p, p, p, p), { x: 0, y: 0 });
     expect(Math.abs(result.point.x - 3)).toBeLessThan(1e-12);
     expect(Math.abs(result.point.y - 4)).toBeLessThan(1e-12);
     expect(result.t).toBeGreaterThanOrEqual(0);
@@ -348,17 +366,11 @@ describe('cubicClosestLocation', () => {
     expect(relErr(result.distanceSquared, 25)).toBeLessThan(1e-9);
   });
 
-  it('tuple XYInput을 받는다', () => {
-    const r1 = cubicClosestLocation({ x: 0, y: 0 }, { x: 1, y: 3 }, { x: 3, y: 3 }, { x: 4, y: 0 }, { x: 2, y: 2 });
-    const r2 = cubicClosestLocation([0, 0], [1, 3], [3, 3], [4, 0], [2, 2]);
-    expect(Math.abs(r1.point.x - r2.point.x)).toBeLessThan(1e-10);
-    expect(Math.abs(r1.point.y - r2.point.y)).toBeLessThan(1e-10);
-    expect(Math.abs(r1.t - r2.t)).toBeLessThan(1e-10);
-    expect(Math.abs(r1.distance - r2.distance)).toBeLessThan(1e-10);
-  });
-
   it('distance ** 2 ≈ distanceSquared', () => {
-    const result = cubicClosestLocation({ x: 0, y: 0 }, { x: 1, y: 4 }, { x: 3, y: 4 }, { x: 5, y: 0 }, { x: 2, y: 3 });
+    const result = cubicClosestLocation(
+      { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 4, x2: 3, y2: 4, x3: 5, y3: 0 },
+      { x: 2, y: 3 }
+    );
     const sqOfDist = result.distance * result.distance;
     expect(Math.abs(sqOfDist - result.distanceSquared)).toBeLessThan(Math.max(1, result.distanceSquared) * 1e-12);
   });
@@ -368,7 +380,7 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 4 };
     const p2 = { x: 3, y: 4 };
     const p3 = { x: 5, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 2, y: 3 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: 2, y: 3 });
     const evald = cubicEval(p0, p1, p2, p3, result.t);
     expect(Math.abs(result.point.x - evald.x)).toBeLessThan(1e-9);
     expect(Math.abs(result.point.y - evald.y)).toBeLessThan(1e-9);
@@ -380,7 +392,11 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 6 };
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 2, y: 100 }, { sampleCount: 1 });
+    const result = cubicClosestLocation(
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
+      { x: 2, y: 100 },
+      { sampleCount: 1, tolerance: 1e-8, maxIterations: 20 }
+    );
     expect(result.t === 0 || result.t === 1).toBe(true);
     // endpoint 거리는 √(4 + 10000)≈100, interior는 훨씬 작다.
     expect(result.distance).toBeGreaterThan(99);
@@ -391,7 +407,11 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 6 };
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 2, y: 100 }, { sampleCount: 0 });
+    const result = cubicClosestLocation(
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
+      { x: 2, y: 100 },
+      { sampleCount: 0, tolerance: 1e-8, maxIterations: 20 }
+    );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(99);
   });
@@ -401,7 +421,11 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 6 };
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 2, y: 100 }, { sampleCount: Number.NaN });
+    const result = cubicClosestLocation(
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
+      { x: 2, y: 100 },
+      { sampleCount: Number.NaN, tolerance: 1e-8, maxIterations: 20 }
+    );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(99);
   });
@@ -412,14 +436,9 @@ describe('cubicClosestLocation', () => {
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
     const result = cubicClosestLocation(
-      p0,
-      p1,
-      p2,
-      p3,
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
       { x: 2, y: 100 },
-      {
-        sampleCount: Number.POSITIVE_INFINITY,
-      }
+      { sampleCount: Number.POSITIVE_INFINITY, tolerance: 1e-8, maxIterations: 20 }
     );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(99);
@@ -432,7 +451,11 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 6 };
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 2, y: 100 }, { sampleCount: 2.5 });
+    const result = cubicClosestLocation(
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
+      { x: 2, y: 100 },
+      { sampleCount: 2.5, tolerance: 1e-8, maxIterations: 20 }
+    );
     expect(result.t === 0 || result.t === 1).toBe(true);
     expect(result.distance).toBeGreaterThan(99);
   });
@@ -442,7 +465,7 @@ describe('cubicClosestLocation', () => {
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
     const p3 = { x: 3, y: 0 };
-    const result = cubicClosestLocation(p0, p1, p2, p3, { x: 1e200, y: 1e200 });
+    const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), { x: 1e200, y: 1e200 });
     expect(result.distanceSquared).toBe(Number.POSITIVE_INFINITY);
     expect(result.distance).toBe(Number.POSITIVE_INFINITY);
     expect(Number.isFinite(result.point.x)).toBe(true);
@@ -456,12 +479,9 @@ describe('cubicClosestLocation', () => {
     const p3 = { x: 4, y: 0 };
     const expected = cubicEval(p0, p1, p2, p3, 0.5);
     const result = cubicClosestLocation(
-      p0,
-      p1,
-      p2,
-      p3,
+      flatCubicFromLegacyPoints(p0, p1, p2, p3),
       { x: expected.x, y: 100 },
-      { maxIterations: Number.POSITIVE_INFINITY }
+      { maxIterations: Number.POSITIVE_INFINITY, tolerance: 1e-8, sampleCount: 11 }
     );
     expect(Number.isFinite(result.t)).toBe(true);
     expect(Number.isFinite(result.distance)).toBe(true);
@@ -475,9 +495,13 @@ describe('cubicClosestLocation', () => {
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
     const query = { x: 2, y: 100 };
-    const ref = cubicClosestLocation(p0, p1, p2, p3, query);
+    const ref = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), query);
     for (const bad of [Number.NaN, -1, 0.5]) {
-      const result = cubicClosestLocation(p0, p1, p2, p3, query, { maxIterations: bad });
+      const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), query, {
+        maxIterations: bad,
+        tolerance: 1e-8,
+        sampleCount: 11,
+      });
       expect(Math.abs(result.t - ref.t)).toBeLessThan(1e-10);
       expect(Math.abs(result.distance - ref.distance)).toBeLessThan(1e-10);
     }
@@ -489,9 +513,13 @@ describe('cubicClosestLocation', () => {
     const p2 = { x: 3, y: 6 };
     const p3 = { x: 4, y: 0 };
     const query = { x: 2, y: 100 };
-    const ref = cubicClosestLocation(p0, p1, p2, p3, query);
+    const ref = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), query);
     for (const bad of [Number.NaN, -1, Number.POSITIVE_INFINITY]) {
-      const result = cubicClosestLocation(p0, p1, p2, p3, query, { tolerance: bad });
+      const result = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), query, {
+        tolerance: bad,
+        maxIterations: 20,
+        sampleCount: 11,
+      });
       expect(Math.abs(result.t - ref.t)).toBeLessThan(1e-10);
       expect(Math.abs(result.distance - ref.distance)).toBeLessThan(1e-10);
     }
@@ -505,8 +533,8 @@ describe('회귀: 기존 closest-point Into와 새 closest-location이 같은 �
     const p2 = { x: 5, y: 1 };
     const query = { x: 2, y: 2 };
     const out = { x: 0, y: 0 };
-    quadraticClosestPointInto(out, p0, p1, p2, query);
-    const loc = quadraticClosestLocation(p0, p1, p2, query);
+    quadraticClosestPointInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), query);
+    const loc = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), query);
     expect(Math.abs(out.x - loc.point.x)).toBeLessThan(1e-12);
     expect(Math.abs(out.y - loc.point.y)).toBeLessThan(1e-12);
   });
@@ -518,8 +546,8 @@ describe('회귀: 기존 closest-point Into와 새 closest-location이 같은 �
     const p3 = { x: 5, y: 0 };
     const query = { x: 2, y: 3 };
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, query);
-    const loc = cubicClosestLocation(p0, p1, p2, p3, query);
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), query);
+    const loc = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), query);
     expect(Math.abs(out.x - loc.point.x)).toBeLessThan(1e-12);
     expect(Math.abs(out.y - loc.point.y)).toBeLessThan(1e-12);
   });
@@ -531,8 +559,8 @@ describe('회귀: 기존 closest-point Into와 새 closest-location이 같은 �
     const query = { x: 4, y: 2 };
     const opts = { tolerance: 1e-10, maxIterations: 50, sampleCount: 21 };
     const out = { x: 0, y: 0 };
-    quadraticClosestPointInto(out, p0, p1, p2, query, opts);
-    const loc = quadraticClosestLocation(p0, p1, p2, query, opts);
+    quadraticClosestPointInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), query, opts);
+    const loc = quadraticClosestLocation(flatQuadraticFromLegacyPoints(p0, p1, p2), query, opts);
     expect(Math.abs(out.x - loc.point.x)).toBeLessThan(1e-12);
     expect(Math.abs(out.y - loc.point.y)).toBeLessThan(1e-12);
   });
@@ -545,8 +573,8 @@ describe('회귀: 기존 closest-point Into와 새 closest-location이 같은 �
     const query = { x: 3, y: 4 };
     const opts = { tolerance: 1e-10, maxIterations: 50, sampleCount: 21 };
     const out = { x: 0, y: 0 };
-    cubicClosestPointInto(out, p0, p1, p2, p3, query, opts);
-    const loc = cubicClosestLocation(p0, p1, p2, p3, query, opts);
+    cubicClosestPointInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), query, opts);
+    const loc = cubicClosestLocation(flatCubicFromLegacyPoints(p0, p1, p2, p3), query, opts);
     expect(Math.abs(out.x - loc.point.x)).toBeLessThan(1e-12);
     expect(Math.abs(out.y - loc.point.y)).toBeLessThan(1e-12);
   });

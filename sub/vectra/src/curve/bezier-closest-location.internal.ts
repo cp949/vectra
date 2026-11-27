@@ -65,13 +65,13 @@ export function findQuadraticClosestLocation(
   p2y: number,
   qx: number,
   qy: number,
-  options?: ClosestPointOptions
+  options?: Required<ClosestPointOptions>
 ): BezierClosestLocationCore {
-  const rawTolerance = options?.tolerance ?? 1e-8;
+  const rawTolerance = options === undefined ? 1e-8 : options.tolerance;
   const tolerance = isUsableTolerance(rawTolerance) ? rawTolerance : 1e-8;
-  const rawMaxIterations = options?.maxIterations ?? 20;
+  const rawMaxIterations = options === undefined ? 20 : options.maxIterations;
   const maxIterations = isUsableMaxIterations(rawMaxIterations) ? rawMaxIterations : 20;
-  const sampleCount = options?.sampleCount ?? 11;
+  const sampleCount = options === undefined ? 11 : options.sampleCount;
 
   // B(t) = (1-t)²p0 + 2(1-t)t·p1 + t²p2
   function bx(t: number): number {
@@ -160,13 +160,13 @@ export function findCubicClosestLocation(
   p3y: number,
   qx: number,
   qy: number,
-  options?: ClosestPointOptions
+  options?: Required<ClosestPointOptions>
 ): BezierClosestLocationCore {
-  const rawTolerance = options?.tolerance ?? 1e-8;
+  const rawTolerance = options === undefined ? 1e-8 : options.tolerance;
   const tolerance = isUsableTolerance(rawTolerance) ? rawTolerance : 1e-8;
-  const rawMaxIterations = options?.maxIterations ?? 20;
+  const rawMaxIterations = options === undefined ? 20 : options.maxIterations;
   const maxIterations = isUsableMaxIterations(rawMaxIterations) ? rawMaxIterations : 20;
-  const sampleCount = options?.sampleCount ?? 11;
+  const sampleCount = options === undefined ? 11 : options.sampleCount;
 
   // B(t)
   function bx(t: number): number {

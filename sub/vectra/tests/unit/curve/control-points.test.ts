@@ -7,23 +7,22 @@
  * - single point는 네 field 모두 같은 점.
  * - empty input은 false 반환 + out 미수정.
  * - NaN / Infinity / -Infinity / 음수 / 비정수 / index >= length는 RangeError.
- * - tuple input과 object input을 모두 읽고, tuple output과 object output에 모두 기록한다.
  * - input/output aliasing이 안전하다(쓰기 전 좌표를 모두 읽는다).
  * - non-finite 좌표는 NaN / Infinity / -Infinity / -0를 pass through한다.
  */
 
 import { describe, expect, it } from 'vitest';
 import { controlPointsInto } from '../../../src/curve/control-points-into';
-import type { CurveControlPointsWritable, XYInput, XYObjectWritable, XYTupleWritable } from '../../../src/types';
+import type { CurveControlPointsWritable } from '../../../src/types';
 
-const PTS: XYInput[] = [
+const PTS = [
   { x: 0, y: 0 },
   { x: 10, y: 5 },
   { x: 20, y: 0 },
   { x: 30, y: 5 },
 ];
 
-function makeObjectOut(): CurveControlPointsWritable<XYObjectWritable> {
+function makeObjectOut(): CurveControlPointsWritable {
   return {
     previous: { x: -1, y: -1 },
     current: { x: -1, y: -1 },
@@ -124,41 +123,13 @@ describe('controlPointsInto', () => {
     expect(() => controlPointsInto(out, PTS, index)).toThrow(RangeError);
   });
 
-  it('tuple input을 읽는다', () => {
-    const tuplePts: XYInput[] = [
-      [0, 0],
-      [10, 5],
-      [20, 0],
-    ];
-    const out = makeObjectOut();
-    controlPointsInto(out, tuplePts, 1);
-    expect(out.previous).toEqual({ x: 0, y: 0 });
-    expect(out.current).toEqual({ x: 10, y: 5 });
-    expect(out.next).toEqual({ x: 20, y: 0 });
-    expect(out.nextNext).toEqual({ x: 20, y: 0 });
-  });
-
-  it('tuple output에 기록한다', () => {
-    const out: CurveControlPointsWritable<XYTupleWritable> = {
-      previous: [0, 0],
-      current: [0, 0],
-      next: [0, 0],
-      nextNext: [0, 0],
-    };
-    controlPointsInto(out, PTS, 1);
-    expect(out.previous).toEqual([0, 0]);
-    expect(out.current).toEqual([10, 5]);
-    expect(out.next).toEqual([20, 0]);
-    expect(out.nextNext).toEqual([30, 5]);
-  });
-
   it('input/output aliasing이 안전하다(쓰기 전 좌표를 모두 읽는다)', () => {
     const a = { x: 1, y: 1 };
     const b = { x: 2, y: 2 };
     const c = { x: 3, y: 3 };
     const pts = [a, b, c];
     // out.previous가 points[2](=c)를 alias한다. previous에 쓰기 전 next/nextNext가 c를 읽어야 한다.
-    const out: CurveControlPointsWritable<XYObjectWritable> = {
+    const out: CurveControlPointsWritable = {
       previous: c,
       current: { x: 0, y: 0 },
       next: { x: 0, y: 0 },

@@ -1,4 +1,5 @@
-import type { ArcCommand, EndpointArcCorrectionWritable, XYInput } from '../types';
+import type { ArcCommand, EndpointArcCorrectionWritable } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { correctEndpointArcRadiiInto } from './correct-endpoint-arc-radii-into';
 
 /**
@@ -17,6 +18,6 @@ import { correctEndpointArcRadiiInto } from './correct-endpoint-arc-radii-into';
  * @param arc endpoint 형식의 ArcCommand
  * @returns 새 plain `EndpointArcCorrectionWritable` object
  */
-export function correctEndpointArcRadii(from: XYInput, arc: ArcCommand): EndpointArcCorrectionWritable {
+export function correctEndpointArcRadii(from: Point, arc: ArcCommand): EndpointArcCorrectionWritable {
   return correctEndpointArcRadiiInto({ rx: 0, ry: 0 }, from, arc);
 }

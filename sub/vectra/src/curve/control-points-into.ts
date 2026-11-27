@@ -1,5 +1,5 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { ControlPointsOptions, CurveControlPointsWritable, XYInput } from '../types';
+import type { ControlPointsOptions, CurveControlPointsWritable } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * point list에서 index가 가리키는 current point의 4-point neighborhood를 out에 기록하고 성공 여부를 반환한다.
@@ -24,9 +24,9 @@ import type { ControlPointsOptions, CurveControlPointsWritable, XYInput } from '
  */
 export function controlPointsInto(
   out: CurveControlPointsWritable,
-  points: readonly XYInput[],
+  points: readonly Point[],
   index: number,
-  options?: ControlPointsOptions
+  options?: Required<ControlPointsOptions>
 ): boolean {
   const n = points.length;
   if (n === 0) {
@@ -37,7 +37,7 @@ export function controlPointsInto(
     throw new RangeError(`controlPointsInto: index must be an integer in [0, points.length), got ${index}`);
   }
 
-  const closed = options?.closed === true;
+  const closed = options !== undefined && options.closed === true;
 
   let previousIndex: number;
   let nextIndex: number;
@@ -53,19 +53,23 @@ export function controlPointsInto(
   }
 
   // 기록 전에 네 점 좌표를 모두 읽어 input/output aliasing을 안전하게 만든다.
-  const previousX = readX(points[previousIndex]);
-  const previousY = readY(points[previousIndex]);
-  const currentX = readX(points[index]);
-  const currentY = readY(points[index]);
-  const nextX = readX(points[nextIndex]);
-  const nextY = readY(points[nextIndex]);
-  const nextNextX = readX(points[nextNextIndex]);
-  const nextNextY = readY(points[nextNextIndex]);
+  const previousX = points[previousIndex].x;
+  const previousY = points[previousIndex].y;
+  const currentX = points[index].x;
+  const currentY = points[index].y;
+  const nextX = points[nextIndex].x;
+  const nextY = points[nextIndex].y;
+  const nextNextX = points[nextNextIndex].x;
+  const nextNextY = points[nextNextIndex].y;
 
-  writeXY(out.previous, previousX, previousY);
-  writeXY(out.current, currentX, currentY);
-  writeXY(out.next, nextX, nextY);
-  writeXY(out.nextNext, nextNextX, nextNextY);
+  out.previous.x = previousX;
+  out.previous.y = previousY;
+  out.current.x = currentX;
+  out.current.y = currentY;
+  out.next.x = nextX;
+  out.next.y = nextY;
+  out.nextNext.x = nextNextX;
+  out.nextNext.y = nextNextY;
 
   return true;
 }

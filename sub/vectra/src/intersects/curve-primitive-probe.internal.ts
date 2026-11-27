@@ -9,6 +9,11 @@
  *
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
+import {
+  flatQuadraticFromLegacyPoints,
+  flatLineFromLegacy,
+  flatCubicFromLegacyPoints,
+} from '../internal/legacy-curve.internal';
 
 import { cubicLineIntersectionsInto } from '../curve/cubic-line-intersections-into';
 import { quadraticLineIntersectionsInto } from '../curve/quadratic-line-intersections-into';
@@ -44,7 +49,11 @@ export function makeQuadraticProbe(p0: XYInput, p1: XYInput, p2: XYInput, epsilo
   const yCoef = [p0y, 2 * (p1y - p0y), p0y - 2 * p1y + p2y];
 
   const probe = ((hits, line) => {
-    quadraticLineIntersectionsInto(hits, p0, p1, p2, line, { epsilon });
+    quadraticLineIntersectionsInto(hits, flatQuadraticFromLegacyPoints(p0, p1, p2), flatLineFromLegacy(line), {
+      epsilon,
+      epsilonT: 1e-10,
+      maxDepth: 32,
+    });
   }) as CurveLineProbe;
   probe.overlapsSegment = (ax, ay, bx, by) => curveOverlapsSegment(xCoef, yCoef, ax, ay, bx, by, epsilon);
   return probe;
@@ -74,7 +83,11 @@ export function makeCubicProbe(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInpu
   const yCoef = [p0y, 3 * (p1y - p0y), 3 * (p0y - 2 * p1y + p2y), -p0y + 3 * p1y - 3 * p2y + p3y];
 
   const probe = ((hits, line) => {
-    cubicLineIntersectionsInto(hits, p0, p1, p2, p3, line, { epsilon });
+    cubicLineIntersectionsInto(hits, flatCubicFromLegacyPoints(p0, p1, p2, p3), flatLineFromLegacy(line), {
+      epsilon,
+      epsilonT: 1e-10,
+      maxDepth: 32,
+    });
   }) as CurveLineProbe;
   probe.overlapsSegment = (ax, ay, bx, by) => curveOverlapsSegment(xCoef, yCoef, ax, ay, bx, by, epsilon);
   return probe;

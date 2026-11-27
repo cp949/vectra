@@ -1,3 +1,9 @@
+import {
+  flatQuadraticFromLegacyPoints,
+  flatLineFromLegacy,
+  flatIntersectionOptions,
+  flatCubicFromLegacyPoints,
+} from '../internal/legacy-curve.internal';
 import { cubicLineIntersectionsInto } from '../curve/cubic-line-intersections-into';
 import { quadraticLineIntersectionsInto } from '../curve/quadratic-line-intersections-into';
 import type {
@@ -32,9 +38,19 @@ export function lineCurveIntersectionsInto(
 ): CurveIntersectionHit[] {
   const hits: IntersectionHit[] = [];
   if (curve.kind === 'quadratic') {
-    quadraticLineIntersectionsInto(hits, curve.p0, curve.p1, curve.p2, line, options);
+    quadraticLineIntersectionsInto(
+      hits,
+      flatQuadraticFromLegacyPoints(curve.p0, curve.p1, curve.p2),
+      flatLineFromLegacy(line),
+      flatIntersectionOptions(options)
+    );
   } else {
-    cubicLineIntersectionsInto(hits, curve.p0, curve.p1, curve.p2, curve.p3, line, options);
+    cubicLineIntersectionsInto(
+      hits,
+      flatCubicFromLegacyPoints(curve.p0, curve.p1, curve.p2, curve.p3),
+      flatLineFromLegacy(line),
+      flatIntersectionOptions(options)
+    );
   }
   writeLineCurveHits(out, hits);
   return out;

@@ -1,14 +1,6 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { DEFAULT_EPSILON, hypot2 } from '../internal/numeric';
-import { readX, readY, writeXY } from '../internal/xy';
-import type {
-  CurveIntersectionOptions,
-  InfiniteLineLike,
-  IntersectionHit,
-  IntersectionKind,
-  XYObjectWritable,
-  XYWritable,
-} from '../types';
+import type { CurveIntersectionOptions, IntersectionHit, IntersectionKind } from '../types';
+import type { InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 
 export const DEFAULT_EPSILON_T = 1e-10;
 
@@ -37,16 +29,11 @@ export interface LineSetup {
 }
 
 /**
- * InfiniteLineLike에서 intersection 계산용 값을 추출한다.
+ * 직선에서 intersection 계산용 값을 추출한다.
  * direction이 zero-vector이면 null을 반환한다.
  */
-export function setupLine(line: InfiniteLineLike): LineSetup | null {
-  const origin = readInfiniteLineOrigin(line);
-  const direction = readInfiniteLineDirection(line);
-  const ox = readX(origin);
-  const oy = readY(origin);
-  const dx = readX(direction);
-  const dy = readY(direction);
+export function setupLine(line: InfiniteLine): LineSetup | null {
+  const { ox, oy, dx, dy } = line;
   const dd = dx * dx + dy * dy;
   // zero-length direction → hit 없음
   if (dd < DEFAULT_EPSILON * DEFAULT_EPSILON) return null;
@@ -75,7 +62,7 @@ export function pushHitIfNew(
   tA: number,
   tB: number,
   epsilonT: number,
-  makePoint: () => XYObjectWritable
+  makePoint: () => PointWritable
 ): void {
   for (const existing of outHits) {
     if (Math.abs(existing.tB - tB) <= epsilonT) return;
@@ -91,21 +78,22 @@ export function writeHit(
   kind: IntersectionKind,
   tA: number,
   tB: number,
-  makePoint: () => XYObjectWritable
+  makePoint: () => PointWritable
 ): void {
   const point = makePoint();
-  writeXY(point as XYWritable, px, py);
+  point.x = px;
+  point.y = py;
   outHits.push({ point, kind, tA, tB });
 }
 
 /** CurveIntersectionOptions에서 epsilon/epsilonT를 추출한다. */
-export function resolveOptions(options: CurveIntersectionOptions | undefined): {
+export function resolveOptions(options: Required<CurveIntersectionOptions> | undefined): {
   epsilon: number;
   epsilonT: number;
 } {
   return {
-    epsilon: options?.epsilon ?? DEFAULT_EPSILON,
-    epsilonT: options?.epsilonT ?? DEFAULT_EPSILON_T,
+    epsilon: options === undefined ? DEFAULT_EPSILON : options.epsilon,
+    epsilonT: options === undefined ? DEFAULT_EPSILON_T : options.epsilonT,
   };
 }
 
@@ -122,7 +110,7 @@ export function pushHitIfNewAB(
   tA: number,
   tB: number,
   epsilonT: number,
-  makePoint: () => XYObjectWritable
+  makePoint: () => PointWritable
 ): void {
   for (const existing of outHits) {
     if (Math.abs(existing.tA - tA) <= epsilonT && Math.abs(existing.tB - tB) <= epsilonT) {
@@ -631,7 +619,7 @@ export interface CurveSubdivisionAdapters<A, B> {
     bSub: B,
     epsilon: number,
     epsilonT: number,
-    makePoint: () => XYObjectWritable
+    makePoint: () => PointWritable
   ) => void;
 }
 
@@ -660,7 +648,7 @@ export function subdivideCurves<A extends readonly number[], B extends readonly 
   epsilonT: number,
   maxDepth: number,
   depth: number,
-  makePoint: () => XYObjectWritable,
+  makePoint: () => PointWritable,
   adapters: CurveSubdivisionAdapters<A, B>
 ): void {
   const { hullBoundsA, hullBoundsB, splitA, splitB, skipBox, onConverge } = adapters;

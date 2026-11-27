@@ -1,6 +1,6 @@
-import { readX, readY } from '../internal/xy';
 import { pushStableRoots } from '../math/quadratic-roots.internal';
-import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput, XYObjectWritable } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { InfiniteLine, PointWritable, QuadraticCurve } from '../types/flat-shapes.internal';
 import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-intersections.internal';
 
 /**
@@ -11,20 +11,16 @@ import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-inte
  * range 밖 root는 버린다. zero direction은 hit 없음.
  *
  * @param outHits 결과 배열 (호출 전 비워야 한다)
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param line infinite-line (origin + direction)
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
  * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function quadraticLineIntersectionsInto(
   outHits: IntersectionHit[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  line: InfiniteLineLike,
-  options?: CurveIntersectionOptions
+  curve: QuadraticCurve,
+  line: InfiniteLine,
+  options?: Required<CurveIntersectionOptions>
 ): IntersectionHit[] {
   outHits.length = 0;
 
@@ -33,12 +29,12 @@ export function quadraticLineIntersectionsInto(
 
   const { nx, ny, nDotO, epsilon, epsilonT } = { ...setup, ...resolveOptions(options) };
 
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   // n·P_i
   const n0 = nx * p0x + ny * p0y;
@@ -51,7 +47,7 @@ export function quadraticLineIntersectionsInto(
   const b = 2 * (n1 - n0);
   const c = n0 - nDotO;
 
-  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
+  const makePoint = (): PointWritable => ({ x: 0, y: 0 });
 
   if (a === 0) {
     // linear equation: bt + c = 0

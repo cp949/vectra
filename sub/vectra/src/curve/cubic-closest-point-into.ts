@@ -1,5 +1,5 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { ClosestPointOptions, XYInput, XYWritable } from '../types';
+import type { ClosestPointOptions } from '../types';
+import type { Point, PointWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { findCubicClosestLocation } from './bezier-closest-location.internal';
 
 /**
@@ -15,34 +15,30 @@ import { findCubicClosestLocation } from './bezier-closest-location.internal';
  * finite 좌표를 그대로 기록한다 (out에는 finite 점이 들어간다).
  *
  * @param out 결과 point를 기록할 writable output
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param point 투영 기준 점
  * @param options 수치 최적화 옵션
  */
-export function cubicClosestPointInto<Out extends XYWritable>(
+export function cubicClosestPointInto<Out extends PointWritable>(
   out: Out,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  point: XYInput,
-  options?: ClosestPointOptions
+  curve: CubicCurve,
+  point: Point,
+  options?: Required<ClosestPointOptions>
 ): Out {
   const core = findCubicClosestLocation(
-    readX(p0),
-    readY(p0),
-    readX(p1),
-    readY(p1),
-    readX(p2),
-    readY(p2),
-    readX(p3),
-    readY(p3),
-    readX(point),
-    readY(point),
+    curve.x0,
+    curve.y0,
+    curve.x1,
+    curve.y1,
+    curve.x2,
+    curve.y2,
+    curve.x3,
+    curve.y3,
+    point.x,
+    point.y,
     options
   );
-  return writeXY(out, core.x, core.y);
+  out.x = core.x;
+  out.y = core.y;
+  return out;
 }

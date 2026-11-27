@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { ClosestPointOptions, CurveLocationResult, XYInput } from '../types';
+import type { ClosestPointOptions, CurveLocationResult } from '../types';
+import type { Point, QuadraticCurve } from '../types/flat-shapes.internal';
 import { findQuadraticClosestLocation } from './bezier-closest-location.internal';
 
 /**
@@ -17,28 +17,24 @@ import { findQuadraticClosestLocation } from './bezier-closest-location.internal
  * `distanceSquared`가 `Infinity`가 되면 `distance`도 `Infinity`다.
  * `t`는 `[0, 1]`로 clamp된다.
  *
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param point 투영 기준 점
  * @param options 수치 최적화 옵션
  */
 export function quadraticClosestLocation(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  point: XYInput,
-  options?: ClosestPointOptions
+  curve: QuadraticCurve,
+  point: Point,
+  options?: Required<ClosestPointOptions>
 ): CurveLocationResult {
   const core = findQuadraticClosestLocation(
-    readX(p0),
-    readY(p0),
-    readX(p1),
-    readY(p1),
-    readX(p2),
-    readY(p2),
-    readX(point),
-    readY(point),
+    curve.x0,
+    curve.y0,
+    curve.x1,
+    curve.y1,
+    curve.x2,
+    curve.y2,
+    point.x,
+    point.y,
     options
   );
   return {

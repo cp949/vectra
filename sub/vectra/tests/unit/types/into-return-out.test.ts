@@ -13,6 +13,8 @@
  *
  * polygon 교차 Into가 배열을 반환하는 규칙과 맞춘다.
  */
+import { flatLineFromLegacy } from '../../../src/internal/legacy-curve.internal';
+
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { decodeFlatCoordsInto } from '../../../src/adapter/flat/decode-flat-coords-into';
 import { fromFloat32ArrayInto } from '../../../src/adapter/flat/from-float32-array-into';
@@ -73,24 +75,83 @@ const controlPoints = [
 
 describe('curve·intersects 교차 Into는 out을 반환한다', () => {
   const hitCases: HitCase[] = [
-    ['quadraticLine 교차', (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], crossing)],
-    ['quadraticLine 교차 없음', (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], missing)],
-    ['quadraticLine zero direction', (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], degenerate)],
-    ['cubicLine 교차', (out) => cubicLineIntersectionsInto(out, [0, 0], [1, 2], [2, 2], [3, 0], crossing)],
-    ['cubicLine zero direction', (out) => cubicLineIntersectionsInto(out, [0, 0], [1, 2], [2, 2], [3, 0], degenerate)],
+    [
+      'quadraticLine 교차',
+      (out) =>
+        quadraticLineIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+          flatLineFromLegacy(crossing)
+        ),
+    ],
+    [
+      'quadraticLine 교차 없음',
+      (out) =>
+        quadraticLineIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+          flatLineFromLegacy(missing)
+        ),
+    ],
+    [
+      'quadraticLine zero direction',
+      (out) =>
+        quadraticLineIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+          flatLineFromLegacy(degenerate)
+        ),
+    ],
+    [
+      'cubicLine 교차',
+      (out) =>
+        cubicLineIntersectionsInto(
+          out,
+          { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 2, x3: 3, y3: 0 },
+          flatLineFromLegacy(crossing)
+        ),
+    ],
+    [
+      'cubicLine zero direction',
+      (out) =>
+        cubicLineIntersectionsInto(
+          out,
+          { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 2, x3: 3, y3: 0 },
+          flatLineFromLegacy(degenerate)
+        ),
+    ],
     [
       'quadraticQuadratic',
-      (out) => quadraticQuadraticIntersectionsInto(out, [0, 0], [1, 2], [2, 0], [0, 1], [1, -1], [2, 1]),
+      (out) =>
+        quadraticQuadraticIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+          { kind: 'quadratic', x0: 0, y0: 1, x1: 1, y1: -1, x2: 2, y2: 1 }
+        ),
     ],
     [
       'quadraticCubic',
-      (out) => quadraticCubicIntersectionsInto(out, [0, 0], [1, 2], [2, 0], [0, 1], [1, -1], [2, 2], [3, 0]),
+      (out) =>
+        quadraticCubicIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+          { kind: 'cubic', x0: 0, y0: 1, x1: 1, y1: -1, x2: 2, y2: 2, x3: 3, y3: 0 }
+        ),
     ],
     [
       'cubicCubic',
-      (out) => cubicCubicIntersectionsInto(out, [0, 0], [1, 2], [2, 2], [3, 0], [0, 1], [1, -1], [2, 3], [3, 1]),
+      (out) =>
+        cubicCubicIntersectionsInto(
+          out,
+          { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 2, x3: 3, y3: 0 },
+          { kind: 'cubic', x0: 0, y0: 1, x1: 1, y1: -1, x2: 2, y2: 3, x3: 3, y3: 1 }
+        ),
     ],
-    ['cubicSelf', (out) => cubicSelfIntersectionsInto(out, [0, 0], [3, 3], [-1, 3], [2, 0])],
+    [
+      'cubicSelf',
+      (out) =>
+        cubicSelfIntersectionsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 3, y1: 3, x2: -1, y2: 3, x3: 2, y3: 0 }),
+    ],
     ['infiniteLineQuadratic', (out) => infiniteLineQuadraticIntersectionsInto(out, crossing, [0, 0], [1, 2], [2, 0])],
     ['infiniteLineCubic', (out) => infiniteLineCubicIntersectionsInto(out, crossing, [0, 0], [1, 2], [2, 2], [3, 0])],
     ['segmentQuadratic', (out) => segmentQuadraticIntersectionsInto(out, segment, [0, 0], [1, 2], [2, 0])],
@@ -110,21 +171,45 @@ describe('curve·intersects 교차 Into는 out을 반환한다', () => {
   const branchCases: HitCase[] = [
     [
       'quadraticLine 선형 분기(a === 0)',
-      (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 0] }),
+      (out) =>
+        quadraticLineIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 2 },
+          flatLineFromLegacy({ origin: [0, 1], direction: [1, 0] })
+        ),
     ],
     [
       'quadraticLine 선형 분기(b === 0)',
-      (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 1] }),
+      (out) =>
+        quadraticLineIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 2 },
+          flatLineFromLegacy({ origin: [0, 1], direction: [1, 1] })
+        ),
     ],
     [
       'quadraticLine 중근 touch 분기',
-      (out) => quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], { origin: [0, 1], direction: [1, 0] }),
+      (out) =>
+        quadraticLineIntersectionsInto(
+          out,
+          { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+          flatLineFromLegacy({ origin: [0, 1], direction: [1, 0] })
+        ),
     ],
     [
       'cubicLine overlap 분기',
-      (out) => cubicLineIntersectionsInto(out, [0, 0.5], [1, 0.5], [2, 0.5], [3, 0.5], crossing),
+      (out) =>
+        cubicLineIntersectionsInto(
+          out,
+          { kind: 'cubic', x0: 0, y0: 0.5, x1: 1, y1: 0.5, x2: 2, y2: 0.5, x3: 3, y3: 0.5 },
+          flatLineFromLegacy(crossing)
+        ),
     ],
-    ['cubicSelf loop 없음', (out) => cubicSelfIntersectionsInto(out, [0, 0], [1, 2], [2, 2], [3, 0])],
+    [
+      'cubicSelf loop 없음',
+      (out) =>
+        cubicSelfIntersectionsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 2, x3: 3, y3: 0 }),
+    ],
   ];
 
   test.each(branchCases)('%s', (_name, call) => {
@@ -133,22 +218,46 @@ describe('curve·intersects 교차 Into는 out을 반환한다', () => {
   });
 
   test('quadraticLine 특수 분기가 기대한 hit를 만든다', () => {
-    const linear = quadraticLineIntersectionsInto([], [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 0] });
+    const linear = quadraticLineIntersectionsInto(
+      [],
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 2 },
+      flatLineFromLegacy({ origin: [0, 1], direction: [1, 0] })
+    );
     expect(linear.map((hit) => hit.kind)).toEqual(['cross']);
-    const parallel = quadraticLineIntersectionsInto([], [0, 0], [1, 1], [2, 2], { origin: [0, 1], direction: [1, 1] });
+    const parallel = quadraticLineIntersectionsInto(
+      [],
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 2 },
+      flatLineFromLegacy({ origin: [0, 1], direction: [1, 1] })
+    );
     expect(parallel).toHaveLength(0);
-    const tangent = quadraticLineIntersectionsInto([], [0, 0], [1, 2], [2, 0], { origin: [0, 1], direction: [1, 0] });
+    const tangent = quadraticLineIntersectionsInto(
+      [],
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+      flatLineFromLegacy({ origin: [0, 1], direction: [1, 0] })
+    );
     expect(tangent.map((hit) => hit.kind)).toEqual(['touch']);
   });
 
   test('교차 있는 호출은 반환한 배열에 hit가 들어 있다', () => {
     const out: IntersectionHit[] = [];
-    expect(quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], crossing)).toHaveLength(2);
+    expect(
+      quadraticLineIntersectionsInto(
+        out,
+        { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+        flatLineFromLegacy(crossing)
+      )
+    ).toHaveLength(2);
   });
 
   test('교차 없는 호출은 이전 내용을 비운 out을 반환한다', () => {
     const out: IntersectionHit[] = [{ point: { x: 9, y: 9 }, kind: 'cross', tA: 0, tB: 0 }];
-    expect(quadraticLineIntersectionsInto(out, [0, 0], [1, 2], [2, 0], missing)).toHaveLength(0);
+    expect(
+      quadraticLineIntersectionsInto(
+        out,
+        { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 0 },
+        flatLineFromLegacy(missing)
+      )
+    ).toHaveLength(0);
     expect(out).toHaveLength(0);
   });
 });

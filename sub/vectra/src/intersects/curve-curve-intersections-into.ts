@@ -1,3 +1,8 @@
+import {
+  flatQuadraticFromLegacyPoints,
+  flatIntersectionOptions,
+  flatCubicFromLegacyPoints,
+} from '../internal/legacy-curve.internal';
 import { cubicCubicIntersectionsInto } from '../curve/cubic-cubic-intersections-into';
 import { quadraticCubicIntersectionsInto } from '../curve/quadratic-cubic-intersections-into';
 import { quadraticQuadraticIntersectionsInto } from '../curve/quadratic-quadratic-intersections-into';
@@ -32,52 +37,32 @@ export function curveCurveIntersectionsInto(
   if (curveA.kind === 'quadratic' && curveB.kind === 'quadratic') {
     quadraticQuadraticIntersectionsInto(
       hits,
-      curveA.p0,
-      curveA.p1,
-      curveA.p2,
-      curveB.p0,
-      curveB.p1,
-      curveB.p2,
-      options
+      flatQuadraticFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2),
+      flatQuadraticFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2),
+      flatIntersectionOptions(options)
     );
   } else if (curveA.kind === 'quadratic' && curveB.kind === 'cubic') {
     quadraticCubicIntersectionsInto(
       hits,
-      curveA.p0,
-      curveA.p1,
-      curveA.p2,
-      curveB.p0,
-      curveB.p1,
-      curveB.p2,
-      curveB.p3,
-      options
+      flatQuadraticFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2),
+      flatCubicFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2, curveB.p3),
+      flatIntersectionOptions(options)
     );
   } else if (curveA.kind === 'cubic' && curveB.kind === 'quadratic') {
     // kernel은 (quadratic, cubic) 순서만 제공한다 — quadratic을 A로 넣고 tA/tB를 swap해 caller 순서를 맞춘다
     quadraticCubicIntersectionsInto(
       hits,
-      curveB.p0,
-      curveB.p1,
-      curveB.p2,
-      curveA.p0,
-      curveA.p1,
-      curveA.p2,
-      curveA.p3,
-      options
+      flatQuadraticFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2),
+      flatCubicFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2, curveA.p3),
+      flatIntersectionOptions(options)
     );
     swap = true;
   } else if (curveA.kind === 'cubic' && curveB.kind === 'cubic') {
     cubicCubicIntersectionsInto(
       hits,
-      curveA.p0,
-      curveA.p1,
-      curveA.p2,
-      curveA.p3,
-      curveB.p0,
-      curveB.p1,
-      curveB.p2,
-      curveB.p3,
-      options
+      flatCubicFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2, curveA.p3),
+      flatCubicFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2, curveB.p3),
+      flatIntersectionOptions(options)
     );
   }
 

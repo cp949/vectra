@@ -1,3 +1,4 @@
+import type { PointWritable } from './flat-shapes.internal';
 import type { XYObjectWritable, XYWritable } from './xy.internal';
 
 /**
@@ -64,7 +65,7 @@ export interface CurveLookupEntry {
 /**
  * curve 위 closest location 결과.
  *
- * `point`는 `XYObjectWritable` 형식의 새 plain object로 curve 위 점 좌표를 담는다.
+ * `point`는 curve 위 좌표를 담은 새 점 객체다.
  * `t`는 curve-local parameter `[0, 1]`,
  * `distance`는 query까지의 Euclidean distance, `distanceSquared`는 그 제곱이다.
  *
@@ -73,7 +74,7 @@ export interface CurveLookupEntry {
  */
 export interface CurveLocationResult {
   /** curve 위 closest point 좌표 */
-  point: XYObjectWritable;
+  point: PointWritable;
 
   /** curve-local parameter, `[0, 1]`로 clamp된다 */
   t: number;
@@ -88,17 +89,17 @@ export interface CurveLocationResult {
 /**
  * `curveFrenetFrameAtInto`가 결과를 기록하는 writable output shape.
  *
- * `point`/`tangent`/`normal`은 object 또는 tuple writable point storage이고, `curvature`는 scalar다.
+ * `point`/`tangent`/`normal`은 점 객체이고, `curvature`는 scalar다.
  */
 export interface CurveFrenetFrameWritable {
   /** curve 위 evaluation point storage */
-  point: XYWritable;
+  point: PointWritable;
 
   /** unit tangent vector storage. zero derivative이면 zero vector */
-  tangent: XYWritable;
+  tangent: PointWritable;
 
   /** unit normal vector storage. zero derivative이면 zero vector */
-  normal: XYWritable;
+  normal: PointWritable;
 
   /** signed curvature. degenerate(zero derivative)이면 `0` */
   curvature: number;
@@ -111,13 +112,13 @@ export interface CurveFrenetFrameWritable {
  */
 export interface CurveFrenetFrameResult {
   /** curve 위 evaluation point */
-  point: XYObjectWritable;
+  point: PointWritable;
 
   /** unit tangent vector. zero derivative이면 zero vector */
-  tangent: XYObjectWritable;
+  tangent: PointWritable;
 
   /** unit normal vector. zero derivative이면 zero vector */
-  normal: XYObjectWritable;
+  normal: PointWritable;
 
   /** signed curvature. degenerate(zero derivative)이면 `0` */
   curvature: number;
@@ -126,37 +127,37 @@ export interface CurveFrenetFrameResult {
 /**
  * point-list curve 계산에 필요한 4-point neighborhood 결과 shape.
  *
- * `controlPoints`가 반환하는 읽기용 형태다. 기본 point 표현은 `XYObjectWritable`(`{ x, y }`)이다.
+ * `controlPoints`가 반환하는 읽기용 형태다. 각 점은 `{ x, y }` 객체다.
  */
-export interface CurveControlPoints<P = XYObjectWritable> {
+export interface CurveControlPoints {
   /** 직전 이웃 점. open edge에서 없으면 `current` */
-  previous: P;
+  previous: PointWritable;
 
   /** current point index가 가리키는 점 */
-  current: P;
+  current: PointWritable;
 
   /** 다음 이웃 점. open edge에서 없으면 `current` */
-  next: P;
+  next: PointWritable;
 
   /** 다다음 이웃 점. open edge에서 없으면 `next` */
-  nextNext: P;
+  nextNext: PointWritable;
 }
 
 /**
  * `controlPointsInto`가 4-point neighborhood를 기록하는 writable output shape.
  *
- * 네 field는 각각 object 또는 tuple writable point storage다.
+ * 네 field는 각각 점 객체다.
  */
-export interface CurveControlPointsWritable<P extends XYWritable = XYWritable> {
+export interface CurveControlPointsWritable {
   /** 직전 이웃 점 storage */
-  previous: P;
+  previous: PointWritable;
 
   /** current point storage */
-  current: P;
+  current: PointWritable;
 
   /** 다음 이웃 점 storage */
-  next: P;
+  next: PointWritable;
 
   /** 다다음 이웃 점 storage */
-  nextNext: P;
+  nextNext: PointWritable;
 }

@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { ArcCommand, EndpointArcCorrectionWritable, XYInput } from '../types';
+import type { ArcCommand, EndpointArcCorrectionWritable } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * SVG 명세 F.6.6.3에 따라 endpoint arc의 radius를 scale 보정한 결과를 out에 기록하고 out을 반환한다.
@@ -18,7 +18,7 @@ import type { ArcCommand, EndpointArcCorrectionWritable, XYInput } from '../type
  */
 export function correctEndpointArcRadiiInto<Out extends EndpointArcCorrectionWritable>(
   out: Out,
-  from: XYInput,
+  from: Point,
   arc: ArcCommand
 ): Out {
   const rx = arc.rx;
@@ -31,8 +31,8 @@ export function correctEndpointArcRadiiInto<Out extends EndpointArcCorrectionWri
     return out;
   }
 
-  const fromX = readX(from);
-  const fromY = readY(from);
+  const fromX = from.x;
+  const fromY = from.y;
 
   // F.6.5 step 1: midpoint를 좌표계 회전 후 변환
   const cosPhi = Math.cos(arc.xRotation);

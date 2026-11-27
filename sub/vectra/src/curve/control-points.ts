@@ -1,10 +1,5 @@
-import type {
-  ControlPointsOptions,
-  CurveControlPoints,
-  CurveControlPointsWritable,
-  XYInput,
-  XYObjectWritable,
-} from '../types';
+import type { ControlPointsOptions, CurveControlPoints, CurveControlPointsWritable } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { controlPointsInto } from './control-points-into';
 
 /**
@@ -27,11 +22,11 @@ import { controlPointsInto } from './control-points-into';
  * @returns 새 CurveControlPoints object, points.length === 0이면 undefined
  */
 export function controlPoints(
-  points: readonly XYInput[],
+  points: readonly Point[],
   index: number,
-  options?: ControlPointsOptions
+  options?: Required<ControlPointsOptions>
 ): CurveControlPoints | undefined {
-  const out: CurveControlPointsWritable<XYObjectWritable> = {
+  const out: CurveControlPointsWritable = {
     previous: { x: 0, y: 0 },
     current: { x: 0, y: 0 },
     next: { x: 0, y: 0 },

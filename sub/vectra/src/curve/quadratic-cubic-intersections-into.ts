@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritable } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { PointWritable, QuadraticCurve, CubicCurve } from '../types/flat-shapes.internal';
 import {
   type CubicFlat,
   classifyIntersectionKind,
@@ -44,7 +44,7 @@ function onConverge(
   bSub: CubicFlat,
   epsilon: number,
   epsilonT: number,
-  makePoint: () => XYObjectWritable
+  makePoint: () => PointWritable
 ): void {
   const spanA = tA1 - tA0;
   const spanB = tB1 - tB0;
@@ -95,42 +95,32 @@ function onConverge(
  * 겹침 구간 내부는 subdivision하지 않는다. 겹침 밖의 교차는 그대로 탐지한다.
  *
  * @param outHits 결과 배열 (함수 호출 전 비워야 한다)
- * @param p0 quadratic curve A 시작점
- * @param p1 quadratic curve A 제어점
- * @param p2 quadratic curve A 끝점
- * @param q0 cubic curve B 시작점
- * @param q1 cubic curve B 첫 번째 제어점
- * @param q2 cubic curve B 두 번째 제어점
- * @param q3 cubic curve B 끝점
+ * @param curveA 시작점·제어점·끝점 좌표를 담은 곡선 객체
+ * @param curveB 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options intersection kernel 옵션
  * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function quadraticCubicIntersectionsInto(
   outHits: IntersectionHit[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  q0: XYInput,
-  q1: XYInput,
-  q2: XYInput,
-  q3: XYInput,
-  options?: CurveIntersectionOptions
+  curveA: QuadraticCurve,
+  curveB: CubicCurve,
+  options?: Required<CurveIntersectionOptions>
 ): IntersectionHit[] {
   outHits.length = 0;
   const { epsilon, epsilonT } = resolveOptions(options);
-  const maxDepth = options?.maxDepth ?? DEFAULT_MAX_DEPTH;
-  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
+  const maxDepth = options === undefined ? DEFAULT_MAX_DEPTH : options.maxDepth;
+  const makePoint = (): PointWritable => ({ x: 0, y: 0 });
 
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+  const p0x = curveA.x0;
+  const p0y = curveA.y0;
+  const p1x = curveA.x1;
+  const p1y = curveA.y1;
+  const p2x = curveA.x2;
+  const p2y = curveA.y2;
 
   const origA: QuadFlat = [p0x, p0y, p1x, p1y, p2x, p2y];
   const aSub: QuadFlat = [p0x, p0y, p1x, p1y, p2x, p2y];
-  const bSub: CubicFlat = [readX(q0), readY(q0), readX(q1), readY(q1), readX(q2), readY(q2), readX(q3), readY(q3)];
+  const bSub: CubicFlat = [curveB.x0, curveB.y0, curveB.x1, curveB.y1, curveB.x2, curveB.y2, curveB.x3, curveB.y3];
 
   // 같은 기하 위 겹침 구간은 subdivision이 모든 box를 hit로 쪼개므로 먼저 끝점 2건으로 기록한다
   const overlapA = quadraticOverlapCurve(origA);

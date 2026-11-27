@@ -10,6 +10,8 @@
  *  - 3번 입력은 무작위 탐색으로 고른 것이다. 필터 조건을 하나씩 바꾼 변이가 각각 다른 결과를 내는 최소 입력이다.
  *  - 기대값은 현재 동작이다. 닫힌 loop의 끝점 근방 cross처럼 알고리즘이 바뀌면 달라질 수 있다.
  */
+import { flatCubicFromLegacyPoints, flatIntersectionOptions } from '../../../src/internal/legacy-curve.internal';
+
 import { describe, expect, test } from 'vitest';
 import { cubicSelfIntersectionsInto } from '../../../src/curve/cubic-self-intersections-into';
 import type { IntersectionHit, XYInput } from '../../../src/types';
@@ -22,7 +24,11 @@ function controlPoints(coords: readonly (readonly [number, number])[]): XYInput[
 /** 제어점 배열로 자기 교차를 구한다. */
 function selfHits(p: readonly XYInput[], options?: { epsilon?: number; epsilonT?: number; maxDepth?: number }) {
   const hits: IntersectionHit[] = [];
-  return cubicSelfIntersectionsInto(hits, p[0], p[1], p[2], p[3], options);
+  return cubicSelfIntersectionsInto(
+    hits,
+    flatCubicFromLegacyPoints(p[0], p[1], p[2], p[3]),
+    flatIntersectionOptions(options)
+  );
 }
 
 /** hit 목록을 [tA, tB] 쌍으로 줄여 비교하기 쉽게 만든다. */

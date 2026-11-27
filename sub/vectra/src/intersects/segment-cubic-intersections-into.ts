@@ -1,3 +1,8 @@
+import {
+  flatCubicFromLegacyPoints,
+  flatLineFromLegacy,
+  flatIntersectionOptions,
+} from '../internal/legacy-curve.internal';
 import { cubicLineIntersectionsInto } from '../curve/cubic-line-intersections-into';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
@@ -38,7 +43,12 @@ export function segmentCubicIntersectionsInto(
     direction: { x: readX(b) - ax, y: readY(b) - ay },
   };
 
-  cubicLineIntersectionsInto(outHits, p0, p1, p2, p3, line, options);
+  cubicLineIntersectionsInto(
+    outHits,
+    flatCubicFromLegacyPoints(p0, p1, p2, p3),
+    flatLineFromLegacy(line),
+    flatIntersectionOptions(options)
+  );
 
   // segment는 tA ∈ [0,1] 범위만 유효하다 — 범위 밖 hit를 제거한다
   let i = outHits.length - 1;

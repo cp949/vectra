@@ -1,4 +1,5 @@
-import type { ArcCommand, CenterArcWritable, XYInput } from '../types';
+import type { ArcCommand } from '../types';
+import type { CenterArcWritable, Point } from '../types/flat-shapes.internal';
 import { endpointArcToCenterInto } from './endpoint-arc-to-center-into';
 
 /**
@@ -22,7 +23,7 @@ import { endpointArcToCenterInto } from './endpoint-arc-to-center-into';
  * @param arc endpoint 형식의 ArcCommand
  * @returns 새 `CenterArcWritable` plain object
  */
-export function endpointArcToCenter(from: XYInput, arc: ArcCommand): CenterArcWritable {
+export function endpointArcToCenter(from: Point, arc: ArcCommand): CenterArcWritable {
   return endpointArcToCenterInto(
     { cx: 0, cy: 0, rx: 0, ry: 0, xRotation: 0, startAngle: 0, endAngle: 0, sweep: false },
     from,

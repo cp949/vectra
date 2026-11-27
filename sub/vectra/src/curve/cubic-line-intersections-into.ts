@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput, XYObjectWritable } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { InfiniteLine, PointWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { solveCubicInClosedUnit } from './cubic-solve.internal';
 import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-intersections.internal';
 import { hypot2 } from '../internal/numeric';
@@ -15,22 +15,16 @@ const COEFFICIENT_REL_EPS = 1e-12;
  * range 밖 root는 버린다. zero direction은 hit 없음.
  *
  * @param outHits 결과 배열 (호출 전 비워야 한다)
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param line infinite-line (origin + direction)
  * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
  * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function cubicLineIntersectionsInto(
   outHits: IntersectionHit[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  line: InfiniteLineLike,
-  options?: CurveIntersectionOptions
+  curve: CubicCurve,
+  line: InfiniteLine,
+  options?: Required<CurveIntersectionOptions>
 ): IntersectionHit[] {
   outHits.length = 0;
 
@@ -39,14 +33,14 @@ export function cubicLineIntersectionsInto(
 
   const { ox, oy, nx, ny, nDotO, epsilon, epsilonT } = { ...setup, ...resolveOptions(options) };
 
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const p3x = curve.x3;
+  const p3y = curve.y3;
 
   // n·P_i
   const n0 = nx * p0x + ny * p0y;
@@ -78,7 +72,7 @@ export function cubicLineIntersectionsInto(
   const normalLength = hypot2(nx, ny);
   const coefficientNoise = COEFFICIENT_REL_EPS * normalLength * coordinateScale;
 
-  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
+  const makePoint = (): PointWritable => ({ x: 0, y: 0 });
 
   // curve 전체가 line 위에 놓이는 overlap case는 현재 result type이 interval을 표현하지 못한다.
   // endpoint touch로 축약하면 caller가 finite point 교차로 오해하므로 hit 없음으로 둔다.

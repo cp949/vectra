@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { ArcCommand, CenterArcWritable, XYInput } from '../types';
+import type { ArcCommand } from '../types';
+import type { CenterArcWritable, Point } from '../types/flat-shapes.internal';
 
 /**
  * SVG 명세 F.6.5에 따라 endpoint arc를 center form으로 변환하여 out에 기록하고 out을 반환한다.
@@ -20,9 +20,9 @@ import type { ArcCommand, CenterArcWritable, XYInput } from '../types';
  * @param arc endpoint 형식의 ArcCommand
  * @returns out
  */
-export function endpointArcToCenterInto<Out extends CenterArcWritable>(out: Out, from: XYInput, arc: ArcCommand): Out {
-  const fromX = readX(from);
-  const fromY = readY(from);
+export function endpointArcToCenterInto<Out extends CenterArcWritable>(out: Out, from: Point, arc: ArcCommand): Out {
+  const fromX = from.x;
+  const fromY = from.y;
   const toX = arc.x;
   const toY = arc.y;
 

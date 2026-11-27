@@ -1,6 +1,5 @@
-import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
-import { readX, readY } from '../internal/xy';
-import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritable } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { PointWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { cubicClassify } from './cubic-classify';
 import {
   type CubicFlat,
@@ -37,7 +36,7 @@ function onConvergeSelf(
   _bSub: CubicFlat,
   epsilon: number,
   epsilonT: number,
-  makePoint: () => XYObjectWritable
+  makePoint: () => PointWritable
 ): void {
   const tAMid = (tA0 + tA1) * 0.5;
   const tBMid = (tB0 + tB1) * 0.5;
@@ -100,38 +99,32 @@ function onConvergeSelf(
  * self-intersection이 없는 curve(S-curve 등)에서는 빈 배열을 반환한다.
  *
  * @param outHits 결과 배열 (함수 호출 전 비워야 한다)
- * @param p0 curve 시작점
- * @param p1 curve 첫 번째 제어점
- * @param p2 curve 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options intersection kernel 옵션
  * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function cubicSelfIntersectionsInto(
   outHits: IntersectionHit[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  options?: CurveIntersectionOptions
+  curve: CubicCurve,
+  options?: Required<CurveIntersectionOptions>
 ): IntersectionHit[] {
   outHits.length = 0;
 
   // loop 형태가 아닌 cubic은 자기 교차점이 없다 — early exit으로 false hit를 방지한다
-  if (cubicClassify(flatCubicFromLegacyPoints(p0, p1, p2, p3)) !== 'loop') return outHits;
+  if (cubicClassify(curve) !== 'loop') return outHits;
 
   const { epsilon, epsilonT } = resolveOptions(options);
-  const maxDepth = options?.maxDepth ?? DEFAULT_MAX_DEPTH;
-  const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });
+  const maxDepth = options === undefined ? DEFAULT_MAX_DEPTH : options.maxDepth;
+  const makePoint = (): PointWritable => ({ x: 0, y: 0 });
 
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const p3x = curve.x3;
+  const p3y = curve.y3;
 
   const origA: CubicFlat = [p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y];
 

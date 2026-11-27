@@ -1,4 +1,3 @@
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve × curve 교차 정밀도 회귀 테스트.
  *
@@ -10,6 +9,7 @@ import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curv
  *
  * 기준 근은 원본 control point에서 double Newton을 60회 돌려 얻은 값이다.
  */
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
@@ -50,12 +50,8 @@ describe('curve × curve 교차 정밀도', () => {
     const hits: IntersectionHit[] = [];
     quadraticQuadraticIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 50, y: 100 },
-      { x: 100, y: 0 },
-      { x: 0, y: 50 },
-      { x: 50, y: -50 },
-      { x: 100, y: 50 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 50, y1: 100, x2: 100, y2: 0 },
+      { kind: 'quadratic', x0: 0, y0: 50, x1: 50, y1: -50, x2: 100, y2: 50 }
     );
 
     expect(hits).toHaveLength(2);
@@ -74,14 +70,8 @@ describe('curve × curve 교차 정밀도', () => {
     const hits: IntersectionHit[] = [];
     cubicCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 30, y: 80 },
-      { x: 70, y: 80 },
-      { x: 100, y: 0 },
-      { x: 0, y: 60 },
-      { x: 30, y: -20 },
-      { x: 70, y: -20 },
-      { x: 100, y: 60 }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 30, y1: 80, x2: 70, y2: 80, x3: 100, y3: 0 },
+      { kind: 'cubic', x0: 0, y0: 60, x1: 30, y1: -20, x2: 70, y2: -20, x3: 100, y3: 60 }
     );
 
     expect(hits).toHaveLength(2);
@@ -98,13 +88,8 @@ describe('curve × curve 교차 정밀도', () => {
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 50, y: 100 },
-      { x: 100, y: 0 },
-      { x: 0, y: 60 },
-      { x: 30, y: -20 },
-      { x: 70, y: -20 },
-      { x: 100, y: 60 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 50, y1: 100, x2: 100, y2: 0 },
+      { kind: 'cubic', x0: 0, y0: 60, x1: 30, y1: -20, x2: 70, y2: -20, x3: 100, y3: 60 }
     );
 
     expect(hits).toHaveLength(2);
@@ -120,7 +105,7 @@ describe('curve × curve 교차 정밀도', () => {
   test('cubic self 교차 parameter가 1e-9 이내로 정밀해진다', () => {
     // loop cubic의 자기 교차점은 (4/7, 6/7)이다
     const hits: IntersectionHit[] = [];
-    cubicSelfIntersectionsInto(hits, { x: 0, y: 0 }, { x: 2, y: 2 }, { x: -2, y: 2 }, { x: 2, y: 0 });
+    cubicSelfIntersectionsInto(hits, { kind: 'cubic', x0: 0, y0: 0, x1: 2, y1: 2, x2: -2, y2: 2, x3: 2, y3: 0 });
 
     expect(hits).toHaveLength(1);
     expect(Math.abs(hits[0].tA - 0.1726731646460114)).toBeLessThan(TOL);
@@ -136,12 +121,8 @@ describe('접선 접촉(touch)은 refinement로 깨지지 않는다', () => {
     const hits: IntersectionHit[] = [];
     quadraticQuadraticIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 50, y: 100 },
-      { x: 100, y: 0 },
-      { x: 0, y: 100 },
-      { x: 50, y: 0 },
-      { x: 100, y: 100 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 50, y1: 100, x2: 100, y2: 0 },
+      { kind: 'quadratic', x0: 0, y0: 100, x1: 50, y1: 0, x2: 100, y2: 100 }
     );
 
     expect(hits).toHaveLength(1);
@@ -157,14 +138,8 @@ describe('접선 접촉(touch)은 refinement로 깨지지 않는다', () => {
     const hits: IntersectionHit[] = [];
     cubicCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 30, y: 80 },
-      { x: 70, y: 80 },
-      { x: 100, y: 0 },
-      { x: 0, y: 120 },
-      { x: 30, y: 40 },
-      { x: 70, y: 40 },
-      { x: 100, y: 120 }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 30, y1: 80, x2: 70, y2: 80, x3: 100, y3: 0 },
+      { kind: 'cubic', x0: 0, y0: 120, x1: 30, y1: 40, x2: 70, y2: 40, x3: 100, y3: 120 }
     );
 
     expect(hits).toHaveLength(1);
@@ -186,14 +161,28 @@ describe('접선이 평행한 끝점 교차는 끝점 parameter로 snap한다', 
     const hits: IntersectionHit[] = [];
     cubicCubicIntersectionsInto(
       hits,
-      { x: left.x0, y: left.y0 },
-      { x: left.x1, y: left.y1 },
-      { x: left.x2, y: left.y2 },
-      { x: left.x3, y: left.y3 },
-      { x: right.x0, y: right.y0 },
-      { x: right.x1, y: right.y1 },
-      { x: right.x2, y: right.y2 },
-      { x: right.x3, y: right.y3 }
+      {
+        kind: 'cubic',
+        x0: left.x0,
+        y0: left.y0,
+        x1: left.x1,
+        y1: left.y1,
+        x2: left.x2,
+        y2: left.y2,
+        x3: left.x3,
+        y3: left.y3,
+      },
+      {
+        kind: 'cubic',
+        x0: right.x0,
+        y0: right.y0,
+        x1: right.x1,
+        y1: right.y1,
+        x2: right.x2,
+        y2: right.y2,
+        x3: right.x3,
+        y3: right.y3,
+      }
     );
 
     expect(hits).toHaveLength(1);
@@ -209,13 +198,18 @@ describe('접선이 평행한 끝점 교차는 끝점 parameter로 snap한다', 
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 1, y: 0 },
-      { x: 2, y: 4 },
-      { x: cubic.x0, y: cubic.y0 },
-      { x: cubic.x1, y: cubic.y1 },
-      { x: cubic.x2, y: cubic.y2 },
-      { x: cubic.x3, y: cubic.y3 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 4 },
+      {
+        kind: 'cubic',
+        x0: cubic.x0,
+        y0: cubic.y0,
+        x1: cubic.x1,
+        y1: cubic.y1,
+        x2: cubic.x2,
+        y2: cubic.y2,
+        x3: cubic.x3,
+        y3: cubic.y3,
+      }
     );
 
     expect(hits).toHaveLength(1);
@@ -230,12 +224,8 @@ describe('접선이 평행한 끝점 교차는 끝점 parameter로 snap한다', 
     const hits: IntersectionHit[] = [];
     quadraticQuadraticIntersectionsInto(
       hits,
-      { x: 0, y: 50 },
-      { x: 25, y: 50 },
-      { x: 50, y: 50 },
-      { x: 0, y: 0 },
-      { x: 50, y: 100 },
-      { x: 100, y: 0 }
+      { kind: 'quadratic', x0: 0, y0: 50, x1: 25, y1: 50, x2: 50, y2: 50 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 50, y1: 100, x2: 100, y2: 0 }
     );
 
     expect(hits).toHaveLength(1);
@@ -252,13 +242,26 @@ describe('접선이 평행한 끝점 교차는 끝점 parameter로 snap한다', 
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
-      { x: 20.822316012345254, y: 89.16724626906216 },
-      { x: 34.20280797872692, y: 52.55758771672845 },
-      { x: 48.184252660958315, y: 65.3337527967945 },
-      { x: 71.96688149124384, y: 97.02100993599743 },
-      { x: 20.170513400807977, y: 47.42527718190104 },
-      { x: 83.10800110921264, y: 69.15310944896191 },
-      { x: 3.112330613657832, y: 75.72149608749896 }
+      {
+        kind: 'quadratic',
+        x0: 20.822316012345254,
+        y0: 89.16724626906216,
+        x1: 34.20280797872692,
+        y1: 52.55758771672845,
+        x2: 48.184252660958315,
+        y2: 65.3337527967945,
+      },
+      {
+        kind: 'cubic',
+        x0: 71.96688149124384,
+        y0: 97.02100993599743,
+        x1: 20.170513400807977,
+        y1: 47.42527718190104,
+        x2: 83.10800110921264,
+        y2: 69.15310944896191,
+        x3: 3.112330613657832,
+        y3: 75.72149608749896,
+      }
     );
 
     const endHits = hits.filter((hit) => hit.tA === 1);
@@ -273,12 +276,8 @@ describe('접선이 평행한 끝점 교차는 끝점 parameter로 snap한다', 
     const hits: IntersectionHit[] = [];
     quadraticQuadraticIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 50, y: 0 },
-      { x: 100, y: 0 },
-      { x: 99.999999, y: -50 },
-      { x: 99.999999, y: 0 },
-      { x: 99.999999, y: 50 }
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 50, y1: 0, x2: 100, y2: 0 },
+      { kind: 'quadratic', x0: 99.999999, y0: -50, x1: 99.999999, y1: 0, x2: 99.999999, y2: 50 }
     );
 
     expect(hits).toHaveLength(1);
@@ -302,12 +301,8 @@ describe('거의 평행한 두 곡선은 maxDepth box를 hit로 남기지 않는
     const hits: IntersectionHit[] = [];
     quadraticQuadraticIntersectionsInto(
       hits,
-      PARABOLA[0],
-      PARABOLA[1],
-      PARABOLA[2],
-      ROTATED[0],
-      ROTATED[1],
-      ROTATED[2]
+      flatQuadraticFromLegacyPoints(PARABOLA[0], PARABOLA[1], PARABOLA[2]),
+      flatQuadraticFromLegacyPoints(ROTATED[0], ROTATED[1], ROTATED[2])
     );
 
     expect(hits).toHaveLength(1);
@@ -326,7 +321,11 @@ describe('거의 평행한 두 곡선은 maxDepth box를 hit로 남기지 않는
       { x: cubic.x3, y: cubic.y3 },
     ].map((point) => rotateAbout(point, CENTER, 0.2));
     const hits: IntersectionHit[] = [];
-    quadraticCubicIntersectionsInto(hits, PARABOLA[0], PARABOLA[1], PARABOLA[2], q0, q1, q2, q3);
+    quadraticCubicIntersectionsInto(
+      hits,
+      flatQuadraticFromLegacyPoints(PARABOLA[0], PARABOLA[1], PARABOLA[2]),
+      flatCubicFromLegacyPoints(q0, q1, q2, q3)
+    );
 
     expect(hits).toHaveLength(1);
     expect(hits[0].tA).toBeCloseTo(0.3, 9);
@@ -338,14 +337,8 @@ describe('거의 평행한 두 곡선은 maxDepth box를 hit로 남기지 않는
     const hits: IntersectionHit[] = [];
     cubicCubicIntersectionsInto(
       hits,
-      { x: 0, y: 0 },
-      { x: 30, y: 2 },
-      { x: 70, y: -1 },
-      { x: 100, y: 0 },
-      { x: 0, y: -0.01 },
-      { x: 30, y: 2 },
-      { x: 70, y: -1 },
-      { x: 100, y: 0.01 }
+      { kind: 'cubic', x0: 0, y0: 0, x1: 30, y1: 2, x2: 70, y2: -1, x3: 100, y3: 0 },
+      { kind: 'cubic', x0: 0, y0: -0.01, x1: 30, y1: 2, x2: 70, y2: -1, x3: 100, y3: 0.01 }
     );
 
     expect(hits).toHaveLength(1);
@@ -356,15 +349,15 @@ describe('거의 평행한 두 곡선은 maxDepth box를 hit로 남기지 않는
   test('1e-4 간격으로 나란히 지나가는 두 parabola는 만나지 않으므로 hit가 없다', () => {
     // B는 A를 y로 1e-4 올린 복사본이다. 어디서도 만나지 않는다.
     const hits: IntersectionHit[] = [];
-    quadraticQuadraticIntersectionsInto(
-      hits,
-      PARABOLA[0],
-      PARABOLA[1],
-      PARABOLA[2],
-      { x: 0, y: 1e-4 },
-      { x: 50, y: 100 + 1e-4 },
-      { x: 100, y: 1e-4 }
-    );
+    quadraticQuadraticIntersectionsInto(hits, flatQuadraticFromLegacyPoints(PARABOLA[0], PARABOLA[1], PARABOLA[2]), {
+      kind: 'quadratic',
+      x0: 0,
+      y0: 1e-4,
+      x1: 50,
+      y1: 100 + 1e-4,
+      x2: 100,
+      y2: 1e-4,
+    });
 
     expect(hits).toHaveLength(0);
   });

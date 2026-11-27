@@ -10,6 +10,8 @@
  *  - 이 테스트는 분기 도달, 종료, 유한한 cross 결과를 고정한다.
  *  - 한 테스트가 1–2초 걸리므로 timeout을 늘려 둔다.
  */
+import { flatIntersectionOptions } from '../../../src/internal/legacy-curve.internal';
+
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
 import { quadraticCubicIntersectionsInto } from '../../../src/curve/quadratic-cubic-intersections-into';
@@ -40,15 +42,9 @@ describe('parameter 허용 오차 0 교차', () => {
   test('cubic과 cubic이 X자로 만나면 t = 0.5의 cross만 돌려준다', () => {
     const hits = cubicCubicIntersectionsInto(
       [],
-      { x: 0, y: 0 },
-      { x: 1, y: 1 },
-      { x: 2, y: 2 },
-      { x: 3, y: 3 },
-      { x: 0, y: 3 },
-      { x: 1, y: 2.1 },
-      { x: 2, y: 0.9 },
-      { x: 3, y: 0 },
-      EXTREME
+      { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 2, x3: 3, y3: 3 },
+      { kind: 'cubic', x0: 0, y0: 3, x1: 1, y1: 2.1, x2: 2, y2: 0.9, x3: 3, y3: 0 },
+      flatIntersectionOptions(EXTREME)
     );
     expectCrossingsAt(hits, [0.5]);
   }, 30000);
@@ -56,13 +52,9 @@ describe('parameter 허용 오차 0 교차', () => {
   test('quadratic과 quadratic이 두 점에서 만나면 두 근 모두 cross로 돌려준다', () => {
     const hits = quadraticQuadraticIntersectionsInto(
       [],
-      { x: 0, y: 0 },
-      { x: 1.5, y: 3 },
-      { x: 3, y: 0 },
-      { x: 0, y: 3 },
-      { x: 1.5, y: -1 },
-      { x: 3, y: 3 },
-      EXTREME
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1.5, y1: 3, x2: 3, y2: 0 },
+      { kind: 'quadratic', x0: 0, y0: 3, x1: 1.5, y1: -1, x2: 3, y2: 3 },
+      flatIntersectionOptions(EXTREME)
     );
     expectCrossingsAt(hits, [0.3110177634953864, 0.6889822365046137]);
   }, 30000);
@@ -70,14 +62,9 @@ describe('parameter 허용 오차 0 교차', () => {
   test('quadratic과 cubic이 한 점에서 만나면 t = 0.5의 cross만 돌려준다', () => {
     const hits = quadraticCubicIntersectionsInto(
       [],
-      { x: 0, y: 0 },
-      { x: 1.5, y: 3 },
-      { x: 3, y: 0 },
-      { x: 0, y: 3 },
-      { x: 1, y: 2 },
-      { x: 2, y: 1 },
-      { x: 3, y: 0 },
-      EXTREME
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 1.5, y1: 3, x2: 3, y2: 0 },
+      { kind: 'cubic', x0: 0, y0: 3, x1: 1, y1: 2, x2: 2, y2: 1, x3: 3, y3: 0 },
+      flatIntersectionOptions(EXTREME)
     );
     expectCrossingsAt(hits, [0.5]);
   }, 30000);

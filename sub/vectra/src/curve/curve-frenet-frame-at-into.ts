@@ -1,12 +1,12 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { CurveFrenetFrameWritable, CurveLike } from '../types';
+import type { CurveFrenetFrameWritable } from '../types';
+import type { Curve } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
- * `CurveLike` 위의 파라미터 t에서 point / unit tangent / unit normal / signed curvature를
+ * `Curve` 위의 파라미터 t에서 point / unit tangent / unit normal / signed curvature를
  * 한 번에 계산하여 out에 기록하고 out을 반환한다.
  *
- * - `curve.kind === 'quadratic'`이면 `p0`, `p1`, `p2`를, `'cubic'`이면 `p0`, `p1`, `p2`, `p3`를 쓴다.
+ * - `curve.kind === 'quadratic'`이면 `x0, y0`부터 `x2, y2`까지 읽는다. `'cubic'`은 `x3, y3`도 읽는다.
  * - `t`는 clamp하지 않는다. `t < 0` 또는 `t > 1`이면 외삽(extrapolation) 결과가 된다.
  * - `point`는 curve evaluation 결과다.
  * - `tangent`는 1차 도함수를 정규화한 unit vector다. derivative가 zero vector이면 zero vector를 기록한다.
@@ -21,11 +21,7 @@ import { hypot2 } from '../internal/numeric';
  * @param curve quadratic 또는 cubic Bezier curve 입력
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */
-export function curveFrenetFrameAtInto<Out extends CurveFrenetFrameWritable>(
-  out: Out,
-  curve: CurveLike,
-  t: number
-): Out {
+export function curveFrenetFrameAtInto<Out extends CurveFrenetFrameWritable>(out: Out, curve: Curve, t: number): Out {
   const mt = 1 - t;
 
   let px: number;
@@ -36,12 +32,12 @@ export function curveFrenetFrameAtInto<Out extends CurveFrenetFrameWritable>(
   let d2y: number;
 
   if (curve.kind === 'quadratic') {
-    const p0x = readX(curve.p0);
-    const p0y = readY(curve.p0);
-    const p1x = readX(curve.p1);
-    const p1y = readY(curve.p1);
-    const p2x = readX(curve.p2);
-    const p2y = readY(curve.p2);
+    const p0x = curve.x0;
+    const p0y = curve.y0;
+    const p1x = curve.x1;
+    const p1y = curve.y1;
+    const p2x = curve.x2;
+    const p2y = curve.y2;
 
     const mt2 = mt * mt;
     const t2 = t * t;
@@ -61,14 +57,14 @@ export function curveFrenetFrameAtInto<Out extends CurveFrenetFrameWritable>(
     d2x = 2 * (p2x - 2 * p1x + p0x);
     d2y = 2 * (p2y - 2 * p1y + p0y);
   } else {
-    const p0x = readX(curve.p0);
-    const p0y = readY(curve.p0);
-    const p1x = readX(curve.p1);
-    const p1y = readY(curve.p1);
-    const p2x = readX(curve.p2);
-    const p2y = readY(curve.p2);
-    const p3x = readX(curve.p3);
-    const p3y = readY(curve.p3);
+    const p0x = curve.x0;
+    const p0y = curve.y0;
+    const p1x = curve.x1;
+    const p1y = curve.y1;
+    const p2x = curve.x2;
+    const p2y = curve.y2;
+    const p3x = curve.x3;
+    const p3y = curve.y3;
 
     const mt2 = mt * mt;
     const mt3 = mt2 * mt;
@@ -115,9 +111,12 @@ export function curveFrenetFrameAtInto<Out extends CurveFrenetFrameWritable>(
     curvature = (d1x * d2y - d1y * d2x) / d1Cubed;
   }
 
-  writeXY(out.point, px, py);
-  writeXY(out.tangent, tx, ty);
-  writeXY(out.normal, nx, ny);
+  out.point.x = px;
+  out.point.y = py;
+  out.tangent.x = tx;
+  out.tangent.y = ty;
+  out.normal.x = nx;
+  out.normal.y = ny;
   out.curvature = curvature;
   return out;
 }

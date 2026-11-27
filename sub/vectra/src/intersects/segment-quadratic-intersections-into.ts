@@ -1,3 +1,8 @@
+import {
+  flatQuadraticFromLegacyPoints,
+  flatLineFromLegacy,
+  flatIntersectionOptions,
+} from '../internal/legacy-curve.internal';
 import { quadraticLineIntersectionsInto } from '../curve/quadratic-line-intersections-into';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
@@ -36,7 +41,12 @@ export function segmentQuadraticIntersectionsInto(
     direction: { x: readX(b) - ax, y: readY(b) - ay },
   };
 
-  quadraticLineIntersectionsInto(outHits, p0, p1, p2, line, options);
+  quadraticLineIntersectionsInto(
+    outHits,
+    flatQuadraticFromLegacyPoints(p0, p1, p2),
+    flatLineFromLegacy(line),
+    flatIntersectionOptions(options)
+  );
 
   // segment는 tA ∈ [0,1] 범위만 유효하다 — 범위 밖 hit를 제거한다
   let i = outHits.length - 1;

@@ -1,12 +1,13 @@
-import type { XYInput, XYObjectWritable, XYWritable } from './xy.internal';
+import type { PointWritable } from './flat-shapes.internal';
+import type { XYInput } from './xy.internal';
 
 /** curve 교차 종류. cross=관통, touch=접촉, overlap=구간 중첩, parallel=평행, coincident=완전 일치. */
 export type IntersectionKind = 'cross' | 'touch' | 'overlap' | 'parallel' | 'coincident';
 
 /** curve 교차 결과 1건. point는 교차점, tA/tB는 각 curve의 parameter 값. */
-export interface IntersectionHit<P extends XYWritable = XYObjectWritable> {
+export interface IntersectionHit {
   /** 교차점 */
-  point: P;
+  point: PointWritable;
 
   /** 교차 종류 */
   kind: IntersectionKind;
