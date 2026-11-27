@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 
 /** halvesInto 옵션. */
 export interface HalvesOptions {
@@ -42,7 +41,7 @@ export interface HalvesOptions {
  * **aliasing 안전**: `out.first`/`out.second`가 `rect`와 동일한 object여도 결과가
  * 정확히 계산된다. 모든 입력 값을 local 변수로 먼저 읽은 후 기록한다.
  *
- * @param out 분할 결과를 기록할 writable output
+ * @param out 분할 결과를 기록할 출력 객체
  * @param rect 분할할 rect
  * @param options axis / ratio 옵션
  */
@@ -51,7 +50,7 @@ export function halvesInto<
     first: RectWritable;
     second: RectWritable;
   },
->(out: Out, rect: RectLike, options?: HalvesOptions): Out {
+>(out: Out, rect: Rect, options?: HalvesOptions): Out {
   const axis = options?.axis ?? 'x';
   const ratio = options?.ratio ?? 0.5;
 
@@ -66,10 +65,10 @@ export function halvesInto<
   }
 
   // aliasing 안전 - 모든 입력 값을 먼저 local 변수로 읽은 후 기록한다
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
   if (axis === 'x') {
     const split = x + w * ratio;

@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth } from '../internal/rect';
-import type { RectLike, XYObjectWritable } from '../types';
+import type { Rect, PointWritable } from '../types/flat-shapes.internal';
 import { perimeterPointInto } from './perimeter-point-into';
 
 /**
@@ -21,16 +20,16 @@ import { perimeterPointInto } from './perimeter-point-into';
  * - perimeter가 0이므로 `out.length = 0`만 설정하고 push하지 않는다.
  * - invalid count/step은 empty rect에서도 `RangeError`를 던진다.
  *
- * @param out point를 push할 writable array
+ * @param out 둘레의 점을 기록할 배열
  * @param rect 기준 rect
  * @param options `{ count, wrap? }` 또는 `{ step, wrap? }` 형태의 sampling 옵션
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function perimeterPointsInto(
-  out: XYObjectWritable[],
-  rect: RectLike,
+export function perimeterPointsInto<Out extends PointWritable[]>(
+  out: Out,
+  rect: Rect,
   options: { count: number; wrap?: boolean } | { step: number; wrap?: boolean }
-): XYObjectWritable[] {
+): Out {
   // 입력 유효성을 먼저 검사한다 (empty rect 여부와 무관하게)
   if ('count' in options) {
     const { count } = options;
@@ -46,8 +45,8 @@ export function perimeterPointsInto(
 
   out.length = 0;
 
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+  const w = rect.width;
+  const h = rect.height;
 
   // empty rect: perimeter가 없으므로 push하지 않는다
   if (w <= 0 || h <= 0) {

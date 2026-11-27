@@ -63,12 +63,6 @@ describe('rect - fitInsideInto (contain)', () => {
     expect(outA).toEqual(outB);
   });
 
-  test('tuple rect 입력도 처리한다', () => {
-    const out = makeRect();
-    fitInsideInto(out, [0, 0, 200, 100], [0, 0, 100, 100]);
-    expect(out).toEqual({ x: 0, y: 25, width: 100, height: 50 });
-  });
-
   test('empty target (width=0): container 복사', () => {
     const out = makeRect();
     const container = { x: 5, y: 6, width: 10, height: 20 };

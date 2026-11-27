@@ -1,4 +1,4 @@
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 import { createRect } from './create-rect';
 import { fitOutsideInto } from './fit-outside-into';
 
@@ -12,6 +12,6 @@ import { fitOutsideInto } from './fit-outside-into';
  * @param target aspect ratio와 size를 제공하는 source rect. 위치(x/y)는 결과에 반영되지 않는다.
  * @param container 덮을 대상 container rect
  */
-export function fitOutside(target: RectLike, container: RectLike): RectWritable {
+export function fitOutside(target: Rect, container: Rect): RectWritable {
   return fitOutsideInto(createRect(), target, container);
 }

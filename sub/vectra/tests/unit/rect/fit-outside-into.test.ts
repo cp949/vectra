@@ -64,12 +64,6 @@ describe('rect - fitOutsideInto (cover)', () => {
     expect(out).toEqual({ x: 0, y: -15, width: 10, height: 40 });
   });
 
-  test('tuple rect 입력도 처리한다', () => {
-    const out = makeRect();
-    fitOutsideInto(out, [0, 0, 1, 2], [0, 0, 2, 2]);
-    expect(out).toEqual({ x: 0, y: -1, width: 2, height: 4 });
-  });
-
   test('empty target (width=0): container 복사', () => {
     const out = makeRect();
     const container = { x: 5, y: 6, width: 10, height: 20 };

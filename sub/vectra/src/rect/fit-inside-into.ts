@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 
 /**
  * target의 aspect ratio를 유지하면서 container 내부에 fit한 rect를 out에 기록한다.
@@ -9,18 +8,18 @@ import type { RectLike, RectWritable } from '../types';
  * out에 container를 그대로 복사한다.
  * out과 target/container가 같은 object여도 안전하다.
  *
- * @param out fit 결과 rect를 기록할 writable output
+ * @param out fit 결과 rect를 기록할 사각형 객체
  * @param target aspect ratio와 size를 제공하는 source rect. 위치(x/y)는 결과에 반영되지 않는다.
  * @param container fit 대상 container rect
  */
-export function fitInsideInto<Out extends RectWritable>(out: Out, target: RectLike, container: RectLike): Out {
+export function fitInsideInto<Out extends RectWritable>(out: Out, target: Rect, container: Rect): Out {
   // aliasing 안전 - 모든 입력을 먼저 읽은 후 기록한다
-  const tw = readRectWidth(target);
-  const th = readRectHeight(target);
-  const cx = readRectX(container);
-  const cy = readRectY(container);
-  const cw = readRectWidth(container);
-  const ch = readRectHeight(container);
+  const tw = target.width;
+  const th = target.height;
+  const cx = container.x;
+  const cy = container.y;
+  const cw = container.width;
+  const ch = container.height;
 
   // empty target 또는 empty container → container 복사
   if (tw <= 0 || th <= 0 || cw <= 0 || ch <= 0) {

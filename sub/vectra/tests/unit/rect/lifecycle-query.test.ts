@@ -70,10 +70,6 @@ describe('rect query - left/top/right/bottom', () => {
     expect(left({ x: 3, y: 7, width: 10, height: 5 })).toBe(3);
   });
 
-  test('tuple rect의 left는 첫 번째 component를 반환한다', () => {
-    expect(left([3, 7, 10, 5])).toBe(3);
-  });
-
   test('top은 rect.y를 반환한다', () => {
     expect(top({ x: 3, y: 7, width: 10, height: 5 })).toBe(7);
   });
@@ -115,10 +111,6 @@ describe('rect query - left/top/right/bottom', () => {
 describe('rect query - isEmpty', () => {
   test('양수 width/height는 empty가 아니다', () => {
     expect(isEmpty({ x: 0, y: 0, width: 1, height: 1 })).toBe(false);
-  });
-
-  test('tuple rect의 양수 width/height는 empty가 아니다', () => {
-    expect(isEmpty([0, 0, 1, 1])).toBe(false);
   });
 
   test('width === 0이면 empty이다', () => {

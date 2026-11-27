@@ -39,9 +39,6 @@ const offsetRect = { x: 5, y: 3, width: 10, height: 10 };
 const emptyRectZero = { x: 2, y: 7, width: 0, height: 4 };
 const emptyRectNeg = { x: 1, y: 2, width: -5, height: 3 };
 
-// tuple 형태
-const squareTuple = [0, 0, 10, 10] as const;
-
 // --------------------------------------------------------------------------
 
 describe('perimeterPointInto — 정상 sampling (square, wrap=true 기본값)', () => {
@@ -171,30 +168,6 @@ describe('perimeterPointInto — 오프셋 rect', () => {
     perimeterPointInto(out, offsetRect, 0.25);
     expect(out.x).toBeCloseTo(15);
     expect(out.y).toBeCloseTo(3);
-  });
-});
-
-describe('perimeterPointInto — tuple input', () => {
-  test('tuple 형태 RectLike를 정상 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    perimeterPointInto(out, squareTuple, 0.25);
-    expect(out.x).toBeCloseTo(10);
-    expect(out.y).toBeCloseTo(0);
-  });
-});
-
-describe('perimeterPointInto — XYTupleWritable out', () => {
-  test('tuple out에도 좌표를 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    perimeterPointInto(out, square, 0.25);
-    expect(out[0]).toBeCloseTo(10);
-    expect(out[1]).toBeCloseTo(0);
-  });
-
-  test('반환값이 out과 동일한 reference이다', () => {
-    const out: [number, number] = [0, 0];
-    const ret = perimeterPointInto(out, square, 0.25);
-    expect(ret).toBe(out);
   });
 });
 

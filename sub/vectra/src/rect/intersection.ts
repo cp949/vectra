@@ -1,4 +1,4 @@
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 import { createRect } from './create-rect';
 import { intersectionInto } from './intersection-into';
 
@@ -11,7 +11,7 @@ import { intersectionInto } from './intersection-into';
  * @param a 교집합을 계산할 첫 번째 rect
  * @param b 교집합을 계산할 두 번째 rect
  */
-export function intersection(a: RectLike, b: RectLike): RectWritable | undefined {
+export function intersection(a: Rect, b: Rect): RectWritable | undefined {
   const out = createRect();
   return intersectionInto(out, a, b) ? out : undefined;
 }

@@ -1,3 +1,5 @@
+/** 사각형 결과를 새로 만드는 변환 함수를 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { fromBounds } from '../../../src/rect/from-bounds';
 import { intersection } from '../../../src/rect/intersection';
@@ -5,7 +7,7 @@ import { union } from '../../../src/rect/union';
 
 describe('rect allocating companions', () => {
   test('fromBounds는 plain rect를 반환한다', () => {
-    expect(fromBounds({ min: { x: 2, y: 3 }, max: { x: 7, y: 11 } })).toEqual({
+    expect(fromBounds({ minX: 2, minY: 3, maxX: 7, maxY: 11 })).toEqual({
       x: 2,
       y: 3,
       width: 5,

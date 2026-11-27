@@ -1,4 +1,4 @@
-import type { RectLike } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import { perimeterPointInto } from './perimeter-point-into';
 
 /**
@@ -23,6 +23,6 @@ import { perimeterPointInto } from './perimeter-point-into';
  * @param t perimeter 전체에 대한 normalized parameter
  * @param options wrap 정책 옵션. `wrap` 기본값: `true`
  */
-export function perimeterPoint(rect: RectLike, t: number, options?: { wrap?: boolean }): { x: number; y: number } {
+export function perimeterPoint(rect: Rect, t: number, options?: { wrap?: boolean }): PointWritable {
   return perimeterPointInto({ x: 0, y: 0 }, rect, t, options);
 }

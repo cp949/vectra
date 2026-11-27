@@ -38,11 +38,10 @@ describe('normalizePointInto', () => {
     expect(out.y).toBeCloseTo(0.5);
   });
 
-  test('tuple rect + tuple point를 변환한다', () => {
-    const out: [number, number] = [0, 0];
-    normalizePointInto(out, [0, 0, 10, 10], [2, 8]);
-    expect(out[0]).toBeCloseTo(0.2);
-    expect(out[1]).toBeCloseTo(0.8);
+  test('서로 다른 x와 y 비율을 계산한다', () => {
+    const out = { x: 0, y: 0 };
+    normalizePointInto(out, { x: 0, y: 0, width: 10, height: 10 }, { x: 2, y: 8 });
+    expect(out).toEqual({ x: 0.2, y: 0.8 });
   });
 
   test('rect 밖 point를 clamp하지 않고 <0 / >1 값으로 기록한다', () => {

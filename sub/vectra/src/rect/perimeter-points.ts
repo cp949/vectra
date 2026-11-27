@@ -1,4 +1,4 @@
-import type { RectLike } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import { perimeterPointsInto } from './perimeter-points-into';
 
 /**
@@ -22,8 +22,8 @@ import { perimeterPointsInto } from './perimeter-points-into';
  * @param options `{ count, wrap? }` 또는 `{ step, wrap? }` 형태의 sampling 옵션
  */
 export function perimeterPoints(
-  rect: RectLike,
+  rect: Rect,
   options: { count: number; wrap?: boolean } | { step: number; wrap?: boolean }
-): { x: number; y: number }[] {
+): PointWritable[] {
   return perimeterPointsInto([], rect, options);
 }

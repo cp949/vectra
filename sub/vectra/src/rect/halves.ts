@@ -1,4 +1,4 @@
-import type { RectLike } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 import { type HalvesOptions, halvesInto } from './halves-into';
 
 /**
@@ -29,11 +29,11 @@ import { type HalvesOptions, halvesInto } from './halves-into';
  * @param options axis / ratio 옵션
  */
 export function halves(
-  rect: RectLike,
+  rect: Rect,
   options?: HalvesOptions
 ): {
-  first: { x: number; y: number; width: number; height: number };
-  second: { x: number; y: number; width: number; height: number };
+  first: RectWritable;
+  second: RectWritable;
 } {
   return halvesInto(
     {

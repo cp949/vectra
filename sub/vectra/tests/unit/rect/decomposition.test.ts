@@ -181,15 +181,6 @@ describe('fromCenterInto', () => {
     });
   });
 
-  describe('tuple input', () => {
-    test('tuple center와 tuple size로 rect를 구성한다', () => {
-      const out = { x: 0, y: 0, width: 0, height: 0 };
-      fromCenterInto(out, [5, 10] as const, [8, 6] as const);
-      // x = 5 - 4 = 1, y = 10 - 3 = 7
-      expect(out).toEqual({ x: 1, y: 7, width: 8, height: 6 });
-    });
-  });
-
   describe('origin / degenerate', () => {
     test('center (0,0), size (0,0)이면 (0,0,0,0) rect를 기록한다', () => {
       const out = { x: 99, y: 99, width: 99, height: 99 };

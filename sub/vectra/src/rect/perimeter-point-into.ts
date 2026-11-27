@@ -1,6 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { writeXY } from '../internal/xy';
-import type { RectLike, XYWritable } from '../types';
+import type { Rect, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * rect perimeter 위 normalized parameter `t`에 해당하는 좌표를 `out`에 기록하고 반환한다.
@@ -20,24 +18,26 @@ import type { RectLike, XYWritable } from '../types';
  * empty rect (`width <= 0 || height <= 0`):
  * - perimeter가 0이므로 계산 없이 top-left raw 좌표 `(rect.x, rect.y)`를 `out`에 기록한다.
  *
- * @param out 좌표를 기록할 writable output
+ * @param out 좌표를 기록할 점 객체
  * @param rect 기준 rect
  * @param t perimeter 전체에 대한 normalized parameter
  * @param options wrap 정책 옵션. `wrap` 기본값: `true`
  */
-export function perimeterPointInto<Out extends XYWritable>(
+export function perimeterPointInto<Out extends PointWritable>(
   out: Out,
-  rect: RectLike,
+  rect: Rect,
   t: number,
   options?: { wrap?: boolean }
 ): Out {
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
   if (w <= 0 || h <= 0) {
-    return writeXY(out, x, y);
+    out.x = x;
+    out.y = y;
+    return out;
   }
 
   const wrap = options?.wrap !== false;
@@ -74,5 +74,7 @@ export function perimeterPointInto<Out extends XYWritable>(
     py = y + h - (dist - (2 * w + h));
   }
 
-  return writeXY(out, px, py);
+  out.x = px;
+  out.y = py;
+  return out;
 }

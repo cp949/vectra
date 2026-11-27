@@ -1,3 +1,5 @@
+/** 사각형과 경계 상자의 변환 및 점 배열의 범위 계산을 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { fromPointsInto as boundsFromPointsInto } from '../../../src/bounds/from-points-into';
 import { fromRectInto } from '../../../src/bounds/from-rect-into';
@@ -130,20 +132,20 @@ describe('bounds.fromPointsInto', () => {
 describe('rect.fromBoundsInto', () => {
   test('정상 bounds를 rect로 변환한다', () => {
     const out = makeRect();
-    const result = fromBoundsInto(out, { min: { x: 1, y: 2 }, max: { x: 5, y: 8 } });
+    const result = fromBoundsInto(out, { minX: 1, minY: 2, maxX: 5, maxY: 8 });
     expect(out).toEqual({ x: 1, y: 2, width: 4, height: 6 });
     expect(result).toBe(out);
   });
 
   test('inverted bounds(empty)를 변환한다 - 음수 width/height rect(empty)가 된다', () => {
     const out = makeRect();
-    fromBoundsInto(out, { min: { x: 5, y: 5 }, max: { x: 2, y: 2 } });
+    fromBoundsInto(out, { minX: 5, minY: 5, maxX: 2, maxY: 2 });
     expect(out).toEqual({ x: 5, y: 5, width: -3, height: -3 });
   });
 
   test('sentinel bounds를 변환한다 - Infinity 좌표 rect가 된다', () => {
     const out = makeRect();
-    fromBoundsInto(out, { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } });
+    fromBoundsInto(out, { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
     expect(out.x).toBe(Infinity);
     expect(out.y).toBe(Infinity);
     expect(out.width).toBe(-Infinity);
@@ -182,12 +184,6 @@ describe('rect.fromPointsInto', () => {
     expect(out).toEqual({ x: 3, y: 5, width: 0, height: 0 });
   });
 
-  test('단일 tuple 점을 처리한다', () => {
-    const out = makeRect();
-    rectFromPointsInto(out, [[4, 7]]);
-    expect(out).toEqual({ x: 4, y: 7, width: 0, height: 0 });
-  });
-
   test('복수 object 점의 extent를 rect로 기록한다', () => {
     const out = makeRect();
     rectFromPointsInto(out, [
@@ -198,19 +194,12 @@ describe('rect.fromPointsInto', () => {
     expect(out).toEqual({ x: 1, y: 1, width: 5, height: 4 });
   });
 
-  test('복수 tuple 점의 extent를 rect로 기록한다', () => {
+  test('x와 y의 최솟값이 서로 다른 점에 있어도 각 축을 계산한다', () => {
     const out = makeRect();
     rectFromPointsInto(out, [
-      [3, 1],
-      [1, 5],
-      [6, 2],
+      { x: 2, y: 8 },
+      { x: 5, y: 3 },
     ]);
-    expect(out).toEqual({ x: 1, y: 1, width: 5, height: 4 });
-  });
-
-  test('object와 tuple 혼합 점 배열을 처리한다', () => {
-    const out = makeRect();
-    rectFromPointsInto(out, [{ x: 2, y: 8 }, [5, 3]]);
     expect(out).toEqual({ x: 2, y: 3, width: 3, height: 5 });
   });
 
