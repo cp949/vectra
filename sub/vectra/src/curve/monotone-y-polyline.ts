@@ -1,8 +1,9 @@
-import type { MonotonePolylineOptions, XYInput, XYObjectWritable } from '../types';
+import type { MonotonePolylineOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { monotoneYPolylineInto } from './monotone-y-polyline-into';
 
 /**
- * y축이 strict monotonic인 point list를 monotone cubic을 segment당 균등 샘플링한 새 XYObjectWritable[] 배열을 반환한다.
+ * y축이 strict monotonic인 point list를 monotone cubic을 segment당 균등 샘플링한 새 PointWritable[] 배열을 반환한다.
  *
  * tangent slope는 Fritsch-Carlson(PCHIP) 방식으로 overshoot를 제한한다.
  * 첫 segment만 시작점을 포함하고 후속 segment는 연결점 중복을 피한다.
@@ -13,14 +14,14 @@ import { monotoneYPolylineInto } from './monotone-y-polyline-into';
  * 성능 최적화가 필요하면 `monotoneYPolylineInto`를 사용한다.
  *
  * @param points y축이 strict monotonic인 입력 point 배열
- * @param stepsOrOptions segment당 sample 수 또는 옵션 객체. 기본값 16.
- * @returns 새로 만든 XYObjectWritable point 배열
+ * @param options 구간별 표본 수 옵션. 생략하면 16점을 기록한다.
+ * @returns 새로 만든 PointWritable point 배열
  */
 export function monotoneYPolyline(
-  points: readonly XYInput[],
-  stepsOrOptions?: number | MonotonePolylineOptions
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
-  monotoneYPolylineInto(out, points, stepsOrOptions);
+  points: readonly Point[],
+  options?: Required<MonotonePolylineOptions>
+): PointWritable[] {
+  const out: PointWritable[] = [];
+  monotoneYPolylineInto(out, points, options);
   return out;
 }

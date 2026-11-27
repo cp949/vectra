@@ -1,4 +1,5 @@
-import type { PathCommand, StepCurveOptions, XYInput } from '../types';
+import type { PathCommand, StepCurveOptions } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { resolveStepMode, writeStepPath } from './step.internal';
 
 /**
@@ -18,9 +19,9 @@ import { resolveStepMode, writeStepPath } from './step.internal';
  */
 export function stepPathInto(
   out: PathCommand[],
-  points: readonly XYInput[],
-  options?: StepCurveOptions
+  points: readonly Point[],
+  options?: Required<StepCurveOptions>
 ): PathCommand[] {
-  const mode = resolveStepMode(options?.mode);
+  const mode = options === undefined ? 'middle' : resolveStepMode(options.mode);
   return writeStepPath(out, points, mode);
 }

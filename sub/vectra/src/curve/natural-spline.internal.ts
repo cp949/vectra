@@ -4,17 +4,16 @@
  * 좌표 읽기/검증, index parameter 기준 tridiagonal solve, cubic segment 생성을 모아둔다.
  * public natural spline leaf는 이 helper만 공유하고 서로를 직접 import하지 않는다.
  */
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 // 입력 point의 x/y를 배열로 읽고 모두 finite인지 검증한다. non-finite면 RangeError.
-function readFiniteAxes(points: readonly XYInput[]): { xs: number[]; ys: number[] } {
+function readFiniteAxes(points: readonly Point[]): { xs: number[]; ys: number[] } {
   const n = points.length;
   const xs = new Array<number>(n);
   const ys = new Array<number>(n);
   for (let i = 0; i < n; i++) {
-    const x = readX(points[i]);
-    const y = readY(points[i]);
+    const x = points[i].x;
+    const y = points[i].y;
     if (!Number.isFinite(x) || !Number.isFinite(y)) {
       throw new RangeError('natural spline requires finite coordinates');
     }
@@ -63,7 +62,7 @@ function solveNaturalSecondDerivatives(v: readonly number[]): number[] {
  * @param points natural spline이 통과할 입력 point 배열
  * @returns cubic segment flat 배열과 segment 수
  */
-export function naturalSplineCubicSegments(points: readonly XYInput[]): { segments: number[]; segCount: number } {
+export function naturalSplineCubicSegments(points: readonly Point[]): { segments: number[]; segCount: number } {
   const { xs, ys } = readFiniteAxes(points);
   const n = xs.length;
   const segCount = n - 1;

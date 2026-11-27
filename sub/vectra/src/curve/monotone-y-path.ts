@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types';
+import type { PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { monotoneYPathInto } from './monotone-y-path-into';
 
 /**
@@ -14,6 +15,6 @@ import { monotoneYPathInto } from './monotone-y-path-into';
  * @param points y축이 strict monotonic인 입력 point 배열
  * @returns 새로 만든 PathCommand 배열
  */
-export function monotoneYPath(points: readonly XYInput[]): PathCommand[] {
+export function monotoneYPath(points: readonly Point[]): PathCommand[] {
   return monotoneYPathInto([], points);
 }

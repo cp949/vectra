@@ -22,6 +22,7 @@ import type {
   CubicCurveWritable,
 } from '../../../src/types/flat-shapes.internal';
 
+import { stepPathInto } from '../../../src/curve/step-path-into';
 import { makeCenterArc } from './arc-test-helpers';
 
 const arc = makeCenterArc();
@@ -150,4 +151,8 @@ test('catmullRomPointAtTInto은 외부 클래스 출력의 참조와 반환 타�
   const result = catmullRomPointAtTInto(out, [arcPoint], 0.5);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('계단 경로는 점 객체 배열을 받는다', () => {
+  expectTypeOf(stepPathInto).parameter(1).toEqualTypeOf<readonly Point[]>();
 });

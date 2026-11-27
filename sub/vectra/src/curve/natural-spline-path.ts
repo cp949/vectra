@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types';
+import type { PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { naturalSplinePathInto } from './natural-spline-path-into';
 
 /**
@@ -13,6 +14,6 @@ import { naturalSplinePathInto } from './natural-spline-path-into';
  * @param points natural spline이 통과할 입력 point 배열
  * @returns 새로 만든 PathCommand 배열
  */
-export function naturalSplinePath(points: readonly XYInput[]): PathCommand[] {
+export function naturalSplinePath(points: readonly Point[]): PathCommand[] {
   return naturalSplinePathInto([], points);
 }

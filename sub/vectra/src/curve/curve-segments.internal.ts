@@ -5,7 +5,8 @@
  * segment는 flat number[]로 표현하고 각 segment는 8개 수
  * [p0x, p0y, c1x, c1y, c2x, c2y, p3x, p3y] 순서다. segment s의 p3는 segment s+1의 p0와 같다.
  */
-import type { PathCommand, XYWritable } from '../types';
+import type { PathCommand } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 
 /** segment당 sample 수를 검증한다. safe integer가 아니거나 1 미만이면 RangeError. */
 export function assertSamplesPerSegment(steps: number): void {
@@ -62,11 +63,11 @@ export function cubicSegmentsToPathInto(
  * @returns out
  */
 export function cubicSegmentsToPolylineInto(
-  out: XYWritable[],
+  out: PointWritable[],
   segments: readonly number[],
   segCount: number,
   steps: number
-): XYWritable[] {
+): PointWritable[] {
   assertSamplesPerSegment(steps);
   out.length = 0;
   for (let s = 0; s < segCount; s++) {

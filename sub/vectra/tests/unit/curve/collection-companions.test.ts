@@ -373,9 +373,9 @@ const MONO_Y = [
 const monotoneCompanionCases = [
   {
     name: 'monotoneXPolyline',
-    actual: () => monotoneXPolyline(MONO_X, 8),
-    expected: () => collect((out) => monotoneXPolylineInto(out, MONO_X, 8)),
-    empty: () => monotoneXPolyline([P0], 8),
+    actual: () => monotoneXPolyline(MONO_X, { steps: 8 }),
+    expected: () => collect((out) => monotoneXPolylineInto(out, MONO_X, { steps: 8 })),
+    empty: () => monotoneXPolyline([P0], { steps: 8 }),
   },
   {
     name: 'monotoneXPath',
@@ -385,9 +385,9 @@ const monotoneCompanionCases = [
   },
   {
     name: 'monotoneYPolyline',
-    actual: () => monotoneYPolyline(MONO_Y, 8),
-    expected: () => collect((out) => monotoneYPolylineInto(out, MONO_Y, 8)),
-    empty: () => monotoneYPolyline([P0], 8),
+    actual: () => monotoneYPolyline(MONO_Y, { steps: 8 }),
+    expected: () => collect((out) => monotoneYPolylineInto(out, MONO_Y, { steps: 8 })),
+    empty: () => monotoneYPolyline([P0], { steps: 8 }),
   },
   {
     name: 'monotoneYPath',
@@ -397,9 +397,9 @@ const monotoneCompanionCases = [
   },
   {
     name: 'naturalSplinePolyline',
-    actual: () => naturalSplinePolyline(POINTS, 8),
-    expected: () => collect((out) => naturalSplinePolylineInto(out, POINTS, 8)),
-    empty: () => naturalSplinePolyline([P0], 8),
+    actual: () => naturalSplinePolyline(POINTS, { steps: 8 }),
+    expected: () => collect((out) => naturalSplinePolylineInto(out, POINTS, { steps: 8 })),
+    empty: () => naturalSplinePolyline([P0], { steps: 8 }),
   },
   {
     name: 'naturalSplinePath',

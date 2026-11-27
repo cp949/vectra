@@ -102,7 +102,7 @@ describe('naturalSplinePathInto', () => {
 describe('naturalSplinePolylineInto', () => {
   it('segment 끝점을 포함하고 join duplicate를 만들지 않는다', () => {
     const out: XYObjectWritable[] = [];
-    naturalSplinePolylineInto(out, TRI, 4);
+    naturalSplinePolylineInto(out, TRI, { steps: 4 });
     // 2 segment, steps=4: 4 + 1*(4-1) = 7 point
     expect(out).toHaveLength(7);
     expect(out[0]).toEqual({ x: 0, y: 0 });
@@ -115,7 +115,7 @@ describe('naturalSplinePolylineInto', () => {
 
   it('steps=1은 입력 vertex polyline을 반환한다', () => {
     const out: XYObjectWritable[] = [];
-    naturalSplinePolylineInto(out, TRI, 1);
+    naturalSplinePolylineInto(out, TRI, { steps: 1 });
     expect(out).toHaveLength(3);
     expect(out[0]).toEqual({ x: 0, y: 0 });
     expect(out[2].x).toBeCloseTo(2, 10);
@@ -123,10 +123,10 @@ describe('naturalSplinePolylineInto', () => {
   });
 
   it('invalid steps는 RangeError를 던진다', () => {
-    expect(() => naturalSplinePolylineInto([], TRI, 0)).toThrow(RangeError);
-    expect(() => naturalSplinePolylineInto([], TRI, -1)).toThrow(RangeError);
-    expect(() => naturalSplinePolylineInto([], TRI, 3.5)).toThrow(RangeError);
-    expect(() => naturalSplinePolylineInto([], TRI, 2 ** 53)).toThrow(RangeError);
+    expect(() => naturalSplinePolylineInto([], TRI, { steps: 0 })).toThrow(RangeError);
+    expect(() => naturalSplinePolylineInto([], TRI, { steps: -1 })).toThrow(RangeError);
+    expect(() => naturalSplinePolylineInto([], TRI, { steps: 3.5 })).toThrow(RangeError);
+    expect(() => naturalSplinePolylineInto([], TRI, { steps: 2 ** 53 })).toThrow(RangeError);
   });
 
   it('points < 2이면 빈 배열을 반환한다', () => {

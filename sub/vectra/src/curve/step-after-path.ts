@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types';
+import type { PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { stepAfterPathInto } from './step-after-path-into';
 
 /**
@@ -13,6 +14,6 @@ import { stepAfterPathInto } from './step-after-path-into';
  * @param points step path가 통과할 입력 point 배열
  * @returns 새로 만든 PathCommand 배열
  */
-export function stepAfterPath(points: readonly XYInput[]): PathCommand[] {
+export function stepAfterPath(points: readonly Point[]): PathCommand[] {
   return stepAfterPathInto([], points);
 }

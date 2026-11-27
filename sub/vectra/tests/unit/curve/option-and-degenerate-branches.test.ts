@@ -170,15 +170,6 @@ describe('spline polyline 옵션 객체', () => {
     expect(closed).not.toEqual(catmullRomPolylineInto([], points, { steps: 4, alpha: 0.5, closed: false }));
   });
 
-  test('monotoneYPolylineInto는 steps 옵션 객체와 숫자 인자가 같은 결과를 낸다', () => {
-    const ys = [
-      { x: 0, y: 0 },
-      { x: 1, y: 1 },
-      { x: 3, y: 2 },
-    ];
-    expect(monotoneYPolylineInto([], ys, { steps: 5 })).toEqual(monotoneYPolylineInto([], ys, 5));
-  });
-
   test('monotoneYPolylineInto는 두 점이면 직선 위의 점을 만든다', () => {
     // 접선이 0으로 잘못 잡히면 t=1/3 표본이 직선에서 벗어난다.
     const out: XYObjectWritable[] = [];
@@ -188,20 +179,20 @@ describe('spline polyline 옵션 객체', () => {
         { x: 0, y: 0 },
         { x: 1, y: 1 },
       ],
-      4
+      { steps: 4 }
     );
     expect(out).toHaveLength(4);
     for (const p of out) expect(p.x).toBeCloseTo(p.y, 12);
     expect(out[1].y).toBeCloseTo(1 / 3, 12);
   });
 
-  test('monotoneYPolylineInto는 빈 옵션 객체면 기본 steps를 쓴다', () => {
+  test('monotoneYPolylineInto는 기본 steps를 명시해도 옵션을 생략한 결과와 같다', () => {
     const ys = [
       { x: 0, y: 0 },
       { x: 1, y: 1 },
     ];
-    expect(monotoneYPolylineInto([], ys, {})).toEqual(monotoneYPolylineInto([], ys));
-    expect(monotoneYPolylineInto([], ys, {})).toHaveLength(16);
+    expect(monotoneYPolylineInto([], ys, { steps: 16 })).toEqual(monotoneYPolylineInto([], ys));
+    expect(monotoneYPolylineInto([], ys, { steps: 16 })).toHaveLength(16);
   });
 });
 

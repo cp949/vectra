@@ -1,4 +1,5 @@
-import type { StepCurveOptions, XYInput, XYWritable } from '../types';
+import type { StepCurveOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { resolveStepMode, writeStepPolyline } from './step.internal';
 
 /**
@@ -16,10 +17,10 @@ import { resolveStepMode, writeStepPolyline } from './step.internal';
  * @returns out
  */
 export function stepPolylineInto(
-  out: XYWritable[],
-  points: readonly XYInput[],
-  options?: StepCurveOptions
-): XYWritable[] {
-  const mode = resolveStepMode(options?.mode);
+  out: PointWritable[],
+  points: readonly Point[],
+  options?: Required<StepCurveOptions>
+): PointWritable[] {
+  const mode = options === undefined ? 'middle' : resolveStepMode(options.mode);
   return writeStepPolyline(out, points, mode);
 }

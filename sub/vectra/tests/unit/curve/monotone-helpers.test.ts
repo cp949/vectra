@@ -14,10 +14,11 @@ import { monotoneXPathInto } from '../../../src/curve/monotone-x-path-into';
 import { monotoneXPolylineInto } from '../../../src/curve/monotone-x-polyline-into';
 import { monotoneYPathInto } from '../../../src/curve/monotone-y-path-into';
 import { monotoneYPolylineInto } from '../../../src/curve/monotone-y-polyline-into';
-import type { CubicCommand, PathCommand, XYInput, XYObjectWritable } from '../../../src/types';
+import type { CubicCommand, PathCommand, XYObjectWritable } from '../../../src/types';
+import type { Point } from '../../../src/types/flat-shapes.internal';
 
 // x축이 strict 증가하는 표준 입력.
-const X_INC: XYInput[] = [
+const X_INC: Point[] = [
   { x: 0, y: 0 },
   { x: 1, y: 1 },
   { x: 2, y: 3 },
@@ -25,7 +26,7 @@ const X_INC: XYInput[] = [
 ];
 
 // 증가 후 plateau 후 감소: overshoot 제한 검증용. 모든 y는 [0, 1]에 머물러야 한다.
-const X_PLATEAU: XYInput[] = [
+const X_PLATEAU: Point[] = [
   { x: 0, y: 0 },
   { x: 1, y: 1 },
   { x: 2, y: 1 },
@@ -33,7 +34,7 @@ const X_PLATEAU: XYInput[] = [
 ];
 
 // y축이 strict 증가하고 x는 monotonic이 아닌 입력.
-const Y_INC: XYInput[] = [
+const Y_INC: Point[] = [
   { x: 0, y: 0 },
   { x: 2, y: 1 },
   { x: 2, y: 2 },
@@ -41,25 +42,15 @@ const Y_INC: XYInput[] = [
 ];
 
 // path가 입력 point를 segment endpoint로 통과하는지 검증한다.
-function expectPathThroughPoints(out: PathCommand[], points: XYInput[]): void {
-  expect(out[0]).toEqual({ kind: 'move', x: rx(points[0]), y: ry(points[0]) });
+function expectPathThroughPoints(out: PathCommand[], points: Point[]): void {
+  expect(out[0]).toEqual({ kind: 'move', x: points[0].x, y: points[0].y });
   expect(out).toHaveLength(points.length);
   for (let i = 1; i < points.length; i++) {
     const cmd = out[i] as CubicCommand;
     expect(cmd.kind).toBe('cubic');
-    expect(cmd.x).toBeCloseTo(rx(points[i]), 10);
-    expect(cmd.y).toBeCloseTo(ry(points[i]), 10);
+    expect(cmd.x).toBeCloseTo(points[i].x, 10);
+    expect(cmd.y).toBeCloseTo(points[i].y, 10);
   }
-}
-
-/** XYInput에서 x를 읽는 테스트 helper. object 입력만 사용한다. */
-function rx(p: XYInput): number {
-  return (p as { x: number }).x;
-}
-
-/** XYInput에서 y를 읽는 테스트 helper. object 입력만 사용한다. */
-function ry(p: XYInput): number {
-  return (p as { y: number }).y;
 }
 
 describe('monotoneXPathInto', () => {
@@ -69,7 +60,7 @@ describe('monotoneXPathInto', () => {
   });
 
   it('감소하는 x도 입력 순서대로 통과한다', () => {
-    const dec: XYInput[] = [
+    const dec: Point[] = [
       { x: 3, y: 0 },
       { x: 2, y: 2 },
       { x: 1, y: 2 },
@@ -157,7 +148,7 @@ describe('monotoneYPathInto', () => {
   });
 
   it('감소하는 y도 입력 순서대로 통과한다', () => {
-    const dec: XYInput[] = [
+    const dec: Point[] = [
       { x: 0, y: 3 },
       { x: 2, y: 2 },
       { x: 2, y: 1 },
@@ -214,7 +205,7 @@ describe('monotoneYPathInto', () => {
 describe('monotoneXPolylineInto', () => {
   it('segment 끝점을 포함하고 join duplicate를 만들지 않는다', () => {
     const out: XYObjectWritable[] = [];
-    monotoneXPolylineInto(out, X_INC, 3);
+    monotoneXPolylineInto(out, X_INC, { steps: 3 });
     // 3 segment, steps=3: 3 + 2*(3-1) = 7 point
     expect(out).toHaveLength(7);
     expect(out[0]).toEqual({ x: 0, y: 0 });
@@ -228,7 +219,7 @@ describe('monotoneXPolylineInto', () => {
 
   it('local monotone(plateau) data에서 sampled y가 [0,1]을 벗어나지 않는다', () => {
     const out: XYObjectWritable[] = [];
-    monotoneXPolylineInto(out, X_PLATEAU, 12);
+    monotoneXPolylineInto(out, X_PLATEAU, { steps: 12 });
     for (const p of out) {
       expect(p.y).toBeLessThanOrEqual(1 + 1e-9);
       expect(p.y).toBeGreaterThanOrEqual(-1e-9);
@@ -237,22 +228,22 @@ describe('monotoneXPolylineInto', () => {
 
   it('steps=1은 입력 vertex polyline을 반환한다', () => {
     const out: XYObjectWritable[] = [];
-    monotoneXPolylineInto(out, X_INC, 1);
+    monotoneXPolylineInto(out, X_INC, { steps: 1 });
     expect(out).toHaveLength(4);
     expect(out[0]).toEqual({ x: 0, y: 0 });
     expect(out[3].x).toBeCloseTo(3, 10);
   });
 
   it('invalid steps는 RangeError를 던진다', () => {
-    expect(() => monotoneXPolylineInto([], X_INC, 0)).toThrow(RangeError);
-    expect(() => monotoneXPolylineInto([], X_INC, -1)).toThrow(RangeError);
-    expect(() => monotoneXPolylineInto([], X_INC, 2.5)).toThrow(RangeError);
-    expect(() => monotoneXPolylineInto([], X_INC, 2 ** 53)).toThrow(RangeError);
+    expect(() => monotoneXPolylineInto([], X_INC, { steps: 0 })).toThrow(RangeError);
+    expect(() => monotoneXPolylineInto([], X_INC, { steps: -1 })).toThrow(RangeError);
+    expect(() => monotoneXPolylineInto([], X_INC, { steps: 2.5 })).toThrow(RangeError);
+    expect(() => monotoneXPolylineInto([], X_INC, { steps: 2 ** 53 })).toThrow(RangeError);
   });
 
   it('invalid steps RangeError 시 out 내용을 변경하지 않는다', () => {
     const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
-    expect(() => monotoneXPolylineInto(out, X_INC, 0)).toThrow(RangeError);
+    expect(() => monotoneXPolylineInto(out, X_INC, { steps: 0 })).toThrow(RangeError);
     expect(out).toEqual([{ x: 9, y: 9 }]);
   });
 
@@ -264,7 +255,7 @@ describe('monotoneXPolylineInto', () => {
 describe('monotoneYPolylineInto', () => {
   it('segment 끝점을 포함하고 sampled x/y가 단조성을 유지한다', () => {
     const out: XYObjectWritable[] = [];
-    monotoneYPolylineInto(out, Y_INC, 8);
+    monotoneYPolylineInto(out, Y_INC, { steps: 8 });
     expect(out[0]).toEqual({ x: 0, y: 0 });
     expect(out[out.length - 1].y).toBeCloseTo(3, 10);
     // y는 strict 증가 data이므로 sampled y가 비감소다.

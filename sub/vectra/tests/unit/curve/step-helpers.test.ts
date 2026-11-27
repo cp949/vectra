@@ -13,14 +13,15 @@ import { stepAfterPathInto } from '../../../src/curve/step-after-path-into';
 import { stepBeforePathInto } from '../../../src/curve/step-before-path-into';
 import { stepPathInto } from '../../../src/curve/step-path-into';
 import { stepPolylineInto } from '../../../src/curve/step-polyline-into';
-import type { XYInput, XYObjectWritable } from '../../../src/types';
+import type { XYObjectWritable } from '../../../src/types';
+import type { Point } from '../../../src/types/flat-shapes.internal';
 
-const SEG: XYInput[] = [
+const SEG: Point[] = [
   { x: 0, y: 0 },
   { x: 10, y: 4 },
 ];
 
-const TRI: XYInput[] = [
+const TRI: Point[] = [
   { x: 0, y: 0 },
   { x: 10, y: 4 },
   { x: 20, y: 0 },
@@ -82,20 +83,6 @@ describe('stepPolylineInto', () => {
     const out: XYObjectWritable[] = [];
     stepPolylineInto(out, [{ x: 1, y: 2 }]);
     expect(out).toEqual([]);
-  });
-
-  it('tuple 입력도 object 입력과 같은 결과를 만든다', () => {
-    const out: XYObjectWritable[] = [];
-    stepPolylineInto(out, [
-      [0, 0],
-      [10, 4],
-    ]);
-    expect(out).toEqual([
-      { x: 0, y: 0 },
-      { x: 5, y: 0 },
-      { x: 5, y: 4 },
-      { x: 10, y: 4 },
-    ]);
   });
 
   it('consecutive duplicate point를 제거하지 않는다', () => {

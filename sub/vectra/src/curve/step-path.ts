@@ -1,4 +1,5 @@
-import type { PathCommand, StepCurveOptions, XYInput } from '../types';
+import type { PathCommand, StepCurveOptions } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { stepPathInto } from './step-path-into';
 
 /**
@@ -16,6 +17,6 @@ import { stepPathInto } from './step-path-into';
  * @param options step elbow mode 옵션. mode 기본값 'middle'.
  * @returns 새로 만든 PathCommand 배열
  */
-export function stepPath(points: readonly XYInput[], options?: StepCurveOptions): PathCommand[] {
+export function stepPath(points: readonly Point[], options?: Required<StepCurveOptions>): PathCommand[] {
   return stepPathInto([], points, options);
 }

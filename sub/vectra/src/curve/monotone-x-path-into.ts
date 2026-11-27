@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types';
+import type { PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { cubicSegmentsToPathInto } from './curve-segments.internal';
 import { monotoneCubicSegments } from './monotone.internal';
 
@@ -15,7 +16,7 @@ import { monotoneCubicSegments } from './monotone.internal';
  * @param points x축이 strict monotonic인 입력 point 배열
  * @returns out
  */
-export function monotoneXPathInto(out: PathCommand[], points: readonly XYInput[]): PathCommand[] {
+export function monotoneXPathInto(out: PathCommand[], points: readonly Point[]): PathCommand[] {
   out.length = 0;
   if (points.length < 2) return out;
   const { segments, segCount } = monotoneCubicSegments(points, 'x');

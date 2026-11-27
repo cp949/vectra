@@ -4,16 +4,15 @@
  * mode 정규화, orthogonal vertex 생성, polyline/path 기록 helper를 모아둔다.
  * public step leaf는 이 helper만 공유하고 서로를 직접 import하지 않는다.
  */
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, StepCurveMode, XYInput, XYWritable } from '../types';
+import type { PathCommand, StepCurveMode } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
-/** step mode를 검증해 정규화한다. 생략 시 'middle'. invalid mode는 RangeError. */
-export function resolveStepMode(mode: StepCurveMode | undefined): StepCurveMode {
-  const resolved = mode ?? 'middle';
-  if (resolved !== 'middle' && resolved !== 'before' && resolved !== 'after') {
-    throw new RangeError(`mode must be 'middle' | 'before' | 'after', got ${String(resolved)}`);
+/** step mode를 검증한다. 범위를 벗어나면 RangeError. */
+export function resolveStepMode(mode: StepCurveMode): StepCurveMode {
+  if (mode !== 'middle' && mode !== 'before' && mode !== 'after') {
+    throw new RangeError(`mode must be 'middle' | 'before' | 'after', got ${String(mode)}`);
   }
-  return resolved;
+  return mode;
 }
 
 /**
@@ -27,17 +26,13 @@ export function resolveStepMode(mode: StepCurveMode | undefined): StepCurveMode 
  * @param mode step elbow 위치 정책
  * @param visit 각 vertex의 (x, y)를 받는 콜백
  */
-function forEachStepVertex(
-  points: readonly XYInput[],
-  mode: StepCurveMode,
-  visit: (x: number, y: number) => void
-): void {
-  let xPrev = readX(points[0]);
-  let yPrev = readY(points[0]);
+function forEachStepVertex(points: readonly Point[], mode: StepCurveMode, visit: (x: number, y: number) => void): void {
+  let xPrev = points[0].x;
+  let yPrev = points[0].y;
   visit(xPrev, yPrev);
   for (let i = 1; i < points.length; i++) {
-    const xCur = readX(points[i]);
-    const yCur = readY(points[i]);
+    const xCur = points[i].x;
+    const yCur = points[i].y;
     if (mode === 'middle') {
       const midX = (xPrev + xCur) / 2;
       visit(midX, yPrev);
@@ -63,7 +58,11 @@ function forEachStepVertex(
  * @param mode 정규화된 step elbow mode
  * @returns out
  */
-export function writeStepPolyline(out: XYWritable[], points: readonly XYInput[], mode: StepCurveMode): XYWritable[] {
+export function writeStepPolyline(
+  out: PointWritable[],
+  points: readonly Point[],
+  mode: StepCurveMode
+): PointWritable[] {
   out.length = 0;
   if (points.length < 2) return out;
   forEachStepVertex(points, mode, (x, y) => {
@@ -82,7 +81,7 @@ export function writeStepPolyline(out: XYWritable[], points: readonly XYInput[],
  * @param mode 정규화된 step elbow mode
  * @returns out
  */
-export function writeStepPath(out: PathCommand[], points: readonly XYInput[], mode: StepCurveMode): PathCommand[] {
+export function writeStepPath(out: PathCommand[], points: readonly Point[], mode: StepCurveMode): PathCommand[] {
   out.length = 0;
   if (points.length < 2) return out;
   let first = true;

@@ -1,4 +1,5 @@
-import type { MonotonePolylineOptions, XYInput, XYWritable } from '../types';
+import type { MonotonePolylineOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { cubicSegmentsToPolylineInto } from './curve-segments.internal';
 import { monotoneCubicSegments } from './monotone.internal';
 
@@ -16,15 +17,15 @@ const DEFAULT_STEPS = 16;
  *
  * @param out point를 기록할 writable point 배열. 기존 내용은 덮어쓴다.
  * @param points x축이 strict monotonic인 입력 point 배열
- * @param stepsOrOptions segment당 sample 수 또는 옵션 객체. 기본값 16.
+ * @param options 구간별 표본 수 옵션. 생략하면 16점을 기록한다.
  * @returns out
  */
 export function monotoneXPolylineInto(
-  out: XYWritable[],
-  points: readonly XYInput[],
-  stepsOrOptions?: number | MonotonePolylineOptions
-): XYWritable[] {
-  const steps = typeof stepsOrOptions === 'number' ? stepsOrOptions : (stepsOrOptions?.steps ?? DEFAULT_STEPS);
+  out: PointWritable[],
+  points: readonly Point[],
+  options?: Required<MonotonePolylineOptions>
+): PointWritable[] {
+  const steps = options === undefined ? DEFAULT_STEPS : options.steps;
   if (points.length < 2) {
     out.length = 0;
     return out;
