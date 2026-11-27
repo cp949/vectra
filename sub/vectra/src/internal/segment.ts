@@ -93,7 +93,14 @@ export function createLegacySegment(): SegmentWritable {
   return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
 }
 
-/** 선분 길이가 주어진 오차 이하인지 판정한다. */
+/**
+ * 선분 길이가 주어진 오차 이하인지 판정한다.
+ *
+ * 공개 isZeroLength와 단일 교점 계산이 공유한다.
+ *
+ * @param line 판정할 선분
+ * @param epsilon 허용할 길이 오차
+ */
 export function segmentIsZeroLength(line: Segment, epsilon: number): boolean {
   const dx = line.x2 - line.x1;
   const dy = line.y2 - line.y1;

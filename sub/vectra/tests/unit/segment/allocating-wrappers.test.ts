@@ -120,7 +120,7 @@ describe('segment 할당형 wrapper - 값 확인', () => {
     expect(end(makeFlatLine())).toEqual({ x: 4, y: 6 });
   });
 
-  test('vector는 b - a를 반환한다', () => {
+  test('vector는 끝점에서 시작점을 뺀 벡터를 반환한다', () => {
     expect(vector(makeFlatLine())).toEqual({ x: 3, y: 4 });
   });
 

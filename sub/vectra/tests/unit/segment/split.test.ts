@@ -11,7 +11,7 @@ const splitOut = (): SegmentSplitWritable => ({
 });
 
 describe('segment split - splitInto', () => {
-  test('t=0.25에서 left a->p, right p->b로 분할하고 out을 반환한다', () => {
+  test('t=0.25에서 시작점–분할점, 분할점–끝점으로 나누고 out을 반환한다', () => {
     const out = splitOut();
 
     const result = splitInto(out, { x1: 0, y1: 0, x2: 4, y2: 8 }, 0.25);
@@ -66,7 +66,7 @@ describe('segment split - splitInto', () => {
     expect(out.right).toEqual({ x1: 3, y1: 7, x2: 3, y2: 7 });
   });
 
-  test('endpoint a 좌표가 NaN이면 arithmetic 결과를 그대로 기록한다', () => {
+  test('시작점 좌표가 NaN이면 arithmetic 결과를 그대로 기록한다', () => {
     const out = splitOut();
 
     splitInto(out, { x1: Number.NaN, y1: 0, x2: 4, y2: 8 }, 0.5);
@@ -75,7 +75,7 @@ describe('segment split - splitInto', () => {
     expect(out.right).toEqual({ x1: Number.NaN, y1: 4, x2: 4, y2: 8 });
   });
 
-  test('endpoint b 좌표가 ±Infinity면 arithmetic 결과를 그대로 기록한다', () => {
+  test('끝점 좌표가 ±Infinity면 arithmetic 결과를 그대로 기록한다', () => {
     const out = splitOut();
 
     splitInto(out, { x1: 0, y1: 0, x2: Number.POSITIVE_INFINITY, y2: Number.NEGATIVE_INFINITY }, 0.5);
@@ -89,7 +89,7 @@ describe('segment split - splitInto', () => {
     });
   });
 
-  test('t<=0 boundary는 non-finite b와 산술하지 않고 a와 원본 segment를 보존한다', () => {
+  test('t<=0 boundary는 non-finite 끝점과 산술하지 않고 시작점과 원본 선분을 보존한다', () => {
     const out = splitOut();
 
     splitInto(out, { x1: 1, y1: 2, x2: Number.POSITIVE_INFINITY, y2: Number.NEGATIVE_INFINITY }, -0.5);
@@ -98,7 +98,7 @@ describe('segment split - splitInto', () => {
     expect(out.right).toEqual({ x1: 1, y1: 2, x2: Number.POSITIVE_INFINITY, y2: Number.NEGATIVE_INFINITY });
   });
 
-  test('t>=1 boundary는 non-finite a와 산술하지 않고 원본 segment와 b를 보존한다', () => {
+  test('t>=1 boundary는 non-finite 시작점과 산술하지 않고 원본 선분과 끝점을 보존한다', () => {
     const out = splitOut();
 
     splitInto(out, { x1: Number.POSITIVE_INFINITY, y1: Number.NEGATIVE_INFINITY, x2: 3, y2: 4 }, 1.5);

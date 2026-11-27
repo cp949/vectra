@@ -4,10 +4,11 @@ import type { Segment } from '../types/flat-shapes.internal';
 /**
  * segment를 normalized `t` 기준으로 left/right 두 segment로 분할해 out에 기록하고 out을 반환한다.
  *
- * `t`는 `[0, 1]`로 clamp한다. `t <= 0`이면 `left`는 zero-length `a -> a`, `right`는 원본 `a -> b`다.
- * `t >= 1`이면 `left`는 원본 `a -> b`, `right`는 zero-length `b -> b`다. `0 < t < 1`이면 분할점
- * `p = a + t * (b - a)`로 `left = a -> p`, `right = p -> b`다. 왼쪽 선분의 끝점과 오른쪽 선분의 시작점은 같은 좌표값을
- * 갖는다.
+ * 시작점을 `A`, 끝점을 `B`라 한다. `t`는 `[0, 1]`로 clamp한다.
+ * - `t <= 0`: `left`는 zero-length `A -> A`, `right`는 원본 `A -> B`다.
+ * - `t >= 1`: `left`는 원본 `A -> B`, `right`는 zero-length `B -> B`다.
+ * - `0 < t < 1`: 분할점 `P = A + t * (B - A)`로 `left = A -> P`, `right = P -> B`다.
+ * - 왼쪽 선분의 끝점과 오른쪽 선분의 시작점은 같은 좌표값을 갖는다.
  *
  * zero-length segment도 실패가 아니다. 두 output 모두 zero-length가 된다. `t`가 non-finite이면
  * `RangeError`로 fail-fast한다(`pointAtTInto`의 unclamped/non-finite pass-through 정책과 무관한

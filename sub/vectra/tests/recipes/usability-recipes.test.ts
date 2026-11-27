@@ -25,7 +25,6 @@ describe('레시피 1: segment 투영과 snap point 계산', () => {
     const { length } = await import('../../src/segment/length');
 
     const line = { x1: 0, y1: 0, x2: 100, y2: 0 };
-    // v2-migration: projectionT는 아직 중첩 끝점을 받는다.
     const pointer = { x: 50, y: 30 };
 
     // caller-owned output — 재사용 가능한 object

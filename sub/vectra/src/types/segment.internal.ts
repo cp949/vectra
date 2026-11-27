@@ -35,10 +35,10 @@ export interface SegmentSplitWritable<
   Left extends FlatSegmentWritable = FlatSegmentWritable,
   Right extends FlatSegmentWritable = FlatSegmentWritable,
 > {
-  /** 분할 결과 앞쪽 segment `a -> p` */
+  /** 분할 결과 앞쪽 선분. 원본 시작점에서 분할점까지다. */
   left: Left;
 
-  /** 분할 결과 뒤쪽 segment `p -> b` */
+  /** 분할 결과 뒤쪽 선분. 분할점에서 원본 끝점까지다. */
   right: Right;
 }
 

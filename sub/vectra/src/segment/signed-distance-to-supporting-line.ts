@@ -5,7 +5,7 @@ import { hypot2 } from '../internal/numeric';
  * point에서 segment의 supporting infinite line까지 부호 있는 거리를 반환한다.
  *
  * 공식: `cross(d, point - a) / |d|`
- * - `d = b - a`, cross product는 2D outer product `d.x * (py - ay) - d.y * (px - ax)`.
+ * - `d = (x2 - x1, y2 - y1)`, cross product는 2D outer product `d.x * (py - y1) - d.y * (px - x1)`.
  * - 좌측(진행 방향 기준 left)이 양수, 우측이 음수.
  * - zero-length segment(|d| === 0): 0을 반환한다.
  * - non-finite 입력은 별도 validation 없이 JavaScript number 연산 결과를 따른다.

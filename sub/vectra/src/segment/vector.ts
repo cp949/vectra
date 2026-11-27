@@ -2,7 +2,7 @@ import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 import { vectorInto } from './vector-into';
 
 /**
- * b - a 벡터를 새 object로 반환한다.
+ * 끝점 - 시작점 벡터를 새 object로 반환한다.
  *
  * @param line 대상 segment
  */

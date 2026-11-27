@@ -1,7 +1,7 @@
 import type { Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
- * a + t * (b - a) 위치를 unclamped로 out에 기록하고 out을 반환한다.
+ * 시작점 + t * (끝점 - 시작점) 위치를 unclamped로 out에 기록하고 out을 반환한다.
  *
  * @param out 위치를 기록할 점 객체
  * @param line 대상 segment

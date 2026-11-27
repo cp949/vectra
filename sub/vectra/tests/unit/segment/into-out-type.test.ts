@@ -1,4 +1,4 @@
-/** 선분 조회와 복사의 Into 함수가 외부 클래스의 인스턴스와 타입을 보존하는지 검증한다. */
+/** 선분 Into 함수가 외부 클래스의 인스턴스와 타입을 보존하는지 검증한다. */
 import { expect, expectTypeOf, test } from 'vitest';
 import { angle } from '../../../src/segment/angle';
 import { boundsInto } from '../../../src/segment/bounds-into';
@@ -35,12 +35,14 @@ import type { SegmentSubdivideOptions } from '../../../src/types';
 import type { PointAtLengthOptions } from '../../../src/types';
 import type { PointWritable, Segment, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
+/** 점 좌표에 호출자 상태를 덧붙인 출력 객체다. */
 class OutputPoint {
   x = 0;
   y = 0;
   label = 'point';
 }
 
+/** 선분 좌표에 호출자 상태를 덧붙인 출력 객체다. */
 class OutputSegment {
   x1 = 0;
   y1 = 0;
@@ -49,6 +51,7 @@ class OutputSegment {
   label = 'segment';
 }
 
+/** 경계 좌표에 호출자 상태를 덧붙인 출력 객체다. */
 class OutputBounds {
   minX = 0;
   minY = 0;
@@ -217,6 +220,7 @@ test('행렬 변환과 평행 이동 Into는 선분 출력의 구체 타입과 �
   expect(translated).toBe(out);
 });
 
+/** 두 선분과 호출자 상태를 담는 분할 출력 객체다. */
 class OutputSplit {
   left = new OutputSegment();
   right = new OutputSegment();
@@ -240,9 +244,12 @@ test('subdivideInto는 새 선분을 추가하므로 원소 타입을 SegmentWri
   const out: OutputSegment[] = [];
   const result = subdivideInto(out, { x1: 1, y1: 2, x2: 5, y2: 2 });
 
-  expectTypeOf<SegmentSubdivideOptions>().toEqualTypeOf<{ count: number }>();
   expectTypeOf(result).toEqualTypeOf<SegmentWritable[]>();
   expect(result).toBe(out);
   expect(result).toHaveLength(2);
   expect(result[0]).not.toBeInstanceOf(OutputSegment);
+});
+
+test('균등 분할 옵션은 count 필드를 요구한다', () => {
+  expectTypeOf<SegmentSubdivideOptions>().toEqualTypeOf<{ count: number }>();
 });

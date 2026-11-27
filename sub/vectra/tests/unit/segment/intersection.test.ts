@@ -25,7 +25,7 @@ describe('singleIntersectionInto — X자 교차', () => {
 describe('singleIntersectionInto — endpoint touch', () => {
   test('shared endpoint touch는 해당 endpoint를 기록하고 true를 반환한다', () => {
     const out = { x: 0, y: 0 };
-    // a.b === b.a: t1=1, t2=0 → a.b 우선
+    // a의 끝점이 b의 시작점과 같다: t1=1, t2=0 → a의 끝점 우선
     const a = { x1: 0, y1: 0, x2: 5, y2: 5 };
     const b = { x1: 5, y1: 5, x2: 10, y2: 0 };
     const result = singleIntersectionInto(out, a, b);
@@ -35,7 +35,7 @@ describe('singleIntersectionInto — endpoint touch', () => {
 
   test('T자 교차에서 b endpoint가 a interior에 닿을 때 b endpoint를 기록한다', () => {
     const out = { x: 0, y: 0 };
-    // t1=0.5, t2=1 → t2 endpoint(b.b)를 기록
+    // t1=0.5, t2=1 → b의 끝점을 기록
     const a = { x1: 0, y1: 0, x2: 10, y2: 0 };
     const b = { x1: 5, y1: -5, x2: 5, y2: 0 };
     const result = singleIntersectionInto(out, a, b);
@@ -45,7 +45,7 @@ describe('singleIntersectionInto — endpoint touch', () => {
 
   test('a endpoint가 b interior에 닿을 때 a endpoint를 기록한다', () => {
     const out = { x: 0, y: 0 };
-    // a.b=(5,0) lies on b, t1=1 → a.b 기록
+    // a의 끝점 (5, 0)이 b 위에 있다: t1=1 → a의 끝점 기록
     const a = { x1: 0, y1: 0, x2: 5, y2: 0 };
     const b = { x1: 0, y1: -5, x2: 10, y2: 5 };
     const result = singleIntersectionInto(out, a, b);

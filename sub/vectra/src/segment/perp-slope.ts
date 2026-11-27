@@ -1,7 +1,7 @@
 import type { Segment } from '../types/flat-shapes.internal';
 
 /**
- * segment a→b의 supporting line에 수직인 직선의 기울기를 반환한다.
+ * 선분 (x1, y1) → (x2, y2)의 supporting line에 수직인 직선의 기울기를 반환한다.
  *
  * - horizontal segment(dy === 0, dx !== 0): Infinity.
  * - vertical segment(dx === 0, dy !== 0): 0.

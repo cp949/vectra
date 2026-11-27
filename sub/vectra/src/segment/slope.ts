@@ -1,7 +1,7 @@
 import type { Segment } from '../types/flat-shapes.internal';
 
 /**
- * segment a→b의 기울기(dy / dx)를 반환한다.
+ * 선분 (x1, y1) → (x2, y2)의 기울기(dy / dx)를 반환한다.
  *
  * - vertical segment(dx === 0, dy !== 0): dy > 0이면 Infinity, dy < 0이면 -Infinity.
  * - zero-length segment(dx === 0, dy === 0): NaN.

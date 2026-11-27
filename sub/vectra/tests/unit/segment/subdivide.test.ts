@@ -6,10 +6,11 @@
 import { describe, expect, test } from 'vitest';
 import { subdivide } from '../../../src/segment/subdivide';
 import { subdivideInto } from '../../../src/segment/subdivide-into';
+import type { SegmentSubdivideOptions } from '../../../src/types';
 import type { Segment, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('segment subdivide - subdivideInto', () => {
-  test('기본 count 2로 segment를 두 등분하고 out을 반환한다', () => {
+  test('옵션을 생략하면 선분을 두 등분하고 out을 반환한다', () => {
     const out: SegmentWritable[] = [];
 
     const result = subdivideInto(out, { x1: 0, y1: 0, x2: 8, y2: 0 });
@@ -21,7 +22,7 @@ describe('segment subdivide - subdivideInto', () => {
     ]);
   });
 
-  test('count 4로 [0,0] -> [8,0]을 4개 segment로 나눈다', () => {
+  test('count 4로 (0, 0) → (8, 0) 선분을 4개로 나눈다', () => {
     const out: SegmentWritable[] = [];
 
     subdivideInto(out, { x1: 0, y1: 0, x2: 8, y2: 0 }, { count: 4 });
@@ -93,7 +94,7 @@ describe('segment subdivide - subdivideInto', () => {
     ]);
   });
 
-  test('endpoint a 좌표가 NaN이면 arithmetic 결과를 그대로 기록한다', () => {
+  test('시작점 좌표가 NaN이면 arithmetic 결과를 그대로 기록한다', () => {
     const out: SegmentWritable[] = [];
 
     subdivideInto(out, { x1: Number.NaN, y1: 0, x2: 4, y2: 8 }, { count: 2 });
@@ -102,7 +103,7 @@ describe('segment subdivide - subdivideInto', () => {
     expect(out[1]).toEqual({ x1: Number.NaN, y1: 4, x2: 4, y2: 8 });
   });
 
-  test('endpoint b 좌표가 ±Infinity면 시작/끝점은 정확히 보존하고 내부는 arithmetic 결과를 기록한다', () => {
+  test('끝점 좌표가 ±Infinity면 시작/끝점은 정확히 보존하고 내부는 arithmetic 결과를 기록한다', () => {
     const out: SegmentWritable[] = [];
 
     subdivideInto(out, { x1: 0, y1: 0, x2: Number.POSITIVE_INFINITY, y2: Number.NEGATIVE_INFINITY }, { count: 2 });
@@ -122,6 +123,12 @@ describe('segment subdivide - subdivideInto', () => {
       expect(() => subdivideInto([], { x1: 0, y1: 0, x2: 8, y2: 0 }, { count })).toThrow(RangeError);
     }
   );
+
+  test('옵션 객체에 count가 없으면 기본값을 쓰지 않고 RangeError로 실패한다', () => {
+    const options = {} as SegmentSubdivideOptions;
+
+    expect(() => subdivideInto([], { x1: 0, y1: 0, x2: 8, y2: 0 }, options)).toThrow(RangeError);
+  });
 });
 
 describe('segment subdivide - subdivide', () => {
@@ -134,7 +141,7 @@ describe('segment subdivide - subdivide', () => {
     ]);
   });
 
-  test('기본 count 2를 사용한다', () => {
+  test('옵션을 생략하면 두 등분한다', () => {
     const result = subdivide({ x1: 0, y1: 0, x2: 8, y2: 0 });
 
     expect(result).toHaveLength(2);

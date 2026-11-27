@@ -150,13 +150,13 @@ describe('segment distance - distanceToPointSq', () => {
     expect(distanceToPointSq(seg, { x: 2, y: 3 })).toBe(9);
   });
 
-  test('endpoint closest case: t < 0이면 a까지의 거리 제곱을 반환한다', () => {
+  test('endpoint closest case: t < 0이면 시작점까지의 거리 제곱을 반환한다', () => {
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     // t = -0.5 → clamp to 0, closest = (0,0), dist sq = 4
     expect(distanceToPointSq(seg, { x: -2, y: 0 })).toBe(4);
   });
 
-  test('endpoint closest case: t > 1이면 b까지의 거리 제곱을 반환한다', () => {
+  test('endpoint closest case: t > 1이면 끝점까지의 거리 제곱을 반환한다', () => {
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     // t = 1.5 → clamp to 1, closest = (4,0), dist sq = 4
     expect(distanceToPointSq(seg, { x: 6, y: 0 })).toBe(4);
@@ -168,7 +168,7 @@ describe('segment distance - distanceToPointSq', () => {
     expect(distanceToPointSq(seg, { x: 3, y: 0 })).toBeCloseTo(5.76, 10);
   });
 
-  test('zero-length segment는 point와 a 사이 거리 제곱을 반환한다', () => {
+  test('zero-length segment는 point와 시작점 사이 거리 제곱을 반환한다', () => {
     const seg = { x1: 0, y1: 0, x2: 0, y2: 0 };
     // dist sq = 9 + 16 = 25
     expect(distanceToPointSq(seg, { x: 3, y: 4 })).toBe(25);
@@ -186,13 +186,13 @@ describe('segment distance - distanceToPoint', () => {
     expect(distanceToPoint(seg, { x: 2, y: 3 })).toBe(3);
   });
 
-  test('endpoint closest case (t < 0): a까지의 거리를 반환한다', () => {
+  test('endpoint closest case (t < 0): 시작점까지의 거리를 반환한다', () => {
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     // closest = (0,0), dist = sqrt(4) = 2
     expect(distanceToPoint(seg, { x: -2, y: 0 })).toBe(2);
   });
 
-  test('endpoint closest case (t > 1): b까지의 거리를 반환한다', () => {
+  test('endpoint closest case (t > 1): 끝점까지의 거리를 반환한다', () => {
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     // t = 1.5 → clamp to 1, closest = (4,0), dist = 2
     expect(distanceToPoint(seg, { x: 6, y: 0 })).toBe(2);
@@ -204,7 +204,7 @@ describe('segment distance - distanceToPoint', () => {
     expect(distanceToPoint(seg, { x: 3, y: 0 })).toBeCloseTo(2.4, 10);
   });
 
-  test('zero-length segment는 point와 a 사이 거리를 반환한다', () => {
+  test('zero-length segment는 point와 시작점 사이 거리를 반환한다', () => {
     const seg = { x1: 0, y1: 0, x2: 0, y2: 0 };
     expect(distanceToPoint(seg, { x: 3, y: 4 })).toBe(5);
   });
@@ -253,7 +253,7 @@ describe('segment containment - containsPoint', () => {
     expect(containsPoint(seg, { x: 2, y: 0.5 }, 0.4)).toBe(false);
   });
 
-  test('zero-length segment에서 a와 같은 point를 포함한다', () => {
+  test('zero-length segment에서 시작점과 같은 point를 포함한다', () => {
     const seg = { x1: 3, y1: 4, x2: 3, y2: 4 };
     expect(containsPoint(seg, { x: 3, y: 4 })).toBe(true);
   });

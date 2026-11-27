@@ -1,7 +1,7 @@
 import type { Segment } from '../types/flat-shapes.internal';
 
 /**
- * segment a→b 방향의 left normal 방향각을 radian으로 반환한다. angle(line) + π/2와 같다.
+ * 선분 (x1, y1) → (x2, y2) 방향의 left normal 방향각을 radian으로 반환한다. angle(line) + π/2와 같다.
  * zero-length에서는 π/2를 반환한다.
  *
  * @param line 법선 각도를 계산할 segment

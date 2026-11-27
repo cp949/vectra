@@ -1,7 +1,7 @@
 import type { Segment } from '../types/flat-shapes.internal';
 
 /**
- * |b - a|² 유한 line 길이의 제곱을 반환한다.
+ * |끝점 - 시작점|² 유한 line 길이의 제곱을 반환한다.
  *
  * @param line 대상 segment
  */

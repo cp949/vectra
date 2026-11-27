@@ -51,7 +51,7 @@ describe('segment slope', () => {
       expect(slope({ x1: 0, y1: 0, x2: 3, y2: Infinity })).toBe(Infinity);
     });
 
-    test('a.y = -Infinity이면 Infinity를 반환한다', () => {
+    test('y1 = -Infinity이면 Infinity를 반환한다', () => {
       // dy = 0 - (-Infinity) = Infinity, dx = 3 → Infinity
       expect(slope({ x1: 0, y1: -Infinity, x2: 3, y2: 0 })).toBe(Infinity);
     });

@@ -8,14 +8,14 @@ import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
  * collection output이다. outSegments는 먼저 clear된 뒤 결과 segment가 push되며 같은 outSegments를
  * 반환한다.
  *
- * - `count` 기본값은 `2`다. positive integer가 아니면(`< 1`, non-integer, non-finite) `RangeError`로
+ * - 옵션을 생략하면 `count`는 `2`다. `count`가 positive integer가 아니면(`< 1`, non-integer, non-finite) `RangeError`로
  *   fail-fast한다.
  * - `count === 1`은 원본 segment 1개 복제와 같다.
- * - 인접 sub-segment의 공유점은 같은 좌표값을 갖는다. 시작점은 정확히 `a`, 끝점은 정확히 `b`다.
+ * - 인접 sub-segment의 공유점은 같은 좌표값을 갖는다. 첫 선분의 시작점과 마지막 선분의 끝점은 원본 좌표 그대로다.
  * - zero-length segment도 실패가 아니라 `count`개의 zero-length segment를 만든다.
  *
  * finite 검증은 하지 않는다. endpoint 좌표가 non-finite(NaN/±Infinity)이면 throw하지 않고 JS 산술
- * 결과를 그대로 기록한다(시작/끝점은 산술 없이 `a`/`b`를 그대로 보존한다). `-0` canonicalization은
+ * 결과를 그대로 기록한다(시작/끝점은 산술 없이 원본 좌표를 그대로 보존한다). `-0` canonicalization은
  * `split*`처럼 하지 않는다.
  *
  * input/output aliasing이 가능하므로 clear 전에 source endpoint를 scalar로 snapshot한다. outSegments가
@@ -24,7 +24,7 @@ import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
  *
  * @param outSegments 분할 결과를 기록할 선분 배열
  * @param segment 분할할 segment
- * @param options `count`(positive integer, 기본 `2`) 분할 옵션
+ * @param options `count`(positive integer) 분할 옵션. 생략하면 `count`는 `2`다
  * @throws {RangeError} `count`가 positive integer가 아니면 던진다.
  */
 export function subdivideInto(
@@ -32,7 +32,7 @@ export function subdivideInto(
   segment: Segment,
   options?: SegmentSubdivideOptions
 ): SegmentWritable[] {
-  const count = options?.count ?? 2;
+  const count = options === undefined ? 2 : options.count;
   if (!Number.isInteger(count) || count < 1) {
     throw new RangeError(`segment.subdivideInto: count는 positive integer여야 한다 (받음: ${count})`);
   }
