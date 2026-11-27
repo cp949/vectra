@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve의 공개 경로로 닿는 경계·퇴화 분기 테스트.
  *
@@ -96,11 +97,11 @@ describe('cubicIsLinear 경계', () => {
   const p3 = { x: 3, y: 0 };
 
   test('p2가 chord 밖이면 false다', () => {
-    expect(cubicIsLinear(p0, p1, { x: 2, y: 1 }, p3)).toBe(false);
+    expect(cubicIsLinear(flatCubicFromLegacyPoints(p0, p1, { x: 2, y: 1 }, p3))).toBe(false);
   });
 
   test('p2가 chord 위지만 2/3 위치가 아니면 false다', () => {
-    expect(cubicIsLinear(p0, p1, { x: 2.5, y: 0 }, p3)).toBe(false);
+    expect(cubicIsLinear(flatCubicFromLegacyPoints(p0, p1, { x: 2.5, y: 0 }, p3))).toBe(false);
   });
 });
 
@@ -111,7 +112,9 @@ describe('cubicIsSimple 경계', () => {
     const p1x = -delta / 3;
     const p2x = 0.5 - (2 * delta) / 3;
     const p3x = 2.5 - delta;
-    expect(cubicIsSimple({ x: 0, y: 0 }, { x: p1x, y: 2 / 3 }, { x: p2x, y: 5 / 3 }, { x: p3x, y: 3 })).toBe(true);
+    expect(cubicIsSimple({ kind: 'cubic', x0: 0, y0: 0, x1: p1x, y1: 2 / 3, x2: p2x, y2: 5 / 3, x3: p3x, y3: 3 })).toBe(
+      true
+    );
   });
 });
 

@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { CubicCurveType, XYInput } from '../types';
+import type { CubicCurveType } from '../types';
+import type { CubicCurve } from '../types/flat-shapes.internal';
 
 /**
  * cubic Bezier 곡선의 형태를 분류한다.
@@ -11,20 +11,17 @@ import type { CubicCurveType, XYInput } from '../types';
  * - `'loop'`      : discriminant < 0 (자기교차)
  * - `'serpentine'`: discriminant > 0 (S자형, 두 개의 inflection)
  *
- * @param p0 cubic Bezier 시작점
- * @param p1 cubic Bezier 첫 번째 제어점
- * @param p2 cubic Bezier 두 번째 제어점
- * @param p3 cubic Bezier 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  */
-export function cubicClassify(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput): CubicCurveType {
-  const p0x = readX(p0),
-    p0y = readY(p0);
-  const p1x = readX(p1),
-    p1y = readY(p1);
-  const p2x = readX(p2),
-    p2y = readY(p2);
-  const p3x = readX(p3),
-    p3y = readY(p3);
+export function cubicClassify(curve: CubicCurve): CubicCurveType {
+  const p0x = curve.x0,
+    p0y = curve.y0;
+  const p1x = curve.x1,
+    p1y = curve.y1;
+  const p2x = curve.x2,
+    p2y = curve.y2;
+  const p3x = curve.x3,
+    p3y = curve.y3;
 
   // power basis: a = t^3 계수, b = t^2 계수, c = t^1 계수
   const ax = -p0x + 3 * p1x - 3 * p2x + p3x;

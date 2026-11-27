@@ -15,11 +15,11 @@ import { cubicClassify } from '../../../src/curve/cubic-classify';
 describe('cubicClassify', () => {
   it('직선을 line으로 분류한다', () => {
     // A=0, B=0, C=0: collinear
-    expect(cubicClassify({ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 })).toBe('line');
+    expect(cubicClassify({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 })).toBe('line');
   });
 
   it('대각선 직선을 line으로 분류한다', () => {
-    expect(cubicClassify({ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }, { x: 3, y: 3 })).toBe('line');
+    expect(cubicClassify({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 2, x3: 3, y3: 3 })).toBe('line');
   });
 
   it('quadratic 퇴화 곡선을 quadratic으로 분류한다', () => {
@@ -28,32 +28,34 @@ describe('cubicClassify', () => {
     // a.x = -0+3-6+3=0, a.y = -0+3-0+0=3  -> not quadratic, retry
     // 진짜 quadratic: p1 = 2/3*P1_quad, p2 = 1/3*P0+2/3*P2_quad
     // quadratic p0=(0,0), p1=(1,2), p2=(2,0) -> cubic: p0=(0,0), p1=(2/3,4/3), p2=(4/3,4/3), p3=(2,0)
-    expect(cubicClassify({ x: 0, y: 0 }, { x: 2 / 3, y: 4 / 3 }, { x: 4 / 3, y: 4 / 3 }, { x: 2, y: 0 })).toBe(
-      'quadratic'
-    );
+    expect(
+      cubicClassify({ kind: 'cubic', x0: 0, y0: 0, x1: 2 / 3, y1: 4 / 3, x2: 4 / 3, y2: 4 / 3, x3: 2, y3: 0 })
+    ).toBe('quadratic');
   });
 
   it('cusp 곡선을 cusp으로 분류한다', () => {
     // p0=(-1,-2), p1=(1,2), p2=(-1,2), p3=(1,-2): disc=0
-    expect(cubicClassify({ x: -1, y: -2 }, { x: 1, y: 2 }, { x: -1, y: 2 }, { x: 1, y: -2 })).toBe('cusp');
+    expect(cubicClassify({ kind: 'cubic', x0: -1, y0: -2, x1: 1, y1: 2, x2: -1, y2: 2, x3: 1, y3: -2 })).toBe('cusp');
   });
 
   it('loop 곡선을 loop으로 분류한다', () => {
     // p0=(0,0), p1=(2,2), p2=(-1,2), p3=(2,0): disc<0
-    expect(cubicClassify({ x: 0, y: 0 }, { x: 2, y: 2 }, { x: -1, y: 2 }, { x: 2, y: 0 })).toBe('loop');
+    expect(cubicClassify({ kind: 'cubic', x0: 0, y0: 0, x1: 2, y1: 2, x2: -1, y2: 2, x3: 2, y3: 0 })).toBe('loop');
   });
 
   it('S자 곡선을 serpentine으로 분류한다', () => {
     // p0=(0,0), p1=(0,1), p2=(1,0), p3=(1,1): A=0, disc>0
-    expect(cubicClassify({ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 1, y: 1 })).toBe('serpentine');
+    expect(cubicClassify({ kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 0, x3: 1, y3: 1 })).toBe('serpentine');
   });
 
   it('serpentine 곡선을 serpentine으로 분류한다 (A!=0, disc>0)', () => {
     // p0=(-1,-2), p1=(1,2), p2=(-1,2), p3=(1.1,-2): disc>0
-    expect(cubicClassify({ x: -1, y: -2 }, { x: 1, y: 2 }, { x: -1, y: 2 }, { x: 1.1, y: -2 })).toBe('serpentine');
+    expect(cubicClassify({ kind: 'cubic', x0: -1, y0: -2, x1: 1, y1: 2, x2: -1, y2: 2, x3: 1.1, y3: -2 })).toBe(
+      'serpentine'
+    );
   });
 
   it('tuple XYInput을 받는다', () => {
-    expect(cubicClassify([0, 0], [1, 0], [2, 0], [3, 0])).toBe('line');
+    expect(cubicClassify({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 })).toBe('line');
   });
 });

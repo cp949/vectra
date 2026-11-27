@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { CubicCurve } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -9,21 +8,18 @@ import { hypot2 } from '../internal/numeric';
  * p1, p2의 chord 수직 거리가 모두 flatness 이하이면 true를 반환한다.
  * degenerate (p0 == p3)의 경우 p1, p2도 같은 점이면 true를 반환한다.
  *
- * @param p0 cubic Bezier 시작점
- * @param p1 cubic Bezier 첫 번째 제어점
- * @param p2 cubic Bezier 두 번째 제어점
- * @param p3 cubic Bezier 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param flatness 선형 근사 허용 geometric error
  */
-export function cubicIsFlatEnough(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput, flatness: number): boolean {
-  const p0x = readX(p0),
-    p0y = readY(p0);
-  const p1x = readX(p1),
-    p1y = readY(p1);
-  const p2x = readX(p2),
-    p2y = readY(p2);
-  const p3x = readX(p3),
-    p3y = readY(p3);
+export function cubicIsFlatEnough(curve: CubicCurve, flatness: number): boolean {
+  const p0x = curve.x0,
+    p0y = curve.y0;
+  const p1x = curve.x1,
+    p1y = curve.y1;
+  const p2x = curve.x2,
+    p2y = curve.y2;
+  const p3x = curve.x3,
+    p3y = curve.y3;
 
   const chordX = p3x - p0x;
   const chordY = p3y - p0y;

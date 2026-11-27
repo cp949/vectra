@@ -36,6 +36,12 @@ import { cubicSampleInto } from '../../../src/curve/cubic-sample-into';
 import { cubicSpacedPointsInto } from '../../../src/curve/cubic-spaced-points-into';
 import { cubicLookupTableInto } from '../../../src/curve/cubic-lookup-table-into';
 import { cubicChainFlattenInto } from '../../../src/curve/cubic-chain-flatten-into';
+import { cubicPartInto } from '../../../src/curve/cubic-part-into';
+import { quadraticPartInto } from '../../../src/curve/quadratic-part-into';
+import { quadraticElevateToCubicInto } from '../../../src/curve/quadratic-elevate-to-cubic-into';
+import { cubicSplitInto } from '../../../src/curve/cubic-split-into';
+import { quadraticSplitInto } from '../../../src/curve/quadratic-split-into';
+import { cubicToArcsInto } from '../../../src/curve/cubic-to-arcs-into';
 import type {
   BoundsWritable,
   Point,
@@ -344,4 +350,90 @@ test('cubicChainFlattenInto은 고정 원소 타입으로 같은 출력 배열�
   const result = cubicChainFlattenInto(out, [arcPoint, arcPoint, arcPoint, arcPoint]);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('삼차 베지어의 부분 곡선은 평평한 곡선에 기록한다', () => {
+  expectTypeOf(cubicPartInto).parameter(0).toEqualTypeOf<CubicCurveWritable>();
+});
+
+/** 출력의 구조적 하위 타입을 검증할 외부 객체. */
+class QuadraticOutput {
+  readonly kind = 'quadratic';
+  x0 = 0;
+  y0 = 0;
+  x1 = 0;
+  y1 = 0;
+  x2 = 0;
+  y2 = 0;
+  tag = 'keep';
+}
+
+/** 출력의 구조적 하위 타입을 검증할 외부 객체. */
+class CubicOutput {
+  readonly kind = 'cubic';
+  x0 = 0;
+  y0 = 0;
+  x1 = 0;
+  y1 = 0;
+  x2 = 0;
+  y2 = 0;
+  x3 = 0;
+  y3 = 0;
+  tag = 'keep';
+}
+
+test('cubicPartInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new CubicOutput();
+  const result = cubicPartInto(out, cubic, 0.2, 0.8);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<CubicOutput>();
+});
+
+test('quadraticPartInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new QuadraticOutput();
+  const result = quadraticPartInto(out, quadratic, 0.2, 0.8);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<QuadraticOutput>();
+});
+
+test('quadraticElevateToCubicInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new CubicOutput();
+  const result = quadraticElevateToCubicInto(out, quadratic);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<CubicOutput>();
+});
+
+test('cubicSplitInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new CubicOutput();
+  const result = cubicSplitInto(out, new CubicOutput(), cubic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<CubicOutput>();
+});
+
+test('quadraticSplitInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new QuadraticOutput();
+  const result = quadraticSplitInto(out, new QuadraticOutput(), quadratic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<QuadraticOutput>();
+});
+
+test('cubicToArcsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: CenterArcWritable[] = [];
+  const result = cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<CenterArcWritable[]>();
+});
+
+test('부분 곡선과 분할은 입력과 출력이 같은 곡선 객체여도 좌표를 보존한다', () => {
+  const expectedPart = cubicPartInto(new CubicOutput(), cubic, 0.2, 0.8);
+  const part = Object.assign(new CubicOutput(), cubic);
+  expect(cubicPartInto(part, part, 0.2, 0.8)).toEqual(expectedPart);
+
+  const expectedLeft = new QuadraticOutput();
+  const expectedRight = new QuadraticOutput();
+  quadraticSplitInto(expectedLeft, expectedRight, quadratic, 0.5);
+  const left = Object.assign(new QuadraticOutput(), quadratic);
+  const right = new QuadraticOutput();
+  expect(quadraticSplitInto(left, right, left, 0.5)).toEqual(expectedLeft);
+  expect(right).toEqual(expectedRight);
 });

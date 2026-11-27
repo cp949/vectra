@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve × curve 교차 정밀도 회귀 테스트.
  *
@@ -178,30 +179,43 @@ describe('접선 접촉(touch)은 refinement로 깨지지 않는다', () => {
 describe('접선이 평행한 끝점 교차는 끝점 parameter로 snap한다', () => {
   test('한 cubic을 나눈 두 반쪽은 공유 끝점 hit 1건을 정확한 값으로 기록한다', () => {
     // 나눈 점에서 두 반쪽의 접선은 평행(G1)하다
-    const { left, right } = cubicSplit({ x: 0, y: 0 }, { x: 30, y: 80 }, { x: 70, y: 80 }, { x: 100, y: 0 }, 0.4);
+    const { left, right } = cubicSplit(
+      { kind: 'cubic', x0: 0, y0: 0, x1: 30, y1: 80, x2: 70, y2: 80, x3: 100, y3: 0 },
+      0.4
+    );
     const hits: IntersectionHit[] = [];
-    cubicCubicIntersectionsInto(hits, left.p0, left.p1, left.p2, left.p3, right.p0, right.p1, right.p2, right.p3);
+    cubicCubicIntersectionsInto(
+      hits,
+      { x: left.x0, y: left.y0 },
+      { x: left.x1, y: left.y1 },
+      { x: left.x2, y: left.y2 },
+      { x: left.x3, y: left.y3 },
+      { x: right.x0, y: right.y0 },
+      { x: right.x1, y: right.y1 },
+      { x: right.x2, y: right.y2 },
+      { x: right.x3, y: right.y3 }
+    );
 
     expect(hits).toHaveLength(1);
     expect(hits[0].tA).toBe(1);
     expect(hits[0].tB).toBe(0);
-    expect(hits[0].point.x).toBeCloseTo(left.p3.x, 12);
-    expect(hits[0].point.y).toBeCloseTo(left.p3.y, 12);
+    expect(hits[0].point.x).toBeCloseTo(left.x3, 12);
+    expect(hits[0].point.y).toBeCloseTo(left.y3, 12);
   });
 
   test('quadratic의 끝점에 이어 붙은 cubic은 끝점 hit 1건을 정확한 값으로 기록한다', () => {
     // y = x² 위에서 quadratic은 x∈[0,2], cubic은 x∈[2,3]이다
-    const cubic = quadraticElevateToCubic({ x: 2, y: 4 }, { x: 2.5, y: 6 }, { x: 3, y: 9 });
+    const cubic = quadraticElevateToCubic({ kind: 'quadratic', x0: 2, y0: 4, x1: 2.5, y1: 6, x2: 3, y2: 9 });
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(
       hits,
       { x: 0, y: 0 },
       { x: 1, y: 0 },
       { x: 2, y: 4 },
-      cubic.p0,
-      cubic.p1,
-      cubic.p2,
-      cubic.p3
+      { x: cubic.x0, y: cubic.y0 },
+      { x: cubic.x1, y: cubic.y1 },
+      { x: cubic.x2, y: cubic.y2 },
+      { x: cubic.x3, y: cubic.y3 }
     );
 
     expect(hits).toHaveLength(1);
@@ -304,8 +318,13 @@ describe('거의 평행한 두 곡선은 maxDepth box를 hit로 남기지 않는
   });
 
   test('0.2° 회전한 차수 올림 cubic과의 quadratic × cubic 교차는 hit 1건이다', () => {
-    const cubic = quadraticElevateToCubic(PARABOLA[0], PARABOLA[1], PARABOLA[2]);
-    const [q0, q1, q2, q3] = [cubic.p0, cubic.p1, cubic.p2, cubic.p3].map((point) => rotateAbout(point, CENTER, 0.2));
+    const cubic = quadraticElevateToCubic(flatQuadraticFromLegacyPoints(PARABOLA[0], PARABOLA[1], PARABOLA[2]));
+    const [q0, q1, q2, q3] = [
+      { x: cubic.x0, y: cubic.y0 },
+      { x: cubic.x1, y: cubic.y1 },
+      { x: cubic.x2, y: cubic.y2 },
+      { x: cubic.x3, y: cubic.y3 },
+    ].map((point) => rotateAbout(point, CENTER, 0.2));
     const hits: IntersectionHit[] = [];
     quadraticCubicIntersectionsInto(hits, PARABOLA[0], PARABOLA[1], PARABOLA[2], q0, q1, q2, q3);
 

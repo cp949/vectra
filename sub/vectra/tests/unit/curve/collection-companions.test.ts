@@ -260,15 +260,15 @@ describe('arcToCubic', () => {
 
 describe('quadraticSplit', () => {
   test('quadraticSplitInto 결과와 deep equal이다', () => {
-    const left = { p0: { x: 0, y: 0 }, p1: { x: 0, y: 0 }, p2: { x: 0, y: 0 } };
-    const right = { p0: { x: 0, y: 0 }, p1: { x: 0, y: 0 }, p2: { x: 0, y: 0 } };
-    quadraticSplitInto(left, right, P0, P1, P2, 0.5);
-    expect(quadraticSplit(P0, P1, P2, 0.5)).toEqual({ left, right });
+    const left = { kind: 'quadratic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0 };
+    const right = { kind: 'quadratic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0 };
+    quadraticSplitInto(left, right, flatQuadraticFromLegacyPoints(P0, P1, P2), 0.5);
+    expect(quadraticSplit(flatQuadraticFromLegacyPoints(P0, P1, P2), 0.5)).toEqual({ left, right });
   });
 
   test('새 left/right curve object를 반환한다', () => {
-    const a = quadraticSplit(P0, P1, P2, 0.5);
-    const b = quadraticSplit(P0, P1, P2, 0.5);
+    const a = quadraticSplit(flatQuadraticFromLegacyPoints(P0, P1, P2), 0.5);
+    const b = quadraticSplit(flatQuadraticFromLegacyPoints(P0, P1, P2), 0.5);
     expect(a).not.toBe(b);
     expect(a.left).not.toBe(b.left);
     expect(a.right).not.toBe(b.right);
@@ -278,7 +278,7 @@ describe('quadraticSplit', () => {
 describe('cubicToArcs', () => {
   test('zero-length degenerate cubic은 빈 배열을 반환한다', () => {
     const pt = { x: 0, y: 0 };
-    expect(cubicToArcs(pt, pt, pt, pt)).toEqual([]);
+    expect(cubicToArcs(flatCubicFromLegacyPoints(pt, pt, pt, pt))).toEqual([]);
   });
 });
 
@@ -293,25 +293,15 @@ describe('cubicChainFlatten', () => {
 
 describe('cubicSplit', () => {
   test('cubicSplitInto 결과와 deep equal이다', () => {
-    const left = {
-      p0: { x: 0, y: 0 },
-      p1: { x: 0, y: 0 },
-      p2: { x: 0, y: 0 },
-      p3: { x: 0, y: 0 },
-    };
-    const right = {
-      p0: { x: 0, y: 0 },
-      p1: { x: 0, y: 0 },
-      p2: { x: 0, y: 0 },
-      p3: { x: 0, y: 0 },
-    };
-    cubicSplitInto(left, right, P0, P1, P2, P3, 0.5);
-    expect(cubicSplit(P0, P1, P2, P3, 0.5)).toEqual({ left, right });
+    const left = { kind: 'cubic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
+    const right = { kind: 'cubic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
+    cubicSplitInto(left, right, flatCubicFromLegacyPoints(P0, P1, P2, P3), 0.5);
+    expect(cubicSplit(flatCubicFromLegacyPoints(P0, P1, P2, P3), 0.5)).toEqual({ left, right });
   });
 
   test('새 left/right curve object를 반환한다', () => {
-    const a = cubicSplit(P0, P1, P2, P3, 0.5);
-    const b = cubicSplit(P0, P1, P2, P3, 0.5);
+    const a = cubicSplit(flatCubicFromLegacyPoints(P0, P1, P2, P3), 0.5);
+    const b = cubicSplit(flatCubicFromLegacyPoints(P0, P1, P2, P3), 0.5);
     expect(a).not.toBe(b);
     expect(a.left).not.toBe(b.left);
     expect(a.right).not.toBe(b.right);

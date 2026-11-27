@@ -1,4 +1,5 @@
-import type { CenterArcWritable, CubicToArcsOptions, XYInput } from '../types';
+import type { CubicToArcsOptions } from '../types';
+import type { CenterArcWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { cubicToArcsInto } from './cubic-to-arcs-into';
 
 /**
@@ -17,19 +18,10 @@ import { cubicToArcsInto } from './cubic-to-arcs-into';
  *
  *
  * caller-responsibility 가정은 `cubicToArcsInto`와 동일하다.
- * @param p0 cubic Bezier 시작점
- * @param p1 첫 번째 control point
- * @param p2 두 번째 control point
- * @param p3 cubic Bezier 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options 근사 옵션 (errorTolerance, maxSegments, minSegmentT)
  * @returns 새로 만든 CenterArcWritable 배열
  */
-export function cubicToArcs(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  options?: CubicToArcsOptions
-): CenterArcWritable[] {
-  return cubicToArcsInto([], p0, p1, p2, p3, options);
+export function cubicToArcs(curve: CubicCurve, options?: Required<CubicToArcsOptions>): CenterArcWritable[] {
+  return cubicToArcsInto([], curve, options);
 }

@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve × curve 교차 kernel의 overlap 계약을 검증한다.
  *
@@ -60,9 +61,14 @@ function sortByTA<T extends { tA?: number; tB?: number }>(hits: readonly T[]): T
  * 부분 겹침 fixture를 손 계산 없이 만들기 위해 쓴다.
  */
 function cubicSubCurve(points: typeof LOOP_CUBIC, t0: number, t1: number) {
-  const { left } = cubicSplit(points[0], points[1], points[2], points[3], t1);
-  const { right } = cubicSplit(left.p0, left.p1, left.p2, left.p3, t0 / t1);
-  return [right.p0, right.p1, right.p2, right.p3] as const;
+  const { left } = cubicSplit(flatCubicFromLegacyPoints(points[0], points[1], points[2], points[3]), t1);
+  const { right } = cubicSplit(left, t0 / t1);
+  return [
+    { x: right.x0, y: right.y0 },
+    { x: right.x1, y: right.y1 },
+    { x: right.x2, y: right.y2 },
+    { x: right.x3, y: right.y3 },
+  ] as const;
 }
 
 describe('quadraticQuadraticIntersectionsInto overlap', () => {
@@ -193,9 +199,16 @@ describe('cubicCubicIntersectionsInto overlap', () => {
 
 describe('quadraticCubicIntersectionsInto overlap', () => {
   test('quadratic과 그 차수 올림 cubic은 양 끝점 overlap hit 2건만 기록한다', () => {
-    const cubic = quadraticElevateToCubic(...PARABOLA_0_2);
+    const cubic = quadraticElevateToCubic(flatQuadraticFromLegacyPoints(...PARABOLA_0_2));
     const hits: IntersectionHit[] = [];
-    quadraticCubicIntersectionsInto(hits, ...PARABOLA_0_2, cubic.p0, cubic.p1, cubic.p2, cubic.p3);
+    quadraticCubicIntersectionsInto(
+      hits,
+      ...PARABOLA_0_2,
+      { x: cubic.x0, y: cubic.y0 },
+      { x: cubic.x1, y: cubic.y1 },
+      { x: cubic.x2, y: cubic.y2 },
+      { x: cubic.x3, y: cubic.y3 }
+    );
 
     expect(hits).toHaveLength(2);
     const [start, end] = sortByTA(hits);
@@ -221,11 +234,17 @@ describe('curveCurveIntersectionsInto overlap', () => {
 
   test('(cubic, quadratic) 순서에서도 overlap hit의 tA/tB가 caller 순서를 따른다', () => {
     // cubic은 PARABOLA_1_3의 차수 올림이고 quadratic은 PARABOLA_0_2다. 겹침은 x∈[1,2]다.
-    const cubic = quadraticElevateToCubic(...PARABOLA_1_3);
+    const cubic = quadraticElevateToCubic(flatQuadraticFromLegacyPoints(...PARABOLA_1_3));
     const out: CurveIntersectionHit[] = [];
     curveCurveIntersectionsInto(
       out,
-      { kind: 'cubic', ...cubic },
+      {
+        kind: 'cubic',
+        p0: { x: cubic.x0, y: cubic.y0 },
+        p1: { x: cubic.x1, y: cubic.y1 },
+        p2: { x: cubic.x2, y: cubic.y2 },
+        p3: { x: cubic.x3, y: cubic.y3 },
+      },
       { kind: 'quadratic', p0: PARABOLA_0_2[0], p1: PARABOLA_0_2[1], p2: PARABOLA_0_2[2] }
     );
 

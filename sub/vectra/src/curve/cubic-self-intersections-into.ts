@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
 import { readX, readY } from '../internal/xy';
 import type { CurveIntersectionOptions, IntersectionHit, XYInput, XYObjectWritable } from '../types';
 import { cubicClassify } from './cubic-classify';
@@ -117,7 +118,7 @@ export function cubicSelfIntersectionsInto(
   outHits.length = 0;
 
   // loop 형태가 아닌 cubic은 자기 교차점이 없다 — early exit으로 false hit를 방지한다
-  if (cubicClassify(p0, p1, p2, p3) !== 'loop') return outHits;
+  if (cubicClassify(flatCubicFromLegacyPoints(p0, p1, p2, p3)) !== 'loop') return outHits;
 
   const { epsilon, epsilonT } = resolveOptions(options);
   const maxDepth = options?.maxDepth ?? DEFAULT_MAX_DEPTH;

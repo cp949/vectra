@@ -1,4 +1,5 @@
-import type { CenterArcWritable, CubicToArcsOptions, XYInput } from '../types';
+import type { CubicToArcsOptions } from '../types';
+import type { CenterArcWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { subdivideCubicToTolerance, validateCubicToArcsInputs } from './cubic-to-arcs.internal';
 
 /**
@@ -16,51 +17,36 @@ import { subdivideCubicToTolerance, validateCubicToArcsInputs } from './cubic-to
  * 각 결과 arc는 새 plain object로 push한다. 입력 point나 기존 out element를 재사용하지 않는다.
  *
  * @param out arc를 기록할 writable array
- * @param p0 cubic Bezier 시작점
- * @param p1 첫 번째 control point
- * @param p2 두 번째 control point
- * @param p3 cubic Bezier 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options 근사 옵션 (errorTolerance, maxSegments, minSegmentT)
  * @returns out
  */
 export function cubicToArcsInto(
   out: CenterArcWritable[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  options?: CubicToArcsOptions
+  curve: CubicCurve,
+  options?: Required<CubicToArcsOptions>
 ): CenterArcWritable[] {
   out.length = 0;
 
-  const errorTolerance = options?.errorTolerance ?? 1e-3;
-  const maxSegments = options?.maxSegments ?? 64;
-  const minSegmentT = options?.minSegmentT ?? 1e-6;
+  const errorTolerance = options === undefined ? 1e-3 : options.errorTolerance;
+  const maxSegments = options === undefined ? 64 : options.maxSegments;
+  const minSegmentT = options === undefined ? 1e-6 : options.minSegmentT;
 
-  const validated = validateCubicToArcsInputs(p0, p1, p2, p3, errorTolerance, maxSegments, minSegmentT);
+  const validated = validateCubicToArcsInputs(curve, errorTolerance, maxSegments, minSegmentT);
 
   // zero-length degenerate: 네 control point가 모두 동일한 좌표
   if (
-    validated.p0.x === validated.p1.x &&
-    validated.p0.y === validated.p1.y &&
-    validated.p0.x === validated.p2.x &&
-    validated.p0.y === validated.p2.y &&
-    validated.p0.x === validated.p3.x &&
-    validated.p0.y === validated.p3.y
+    validated.x0 === validated.x1 &&
+    validated.y0 === validated.y1 &&
+    validated.x0 === validated.x2 &&
+    validated.y0 === validated.y2 &&
+    validated.x0 === validated.x3 &&
+    validated.y0 === validated.y3
   ) {
     return out;
   }
 
-  subdivideCubicToTolerance(
-    out,
-    validated.p0,
-    validated.p1,
-    validated.p2,
-    validated.p3,
-    errorTolerance,
-    maxSegments,
-    minSegmentT
-  );
+  subdivideCubicToTolerance(out, validated, errorTolerance, maxSegments, minSegmentT);
 
   return out;
 }

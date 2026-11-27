@@ -16,52 +16,47 @@ describe('cubicSplitInto', () => {
   const p3 = { x: 4, y: 0 };
 
   function makeOut() {
-    return {
-      p0: { x: 0, y: 0 },
-      p1: { x: 0, y: 0 },
-      p2: { x: 0, y: 0 },
-      p3: { x: 0, y: 0 },
-    };
+    return { kind: 'cubic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
   }
 
   it('left.p0이 원본 p0과 같다', () => {
     const outL = makeOut();
     const outR = makeOut();
-    cubicSplitInto(outL, outR, p0, p1, p2, p3, 0.5);
-    expect(outL.p0.x).toBe(0);
-    expect(outL.p0.y).toBe(0);
+    cubicSplitInto(outL, outR, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
+    expect(outL.x0).toBe(0);
+    expect(outL.y0).toBe(0);
   });
 
   it('right.p3이 원본 p3과 같다', () => {
     const outL = makeOut();
     const outR = makeOut();
-    cubicSplitInto(outL, outR, p0, p1, p2, p3, 0.5);
-    expect(outR.p3.x).toBe(4);
-    expect(outR.p3.y).toBe(0);
+    cubicSplitInto(outL, outR, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
+    expect(outR.x3).toBe(4);
+    expect(outR.y3).toBe(0);
   });
 
   it('left.p3과 right.p0이 같다 (de Casteljau 연속성)', () => {
     const outL = makeOut();
     const outR = makeOut();
-    cubicSplitInto(outL, outR, p0, p1, p2, p3, 0.5);
-    expect(outL.p3.x).toBe(outR.p0.x);
-    expect(outL.p3.y).toBe(outR.p0.y);
+    cubicSplitInto(outL, outR, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
+    expect(outL.x3).toBe(outR.x0);
+    expect(outL.y3).toBe(outR.y0);
   });
 
   it('split point가 cubicPointAtTInto(t) 값과 일치한다', () => {
     const outL = makeOut();
     const outR = makeOut();
-    cubicSplitInto(outL, outR, p0, p1, p2, p3, 0.5);
+    cubicSplitInto(outL, outR, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     const pt = { x: 0, y: 0 };
     cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
-    expect(relErr(outL.p3.x, pt.x)).toBeLessThan(1e-12);
-    expect(relErr(outL.p3.y, pt.y)).toBeLessThan(1e-12);
+    expect(relErr(outL.x3, pt.x)).toBeLessThan(1e-12);
+    expect(relErr(outL.y3, pt.y)).toBeLessThan(1e-12);
   });
 
   it('outLeft를 반환한다 (identity)', () => {
     const outL = makeOut();
     const outR = makeOut();
-    const ret = cubicSplitInto(outL, outR, p0, p1, p2, p3, 0.5);
+    const ret = cubicSplitInto(outL, outR, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(ret).toBe(outL);
   });
 });

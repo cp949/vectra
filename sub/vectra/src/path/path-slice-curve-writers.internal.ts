@@ -1,15 +1,9 @@
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
+import { createZeroCubicCurve, createZeroQuadraticCurve } from '../internal/curve-shapes';
 import { cubicSplitInto } from '../curve/cubic-split-into';
 import { cubicTAtLength } from '../curve/cubic-t-at-length';
 import { quadraticSplitInto } from '../curve/quadratic-split-into';
 import { quadraticTAtLength } from '../curve/quadratic-t-at-length';
-import type {
-  CubicCommand,
-  CubicCurveWritable,
-  PathCommand,
-  QuadraticCommand,
-  QuadraticCurveWritable,
-} from '../types/index';
+import type { CubicCommand, PathCommand, QuadraticCommand } from '../types/index';
 import type { DrawSegment } from './path-segments.internal';
 
 /**
@@ -24,37 +18,36 @@ export function writeQuadraticSplit(
   local: number
 ): void {
   const cmd = seg.command;
-  const p0 = { x: seg.fromX, y: seg.fromY };
-  const p1 = { x: cmd.x1, y: cmd.y1 };
-  const p2 = { x: cmd.x, y: cmd.y };
-  const t = quadraticTAtLength(flatQuadraticFromLegacyPoints(p0, p1, p2), local);
-  const left: QuadraticCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-  };
-  const right: QuadraticCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-  };
-  quadraticSplitInto(left, right, p0, p1, p2, t);
+  // v2-migration: path의 곡선 변환을 한곳에서 관리할 때 합친다.
+  const curve = {
+    kind: 'quadratic',
+    x0: seg.fromX,
+    y0: seg.fromY,
+    x1: cmd.x1,
+    y1: cmd.y1,
+    x2: cmd.x,
+    y2: cmd.y,
+  } as const;
+  const t = quadraticTAtLength(curve, local);
+  const left = createZeroQuadraticCurve();
+  const right = createZeroQuadraticCurve();
+  quadraticSplitInto(left, right, curve, t);
   const leftCmd: QuadraticCommand = {
     kind: 'quadratic',
-    x1: left.p1.x,
-    y1: left.p1.y,
-    x: left.p2.x,
-    y: left.p2.y,
+    x1: left.x1,
+    y1: left.y1,
+    x: left.x2,
+    y: left.y2,
   };
   const rightCmd: QuadraticCommand = {
     kind: 'quadratic',
-    x1: right.p1.x,
-    y1: right.p1.y,
-    x: right.p2.x,
-    y: right.p2.y,
+    x1: right.x1,
+    y1: right.y1,
+    x: right.x2,
+    y: right.y2,
   };
   outA.push(leftCmd);
-  outB.push({ kind: 'move', x: right.p0.x, y: right.p0.y });
+  outB.push({ kind: 'move', x: right.x0, y: right.y0 });
   outB.push(rightCmd);
 }
 
@@ -65,43 +58,41 @@ export function writeCubicSplit(
   local: number
 ): void {
   const cmd = seg.command;
-  const p0 = { x: seg.fromX, y: seg.fromY };
-  const p1 = { x: cmd.x1, y: cmd.y1 };
-  const p2 = { x: cmd.x2, y: cmd.y2 };
-  const p3 = { x: cmd.x, y: cmd.y };
-  const t = cubicTAtLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), local);
-  const left: CubicCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-    p3: { x: 0, y: 0 },
-  };
-  const right: CubicCurveWritable = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-    p3: { x: 0, y: 0 },
-  };
-  cubicSplitInto(left, right, p0, p1, p2, p3, t);
+  // v2-migration: path의 곡선 변환을 한곳에서 관리할 때 합친다.
+  const curve = {
+    kind: 'cubic',
+    x0: seg.fromX,
+    y0: seg.fromY,
+    x1: cmd.x1,
+    y1: cmd.y1,
+    x2: cmd.x2,
+    y2: cmd.y2,
+    x3: cmd.x,
+    y3: cmd.y,
+  } as const;
+  const t = cubicTAtLength(curve, local);
+  const left = createZeroCubicCurve();
+  const right = createZeroCubicCurve();
+  cubicSplitInto(left, right, curve, t);
   const leftCmd: CubicCommand = {
     kind: 'cubic',
-    x1: left.p1.x,
-    y1: left.p1.y,
-    x2: left.p2.x,
-    y2: left.p2.y,
-    x: left.p3.x,
-    y: left.p3.y,
+    x1: left.x1,
+    y1: left.y1,
+    x2: left.x2,
+    y2: left.y2,
+    x: left.x3,
+    y: left.y3,
   };
   const rightCmd: CubicCommand = {
     kind: 'cubic',
-    x1: right.p1.x,
-    y1: right.p1.y,
-    x2: right.p2.x,
-    y2: right.p2.y,
-    x: right.p3.x,
-    y: right.p3.y,
+    x1: right.x1,
+    y1: right.y1,
+    x2: right.x2,
+    y2: right.y2,
+    x: right.x3,
+    y: right.y3,
   };
   outA.push(leftCmd);
-  outB.push({ kind: 'move', x: right.p0.x, y: right.p0.y });
+  outB.push({ kind: 'move', x: right.x0, y: right.y0 });
   outB.push(rightCmd);
 }

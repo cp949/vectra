@@ -25,27 +25,27 @@ function endpointError(arc: CenterArcWritable, angle: number, x: number, y: numb
 }
 
 describe('cubicToArcsInto 수치 한계', () => {
-  const loose = { errorTolerance: 10 };
+  const loose = { errorTolerance: 10, maxSegments: 64, minSegmentT: 1e-6 };
 
   test('곡률 반지름이 3e16쯤인 cubic은 collinear RangeError를 던진다', () => {
     const out: CenterArcWritable[] = [];
-    expect(() => cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 1e-16 }, { x: 3, y: 0 })).toThrow(
-      /collinear segment cannot be approximated/
-    );
+    expect(() =>
+      cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 1e-16, x3: 3, y3: 0 })
+    ).toThrow(/collinear segment cannot be approximated/);
   });
 
   test('반대쪽으로 휘어도 collinear RangeError를 던진다', () => {
     const out: CenterArcWritable[] = [];
-    expect(() => cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: -1e-16 }, { x: 3, y: 0 })).toThrow(
-      RangeError
-    );
+    expect(() =>
+      cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: -1e-16, x3: 3, y3: 0 })
+    ).toThrow(RangeError);
   });
 
   test('정확히 직선인 cubic과 같은 오류 메시지를 쓴다', () => {
     const out: CenterArcWritable[] = [];
     const message = (y: number) => {
       try {
-        cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y }, { x: 3, y: 0 });
+        cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: y, x3: 3, y3: 0 });
         return 'no error';
       } catch (error) {
         return (error as Error).message;
@@ -56,7 +56,7 @@ describe('cubicToArcsInto 수치 한계', () => {
 
   test('곡률 반지름이 해상도 안쪽이면 중심각이 0이 아닌 arc가 된다', () => {
     const out: CenterArcWritable[] = [];
-    cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 1e-3 }, { x: 3, y: 0 });
+    cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 1e-3, x3: 3, y3: 0 });
     expect(out.length).toBeGreaterThan(0);
     for (const arc of out) expect(arc.endAngle).not.toBe(arc.startAngle);
   });
@@ -65,7 +65,7 @@ describe('cubicToArcsInto 수치 한계', () => {
     // 곡률 반지름이 3e15다. 예전에는 절대 각도 차 -1.1e-15를 [0, 2π)로 접어 각폭 2π arc를 돌려줬다.
     // 끝점 재구성 오차가 0.3쯤이라 기본 errorTolerance로는 RangeError다. 허용오차를 넓혀 arc를 받는다.
     const out: CenterArcWritable[] = [];
-    cubicToArcsInto(out, { x: 0, y: 0 }, { x: -1, y: 0 }, { x: -2, y: -1e-15 }, { x: -3, y: 0 }, loose);
+    cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: -1, y1: 0, x2: -2, y2: -1e-15, x3: -3, y3: 0 }, loose);
     expect(out.length).toBeGreaterThan(0);
     for (const arc of out) expect(Math.abs(arc.endAngle - arc.startAngle)).toBeLessThan(1e-12);
   });
@@ -73,8 +73,8 @@ describe('cubicToArcsInto 수치 한계', () => {
   test('π 회전한 cubic도 같은 각폭의 arc가 된다', () => {
     const out: CenterArcWritable[] = [];
     const rotated: CenterArcWritable[] = [];
-    cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 1e-15 }, { x: 3, y: 0 }, loose);
-    cubicToArcsInto(rotated, { x: 0, y: 0 }, { x: -1, y: 0 }, { x: -2, y: -1e-15 }, { x: -3, y: 0 }, loose);
+    cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 1e-15, x3: 3, y3: 0 }, loose);
+    cubicToArcsInto(rotated, { kind: 'cubic', x0: 0, y0: 0, x1: -1, y1: 0, x2: -2, y2: -1e-15, x3: -3, y3: 0 }, loose);
     expect(rotated.length).toBe(out.length);
     for (let i = 0; i < out.length; i++) {
       expect(rotated[i].endAngle - rotated[i].startAngle).toBeCloseTo(out[i].endAngle - out[i].startAngle, 15);
@@ -84,9 +84,9 @@ describe('cubicToArcsInto 수치 한계', () => {
   test('곡률 반지름이 3e15인 cubic은 끝점이 어긋난 arc 대신 collinear RangeError를 던진다', () => {
     // startAngle 반올림만으로 시작점이 0.3쯤 어긋난다. 기본 errorTolerance 1e-3을 넘는다.
     const out: CenterArcWritable[] = [];
-    expect(() => cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 1e-15 }, { x: 3, y: 0 })).toThrow(
-      /collinear segment cannot be approximated/
-    );
+    expect(() =>
+      cubicToArcsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 1e-15, x3: 3, y3: 0 })
+    ).toThrow(/collinear segment cannot be approximated/);
   });
 
   test('돌려준 arc의 재구성 끝점은 errorTolerance 안에 있다', () => {
@@ -96,7 +96,11 @@ describe('cubicToArcsInto 수치 한계', () => {
         const out: CenterArcWritable[] = [];
         const y = sign * 10 ** exponent;
         try {
-          cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y }, { x: 3, y: 0 }, { errorTolerance });
+          cubicToArcsInto(
+            out,
+            { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: y, x3: 3, y3: 0 },
+            { errorTolerance, maxSegments: 64, minSegmentT: 1e-6 }
+          );
         } catch (error) {
           expect((error as Error).message).toMatch(/collinear segment cannot be approximated/);
           continue;
@@ -121,7 +125,11 @@ describe('cubicToArcsInto 수치 한계', () => {
 
   test('끝점 재구성 오차가 errorTolerance 안이면 큰 반지름 arc도 받는다', () => {
     const out: CenterArcWritable[] = [];
-    cubicToArcsInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 1e-15 }, { x: 3, y: 0 }, { errorTolerance: 1 });
+    cubicToArcsInto(
+      out,
+      { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 1e-15, x3: 3, y3: 0 },
+      { errorTolerance: 1, maxSegments: 64, minSegmentT: 1e-6 }
+    );
     expect(out.length).toBe(1);
     expect(endpointError(out[0], out[0].startAngle, 0, 0)).toBeLessThanOrEqual(1);
   });

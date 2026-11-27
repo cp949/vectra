@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { CubicCurve } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -9,21 +8,18 @@ import { hypot2 } from '../internal/numeric';
  * 수직 거리뿐 아니라 parametric 위치까지 검사한다.
  * degenerate (p0 == p3)의 경우 모든 점이 같은 점이면 true를 반환한다.
  *
- * @param p0 cubic Bezier 시작점
- * @param p1 cubic Bezier 첫 번째 제어점
- * @param p2 cubic Bezier 두 번째 제어점
- * @param p3 cubic Bezier 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param epsilon 허용 오차 (기본값 1e-10)
  */
-export function cubicIsLinear(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput, epsilon = 1e-10): boolean {
-  const p0x = readX(p0),
-    p0y = readY(p0);
-  const p1x = readX(p1),
-    p1y = readY(p1);
-  const p2x = readX(p2),
-    p2y = readY(p2);
-  const p3x = readX(p3),
-    p3y = readY(p3);
+export function cubicIsLinear(curve: CubicCurve, epsilon = 1e-10): boolean {
+  const p0x = curve.x0,
+    p0y = curve.y0;
+  const p1x = curve.x1,
+    p1y = curve.y1;
+  const p2x = curve.x2,
+    p2y = curve.y2;
+  const p3x = curve.x3,
+    p3y = curve.y3;
 
   const chordX = p3x - p0x;
   const chordY = p3y - p0y;

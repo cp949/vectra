@@ -157,51 +157,47 @@ describe('quadraticSplitInto', () => {
   const p2 = { x: 4, y: 0 };
 
   function makeOut() {
-    return {
-      p0: { x: 0, y: 0 },
-      p1: { x: 0, y: 0 },
-      p2: { x: 0, y: 0 },
-    };
+    return { kind: 'quadratic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0 };
   }
 
   it('left.p0이 원본 p0과 같다', () => {
     const outL = makeOut();
     const outR = makeOut();
-    quadraticSplitInto(outL, outR, p0, p1, p2, 0.5);
-    expect(outL.p0.x).toBe(0);
-    expect(outL.p0.y).toBe(0);
+    quadraticSplitInto(outL, outR, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
+    expect(outL.x0).toBe(0);
+    expect(outL.y0).toBe(0);
   });
 
   it('right.p2가 원본 p2와 같다', () => {
     const outL = makeOut();
     const outR = makeOut();
-    quadraticSplitInto(outL, outR, p0, p1, p2, 0.5);
-    expect(outR.p2.x).toBe(4);
-    expect(outR.p2.y).toBe(0);
+    quadraticSplitInto(outL, outR, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
+    expect(outR.x2).toBe(4);
+    expect(outR.y2).toBe(0);
   });
 
   it('left.p2와 right.p0이 같다 (de Casteljau 연속성)', () => {
     const outL = makeOut();
     const outR = makeOut();
-    quadraticSplitInto(outL, outR, p0, p1, p2, 0.5);
-    expect(outL.p2.x).toBe(outR.p0.x);
-    expect(outL.p2.y).toBe(outR.p0.y);
+    quadraticSplitInto(outL, outR, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
+    expect(outL.x2).toBe(outR.x0);
+    expect(outL.y2).toBe(outR.y0);
   });
 
   it('split point가 원본 curve의 pointAt(t) 값과 일치한다', () => {
     const outL = makeOut();
     const outR = makeOut();
-    quadraticSplitInto(outL, outR, p0, p1, p2, 0.5);
+    quadraticSplitInto(outL, outR, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     const pt = { x: 0, y: 0 };
     quadraticPointAtTInto(pt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
-    expect(relErr(outL.p2.x, pt.x)).toBeLessThan(1e-12);
-    expect(relErr(outL.p2.y, pt.y)).toBeLessThan(1e-12);
+    expect(relErr(outL.x2, pt.x)).toBeLessThan(1e-12);
+    expect(relErr(outL.y2, pt.y)).toBeLessThan(1e-12);
   });
 
   it('outLeft를 반환한다', () => {
     const outL = makeOut();
     const outR = makeOut();
-    const ret = quadraticSplitInto(outL, outR, p0, p1, p2, 0.5);
+    const ret = quadraticSplitInto(outL, outR, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(ret).toBe(outL);
   });
 });

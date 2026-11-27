@@ -1,15 +1,6 @@
-import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
-import { readX, readY } from '../internal/xy';
-import type { CenterArcWritable, XYInput, XYLike } from '../types';
+import type { CenterArcWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { cubicPointAtTInto } from './cubic-point-at-t-into';
 import { hypot2 } from '../internal/numeric';
-
-interface ValidatedCubicToArcsInputs {
-  p0: XYLike;
-  p1: XYLike;
-  p2: XYLike;
-  p3: XYLike;
-}
 
 /**
  * cubicToArcsInto 입력을 검증한다.
@@ -18,14 +9,11 @@ interface ValidatedCubicToArcsInputs {
  * 원본 함수와 동일한 에러 우선순위를 유지한다.
  */
 export function validateCubicToArcsInputs(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
+  curve: CubicCurve,
   errorTolerance: number,
   maxSegments: number,
   minSegmentT: number
-): ValidatedCubicToArcsInputs {
+): CubicCurve {
   if (!(Number.isFinite(errorTolerance) && errorTolerance > 0)) {
     throw new RangeError('cubicToArcsInto: errorTolerance must be a finite positive number');
   }
@@ -36,34 +24,20 @@ export function validateCubicToArcsInputs(
     throw new RangeError('cubicToArcsInto: minSegmentT must be a finite positive number');
   }
 
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
-
+  const { x0, y0, x1, y1, x2, y2, x3, y3 } = curve;
   if (
-    !Number.isFinite(p0x) ||
-    !Number.isFinite(p0y) ||
-    !Number.isFinite(p1x) ||
-    !Number.isFinite(p1y) ||
-    !Number.isFinite(p2x) ||
-    !Number.isFinite(p2y) ||
-    !Number.isFinite(p3x) ||
-    !Number.isFinite(p3y)
+    !Number.isFinite(x0) ||
+    !Number.isFinite(y0) ||
+    !Number.isFinite(x1) ||
+    !Number.isFinite(y1) ||
+    !Number.isFinite(x2) ||
+    !Number.isFinite(y2) ||
+    !Number.isFinite(x3) ||
+    !Number.isFinite(y3)
   ) {
     throw new RangeError('cubicToArcsInto: all control points must be finite');
   }
-
-  return {
-    p0: { x: p0x, y: p0y },
-    p1: { x: p1x, y: p1y },
-    p2: { x: p2x, y: p2y },
-    p3: { x: p3x, y: p3y },
-  };
+  return { kind: 'cubic', x0, y0, x1, y1, x2, y2, x3, y3 };
 }
 
 /**
@@ -189,10 +163,7 @@ function tryEmitArcFromSegment(
  */
 export function subdivideCubicToTolerance(
   out: CenterArcWritable[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
+  curve: CubicCurve,
   errorTolerance: number,
   maxSegments: number,
   minSegmentT: number
@@ -209,13 +180,13 @@ export function subdivideCubicToTolerance(
     const tSpan = t1 - t0;
     const tMid = (t0 + t1) * 0.5;
 
-    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t0);
+    cubicPointAtTInto(scratch, curve, t0);
     const sx = scratch.x;
     const sy = scratch.y;
-    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), tMid);
+    cubicPointAtTInto(scratch, curve, tMid);
     const mx = scratch.x;
     const my = scratch.y;
-    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t1);
+    cubicPointAtTInto(scratch, curve, t1);
     const ex = scratch.x;
     const ey = scratch.y;
 
@@ -246,10 +217,10 @@ export function subdivideCubicToTolerance(
     // error metric: quarter-point 표본의 point-to-circle deviation과 끝점 재구성 오차의 최대값
     // 거의 직선인 segment는 재분할해도 반지름이 그대로라 끝점 오차가 줄지 않는다.
     // 대신 현이 짧아져 circumcircle이 null이 되고 collinear 경로로 수렴한다.
-    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t0 + tSpan * 0.25);
+    cubicPointAtTInto(scratch, curve, t0 + tSpan * 0.25);
     const q1x = scratch.x;
     const q1y = scratch.y;
-    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t1 - tSpan * 0.25);
+    cubicPointAtTInto(scratch, curve, t1 - tSpan * 0.25);
     const q3x = scratch.x;
     const q3y = scratch.y;
 

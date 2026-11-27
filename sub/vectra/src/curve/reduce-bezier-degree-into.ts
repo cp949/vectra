@@ -1,5 +1,5 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BezierDegreeReductionOptions, QuadraticCurveWritable, XYInput, XYWritable } from '../types';
+import type { BezierDegreeReductionOptions } from '../types';
+import type { QuadraticCurveWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -18,40 +18,34 @@ import { hypot2 } from '../internal/numeric';
  *
  * 정확히 quadratic에서 elevation된 cubic은 성공한다. 일반 cubic은 기본 tolerance에서 대부분 실패한다.
  *
- * 실패 시 `out`은 미수정이고 `false`를 반환한다. 성공 시에만 `out.p0`, `out.p1`, `out.p2`를 기록한다.
+ * 실패 시 `out`은 미수정이고 `false`를 반환한다. 성공 시에만 `out의 제어점 좌표`를 기록한다.
  * max error가 non-finite이면 tolerance 비교가 실패하므로 `false`가 된다.
  *
  * aliasing 안전: 입력을 모두 읽고 성공 판정 후 output을 기록한다.
  *
  * @param out 결과 quadratic curve를 기록할 writable output
- * @param p0 cubic curve 시작점
- * @param p1 cubic curve 첫 번째 제어점
- * @param p2 cubic curve 두 번째 제어점
- * @param p3 cubic curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options 축소 tolerance 옵션. `tolerance`가 finite number가 아니거나 음수이면 RangeError.
  */
 export function reduceBezierDegreeInto<Out extends QuadraticCurveWritable>(
   out: Out,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  options?: BezierDegreeReductionOptions
+  curve: CubicCurve,
+  options?: Required<BezierDegreeReductionOptions>
 ): boolean {
-  const tolerance = options?.tolerance ?? 1e-9;
+  const tolerance = options === undefined ? 1e-9 : options.tolerance;
   if (!Number.isFinite(tolerance) || tolerance < 0) {
     throw new RangeError(`reduceBezierDegreeInto: tolerance must be a finite number >= 0, got ${tolerance}`);
   }
 
   // aliasing 안전을 위해 입력을 모두 먼저 읽는다
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const p3x = curve.x3;
+  const p3y = curve.y3;
 
   // quadratic control point 후보: q1 = ((3*p1 - p0) + (3*p2 - p3)) / 4
   const q1x = (3 * p1x - p0x + (3 * p2x - p3x)) / 4;
@@ -80,8 +74,11 @@ export function reduceBezierDegreeInto<Out extends QuadraticCurveWritable>(
     return false;
   }
 
-  writeXY(out.p0 as XYWritable, p0x, p0y);
-  writeXY(out.p1 as XYWritable, q1x, q1y);
-  writeXY(out.p2 as XYWritable, p3x, p3y);
+  out.x0 = p0x;
+  out.y0 = p0y;
+  out.x1 = q1x;
+  out.y1 = q1y;
+  out.x2 = p3x;
+  out.y2 = p3y;
   return true;
 }

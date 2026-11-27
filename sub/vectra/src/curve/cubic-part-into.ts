@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { CubicCurveWritable, XYInput, XYWritable } from '../types';
+import type { CubicCurveWritable, CubicCurve } from '../types/flat-shapes.internal';
 
 /**
  * cubic Bezier curve의 파라미터 구간 [fromT, toT]에 해당하는 sub-curve를 out에 기록하고 out을 반환한다.
@@ -9,30 +8,24 @@ import type { CubicCurveWritable, XYInput, XYWritable } from '../types';
  * `fromT`/`toT`는 clamp하지 않으며, `fromT > toT`이면 역방향 subcurve를 반환한다.
  *
  * @param out sub-curve를 기록할 writable output
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param fromT 구간 시작 파라미터
  * @param toT 구간 끝 파라미터
  */
 export function cubicPartInto<Out extends CubicCurveWritable>(
   out: Out,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
+  curve: CubicCurve,
   fromT: number,
   toT: number
 ): Out {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const p3x = curve.x3;
+  const p3y = curve.y3;
 
   const fromMt = 1 - fromT;
   const toMt = 1 - toT;
@@ -59,10 +52,14 @@ export function cubicPartInto<Out extends CubicCurveWritable>(
   const q2x = q3x - (span * d1x) / 3;
   const q2y = q3y - (span * d1y) / 3;
 
-  writeXY(out.p0 as XYWritable, q0x, q0y);
-  writeXY(out.p1 as XYWritable, q1x, q1y);
-  writeXY(out.p2 as XYWritable, q2x, q2y);
-  writeXY(out.p3 as XYWritable, q3x, q3y);
+  out.x0 = q0x;
+  out.y0 = q0y;
+  out.x1 = q1x;
+  out.y1 = q1y;
+  out.x2 = q2x;
+  out.y2 = q2y;
+  out.x3 = q3x;
+  out.y3 = q3y;
 
   return out;
 }

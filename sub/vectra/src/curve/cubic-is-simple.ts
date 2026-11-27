@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { CubicCurve } from '../types/flat-shapes.internal';
 import { solveQuadraticInOpenUnit } from './cubic-solve.internal';
 
 /**
@@ -8,20 +7,17 @@ import { solveQuadraticInOpenUnit } from './cubic-solve.internal';
  * (0, 1) 범위 내 inflection이 없고 loop도 아닌 경우 true를 반환한다.
  * inflection이 있거나 loop인 곡선은 false를 반환한다.
  *
- * @param p0 cubic Bezier 시작점
- * @param p1 cubic Bezier 첫 번째 제어점
- * @param p2 cubic Bezier 두 번째 제어점
- * @param p3 cubic Bezier 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  */
-export function cubicIsSimple(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput): boolean {
-  const p0x = readX(p0),
-    p0y = readY(p0);
-  const p1x = readX(p1),
-    p1y = readY(p1);
-  const p2x = readX(p2),
-    p2y = readY(p2);
-  const p3x = readX(p3),
-    p3y = readY(p3);
+export function cubicIsSimple(curve: CubicCurve): boolean {
+  const p0x = curve.x0,
+    p0y = curve.y0;
+  const p1x = curve.x1,
+    p1y = curve.y1;
+  const p2x = curve.x2,
+    p2y = curve.y2;
+  const p3x = curve.x3,
+    p3y = curve.y3;
 
   // power basis
   const ax = -p0x + 3 * p1x - 3 * p2x + p3x;

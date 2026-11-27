@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { QuadraticCurveWritable, XYInput, XYWritable } from '../types';
+import type { QuadraticCurveWritable, QuadraticCurve } from '../types/flat-shapes.internal';
 
 /**
  * quadratic Bezier curve의 파라미터 구간 [fromT, toT]에 해당하는 sub-curve를 out에 기록하고 out을 반환한다.
@@ -9,26 +8,22 @@ import type { QuadraticCurveWritable, XYInput, XYWritable } from '../types';
  * `fromT`/`toT`는 clamp하지 않으며, `fromT > toT`이면 역방향 subcurve를 반환한다.
  *
  * @param out sub-curve를 기록할 writable output
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param fromT 구간 시작 파라미터
  * @param toT 구간 끝 파라미터
  */
 export function quadraticPartInto<Out extends QuadraticCurveWritable>(
   out: Out,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
+  curve: QuadraticCurve,
   fromT: number,
   toT: number
 ): Out {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   const fromMt = 1 - fromT;
   const toMt = 1 - toT;
@@ -46,9 +41,12 @@ export function quadraticPartInto<Out extends QuadraticCurveWritable>(
   const q1x = q0x + (span * d0x) / 2;
   const q1y = q0y + (span * d0y) / 2;
 
-  writeXY(out.p0 as XYWritable, q0x, q0y);
-  writeXY(out.p1 as XYWritable, q1x, q1y);
-  writeXY(out.p2 as XYWritable, q2x, q2y);
+  out.x0 = q0x;
+  out.y0 = q0y;
+  out.x1 = q1x;
+  out.y1 = q1y;
+  out.x2 = q2x;
+  out.y2 = q2y;
 
   return out;
 }

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { QuadraticCurveWritable, XYInput, XYWritable } from '../types';
+import type { QuadraticCurveWritable, QuadraticCurve } from '../types/flat-shapes.internal';
 
 /**
  * quadratic Bezier curve를 파라미터 t 위치에서 de Casteljau 알고리즘으로 분할하여
@@ -18,25 +17,21 @@ import type { QuadraticCurveWritable, XYInput, XYWritable } from '../types';
  *
  * @param outLeft 분할 후 좌측 sub-curve를 기록할 writable output
  * @param outRight 분할 후 우측 sub-curve를 기록할 writable output
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 분할 파라미터 (일반적으로 [0, 1], clamp 없음)
  */
 export function quadraticSplitInto<L extends QuadraticCurveWritable, R extends QuadraticCurveWritable>(
   outLeft: L,
   outRight: R,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
+  curve: QuadraticCurve,
   t: number
 ): L {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   // de Casteljau 1단계
   const lerpP01x = p0x + t * (p1x - p0x);
@@ -49,14 +44,20 @@ export function quadraticSplitInto<L extends QuadraticCurveWritable, R extends Q
   const pointAtY = lerpP01y + t * (lerpP12y - lerpP01y);
 
   // outLeft: { p0, p1: lerpP01, p2: pointAt }
-  writeXY(outLeft.p0 as XYWritable, p0x, p0y);
-  writeXY(outLeft.p1 as XYWritable, lerpP01x, lerpP01y);
-  writeXY(outLeft.p2 as XYWritable, pointAtX, pointAtY);
+  outLeft.x0 = p0x;
+  outLeft.y0 = p0y;
+  outLeft.x1 = lerpP01x;
+  outLeft.y1 = lerpP01y;
+  outLeft.x2 = pointAtX;
+  outLeft.y2 = pointAtY;
 
   // outRight: { p0: pointAt, p1: lerpP12, p2 }
-  writeXY(outRight.p0 as XYWritable, pointAtX, pointAtY);
-  writeXY(outRight.p1 as XYWritable, lerpP12x, lerpP12y);
-  writeXY(outRight.p2 as XYWritable, p2x, p2y);
+  outRight.x0 = pointAtX;
+  outRight.y0 = pointAtY;
+  outRight.x1 = lerpP12x;
+  outRight.y1 = lerpP12y;
+  outRight.x2 = p2x;
+  outRight.y2 = p2y;
 
   return outLeft;
 }
