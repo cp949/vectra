@@ -1,6 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import { writeXY } from '../internal/xy';
-import type { SegmentWritable, TriangleLike, XYWritable } from '../types';
+import type { SegmentWritable, Triangle } from '../types/flat-shapes.internal';
 
 /** triangle vertex를 가리키는 key. median family에서 사용한다. */
 export type TriangleVertexKey = 'a' | 'b' | 'c';
@@ -13,29 +11,28 @@ export type TriangleVertexKey = 'a' | 'b' | 'c';
  * - 'b': vertex B에서 midpoint(CA)로 향하는 segment
  * - 'c': vertex C에서 midpoint(AB)로 향하는 segment
  *
- * out.a는 source vertex, out.b는 opposite side midpoint다.
+ * (out.x1, out.y1)는 source vertex, (out.x2, out.y2)는 opposite side midpoint다.
  *
  * runtime invalid vertex key는 false를 반환하고 out을 수정하지 않는다.
  * degenerate triangle(collinear, all-same vertex)도 midpoint 산식을 그대로 적용해 segment를
  * 기록한다.
  * non-finite vertex 좌표는 검증 없이 JS 산술 결과를 그대로 기록한다.
  *
- * aliasing 안전: 모든 triangle 좌표를 local 변수로 읽은 뒤 writeXY를 호출한다. out.a 또는 out.b가
- * triangle vertex storage와 같은 object여도 결과가 깨지지 않는다.
+ * 모든 꼭짓점을 먼저 읽으므로 입력과 출력을 같은 객체로 넘겨도 안전하다.
  *
- * @param out median segment를 기록할 writable output (out.a: source vertex, out.b: midpoint)
+ * @param out median segment를 기록할 선분 객체 ((out.x1, out.y1): source vertex, (out.x2, out.y2): midpoint)
  * @param triangle median을 계산할 triangle
  * @param vertex source vertex key. 'a' | 'b' | 'c' 외 값은 false 반환.
  * @returns out 또는 false(invalid key)
  */
-export function medianInto<Out extends SegmentWritable<XYWritable, XYWritable>>(
+export function medianInto<Out extends SegmentWritable>(
   out: Out,
-  triangle: TriangleLike,
+  triangle: Triangle,
   vertex: TriangleVertexKey
 ): Out | false {
   if (vertex !== 'a' && vertex !== 'b' && vertex !== 'c') return false;
 
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
 
   let sx: number;
   let sy: number;
@@ -62,7 +59,9 @@ export function medianInto<Out extends SegmentWritable<XYWritable, XYWritable>>(
     my = (ay + by) / 2;
   }
 
-  writeXY(out.a, sx, sy);
-  writeXY(out.b, mx, my);
+  out.x1 = sx;
+  out.y1 = sy;
+  out.x2 = mx;
+  out.y2 = my;
   return out;
 }

@@ -1,5 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -12,8 +11,8 @@ import { hypot2 } from '../internal/numeric';
  * @param triangle 검사할 triangle
  * @param epsilon 변 길이 절대 허용 오차 (기본값 0)
  */
-export function isIsosceles(triangle: TriangleLike, epsilon = 0): boolean {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function isIsosceles(triangle: Triangle, epsilon = 0): boolean {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   const ab = hypot2(bx - ax, by - ay);
   const bc = hypot2(cx - bx, cy - by);
   const ca = hypot2(ax - cx, ay - cy);

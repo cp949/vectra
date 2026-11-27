@@ -1,4 +1,5 @@
-import type { TriangleLike, TriangleWritable } from '../types';
+import { createZeroTriangle } from '../internal/triangle';
+import type { Triangle, TriangleWritable } from '../types/flat-shapes.internal';
 import { medialTriangleInto } from './medial-triangle-into';
 
 /**
@@ -9,11 +10,7 @@ import { medialTriangleInto } from './medial-triangle-into';
  * degenerate/empty 입력 처리 정책은 `medialTriangleInto`와 동일하다.
  * tolerance/iteration option 정책은 `medialTriangleInto`와 동일하다.
  */
-export function medialTriangle(triangle: TriangleLike): TriangleWritable {
-  const out: TriangleWritable = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
+export function medialTriangle(triangle: Triangle): TriangleWritable {
+  const out = createZeroTriangle();
   return medialTriangleInto(out, triangle);
 }

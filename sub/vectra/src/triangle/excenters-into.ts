@@ -11,7 +11,7 @@ import { hypot2 } from '../internal/numeric';
  * 빈 array를 반환한다.
  * input 좌표는 push 전에 local 변수로 읽어 aliasing을 방지한다.
  *
- * @param out 방심 3개를 push할 array
+ * @param out 방심 세 개를 기록할 점 배열
  * @param triangle 방심을 계산할 triangle
  * @returns out (성공 시 length 3, 실패 시 length 0)
  */

@@ -13,30 +13,27 @@ const right345 = { x1: 0, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
 /** collinear(degenerate) */
 const collinear = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
 
-const angleRight = { a: { x: 0, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
-const angleCollinear = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
-
 describe('triangle.interiorAngles — 새 배열 반환', () => {
   test('Into와 동일한 3개 내각을 반환한다', () => {
     const out: number[] = [];
-    interiorAnglesInto(out, angleRight);
-    expect(interiorAngles(angleRight)).toEqual(out);
+    interiorAnglesInto(out, right345);
+    expect(interiorAngles(right345)).toEqual(out);
   });
 
   test('새 배열을 반환한다', () => {
-    const result1 = interiorAngles(angleRight);
-    const result2 = interiorAngles(angleRight);
+    const result1 = interiorAngles(right345);
+    const result2 = interiorAngles(right345);
     expect(result1).not.toBe(result2);
   });
 
   test('3개 내각의 합이 π이다', () => {
-    const result = interiorAngles(angleRight);
+    const result = interiorAngles(right345);
     expect(result).toHaveLength(3);
     expect(result[0] + result[1] + result[2]).toBeCloseTo(Math.PI, 10);
   });
 
   test('collinear triangle에서도 3개 내각을 반환한다', () => {
-    expect(interiorAngles(angleCollinear)).toHaveLength(3);
+    expect(interiorAngles(collinear)).toHaveLength(3);
   });
 });
 

@@ -1,5 +1,5 @@
-import { createLegacySegment } from '../internal/segment';
-import type { SegmentWritable, TriangleLike } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { SegmentWritable, Triangle } from '../types/flat-shapes.internal';
 import { sideAtInto } from './side-at-into';
 
 /**
@@ -9,8 +9,8 @@ import { sideAtInto } from './side-at-into';
  * finite/non-finite 입력과 결과 처리 정책은 `sideAtInto`와 동일하다.
  * degenerate/empty 입력 처리 정책은 `sideAtInto`와 동일하다.
  */
-export function sideAt(triangle: TriangleLike, index: number): SegmentWritable | undefined {
-  const seed = createLegacySegment();
+export function sideAt(triangle: Triangle, index: number): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (!sideAtInto(seed, triangle, index)) return undefined;
   return seed;
 }

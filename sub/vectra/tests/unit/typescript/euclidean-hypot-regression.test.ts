@@ -44,11 +44,7 @@ describe('Euclidean hypot regression', () => {
   });
 
   test('triangle isRight does not turn every huge non-right angle into right angle', () => {
-    const triangle = {
-      a: { x: 0, y: 0 },
-      b: { x: 1e154, y: 0 },
-      c: { x: 0.5e154, y: 1e154 },
-    };
+    const triangle = { x1: 0, y1: 0, x2: 1e154, y2: 0, x3: 0.5e154, y3: 1e154 };
 
     expect(isRight(triangle, 0.1)).toBe(false);
   });

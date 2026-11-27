@@ -1,5 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle의 세 내각이 모두 π/2보다 작으면 true를 반환한다.
@@ -9,8 +8,8 @@ import type { TriangleLike } from '../types';
  *
  * @param triangle 검사할 triangle
  */
-export function isAcute(triangle: TriangleLike): boolean {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function isAcute(triangle: Triangle): boolean {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   // dot at A > 0
   if (!((bx - ax) * (cx - ax) + (by - ay) * (cy - ay) > 0)) return false;
   // dot at B > 0

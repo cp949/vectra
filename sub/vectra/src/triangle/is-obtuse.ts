@@ -1,5 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle의 한 내각이 π/2보다 크면 true를 반환한다.
@@ -10,8 +9,8 @@ import type { TriangleLike } from '../types';
  *
  * @param triangle 검사할 triangle
  */
-export function isObtuse(triangle: TriangleLike): boolean {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function isObtuse(triangle: Triangle): boolean {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   // dot at A
   if ((bx - ax) * (cx - ax) + (by - ay) * (cy - ay) < 0) return true;
   // dot at B

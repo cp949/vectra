@@ -1,5 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 function scaledRightThreshold(epsilon: number, dx1: number, dy1: number, dx2: number, dy2: number): number {
@@ -18,8 +17,8 @@ function scaledRightThreshold(epsilon: number, dx1: number, dy1: number, dx2: nu
  * @param triangle 검사할 triangle
  * @param epsilon dot product 허용 오차 (기본값 0)
  */
-export function isRight(triangle: TriangleLike, epsilon = 0): boolean {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function isRight(triangle: Triangle, epsilon = 0): boolean {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
 
   // At A: vectors AB, AC
   const abx = bx - ax;

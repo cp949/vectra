@@ -1,6 +1,6 @@
 /**
  * triangle vertex와 side index accessor를 검증한다.
- * 유효 index, invalid index, tuple input, writable output을 다룬다.
+ * 유효 index, invalid index, writable output을 다룬다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -10,7 +10,7 @@ import { sideAt } from '../../../src/triangle/side-at';
 import { sideAtInto } from '../../../src/triangle/side-at-into';
 
 describe('pointAtIndexInto', () => {
-  const triangle = { a: { x: 1, y: 2 }, b: { x: 3, y: 4 }, c: { x: 5, y: 6 } };
+  const triangle = { x1: 1, y1: 2, x2: 3, y2: 4, x3: 5, y3: 6 };
 
   test('index 0: vertex a를 out에 기록하고 true를 반환한다', () => {
     const out = { x: 0, y: 0 };
@@ -35,27 +35,10 @@ describe('pointAtIndexInto', () => {
     expect(pointAtIndexInto(out, triangle, -1)).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
-
-  test('tuple XYWritable에도 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(pointAtIndexInto(out, triangle, 1)).toBe(true);
-    expect(out).toEqual([3, 4]);
-  });
-
-  test('TriangleTuple input도 처리한다', () => {
-    const tup = [
-      { x: 10, y: 20 },
-      { x: 30, y: 40 },
-      { x: 50, y: 60 },
-    ] as const;
-    const out = { x: 0, y: 0 };
-    expect(pointAtIndexInto(out, tup, 2)).toBe(true);
-    expect(out).toEqual({ x: 50, y: 60 });
-  });
 });
 
 describe('pointAtIndex', () => {
-  const triangle = { a: { x: 1, y: 2 }, b: { x: 3, y: 4 }, c: { x: 5, y: 6 } };
+  const triangle = { x1: 1, y1: 2, x2: 3, y2: 4, x3: 5, y3: 6 };
 
   test('index 1: vertex b를 반환한다', () => {
     expect(pointAtIndex(triangle, 1)).toEqual({ x: 3, y: 4 });
@@ -67,49 +50,38 @@ describe('pointAtIndex', () => {
 });
 
 describe('sideAtInto', () => {
-  const triangle = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 3 } };
+  const triangle = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 3 };
 
   test('index 0: side BC(b→c)를 out에 기록하고 true를 반환한다', () => {
-    const out = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
     expect(sideAtInto(out, triangle, 0)).toBe(true);
-    expect(out).toEqual({ a: { x: 4, y: 0 }, b: { x: 2, y: 3 } });
+    expect(out).toEqual({ x1: 4, y1: 0, x2: 2, y2: 3 });
   });
 
   test('index 1: side CA(c→a)를 out에 기록하고 true를 반환한다', () => {
-    const out = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
     expect(sideAtInto(out, triangle, 1)).toBe(true);
-    expect(out).toEqual({ a: { x: 2, y: 3 }, b: { x: 0, y: 0 } });
+    expect(out).toEqual({ x1: 2, y1: 3, x2: 0, y2: 0 });
   });
 
   test('index 2: side AB(a→b)를 out에 기록하고 true를 반환한다', () => {
-    const out = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
     expect(sideAtInto(out, triangle, 2)).toBe(true);
-    expect(out).toEqual({ a: { x: 0, y: 0 }, b: { x: 4, y: 0 } });
+    expect(out).toEqual({ x1: 0, y1: 0, x2: 4, y2: 0 });
   });
 
   test('invalid index: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { a: { x: 99, y: 99 }, b: { x: 99, y: 99 } };
+    const out = { x1: 99, y1: 99, x2: 99, y2: 99 };
     expect(sideAtInto(out, triangle, -1)).toBe(false);
-    expect(out).toEqual({ a: { x: 99, y: 99 }, b: { x: 99, y: 99 } });
-  });
-
-  test('TriangleTuple input도 처리한다', () => {
-    const tup = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 2, y: 3 },
-    ] as const;
-    const out = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
-    expect(sideAtInto(out, tup, 0)).toBe(true);
-    expect(out).toEqual({ a: { x: 4, y: 0 }, b: { x: 2, y: 3 } });
+    expect(out).toEqual({ x1: 99, y1: 99, x2: 99, y2: 99 });
   });
 });
 
 describe('sideAt', () => {
-  const triangle = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 3 } };
+  const triangle = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 3 };
 
   test('index 0: side BC(b→c)를 반환한다', () => {
-    expect(sideAt(triangle, 0)).toEqual({ a: { x: 4, y: 0 }, b: { x: 2, y: 3 } });
+    expect(sideAt(triangle, 0)).toEqual({ x1: 4, y1: 0, x2: 2, y2: 3 });
   });
 
   test('invalid index: undefined를 반환한다', () => {

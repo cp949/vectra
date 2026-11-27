@@ -8,20 +8,16 @@ import { describe, expect, test } from 'vitest';
 import { interiorAnglesInto } from '../../../src/triangle/interior-angles-into';
 
 /** 3-4-5 직각삼각형: a(0,0) b(3,0) c(0,4) — CCW */
-const right345 = { a: { x: 0, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
+const right345 = { x1: 0, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
 
 /** 변이 1인 정삼각형 */
-const equilateral = {
-  a: { x: 0, y: 0 },
-  b: { x: 1, y: 0 },
-  c: { x: 0.5, y: Math.sqrt(3) / 2 },
-};
+const equilateral = { x1: 0, y1: 0, x2: 1, y2: 0, x3: 0.5, y3: Math.sqrt(3) / 2 };
 
 /** collinear(degenerate) triangle */
-const collinear = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
+const collinear = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
 
 /** 한 점으로 수렴(all same vertex) */
-const point = { a: { x: 1, y: 1 }, b: { x: 1, y: 1 }, c: { x: 1, y: 1 } };
+const point = { x1: 1, y1: 1, x2: 1, y2: 1, x3: 1, y3: 1 };
 
 describe('interiorAnglesInto', () => {
   test('3-4-5 직각삼각형: 세 내각의 합이 π이다', () => {
@@ -71,17 +67,5 @@ describe('interiorAnglesInto', () => {
     for (const angle of out) {
       expect(angle).toBe(0);
     }
-  });
-
-  test('tuple input도 처리한다', () => {
-    const t = [
-      { x: 0, y: 0 },
-      { x: 3, y: 0 },
-      { x: 0, y: 4 },
-    ] as const;
-    const out: number[] = [];
-    interiorAnglesInto(out, t);
-    expect(out).toHaveLength(3);
-    expect(out[0] + out[1] + out[2]).toBeCloseTo(Math.PI, 10);
   });
 });

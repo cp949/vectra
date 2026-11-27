@@ -1,5 +1,5 @@
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -23,30 +23,24 @@ import { hypot2 } from '../internal/numeric';
  * @param options.epsilon ratio 차이 절대 허용오차 (기본값 1e-9, 음수이면 RangeError)
  * @param options.allowReflection true면 orientation 부호 차이를 허용한다 (기본값 false)
  */
-export function similarTo(
-  a: TriangleLike,
-  b: TriangleLike,
-  options?: { epsilon?: number; allowReflection?: boolean }
-): boolean {
-  const epsilon = options?.epsilon ?? 1e-9;
+export function similarTo(a: Triangle, b: Triangle, options?: { epsilon: number; allowReflection: boolean }): boolean {
+  const epsilon = options === undefined ? 1e-9 : options.epsilon;
   if (epsilon < 0) throw new RangeError('epsilon must be non-negative');
-  const allowReflection = options?.allowReflection ?? false;
+  const allowReflection = options === undefined ? false : options.allowReflection;
 
-  if (hasNonFiniteVertex(a) || hasNonFiniteVertex(b)) return false;
+  if (hasNonFiniteTriangleVertex(a) || hasNonFiniteTriangleVertex(b)) return false;
 
-  const area2xA = triangleSignedArea2x(a);
-  const area2xB = triangleSignedArea2x(b);
+  const area2xA = flatTriangleSignedArea2x(a);
+  const area2xB = flatTriangleSignedArea2x(b);
   // degenerate triangle은 닮음 판정 대상이 아니다(변 길이 0 분모도 함께 배제한다).
   if (area2xA === 0 || area2xB === 0) return false;
 
   // 기본 reflection 불허: orientation 부호가 다르면 false.
   if (!allowReflection && Math.sign(area2xA) !== Math.sign(area2xB)) return false;
 
-  const ca = readTriangleRawCoords(a);
-  const cb = readTriangleRawCoords(b);
-  const rAB = hypot2(cb.bx - cb.ax, cb.by - cb.ay) / hypot2(ca.bx - ca.ax, ca.by - ca.ay);
-  const rBC = hypot2(cb.cx - cb.bx, cb.cy - cb.by) / hypot2(ca.cx - ca.bx, ca.cy - ca.by);
-  const rCA = hypot2(cb.ax - cb.cx, cb.ay - cb.cy) / hypot2(ca.ax - ca.cx, ca.ay - ca.cy);
+  const rAB = hypot2(b.x2 - b.x1, b.y2 - b.y1) / hypot2(a.x2 - a.x1, a.y2 - a.y1);
+  const rBC = hypot2(b.x3 - b.x2, b.y3 - b.y2) / hypot2(a.x3 - a.x2, a.y3 - a.y2);
+  const rCA = hypot2(b.x1 - b.x3, b.y1 - b.y3) / hypot2(a.x1 - a.x3, a.y1 - a.y3);
 
   // pairwise 비교(세 조건 모두 유지). 절대 허용오차이므로 |rCA - rAB|는 앞 두 조건에서 <= 2·epsilon만
   // 보장돼 transitive하지 않다. 세 번째 조건을 지우면 허용오차가 느슨해지므로 제거하지 않는다.

@@ -1,5 +1,5 @@
-import { createLegacySegment } from '../internal/segment';
-import type { SegmentWritable, TriangleLike } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { SegmentWritable, Triangle } from '../types/flat-shapes.internal';
 import { medianInto, type TriangleVertexKey } from './median-into';
 
 /**
@@ -20,8 +20,8 @@ import { medianInto, type TriangleVertexKey } from './median-into';
  * @param triangle median을 계산할 triangle
  * @param vertex source vertex key. 'a' | 'b' | 'c' 외 값은 undefined 반환.
  */
-export function median(triangle: TriangleLike, vertex: TriangleVertexKey): SegmentWritable | undefined {
-  const seed = createLegacySegment();
+export function median(triangle: Triangle, vertex: TriangleVertexKey): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (medianInto(seed, triangle, vertex) === false) return undefined;
   return seed;
 }

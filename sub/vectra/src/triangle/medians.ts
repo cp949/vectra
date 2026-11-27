@@ -1,5 +1,5 @@
-import { createLegacySegment } from '../internal/segment';
-import type { TriangleLike } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { mediansInto, type TriangleMediansWritable } from './medians-into';
 
 /**
@@ -18,11 +18,11 @@ import { mediansInto, type TriangleMediansWritable } from './medians-into';
  * tolerance/iteration option 정책은 `mediansInto`와 동일하다.
  * @param triangle median을 계산할 triangle
  */
-export function medians(triangle: TriangleLike): TriangleMediansWritable {
+export function medians(triangle: Triangle): TriangleMediansWritable {
   const out: TriangleMediansWritable = {
-    a: createLegacySegment(),
-    b: createLegacySegment(),
-    c: createLegacySegment(),
+    a: createZeroSegment(),
+    b: createZeroSegment(),
+    c: createZeroSegment(),
   };
   return mediansInto(out, triangle);
 }

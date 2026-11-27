@@ -1,4 +1,4 @@
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { interiorAnglesInto } from './interior-angles-into';
 
 /**
@@ -10,6 +10,6 @@ import { interiorAnglesInto } from './interior-angles-into';
  *
  * @param triangle 내각을 계산할 triangle
  */
-export function interiorAngles(triangle: TriangleLike): number[] {
+export function interiorAngles(triangle: Triangle): number[] {
   return interiorAnglesInto([], triangle);
 }

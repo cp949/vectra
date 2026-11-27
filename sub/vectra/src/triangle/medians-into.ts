@@ -1,6 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import { writeXY } from '../internal/xy';
-import type { SegmentWritable, TriangleLike } from '../types';
+import type { SegmentWritable, Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle 세 vertex의 median을 한 번에 담는 nested writable container.
@@ -29,20 +27,19 @@ export interface TriangleMediansWritable {
  * - out.b: B → midpoint(CA)
  * - out.c: C → midpoint(AB)
  *
- * out.a, out.b, out.c와 그 내부 .a, .b XY object identity는 보존한다. 좌표 field만 mutate한다.
+ * out.a, out.b, out.c의 참조를 보존하고 각 선분의 좌표를 기록한다.
  *
  * degenerate triangle(collinear, all-same vertex)도 midpoint 산식을 그대로 적용해 세 segment를
  * 모두 기록한다. 실패하지 않고 항상 out을 반환한다.
  * non-finite vertex 좌표는 검증 없이 JS 산술 결과를 그대로 기록한다.
  *
- * aliasing 안전: 모든 triangle 좌표를 local 변수로 읽은 뒤 writeXY를 호출한다. out의 어느 nested
- * XY가 triangle vertex storage와 같은 object여도 결과가 깨지지 않는다.
+ * 모든 꼭짓점을 먼저 읽으므로 입력 객체를 중선 중 하나로 넘겨도 안전하다.
  *
- * @param out 세 median을 기록할 nested writable container. 내부 segment object identity는 보존된다.
+ * @param out 세 중선을 기록할 선분 객체 세 개를 담은 컨테이너. 내부 객체의 참조는 보존한다.
  * @param triangle median을 계산할 triangle
  */
-export function mediansInto<Out extends TriangleMediansWritable>(out: Out, triangle: TriangleLike): Out {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function mediansInto<Out extends TriangleMediansWritable>(out: Out, triangle: Triangle): Out {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
 
   // 모든 좌표를 local에 읽은 뒤 기록한다. nested aliasing 안전.
   const mbcX = (bx + cx) / 2;
@@ -53,14 +50,20 @@ export function mediansInto<Out extends TriangleMediansWritable>(out: Out, trian
   const mabY = (ay + by) / 2;
 
   // median a: A → midpoint(BC)
-  writeXY(out.a.a, ax, ay);
-  writeXY(out.a.b, mbcX, mbcY);
+  out.a.x1 = ax;
+  out.a.y1 = ay;
+  out.a.x2 = mbcX;
+  out.a.y2 = mbcY;
   // median b: B → midpoint(CA)
-  writeXY(out.b.a, bx, by);
-  writeXY(out.b.b, mcaX, mcaY);
+  out.b.x1 = bx;
+  out.b.y1 = by;
+  out.b.x2 = mcaX;
+  out.b.y2 = mcaY;
   // median c: C → midpoint(AB)
-  writeXY(out.c.a, cx, cy);
-  writeXY(out.c.b, mabX, mabY);
+  out.c.x1 = cx;
+  out.c.y1 = cy;
+  out.c.x2 = mabX;
+  out.c.y2 = mabY;
 
   return out;
 }

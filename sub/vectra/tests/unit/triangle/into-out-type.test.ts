@@ -11,6 +11,7 @@ import { closestPointOnEdgeInto } from '../../../src/triangle/closest-point-on-e
 import { barycentricInto } from '../../../src/triangle/barycentric-into';
 import { pointFromBarycentricInto } from '../../../src/triangle/point-from-barycentric-into';
 import { triangleFrom } from '../../../src/triangle/triangle-from';
+import { sideAt } from '../../../src/triangle/side-at';
 import { copyInto } from '../../../src/triangle/copy-into';
 import { buildEquilateralInto } from '../../../src/triangle/build-equilateral-into';
 import { buildRightInto } from '../../../src/triangle/build-right-into';
@@ -30,7 +31,12 @@ import { incircleInto } from '../../../src/triangle/incircle-into';
 import { ninePointCircleInto } from '../../../src/triangle/nine-point-circle-into';
 import { excentersInto } from '../../../src/triangle/excenters-into';
 import { excirclesInto } from '../../../src/triangle/excircles-into';
+import { medialTriangleInto } from '../../../src/triangle/medial-triangle-into';
+import { medianInto } from '../../../src/triangle/median-into';
+import { mediansInto } from '../../../src/triangle/medians-into';
+import { interiorAnglesInto } from '../../../src/triangle/interior-angles-into';
 import type {
+  SegmentWritable,
   Triangle,
   TriangleWritable,
   PointWritable,
@@ -271,4 +277,44 @@ test('excirclesInto은 같은 출력 배열을 반환한다', () => {
   const result = excirclesInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<CircleWritable[]>();
+});
+
+test('맞은편 변은 평평한 선분을 반환한다', () => {
+  expectTypeOf(sideAt).returns.toEqualTypeOf<SegmentWritable | undefined>();
+});
+
+/** 호출자가 정의한 출력 클래스. */
+class ExternalMedians {
+  a = new ExternalSegment();
+  b = new ExternalSegment();
+  c = new ExternalSegment();
+  tag = 'keep';
+}
+
+test('medialTriangleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalTriangle();
+  const result = medialTriangleInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
+});
+
+test('medianInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalSegment();
+  const result = medianInto(out, triangle, 'a');
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalSegment | false>();
+});
+
+test('mediansInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalMedians();
+  const result = mediansInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalMedians>();
+});
+
+test('interiorAnglesInto은 같은 출력 배열을 반환한다', () => {
+  const out: number[] = [];
+  const result = interiorAnglesInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<number[]>();
 });

@@ -1,40 +1,31 @@
-import { readTriangleA, readTriangleB, readTriangleC } from '../internal/triangle';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { TriangleLike, TriangleWritable, XYWritable } from '../types';
+import type { Triangle, TriangleWritable } from '../types/flat-shapes.internal';
 
 /**
  * 세 side의 midpoint를 vertex로 하는 medial triangle을 out에 기록하고 out을 반환한다.
  *
  * medial triangle의 각 vertex:
- * - out.a = midpoint(a, b)
- * - out.b = midpoint(b, c)
- * - out.c = midpoint(c, a)
+ * - (out.x1, out.y1) = midpoint(a, b)
+ * - (out.x2, out.y2) = midpoint(b, c)
+ * - (out.x3, out.y3) = midpoint(c, a)
  *
  * degenerate triangle(collinear)에서도 각 side의 midpoint를 계산한다.
  * non-finite vertex는 IEEE 754 연산 결과를 그대로 반환한다.
+ *
+ * @param out 세 변의 중점을 기록할 triangle 객체
+ * @param triangle 세 변의 중점을 구할 triangle
  */
-export function medialTriangleInto<Out extends TriangleWritable<XYWritable, XYWritable, XYWritable>>(
-  out: Out,
-  triangle: TriangleLike
-): Out {
-  const a = readTriangleA(triangle);
-  const b = readTriangleB(triangle);
-  const c = readTriangleC(triangle);
+export function medialTriangleInto<Out extends TriangleWritable>(out: Out, triangle: Triangle): Out {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
 
-  // aliasing에서도 안전하도록 모든 좌표를 읽은 뒤 기록한다
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
-  const cx = readX(c);
-  const cy = readY(c);
-
-  // out.a = midpoint(a, b)
-  writeXY(out.a, (ax + bx) / 2, (ay + by) / 2);
-  // out.b = midpoint(b, c)
-  writeXY(out.b, (bx + cx) / 2, (by + cy) / 2);
-  // out.c = midpoint(c, a)
-  writeXY(out.c, (cx + ax) / 2, (cy + ay) / 2);
+  // (out.x1, out.y1) = midpoint(a, b)
+  out.x1 = (ax + bx) / 2;
+  out.y1 = (ay + by) / 2;
+  // (out.x2, out.y2) = midpoint(b, c)
+  out.x2 = (bx + cx) / 2;
+  out.y2 = (by + cy) / 2;
+  // (out.x3, out.y3) = midpoint(c, a)
+  out.x3 = (cx + ax) / 2;
+  out.y3 = (cy + ay) / 2;
 
   return out;
 }

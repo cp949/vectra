@@ -1,5 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /** 두 벡터 사이의 각도(radian)를 반환한다. 영벡터 방향이면 0을 반환한다. */
@@ -22,8 +21,8 @@ function angleBetween(dx1: number, dy1: number, dx2: number, dy2: number): numbe
  * @param triangle 내각을 계산할 triangle
  * @returns out
  */
-export function interiorAnglesInto(out: number[], triangle: TriangleLike): number[] {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function interiorAnglesInto(out: number[], triangle: Triangle): number[] {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   out.length = 0;
   // At A: vectors AB, AC
   out.push(angleBetween(bx - ax, by - ay, cx - ax, cy - ay));

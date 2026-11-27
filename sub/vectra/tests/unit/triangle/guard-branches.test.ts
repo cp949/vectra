@@ -18,32 +18,27 @@ function tri(ax: number, ay: number, bx: number, by: number, cx: number, cy: num
 }
 
 /** 면적은 1e-17(0이 아님)이지만 `|BC| + |AB| = |CA|`가 부동소수점으로 정확히 성립하는 삼각형. */
-/** 전환 전 각도 질의에 넘길 꼭짓점을 만든다. */
-function legacyTri(ax: number, ay: number, bx: number, by: number, cx: number, cy: number) {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by }, c: { x: cx, y: cy } };
-}
-
 const sliver = tri(0, 0, 1, 0, 2, 1e-17);
 
 describe('각도 판정 — A 이외의 vertex', () => {
   test('isObtuse는 A가 둔각이면 true다', () => {
-    expect(isObtuse(legacyTri(0, 1, -3, 0, 3, 0))).toBe(true);
+    expect(isObtuse(tri(0, 1, -3, 0, 3, 0))).toBe(true);
   });
 
   test('isObtuse는 B가 둔각이면 true다', () => {
-    expect(isObtuse(legacyTri(-3, 0, 0, 1, 3, 0))).toBe(true);
+    expect(isObtuse(tri(-3, 0, 0, 1, 3, 0))).toBe(true);
   });
 
   test('isAcute는 A가 예각이어도 B가 둔각이면 false다', () => {
-    expect(isAcute(legacyTri(-3, 0, 0, 1, 3, 0))).toBe(false);
+    expect(isAcute(tri(-3, 0, 0, 1, 3, 0))).toBe(false);
   });
 
   test('isRight는 B가 직각이면 true다', () => {
-    expect(isRight(legacyTri(0, 3, 0, 0, 4, 0))).toBe(true);
+    expect(isRight(tri(0, 3, 0, 0, 4, 0))).toBe(true);
   });
 
   test('isRight는 C가 직각이면 true다', () => {
-    expect(isRight(legacyTri(3, 0, 0, 4, 0, 0))).toBe(true);
+    expect(isRight(tri(3, 0, 0, 4, 0, 0))).toBe(true);
   });
 });
 
