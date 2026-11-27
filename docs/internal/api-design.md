@@ -17,7 +17,7 @@
 | API-006 | Output 타입 다형성이 없으면 `Into` 없이 직접 반환한다. |
 | API-007 | `Into`가 단일 caller-side object를 기록하면 allocating companion `xxx`를 함께 제공한다. |
 | API-008 | Collection / multi-output도 `xxxInto`와 `xxx`를 함께 제공한다. |
-| API-009 | 좌표 입력은 `Point`를 사용한다. |
+| API-009 | 좌표 입력은 `Point`를 사용한다. 숫자 나열 overload는 public input에 포함하지 않는다. |
 | API-010 | Shape 입력과 출력은 ADR 0010의 고정된 형식을 따른다. |
 | API-011 | Public 함수끼리 직접 import하지 않는다. Companion `xxx` → `xxxInto` leaf import는 예외. |
 | API-012 | Catalog 기본값은 "제공한다". 제외에는 명시적인 이유가 필요하다. |
@@ -236,6 +236,8 @@ point 배열을 `out`으로 받는 collection `xxxInto`는 `out.length = 0` 뒤 
 
 좌표 입력과 출력은 [ADR 0010](./adr/0010-flat-shape-input.md)의 `{ x, y }` 형식을 따른다.
 입력 필드는 읽기 전용이다. 출력 필드는 쓰기 가능하다.
+숫자 나열 overload(`addInto(out, ax, ay, bx, by)` 같은 `*XY` 함수)는 public input에 포함하지 않는다.
+평평한 객체 입력이 숫자 인자와 같은 속도라서 따로 둘 이유가 없다.
 
 ## API-010: Shape 입력과 출력
 

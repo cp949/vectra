@@ -49,8 +49,10 @@
 
 ### 점 목록
 
-- Node.js v24.21.0에서 입력 생성을 제외하고 목록당 32·256·2048점을 비교했을 때 polygon의 `area`와 `containsPoint`는 interleaved `number[]`가 가장 빨랐다.
-- 같은 조건에서 256점과 2048점 polyline의 길이 계산은 `{ x, y }[]`가 가장 빨랐다.
+- Node.js v24.21.0에서 입력 생성을 제외하고 목록당 32·256·2048점을 비교했다.
+- polygon `area`는 interleaved `number[]`가 `{ x, y }[]`보다 시간이 27–48% 짧았다.
+- polygon `containsPoint`의 두 형식 차이는 3.4% 이하였다. 형식 선택 근거가 아니다.
+- 256점과 2048점 polyline 길이 계산은 `{ x, y }[]`가 `number[]`보다 시간이 7–12% 짧았다.
 - polygon과 polyline 사이 변환 비용은 측정하지 않았다.
 
 ### 출력
