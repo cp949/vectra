@@ -1,4 +1,4 @@
-import type { TriangleLike, XYObjectWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { orthocenterInto } from './orthocenter-into';
 
 /**
@@ -11,8 +11,8 @@ import { orthocenterInto } from './orthocenter-into';
  * tolerance/iteration option 정책은 `orthocenterInto`와 동일하다.
  * @param triangle 수심을 계산할 triangle
  */
-export function orthocenter(triangle: TriangleLike): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function orthocenter(triangle: Triangle): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   const result = orthocenterInto(seed, triangle);
   return result === false ? undefined : result;
 }

@@ -1,6 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import { writeXY } from '../internal/xy';
-import type { TriangleLike, XYWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -10,18 +8,19 @@ import { hypot2 } from '../internal/numeric';
  * perimeter가 0이면(점 triangle) out을 수정하지 않고 false를 반환한다.
  * collinear triangle은 perimeter > 0이므로 계산 결과를 그대로 기록하고 out을 반환한다.
  *
- * @param out 내심 좌표를 기록할 writable output
+ * @param out 내심 좌표를 기록할 점 객체
  * @param triangle 내심을 계산할 triangle
  * @returns out 또는 false(perimeter === 0)
  */
-export function incenterInto<Out extends XYWritable>(out: Out, triangle: TriangleLike): Out | false {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function incenterInto<Out extends PointWritable>(out: Out, triangle: Triangle): Out | false {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   // a = 변 BC (vertex A 맞은편), b = 변 CA (vertex B 맞은편), c = 변 AB (vertex C 맞은편)
   const a = hypot2(cx - bx, cy - by);
   const b = hypot2(ax - cx, ay - cy);
   const c = hypot2(bx - ax, by - ay);
   const perimeter = a + b + c;
   if (perimeter === 0) return false;
-  writeXY(out, (a * ax + b * bx + c * cx) / perimeter, (a * ay + b * by + c * cy) / perimeter);
+  out.x = (a * ax + b * bx + c * cx) / perimeter;
+  out.y = (a * ay + b * by + c * cy) / perimeter;
   return out;
 }

@@ -1,5 +1,5 @@
-import { createLegacySegment } from '../internal/segment';
-import type { SegmentWritable, TriangleLike } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { SegmentWritable, Triangle } from '../types/flat-shapes.internal';
 import { altitudeInto } from './altitude-into';
 
 /**
@@ -11,8 +11,8 @@ import { altitudeInto } from './altitude-into';
  * @param triangle 수선을 계산할 triangle
  * @param index 수선을 내릴 vertex index (0=A, 1=B, 2=C)
  */
-export function altitude(triangle: TriangleLike, index: number): SegmentWritable | undefined {
-  const seed = createLegacySegment();
+export function altitude(triangle: Triangle, index: number): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (!altitudeInto(seed, triangle, index)) return undefined;
   return seed;
 }

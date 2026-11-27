@@ -14,37 +14,42 @@ import { isRight } from '../../../src/triangle/is-right';
 
 /** A의 좌표가 `(ax, ay)`, B가 `(bx, by)`, C가 `(cx, cy)`인 plain triangle을 만든다. */
 function tri(ax: number, ay: number, bx: number, by: number, cx: number, cy: number) {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by }, c: { x: cx, y: cy } };
+  return { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy };
 }
 
 /** 면적은 1e-17(0이 아님)이지만 `|BC| + |AB| = |CA|`가 부동소수점으로 정확히 성립하는 삼각형. */
+/** 전환 전 각도 질의에 넘길 꼭짓점을 만든다. */
+function legacyTri(ax: number, ay: number, bx: number, by: number, cx: number, cy: number) {
+  return { a: { x: ax, y: ay }, b: { x: bx, y: by }, c: { x: cx, y: cy } };
+}
+
 const sliver = tri(0, 0, 1, 0, 2, 1e-17);
 
 describe('각도 판정 — A 이외의 vertex', () => {
   test('isObtuse는 A가 둔각이면 true다', () => {
-    expect(isObtuse(tri(0, 1, -3, 0, 3, 0))).toBe(true);
+    expect(isObtuse(legacyTri(0, 1, -3, 0, 3, 0))).toBe(true);
   });
 
   test('isObtuse는 B가 둔각이면 true다', () => {
-    expect(isObtuse(tri(-3, 0, 0, 1, 3, 0))).toBe(true);
+    expect(isObtuse(legacyTri(-3, 0, 0, 1, 3, 0))).toBe(true);
   });
 
   test('isAcute는 A가 예각이어도 B가 둔각이면 false다', () => {
-    expect(isAcute(tri(-3, 0, 0, 1, 3, 0))).toBe(false);
+    expect(isAcute(legacyTri(-3, 0, 0, 1, 3, 0))).toBe(false);
   });
 
   test('isRight는 B가 직각이면 true다', () => {
-    expect(isRight(tri(0, 3, 0, 0, 4, 0))).toBe(true);
+    expect(isRight(legacyTri(0, 3, 0, 0, 4, 0))).toBe(true);
   });
 
   test('isRight는 C가 직각이면 true다', () => {
-    expect(isRight(tri(3, 0, 0, 4, 0, 0))).toBe(true);
+    expect(isRight(legacyTri(3, 0, 0, 4, 0, 0))).toBe(true);
   });
 });
 
 describe('excentersInto·excirclesInto — 얇은 삼각형', () => {
   test('면적이 0이 아니어도 변 길이 합이 삼각부등식의 등호이면 빈 배열을 돌려준다', () => {
     expect(excentersInto([{ x: 9, y: 9 }], sliver)).toEqual([]);
-    expect(excirclesInto([{ center: { x: 9, y: 9 }, radius: 1 }], sliver)).toEqual([]);
+    expect(excirclesInto([{ cx: 9, cy: 9, r: 1 }], sliver)).toEqual([]);
   });
 });

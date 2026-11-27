@@ -1,4 +1,4 @@
-import type { TriangleLike, XYObjectWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { excentersInto } from './excenters-into';
 
 /**
@@ -10,6 +10,6 @@ import { excentersInto } from './excenters-into';
  *
  * @param triangle 방심을 계산할 triangle
  */
-export function excenters(triangle: TriangleLike): XYObjectWritable[] {
+export function excenters(triangle: Triangle): PointWritable[] {
   return excentersInto([], triangle);
 }

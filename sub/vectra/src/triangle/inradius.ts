@@ -1,5 +1,5 @@
-import { readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import { flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -14,12 +14,12 @@ import { hypot2 } from '../internal/numeric';
  * @param triangle 내접원 반지름을 계산할 triangle
  * @returns 내접원 반지름. perimeter === 0이면 undefined
  */
-export function inradius(triangle: TriangleLike): number | undefined {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function inradius(triangle: Triangle): number | undefined {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   const a = hypot2(cx - bx, cy - by);
   const b = hypot2(ax - cx, ay - cy);
   const c = hypot2(bx - ax, by - ay);
   const perimeter = a + b + c;
   if (perimeter === 0) return undefined;
-  return Math.abs(triangleSignedArea2x(triangle)) / perimeter;
+  return Math.abs(flatTriangleSignedArea2x(triangle)) / perimeter;
 }

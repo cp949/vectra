@@ -1,4 +1,4 @@
-import type { TriangleLike, XYObjectWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { circumcenterInto } from './circumcenter-into';
 
 /**
@@ -11,8 +11,8 @@ import { circumcenterInto } from './circumcenter-into';
  * tolerance/iteration option 정책은 `circumcenterInto`와 동일하다.
  * @param triangle 외심을 계산할 triangle
  */
-export function circumcenter(triangle: TriangleLike): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function circumcenter(triangle: Triangle): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   const result = circumcenterInto(seed, triangle);
   return result === false ? undefined : result;
 }

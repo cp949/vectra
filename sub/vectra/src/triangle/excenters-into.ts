@@ -1,5 +1,5 @@
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike, XYObjectWritable } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -15,11 +15,11 @@ import { hypot2 } from '../internal/numeric';
  * @param triangle 방심을 계산할 triangle
  * @returns out (성공 시 length 3, 실패 시 length 0)
  */
-export function excentersInto(out: XYObjectWritable[], triangle: TriangleLike): XYObjectWritable[] {
+export function excentersInto(out: PointWritable[], triangle: Triangle): PointWritable[] {
   out.length = 0;
-  if (hasNonFiniteVertex(triangle) || triangleSignedArea2x(triangle) === 0) return out;
+  if (hasNonFiniteTriangleVertex(triangle) || flatTriangleSignedArea2x(triangle) === 0) return out;
   // 입력 좌표를 local 변수로 미리 읽어둔다 (aliasing 안전)
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   // a = 변 BC (vertex A 맞은편), b = 변 CA, c = 변 AB
   const a = hypot2(cx - bx, cy - by);
   const b = hypot2(ax - cx, ay - cy);

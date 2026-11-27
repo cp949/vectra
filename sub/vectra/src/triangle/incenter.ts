@@ -1,4 +1,4 @@
-import type { TriangleLike, XYObjectWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { incenterInto } from './incenter-into';
 
 /**
@@ -10,8 +10,8 @@ import { incenterInto } from './incenter-into';
  * tolerance/iteration option 정책은 `incenterInto`와 동일하다.
  * @param triangle 내심을 계산할 triangle
  */
-export function incenter(triangle: TriangleLike): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function incenter(triangle: Triangle): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   const result = incenterInto(seed, triangle);
   return result === false ? undefined : result;
 }

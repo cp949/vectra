@@ -1,6 +1,5 @@
-import { readTriangleRawCoords } from '../internal/triangle';
 import { solveTriangleCircumcenter } from '../internal/triangle-circumcenter';
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 const center = { x: 0, y: 0 };
@@ -16,8 +15,8 @@ const center = { x: 0, y: 0 };
  * @param triangle 외접원 반지름을 계산할 triangle
  * @returns 외접원 반지름. degenerate triangle이면 undefined
  */
-export function circumradius(triangle: TriangleLike): number | undefined {
+export function circumradius(triangle: Triangle): number | undefined {
   if (!solveTriangleCircumcenter(center, triangle)) return undefined;
-  const { ax, ay } = readTriangleRawCoords(triangle);
+  const { x1: ax, y1: ay } = triangle;
   return hypot2(ax - center.x, ay - center.y);
 }

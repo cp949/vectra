@@ -20,21 +20,21 @@ import { orthocenterInto } from '../../../src/triangle/orthocenter-into';
 // ─── 공통 fixture ───────────────────────────────────────────────────────────
 
 /** 3-4-5 직각삼각형: a(0,0) b(3,0) c(0,4) — CCW */
-const right345 = { a: { x: 0, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
+const right345 = { x1: 0, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
 
 /** collinear(degenerate) triangle — opposite side zero-length 아님, 단 area=0 */
-const collinear = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
+const collinear = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
 
 /** opposite side zero-length: b와 c가 같은 점 */
-const zeroSide = { a: { x: 0, y: 1 }, b: { x: 2, y: 0 }, c: { x: 2, y: 0 } };
+const zeroSide = { x1: 0, y1: 1, x2: 2, y2: 0, x3: 2, y3: 0 };
 
 /** plain segment writable seed를 만든다. */
-function seg(ax = 0, ay = 0, bx = 0, by = 0): { a: { x: number; y: number }; b: { x: number; y: number } } {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
+function seg(ax = 0, ay = 0, bx = 0, by = 0): { x1: number; y1: number; x2: number; y2: number } {
+  return { x1: ax, y1: ay, x2: bx, y2: by };
 }
 
 /** acute triangle: A=(0,0) B=(4,0) C=(2,3) */
-const acute = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 3 } };
+const acute = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 3 };
 
 // ─── equilateralAltitude ─────────────────────────────────────────────────────
 
@@ -109,10 +109,10 @@ describe('altitudeInto', () => {
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, right345, 0);
     expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(0, 10); // source vertex A
-    expect(out.a.y).toBeCloseTo(0, 10);
-    expect(out.b.x).toBeCloseTo(48 / 25, 10); // foot on BC
-    expect(out.b.y).toBeCloseTo(36 / 25, 10);
+    expect(out.x1).toBeCloseTo(0, 10); // source vertex A
+    expect(out.y1).toBeCloseTo(0, 10);
+    expect(out.x2).toBeCloseTo(48 / 25, 10); // foot on BC
+    expect(out.y2).toBeCloseTo(36 / 25, 10);
   });
 
   test('index 1: B에서 CA로 내린 수선을 기록한다', () => {
@@ -123,10 +123,10 @@ describe('altitudeInto', () => {
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, right345, 1);
     expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(3, 10); // source vertex B
-    expect(out.a.y).toBeCloseTo(0, 10);
-    expect(out.b.x).toBeCloseTo(0, 10); // foot on CA
-    expect(out.b.y).toBeCloseTo(0, 10);
+    expect(out.x1).toBeCloseTo(3, 10); // source vertex B
+    expect(out.y1).toBeCloseTo(0, 10);
+    expect(out.x2).toBeCloseTo(0, 10); // foot on CA
+    expect(out.y2).toBeCloseTo(0, 10);
   });
 
   test('index 2: C에서 AB로 내린 수선을 기록한다', () => {
@@ -137,56 +137,41 @@ describe('altitudeInto', () => {
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, right345, 2);
     expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(0, 10); // source vertex C
-    expect(out.a.y).toBeCloseTo(4, 10);
-    expect(out.b.x).toBeCloseTo(0, 10); // foot on AB
-    expect(out.b.y).toBeCloseTo(0, 10);
-  });
-
-  test('tuple input도 처리한다', () => {
-    const tri = [
-      { x: 0, y: 0 },
-      { x: 3, y: 0 },
-      { x: 0, y: 4 },
-    ] as const;
-    const out = seg();
-    const result = altitudeInto(out, tri, 0);
-    expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(0, 10);
-    expect(out.a.y).toBeCloseTo(0, 10);
-    expect(out.b.x).toBeCloseTo(48 / 25, 10);
-    expect(out.b.y).toBeCloseTo(36 / 25, 10);
+    expect(out.x1).toBeCloseTo(0, 10); // source vertex C
+    expect(out.y1).toBeCloseTo(4, 10);
+    expect(out.x2).toBeCloseTo(0, 10); // foot on AB
+    expect(out.y2).toBeCloseTo(0, 10);
   });
 
   test('invalid index(-1): false를 반환하고 out을 수정하지 않는다', () => {
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, right345, -1);
     expect(result).toBe(false);
-    expect(out.a.x).toBe(99);
-    expect(out.b.x).toBe(99);
+    expect(out.x1).toBe(99);
+    expect(out.x2).toBe(99);
   });
 
   test('invalid index(3): false를 반환하고 out을 수정하지 않는다', () => {
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, right345, 3);
     expect(result).toBe(false);
-    expect(out.a.x).toBe(99);
-    expect(out.b.x).toBe(99);
+    expect(out.x1).toBe(99);
+    expect(out.x2).toBe(99);
   });
 
   test('invalid index(NaN): false를 반환하고 out을 수정하지 않는다', () => {
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, right345, Number.NaN);
     expect(result).toBe(false);
-    expect(out.a.x).toBe(99);
+    expect(out.x1).toBe(99);
   });
 
   test('non-finite vertex를 포함한 triangle: false를 반환하고 out을 수정하지 않는다', () => {
-    const tri = { a: { x: Infinity, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
+    const tri = { x1: Infinity, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, tri, 0);
     expect(result).toBe(false);
-    expect(out.a.x).toBe(99);
+    expect(out.x1).toBe(99);
   });
 
   test('opposite side zero-length: false를 반환하고 out을 수정하지 않는다', () => {
@@ -194,7 +179,7 @@ describe('altitudeInto', () => {
     const out = seg(99, 99, 99, 99);
     const result = altitudeInto(out, zeroSide, 0);
     expect(result).toBe(false);
-    expect(out.a.x).toBe(99);
+    expect(out.x1).toBe(99);
   });
 
   test('collinear triangle: height 0 segment를 기록하고 true를 반환한다', () => {
@@ -207,42 +192,10 @@ describe('altitudeInto', () => {
     const out = seg();
     const result = altitudeInto(out, collinear, 0);
     expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(0, 10); // source vertex A
-    expect(out.a.y).toBeCloseTo(0, 10);
-    expect(out.b.x).toBeCloseTo(0, 10); // foot = same point (height 0)
-    expect(out.b.y).toBeCloseTo(0, 10);
-  });
-
-  test('self-aliasing: out.a가 triangle의 vertex A와 같은 object여도 결과가 올바르다', () => {
-    // right345: a(0,0) b(3,0) c(0,4)
-    // index 0: foot on BC = (48/25, 36/25)
-    const vertexA = { x: 0, y: 0 };
-    const tri = { a: vertexA, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
-    const out = { a: vertexA, b: { x: 0, y: 0 } }; // out.a IS vertexA
-    const result = altitudeInto(out, tri, 0);
-    expect(result).toBe(out);
-    // out.a should be updated to vertex A coords (same values as before in this case)
-    expect(out.a.x).toBeCloseTo(0, 10);
-    expect(out.a.y).toBeCloseTo(0, 10);
-    // foot should be correct despite self-aliasing
-    expect(out.b.x).toBeCloseTo(48 / 25, 10);
-    expect(out.b.y).toBeCloseTo(36 / 25, 10);
-  });
-
-  test('self-aliasing: out.b가 triangle의 vertex B와 같은 object여도 foot이 올바르게 기록된다', () => {
-    // right345: a(0,0) b(3,0) c(0,4)
-    // index 0: A에서 BC로의 수선, foot = (48/25, 36/25)
-    // out.b IS tri.b(B vertex). writeXY(out.a) 먼저, writeXY(out.b) 나중 순서이므로
-    // tri.b 좌표가 덮어써지기 전에 bx/by가 이미 local 변수에 읽혀 있어야 한다.
-    const vertexB = { x: 3, y: 0 };
-    const tri = { a: { x: 0, y: 0 }, b: vertexB, c: { x: 0, y: 4 } };
-    const out = { a: { x: 0, y: 0 }, b: vertexB }; // out.b IS vertexB
-    const result = altitudeInto(out, tri, 0);
-    expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(0, 10); // source vertex A
-    expect(out.a.y).toBeCloseTo(0, 10);
-    expect(out.b.x).toBeCloseTo(48 / 25, 10); // foot on BC, not corrupted B
-    expect(out.b.y).toBeCloseTo(36 / 25, 10);
+    expect(out.x1).toBeCloseTo(0, 10); // source vertex A
+    expect(out.y1).toBeCloseTo(0, 10);
+    expect(out.x2).toBeCloseTo(0, 10); // foot = same point (height 0)
+    expect(out.y2).toBeCloseTo(0, 10);
   });
 });
 
@@ -252,18 +205,18 @@ describe('altitude', () => {
   test('index 0: plain segment object를 반환한다', () => {
     const result = altitude(right345, 0);
     expect(result).not.toBeUndefined();
-    expect(result?.a.x).toBeCloseTo(0, 10);
-    expect(result?.a.y).toBeCloseTo(0, 10);
-    expect(result?.b.x).toBeCloseTo(48 / 25, 10);
-    expect(result?.b.y).toBeCloseTo(36 / 25, 10);
+    expect(result?.x1).toBeCloseTo(0, 10);
+    expect(result?.y1).toBeCloseTo(0, 10);
+    expect(result?.x2).toBeCloseTo(48 / 25, 10);
+    expect(result?.y2).toBeCloseTo(36 / 25, 10);
   });
 
   test('index 1: plain segment object를 반환한다', () => {
     const result = altitude(right345, 1);
     expect(result).not.toBeUndefined();
-    expect(result?.a.x).toBeCloseTo(3, 10);
-    expect(result?.b.x).toBeCloseTo(0, 10);
-    expect(result?.b.y).toBeCloseTo(0, 10);
+    expect(result?.x1).toBeCloseTo(3, 10);
+    expect(result?.x2).toBeCloseTo(0, 10);
+    expect(result?.y2).toBeCloseTo(0, 10);
   });
 
   test('invalid index: undefined를 반환한다', () => {
@@ -275,7 +228,7 @@ describe('altitude', () => {
   });
 
   test('non-finite vertex: undefined를 반환한다', () => {
-    const tri = { a: { x: NaN, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
+    const tri = { x1: NaN, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
     expect(altitude(tri, 0)).toBeUndefined();
   });
 
@@ -283,10 +236,10 @@ describe('altitude', () => {
     const result = altitude(right345, 2);
     expect(result).not.toBeUndefined();
     if (result) {
-      expect(typeof result.a.x).toBe('number');
-      expect(typeof result.a.y).toBe('number');
-      expect(typeof result.b.x).toBe('number');
-      expect(typeof result.b.y).toBe('number');
+      expect(typeof result.x1).toBe('number');
+      expect(typeof result.y1).toBe('number');
+      expect(typeof result.x2).toBe('number');
+      expect(typeof result.y2).toBe('number');
     }
   });
 });
@@ -323,35 +276,11 @@ describe('orthocenterInto', () => {
   });
 
   test('non-finite vertex: false를 반환하고 out을 수정하지 않는다', () => {
-    const tri = { a: { x: Infinity, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
+    const tri = { x1: Infinity, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
     const out = { x: 99, y: 99 };
     const result = orthocenterInto(out, tri);
     expect(result).toBe(false);
     expect(out.x).toBe(99);
-  });
-
-  test('tuple input으로 orthocenterInto를 호출한다', () => {
-    const tri = [
-      { x: 0, y: 0 },
-      { x: 3, y: 0 },
-      { x: 0, y: 4 },
-    ] as const;
-    const out = { x: 0, y: 0 };
-    const result = orthocenterInto(out, tri);
-    expect(result).toBe(out);
-    expect(out.x).toBeCloseTo(0, 10);
-    expect(out.y).toBeCloseTo(0, 10);
-  });
-
-  test('self-aliasing: out이 triangle vertex 중 하나와 같은 object여도 결과가 올바르다', () => {
-    // right345에서 수심은 A(0,0)이므로 out을 vertexB로 aliasing해도 결과는 (0,0)
-    const vertexB = { x: 3, y: 0 };
-    const tri = { a: { x: 0, y: 0 }, b: vertexB, c: { x: 0, y: 4 } };
-    const out = vertexB;
-    const result = orthocenterInto(out, tri);
-    expect(result).toBe(out);
-    expect(out.x).toBeCloseTo(0, 10);
-    expect(out.y).toBeCloseTo(0, 10);
   });
 });
 
@@ -370,7 +299,7 @@ describe('orthocenter', () => {
   });
 
   test('non-finite vertex: undefined를 반환한다', () => {
-    const tri = { a: { x: NaN, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
+    const tri = { x1: NaN, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
     expect(orthocenter(tri)).toBeUndefined();
   });
 });
@@ -395,17 +324,6 @@ describe('excentersInto', () => {
     expect(out[2]?.y).toBeCloseTo(-2, 10);
   });
 
-  test('tuple input으로 excentersInto를 호출한다', () => {
-    const tri = [
-      { x: 0, y: 0 },
-      { x: 3, y: 0 },
-      { x: 0, y: 4 },
-    ] as const;
-    const out: { x: number; y: number }[] = [];
-    excentersInto(out, tri);
-    expect(out).toHaveLength(3);
-  });
-
   test('기존 array 내용을 지운다 (array reset)', () => {
     const out: { x: number; y: number }[] = [
       { x: 1, y: 2 },
@@ -424,7 +342,7 @@ describe('excentersInto', () => {
   });
 
   test('non-finite vertex: 빈 array를 반환한다', () => {
-    const tri = { a: { x: Infinity, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
+    const tri = { x1: Infinity, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
     const out: { x: number; y: number }[] = [];
     excentersInto(out, tri);
     expect(out).toHaveLength(0);
@@ -436,48 +354,37 @@ describe('excentersInto', () => {
 describe('excirclesInto', () => {
   test('right345에서 center와 radius 3개를 순서대로 반환한다', () => {
     // area=6; ra=6/(da/2)=6/1=6, rb=6/(db/2)=6/2=3, rc=6/(dc/2)=6/3=2
-    const out: { center: { x: number; y: number }; radius: number }[] = [];
+    const out: { cx: number; cy: number; r: number }[] = [];
     const result = excirclesInto(out, right345);
     expect(result).toBe(out);
     expect(out).toHaveLength(3);
-    expect(out[0]?.center.x).toBeCloseTo(6, 10);
-    expect(out[0]?.center.y).toBeCloseTo(6, 10);
-    expect(out[0]?.radius).toBeCloseTo(6, 10);
-    expect(out[1]?.center.x).toBeCloseTo(-3, 10);
-    expect(out[1]?.center.y).toBeCloseTo(3, 10);
-    expect(out[1]?.radius).toBeCloseTo(3, 10);
-    expect(out[2]?.center.x).toBeCloseTo(2, 10);
-    expect(out[2]?.center.y).toBeCloseTo(-2, 10);
-    expect(out[2]?.radius).toBeCloseTo(2, 10);
-  });
-
-  test('tuple input으로 excirclesInto를 호출한다', () => {
-    const tri = [
-      { x: 0, y: 0 },
-      { x: 3, y: 0 },
-      { x: 0, y: 4 },
-    ] as const;
-    const out: { center: { x: number; y: number }; radius: number }[] = [];
-    excirclesInto(out, tri);
-    expect(out).toHaveLength(3);
+    expect(out[0]?.cx).toBeCloseTo(6, 10);
+    expect(out[0]?.cy).toBeCloseTo(6, 10);
+    expect(out[0]?.r).toBeCloseTo(6, 10);
+    expect(out[1]?.cx).toBeCloseTo(-3, 10);
+    expect(out[1]?.cy).toBeCloseTo(3, 10);
+    expect(out[1]?.r).toBeCloseTo(3, 10);
+    expect(out[2]?.cx).toBeCloseTo(2, 10);
+    expect(out[2]?.cy).toBeCloseTo(-2, 10);
+    expect(out[2]?.r).toBeCloseTo(2, 10);
   });
 
   test('기존 array 내용을 지운다 (array reset)', () => {
-    const dummy = { center: { x: 0, y: 0 }, radius: 1 };
+    const dummy = { cx: 0, cy: 0, r: 1 };
     const out = [dummy, dummy, dummy, dummy];
     excirclesInto(out, right345);
     expect(out).toHaveLength(3);
   });
 
   test('collinear triangle: 빈 array를 반환한다', () => {
-    const out: { center: { x: number; y: number }; radius: number }[] = [];
+    const out: { cx: number; cy: number; r: number }[] = [];
     excirclesInto(out, collinear);
     expect(out).toHaveLength(0);
   });
 
   test('non-finite vertex: 빈 array를 반환한다', () => {
-    const tri = { a: { x: NaN, y: 0 }, b: { x: 3, y: 0 }, c: { x: 0, y: 4 } };
-    const out: { center: { x: number; y: number }; radius: number }[] = [];
+    const tri = { x1: NaN, y1: 0, x2: 3, y2: 0, x3: 0, y3: 4 };
+    const out: { cx: number; cy: number; r: number }[] = [];
     excirclesInto(out, tri);
     expect(out).toHaveLength(0);
   });

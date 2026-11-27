@@ -1,4 +1,4 @@
-import type { CircleWritable, TriangleLike, XYObjectWritable } from '../types';
+import type { CircleWritable, Triangle } from '../types/flat-shapes.internal';
 import { excirclesInto } from './excircles-into';
 
 /**
@@ -10,6 +10,6 @@ import { excirclesInto } from './excircles-into';
  *
  * @param triangle 방접원을 계산할 triangle
  */
-export function excircles(triangle: TriangleLike): CircleWritable<XYObjectWritable>[] {
+export function excircles(triangle: Triangle): CircleWritable[] {
   return excirclesInto([], triangle);
 }

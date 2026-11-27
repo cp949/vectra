@@ -1,7 +1,5 @@
-import { readTriangleRawCoords } from '../internal/triangle';
 import { solveTriangleCircumcenter } from '../internal/triangle-circumcenter';
-import { writeXY } from '../internal/xy';
-import type { CircleWritable, TriangleLike, XYWritable } from '../types';
+import type { CircleWritable, Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 const center = { x: 0, y: 0 };
@@ -12,18 +10,15 @@ const center = { x: 0, y: 0 };
  * 외접원의 중심은 외심(circumcenter)이고, 반지름은 외심-vertex 거리다.
  * degenerate triangle이면 out을 수정하지 않고 false를 반환한다.
  *
- * @param out 외접원을 기록할 writable output
+ * @param out 외접원을 기록할 원 객체
  * @param triangle 외접원을 계산할 triangle
  * @returns out 또는 false(degenerate)
  */
-export function circumcircleInto<Out extends CircleWritable<XYWritable>>(
-  out: Out,
-  triangle: TriangleLike
-): Out | false {
+export function circumcircleInto<Out extends CircleWritable>(out: Out, triangle: Triangle): Out | false {
   if (!solveTriangleCircumcenter(center, triangle)) return false;
-  // out.center가 vertex와 alias일 수 있으므로 기록 전에 vertex A를 읽어 둔다.
-  const { ax, ay } = readTriangleRawCoords(triangle);
-  writeXY(out.center, center.x, center.y);
-  out.radius = hypot2(ax - center.x, ay - center.y);
+  const { x1: ax, y1: ay } = triangle;
+  out.cx = center.x;
+  out.cy = center.y;
+  out.r = hypot2(ax - center.x, ay - center.y);
   return out;
 }

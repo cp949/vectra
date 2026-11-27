@@ -3,7 +3,7 @@
  *
  * eulerLineInto / eulerLine의 endpoint(out.a=centroid, out.b=orthocenter),
  * 정삼각형 zero-length segment, degenerate/non-finite 실패 정책, output 계약,
- * aliasing 안전성을 다룬다.
+ * 같은 객체를 입력과 출력으로 쓰는 경우를 다룬다.
  */
 import { describe, expect, test } from 'vitest';
 import { centroid } from '../../../src/triangle/centroid';
@@ -12,131 +12,108 @@ import { eulerLineInto } from '../../../src/triangle/euler-line-into';
 import { orthocenter } from '../../../src/triangle/orthocenter';
 
 /** 직각삼각형. 직각 꼭짓점 A(0,0)이 orthocenter, centroid=(4/3, 1) */
-const right = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } };
+const right = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 };
 
 /** 예각삼각형 */
-const acute = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 1, y: 3 } };
+const acute = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 1, y3: 3 };
 
 /** 변이 1인 정삼각형. centroid와 orthocenter가 일치한다. */
-const equilateral = {
-  a: { x: 0, y: 0 },
-  b: { x: 1, y: 0 },
-  c: { x: 0.5, y: Math.sqrt(3) / 2 },
-};
+const equilateral = { x1: 0, y1: 0, x2: 1, y2: 0, x3: 0.5, y3: Math.sqrt(3) / 2 };
 
 /** collinear(degenerate) triangle */
-const collinear = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
+const collinear = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
 
 /** 세 vertex가 한 점인 triangle */
-const singlePoint = { a: { x: 1, y: 1 }, b: { x: 1, y: 1 }, c: { x: 1, y: 1 } };
+const singlePoint = { x1: 1, y1: 1, x2: 1, y2: 1, x3: 1, y3: 1 };
 
 /** zero-initialized segment writable을 만든다. */
 function seg() {
-  return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  return { x1: 0, y1: 0, x2: 0, y2: 0 };
 }
 
 describe('eulerLineInto', () => {
+  test('같은 객체를 triangle 입력과 선분 출력으로 쓸 수 있다', () => {
+    const out = { ...acute };
+    expect(eulerLineInto(out, out)).toBe(out);
+    expect(out.x1).toBeCloseTo(5 / 3, 10);
+    expect(out.y1).toBeCloseTo(1, 10);
+    expect(out.x2).toBeCloseTo(1, 10);
+    expect(out.y2).toBeCloseTo(1, 10);
+  });
+
   test('직각삼각형: out.a는 centroid(4/3, 1), out.b는 orthocenter(0, 0)다', () => {
     const out = seg();
     const result = eulerLineInto(out, right);
     expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(4 / 3, 10);
-    expect(out.a.y).toBeCloseTo(1, 10);
-    expect(out.b.x).toBeCloseTo(0, 10);
-    expect(out.b.y).toBeCloseTo(0, 10);
+    expect(out.x1).toBeCloseTo(4 / 3, 10);
+    expect(out.y1).toBeCloseTo(1, 10);
+    expect(out.x2).toBeCloseTo(0, 10);
+    expect(out.y2).toBeCloseTo(0, 10);
   });
 
   test('예각삼각형: out.a/out.b는 centroid/orthocenter companion과 일치한다', () => {
-    const g = centroid({ x1: acute.a.x, y1: acute.a.y, x2: acute.b.x, y2: acute.b.y, x3: acute.c.x, y3: acute.c.y });
+    const g = centroid(acute);
     const h = orthocenter(acute);
     expect(h).not.toBeUndefined();
     if (h === undefined) throw new Error('orthocenter가 정의되어야 한다');
     const out = seg();
     expect(eulerLineInto(out, acute)).toBe(out);
-    expect(out.a.x).toBeCloseTo(g.x, 10);
-    expect(out.a.y).toBeCloseTo(g.y, 10);
-    expect(out.b.x).toBeCloseTo(h.x, 10);
-    expect(out.b.y).toBeCloseTo(h.y, 10);
+    expect(out.x1).toBeCloseTo(g.x, 10);
+    expect(out.y1).toBeCloseTo(g.y, 10);
+    expect(out.x2).toBeCloseTo(h.x, 10);
+    expect(out.y2).toBeCloseTo(h.y, 10);
   });
 
   test('정삼각형: centroid와 orthocenter가 일치하는 zero-length segment로 성공한다', () => {
     const out = seg();
     const result = eulerLineInto(out, equilateral);
     expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(out.b.x, 10);
-    expect(out.a.y).toBeCloseTo(out.b.y, 10);
-    expect(out.a.x).toBeCloseTo(0.5, 10);
-    expect(out.a.y).toBeCloseTo(Math.sqrt(3) / 6, 10);
-  });
-
-  test('tuple input도 처리한다', () => {
-    const t = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 0, y: 3 },
-    ] as const;
-    const out = seg();
-    const result = eulerLineInto(out, t);
-    expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(4 / 3, 10);
-    expect(out.a.y).toBeCloseTo(1, 10);
-    expect(out.b.x).toBeCloseTo(0, 10);
-    expect(out.b.y).toBeCloseTo(0, 10);
-  });
-
-  test('out.a가 input vertex storage와 aliasing되어도 올바른 결과를 기록한다', () => {
-    const shared = { x: 0, y: 0 };
-    // vertex a와 out.a가 같은 object다.
-    const t = { a: shared, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } };
-    const out = { a: shared, b: { x: 0, y: 0 } };
-    const result = eulerLineInto(out, t);
-    expect(result).toBe(out);
-    expect(out.a.x).toBeCloseTo(4 / 3, 10);
-    expect(out.a.y).toBeCloseTo(1, 10);
-    expect(out.b.x).toBeCloseTo(0, 10);
-    expect(out.b.y).toBeCloseTo(0, 10);
+    expect(out.x1).toBeCloseTo(out.x2, 10);
+    expect(out.y1).toBeCloseTo(out.y2, 10);
+    expect(out.x1).toBeCloseTo(0.5, 10);
+    expect(out.y1).toBeCloseTo(Math.sqrt(3) / 6, 10);
   });
 
   test('collinear triangle: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { a: { x: 99, y: 99 }, b: { x: 88, y: 88 } };
+    const out = { x1: 99, y1: 99, x2: 88, y2: 88 };
     const result = eulerLineInto(out, collinear);
     expect(result).toBe(false);
-    expect(out.a.x).toBe(99);
-    expect(out.a.y).toBe(99);
-    expect(out.b.x).toBe(88);
-    expect(out.b.y).toBe(88);
+    expect(out.x1).toBe(99);
+    expect(out.y1).toBe(99);
+    expect(out.x2).toBe(88);
+    expect(out.y2).toBe(88);
   });
 
   test('single-point triangle: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { a: { x: 99, y: 99 }, b: { x: 88, y: 88 } };
+    const out = { x1: 99, y1: 99, x2: 88, y2: 88 };
     const result = eulerLineInto(out, singlePoint);
     expect(result).toBe(false);
-    expect(out.a.x).toBe(99);
-    expect(out.b.x).toBe(88);
+    expect(out.x1).toBe(99);
+    expect(out.x2).toBe(88);
   });
 
   test('non-finite vertex(Infinity): false를 반환하고 out을 수정하지 않는다', () => {
-    const t = { a: { x: Infinity, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } };
-    const out = { a: { x: 99, y: 99 }, b: { x: 88, y: 88 } };
+    const t = { x1: Infinity, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 };
+    const out = { x1: 99, y1: 99, x2: 88, y2: 88 };
     expect(eulerLineInto(out, t)).toBe(false);
-    expect(out.a.x).toBe(99);
-    expect(out.b.x).toBe(88);
+    expect(out.x1).toBe(99);
+    expect(out.x2).toBe(88);
   });
 
   test('non-finite vertex(NaN): false를 반환하고 out을 수정하지 않는다', () => {
-    const t = { a: { x: 0, y: 0 }, b: { x: NaN, y: 0 }, c: { x: 0, y: 3 } };
-    const out = { a: { x: 99, y: 99 }, b: { x: 88, y: 88 } };
+    const t = { x1: 0, y1: 0, x2: NaN, y2: 0, x3: 0, y3: 3 };
+    const out = { x1: 99, y1: 99, x2: 88, y2: 88 };
     expect(eulerLineInto(out, t)).toBe(false);
-    expect(out.a.x).toBe(99);
-    expect(out.b.y).toBe(88);
+    expect(out.x1).toBe(99);
+    expect(out.y2).toBe(88);
   });
 
   test('non-finite vertex(-Infinity): false를 반환하고 out을 수정하지 않는다', () => {
-    const t = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: -Infinity } };
-    const out = { a: { x: 99, y: 99 }, b: { x: 88, y: 88 } };
+    const t = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: -Infinity };
+    const out = { x1: 99, y1: 99, x2: 88, y2: 88 };
     expect(eulerLineInto(out, t)).toBe(false);
-    expect(out.a.y).toBe(99);
-    expect(out.b.x).toBe(88);
+    expect(out.y1).toBe(99);
+    expect(out.x2).toBe(88);
   });
 });
 
@@ -145,25 +122,24 @@ describe('eulerLine', () => {
     const result = eulerLine(right);
     expect(result).not.toBeUndefined();
     if (result === undefined) throw new Error('eulerLine이 정의되어야 한다');
-    expect(result.a.x).toBeCloseTo(4 / 3, 10);
-    expect(result.a.y).toBeCloseTo(1, 10);
-    expect(result.b.x).toBeCloseTo(0, 10);
-    expect(result.b.y).toBeCloseTo(0, 10);
+    expect(result.x1).toBeCloseTo(4 / 3, 10);
+    expect(result.y1).toBeCloseTo(1, 10);
+    expect(result.x2).toBeCloseTo(0, 10);
+    expect(result.y2).toBeCloseTo(0, 10);
   });
 
   test('성공 시 매번 새 object를 반환한다', () => {
     const r1 = eulerLine(right);
     const r2 = eulerLine(right);
     expect(r1).not.toBe(r2);
-    expect(r1?.a).not.toBe(r2?.a);
   });
 
   test('정삼각형: zero-length segment를 반환한다', () => {
     const result = eulerLine(equilateral);
     expect(result).not.toBeUndefined();
     if (result === undefined) throw new Error('eulerLine이 정의되어야 한다');
-    expect(result.a.x).toBeCloseTo(result.b.x, 10);
-    expect(result.a.y).toBeCloseTo(result.b.y, 10);
+    expect(result.x1).toBeCloseTo(result.x2, 10);
+    expect(result.y1).toBeCloseTo(result.y2, 10);
   });
 
   test('collinear triangle: undefined를 반환한다', () => {
@@ -175,7 +151,7 @@ describe('eulerLine', () => {
   });
 
   test('non-finite vertex: undefined를 반환한다', () => {
-    const t = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: -Infinity } };
+    const t = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: -Infinity };
     expect(eulerLine(t)).toBeUndefined();
   });
 });

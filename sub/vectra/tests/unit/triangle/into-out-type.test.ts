@@ -19,7 +19,23 @@ import { fromCircleInto } from '../../../src/triangle/from-circle-into';
 import { fromRectInto } from '../../../src/triangle/from-rect-into';
 import { fromSegmentApexInto } from '../../../src/triangle/from-segment-apex-into';
 import { fromSegmentHeightInto } from '../../../src/triangle/from-segment-height-into';
-import type { Triangle, TriangleWritable } from '../../../src/types/flat-shapes.internal';
+import { circumcircle } from '../../../src/triangle/circumcircle';
+import { altitudeInto } from '../../../src/triangle/altitude-into';
+import { eulerLineInto } from '../../../src/triangle/euler-line-into';
+import { circumcenterInto } from '../../../src/triangle/circumcenter-into';
+import { incenterInto } from '../../../src/triangle/incenter-into';
+import { orthocenterInto } from '../../../src/triangle/orthocenter-into';
+import { circumcircleInto } from '../../../src/triangle/circumcircle-into';
+import { incircleInto } from '../../../src/triangle/incircle-into';
+import { ninePointCircleInto } from '../../../src/triangle/nine-point-circle-into';
+import { excentersInto } from '../../../src/triangle/excenters-into';
+import { excirclesInto } from '../../../src/triangle/excircles-into';
+import type {
+  Triangle,
+  TriangleWritable,
+  PointWritable,
+  CircleWritable,
+} from '../../../src/types/flat-shapes.internal';
 
 test('삼각형 면적과 무게중심은 평평한 꼭짓점 필드를 받는다', () => {
   expectTypeOf(area).parameter(0).toEqualTypeOf<Triangle>();
@@ -164,4 +180,95 @@ test('fromSegmentHeightInto은 외부 클래스의 참조와 반환 타입을 �
   const result = fromSegmentHeightInto(out, { x1: 0, y1: 0, x2: 4, y2: 0 }, 3);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle | false>();
+});
+
+test('외접원은 평평한 원을 반환한다', () => {
+  expectTypeOf(circumcircle).returns.toEqualTypeOf<CircleWritable | undefined>();
+});
+
+/** 호출자가 정의한 출력 클래스. */
+class ExternalSegment {
+  x1 = 0;
+  y1 = 0;
+  x2 = 0;
+  y2 = 0;
+  tag = 'keep';
+}
+
+/** 호출자가 정의한 출력 클래스. */
+class ExternalCircle {
+  cx = 0;
+  cy = 0;
+  r = 0;
+  tag = 'keep';
+}
+
+test('altitudeInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalSegment();
+  const result = altitudeInto(out, triangle, 0);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalSegment | false>();
+});
+
+test('eulerLineInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalSegment();
+  const result = eulerLineInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalSegment | false>();
+});
+
+test('circumcenterInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = circumcenterInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint | false>();
+});
+
+test('incenterInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = incenterInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint | false>();
+});
+
+test('orthocenterInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = orthocenterInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint | false>();
+});
+
+test('circumcircleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalCircle();
+  const result = circumcircleInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
+});
+
+test('incircleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalCircle();
+  const result = incircleInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
+});
+
+test('ninePointCircleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalCircle();
+  const result = ninePointCircleInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
+});
+
+test('excentersInto은 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = excentersInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('excirclesInto은 같은 출력 배열을 반환한다', () => {
+  const out: CircleWritable[] = [];
+  const result = excirclesInto(out, triangle);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<CircleWritable[]>();
 });

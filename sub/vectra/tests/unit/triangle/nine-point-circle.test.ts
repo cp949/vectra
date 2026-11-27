@@ -12,25 +12,25 @@ import { ninePointCircleInto } from '../../../src/triangle/nine-point-circle-int
 import { orthocenter } from '../../../src/triangle/orthocenter';
 
 /** 직각삼각형. 외심 = 빗변 BC 중점 (2, 1.5), 수심 = 직각 꼭짓점 A (0,0) */
-const right = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } };
+const right = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 };
 
 /** 예각삼각형 */
-const acute = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 1, y: 3 } };
+const acute = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 1, y3: 3 };
 
 /** collinear(degenerate) triangle */
-const collinear = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
+const collinear = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
 
 /** 세 vertex가 한 점인 triangle */
-const singlePoint = { a: { x: 1, y: 1 }, b: { x: 1, y: 1 }, c: { x: 1, y: 1 } };
+const singlePoint = { x1: 1, y1: 1, x2: 1, y2: 1, x3: 1, y3: 1 };
 
 describe('ninePointCircleInto', () => {
   test('직각삼각형: center는 (1, 0.75), radius는 1.25다', () => {
-    const out = { center: { x: 0, y: 0 }, radius: 0 };
+    const out = { cx: 0, cy: 0, r: 0 };
     const result = ninePointCircleInto(out, right);
     expect(result).toBe(out);
-    expect(out.center.x).toBeCloseTo(1, 10);
-    expect(out.center.y).toBeCloseTo(0.75, 10);
-    expect(out.radius).toBeCloseTo(1.25, 10);
+    expect(out.cx).toBeCloseTo(1, 10);
+    expect(out.cy).toBeCloseTo(0.75, 10);
+    expect(out.r).toBeCloseTo(1.25, 10);
   });
 
   test('예각삼각형: center는 circumcenter와 orthocenter의 midpoint다', () => {
@@ -39,106 +39,77 @@ describe('ninePointCircleInto', () => {
     expect(u).not.toBeUndefined();
     expect(h).not.toBeUndefined();
     if (u === undefined || h === undefined) throw new Error('circumcenter/orthocenter가 정의되어야 한다');
-    const out = { center: { x: 0, y: 0 }, radius: 0 };
+    const out = { cx: 0, cy: 0, r: 0 };
     expect(ninePointCircleInto(out, acute)).not.toBe(false);
     // midpoint 동치를 conditional skip 없이 무조건 검증한다.
-    expect(out.center.x).toBeCloseTo((u.x + h.x) / 2, 10);
-    expect(out.center.y).toBeCloseTo((u.y + h.y) / 2, 10);
+    expect(out.cx).toBeCloseTo((u.x + h.x) / 2, 10);
+    expect(out.cy).toBeCloseTo((u.y + h.y) / 2, 10);
   });
 
   test('예각삼각형: radius는 circumradius의 절반이다', () => {
     const r = circumradius(acute);
     expect(r).not.toBeUndefined();
     if (r === undefined) throw new Error('circumradius가 정의되어야 한다');
-    const out = { center: { x: 0, y: 0 }, radius: 0 };
+    const out = { cx: 0, cy: 0, r: 0 };
     expect(ninePointCircleInto(out, acute)).not.toBe(false);
     // radius 동치를 conditional skip 없이 무조건 검증한다.
-    expect(out.radius).toBeCloseTo(r / 2, 10);
-  });
-
-  test('tuple input도 처리한다', () => {
-    const t = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 0, y: 3 },
-    ] as const;
-    const out = { center: { x: 0, y: 0 }, radius: 0 };
-    const result = ninePointCircleInto(out, t);
-    expect(result).not.toBe(false);
-    if (result !== false) {
-      expect(result.center.x).toBeCloseTo(1, 10);
-      expect(result.center.y).toBeCloseTo(0.75, 10);
-      expect(result.radius).toBeCloseTo(1.25, 10);
-    }
-  });
-
-  test('out.center가 input vertex storage와 aliasing되어도 올바른 결과를 기록한다', () => {
-    const shared = { x: 0, y: 0 };
-    // vertex a와 out.center가 같은 object다.
-    const t = { a: shared, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } };
-    const out = { center: shared, radius: 0 };
-    const result = ninePointCircleInto(out, t);
-    expect(result).toBe(out);
-    expect(out.center.x).toBeCloseTo(1, 10);
-    expect(out.center.y).toBeCloseTo(0.75, 10);
-    expect(out.radius).toBeCloseTo(1.25, 10);
+    expect(out.r).toBeCloseTo(r / 2, 10);
   });
 
   test('collinear triangle: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { center: { x: 99, y: 99 }, radius: 99 };
+    const out = { cx: 99, cy: 99, r: 99 };
     const result = ninePointCircleInto(out, collinear);
     expect(result).toBe(false);
-    expect(out.center.x).toBe(99);
-    expect(out.center.y).toBe(99);
-    expect(out.radius).toBe(99);
+    expect(out.cx).toBe(99);
+    expect(out.cy).toBe(99);
+    expect(out.r).toBe(99);
   });
 
   test('single-point triangle: false를 반환하고 out을 수정하지 않는다', () => {
-    const out = { center: { x: 99, y: 99 }, radius: 99 };
+    const out = { cx: 99, cy: 99, r: 99 };
     const result = ninePointCircleInto(out, singlePoint);
     expect(result).toBe(false);
-    expect(out.center.x).toBe(99);
-    expect(out.radius).toBe(99);
+    expect(out.cx).toBe(99);
+    expect(out.r).toBe(99);
   });
 
   test('non-finite vertex(Infinity): false를 반환하고 out을 수정하지 않는다', () => {
-    const t = { a: { x: Infinity, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } };
-    const out = { center: { x: 99, y: 99 }, radius: 99 };
+    const t = { x1: Infinity, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 };
+    const out = { cx: 99, cy: 99, r: 99 };
     expect(ninePointCircleInto(out, t)).toBe(false);
-    expect(out.center.x).toBe(99);
-    expect(out.radius).toBe(99);
+    expect(out.cx).toBe(99);
+    expect(out.r).toBe(99);
   });
 
   test('non-finite vertex(NaN): false를 반환하고 out을 수정하지 않는다', () => {
-    const t = { a: { x: 0, y: 0 }, b: { x: NaN, y: 0 }, c: { x: 0, y: 3 } };
-    const out = { center: { x: 99, y: 99 }, radius: 99 };
+    const t = { x1: 0, y1: 0, x2: NaN, y2: 0, x3: 0, y3: 3 };
+    const out = { cx: 99, cy: 99, r: 99 };
     expect(ninePointCircleInto(out, t)).toBe(false);
-    expect(out.center.x).toBe(99);
-    expect(out.center.y).toBe(99);
-    expect(out.radius).toBe(99);
+    expect(out.cx).toBe(99);
+    expect(out.cy).toBe(99);
+    expect(out.r).toBe(99);
   });
 
   test('non-finite vertex(-Infinity): false를 반환하고 out을 수정하지 않는다', () => {
-    const t = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: -Infinity } };
-    const out = { center: { x: 99, y: 99 }, radius: 99 };
+    const t = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: -Infinity };
+    const out = { cx: 99, cy: 99, r: 99 };
     expect(ninePointCircleInto(out, t)).toBe(false);
-    expect(out.center.x).toBe(99);
-    expect(out.center.y).toBe(99);
-    expect(out.radius).toBe(99);
+    expect(out.cx).toBe(99);
+    expect(out.cy).toBe(99);
+    expect(out.r).toBe(99);
   });
 });
 
 describe('ninePointCircle', () => {
   test('직각삼각형: nine-point circle을 새 plain object로 반환한다', () => {
     const result = ninePointCircle(right);
-    expect(result).toEqual({ center: { x: 1, y: 0.75 }, radius: 1.25 });
+    expect(result).toEqual({ cx: 1, cy: 0.75, r: 1.25 });
   });
 
   test('성공 시 매번 새 object를 반환한다', () => {
     const r1 = ninePointCircle(right);
     const r2 = ninePointCircle(right);
     expect(r1).not.toBe(r2);
-    expect(r1?.center).not.toBe(r2?.center);
   });
 
   test('collinear triangle: undefined를 반환한다', () => {
@@ -150,7 +121,7 @@ describe('ninePointCircle', () => {
   });
 
   test('non-finite vertex: undefined를 반환한다', () => {
-    const t = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: -Infinity } };
+    const t = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: -Infinity };
     expect(ninePointCircle(t)).toBeUndefined();
   });
 });
