@@ -644,10 +644,6 @@
   ],
   "typeOnlyImports": [
     {
-      "from": "polygon/polygon-from.ts",
-      "to": "polygon/create-polygon.ts"
-    },
-    {
       "from": "polyline/polyline-from.ts",
       "to": "polyline/create-polyline.ts"
     },

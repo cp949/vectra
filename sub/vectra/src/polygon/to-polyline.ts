@@ -1,4 +1,4 @@
-import type { PolygonLike, XYObjectWritable } from '../types';
+import type { Polygon, PointWritable } from '../types/flat-shapes.internal';
 import { toPolylineInto } from './to-polyline-into';
 
 /**
@@ -6,11 +6,10 @@ import { toPolylineInto } from './to-polyline-into';
  *
  * point-collection 기준이다. 0개 point면 빈 배열을 반환하고, 좌표 finite 여부를 검사하지 않는다.
  * `options.close === true`이고 point가 1개 이상이면 첫 vertex 복사본을 끝에 추가한다.
- * 대응 `toPolylineInto`는 input point array와 outPoints가 같은 배열이어도 안전하다.
  *
  * @param polygon vertex를 읽을 polygon
  * @param options close — true이면 첫 vertex 복사본을 끝에 추가한다. 기본 false(open view)
  */
-export function toPolyline(polygon: PolygonLike, options?: { close?: boolean }): XYObjectWritable[] {
+export function toPolyline(polygon: Polygon, options?: { readonly close: boolean }): PointWritable[] {
   return toPolylineInto([], polygon, options);
 }

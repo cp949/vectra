@@ -1,3 +1,4 @@
+/** 다각형 계산과 출력 계약을 검증한다. */
 import { expect } from 'vitest';
 
 // 작은 절대 오차와 큰 값에 대한 상대 오차를 혼합한 tolerance helper.

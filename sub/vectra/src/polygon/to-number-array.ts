@@ -1,4 +1,4 @@
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import { toNumberArrayInto } from './to-number-array-into';
 
 /**
@@ -9,6 +9,6 @@ import { toNumberArrayInto } from './to-number-array-into';
  *
  * @param polygon vertex를 읽을 polygon
  */
-export function toNumberArray(polygon: PolygonLike): number[] {
+export function toNumberArray(polygon: Polygon): number[] {
   return toNumberArrayInto([], polygon);
 }

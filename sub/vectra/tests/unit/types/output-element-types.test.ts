@@ -22,7 +22,6 @@ import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-inte
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';
 import { lineCommandsInto } from '../../../src/path/line-commands-into';
 import { transformCommandsInto } from '../../../src/path/transform-commands-into';
-import { fromRectInto } from '../../../src/polygon/from-rect-into';
 import type { IntersectionHit, MoveCommand, PathCommand, XYObjectWritable, XYTupleWritable } from '../../../src/types';
 
 describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
@@ -43,15 +42,6 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
     const transformed = transformCommandsInto(narrow, [{ kind: 'close' }], { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
     expectTypeOf(transformed).toEqualTypeOf<PathCommand[]>();
     expect(transformed.map((command) => command.kind)).toEqual(['close']);
-  });
-
-  test('point 배열 Into에 좁은 원소 배열을 넘겨도 반환 타입은 XYObjectWritable[]이다', () => {
-    const tagged: (XYObjectWritable & { id: string })[] = [];
-    // 배열은 공변이라 인자는 받는다. 대신 반환 타입이 id 없는 실제 원소를 가리지 않는다
-    const rect = fromRectInto(tagged, { x: 0, y: 0, width: 2, height: 1 });
-    expectTypeOf(rect).toEqualTypeOf<XYObjectWritable[]>();
-    expect(rect).toHaveLength(4);
-    expect('id' in rect[0]).toBe(false);
   });
 
   test('curve 교차 Into는 tuple point를 담는 hit 배열을 받지 않는다', () => {

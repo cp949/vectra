@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from '../types';
+import type { PolygonWritable } from '../types/flat-shapes.internal';
 
 /**
  * radial polygon vertex sequence를 out에 push한다.
@@ -15,7 +15,7 @@ import type { XYObjectWritable } from '../types';
  *  - vertex `i` 좌표는 `(cx + r * cos(angle), cy + r * sin(angle))`.
  *    여기서 `r`은 `radiusAt`이 주어지면 `radiusAt(i)`, 아니면 `vertexRadius`다.
  *
- * @param out vertex object를 push할 mutable 배열 (caller가 미리 clear)
+ * @param out vertex 좌표 짝를 push할 mutable 배열 (caller가 미리 clear)
  * @param cx polygon 중심 x 좌표
  * @param cy polygon 중심 y 좌표
  * @param vertexRadius vertex 기본 반지름. `radiusAt` 미지정 시 모든 vertex가 이 값을 사용한다
@@ -25,7 +25,7 @@ import type { XYObjectWritable } from '../types';
  * @param radiusAt 선택 vertex별 반지름 callback. star처럼 vertex마다 radius가 다를 때 사용한다
  */
 export function buildRadialVertices(
-  out: XYObjectWritable[],
+  out: PolygonWritable,
   cx: number,
   cy: number,
   vertexRadius: number,
@@ -38,6 +38,6 @@ export function buildRadialVertices(
   for (let i = 0; i < vertexCount; i++) {
     const angle = startAngle + step * i;
     const r = radiusAt !== undefined ? radiusAt(i) : vertexRadius;
-    out.push({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
+    out.push(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
   }
 }

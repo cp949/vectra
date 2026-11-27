@@ -12,11 +12,7 @@ import { transformPointsInto } from '../../../src/polygon/transform-points-into'
 import { translatePoints } from '../../../src/polygon/translate-points';
 import { translatePointsInto } from '../../../src/polygon/translate-points-into';
 
-const POINTS = [
-  { x: 0, y: 0 },
-  { x: 10, y: 0 },
-  { x: 0, y: 10 },
-];
+const POINTS = [0, 0, 10, 0, 0, 10];
 const MATRIX = { a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 3 };
 
 describe('polygon.translatePoints — 새 배열 반환', () => {
@@ -25,7 +21,7 @@ describe('polygon.translatePoints — 새 배열 반환', () => {
   });
 
   test('translatePointsInto는 입력 배열과 output 배열이 같아도 원래 point 기준 결과를 반환한다', () => {
-    const out = POINTS.map((point) => ({ ...point }));
+    const out = POINTS.slice();
     const expected = translatePointsInto([], out, { x: 2, y: 3 });
 
     expect(translatePointsInto(out, out, { x: 2, y: 3 })).toEqual(expected);
@@ -38,7 +34,7 @@ describe('polygon.transformPoints — 새 배열 반환', () => {
   });
 
   test('transformPointsInto는 입력 배열과 output 배열이 같아도 원래 point 기준 결과를 반환한다', () => {
-    const out = POINTS.map((point) => ({ ...point }));
+    const out = POINTS.slice();
     const expected = transformPointsInto([], out, MATRIX);
 
     expect(transformPointsInto(out, out, MATRIX)).toEqual(expected);
@@ -51,7 +47,7 @@ describe('polygon.reversePoints — 새 배열 반환', () => {
   });
 
   test('reversePointsInto는 입력 배열과 output 배열이 같아도 원래 point 기준 결과를 반환한다', () => {
-    const out = POINTS.map((point) => ({ ...point }));
+    const out = POINTS.slice();
     const expected = reversePointsInto([], out);
 
     expect(reversePointsInto(out, out)).toEqual(expected);

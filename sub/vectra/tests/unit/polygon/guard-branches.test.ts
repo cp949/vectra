@@ -12,16 +12,7 @@ import { sortPointsByAngleInto } from '../../../src/polygon/sort-points-by-angle
 
 describe('pointsAlongEdgesInto', () => {
   test('첫 edge가 zero-length이면 첫 sample은 그 vertex다', () => {
-    const out = pointsAlongEdgesInto(
-      [],
-      [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 10, y: 0 },
-        { x: 10, y: 10 },
-      ],
-      10
-    );
+    const out = pointsAlongEdgesInto([], [0, 0, 0, 0, 10, 0, 10, 10], 10);
     // 둘레 10 + 10 + 14.14... 에서 dist 0, 10, 20 순서로 sample한다.
     expect(out[0]).toEqual({ x: 0, y: 0 });
     expect(out[1]).toEqual({ x: 10, y: 0 });
@@ -37,16 +28,7 @@ describe('ringHasZeroLengthEdge', () => {
 
 describe('sortPointsByAngleInto', () => {
   test('NaN angle point가 중간에 있어도 finite angle point 뒤로 보낸다', () => {
-    const out = sortPointsByAngleInto(
-      [],
-      [
-        { x: 0, y: 1 },
-        { x: Number.NaN, y: 0 },
-        { x: 1, y: 0 },
-        { x: -1, y: 0 },
-      ],
-      { center: { x: 0, y: 0 } }
-    );
-    expect(out.map((p) => p.x)).toEqual([1, 0, -1, Number.NaN]);
+    const out = sortPointsByAngleInto([], [0, 1, Number.NaN, 0, 1, 0, -1, 0], { center: { x: 0, y: 0 } });
+    expect(out.filter((_, index) => index % 2 === 0)).toEqual([1, 0, -1, Number.NaN]);
   });
 });

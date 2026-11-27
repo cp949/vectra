@@ -1,53 +1,37 @@
-import { readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike, XYObjectWritable } from '../types';
+import type { Polygon, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
  * polygon boundary를 implicit closed ring으로 보고 arc-length 균등 간격으로 샘플링해 outPoints에 기록한다.
  *
  * outPoints는 먼저 clear된 뒤 새 `{ x, y }` point가 push되며, 같은 outPoints를 반환한다.
- * 입력 point array와 outPoints가 같은 배열이어도 안전하다. clear 전에 좌표를 snapshot한다.
  *
  * 마지막 vertex에서 첫 vertex로 닫히는 edge까지 포함한 perimeter를 따라 샘플링한다.
  * sample arc-length는 `0, spacing, 2*spacing, ...`로 total perimeter 미만까지이며, 시작점(거리 0)은 항상 포함한다.
  * closed ring이므로 끝점은 시작점과 같다. 끝점(시작점 복제)은 추가하지 않는다.
  *
- * point-collection 기준이다. `points.length`가 0이면 빈 배열을 반환하고, 1개이거나 perimeter가 0(repeated point)이면
+ * point-collection 기준이다. vertex가 0개면 빈 배열을 반환하고, 1개이거나 perimeter가 0(repeated point)이면
  * 시작점 1개만 push한다.
  *
  * `spacing`이 finite positive number가 아니거나 perimeter가 finite가 아니면 RangeError를 던진다.
  *
- * @param outPoints 샘플링된 point object를 기록할 writable output array
+ * @param outPoints 점을 기록할 writable 배열 (`{ x, y }[]`)
  * @param polygon boundary를 읽을 polygon
  * @param spacing 균등 간격 (arc-length 단위, finite positive number)
  */
-export function pointsAlongEdgesInto(
-  outPoints: XYObjectWritable[],
-  polygon: PolygonLike,
-  spacing: number
-): XYObjectWritable[] {
+export function pointsAlongEdgesInto(outPoints: PointWritable[], polygon: Polygon, spacing: number): PointWritable[] {
   if (!Number.isFinite(spacing) || spacing <= 0) {
     throw new RangeError('spacing must be a finite positive number');
   }
 
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
-  // input/output array aliasing에 대비해 clear 전에 좌표를 snapshot한다.
-  const xs: number[] = new Array(n);
-  const ys: number[] = new Array(n);
-  for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
-  }
-
+  const n = polygon.length / 2;
   outPoints.length = 0;
 
   if (n === 0) {
     return outPoints;
   }
   if (n === 1) {
-    outPoints.push({ x: xs[0], y: ys[0] });
+    outPoints.push({ x: polygon[0], y: polygon[1] });
     return outPoints;
   }
 
@@ -56,8 +40,8 @@ export function pointsAlongEdgesInto(
   let totalLen = 0;
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
-    const dx = xs[j] - xs[i];
-    const dy = ys[j] - ys[i];
+    const dx = polygon[2 * j] - polygon[2 * i];
+    const dy = polygon[2 * j + 1] - polygon[2 * i + 1];
     const len = hypot2(dx, dy);
     segLens[i] = len;
     totalLen += len;
@@ -69,7 +53,7 @@ export function pointsAlongEdgesInto(
 
   // repeated-point polygon — perimeter 0이면 시작점만
   if (totalLen === 0) {
-    outPoints.push({ x: xs[0], y: ys[0] });
+    outPoints.push({ x: polygon[0], y: polygon[1] });
     return outPoints;
   }
 
@@ -87,12 +71,12 @@ export function pointsAlongEdgesInto(
     const sl = segLens[segIdx];
     if (sl === 0) {
       // zero-length edge: 해당 vertex 그대로
-      outPoints.push({ x: xs[a], y: ys[a] });
+      outPoints.push({ x: polygon[2 * a], y: polygon[2 * a + 1] });
     } else {
       const localT = Math.max(0, Math.min(1, (dist - segAcc) / sl));
       outPoints.push({
-        x: xs[a] + localT * (xs[b] - xs[a]),
-        y: ys[a] + localT * (ys[b] - ys[a]),
+        x: polygon[2 * a] + localT * (polygon[2 * b] - polygon[2 * a]),
+        y: polygon[2 * a + 1] + localT * (polygon[2 * b + 1] - polygon[2 * a + 1]),
       });
     }
   }

@@ -1,3 +1,5 @@
+/** 다각형 계산과 출력 계약을 검증한다. */
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 /**
  * polygon toNumberArray* adapter helper unit test.
  */
@@ -5,13 +7,12 @@
 import { describe, expect, test } from 'vitest';
 import { toNumberArray } from '../../../src/polygon/to-number-array';
 import { toNumberArrayInto } from '../../../src/polygon/to-number-array-into';
-import type { PolygonLike } from '../../../src/types';
 import { SQUARE, TRIANGLE } from './_bridge-adapter-test-helpers';
 
 describe('polygon bridge - toNumberArrayInto', () => {
   test('빈 polygon이면 clear된 빈 배열을 반환한다', () => {
     const out: number[] = [9, 9];
-    const result = toNumberArrayInto(out, { points: [] });
+    const result = toNumberArrayInto(out, []);
     expect(result).toBe(out);
     expect(out).toHaveLength(0);
   });
@@ -32,23 +33,8 @@ describe('polygon bridge - toNumberArrayInto', () => {
     expect(toNumberArray(SQUARE)).toEqual([0, 0, 2, 0, 2, 2, 0, 2]);
   });
 
-  test('tuple point 입력을 처리한다', () => {
-    const poly: PolygonLike = {
-      points: [
-        [1, 2],
-        [3, 4],
-      ],
-    };
-    expect(toNumberArray(poly)).toEqual([1, 2, 3, 4]);
-  });
-
   test('non-finite 좌표를 그대로 통과시킨다', () => {
-    const poly: PolygonLike = {
-      points: [
-        { x: Number.NaN, y: Number.POSITIVE_INFINITY },
-        { x: -0, y: 1 },
-      ],
-    };
+    const poly: Polygon = [Number.NaN, Number.POSITIVE_INFINITY, -0, 1];
     const out = toNumberArray(poly);
     expect(out[0]).toBeNaN();
     expect(out[1]).toBe(Number.POSITIVE_INFINITY);
@@ -61,4 +47,10 @@ describe('polygon bridge - toNumberArrayInto', () => {
     toNumberArrayInto(out, SQUARE);
     expect(toNumberArray(SQUARE)).toEqual(out);
   });
+});
+
+test('입력과 출력 배열이 같으면 같은 참조와 좌표를 유지한다', () => {
+  const polygon = [0, 0, 4, 0, 0, 3];
+  expect(toNumberArrayInto(polygon, polygon)).toBe(polygon);
+  expect(polygon).toEqual([0, 0, 4, 0, 0, 3]);
 });

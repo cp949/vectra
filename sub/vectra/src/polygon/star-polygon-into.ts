@@ -1,9 +1,9 @@
+import type { Point, PolygonWritable } from '../types/flat-shapes.internal';
 import { buildRadialVertices } from '../internal/polygon-builder';
-import { readX, readY } from '../internal/xy';
-import type { StarOptions, XYInput, XYObjectWritable } from '../types/index';
+import type { StarOptions } from '../types';
 
 /**
- * star polygon vertex `2 * points`개를 out에 새 `{ x, y }` object로 기록하고 out을 반환한다.
+ * star polygon vertex `2 * points`개를 out에 교대로 저장한 좌표 `[x0, y0, …]`로 기록하고 out을 반환한다.
  *
  * outer vertex부터 시작해 `outer, inner, outer, inner, ...` 순서로 push한다 (총 `2 * points` vertex).
  * `points`가 3 이상 정수가 아니면 (non-integer, NaN, ±Infinity, `< 3` 포함) out을 clear만 하고 반환한다 (validation throw 없음).
@@ -14,32 +14,32 @@ import type { StarOptions, XYInput, XYObjectWritable } from '../types/index';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  * path `starCommandsInto`와 달리 close vertex는 추가하지 않고 정확히 `2 * points`개 vertex만 push한다.
  *
- * @param out vertex object를 기록할 mutable 배열
- * @param center star 중심점 (XYInput)
+ * @param out vertex 좌표를 기록할 writable 배열 (`[x0, y0, …]`)
+ * @param center star 중심점 (Point)
  * @param innerRadius inner vertex 반지름. clamp 없음. non-finite는 좌표에 그대로 전파
  * @param outerRadius outer vertex 반지름. clamp 없음. non-finite는 좌표에 그대로 전파
  * @param points outer vertex 수 (별의 꼭짓점 수). 3 이상 정수가 아니면 out clear만 (non-integer/NaN/Infinity 포함)
- * @param options startAngle/clockwise 옵션. 기본 startAngle = -π/2, clockwise = true
+ * @param options 시작 각도와 진행 방향. 생략하면 startAngle = -π/2, clockwise = true
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function starPolygonInto(
-  out: XYObjectWritable[],
-  center: XYInput,
+  out: PolygonWritable,
+  center: Point,
   innerRadius: number,
   outerRadius: number,
   points: number,
-  options?: StarOptions
-): XYObjectWritable[] {
+  options?: Required<StarOptions>
+): PolygonWritable {
   out.length = 0;
   if (!Number.isInteger(points) || points < 3) {
     // non-integer, NaN, ±Infinity, < 3 모두 여기서 걸린다.
     return out;
   }
 
-  const startAngle = options?.startAngle ?? -Math.PI / 2;
-  const clockwise = options?.clockwise ?? true;
-  const cx = readX(center);
-  const cy = readY(center);
+  const startAngle = options === undefined ? -Math.PI / 2 : options.startAngle;
+  const clockwise = options === undefined ? true : options.clockwise;
+  const cx = center.x;
+  const cy = center.y;
   const total = 2 * points;
 
   // index 0(outer), 1(inner), 2(outer), ... 교차. vertexRadius arg는 사용되지 않으므로 0을 넘긴다.

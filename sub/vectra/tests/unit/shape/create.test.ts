@@ -54,25 +54,18 @@ describe('shape create/xFrom factories', () => {
     expect(result).toBe(points);
   });
 
-  test('createPolygon()는 빈 list seed를 만들고 polygonFrom은 source를 복사한다', () => {
-    expect(createPolygon()).toEqual({ points: [] });
+  test('createPolygon은 빈 배열을 만들고 polygonFrom은 좌표를 복사한다', () => {
+    expect(createPolygon()).toEqual([]);
 
-    const points = [{ x: 1, y: 2 }, [3, 4] as const] as const;
-    const result = polygonFrom({ points });
-    expect(result).toEqual({
-      points: [
-        { x: 1, y: 2 },
-        { x: 3, y: 4 },
-      ],
-    });
-    expect(result.points).not.toBe(points);
+    const points = [1, 2, 3, 4] as const;
+    const result = polygonFrom(points);
+    expect(result).toEqual(points);
+    expect(result).not.toBe(points);
   });
 
-  test('polygonFrom은 clonePoints false이면 해석된 points 배열을 공유한다', () => {
-    const points = [{ x: 1, y: 2 }, [3, 4] as const] as const;
-    const result = polygonFrom(points, { clonePoints: false });
-    expect(result).toEqual({ points });
-    expect(result.points).toBe(points);
+  test('polygonFrom은 clonePoints가 false이면 입력 배열을 공유한다', () => {
+    const points = [1, 2, 3, 4];
+    expect(polygonFrom(points, { clonePoints: false })).toBe(points);
   });
 
   test('createPolyline()는 빈 list seed를 만든다', () => {

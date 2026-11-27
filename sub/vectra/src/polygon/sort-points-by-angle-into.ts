@@ -1,12 +1,10 @@
-import { readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike, XYInput, XYObjectWritable } from '../types';
+import type { Polygon, Point, PolygonWritable } from '../types/flat-shapes.internal';
 
 /**
- * point set을 center 기준 polar angle 순서로 정렬해 outPoints에 새 point object로 기록한다.
+ * point set을 center 기준 polar angle 순서로 정렬해 outPoints에 좌표 쌍으로 기록한다.
  *
- * outPoints는 먼저 clear된 뒤 새 `{ x, y }` point가 push되며, 같은 outPoints를 반환한다.
- * 입력 point array와 outPoints가 같은 배열이어도 안전하다. clear 전에 좌표를 snapshot한다.
+ * outPoints는 먼저 clear된 뒤 좌표 쌍이 push되며, 같은 outPoints를 반환한다.
+ * 입력 좌표 배열과 outPoints가 같은 배열이어도 안전하다.
  *
  * `atan2(y - cy, x - cx)` 오름차순으로 정렬한다. 좌표계 convention을 강제하지 않는다.
  * convex hull이 아니다. 입력 point를 삭제하지 않으며 duplicate point도 모두 유지한다. 출력 길이는 입력 길이와 같다.
@@ -17,25 +15,17 @@ import type { PolygonLike, XYInput, XYObjectWritable } from '../types';
  * 기본 center에서 어떤 point라도 non-finite면 center가 `NaN`이 되어 전체 angle이 `NaN` → 원래 순서를 보존한다.
  * `n === 0`이면 빈 배열, `n === 1`이면 해당 point 1개를 반환한다.
  *
- * @param outPoints 정렬된 point object를 기록할 writable output array
- * @param points 정렬할 point set (polygon vertex list 또는 bare point array)
- * @param options center — polar angle 기준 center. 생략하면 arithmetic mean을 쓴다
+ * @param outPoints 좌표를 기록할 writable 배열 (`[x0, y0, …]`)
+ * @param points 정렬할 polygon 좌표 배열
+ * @param options polar angle 기준 중심점. 생략하면 vertex의 산술 평균을 쓴다
  */
 export function sortPointsByAngleInto(
-  outPoints: XYObjectWritable[],
-  points: PolygonLike,
-  options?: { center?: XYInput }
-): XYObjectWritable[] {
-  const pts = readPolygonPoints(points);
-  const n = pts.length;
-  // input/output array aliasing에 대비해 clear 전에 좌표를 snapshot한다.
-  const xs: number[] = new Array(n);
-  const ys: number[] = new Array(n);
-  for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
-  }
-
+  outPoints: PolygonWritable,
+  points: Polygon,
+  options?: { readonly center: Point }
+): PolygonWritable {
+  const n = points.length / 2;
+  const source = outPoints === points ? points.slice() : points;
   outPoints.length = 0;
   if (n === 0) {
     return outPoints;
@@ -43,15 +33,15 @@ export function sortPointsByAngleInto(
 
   let cx: number;
   let cy: number;
-  if (options?.center !== undefined) {
-    cx = readX(options.center);
-    cy = readY(options.center);
+  if (options !== undefined) {
+    cx = options.center.x;
+    cy = options.center.y;
   } else {
     let sx = 0;
     let sy = 0;
     for (let i = 0; i < n; i++) {
-      sx += xs[i];
-      sy += ys[i];
+      sx += source[2 * i];
+      sy += source[2 * i + 1];
     }
     cx = sx / n;
     cy = sy / n;
@@ -59,8 +49,8 @@ export function sortPointsByAngleInto(
 
   const order: { angle: number; distSq: number; index: number }[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    const dx = xs[i] - cx;
-    const dy = ys[i] - cy;
+    const dx = source[2 * i] - cx;
+    const dy = source[2 * i + 1] - cy;
     order[i] = { angle: Math.atan2(dy, dx), distSq: dx * dx + dy * dy, index: i };
   }
 
@@ -79,7 +69,7 @@ export function sortPointsByAngleInto(
 
   for (let i = 0; i < n; i++) {
     const idx = order[i].index;
-    outPoints.push({ x: xs[idx], y: ys[idx] });
+    outPoints.push(source[2 * idx], source[2 * idx + 1]);
   }
   return outPoints;
 }
