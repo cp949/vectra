@@ -1,3 +1,5 @@
+/** 삼각형 생성의 좌표 계산, 경계값과 결과 기록을 검증한다. */
+
 import { describe, expect, test } from 'vitest';
 import { createTriangle } from '../../../src/triangle/create-triangle';
 import { fromCenter } from '../../../src/triangle/from-center';
@@ -11,7 +13,7 @@ describe('fromCenterInto / fromCenter', () => {
       { x: 0, y: 0 },
       SQRT3,
       undefined,
-      { a: { x: 0, y: -1 }, b: { x: SQRT3 / 2, y: 0.5 }, c: { x: -SQRT3 / 2, y: 0.5 } },
+      { x1: 0, y1: -1, x2: SQRT3 / 2, y2: 0.5, x3: -SQRT3 / 2, y3: 0.5 },
     ],
     [
       'custom rotation 0',
@@ -19,25 +21,21 @@ describe('fromCenterInto / fromCenter', () => {
       SQRT3,
       0,
       {
-        a: { x: 1, y: 0 },
-        b: { x: Math.cos((2 * Math.PI) / 3), y: Math.sin((2 * Math.PI) / 3) },
-        c: { x: Math.cos((4 * Math.PI) / 3), y: Math.sin((4 * Math.PI) / 3) },
+        x1: 1,
+        y1: 0,
+        x2: Math.cos((2 * Math.PI) / 3),
+        y2: Math.sin((2 * Math.PI) / 3),
+        x3: Math.cos((4 * Math.PI) / 3),
+        y3: Math.sin((4 * Math.PI) / 3),
       },
     ],
-    [
-      'tuple center input',
-      [10, 20] as const,
-      SQRT3,
-      undefined,
-      { a: { x: 10, y: 19 }, b: { x: 10 + SQRT3 / 2, y: 20.5 }, c: { x: 10 - SQRT3 / 2, y: 20.5 } },
-    ],
-    ['sideLength = 0', { x: 5, y: 7 }, 0, undefined, { a: { x: 5, y: 7 }, b: { x: 5, y: 7 }, c: { x: 5, y: 7 } }],
+    ['sideLength = 0', { x: 5, y: 7 }, 0, undefined, { x1: 5, y1: 7, x2: 5, y2: 7, x3: 5, y3: 7 }],
     [
       '음수 sideLength',
       { x: 0, y: 0 },
       -SQRT3,
       undefined,
-      { a: { x: 0, y: 1 }, b: { x: -SQRT3 / 2, y: -0.5 }, c: { x: SQRT3 / 2, y: -0.5 } },
+      { x1: 0, y1: 1, x2: -SQRT3 / 2, y2: -0.5, x3: SQRT3 / 2, y3: -0.5 },
     ],
   ])('%s', (_, center, sideLength, rotation, expected) => {
     const out = createTriangle();
@@ -48,25 +46,25 @@ describe('fromCenterInto / fromCenter', () => {
   test('centroid와 sideLength 계약을 만족한다', () => {
     const out = createTriangle();
     fromCenterInto(out, { x: 3, y: 7 }, 5);
-    expect((out.a.x + out.b.x + out.c.x) / 3).toBeCloseTo(3, 12);
-    expect((out.a.y + out.b.y + out.c.y) / 3).toBeCloseTo(7, 12);
+    expect((out.x1 + out.x2 + out.x3) / 3).toBeCloseTo(3, 12);
+    expect((out.y1 + out.y2 + out.y3) / 3).toBeCloseTo(7, 12);
 
     fromCenterInto(out, { x: 0, y: 0 }, 6);
-    expect(Math.hypot(out.b.x - out.a.x, out.b.y - out.a.y)).toBeCloseTo(6, 12);
-    expect(Math.hypot(out.c.x - out.b.x, out.c.y - out.b.y)).toBeCloseTo(6, 12);
+    expect(Math.hypot(out.x2 - out.x1, out.y2 - out.y1)).toBeCloseTo(6, 12);
+    expect(Math.hypot(out.x3 - out.x2, out.y3 - out.y2)).toBeCloseTo(6, 12);
   });
 
   test.each([
-    ['NaN sideLength', Number.NaN, (out: TrianglePoints) => expect(Number.isNaN(out.a.x)).toBe(true)],
+    ['NaN sideLength', Number.NaN, (out: TrianglePoints) => expect(Number.isNaN(out.x1)).toBe(true)],
     [
       'Infinity sideLength',
       Number.POSITIVE_INFINITY,
-      (out: TrianglePoints) => expect(out.a.y).toBe(Number.NEGATIVE_INFINITY),
+      (out: TrianglePoints) => expect(out.y1).toBe(Number.NEGATIVE_INFINITY),
     ],
     [
       '-Infinity sideLength',
       Number.NEGATIVE_INFINITY,
-      (out: TrianglePoints) => expect(out.a.y).toBe(Number.POSITIVE_INFINITY),
+      (out: TrianglePoints) => expect(out.y1).toBe(Number.POSITIVE_INFINITY),
     ],
   ])('%s는 JS 산술 결과를 따른다', (_, sideLength, assert) => {
     const out = createTriangle();
@@ -74,16 +72,11 @@ describe('fromCenterInto / fromCenter', () => {
     assert(out);
   });
 
-  test('non-finite rotation과 aliasing을 처리한다', () => {
+  test('유한하지 않은 회전값을 산술 결과에 반영한다', () => {
     const out = createTriangle();
     fromCenterInto(out, { x: 0, y: 0 }, 2, Number.POSITIVE_INFINITY);
-    expect(Number.isNaN(out.a.x)).toBe(true);
-    expect(Number.isNaN(out.b.y)).toBe(true);
-
-    out.a.x = 10;
-    out.a.y = 20;
-    fromCenterInto(out, out.a, SQRT3);
-    expectTriangle(out, { a: { x: 10, y: 19 }, b: { x: 10 + SQRT3 / 2, y: 20.5 }, c: { x: 10 - SQRT3 / 2, y: 20.5 } });
+    expect(Number.isNaN(out.x1)).toBe(true);
+    expect(Number.isNaN(out.y2)).toBe(true);
   });
 
   test('allocating companion은 Into 결과와 일치한다', () => {

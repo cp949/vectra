@@ -1,4 +1,5 @@
-import type { SegmentLike, TriangleWritable } from '../types';
+import { createZeroTriangle } from '../internal/triangle';
+import type { Segment, TriangleWritable } from '../types/flat-shapes.internal';
 import { fromSegmentHeightInto } from './from-segment-height-into';
 
 /**
@@ -17,18 +18,14 @@ import { fromSegmentHeightInto } from './from-segment-height-into';
  *
  * @param base 첫 두 vertex로 쓸 segment input. length가 finite positive여야 한다.
  * @param height base midpoint에서 normal 방향으로 이동할 거리. 음수면 반대쪽 apex.
- * @param options `{ side?: 'left' | 'right' }`. 기본 `side = 'left'`.
+ * @param options `{ side: 'left' | 'right' }`. 기본 `side = 'left'`.
  */
 export function fromSegmentHeight(
-  base: SegmentLike,
+  base: Segment,
   height: number,
-  options?: { side?: 'left' | 'right' }
+  options?: { side: 'left' | 'right' }
 ): TriangleWritable | undefined {
-  const out: TriangleWritable = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
+  const out = createZeroTriangle();
   const result = fromSegmentHeightInto(out, base, height, options);
   return result === false ? undefined : out;
 }

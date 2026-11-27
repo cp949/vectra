@@ -1,4 +1,5 @@
-import type { SegmentLike, TriangleWritable, XYInput } from '../types';
+import { createZeroTriangle } from '../internal/triangle';
+import type { Segment, TriangleWritable, Point } from '../types/flat-shapes.internal';
 import { fromSegmentApexInto } from './from-segment-apex-into';
 
 /**
@@ -11,11 +12,7 @@ import { fromSegmentApexInto } from './from-segment-apex-into';
  * @param base 첫 두 vertex로 쓸 segment input
  * @param apex 세 번째 vertex point
  */
-export function fromSegmentApex(base: SegmentLike, apex: XYInput): TriangleWritable {
-  const out: TriangleWritable = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
+export function fromSegmentApex(base: Segment, apex: Point): TriangleWritable {
+  const out = createZeroTriangle();
   return fromSegmentApexInto(out, base, apex);
 }

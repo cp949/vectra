@@ -1,4 +1,5 @@
-import type { RectLike, TriangleWritable } from '../types';
+import { createZeroTriangle } from '../internal/triangle';
+import type { Rect, TriangleWritable } from '../types/flat-shapes.internal';
 import { fromRectInto } from './from-rect-into';
 
 /**
@@ -11,13 +12,9 @@ import { fromRectInto } from './from-rect-into';
  * clamp하지 않고 JS 산술 결과를 따른다. NaN/Infinity component는 validation 없이 JS 산술
  * 결과를 그대로 기록한다.
  *
- * @param rect 세 corner를 읽을 rect input. object 또는 tuple을 받는다.
+ * @param rect 세 corner를 읽을 rect 객체.
  */
-export function fromRect(rect: RectLike): TriangleWritable {
-  const out: TriangleWritable = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
+export function fromRect(rect: Rect): TriangleWritable {
+  const out = createZeroTriangle();
   return fromRectInto(out, rect);
 }

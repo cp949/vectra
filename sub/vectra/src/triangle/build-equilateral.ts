@@ -1,4 +1,5 @@
-import type { TriangleWritable, XYInput } from '../types';
+import { createZeroTriangle } from '../internal/triangle';
+import type { TriangleWritable, Point } from '../types/flat-shapes.internal';
 import { buildEquilateralInto } from './build-equilateral-into';
 
 /**
@@ -14,11 +15,7 @@ import { buildEquilateralInto } from './build-equilateral-into';
  * @param sideLength 변의 길이. clamp하지 않는다.
  * @param angle origin→b 방향의 radian. 기본값 0.
  */
-export function buildEquilateral(origin: XYInput, sideLength: number, angle: number = 0): TriangleWritable {
-  const out: TriangleWritable = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
+export function buildEquilateral(origin: Point, sideLength: number, angle: number = 0): TriangleWritable {
+  const out = createZeroTriangle();
   return buildEquilateralInto(out, origin, sideLength, angle);
 }

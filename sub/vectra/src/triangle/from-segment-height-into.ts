@@ -1,15 +1,13 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { SegmentLike, TriangleWritable, XYWritable } from '../types';
+import type { Segment, TriangleWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
  * base segment와 height로 isosceles triangle을 만들어 out에 기록하고 out을 반환한다.
  *
  * 좌표 정의:
- * - out.a = base.a
- * - out.b = base.b
- * - apex(out.c)는 base midpoint에서 base normal 방향으로 `height`만큼 이동한 점.
+ * - (x1, y1) = 첫 끝점
+ * - (x2, y2) = 둘째 끝점
+ * - apex((x3, y3))는 base midpoint에서 base normal 방향으로 `height`만큼 이동한 점.
  * - `side: 'left'` (기본): normal = (-dy / len, dx / len)
  * - `side: 'right'`: normal = (dy / len, -dx / len)
  *
@@ -20,26 +18,21 @@ import { hypot2 } from '../internal/numeric';
  * 통과하면 apex 좌표에 그대로 전파된다 (예: `midpoint + 1 * Infinity = Infinity`,
  * `midpoint + 0 * Infinity = NaN`).
  *
- * aliasing: base 좌표를 모두 local에 먼저 읽으므로 base endpoint가 out의 vertex storage와
+ * 입력 좌표를 먼저 읽은 뒤 결과를 기록한다.
  * 같은 object여도 안전하다.
  *
- * @param out 삼각형 vertex를 기록할 writable output
+ * @param out 삼각형 vertex를 기록할 triangle 객체
  * @param base 첫 두 vertex로 쓸 segment input. length가 finite positive여야 한다.
  * @param height base midpoint에서 normal 방향으로 이동할 거리. 음수면 반대쪽 apex.
- * @param options `{ side?: 'left' | 'right' }`. 기본 `side = 'left'`.
+ * @param options `{ side: 'left' | 'right' }`. 기본 `side = 'left'`.
  */
-export function fromSegmentHeightInto<Out extends TriangleWritable<XYWritable, XYWritable, XYWritable>>(
+export function fromSegmentHeightInto<Out extends TriangleWritable>(
   out: Out,
-  base: SegmentLike,
+  base: Segment,
   height: number,
-  options?: { side?: 'left' | 'right' }
+  options?: { side: 'left' | 'right' }
 ): Out | false {
-  const baseA = readSegmentA(base);
-  const baseB = readSegmentB(base);
-  const ax = readX(baseA);
-  const ay = readY(baseA);
-  const bx = readX(baseB);
-  const by = readY(baseB);
+  const { x1: ax, y1: ay, x2: bx, y2: by } = base;
 
   const dx = bx - ax;
   const dy = by - ay;
@@ -50,7 +43,7 @@ export function fromSegmentHeightInto<Out extends TriangleWritable<XYWritable, X
     return false;
   }
 
-  const side = options?.side ?? 'left';
+  const side = options === undefined ? 'left' : options.side;
   const nx = side === 'right' ? dy / len : -dy / len;
   const ny = side === 'right' ? -dx / len : dx / len;
 
@@ -59,9 +52,12 @@ export function fromSegmentHeightInto<Out extends TriangleWritable<XYWritable, X
   const cx = mx + nx * height;
   const cy = my + ny * height;
 
-  writeXY(out.a, ax, ay);
-  writeXY(out.b, bx, by);
-  writeXY(out.c, cx, cy);
+  out.x1 = ax;
+  out.y1 = ay;
+  out.x2 = bx;
+  out.y2 = by;
+  out.x3 = cx;
+  out.y3 = cy;
 
   return out;
 }

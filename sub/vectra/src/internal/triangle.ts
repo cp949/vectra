@@ -1,5 +1,5 @@
 import type { TriangleLike, TriangleTuple, XYInput } from '../types';
-import type { Triangle } from '../types/flat-shapes.internal';
+import type { Triangle, TriangleWritable } from '../types/flat-shapes.internal';
 import { readX, readY } from './xy';
 
 /** TriangleLike가 tuple인지 확인하는 type guard */
@@ -78,4 +78,9 @@ export function hasNonFiniteTriangleVertex(t: Triangle): boolean {
     !Number.isFinite(t.x3) ||
     !Number.isFinite(t.y3)
   );
+}
+
+/** 꼭짓점 세 개가 원점인 평평한 triangle 객체를 만든다. */
+export function createZeroTriangle(): TriangleWritable {
+  return { x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
 }

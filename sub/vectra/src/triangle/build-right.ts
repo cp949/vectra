@@ -1,4 +1,5 @@
-import type { TriangleWritable, XYInput } from '../types';
+import { createZeroTriangle } from '../internal/triangle';
+import type { TriangleWritable, Point } from '../types/flat-shapes.internal';
 import { buildRightInto } from './build-right-into';
 
 /**
@@ -15,11 +16,7 @@ import { buildRightInto } from './build-right-into';
  * @param height origin→c의 길이. clamp하지 않는다.
  * @param angle origin→b 방향의 radian. 기본값 0.
  */
-export function buildRight(origin: XYInput, width: number, height: number, angle: number = 0): TriangleWritable {
-  const out: TriangleWritable = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
+export function buildRight(origin: Point, width: number, height: number, angle: number = 0): TriangleWritable {
+  const out = createZeroTriangle();
   return buildRightInto(out, origin, width, height, angle);
 }

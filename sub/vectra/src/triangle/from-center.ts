@@ -1,4 +1,5 @@
-import type { TriangleWritable, XYInput } from '../types';
+import { createZeroTriangle } from '../internal/triangle';
+import type { TriangleWritable, Point } from '../types/flat-shapes.internal';
 import { fromCenterInto } from './from-center-into';
 
 /**
@@ -15,11 +16,7 @@ import { fromCenterInto } from './from-center-into';
  * @param sideLength 변의 길이. clamp하지 않는다.
  * @param rotation 첫 vertex angle의 radian. 기본값 -PI/2.
  */
-export function fromCenter(center: XYInput, sideLength: number, rotation: number = -Math.PI / 2): TriangleWritable {
-  const out: TriangleWritable = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
+export function fromCenter(center: Point, sideLength: number, rotation: number = -Math.PI / 2): TriangleWritable {
+  const out = createZeroTriangle();
   return fromCenterInto(out, center, sideLength, rotation);
 }
