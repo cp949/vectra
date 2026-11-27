@@ -4,17 +4,17 @@
  */
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
-import { copyInto } from '../../../src/vec/copy-into';
-import { cornerBisectorInto } from '../../../src/vec/corner-bisector-into';
-import { directionToInto } from '../../../src/vec/direction-to-into';
-import { divideInto } from '../../../src/vec/divide-into';
-import { floorInto } from '../../../src/vec/floor-into';
 import { absInto } from '../../../src/vec/abs-into';
 import { addInto } from '../../../src/vec/add-into';
 import { addScaledInto } from '../../../src/vec/add-scaled-into';
 import { ceilInto } from '../../../src/vec/ceil-into';
 import { clampInto } from '../../../src/vec/clamp-into';
 import { clampLengthInto } from '../../../src/vec/clamp-length-into';
+import { copyInto } from '../../../src/vec/copy-into';
+import { cornerBisectorInto } from '../../../src/vec/corner-bisector-into';
+import { directionToInto } from '../../../src/vec/direction-to-into';
+import { divideInto } from '../../../src/vec/divide-into';
+import { floorInto } from '../../../src/vec/floor-into';
 
 /** 메서드를 가진 외부 점 클래스. Into 반환값으로 메서드를 이어 부를 수 있어야 한다. */
 class Sprite {

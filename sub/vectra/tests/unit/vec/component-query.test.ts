@@ -15,8 +15,6 @@ import { componentMinIndex } from '../../../src/vec/component-min-index';
 describe('vec component query helpers', () => {
   test('componentMinIndex는 더 작은 성분의 인덱스를 반환한다', () => {
     expect(componentMinIndex({ x: 1, y: 2 })).toBe(0);
-    expect(componentMinIndex({ x: 1, y: 2 })).toBe(0);
-    expect(componentMinIndex({ x: 2, y: 1 })).toBe(1);
     expect(componentMinIndex({ x: 2, y: 1 })).toBe(1);
   });
 
