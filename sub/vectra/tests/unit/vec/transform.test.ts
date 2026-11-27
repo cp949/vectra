@@ -1,3 +1,4 @@
+/** 평평한 행렬로 점을 변환할 때 이동, 회전, 크기 조절과 제자리 기록을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { transform } from '../../../src/vec/transform';
 import { transformInto } from '../../../src/vec/transform-into';
@@ -39,23 +40,8 @@ describe('transformInto — matrix point 변환 후 out에 기록', () => {
     expect(out.y).toBeCloseTo(1);
   });
 
-  test('tuple input을 받는다', () => {
-    const out = { x: 0, y: 0 };
-    transformInto(out, [2, 3] as const, IDENTITY);
-    expect(out.x).toBe(2);
-    expect(out.y).toBe(3);
-  });
-
-  test('tuple output에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = transformInto(out, { x: 2, y: 3 }, IDENTITY);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
-    expect(result).toBe(out);
-  });
-
-  test('tuple matrix input을 받는다', () => {
-    const m: [number, number, number, number, number, number] = [2, 0, 0, 2, 1, 1];
+  test('배율과 이동을 함께 적용한다', () => {
+    const m = { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 };
     const out = { x: 0, y: 0 };
     transformInto(out, { x: 3, y: 4 }, m);
     expect(out.x).toBe(7);
@@ -65,18 +51,9 @@ describe('transformInto — matrix point 변환 후 out에 기록', () => {
   test('object self-aliasing: transformInto(pt, pt, m)이 안전하다', () => {
     const pt = { x: 3, y: 4 };
     const m = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
-    transformInto(pt, pt, m);
+    expect(transformInto(pt, pt, m)).toBe(pt);
     expect(pt.x).toBe(13);
     expect(pt.y).toBe(24);
-  });
-
-  test('tuple self-aliasing: transformInto(tup, tup, m)이 안전하다', () => {
-    const tup: [number, number] = [3, 4];
-    const m = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
-    const result = transformInto(tup, tup, m);
-    expect(tup[0]).toBe(13);
-    expect(tup[1]).toBe(24);
-    expect(result).toBe(tup);
   });
 });
 

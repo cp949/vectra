@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -14,16 +13,16 @@ import { hypot2 } from '../internal/numeric';
  * a와 b가 거의 같은 방향(`|omega| < 1e-10`)이거나 정반대(`|omega - π| < 1e-10`)인 경우 선형 보간(lerp)으로 fallback한다.
  * 정반대 방향에서는 2D 보간 평면이 유일하지 않으므로 결과 길이가 보장되지 않는다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param a 시작 unit vector (t = 0)
  * @param b 끝 unit vector (t = 1)
  * @param t 보간 계수
  */
-export function slerpInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInput, t: number): Out {
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
+export function slerpInto<Out extends PointWritable>(out: Out, a: Point, b: Point, t: number): Out {
+  const ax = a.x;
+  const ay = a.y;
+  const bx = b.x;
+  const by = b.y;
 
   const aLenSq = ax * ax + ay * ay;
   const bLenSq = bx * bx + by * by;
@@ -38,11 +37,15 @@ export function slerpInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInp
 
   // 거의 같은 방향이거나 정반대인 경우 lerp fallback — sinOmega ≈ 0 이므로 나눗셈 불안정
   if (Math.abs(omega) < 1e-10 || Math.abs(omega - Math.PI) < 1e-10) {
-    return writeXY(out, ax + (bx - ax) * t, ay + (by - ay) * t);
+    out.x = ax + (bx - ax) * t;
+    out.y = ay + (by - ay) * t;
+    return out;
   }
 
   const sinOmega = Math.sin(omega);
   const sa = Math.sin((1 - t) * omega) / sinOmega;
   const sb = Math.sin(t * omega) / sinOmega;
-  return writeXY(out, ax * sa + bx * sb, ay * sa + by * sb);
+  out.x = ax * sa + bx * sb;
+  out.y = ay * sa + by * sb;
+  return out;
 }

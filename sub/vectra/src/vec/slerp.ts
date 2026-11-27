@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { slerpInto } from './slerp-into';
 
 /**
@@ -14,6 +14,6 @@ import { slerpInto } from './slerp-into';
  * @param b 끝 unit vector (t = 1)
  * @param t 보간 계수
  */
-export function slerp(a: XYInput, b: XYInput, t: number): XYObjectWritable {
+export function slerp(a: Point, b: Point, t: number): PointWritable {
   return slerpInto({ x: 0, y: 0 }, a, b, t);
 }

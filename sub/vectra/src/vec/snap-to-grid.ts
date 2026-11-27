@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { snapToGridInto } from './snap-to-grid-into';
 
 /**
@@ -14,6 +14,6 @@ import { snapToGridInto } from './snap-to-grid-into';
  * @param input snap할 입력 point
  * @param grid 성분별 grid 간격 vector
  */
-export function snapToGrid(input: XYInput, grid: XYInput): XYObjectWritable {
+export function snapToGrid(input: Point, grid: Point): PointWritable {
   return snapToGridInto({ x: 0, y: 0 }, input, grid);
 }

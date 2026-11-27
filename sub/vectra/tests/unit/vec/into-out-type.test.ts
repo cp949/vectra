@@ -3,7 +3,7 @@
  * 묶음에서 vec Into 함수를 바꾸면 이 목록에 더한다.
  */
 import { describe, expect, expectTypeOf, test } from 'vitest';
-import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
+import type { Matrix, Point, PointWritable } from '../../../src/types/flat-shapes.internal';
 import { absInto } from '../../../src/vec/abs-into';
 import { addInto } from '../../../src/vec/add-into';
 import { addScaledInto } from '../../../src/vec/add-scaled-into';
@@ -39,6 +39,15 @@ import { rotateAroundInto } from '../../../src/vec/rotate-around-into';
 import { rotateInto } from '../../../src/vec/rotate-into';
 import { roundInto } from '../../../src/vec/round-into';
 import { scaleInto } from '../../../src/vec/scale-into';
+import { setLengthInto } from '../../../src/vec/set-length-into';
+import { slerpInto } from '../../../src/vec/slerp-into';
+import { slideInto } from '../../../src/vec/slide-into';
+import { snapToGridInto } from '../../../src/vec/snap-to-grid-into';
+import { subInto } from '../../../src/vec/sub-into';
+import { subtractScaledInto } from '../../../src/vec/subtract-scaled-into';
+import { type PolarWritable, toPolarInto } from '../../../src/vec/to-polar-into';
+import { transformInto } from '../../../src/vec/transform-into';
+import { zeroInto } from '../../../src/vec/zero-into';
 
 /** 메서드를 가진 외부 점 클래스. Into 반환값으로 메서드를 이어 부를 수 있어야 한다. */
 class Sprite {
@@ -50,6 +59,18 @@ class Sprite {
   }
 }
 
+/** 메서드를 가진 외부 극좌표 출력 클래스. */
+class Polar {
+  r = 0;
+  theta = 0;
+
+  rotate(angle: number): Polar {
+    this.theta += angle;
+    return this;
+  }
+}
+
+const matrix = { a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 3 };
 const a = { x: -1.5, y: 2 };
 const b = { x: 3, y: -4 };
 
@@ -110,6 +131,14 @@ describe('vec Into 반환 타입', () => {
       (out: Sprite) => rotateInto(out, a, 1),
       (out: Sprite) => roundInto(out, a),
       (out: Sprite) => scaleInto(out, a, 2),
+      (out: Sprite) => setLengthInto(out, a, 2),
+      (out: Sprite) => slerpInto(out, { x: 1, y: 0 }, { x: 0, y: 1 }, 0.5),
+      (out: Sprite) => slideInto(out, a, b),
+      (out: Sprite) => snapToGridInto(out, a, b),
+      (out: Sprite) => subInto(out, a, b),
+      (out: Sprite) => subtractScaledInto(out, a, b, 2),
+      (out: Sprite) => transformInto(out, a, matrix),
+      (out: Sprite) => zeroInto(out),
     ];
     for (const run of cases) {
       const sprite = new Sprite();
@@ -155,5 +184,26 @@ describe('vec Into 반환 타입', () => {
     expectTypeOf(rotateInto(sprite, a, 1)).toEqualTypeOf<Sprite>();
     expectTypeOf(roundInto(sprite, a)).toEqualTypeOf<Sprite>();
     expectTypeOf(scaleInto(sprite, a, 2)).toEqualTypeOf<Sprite>();
+    expectTypeOf(setLengthInto).parameter(0).toEqualTypeOf<PointWritable>();
+    expectTypeOf(setLengthInto(sprite, a, 2)).toEqualTypeOf<Sprite>();
+    expectTypeOf(slerpInto(sprite, { x: 1, y: 0 }, { x: 0, y: 1 }, 0.5)).toEqualTypeOf<Sprite>();
+    expectTypeOf(slideInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(snapToGridInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(subInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(subtractScaledInto(sprite, a, b, 2)).toEqualTypeOf<Sprite>();
+    expectTypeOf(transformInto(sprite, a, matrix)).toEqualTypeOf<Sprite>();
+    expectTypeOf(zeroInto(sprite)).toEqualTypeOf<Sprite>();
+    expectTypeOf(transformInto).parameter(2).toEqualTypeOf<Matrix>();
+  });
+
+  test('toPolarInto는 메서드가 있는 극좌표 out의 인스턴스와 타입을 보존한다', () => {
+    const polar = new Polar();
+    const result = toPolarInto(polar, { x: 1, y: 0 });
+    expectTypeOf(toPolarInto).parameter(0).toEqualTypeOf<PolarWritable>();
+    expectTypeOf(toPolarInto).parameter(1).toEqualTypeOf<Point>();
+    expectTypeOf(result).toEqualTypeOf<Polar>();
+    expect(result).toBe(polar);
+    expect(result.r).toBe(1);
+    expect(result.rotate(0)).toBe(polar);
   });
 });

@@ -1,4 +1,4 @@
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { type PolarWritable, toPolarInto } from './to-polar-into';
 
 /**
@@ -11,6 +11,6 @@ import { type PolarWritable, toPolarInto } from './to-polar-into';
  *
  * @param v 극좌표로 변환할 XY 벡터
  */
-export function toPolar(v: XYInput): PolarWritable {
+export function toPolar(v: Point): PolarWritable {
   return toPolarInto({ r: 0, theta: 0 }, v);
 }

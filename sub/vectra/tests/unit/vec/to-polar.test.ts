@@ -68,12 +68,6 @@ describe('vec conversion - toPolar (companion)', () => {
     expect(result.theta).toBeCloseTo(expected.theta, 12);
   });
 
-  test('tuple 입력도 정상 처리한다', () => {
-    const result = toPolar([3, 4]);
-    expect(result.r).toBeCloseTo(5, 10);
-    expect(result.theta).toBeCloseTo(Math.atan2(4, 3), 10);
-  });
-
   test('호출마다 새로운 object를 할당해 반환한다', () => {
     // companion은 caller-side 새 storage를 만들어야 한다
     const a = toPolar({ x: 1, y: 0 });

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -11,17 +10,23 @@ import { hypot2 } from '../internal/numeric';
  * input과 out이 같은 object여도 안전하다.
  * non-finite 입력은 검증 없이 JavaScript 연산 결과 그대로 흐른다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param vector 길이를 설정할 벡터
  * @param targetLength 설정할 길이 (finite non-negative 전제)
  */
-export function setLengthInto<Out extends XYWritable>(out: Out, vector: XYInput, targetLength: number): Out {
-  const vx = readX(vector);
-  const vy = readY(vector);
+export function setLengthInto<Out extends PointWritable>(out: Out, vector: Point, targetLength: number): Out {
+  const vx = vector.x;
+  const vy = vector.y;
   const len = hypot2(vx, vy);
 
-  if (len === 0) return writeXY(out, 0, 0);
+  if (len === 0) {
+    out.x = 0;
+    out.y = 0;
+    return out;
+  }
 
   const s = targetLength / len;
-  return writeXY(out, vx * s, vy * s);
+  out.x = vx * s;
+  out.y = vy * s;
+  return out;
 }

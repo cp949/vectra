@@ -1,6 +1,4 @@
-import { isXYObject } from '../internal/xy-object.internal';
-import type { XYInput, XYObjectWritable } from '../types';
-import { subtractScaledInto } from './subtract-scaled-into';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * a에서 b * scalar를 뺀 벡터를 새 object로 반환한다.
@@ -11,7 +9,6 @@ import { subtractScaledInto } from './subtract-scaled-into';
  * @param b scalar를 곱한 뒤 뺄 벡터
  * @param scalar b에 곱할 스칼라값
  */
-export function subtractScaled(a: XYInput, b: XYInput, scalar: number): XYObjectWritable {
-  if (isXYObject(a) && isXYObject(b)) return { x: a.x - b.x * scalar, y: a.y - b.y * scalar };
-  return subtractScaledInto({ x: 0, y: 0 }, a, b, scalar);
+export function subtractScaled(a: Point, b: Point, scalar: number): PointWritable {
+  return { x: a.x - b.x * scalar, y: a.y - b.y * scalar };
 }

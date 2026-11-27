@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /** r/theta field에 극좌표를 기록할 수 있는 polar output. */
@@ -18,12 +17,12 @@ export interface PolarWritable {
  * zero-vector 입력 시 r = 0, theta = atan2(0, 0) = 0.
  * non-finite 입력(NaN, ±Infinity)은 그대로 pass-through한다. caller가 책임진다.
  *
- * @param out 결과를 기록할 polar writable output
+ * @param out 결과를 기록할 극좌표 객체
  * @param v 극좌표로 변환할 XY 벡터
  */
-export function toPolarInto<Out extends PolarWritable>(out: Out, v: XYInput): Out {
-  const x = readX(v);
-  const y = readY(v);
+export function toPolarInto<Out extends PolarWritable>(out: Out, v: Point): Out {
+  const x = v.x;
+  const y = v.y;
   const theta = Math.atan2(y, x);
   out.r = hypot2(x, y);
   out.theta = theta === -Math.PI ? Math.PI : theta;

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * input의 각 성분을 grid vector 단위로 가장 가까운 배수에 맞춰 out에 기록하고 out을 반환한다.
@@ -12,15 +11,17 @@ import type { XYInput, XYWritable } from '../types';
  *
  * input과 grid 성분을 local로 먼저 읽으므로 out이 input 또는 grid와 같은 storage여도 안전하다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param input snap할 입력 point
  * @param grid 성분별 grid 간격 vector
  */
-export function snapToGridInto<Out extends XYWritable>(out: Out, input: XYInput, grid: XYInput): Out {
-  const ix = readX(input);
-  const iy = readY(input);
-  const gx = readX(grid);
-  const gy = readY(grid);
+export function snapToGridInto<Out extends PointWritable>(out: Out, input: Point, grid: Point): Out {
+  const ix = input.x;
+  const iy = input.y;
+  const gx = grid.x;
+  const gy = grid.y;
 
-  return writeXY(out, Math.round(ix / gx) * gx, Math.round(iy / gy) * gy);
+  out.x = Math.round(ix / gx) * gx;
+  out.y = Math.round(iy / gy) * gy;
+  return out;
 }

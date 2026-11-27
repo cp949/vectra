@@ -137,26 +137,11 @@ describe('setLengthInto — 벡터 길이 설정 (Into 버전)', () => {
     expect(len).toBeCloseTo(10);
   });
 
-  test('mutable tuple out 타입 유지 — tuple을 out으로 받는다', () => {
-    const out: [number, number] = [0, 0];
-    const result = setLengthInto(out, { x: 1, y: 0 }, 5);
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(5);
-    expect(out[1]).toBeCloseTo(0);
-  });
-
   test('object input — x/y field로 읽는다', () => {
     const out = { x: 0, y: 0 };
     setLengthInto(out, { x: 0, y: 3 }, 9);
     expect(out.x).toBeCloseTo(0);
     expect(out.y).toBeCloseTo(9);
-  });
-
-  test('tuple input — [x, y] 형태로 읽는다', () => {
-    const out = { x: 0, y: 0 };
-    setLengthInto(out, [1, 0] as const, 4);
-    expect(out.x).toBeCloseTo(4);
-    expect(out.y).toBeCloseTo(0);
   });
 
   test('NaN 입력은 NaN을 그대로 흘린다', () => {

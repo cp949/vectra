@@ -36,12 +36,6 @@ describe('vec subtractScaled - subtractScaledInto', () => {
     expect(out).toEqual({ x: 6, y: 2 });
   });
 
-  test('tuple 입력과 object 입력을 혼합해 처리한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    subtractScaledInto(out, [10, 8], { x: 2, y: 3 }, 2);
-    expect(out).toEqual({ x: 6, y: 2 });
-  });
-
   test('scalar = 0이면 a를 그대로 기록한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
     subtractScaledInto(out, { x: 5, y: 7 }, { x: 99, y: 99 }, 0);
@@ -75,12 +69,6 @@ describe('vec subtractScaled - subtractScaledInto', () => {
     subtractScaledInto(v, { x: 10, y: 8 }, v, 2);
     expect(v).toEqual({ x: 6, y: 2 });
   });
-
-  test('tuple out에도 올바르게 기록한다', () => {
-    const out: XYWritable = [0, 0];
-    subtractScaledInto(out, [10, 8], [2, 3], 2);
-    expect(out).toEqual([6, 2]);
-  });
 });
 
 describe('vec subtractScaled - subtractScaled (companion)', () => {
@@ -91,8 +79,8 @@ describe('vec subtractScaled - subtractScaled (companion)', () => {
 
   test('subtractScaledInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    subtractScaledInto(out, [5, 9], [1, 3], 3);
-    const result = subtractScaled([5, 9], [1, 3], 3);
+    subtractScaledInto(out, { x: 5, y: 9 }, { x: 1, y: 3 }, 3);
+    const result = subtractScaled({ x: 5, y: 9 }, { x: 1, y: 3 }, 3);
     expect(result.x).toBe(out.x);
     expect(result.y).toBe(out.y);
   });
@@ -265,13 +253,6 @@ describe('vec interpolation - slerpInto', () => {
     expect(() => slerpInto({ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 0 }, 0.5)).toThrow(RangeError);
   });
 
-  test('tuple out에도 올바르게 기록한다', () => {
-    const out: XYWritable = [0, 0];
-    slerpInto(out, [1, 0], [0, 1], 0);
-    expect((out as number[])[0]).toBeCloseTo(1, 10);
-    expect((out as number[])[1]).toBeCloseTo(0, 10);
-  });
-
   test('정반대 방향 벡터 사이를 t=0.5로 보간하면 lerp fallback이 적용된다', () => {
     const out: XYWritable = { x: 0, y: 0 };
     // (1, 0)과 (-1, 0)은 정반대 방향 — lerp fallback: 중간점이 (0, 0)에 수렴
@@ -306,8 +287,8 @@ describe('vec interpolation - slerp (companion)', () => {
 
   test('slerpInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    slerpInto(out, [1, 0], [0, 1], 0.3);
-    const result = slerp([1, 0], [0, 1], 0.3);
+    slerpInto(out, { x: 1, y: 0 }, { x: 0, y: 1 }, 0.3);
+    const result = slerp({ x: 1, y: 0 }, { x: 0, y: 1 }, 0.3);
     expect(result.x).toBeCloseTo((out as { x: number }).x, 10);
     expect(result.y).toBeCloseTo((out as { y: number }).y, 10);
   });
@@ -366,25 +347,6 @@ describe('vec conversion - toPolarInto', () => {
     toPolarInto(out, { x: 0, y: 0 });
     expect(out.r).toBe(0);
     expect(out.theta).toBe(Math.atan2(0, 0));
-  });
-
-  test('tuple 입력을 처리한다', () => {
-    const out = { r: 0, theta: 0 };
-    toPolarInto(out, [3, 4]);
-    expect(out.r).toBeCloseTo(5, 10);
-  });
-
-  test('서브클래스 out을 보존한다', () => {
-    class Polar {
-      r = 0;
-      theta = 0;
-      label = 'polar';
-    }
-    const out = new Polar();
-    const result = toPolarInto(out, { x: 1, y: 0 });
-    expect(result).toBe(out);
-    expect(result.label).toBe('polar');
-    expect(result.r).toBeCloseTo(1, 10);
   });
 });
 

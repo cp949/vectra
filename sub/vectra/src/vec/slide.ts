@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { slideInto } from './slide-into';
 
 /**
@@ -12,6 +12,6 @@ import { slideInto } from './slide-into';
  * @param vector 슬라이드할 벡터
  * @param normal 충돌 표면 법선 벡터 (임의 길이)
  */
-export function slide(vector: XYInput, normal: XYInput): XYObjectWritable {
+export function slide(vector: Point, normal: Point): PointWritable {
   return slideInto({ x: 0, y: 0 }, vector, normal);
 }

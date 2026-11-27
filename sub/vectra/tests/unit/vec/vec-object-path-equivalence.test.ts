@@ -4,7 +4,7 @@
  * 대상: addInto/add, subInto/sub, scaleInto/scale, addScaledInto/addScaled, subtractScaledInto/subtractScaled,
  * dot, cross, length, lengthSq, distance, distanceSq, normalizeInto, reflectInto, reflectAcrossNormalInto.
  *
- * 점 객체 함수의 계산 결과와 out aliasing을 검증한다. 전환 전 함수는 tuple과 외부 클래스도 검증한다.
+ * 점 객체 및 외부 클래스 입력의 계산 결과와 out aliasing을 검증한다.
  *
  * 정수·실수·큰 값·±0·NaN·±Infinity·zero vector 좌표에서 결과가 이전 구현과 `Object.is` 수준으로 같다.
  * 이전 구현은 공유 readX/readY/writeXY로 읽고 쓴다.
@@ -33,6 +33,7 @@ import { subtractScaledInto } from '../../../src/vec/subtract-scaled-into';
 import { hypot2 } from '../../../src/internal/numeric';
 import { readX, readY, writeXY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
+import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 import type { XYInput, XYObjectWritable, XYWritable } from '../../../src/types';
 
 // 이전 구현. 공유 readX/readY/writeXY를 그대로 쓴다. 새 구현의 비교 기준으로만 쓴다.
@@ -95,10 +96,11 @@ const ref = {
   },
 };
 
+/** 좌표를 갱신할 수 있는 외부 점 클래스. */
 class Point2 {
   constructor(
-    readonly x: number,
-    readonly y: number
+    public x: number,
+    public y: number
   ) {}
 }
 
@@ -106,10 +108,12 @@ type Rng = () => number;
 
 const SPECIAL = [0, -0, 1, -1, 1e-300, 1e150, -1e150, 1e308, -1e308, NaN, Infinity, -Infinity, 0.5, -0.5];
 
+/** 난수로 목록의 원소를 고른다. */
 function pick<T>(rng: Rng, list: readonly T[]): T {
   return list[Math.floor(rng() * list.length)];
 }
 
+/** 경곗값, 작은 정수, 실수를 섞어 좌표를 만든다. */
 function coord(rng: Rng): number {
   const r = rng();
   if (r < 0.12) return pick(rng, SPECIAL);
@@ -117,50 +121,25 @@ function coord(rng: Rng): number {
   return (rng() - 0.5) * 20;
 }
 
-/** 입력 한 개의 명세. 같은 명세로 이전 구현과 새 구현이 쓸 입력을 따로 만든다. */
-interface VecSpec {
-  form: number;
-  x: number;
-  y: number;
-}
-
-/** 0=객체 1=tuple 2=class 3=x/y field를 가진 tuple(tuple로 읽혀야 한다) 4=객체(추가 field) */
-function makeVec(spec: VecSpec): XYInput {
-  switch (spec.form) {
-    case 0:
-      return { x: spec.x, y: spec.y };
-    case 1:
-      return [spec.x, spec.y];
-    case 2:
-      return new Point2(spec.x, spec.y);
-    case 3: {
-      const tuple = [spec.x, spec.y] as unknown as { x: number; y: number } & [number, number];
-      tuple.x = 7;
-      tuple.y = 8;
-      return tuple;
-    }
-    default:
-      return { x: spec.x, y: spec.y, extra: 1 } as XYInput;
+/** 일반 객체, 외부 클래스, 추가 필드가 있는 객체를 섞어 만든다. */
+function makePoint(rng: Rng): PointWritable {
+  const x = coord(rng);
+  const y = coord(rng);
+  const form = Math.floor(rng() * 3);
+  if (form === 0) return new Point2(x, y);
+  if (form === 1) {
+    const point = { x, y, extra: 1 };
+    return point;
   }
+  return { x, y };
 }
 
-function makeSpec(rng: Rng, objectBias: number): VecSpec {
-  const form = rng() < objectBias ? (rng() < 0.7 ? 0 : 2) : Math.floor(rng() * 5);
-  return { form, x: coord(rng), y: coord(rng) };
-}
-
-/** out의 모양. 0=객체 1=tuple 2=입력 a와 같은 값(aliasing) 3=입력 b와 같은 값(aliasing) */
-function makeOut(kind: number, a: VecSpec, b: VecSpec): XYWritable {
-  if (kind === 1) return [9, 9];
-  if (kind === 2) return a.form === 1 ? [a.x, a.y] : ({ x: a.x, y: a.y } as XYObjectWritable);
-  if (kind === 3) return b.form === 1 ? [b.x, b.y] : ({ x: b.x, y: b.y } as XYObjectWritable);
-  return { x: 9, y: 9 };
-}
-
+/** 이전 구현이 반환한 좌표를 비교용 쌍으로 읽는다. */
 function snapshot(v: XYWritable | XYInput): [number, number] {
   return Array.isArray(v) ? [v[0], v[1]] : [(v as XYObjectWritable).x, (v as XYObjectWritable).y];
 }
 
+/** NaN과 음의 영을 구분하는 좌표 비교를 수행한다. */
 function same(a: number, b: number): boolean {
   return Object.is(a, b);
 }
@@ -203,35 +182,17 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
 
   test(`무작위 ${N}건: 두 벡터를 받는 Into 함수가 이전 구현과 같다`, () => {
     const rng = createRng(20260101);
-    const fns: Array<
-      [
-        string,
-        (out: XYWritable, a: XYInput, b: XYInput, s: number) => XYWritable,
-        (out: XYWritable, a: XYInput, b: XYInput, s: number) => XYWritable,
-      ]
-    > = [
-      ['subInto', (o, a, b) => subInto(o, a, b), (o, a, b) => ref.subInto(o, a, b)],
-      ['subtractScaledInto', subtractScaledInto, ref.subtractScaledInto],
-    ];
     for (let i = 0; i < N; i++) {
-      const bias = i % 3 === 0 ? 1 : 0.3;
-      const aSpec = makeSpec(rng, bias);
-      const bSpec = makeSpec(rng, bias);
-      const outKind = Math.floor(rng() * 4);
-      const s = coord(rng);
-      const [name, fn, reference] = fns[i % fns.length];
-      const expectedOut = makeOut(outKind, aSpec, bSpec);
-      const actualOut = makeOut(outKind, aSpec, bSpec);
-      const expectedResult = reference(expectedOut, makeVec(aSpec), makeVec(bSpec), s);
-      const actualResult = fn(actualOut, makeVec(aSpec), makeVec(bSpec), s);
-      expect(actualResult).toBe(actualOut);
-      expect(Array.isArray(actualOut)).toBe(Array.isArray(expectedOut));
-      const [ex, ey] = snapshot(expectedResult);
-      const [ax, ay] = snapshot(actualResult);
-      if (!same(ex, ax) || !same(ey, ay)) {
-        throw new Error(
-          `${name} 불일치: a=${JSON.stringify(aSpec)} b=${JSON.stringify(bSpec)} out=${outKind} s=${s} 기대=(${ex}, ${ey}) 실제=(${ax}, ${ay})`
-        );
+      const a = makePoint(rng);
+      const b = makePoint(rng);
+      const scalar = coord(rng);
+      const useScaled = i % 2 === 0;
+      const reference = useScaled ? ref.subtractScaledInto : ref.subInto;
+      const [expectedX, expectedY] = snapshot(reference({ x: 0, y: 0 }, a, b, scalar));
+      const out = i % 3 === 0 ? a : i % 3 === 1 ? b : { x: 9, y: 9 };
+      const result = useScaled ? subtractScaledInto(out, a, b, scalar) : subInto(out, a, b);
+      if (result !== out || !same(expectedX, out.x) || !same(expectedY, out.y)) {
+        throw new Error(`점 객체 뺄셈 불일치: 반복 ${i}`);
       }
     }
   });
@@ -256,11 +217,10 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
   test(`무작위 ${N}건: 한 벡터를 받는 Into 함수가 이전 구현과 같다`, () => {
     const rng = createRng(20260102);
     for (let i = 0; i < N; i++) {
-      const aSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
       const outKind = Math.floor(rng() * 3);
       const s = coord(rng);
       const useScale = i % 2 === 0;
-      const a = { x: aSpec.x, y: aSpec.y };
+      const a = makePoint(rng);
       const actualOut = outKind === 2 ? a : { x: 0, y: 0 };
       const expectedOut = { x: 0, y: 0 };
       const expectedResult = useScale ? ref.scaleInto(expectedOut, a, s) : ref.normalizeInto(expectedOut, a);
@@ -270,7 +230,7 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       const [ax, ay] = snapshot(actualResult);
       if (!same(ex, ax) || !same(ey, ay)) {
         throw new Error(
-          `${useScale ? 'scaleInto' : 'normalizeInto'} 불일치: a=${JSON.stringify(aSpec)} out=${outKind} s=${s} 기대=(${ex}, ${ey}) 실제=(${ax}, ${ay})`
+          `${useScale ? 'scaleInto' : 'normalizeInto'} 불일치: a=${JSON.stringify(a)} out=${outKind} s=${s} 기대=(${ex}, ${ey}) 실제=(${ax}, ${ay})`
         );
       }
     }
@@ -279,24 +239,19 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
   test(`무작위 ${N}건: 새 object를 반환하는 companion이 이전 구현과 같다`, () => {
     const rng = createRng(20260103);
     for (let i = 0; i < N; i++) {
-      const aSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
-      const bSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
       const s = coord(rng);
-      const a = { x: aSpec.x, y: aSpec.y };
+      const a = makePoint(rng);
+      const b = makePoint(rng);
       const cases: Array<[string, XYObjectWritable, XYWritable]> = [
-        ['sub', sub(makeVec(aSpec), makeVec(bSpec)), ref.subInto({ x: 0, y: 0 }, makeVec(aSpec), makeVec(bSpec))],
+        ['sub', sub(a, b), ref.subInto({ x: 0, y: 0 }, a, b)],
         ['scale', scale(a, s), ref.scaleInto({ x: 0, y: 0 }, a, s)],
-        [
-          'subtractScaled',
-          subtractScaled(makeVec(aSpec), makeVec(bSpec), s),
-          ref.subtractScaledInto({ x: 0, y: 0 }, makeVec(aSpec), makeVec(bSpec), s),
-        ],
+        ['subtractScaled', subtractScaled(a, b, s), ref.subtractScaledInto({ x: 0, y: 0 }, a, b, s)],
       ];
       for (const [name, actual, expected] of cases) {
         const [ex, ey] = snapshot(expected);
         if (Array.isArray(actual) || !same(ex, actual.x) || !same(ey, actual.y)) {
           throw new Error(
-            `${name} 불일치: a=${JSON.stringify(aSpec)} b=${JSON.stringify(bSpec)} s=${s} 기대=(${ex}, ${ey}) 실제=(${actual.x}, ${actual.y})`
+            `${name} 불일치: a=${JSON.stringify(a)} b=${JSON.stringify(b)} s=${s} 기대=(${ex}, ${ey}) 실제=(${actual.x}, ${actual.y})`
           );
         }
       }
@@ -306,10 +261,8 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
   test(`무작위 ${N}건: 숫자를 반환하는 함수가 이전 구현과 같다`, () => {
     const rng = createRng(20260104);
     for (let i = 0; i < N; i++) {
-      const aSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
-      const bSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
-      const a = { x: aSpec.x, y: aSpec.y };
-      const b = { x: bSpec.x, y: bSpec.y };
+      const a = makePoint(rng);
+      const b = makePoint(rng);
       const cases: Array<[string, number, number]> = [
         ['dot', dot(a, b), ref.dot(a, b)],
         ['cross', cross(a, b), ref.cross(a, b)],
@@ -321,7 +274,7 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       for (const [name, actual, expected] of cases) {
         if (!same(expected, actual)) {
           throw new Error(
-            `${name} 불일치: a=${JSON.stringify(aSpec)} b=${JSON.stringify(bSpec)} 기대=${expected} 실제=${actual}`
+            `${name} 불일치: a=${JSON.stringify(a)} b=${JSON.stringify(b)} 기대=${expected} 실제=${actual}`
           );
         }
       }
@@ -332,8 +285,8 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
     const v = { x: 1, y: 2 };
     expect(addScaledInto(v, v, v, 2)).toBe(v);
     expect(v).toEqual({ x: 3, y: 6 });
-    const t: [number, number] = [1, 2];
-    subInto(t, t, [0.5, 0.5]);
-    expect(t).toEqual([0.5, 1.5]);
+    const point = { x: 1, y: 2 };
+    subInto(point, point, { x: 0.5, y: 0.5 });
+    expect(point).toEqual({ x: 0.5, y: 1.5 });
   });
 });

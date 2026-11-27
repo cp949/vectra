@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { setLengthInto } from './set-length-into';
 
 /**
@@ -12,6 +12,6 @@ import { setLengthInto } from './set-length-into';
  * @param vector 길이를 설정할 벡터
  * @param targetLength 설정할 길이 (finite non-negative 전제)
  */
-export function setLength(vector: XYInput, targetLength: number): XYObjectWritable {
+export function setLength(vector: Point, targetLength: number): PointWritable {
   return setLengthInto({ x: 0, y: 0 }, vector, targetLength);
 }

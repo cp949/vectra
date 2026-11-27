@@ -29,24 +29,6 @@ describe('snapToGridInto — component-wise grid snap', () => {
     expect(out.y).toBe(20);
   });
 
-  test('tuple 입력을 처리하고 out을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const result = snapToGridInto(out, [12.2, 18.7], [5, 10]);
-
-    expect(result).toBe(out);
-    expect(out.x).toBe(10);
-    expect(out.y).toBe(20);
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = snapToGridInto(out, { x: 12.2, y: 18.7 }, { x: 5, y: 10 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBe(10);
-    expect(out[1]).toBe(20);
-  });
-
   test('음수 좌표를 scalar snap과 동일하게 처리한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
     snapToGridInto(out, { x: -12.2, y: -18.7 }, { x: 5, y: 10 });

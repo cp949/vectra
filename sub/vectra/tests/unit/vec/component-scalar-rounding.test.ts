@@ -22,17 +22,12 @@ import {
   type ConstantCompanion,
   expectNaNComponents,
   expectObjectOut,
-  expectTupleOut,
   expectXY,
   testUnaryBehavior,
   type UnaryBehaviorCase,
 } from './component-helper-test-utils';
 
 describe('vec constants - zero and one', () => {
-  test('zeroInto는 tuple out에 영 벡터를 기록하고 out을 반환한다', () => {
-    expectTupleOut(zeroInto, [0, 0]);
-  });
-
   const cases: ReadonlyArray<{
     name: string;
     into: (out: XYObjectWritable) => XYObjectWritable;

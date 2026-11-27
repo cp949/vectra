@@ -63,11 +63,10 @@ describe('vec arithmetic - addInto', () => {
 });
 
 describe('vec arithmetic - subInto', () => {
-  test('tuple 입력에서 object 입력을 빼서 out에 기록한다', () => {
-    // a는 tuple, b는 object로 혼합 입력을 검증한다
+  test('두 점의 좌표 차를 out에 기록한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
 
-    const result = subInto(out, [10, 5], { x: 3, y: 8 });
+    const result = subInto(out, { x: 10, y: 5 }, { x: 3, y: 8 });
 
     expect(result).toBe(out);
     expect(out).toEqual({ x: 7, y: -3 });
@@ -77,22 +76,12 @@ describe('vec arithmetic - subInto', () => {
     // 두 번 연속 호출에서도 같은 out reference를 반환해야 한다
     const out: XYWritable = { x: 99, y: 99 };
 
-    const first = subInto(out, { x: 10, y: 10 }, [4, 1]);
-    const second = subInto(out, [0, 0], { x: 2, y: -2 });
+    const first = subInto(out, { x: 10, y: 10 }, { x: 4, y: 1 });
+    const second = subInto(out, { x: 0, y: 0 }, { x: 2, y: -2 });
 
     expect(first).toBe(out);
     expect(second).toBe(out);
     expect(out).toEqual({ x: -2, y: 2 });
-  });
-
-  test('mutable tuple out에 뺄셈 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = subInto(out, [10, 5], { x: 3, y: 8 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBe(7);
-    expect(out[1]).toBe(-3);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 });
 
@@ -185,8 +174,8 @@ describe('vec companion - sub', () => {
 
   test('subInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    subInto(out, { x: 10, y: 5 }, [3, 8]);
-    const result = sub({ x: 10, y: 5 }, [3, 8]);
+    subInto(out, { x: 9, y: 4 }, { x: 3, y: 8 });
+    const result = sub({ x: 9, y: 4 }, { x: 3, y: 8 });
 
     expect(result.x).toBe(out.x);
     expect(result.y).toBe(out.y);

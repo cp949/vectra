@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { copyInto } from './copy-into';
 
 /**
@@ -7,7 +6,6 @@ import { copyInto } from './copy-into';
  *
  * @param input 복사할 입력 벡터
  */
-export function vecFrom(input: XYInput): XYObjectWritable {
-  // v2-migration: vecFrom의 tuple 입력을 점 객체로 변환한다.
-  return copyInto({ x: 0, y: 0 }, { x: readX(input), y: readY(input) });
+export function vecFrom(input: Point): PointWritable {
+  return copyInto({ x: 0, y: 0 }, input);
 }
