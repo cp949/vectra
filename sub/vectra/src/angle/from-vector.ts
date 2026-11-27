@@ -1,6 +1,5 @@
-import { readX, readY } from '../internal/xy';
 import { assertFinite2 } from '../math/range.internal';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 벡터의 방향각을 radian으로 반환한다. 범위는 [-π, π]이다.
@@ -11,9 +10,9 @@ import type { XYInput } from '../types';
  *
  * @param input 방향각을 측정할 벡터
  */
-export function fromVector(input: XYInput): number {
-  const x = readX(input);
-  const y = readY(input);
+export function fromVector(input: Point): number {
+  const x = input.x;
+  const y = input.y;
   assertFinite2(x, y);
   return Math.atan2(y, x);
 }

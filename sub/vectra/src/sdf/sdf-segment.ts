@@ -1,6 +1,6 @@
-import { readSegmentA, readSegmentB, segmentClosestPointXY } from '../internal/segment';
-import type { SegmentLike, XYInput } from '../types';
-import { requireFiniteX, requireFiniteY } from './primitive.internal';
+import { segmentClosestPointXY } from '../internal/segment';
+import type { Point, Segment } from '../types/flat-shapes.internal';
+import { requireFinite } from './primitive.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -16,15 +16,13 @@ import { hypot2 } from '../internal/numeric';
  * @param segment signed distance를 측정할 segment
  * @param point segment까지의 signed distance를 측정할 point
  */
-export function sdfSegment(segment: SegmentLike, point: XYInput): number {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const ax = requireFiniteX(a, 'segment a');
-  const ay = requireFiniteY(a, 'segment a');
-  const bx = requireFiniteX(b, 'segment b');
-  const by = requireFiniteY(b, 'segment b');
-  const px = requireFiniteX(point, 'point');
-  const py = requireFiniteY(point, 'point');
+export function sdfSegment(segment: Segment, point: Point): number {
+  const ax = requireFinite(segment.x1, 'segment a x');
+  const ay = requireFinite(segment.y1, 'segment a y');
+  const bx = requireFinite(segment.x2, 'segment b x');
+  const by = requireFinite(segment.y2, 'segment b y');
+  const px = requireFinite(point.x, 'point x');
+  const py = requireFinite(point.y, 'point y');
 
   const closest = segmentClosestPointXY(ax, ay, bx, by, px, py);
   return hypot2(px - closest.x, py - closest.y);

@@ -1,3 +1,4 @@
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { toUnitVectorInto } from './to-unit-vector-into';
 
 /**
@@ -8,6 +9,6 @@ import { toUnitVectorInto } from './to-unit-vector-into';
  *
  * @param angle unit vector 방향각(라디안)
  */
-export function toUnitVector(angle: number): { x: number; y: number } {
+export function toUnitVector(angle: number): PointWritable {
   return toUnitVectorInto({ x: 0, y: 0 }, angle);
 }

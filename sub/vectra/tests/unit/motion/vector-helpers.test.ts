@@ -19,26 +19,6 @@ describe('displacementVectorInto', () => {
     expect(result).toEqual({ x: 12, y: 6 });
   });
 
-  test('tuple input도 같은 값을 기록한다', () => {
-    expect(displacementVectorInto({ x: 0, y: 0 }, [2, -3], [4, 6], 2)).toEqual({
-      x: 12,
-      y: 6,
-    });
-  });
-
-  test('tuple output에 기록하고 같은 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = displacementVectorInto(out, { x: 2, y: -3 }, { x: 4, y: 6 }, 2);
-
-    expect(result).toBe(out);
-    expect(result).toEqual([12, 6]);
-  });
-
-  test('object output에 기록하고 같은 object reference를 반환한다', () => {
-    const out = { x: 0, y: 0 };
-    expect(displacementVectorInto(out, { x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toBe(out);
-  });
-
   test('time < 0은 역방향 closed-form으로 평가한다', () => {
     // x: 2*-1 + 0.5*4*1 = 0, y: -3*-1 + 0.5*6*1 = 6
     expect(displacementVectorInto({ x: 0, y: 0 }, { x: 2, y: -3 }, { x: 4, y: 6 }, -1)).toEqual({ x: 0, y: 6 });
@@ -85,14 +65,6 @@ describe('displacementVectorInto', () => {
     expect(out).toEqual({ x: 1, y: 2 });
   });
 
-  test('overflow 시 tuple out도 수정하지 않는다', () => {
-    const out: [number, number] = [1, 2];
-    expect(() =>
-      displacementVectorInto(out, { x: Number.MAX_VALUE, y: 0 }, { x: Number.MAX_VALUE, y: 0 }, Number.MAX_VALUE)
-    ).toThrow(RangeError);
-    expect(out).toEqual([1, 2]);
-  });
-
   test('signed-zero 결과 component는 0으로 canonicalize한다', () => {
     const result = displacementVectorInto({ x: 0, y: 0 }, { x: -0, y: -0 }, { x: -0, y: -0 }, 1);
 
@@ -107,10 +79,6 @@ describe('displacementVector', () => {
       x: 12,
       y: 6,
     });
-  });
-
-  test('tuple input도 같은 값을 반환한다', () => {
-    expect(displacementVector([2, -3], [4, 6], 2)).toEqual({ x: 12, y: 6 });
   });
 
   test('input을 mutate하지 않고 새 object를 반환한다', () => {
@@ -143,21 +111,6 @@ describe('velocityInto', () => {
 
     expect(result).toBe(out);
     expect(result).toEqual({ x: 10, y: 9 });
-  });
-
-  test('tuple input도 같은 값을 기록한다', () => {
-    expect(velocityInto({ x: 0, y: 0 }, [2, -3], [4, 6], 2)).toEqual({
-      x: 10,
-      y: 9,
-    });
-  });
-
-  test('tuple output에 기록하고 같은 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = velocityInto(out, { x: 2, y: -3 }, { x: 4, y: 6 }, 2);
-
-    expect(result).toBe(out);
-    expect(result).toEqual([10, 9]);
   });
 
   test('time < 0은 역방향 closed-form으로 평가한다', () => {
@@ -221,10 +174,6 @@ describe('velocity', () => {
     });
   });
 
-  test('tuple input도 같은 값을 반환한다', () => {
-    expect(velocity([2, -3], [4, 6], 2)).toEqual({ x: 10, y: 9 });
-  });
-
   test('input을 mutate하지 않고 새 object를 반환한다', () => {
     const initialVelocityArg = { x: 2, y: -3 };
     const accelerationArg = { x: 4, y: 6 };
@@ -255,21 +204,6 @@ describe('positionInto', () => {
 
     expect(result).toBe(out);
     expect(result).toEqual({ x: 13, y: 8 });
-  });
-
-  test('tuple input도 같은 값을 기록한다', () => {
-    expect(positionInto({ x: 0, y: 0 }, [1, 2], [2, -3], [4, 6], 2)).toEqual({
-      x: 13,
-      y: 8,
-    });
-  });
-
-  test('tuple output에 기록하고 같은 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = positionInto(out, { x: 1, y: 2 }, { x: 2, y: -3 }, { x: 4, y: 6 }, 2);
-
-    expect(result).toBe(out);
-    expect(result).toEqual([13, 8]);
   });
 
   test('time < 0은 역방향 closed-form으로 평가한다', () => {
@@ -344,10 +278,6 @@ describe('positionInto', () => {
 describe('position', () => {
   test('새 plain object로 위치 벡터를 반환한다', () => {
     expect(position({ x: 1, y: 2 }, { x: 2, y: -3 }, { x: 4, y: 6 }, 2)).toEqual({ x: 13, y: 8 });
-  });
-
-  test('tuple input도 같은 값을 반환한다', () => {
-    expect(position([1, 2], [2, -3], [4, 6], 2)).toEqual({ x: 13, y: 8 });
   });
 
   test('input을 mutate하지 않고 새 object를 반환한다', () => {

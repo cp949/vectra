@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { assertFiniteScalar } from './scalar.internal';
 import { assertFiniteVector, finalizeVectorComponent } from './vector.internal';
 
@@ -15,30 +14,32 @@ import { assertFiniteVector, finalizeVectorComponent } from './vector.internal';
  * 모든 component를 계산·마감한 뒤 한 번에 commit하므로 out이 `velocity` 또는 `acceleration`과
  * 같은 object여도 원래 input 값을 기준으로 계산한다. `-0` 결과 component는 `0`으로 반환한다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param velocity 초기 속도 벡터 v
  * @param acceleration 상수 가속도 벡터 a
  * @param time 경과 시간 t. 음수는 역방향 평가다.
  */
-export function displacementVectorInto<Out extends XYWritable>(
+export function displacementVectorInto<Out extends PointWritable>(
   out: Out,
-  velocity: XYInput,
-  acceleration: XYInput,
+  velocity: Point,
+  acceleration: Point,
   time: number
 ): Out {
   assertFiniteVector(velocity, 'velocity');
   assertFiniteVector(acceleration, 'acceleration');
   assertFiniteScalar(time, 'time');
 
-  // aliasing 안전: writeXY 전에 모든 input component를 읽는다.
-  const vx = readX(velocity);
-  const vy = readY(velocity);
-  const ax = readX(acceleration);
-  const ay = readY(acceleration);
+  // aliasing 안전: out에 기록하기 전에 모든 input component를 읽는다.
+  const vx = velocity.x;
+  const vy = velocity.y;
+  const ax = acceleration.x;
+  const ay = acceleration.y;
 
   const halfTimeSquared = 0.5 * time * time;
   const x = finalizeVectorComponent(vx * time + ax * halfTimeSquared, 'displacement.x');
   const y = finalizeVectorComponent(vy * time + ay * halfTimeSquared, 'displacement.y');
 
-  return writeXY(out, x, y);
+  out.x = x;
+  out.y = y;
+  return out;
 }

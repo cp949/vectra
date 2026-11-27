@@ -1,4 +1,4 @@
-import type { CircleWritable, XYInput } from '../types';
+import type { CircleWritable, Point } from '../types/flat-shapes.internal';
 import { fitCircleToPointsInto } from './fit-circle-to-points-into';
 import type { FitOptions } from './types';
 
@@ -6,7 +6,7 @@ import type { FitOptions } from './types';
  * point collection에 algebraic least-squares circle을 fitting해 새 plain object로 반환한다.
  *
  * 방정식 `x^2 + y^2 + d*x + e*y + f = 0`을 centroid 기준 frame에서 풀고 center를 원래 좌표계로
- * 되돌린다. `radius`는 frame 이동에 불변이다. 세 점이면 exact circle, 네 점 이상이면
+ * 되돌린다. `r`은 frame 이동에 불변이다. 세 점이면 exact circle, 네 점 이상이면
  * overdetermined least-squares fit이다.
  *
  * 최소 sample count는 3이다. point 수가 3 미만이거나, collinear/rank-deficient(duplicate-heavy 포함)로
@@ -17,9 +17,9 @@ import type { FitOptions } from './types';
  * singular/degenerate 판정에만 쓰고 finite 검증에는 쓰지 않는다.
  *
  * @param points circle을 fitting할 point collection
- * @param options `epsilon`을 담은 fitting 옵션. 미지정 시 `epsilon`은 `1e-9`
+ * @param options `epsilon`을 담은 fitting 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`
  */
-export function fitCircleToPoints(points: readonly XYInput[], options?: FitOptions): CircleWritable | undefined {
-  const out = { center: { x: 0, y: 0 }, radius: 0 };
+export function fitCircleToPoints(points: readonly Point[], options?: FitOptions): CircleWritable | undefined {
+  const out = { cx: 0, cy: 0, r: 0 };
   return fitCircleToPointsInto(out, points, options) === false ? undefined : out;
 }

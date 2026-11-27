@@ -29,9 +29,9 @@ describe('fitCircleToPoints — 3x3 solver', () => {
   test('거의 수직인 짧은 호는 pivot 행을 교환해야 원을 복원한다', () => {
     // 호가 x 방향으로 거의 퍼지지 않아 첫 열에서 |sxy| >> |sxx|다. pivot을 교환하지 않으면 singular로 판정된다.
     const fit = fitCircleToPoints(arcPoints(1, -1, 2, 180, 180 + (0.004 * 180) / Math.PI, 6));
-    expect(fit?.center.x).toBeCloseTo(1, 6);
-    expect(fit?.center.y).toBeCloseTo(-1, 6);
-    expect(fit?.radius).toBeCloseTo(2, 6);
+    expect(fit?.cx).toBeCloseTo(1, 6);
+    expect(fit?.cy).toBeCloseTo(-1, 6);
+    expect(fit?.r).toBeCloseTo(2, 6);
   });
 
   test('pivot 교환을 거치면 세 점의 외접원 중심이 정확히 representable한 값으로 나온다', () => {
@@ -44,7 +44,8 @@ describe('fitCircleToPoints — 3x3 solver', () => {
       ],
       { epsilon: 0 }
     );
-    expect(fit?.center).toEqual({ x: 3.4375, y: 4.375 });
+    expect(fit?.cx).toBe(3.4375);
+    expect(fit?.cy).toBe(4.375);
   });
 
   test('좌표가 너무 커서 normal equation이 overflow하면 undefined를 돌려준다', () => {
@@ -81,7 +82,7 @@ describe('fitCircleToPoints — 3x3 solver', () => {
   test('반지름 제곱이 epsilon 이하이면 undefined를 돌려준다', () => {
     const points = arcPoints(0, 0, 1, 0, 315, 8);
     expect(fitCircleToPoints(points, { epsilon: 1 })).toBeUndefined();
-    expect(fitCircleToPoints(points, { epsilon: 0.5 })?.radius).toBeCloseTo(1, 9);
+    expect(fitCircleToPoints(points, { epsilon: 0.5 })?.r).toBeCloseTo(1, 9);
   });
 });
 

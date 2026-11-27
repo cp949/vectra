@@ -1,3 +1,4 @@
+/** 도형의 부호 있는 거리와 입력 검증을 확인한다. */
 import { describe, expect, test } from 'vitest';
 import { sdfRect } from '../../../src/sdf/sdf-rect';
 import { sdfRoundedRect } from '../../../src/sdf/sdf-rounded-rect';
@@ -126,13 +127,6 @@ describe('sdfRoundedRect', () => {
 
   test('boundary 결과는 -0이 아닌 0이다', () => {
     expect(Object.is(sdfRoundedRect(rect, 2, { x: 5, y: 0 }), 0)).toBe(true);
-  });
-
-  test('tuple rect/point와 object rect/point가 같은 결과를 반환한다', () => {
-    const fromObject = sdfRoundedRect({ x: 0, y: 0, width: 10, height: 6 }, 2, { x: 13, y: 3 });
-    const fromTuple = sdfRoundedRect([0, 0, 10, 6], 2, [13, 3]);
-    expect(fromTuple).toBe(fromObject);
-    expect(fromTuple).toBe(3);
   });
 
   test('negative radius는 RangeError다', () => {

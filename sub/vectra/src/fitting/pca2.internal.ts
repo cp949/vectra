@@ -6,8 +6,7 @@
  * 상호 import를 피한다.
  */
 
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import type { FitOptions } from './types';
 import { hypot2 } from '../internal/numeric';
 
@@ -43,15 +42,15 @@ export function resolveFitEpsilon(options: FitOptions | undefined, name: string)
  * @param name error message에 사용할 인자 이름
  */
 export function materializeFinitePoints(
-  points: readonly XYInput[],
+  points: readonly Point[],
   name: string
 ): { readonly xs: number[]; readonly ys: number[] } {
   const count = points.length;
   const xs = new Array<number>(count);
   const ys = new Array<number>(count);
   for (let i = 0; i < count; i++) {
-    const x = readX(points[i]);
-    const y = readY(points[i]);
+    const x = points[i].x;
+    const y = points[i].y;
     if (!Number.isFinite(x)) {
       throw new RangeError(`${name}[${i}].x must be a finite number, got ${String(x)}`);
     }

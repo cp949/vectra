@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { velocityInto } from './velocity-into';
 
 /**
@@ -15,6 +15,6 @@ import { velocityInto } from './velocity-into';
  * @param acceleration 상수 가속도 벡터 a
  * @param time 경과 시간 t. 음수는 역방향 평가다.
  */
-export function velocity(initialVelocity: XYInput, acceleration: XYInput, time: number): XYObjectWritable {
+export function velocity(initialVelocity: Point, acceleration: Point, time: number): PointWritable {
   return velocityInto({ x: 0, y: 0 }, initialVelocity, acceleration, time);
 }

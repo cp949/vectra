@@ -1,5 +1,4 @@
-import { writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { computePrincipalAxes, materializeFinitePoints, resolveFitEpsilon } from './pca2.internal';
 import type { FitOptions, PrincipalDirectionsWritable } from './types';
 
@@ -21,11 +20,11 @@ import type { FitOptions, PrincipalDirectionsWritable } from './types';
  *
  * @param out principal axis pair를 기록할 writable output
  * @param points principal direction을 계산할 point collection
- * @param options `epsilon`을 담은 fitting 옵션. 미지정 시 `epsilon`은 `1e-9`
+ * @param options `epsilon`을 담은 fitting 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`
  */
-export function principalDirectionsInto<Out extends PrincipalDirectionsWritable<XYWritable, XYWritable>>(
+export function principalDirectionsInto<Out extends PrincipalDirectionsWritable>(
   out: Out,
-  points: readonly XYInput[],
+  points: readonly Point[],
   options?: FitOptions
 ): Out | false {
   const epsilon = resolveFitEpsilon(options, 'options');
@@ -34,7 +33,9 @@ export function principalDirectionsInto<Out extends PrincipalDirectionsWritable<
   if (axes === undefined) {
     return false;
   }
-  writeXY(out.primary, axes.primaryX, axes.primaryY);
-  writeXY(out.secondary, axes.secondaryX, axes.secondaryY);
+  out.primary.x = axes.primaryX;
+  out.primary.y = axes.primaryY;
+  out.secondary.x = axes.secondaryX;
+  out.secondary.y = axes.secondaryY;
   return out;
 }

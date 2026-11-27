@@ -1,6 +1,3 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
-
 /**
  * 값이 finite가 아니면 RangeError를 던지고, finite면 그대로 반환한다.
  *
@@ -107,40 +104,4 @@ export function signedInsetIntervalDistance(start: number, size: number, inset: 
 
   const nearestEdgeDistance = Math.min(leftDistance - inset, rightDistance - inset);
   return nearestEdgeDistance === 0 ? 0 : -nearestEdgeDistance;
-}
-
-/**
- * XYInput의 x를 읽어 finite인지 검증하고 반환한다. non-finite면 RangeError다.
- *
- * @param point x를 읽을 structural point
- * @param label 실패 메시지에 쓸 입력 이름
- */
-export function requireFiniteX(point: XYInput, label: string): number {
-  return requireFinite(readX(point), `${label} x`);
-}
-
-/**
- * XYInput의 y를 읽어 finite인지 검증하고 반환한다. non-finite면 RangeError다.
- *
- * @param point y를 읽을 structural point
- * @param label 실패 메시지에 쓸 입력 이름
- */
-export function requireFiniteY(point: XYInput, label: string): number {
-  return requireFinite(readY(point), `${label} y`);
-}
-
-/**
- * point 목록의 모든 x/y 좌표가 finite인지 검증한다. non-finite면 RangeError다.
- *
- * polygon vertex처럼 가변 길이 좌표 묶음의 finite 정책을 강제한다. 실패 메시지는 index를 포함한다.
- * 빈 목록은 검증할 좌표가 없으므로 통과한다.
- *
- * @param points 검증할 point 목록
- * @param label 실패 메시지에 쓸 입력 이름
- */
-export function requireFinitePoints(points: readonly XYInput[], label: string): void {
-  for (let i = 0; i < points.length; i += 1) {
-    requireFinite(readX(points[i]), `${label}[${i}] x`);
-    requireFinite(readY(points[i]), `${label}[${i}] y`);
-  }
 }

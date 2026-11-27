@@ -1,3 +1,4 @@
+/** 도형의 부호 있는 거리와 입력 검증을 확인한다. */
 import { describe, expect, test } from 'vitest';
 import { sdfRect } from '../../../src/sdf/sdf-rect';
 import { NON_FINITE } from './_sdf-test-helpers';
@@ -35,12 +36,6 @@ describe('sdfRect', () => {
     expect(sdfRect(rect, { x: 13, y: 6 })).toBeCloseTo(Math.sqrt(13), 12);
   });
 
-  test('tuple input과 object input이 같은 결과를 반환한다', () => {
-    const fromObject = sdfRect(rect, { x: 13, y: 2 });
-    const fromTuple = sdfRect([0, 0, 10, 4], [13, 2]);
-    expect(fromTuple).toBe(fromObject);
-  });
-
   test('tall rect(width<height)도 sign convention을 유지한다', () => {
     // region [0,4] x [0,10], center (2,5)
     const tall = { x: 0, y: 0, width: 4, height: 10 };
@@ -70,13 +65,6 @@ describe('sdfRect', () => {
 
     const interiorFromLeft = { x: huge / 2, y: huge / 2, width: huge, height: huge };
     expect(sdfRect(interiorFromLeft, { x: huge, y: huge })).toBe(-(huge / 2));
-  });
-
-  test('zero-width degenerate에서 tuple과 object가 일치한다', () => {
-    const fromObject = sdfRect({ x: 5, y: 0, width: 0, height: 4 }, { x: 8, y: 2 });
-    const fromTuple = sdfRect([5, 0, 0, 4], [8, 2]);
-    expect(fromTuple).toBe(fromObject);
-    expect(fromTuple).toBe(3);
   });
 
   test('zero-width rect는 interior 없이 segment distance를 반환한다', () => {

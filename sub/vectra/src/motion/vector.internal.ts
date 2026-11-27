@@ -1,19 +1,18 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { assertFiniteScalar, finalizeScalarResult } from './scalar.internal';
 
 /**
  * vector kinematics 입력의 x/y component가 모두 finite number인지 검증한다. 위반 시 `RangeError`.
  *
- * tuple과 object input을 모두 읽는다. `NaN`, `Infinity`, `-Infinity`는 모두 위반이다. 음수와
+ * `NaN`, `Infinity`, `-Infinity`는 모두 위반이다. 음수와
  * `0`은 허용한다. 검증은 읽기만 하므로 input/output aliasing에 안전하다.
  *
  * @param input 검증할 좌표 input
  * @param name error message에 사용할 인자 이름. component는 `${name}.x`, `${name}.y`로 표시한다.
  */
-export function assertFiniteVector(input: XYInput, name: string): void {
-  assertFiniteScalar(readX(input), `${name}.x`);
-  assertFiniteScalar(readY(input), `${name}.y`);
+export function assertFiniteVector(input: Point, name: string): void {
+  assertFiniteScalar(input.x, `${name}.x`);
+  assertFiniteScalar(input.y, `${name}.y`);
 }
 
 /**

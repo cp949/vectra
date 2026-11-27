@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { displacementVectorInto } from './displacement-vector-into';
 
 /**
@@ -15,6 +15,6 @@ import { displacementVectorInto } from './displacement-vector-into';
  * @param acceleration 상수 가속도 벡터 a
  * @param time 경과 시간 t. 음수는 역방향 평가다.
  */
-export function displacementVector(velocity: XYInput, acceleration: XYInput, time: number): XYObjectWritable {
+export function displacementVector(velocity: Point, acceleration: Point, time: number): PointWritable {
   return displacementVectorInto({ x: 0, y: 0 }, velocity, acceleration, time);
 }

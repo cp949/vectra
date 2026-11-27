@@ -1,6 +1,6 @@
-import { capsuleAxisDistanceXY, readCapsuleA, readCapsuleB, readCapsuleRadius } from '../internal/capsule';
-import type { CapsuleLike, XYInput } from '../types';
-import { requireFiniteX, requireFiniteY, requireNonNegative } from './primitive.internal';
+import { capsuleAxisDistanceXY } from '../internal/capsule';
+import type { Capsule, Point } from '../types/flat-shapes.internal';
+import { requireFinite, requireNonNegative } from './primitive.internal';
 
 /**
  * capsule과 point 사이의 signed distance를 반환한다.
@@ -14,16 +14,14 @@ import { requireFiniteX, requireFiniteY, requireNonNegative } from './primitive.
  * @param capsule signed distance를 측정할 capsule
  * @param point capsule까지의 signed distance를 측정할 point
  */
-export function sdfCapsule(capsule: CapsuleLike, point: XYInput): number {
-  const a = readCapsuleA(capsule);
-  const b = readCapsuleB(capsule);
-  const ax = requireFiniteX(a, 'capsule a');
-  const ay = requireFiniteY(a, 'capsule a');
-  const bx = requireFiniteX(b, 'capsule b');
-  const by = requireFiniteY(b, 'capsule b');
-  const radius = requireNonNegative(readCapsuleRadius(capsule), 'capsule radius');
-  const px = requireFiniteX(point, 'point');
-  const py = requireFiniteY(point, 'point');
+export function sdfCapsule(capsule: Capsule, point: Point): number {
+  const ax = requireFinite(capsule.x1, 'capsule a x');
+  const ay = requireFinite(capsule.y1, 'capsule a y');
+  const bx = requireFinite(capsule.x2, 'capsule b x');
+  const by = requireFinite(capsule.y2, 'capsule b y');
+  const radius = requireNonNegative(capsule.r, 'capsule radius');
+  const px = requireFinite(point.x, 'point x');
+  const py = requireFinite(point.y, 'point y');
 
   return capsuleAxisDistanceXY(ax, ay, bx, by, px, py) - radius;
 }

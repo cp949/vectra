@@ -1,6 +1,5 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import type { CircleLike, XYInput } from '../types';
-import { requireFiniteX, requireFiniteY, requireNonNegative } from './primitive.internal';
+import type { Circle, Point } from '../types/flat-shapes.internal';
+import { requireFinite, requireNonNegative } from './primitive.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -15,13 +14,12 @@ import { hypot2 } from '../internal/numeric';
  * @param circle signed distance를 측정할 circle
  * @param point circle까지의 signed distance를 측정할 point
  */
-export function sdfCircle(circle: CircleLike, point: XYInput): number {
-  const center = readCircleCenter(circle);
-  const cx = requireFiniteX(center, 'circle center');
-  const cy = requireFiniteY(center, 'circle center');
-  const radius = requireNonNegative(readCircleRadius(circle), 'circle radius');
-  const px = requireFiniteX(point, 'point');
-  const py = requireFiniteY(point, 'point');
+export function sdfCircle(circle: Circle, point: Point): number {
+  const cx = requireFinite(circle.cx, 'circle center x');
+  const cy = requireFinite(circle.cy, 'circle center y');
+  const radius = requireNonNegative(circle.r, 'circle radius');
+  const px = requireFinite(point.x, 'point x');
+  const py = requireFinite(point.y, 'point y');
 
   return hypot2(px - cx, py - cy) - radius;
 }

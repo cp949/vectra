@@ -1,4 +1,4 @@
-import type { OrientedRectWritable, XYInput } from '../types';
+import type { OrientedRectWritable, Point } from '../types/flat-shapes.internal';
 import { fitMinimumAreaRectInto } from './fit-minimum-area-rect-into';
 import type { FitOptions } from './types';
 
@@ -6,8 +6,8 @@ import type { FitOptions } from './types';
  * point collection을 감싸는 최소 area oriented rectangle을 새 plain object로 반환한다.
  *
  * exact duplicate를 제거한 unique point의 convex hull을 만들고, 각 hull edge axis로 hull point를
- * projection해 `width * height`가 최소인 oriented rect를 고른다. `center`는 선택된 candidate의
- * projection interval midpoint를 world-space로 복원한 값이다. `size.x`는 edge axis 방향 width, `size.y`는
+ * projection해 `width * height`가 최소인 oriented rect를 고른다. `cx`, `cy`는 선택된 candidate의
+ * projection interval midpoint를 world-space로 복원한 값이다. `width`는 edge axis 방향 width, `height`는
  * perpendicular axis 방향 height이며 둘 다 strict positive다. `angle`은 edge axis의 `atan2(y, x)`다. 같은
  * area candidate는 convex hull edge 순회에서 먼저 발견한 candidate를 유지한다.
  *
@@ -20,9 +20,9 @@ import type { FitOptions } from './types';
  * canonicalize한다.
  *
  * @param points oriented rect로 감쌀 point collection
- * @param options `epsilon`을 담은 fitting 옵션. 미지정 시 `epsilon`은 `1e-9`
+ * @param options `epsilon`을 담은 fitting 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`
  */
-export function fitMinimumAreaRect(points: readonly XYInput[], options?: FitOptions): OrientedRectWritable | undefined {
-  const out = { center: { x: 0, y: 0 }, size: { x: 0, y: 0 }, angle: 0 };
+export function fitMinimumAreaRect(points: readonly Point[], options?: FitOptions): OrientedRectWritable | undefined {
+  const out = { cx: 0, cy: 0, width: 0, height: 0, angle: 0 };
   return fitMinimumAreaRectInto(out, points, options) === false ? undefined : out;
 }

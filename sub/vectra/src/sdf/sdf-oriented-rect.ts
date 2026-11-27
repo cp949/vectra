@@ -1,13 +1,5 @@
-import { readOrientedRectAngle, readOrientedRectCenter, readOrientedRectSize } from '../internal/oriented-rect';
-import { readX, readY } from '../internal/xy';
-import type { OrientedRectLike, XYInput } from '../types';
-import {
-  canonicalizeZero,
-  requireFinite,
-  requireFiniteX,
-  requireFiniteY,
-  requireNonNegative,
-} from './primitive.internal';
+import type { OrientedRect, Point } from '../types/flat-shapes.internal';
+import { canonicalizeZero, requireFinite, requireNonNegative } from './primitive.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -27,16 +19,14 @@ import { hypot2 } from '../internal/numeric';
  * @param rect signed distance를 측정할 oriented rect
  * @param point oriented rect까지의 signed distance를 측정할 point
  */
-export function sdfOrientedRect(rect: OrientedRectLike, point: XYInput): number {
-  const center = readOrientedRectCenter(rect);
-  const cx = requireFiniteX(center, 'oriented rect center');
-  const cy = requireFiniteY(center, 'oriented rect center');
-  const size = readOrientedRectSize(rect);
-  const width = requireNonNegative(readX(size), 'oriented rect width');
-  const height = requireNonNegative(readY(size), 'oriented rect height');
-  const angle = requireFinite(readOrientedRectAngle(rect), 'oriented rect angle');
-  const px = requireFiniteX(point, 'point');
-  const py = requireFiniteY(point, 'point');
+export function sdfOrientedRect(rect: OrientedRect, point: Point): number {
+  const cx = requireFinite(rect.cx, 'oriented rect center x');
+  const cy = requireFinite(rect.cy, 'oriented rect center y');
+  const width = requireNonNegative(rect.width, 'oriented rect width');
+  const height = requireNonNegative(rect.height, 'oriented rect height');
+  const angle = requireFinite(rect.angle, 'oriented rect angle');
+  const px = requireFinite(point.x, 'point x');
+  const py = requireFinite(point.y, 'point y');
 
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);

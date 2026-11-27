@@ -1,13 +1,5 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectLike, XYInput } from '../types';
-import {
-  canonicalizeZero,
-  requireFinite,
-  requireFiniteX,
-  requireFiniteY,
-  requireNonNegative,
-  signedInsetIntervalDistance,
-} from './primitive.internal';
+import type { Point, Rect } from '../types/flat-shapes.internal';
+import { canonicalizeZero, requireFinite, requireNonNegative, signedInsetIntervalDistance } from './primitive.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -28,14 +20,14 @@ import { hypot2 } from '../internal/numeric';
  * @param radius uniform corner radius. `min(radius, width / 2, height / 2)`로 clamp한다
  * @param point rounded rect까지의 signed distance를 측정할 point
  */
-export function sdfRoundedRect(rect: RectLike, radius: number, point: XYInput): number {
-  const rx = requireFinite(readRectX(rect), 'rect x');
-  const ry = requireFinite(readRectY(rect), 'rect y');
-  const width = requireNonNegative(readRectWidth(rect), 'rect width');
-  const height = requireNonNegative(readRectHeight(rect), 'rect height');
+export function sdfRoundedRect(rect: Rect, radius: number, point: Point): number {
+  const rx = requireFinite(rect.x, 'rect x');
+  const ry = requireFinite(rect.y, 'rect y');
+  const width = requireNonNegative(rect.width, 'rect width');
+  const height = requireNonNegative(rect.height, 'rect height');
   const r = requireNonNegative(radius, 'rounded rect radius');
-  const px = requireFiniteX(point, 'point');
-  const py = requireFiniteY(point, 'point');
+  const px = requireFinite(point.x, 'point x');
+  const py = requireFinite(point.y, 'point y');
 
   const hw = width / 2;
   const hh = height / 2;

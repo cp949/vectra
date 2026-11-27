@@ -1,4 +1,4 @@
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { principalDirectionsInto } from './principal-directions-into';
 import type { FitOptions, PrincipalDirections } from './types';
 
@@ -15,9 +15,9 @@ import type { FitOptions, PrincipalDirections } from './types';
  * degenerate 판정에만 쓰고 finite 검증에는 쓰지 않는다.
  *
  * @param points principal direction을 계산할 point collection
- * @param options `epsilon`을 담은 fitting 옵션. 미지정 시 `epsilon`은 `1e-9`
+ * @param options `epsilon`을 담은 fitting 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`
  */
-export function principalDirections(points: readonly XYInput[], options?: FitOptions): PrincipalDirections | undefined {
+export function principalDirections(points: readonly Point[], options?: FitOptions): PrincipalDirections | undefined {
   const out = { primary: { x: 0, y: 0 }, secondary: { x: 0, y: 0 } };
   return principalDirectionsInto(out, points, options) === false ? undefined : out;
 }

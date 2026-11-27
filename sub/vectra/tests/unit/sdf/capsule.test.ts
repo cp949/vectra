@@ -1,3 +1,4 @@
+/** 도형의 부호 있는 거리와 입력 검증을 확인한다. */
 import { describe, expect, test } from 'vitest';
 import { sdfCapsule } from '../../../src/sdf/sdf-capsule';
 import { sdfCircle } from '../../../src/sdf/sdf-circle';
@@ -5,7 +6,7 @@ import { NON_FINITE } from './_sdf-test-helpers';
 
 describe('sdfCapsule', () => {
   // capsule a(0,0) b(10,0) radius 2
-  const capsule = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, radius: 2 };
+  const capsule = { x1: 0, y1: 0, x2: 10, y2: 0, r: 2 };
 
   test('axis 위 interior point는 -radius를 반환한다', () => {
     expect(sdfCapsule(capsule, { x: 5, y: 0 })).toBe(-2);
@@ -33,7 +34,7 @@ describe('sdfCapsule', () => {
 
   test('vertical axis capsule도 sign convention을 유지한다', () => {
     // axis a(0,0) b(0,10) radius 2
-    const vertical = { a: { x: 0, y: 0 }, b: { x: 0, y: 10 }, radius: 2 };
+    const vertical = { x1: 0, y1: 0, x2: 0, y2: 10, r: 2 };
     expect(sdfCapsule(vertical, { x: 0, y: 5 })).toBe(-2); // axis 위 interior
     expect(sdfCapsule(vertical, { x: 2, y: 5 })).toBe(0); // side boundary
     expect(sdfCapsule(vertical, { x: 0, y: 12 })).toBe(0); // cap boundary
@@ -42,78 +43,56 @@ describe('sdfCapsule', () => {
 
   test('diagonal axis capsule도 perpendicular distance로 측정한다', () => {
     // axis a(0,0) b(6,8) length 10, radius 1
-    const diagonal = { a: { x: 0, y: 0 }, b: { x: 6, y: 8 }, radius: 1 };
+    const diagonal = { x1: 0, y1: 0, x2: 6, y2: 8, r: 1 };
     expect(sdfCapsule(diagonal, { x: 3, y: 4 })).toBe(-1); // midpoint interior
     // midpoint에서 perpendicular로 5만큼 떨어진 (-1,7): axisDist 5 - radius 1 = 4
     expect(sdfCapsule(diagonal, { x: -1, y: 7 })).toBeCloseTo(4, 12);
   });
 
   test('zero-axis capsule은 같은 center/radius circle과 같은 결과를 반환한다', () => {
-    const zeroAxis = { a: { x: 1, y: 1 }, b: { x: 1, y: 1 }, radius: 3 };
+    const zeroAxis = { x1: 1, y1: 1, x2: 1, y2: 1, r: 3 };
     for (const p of [
       { x: 1, y: 1 },
       { x: 4, y: 5 },
       { x: 1, y: 1.5 },
       { x: -10, y: 20 },
     ]) {
-      expect(sdfCapsule(zeroAxis, p)).toBe(sdfCircle({ center: { x: 1, y: 1 }, radius: 3 }, p));
+      expect(sdfCapsule(zeroAxis, p)).toBe(sdfCircle({ cx: 1, cy: 1, r: 3 }, p));
     }
-  });
-
-  test('tuple input과 object input이 같은 결과를 반환한다', () => {
-    const fromObject = sdfCapsule(capsule, { x: 5, y: 5 });
-    const fromTuple = sdfCapsule([[0, 0], [10, 0], 2], [5, 5]);
-    expect(fromTuple).toBe(fromObject);
-    expect(fromTuple).toBe(3);
-  });
-
-  test('zero-axis degenerate에서 tuple과 object가 일치한다', () => {
-    const fromObject = sdfCapsule({ a: { x: 1, y: 1 }, b: { x: 1, y: 1 }, radius: 3 }, { x: 4, y: 5 });
-    const fromTuple = sdfCapsule([[1, 1], [1, 1], 3], [4, 5]);
-    expect(fromTuple).toBe(fromObject);
-    expect(fromTuple).toBe(2);
   });
 
   test('finite 좌표 차이가 overflow해도 axis distance가 NaN이 되지 않는다', () => {
     const huge = Number.MAX_VALUE;
-    expect(sdfCapsule({ a: { x: -huge, y: 0 }, b: { x: huge, y: 0 }, radius: 0.25 }, { x: 0, y: 1 })).toBe(0.75);
+    expect(sdfCapsule({ x1: -huge, y1: 0, x2: huge, y2: 0, r: 0.25 }, { x: 0, y: 1 })).toBe(0.75);
   });
 
   test('finite axis distance 제곱이 overflow해도 signed distance는 finite distance를 유지한다', () => {
     const far = Number.MAX_VALUE / 2;
-    expect(sdfCapsule({ a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, radius: 1 }, { x: far, y: 0 })).toBe(far);
+    expect(sdfCapsule({ x1: 0, y1: 0, x2: 0, y2: 0, r: 1 }, { x: far, y: 0 })).toBe(far);
   });
 
   test('negative radius는 RangeError다', () => {
-    expect(() => sdfCapsule({ a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, radius: -1 }, { x: 0, y: 0 })).toThrow(RangeError);
+    expect(() => sdfCapsule({ x1: 0, y1: 0, x2: 10, y2: 0, r: -1 }, { x: 0, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite radius %p는 RangeError다', (bad) => {
-    expect(() => sdfCapsule({ a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, radius: bad }, { x: 0, y: 0 })).toThrow(
-      RangeError
-    );
+    expect(() => sdfCapsule({ x1: 0, y1: 0, x2: 10, y2: 0, r: bad }, { x: 0, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite a.x %p는 RangeError다', (bad) => {
-    expect(() => sdfCapsule({ a: { x: bad, y: 0 }, b: { x: 10, y: 0 }, radius: 2 }, { x: 5, y: 0 })).toThrow(
-      RangeError
-    );
+    expect(() => sdfCapsule({ x1: bad, y1: 0, x2: 10, y2: 0, r: 2 }, { x: 5, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite a.y %p는 RangeError다', (bad) => {
-    expect(() => sdfCapsule({ a: { x: 0, y: bad }, b: { x: 10, y: 0 }, radius: 2 }, { x: 5, y: 0 })).toThrow(
-      RangeError
-    );
+    expect(() => sdfCapsule({ x1: 0, y1: bad, x2: 10, y2: 0, r: 2 }, { x: 5, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite b.x %p는 RangeError다', (bad) => {
-    expect(() => sdfCapsule({ a: { x: 0, y: 0 }, b: { x: bad, y: 0 }, radius: 2 }, { x: 5, y: 0 })).toThrow(RangeError);
+    expect(() => sdfCapsule({ x1: 0, y1: 0, x2: bad, y2: 0, r: 2 }, { x: 5, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite b.y %p는 RangeError다', (bad) => {
-    expect(() => sdfCapsule({ a: { x: 0, y: 0 }, b: { x: 10, y: bad }, radius: 2 }, { x: 5, y: 0 })).toThrow(
-      RangeError
-    );
+    expect(() => sdfCapsule({ x1: 0, y1: 0, x2: 10, y2: bad, r: 2 }, { x: 5, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite point.x %p는 RangeError다', (bad) => {

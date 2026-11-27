@@ -240,11 +240,9 @@ describe('root geometry type exposure 계약', () => {
     const field = expectAssignable<Sdf2>((_point) => 0);
     expectAssignable<Sdf2>(field);
     expectAssignable<number>(field({ x: 0, y: 0 }));
-    expectAssignable<number>(field([1, 2] as const));
   });
 
   test('root entry가 fitting type을 노출한다', () => {
-    expectAssignable<FitOptions>({});
     expectAssignable<FitOptions>({ epsilon: 1e-9 });
     const directions = expectAssignable<PrincipalDirections>({
       primary: { x: 1, y: 0 },

@@ -33,21 +33,6 @@ describe('toUnitVectorInto - 각도에서 unit vector 기록', () => {
     expect(result.y).toBeCloseTo(0, 10);
   });
 
-  test('tuple output에 기록하고 같은 tuple을 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = toUnitVectorInto(out, Math.PI / 2);
-    expect(result).toBe(out);
-    expect(result[0]).toBeCloseTo(0, 10);
-    expect(result[1]).toBeCloseTo(1, 10);
-  });
-
-  test('out 구체 타입이 보존된다 (타입 레벨 확인)', () => {
-    // 컴파일 오류 없이 타입이 보존되면 통과
-    const obj = { x: 0, y: 0, label: 'test' };
-    const result = toUnitVectorInto(obj, 0);
-    expect(result.label).toBe('test');
-  });
-
   test.each(nonFiniteValues)('finite하지 않은 angle %s는 RangeError를 던진다', (value) => {
     expect(() => toUnitVectorInto({ x: 0, y: 0 }, value)).toThrow(RangeError);
   });
@@ -98,22 +83,12 @@ describe('fromVector - 벡터에서 angle 추출', () => {
     expect(fromVector({ x: 0, y: 0 })).toBe(0);
   });
 
-  test('tuple input [0, 1] → π/2이다', () => {
-    expect(fromVector([0, 1])).toBeCloseTo(Math.PI / 2, 10);
-  });
-
-  test('tuple zero vector [0, 0] → 0이다', () => {
-    expect(fromVector([0, 0])).toBe(0);
-  });
-
   test.each(nonFiniteValues)('x 성분이 finite하지 않은 %s이면 RangeError를 던진다', (value) => {
     expect(() => fromVector({ x: value, y: 0 })).toThrow(RangeError);
-    expect(() => fromVector([value, 0])).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('y 성분이 finite하지 않은 %s이면 RangeError를 던진다', (value) => {
     expect(() => fromVector({ x: 0, y: value })).toThrow(RangeError);
-    expect(() => fromVector([0, value])).toThrow(RangeError);
   });
 });
 

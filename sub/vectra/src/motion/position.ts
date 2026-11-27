@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { positionInto } from './position-into';
 
 /**
@@ -17,10 +17,10 @@ import { positionInto } from './position-into';
  * @param time 경과 시간 t. 음수는 역방향 평가다.
  */
 export function position(
-  initialPosition: XYInput,
-  initialVelocity: XYInput,
-  acceleration: XYInput,
+  initialPosition: Point,
+  initialVelocity: Point,
+  acceleration: Point,
   time: number
-): XYObjectWritable {
+): PointWritable {
   return positionInto({ x: 0, y: 0 }, initialPosition, initialVelocity, acceleration, time);
 }

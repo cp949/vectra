@@ -1,9 +1,11 @@
+/** 점 모음 피팅의 계산 결과와 실패 조건을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { principalDirections } from '../../../src/fitting/principal-directions';
 import { principalDirectionsInto } from '../../../src/fitting/principal-directions-into';
 
 const NON_FINITE = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
 
+/** 피팅 결과를 기록할 초기 출력 객체를 만든다. */
 function createOut() {
   return { primary: { x: 0, y: 0 }, secondary: { x: 0, y: 0 } };
 }
@@ -12,10 +14,10 @@ describe('principalDirectionsInto', () => {
   test('x축 방향 point cloud는 primary (1, 0), secondary (0, 1)을 기록한다', () => {
     const out = createOut();
     const result = principalDirectionsInto(out, [
-      [-2, 0],
-      [-1, 0],
-      [1, 0],
-      [2, 0],
+      { x: -2, y: 0 },
+      { x: -1, y: 0 },
+      { x: 1, y: 0 },
+      { x: 2, y: 0 },
     ]);
     expect(result).toBe(out);
     expect(out.primary).toEqual({ x: 1, y: 0 });
@@ -25,10 +27,10 @@ describe('principalDirectionsInto', () => {
   test('y축 방향 point cloud는 primary (0, 1), secondary (1, 0)을 기록한다', () => {
     const out = createOut();
     principalDirectionsInto(out, [
-      [0, -2],
-      [0, -1],
-      [0, 1],
-      [0, 2],
+      { x: 0, y: -2 },
+      { x: 0, y: -1 },
+      { x: 0, y: 1 },
+      { x: 0, y: 2 },
     ]);
     expect(out.primary).toEqual({ x: 0, y: 1 });
     // perpendicular (-1, 0)을 canonicalize → (1, 0)
@@ -38,10 +40,10 @@ describe('principalDirectionsInto', () => {
   test('diagonal point cloud는 unit-length orthonormal axis를 반환한다', () => {
     const out = createOut();
     principalDirectionsInto(out, [
-      [0, 0],
-      [1, 1],
-      [2, 2],
-      [3, 3],
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+      { x: 2, y: 2 },
+      { x: 3, y: 3 },
     ]);
     const half = Math.SQRT1_2;
     expect(out.primary.x).toBeCloseTo(half, 12);
@@ -57,7 +59,7 @@ describe('principalDirectionsInto', () => {
 
   test('sample count가 2 미만이면 false이고 out을 수정하지 않는다', () => {
     const out = createOut();
-    expect(principalDirectionsInto(out, [[1, 2]])).toBe(false);
+    expect(principalDirectionsInto(out, [{ x: 1, y: 2 }])).toBe(false);
     expect(out).toEqual(createOut());
   });
 
@@ -65,9 +67,9 @@ describe('principalDirectionsInto', () => {
     const out = createOut();
     expect(
       principalDirectionsInto(out, [
-        [5, 5],
-        [5, 5],
-        [5, 5],
+        { x: 5, y: 5 },
+        { x: 5, y: 5 },
+        { x: 5, y: 5 },
       ])
     ).toBe(false);
     expect(out).toEqual(createOut());
@@ -79,8 +81,8 @@ describe('principalDirectionsInto', () => {
       principalDirectionsInto(
         out,
         [
-          [0, 0],
-          [1, 0],
+          { x: 0, y: 0 },
+          { x: 1, y: 0 },
         ],
         { epsilon: 1 }
       )
@@ -92,8 +94,8 @@ describe('principalDirectionsInto', () => {
     const out = createOut();
     expect(() =>
       principalDirectionsInto(out, [
-        [bad, 0],
-        [1, 1],
+        { x: bad, y: 0 },
+        { x: 1, y: 1 },
       ])
     ).toThrow(RangeError);
   });
@@ -102,8 +104,8 @@ describe('principalDirectionsInto', () => {
     const out = createOut();
     expect(() =>
       principalDirectionsInto(out, [
-        [0, bad],
-        [1, 1],
+        { x: 0, y: bad },
+        { x: 1, y: 1 },
       ])
     ).toThrow(RangeError);
   });
@@ -114,8 +116,8 @@ describe('principalDirectionsInto', () => {
       principalDirectionsInto(
         out,
         [
-          [0, 0],
-          [1, 0],
+          { x: 0, y: 0 },
+          { x: 1, y: 0 },
         ],
         { epsilon: bad }
       )
@@ -128,8 +130,8 @@ describe('principalDirectionsInto', () => {
       principalDirectionsInto(
         out,
         [
-          [0, 0],
-          [1, 0],
+          { x: 0, y: 0 },
+          { x: 1, y: 0 },
         ],
         { epsilon: -1 }
       )
@@ -140,9 +142,9 @@ describe('principalDirectionsInto', () => {
     const out = createOut();
     // sxy < 0 분기. canonicalize는 x>0를 유지하고 y는 음수가 된다.
     principalDirectionsInto(out, [
-      [0, 0],
-      [-1, 1],
-      [-2, 2],
+      { x: 0, y: 0 },
+      { x: -1, y: 1 },
+      { x: -2, y: 2 },
     ]);
     const half = Math.SQRT1_2;
     expect(out.primary.x).toBeCloseTo(half, 12);
@@ -156,16 +158,16 @@ describe('principalDirectionsInto', () => {
     const out = createOut();
     // x축 cloud → primary (1, 0), secondary (0, 1). 0 component가 -0이 아님을 보장한다.
     principalDirectionsInto(out, [
-      [-1, 0],
-      [1, 0],
+      { x: -1, y: 0 },
+      { x: 1, y: 0 },
     ]);
     expect(Object.is(out.primary.y, -0)).toBe(false);
     expect(Object.is(out.secondary.x, -0)).toBe(false);
     // y축 cloud → secondary raw (-1, 0) → flip → (1, -0); -0 cleanup 검증.
     const out2 = createOut();
     principalDirectionsInto(out2, [
-      [0, -1],
-      [0, 1],
+      { x: 0, y: -1 },
+      { x: 0, y: 1 },
     ]);
     expect(Object.is(out2.secondary.y, -0)).toBe(false);
   });
@@ -176,8 +178,8 @@ describe('principalDirectionsInto', () => {
       principalDirectionsInto(
         out,
         [
-          [0, 0],
-          [1, 0],
+          { x: 0, y: 0 },
+          { x: 1, y: 0 },
         ],
         { epsilon: 0 }
       )
@@ -198,18 +200,18 @@ describe('principalDirectionsInto', () => {
 describe('principalDirections', () => {
   test('성공 시 plain object를 반환한다', () => {
     const result = principalDirections([
-      [-2, 0],
-      [2, 0],
+      { x: -2, y: 0 },
+      { x: 2, y: 0 },
     ]);
     expect(result).toEqual({ primary: { x: 1, y: 0 }, secondary: { x: 0, y: 1 } });
   });
 
   test('실패 시 undefined를 반환한다', () => {
-    expect(principalDirections([[1, 1]])).toBeUndefined();
+    expect(principalDirections([{ x: 1, y: 1 }])).toBeUndefined();
     expect(
       principalDirections([
-        [3, 3],
-        [3, 3],
+        { x: 3, y: 3 },
+        { x: 3, y: 3 },
       ])
     ).toBeUndefined();
   });
@@ -217,8 +219,8 @@ describe('principalDirections', () => {
   test('non-finite 입력은 RangeError다', () => {
     expect(() =>
       principalDirections([
-        [Number.NaN, 0],
-        [1, 1],
+        { x: Number.NaN, y: 0 },
+        { x: 1, y: 1 },
       ])
     ).toThrow(RangeError);
   });

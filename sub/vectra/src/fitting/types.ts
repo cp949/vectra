@@ -1,13 +1,13 @@
-import type { XYLike, XYObjectWritable, XYWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 
 /** point-to-primitive fitting helper가 공유하는 옵션. */
 export interface FitOptions {
   /**
-   * rank/singularity/degenerate 판정 tolerance. 미지정 시 `1e-9`.
+   * rank/singularity/degenerate 판정 tolerance. 옵션을 생략하면 `1e-9`.
    *
    * input finite 검증에는 사용하지 않는다. NaN/Infinity/음수는 `RangeError`.
    */
-  readonly epsilon?: number;
+  readonly epsilon: number;
 }
 
 /**
@@ -19,10 +19,10 @@ export interface FitOptions {
  */
 export interface PrincipalDirections {
   /** 큰 variance를 갖는 principal axis. unit length. */
-  readonly primary: XYLike;
+  readonly primary: PointWritable;
 
   /** `primary`에 직교하는 secondary axis. unit length. */
-  readonly secondary: XYLike;
+  readonly secondary: PointWritable;
 }
 
 /**
@@ -31,13 +31,10 @@ export interface PrincipalDirections {
  * `primary`/`secondary`는 caller가 제공한 좌표 storage다. 성공 시에만 두 storage에 unit-length axis를
  * 기록한다.
  */
-export interface PrincipalDirectionsWritable<
-  Primary extends XYWritable = XYObjectWritable,
-  Secondary extends XYWritable = XYObjectWritable,
-> {
+export interface PrincipalDirectionsWritable {
   /** 큰 variance axis를 기록할 writable 좌표 storage. */
-  primary: Primary;
+  primary: PointWritable;
 
   /** secondary axis를 기록할 writable 좌표 storage. */
-  secondary: Secondary;
+  secondary: PointWritable;
 }

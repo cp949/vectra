@@ -31,7 +31,7 @@ leaf 함수는 입력과 결과로 검증한다.
 
 ```ts
 expect(linear(0.25)).toBe(0.25);
-expect(sdfCircle({ center: { x: 0, y: 0 }, radius: 5 }, { x: 8, y: 0 })).toBe(3);
+expect(sdfCircle({ cx: 0, cy: 0, r: 5 }, { x: 8, y: 0 })).toBe(3);
 ```
 
 barrel import가 중요하더라도 leaf 함수의 동작 검증이 이미 있으면 별도 `typeof === 'function'` 테스트를 추가하지 않는다.

@@ -1,12 +1,5 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectLike, XYInput } from '../types';
-import {
-  requireFinite,
-  requireFiniteX,
-  requireFiniteY,
-  requireNonNegative,
-  signedIntervalDistance,
-} from './primitive.internal';
+import type { Point, Rect } from '../types/flat-shapes.internal';
+import { requireFinite, requireNonNegative, signedIntervalDistance } from './primitive.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -24,13 +17,13 @@ import { hypot2 } from '../internal/numeric';
  * @param rect signed distance를 측정할 axis-aligned rect
  * @param point rect까지의 signed distance를 측정할 point
  */
-export function sdfRect(rect: RectLike, point: XYInput): number {
-  const rx = requireFinite(readRectX(rect), 'rect x');
-  const ry = requireFinite(readRectY(rect), 'rect y');
-  const width = requireNonNegative(readRectWidth(rect), 'rect width');
-  const height = requireNonNegative(readRectHeight(rect), 'rect height');
-  const px = requireFiniteX(point, 'point');
-  const py = requireFiniteY(point, 'point');
+export function sdfRect(rect: Rect, point: Point): number {
+  const rx = requireFinite(rect.x, 'rect x');
+  const ry = requireFinite(rect.y, 'rect y');
+  const width = requireNonNegative(rect.width, 'rect width');
+  const height = requireNonNegative(rect.height, 'rect height');
+  const px = requireFinite(point.x, 'point x');
+  const py = requireFinite(point.y, 'point y');
 
   const dx = signedIntervalDistance(rx, width, px);
   const dy = signedIntervalDistance(ry, height, py);

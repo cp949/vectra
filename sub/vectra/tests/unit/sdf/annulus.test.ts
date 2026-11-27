@@ -1,3 +1,4 @@
+/** 도형의 부호 있는 거리와 입력 검증을 확인한다. */
 import { describe, expect, test } from 'vitest';
 import { sdfAnnulus } from '../../../src/sdf/sdf-annulus';
 import { sdfCircle } from '../../../src/sdf/sdf-circle';
@@ -5,7 +6,7 @@ import { NON_FINITE } from './_sdf-test-helpers';
 
 describe('sdfAnnulus', () => {
   // outer circle center (0,0) radius 5, innerRadius 2
-  const circle = { center: { x: 0, y: 0 }, radius: 5 };
+  const circle = { cx: 0, cy: 0, r: 5 };
 
   test('inner hole 내부 point는 양수 distance를 반환한다', () => {
     // d=1 < inner 2 → 2 - 1 = 1
@@ -49,13 +50,6 @@ describe('sdfAnnulus', () => {
     expect(sdfAnnulus(circle, 5, { x: 5, y: 0 })).toBe(0);
   });
 
-  test('tuple input과 object input이 같은 결과를 반환한다', () => {
-    const fromObject = sdfAnnulus({ center: { x: 0, y: 0 }, radius: 5 }, 2, { x: 1, y: 0 });
-    const fromTuple = sdfAnnulus([[0, 0], 5], 2, [1, 0]);
-    expect(fromTuple).toBe(fromObject);
-    expect(fromTuple).toBe(1);
-  });
-
   test('boundary 결과는 -0이 아닌 0이다', () => {
     expect(Object.is(sdfAnnulus(circle, 2, { x: 5, y: 0 }), 0)).toBe(true);
     expect(Object.is(sdfAnnulus(circle, 2, { x: 2, y: 0 }), 0)).toBe(true);
@@ -70,7 +64,7 @@ describe('sdfAnnulus', () => {
   });
 
   test('negative outerRadius는 RangeError다', () => {
-    expect(() => sdfAnnulus({ center: { x: 0, y: 0 }, radius: -1 }, 0, { x: 0, y: 0 })).toThrow(RangeError);
+    expect(() => sdfAnnulus({ cx: 0, cy: 0, r: -1 }, 0, { x: 0, y: 0 })).toThrow(RangeError);
   });
 
   test('innerRadius > outerRadius는 RangeError다', () => {
@@ -82,15 +76,15 @@ describe('sdfAnnulus', () => {
   });
 
   test.each(NON_FINITE)('non-finite outerRadius %p는 RangeError다', (bad) => {
-    expect(() => sdfAnnulus({ center: { x: 0, y: 0 }, radius: bad }, 2, { x: 0, y: 0 })).toThrow(RangeError);
+    expect(() => sdfAnnulus({ cx: 0, cy: 0, r: bad }, 2, { x: 0, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite center.x %p는 RangeError다', (bad) => {
-    expect(() => sdfAnnulus({ center: { x: bad, y: 0 }, radius: 5 }, 2, { x: 0, y: 0 })).toThrow(RangeError);
+    expect(() => sdfAnnulus({ cx: bad, cy: 0, r: 5 }, 2, { x: 0, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite center.y %p는 RangeError다', (bad) => {
-    expect(() => sdfAnnulus({ center: { x: 0, y: bad }, radius: 5 }, 2, { x: 0, y: 0 })).toThrow(RangeError);
+    expect(() => sdfAnnulus({ cx: 0, cy: bad, r: 5 }, 2, { x: 0, y: 0 })).toThrow(RangeError);
   });
 
   test.each(NON_FINITE)('non-finite point.x %p는 RangeError다', (bad) => {
