@@ -1,4 +1,4 @@
-import type { HexAxialLike, HexAxialWritable } from '../types';
+import type { HexAxial, HexAxialWritable } from '../types/flat-shapes.internal';
 import { hexRingInto } from './hex-ring-into';
 
 /**
@@ -16,6 +16,6 @@ import { hexRingInto } from './hex-ring-into';
  * @param center ring의 center axial coordinate
  * @param radius ring radius. non-negative safe integer
  */
-export function hexRing(center: HexAxialLike, radius: number): HexAxialWritable[] {
+export function hexRing(center: HexAxial, radius: number): HexAxialWritable[] {
   return hexRingInto([], center, radius);
 }

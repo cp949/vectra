@@ -1,12 +1,11 @@
+import type { HexOffsetLayout } from '../types/hex-grid.internal';
 import {
   hexParity,
-  readHexOffsetCol,
-  readHexOffsetRow,
   validateHexComputedSafeInteger,
   validateHexOffsetLayout,
   validateHexOffsetSafeInteger,
 } from '../internal/hex-grid';
-import type { HexAxialWritable, HexOffsetLayout, HexOffsetLike } from '../types';
+import type { HexAxialWritable, HexOffset } from '../types/flat-shapes.internal';
 
 /**
  * offset hex coordinate를 axial hex coordinate `{ q, r }`로 변환해 새 plain object로 반환한다.
@@ -25,9 +24,9 @@ import type { HexAxialWritable, HexOffsetLayout, HexOffsetLike } from '../types'
  * @param offset axial로 변환할 offset coordinate
  * @param layout offset row/column이 어느 parity로 shove됐는지 정하는 layout convention
  */
-export function hexOffsetToAxial(offset: HexOffsetLike, layout: HexOffsetLayout): HexAxialWritable {
-  const col = readHexOffsetCol(offset);
-  const row = readHexOffsetRow(offset);
+export function hexOffsetToAxial(offset: HexOffset, layout: HexOffsetLayout): HexAxialWritable {
+  const col = offset.col;
+  const row = offset.row;
 
   validateHexOffsetSafeInteger(col, row);
   validateHexOffsetLayout(layout);

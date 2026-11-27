@@ -1,11 +1,5 @@
-import {
-  readHexCubeQ,
-  readHexCubeR,
-  readHexCubeS,
-  validateHexCubeSafeInteger,
-  validateHexCubeZeroSum,
-} from '../internal/hex-grid';
-import type { HexAxialWritable, HexCubeLike } from '../types';
+import { validateHexCubeSafeInteger, validateHexCubeZeroSum } from '../internal/hex-grid';
+import type { HexAxialWritable, HexCube } from '../types/flat-shapes.internal';
 
 /**
  * cube hex coordinate를 axial hex coordinate `{ q, r }`로 변환해 새 plain object로 반환한다.
@@ -16,10 +10,10 @@ import type { HexAxialWritable, HexCubeLike } from '../types';
  *
  * @param cube axial로 변환할 cube coordinate
  */
-export function hexCubeToAxial(cube: HexCubeLike): HexAxialWritable {
-  const q = readHexCubeQ(cube);
-  const r = readHexCubeR(cube);
-  const s = readHexCubeS(cube);
+export function hexCubeToAxial(cube: HexCube): HexAxialWritable {
+  const q = cube.q;
+  const r = cube.r;
+  const s = cube.s;
 
   validateHexCubeSafeInteger(q, r, s);
   validateHexCubeZeroSum(q, r, s);

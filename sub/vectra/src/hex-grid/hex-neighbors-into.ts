@@ -1,11 +1,5 @@
-import {
-  commitHexAxialCollection,
-  HEX_AXIAL_DIRECTIONS,
-  readHexAxialQ,
-  readHexAxialR,
-  validateHexAxialSafeInteger,
-} from '../internal/hex-grid';
-import type { HexAxialLike, HexAxialWritable } from '../types';
+import { commitHexAxialCollection, HEX_AXIAL_DIRECTIONS, validateHexAxialSafeInteger } from '../internal/hex-grid';
+import type { HexAxial, HexAxialWritable } from '../types/flat-shapes.internal';
 
 /**
  * axial coordinate의 6개 neighbor를 direction `0..5` 순서로 out에 기록하고 out을 반환한다.
@@ -19,9 +13,9 @@ import type { HexAxialLike, HexAxialWritable } from '../types';
  * @param out neighbor collection을 기록할 writable array. 성공 시 비우고 새 object를 push한다.
  * @param axial neighbor를 구할 center axial coordinate
  */
-export function hexNeighborsInto(out: HexAxialWritable[], axial: HexAxialLike): HexAxialWritable[] {
-  const q = readHexAxialQ(axial);
-  const r = readHexAxialR(axial);
+export function hexNeighborsInto(out: HexAxialWritable[], axial: HexAxial): HexAxialWritable[] {
+  const q = axial.q;
+  const r = axial.r;
   validateHexAxialSafeInteger(q, r);
 
   const coords = HEX_AXIAL_DIRECTIONS.map((direction) => [q + direction[0], r + direction[1]] as const);

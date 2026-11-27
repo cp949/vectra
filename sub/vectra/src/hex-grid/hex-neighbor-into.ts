@@ -1,14 +1,12 @@
 import {
   HEX_AXIAL_DIRECTIONS,
   hexCanonicalZero,
-  readHexAxialQ,
-  readHexAxialR,
   validateHexAxialSafeInteger,
   validateHexComputedSafeInteger,
   validateHexDirection,
   writeHexAxial,
 } from '../internal/hex-grid';
-import type { HexAxialLike, HexAxialWritable } from '../types';
+import type { HexAxial, HexAxialWritable } from '../types/flat-shapes.internal';
 
 /**
  * axial coordinate의 direction `0..5` neighbor를 out에 기록하고 out을 반환한다.
@@ -20,13 +18,13 @@ import type { HexAxialLike, HexAxialWritable } from '../types';
  * validation한 뒤 기록하므로 input/output aliasing이 안전하고, validation 실패 시 out을 수정하지
  * 않는다. 결과 `-0`은 `0`으로 canonicalize한다.
  *
- * @param out neighbor axial coordinate를 기록할 writable output
+ * @param out neighbor axial 좌표를 기록할 객체
  * @param axial neighbor를 구할 center axial coordinate
  * @param direction `0..5` neighbor direction index
  */
-export function hexNeighborInto<Out extends HexAxialWritable>(out: Out, axial: HexAxialLike, direction: number): Out {
-  const q = readHexAxialQ(axial);
-  const r = readHexAxialR(axial);
+export function hexNeighborInto<Out extends HexAxialWritable>(out: Out, axial: HexAxial, direction: number): Out {
+  const q = axial.q;
+  const r = axial.r;
   validateHexAxialSafeInteger(q, r);
   validateHexDirection(direction);
 

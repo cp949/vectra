@@ -1,13 +1,11 @@
 import {
   commitHexAxialCollection,
   HEX_AXIAL_DIRECTIONS,
-  readHexAxialQ,
-  readHexAxialR,
   validateHexAxialSafeInteger,
   validateHexCollectionCount,
   validateHexRadius,
 } from '../internal/hex-grid';
-import type { HexAxialLike, HexAxialWritable } from '../types';
+import type { HexAxial, HexAxialWritable } from '../types/flat-shapes.internal';
 
 /**
  * center에서 radius만큼 떨어진 hex ring perimeter를 out에 기록하고 out을 반환한다.
@@ -26,9 +24,9 @@ import type { HexAxialLike, HexAxialWritable } from '../types';
  * @param center ring의 center axial coordinate
  * @param radius ring radius. non-negative safe integer
  */
-export function hexRingInto(out: HexAxialWritable[], center: HexAxialLike, radius: number): HexAxialWritable[] {
-  const cq = readHexAxialQ(center);
-  const cr = readHexAxialR(center);
+export function hexRingInto(out: HexAxialWritable[], center: HexAxial, radius: number): HexAxialWritable[] {
+  const cq = center.q;
+  const cr = center.r;
   validateHexAxialSafeInteger(cq, cr);
   validateHexRadius(radius);
 

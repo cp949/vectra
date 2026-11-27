@@ -1,7 +1,7 @@
 /**
  * hex-grid neighbor(hexNeighborInto / hexNeighbor / hexNeighborsInto / hexNeighbors) 계약 테스트.
  *
- * direction 0..5의 clockwise axial order, tuple/object axial input, input/output aliasing,
+ * direction 0..5의 clockwise axial order, input/output aliasing,
  * invalid direction(범위 밖/non-integer/non-finite)·invalid axial·computed overflow RangeError,
  * hexNeighborsInto의 같은 array ref 반환과 성공 시 content 교체, validation 실패 시 out 미수정,
  * companion의 새 plain object/array 반환을 검증한다.
@@ -32,12 +32,6 @@ describe('hexNeighborInto - 단일 방향 neighbor', () => {
       expect(result).toBe(out);
       expect(out).toEqual({ q: 3 + DIRECTION_OFFSETS[d].q, r: -2 + DIRECTION_OFFSETS[d].r });
     }
-  });
-
-  test('tuple axial input을 object axial과 동일하게 처리한다', () => {
-    const out: HexAxialWritable = { q: 0, r: 0 };
-    hexNeighborInto(out, [3, -2], 1);
-    expect(out).toEqual({ q: 4, r: -3 });
   });
 
   test('input/output aliasing이 안전하다', () => {
@@ -101,19 +95,6 @@ describe('hexNeighborsInto - 6-neighbor collection', () => {
       { q: 2, r: -2 },
       { q: 2, r: -1 },
       { q: 3, r: -1 },
-    ]);
-  });
-
-  test('tuple axial input을 처리한다', () => {
-    const out: HexAxialWritable[] = [];
-    hexNeighborsInto(out, [0, 0]);
-    expect(out).toEqual([
-      { q: 1, r: 0 },
-      { q: 1, r: -1 },
-      { q: 0, r: -1 },
-      { q: -1, r: 0 },
-      { q: -1, r: 1 },
-      { q: 0, r: 1 },
     ]);
   });
 

@@ -1,12 +1,12 @@
 /**
  * hex-grid coordinate conversion(hexAxialToCube / hexCubeToAxial) 계약 테스트.
  *
- * object/tuple axial·cube input 변환, negative coordinate의 `q + r + s === 0` invariant,
+ * axial·cube 좌표 변환, negative coordinate의 `q + r + s === 0` invariant,
  * cube invariant 위반 RangeError, non-finite / non-integer / unsafe integer input RangeError,
  * 계산된 s overflow RangeError, companion plain object 반환을 검증한다.
  *
  * offset conversion(hexAxialToOffset / hexOffsetToAxial)은 4개 layout의 axial → offset → axial
- * round-trip, negative parity case, tuple/object input, invalid layout RangeError,
+ * round-trip, negative parity case, invalid layout RangeError,
  * non-finite / non-integer / unsafe integer input RangeError, 계산된 col/row overflow RangeError를
  * 검증한다.
  */
@@ -23,10 +23,6 @@ describe('hexAxialToCube - axial을 cube로 변환', () => {
     expect(hexAxialToCube({ q: 1, r: 2 })).toEqual({ q: 1, r: 2, s: -3 });
   });
 
-  test('tuple axial을 object axial과 동일하게 변환한다', () => {
-    expect(hexAxialToCube([1, 2])).toEqual({ q: 1, r: 2, s: -3 });
-  });
-
   test('negative coordinate에서도 q + r + s === 0을 만족한다', () => {
     const cube = hexAxialToCube({ q: -4, r: 3 });
     expect(cube).toEqual({ q: -4, r: 3, s: 1 });
@@ -34,7 +30,7 @@ describe('hexAxialToCube - axial을 cube로 변환', () => {
   });
 
   test('새 plain object를 반환한다', () => {
-    const result = hexAxialToCube([0, 0]);
+    const result = hexAxialToCube({ q: 0, r: 0 });
     expect(result).toEqual({ q: 0, r: 0, s: 0 });
   });
 
@@ -55,22 +51,18 @@ describe('hexCubeToAxial - cube를 axial로 변환', () => {
     expect(hexCubeToAxial({ q: 1, r: 2, s: -3 })).toEqual({ q: 1, r: 2 });
   });
 
-  test('tuple cube를 object cube와 동일하게 변환한다', () => {
-    expect(hexCubeToAxial([1, 2, -3])).toEqual({ q: 1, r: 2 });
-  });
-
   test('negative coordinate cube를 변환한다', () => {
-    expect(hexCubeToAxial([-4, 3, 1])).toEqual({ q: -4, r: 3 });
+    expect(hexCubeToAxial({ q: -4, r: 3, s: 1 })).toEqual({ q: -4, r: 3 });
   });
 
   test('새 plain object를 반환한다', () => {
-    const result = hexCubeToAxial([0, 0, 0]);
+    const result = hexCubeToAxial({ q: 0, r: 0, s: 0 });
     expect(result).toEqual({ q: 0, r: 0 });
   });
 
   test('q + r + s !== 0이면 RangeError다', () => {
     expect(() => hexCubeToAxial({ q: 1, r: 1, s: 1 })).toThrow(RangeError);
-    expect(() => hexCubeToAxial([1, 2, 0])).toThrow(RangeError);
+    expect(() => hexCubeToAxial({ q: 1, r: 2, s: 0 })).toThrow(RangeError);
   });
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5, Number.MAX_SAFE_INTEGER + 1])(
@@ -106,11 +98,6 @@ describe('hexAxialToOffset / hexOffsetToAxial - axial과 offset 변환', () => {
   test('negative parity case를 고정한다', () => {
     expect(hexAxialToOffset({ q: -2, r: -3 }, 'odd-r')).toEqual({ col: -4, row: -3 });
     expect(hexAxialToOffset({ q: -2, r: -3 }, 'even-r')).toEqual({ col: -3, row: -3 });
-  });
-
-  test('tuple input을 object input과 동일하게 처리한다', () => {
-    expect(hexAxialToOffset([2, 3], 'odd-r')).toEqual({ col: 3, row: 3 });
-    expect(hexOffsetToAxial([3, 3], 'odd-r')).toEqual({ q: 2, r: 3 });
   });
 
   test('invalid layout string은 RangeError다', () => {

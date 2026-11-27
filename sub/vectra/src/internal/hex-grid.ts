@@ -1,112 +1,12 @@
 /**
- * hex-grid domain leaf module이 공유하는 coordinate reader와 validator.
+ * hex-grid domain leaf module이 공유하는 좌표 계산과 검증.
  *
- * public hex conversion/query helper가 axial/cube coordinate를 같은 정책으로 읽고 검증하도록
+ * public hex conversion/query helper가 axial/cube coordinate를 같은 정책으로 검증하도록
  * 이 internal primitive를 통한다. public leaf끼리 서로 import하지 않고 여기로 공유 계산을 내린다.
  */
 
-import type {
-  HexAxialLike,
-  HexAxialWritable,
-  HexCubeLike,
-  HexLayoutLike,
-  HexOffsetLayout,
-  HexOffsetLike,
-  HexOrientation,
-} from '../types';
-import { readX, readY } from './xy';
-
-/** axial input이 tuple이면 true를 반환한다. */
-function isHexAxialTuple(axial: HexAxialLike): axial is readonly [number, number] {
-  return Array.isArray(axial);
-}
-
-/** cube input이 tuple이면 true를 반환한다. */
-function isHexCubeTuple(cube: HexCubeLike): cube is readonly [number, number, number] {
-  return Array.isArray(cube);
-}
-
-/** offset input이 tuple이면 true를 반환한다. */
-function isHexOffsetTuple(offset: HexOffsetLike): offset is readonly [number, number] {
-  return Array.isArray(offset);
-}
-
-/**
- * HexAxialLike input에서 q 성분을 읽는다.
- *
- * tuple input은 index 0을, object input은 q field를 읽는다.
- *
- * @param axial q 성분을 읽을 structural axial coordinate
- */
-export function readHexAxialQ(axial: HexAxialLike): number {
-  return isHexAxialTuple(axial) ? axial[0] : axial.q;
-}
-
-/**
- * HexAxialLike input에서 r 성분을 읽는다.
- *
- * tuple input은 index 1을, object input은 r field를 읽는다.
- *
- * @param axial r 성분을 읽을 structural axial coordinate
- */
-export function readHexAxialR(axial: HexAxialLike): number {
-  return isHexAxialTuple(axial) ? axial[1] : axial.r;
-}
-
-/**
- * HexCubeLike input에서 q 성분을 읽는다.
- *
- * tuple input은 index 0을, object input은 q field를 읽는다.
- *
- * @param cube q 성분을 읽을 structural cube coordinate
- */
-export function readHexCubeQ(cube: HexCubeLike): number {
-  return isHexCubeTuple(cube) ? cube[0] : cube.q;
-}
-
-/**
- * HexCubeLike input에서 r 성분을 읽는다.
- *
- * tuple input은 index 1을, object input은 r field를 읽는다.
- *
- * @param cube r 성분을 읽을 structural cube coordinate
- */
-export function readHexCubeR(cube: HexCubeLike): number {
-  return isHexCubeTuple(cube) ? cube[1] : cube.r;
-}
-
-/**
- * HexCubeLike input에서 s 성분을 읽는다.
- *
- * tuple input은 index 2를, object input은 s field를 읽는다.
- *
- * @param cube s 성분을 읽을 structural cube coordinate
- */
-export function readHexCubeS(cube: HexCubeLike): number {
-  return isHexCubeTuple(cube) ? cube[2] : cube.s;
-}
-
-/**
- * HexOffsetLike input에서 column index를 읽는다.
- *
- * tuple input은 index 0을, object input은 col field를 읽는다.
- *
- * @param offset column index를 읽을 structural offset coordinate
- */
-export function readHexOffsetCol(offset: HexOffsetLike): number {
-  return isHexOffsetTuple(offset) ? offset[0] : offset.col;
-}
-
-/**
- * HexOffsetLike input에서 row index를 읽는다.
- *
- * tuple input은 index 1을, object input은 row field를 읽는다.
- *
- * @param offset row index를 읽을 structural offset coordinate
- */
-export function readHexOffsetRow(offset: HexOffsetLike): number {
-  return isHexOffsetTuple(offset) ? offset[1] : offset.row;
-}
+import type { HexAxialWritable, HexCube } from '../types/flat-shapes.internal';
+import type { HexOffsetLayout, HexOrientation } from '../types/hex-grid.internal';
 
 /**
  * axial coordinate 두 성분이 safe integer인지 검증한다.
@@ -216,33 +116,6 @@ export function hexParity(n: number): number {
 }
 
 /**
- * HexLayoutLike input에서 origin x 성분을 읽는다. origin이 없으면 0을 반환한다.
- *
- * @param layout origin을 읽을 structural layout spec
- */
-export function readHexLayoutOriginX(layout: HexLayoutLike): number {
-  return layout.origin != null ? readX(layout.origin) : 0;
-}
-
-/**
- * HexLayoutLike input에서 origin y 성분을 읽는다. origin이 없으면 0을 반환한다.
- *
- * @param layout origin을 읽을 structural layout spec
- */
-export function readHexLayoutOriginY(layout: HexLayoutLike): number {
-  return layout.origin != null ? readY(layout.origin) : 0;
-}
-
-/**
- * HexLayoutLike input에서 orientation을 읽는다. 생략하면 `"pointy"`를 반환한다.
- *
- * @param layout orientation을 읽을 structural layout spec
- */
-export function readHexLayoutOrientation(layout: HexLayoutLike): HexOrientation {
-  return layout.orientation ?? 'pointy';
-}
-
-/**
  * layout size가 positive finite number인지 검증한다.
  *
  * `0`, 음수, `NaN`, `Infinity`, `-Infinity`는 모두 `RangeError`다.
@@ -315,17 +188,6 @@ export function writeHexAxial<Out extends HexAxialWritable>(out: Out, q: number,
   out.q = q;
   out.r = r;
   return out;
-}
-
-/**
- * round input이 cube shape이면 true를 반환한다.
- *
- * tuple input은 길이 3을, object input은 `s` property 존재를 cube로 본다.
- *
- * @param input 분류할 axial 또는 cube coordinate
- */
-export function isHexCubeInput(input: HexAxialLike | HexCubeLike): input is HexCubeLike {
-  return Array.isArray(input) ? input.length === 3 : 's' in input;
 }
 
 /**
@@ -497,27 +359,13 @@ export function hexLerp(a: number, b: number, t: number): number {
 }
 
 /**
- * axial 또는 cube input을 검증된 integer cube 성분 `[q, r, s]`로 읽는다.
+ * cube 좌표의 세 성분이 safe integer이고 합이 0인지 검증한다.
  *
- * cube input은 safe integer와 `q + r + s === 0` invariant를 검증한다. axial input은 safe integer를
- * 검증하고 `s = -q - r`로 cube화하며 계산된 `s`가 safe integer 범위를 벗어나면 `RangeError`다.
- *
- * @param input cube로 읽을 axial 또는 cube coordinate
+ * @param input 검증할 cube 좌표
  */
-export function toHexCubeChecked(input: HexAxialLike | HexCubeLike): readonly [number, number, number] {
-  if (isHexCubeInput(input)) {
-    const q = readHexCubeQ(input);
-    const r = readHexCubeR(input);
-    const s = readHexCubeS(input);
-    validateHexCubeSafeInteger(q, r, s);
-    validateHexCubeZeroSum(q, r, s);
-    return [q, r, s];
-  }
-
-  const q = readHexAxialQ(input);
-  const r = readHexAxialR(input);
-  validateHexAxialSafeInteger(q, r);
-  const s = -q - r;
-  validateHexComputedSafeInteger(s, 's');
+export function toHexCubeChecked(input: HexCube): readonly [number, number, number] {
+  const { q, r, s } = input;
+  validateHexCubeSafeInteger(q, r, s);
+  validateHexCubeZeroSum(q, r, s);
   return [q, r, s];
 }

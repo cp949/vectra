@@ -1,4 +1,4 @@
-import type { HexAxialLike, HexAxialWritable } from '../types';
+import type { HexAxial, HexAxialWritable } from '../types/flat-shapes.internal';
 import { hexNeighborInto } from './hex-neighbor-into';
 
 /**
@@ -13,6 +13,6 @@ import { hexNeighborInto } from './hex-neighbor-into';
  * @param axial neighbor를 구할 center axial coordinate
  * @param direction `0..5` neighbor direction index
  */
-export function hexNeighbor(axial: HexAxialLike, direction: number): HexAxialWritable {
+export function hexNeighbor(axial: HexAxial, direction: number): HexAxialWritable {
   return hexNeighborInto({ q: 0, r: 0 }, axial, direction);
 }

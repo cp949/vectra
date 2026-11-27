@@ -2,7 +2,7 @@
  * hex-grid ring(hexRingInto / hexRing) 계약 테스트.
  *
  * radius 0 center 단일 반환, radius 1/2 perimeter deterministic order(direction 4 시작 corner에서
- * direction 0..5를 radius step씩), 길이 6*r, tuple/object center input, invalid center·invalid
+ * direction 0..5를 radius step씩), 길이 6*r, invalid center·invalid
  * radius(음수/non-integer/non-finite)·computed overflow·collection length(6*radius>0xffffffff) RangeError,
  * hexRingInto의 같은 array ref
  * 반환과 성공 시 content 교체, validation 실패 시 out 미수정, companion의 새 plain array 반환을
@@ -65,19 +65,6 @@ describe('hexRingInto - radius perimeter collection', () => {
       { q: 11, r: -6 },
       { q: 10, r: -6 },
       { q: 9, r: -5 },
-    ]);
-  });
-
-  test('tuple center input을 object center와 동일하게 처리한다', () => {
-    const out: HexAxialWritable[] = [];
-    hexRingInto(out, [0, 0], 1);
-    expect(out).toEqual([
-      { q: -1, r: 1 },
-      { q: 0, r: 1 },
-      { q: 1, r: 0 },
-      { q: 1, r: -1 },
-      { q: 0, r: -1 },
-      { q: -1, r: 0 },
     ]);
   });
 
