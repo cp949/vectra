@@ -5,10 +5,10 @@ import type { BoundsWritable, OrientedRect } from '../types/flat-shapes.internal
  * oriented rect를 포함하는 axis-aligned bounds를 out에 기록하고 out을 반환한다.
  *
  * 회전된 corner의 min/max로 AABB를 구한다. center 기준 half-extent는
- * `ex = |hw*cos| + |hh*sin|`, `ey = |hw*sin| + |hh*cos|`이며 `min = center - (ex, ey)`,
- * `max = center + (ex, ey)`다. `width <= 0 || height <= 0`인 empty oriented rect는 sentinel empty
- * bounds(`min = (Infinity, Infinity)`, `max = (-Infinity, -Infinity)`)를 기록한다. size 두 성분이나
- * angle이 non-finite이면 `RangeError`다. center 좌표 non-finite는 검증하지 않고 산술 결과를 따른다.
+ * `ex = |hw*cos| + |hh*sin|`, `ey = |hw*sin| + |hh*cos|`이며 `(minX, minY) = (cx - ex, cy - ey)`,
+ * `(maxX, maxY) = (cx + ex, cy + ey)`다. `width <= 0 || height <= 0`인 empty oriented rect는 sentinel empty
+ * bounds(`minX = minY = Infinity`, `maxX = maxY = -Infinity`)를 기록한다. width, height, angle 중
+ * 하나가 non-finite이면 `RangeError`다. center 좌표 non-finite는 검증하지 않고 산술 결과를 따른다.
  * source 값을 먼저 모두 읽으므로 input과 out이 같은 object여도 안전하다.
  *
  * @param out 결과를 기록할 경계 상자 객체

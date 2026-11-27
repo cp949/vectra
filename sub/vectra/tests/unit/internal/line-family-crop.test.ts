@@ -5,13 +5,13 @@ import { cropLineFamilyByCircleInto, cropLineFamilyByRectInto } from '../../../s
 import type { SegmentWritable as LegacySegmentWritable, XYObjectWritable } from '../../../src/types';
 import type { SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
-/** 유한 선분(`finite`) 출력용 평평한 선분을 원점으로 초기화한다. */
+/** 선분(`finite`)과 반직선(`ray`) 출력용 평평한 선분을 원점으로 초기화한다. */
 function flatSeg(): SegmentWritable {
   return { x1: 0, y1: 0, x2: 0, y2: 0 };
 }
 
-// v2-migration: ray와 infinite-line을 전환하면 중첩 출력 도우미를 지운다.
-/** 반직선과 무한 직선 출력용 중첩 끝점 선분을 원점으로 초기화한다. */
+// v2-migration: infinite-line을 전환하면 중첩 출력 도우미를 지운다.
+/** 무한 직선(`inf`) 출력용 중첩 끝점 선분을 원점으로 초기화한다. */
 function nestedSeg(): LegacySegmentWritable<XYObjectWritable, XYObjectWritable> {
   return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
 }

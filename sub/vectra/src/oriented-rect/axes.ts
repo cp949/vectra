@@ -6,7 +6,7 @@ import type { OrientedRect } from '../types/flat-shapes.internal';
  *
  * `xAxis = (cos(angle), sin(angle))`, `yAxis = (-sin(angle), cos(angle))`인 orthonormal pair를
  * `{ xAxis, yAxis }`로 반환한다. size 값은 axis 계산에 직접 쓰지 않지만 invalid oriented rect input을
- * 같은 정책으로 거부한다. size 두 성분이나 angle이 non-finite이면 `RangeError`다.
+ * 같은 정책으로 거부한다. width, height, angle 중 하나가 non-finite이면 `RangeError`다.
  *
  * @param rect axis를 읽을 oriented rect
  */

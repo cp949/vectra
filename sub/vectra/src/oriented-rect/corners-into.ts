@@ -9,7 +9,7 @@ import type { OrientedRect, PointWritable } from '../types/flat-shapes.internal'
  * `(-w/2, -h/2)`, `(w/2, -h/2)`, `(w/2, h/2)`, `(-w/2, h/2)`이며 angle로 회전 후 center로 평행이동한다.
  *
  * `width <= 0 || height <= 0`인 empty oriented rect에서도 raw 좌표로 4개 point를 push한다.
- * zero/negative size에서는 corner가 겹치거나 order가 뒤집힐 수 있다. size 두 성분이나 angle이
+ * zero/negative size에서는 corner가 겹치거나 order가 뒤집힐 수 있다. width, height, angle 중 하나가
  * non-finite이면 `RangeError`다. center 좌표 non-finite는 검증하지 않고 산술 결과를 따른다.
  *
  * @param out 꼭짓점을 기록할 점 배열

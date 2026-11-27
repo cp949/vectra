@@ -10,7 +10,7 @@ import type { OrientedRect, Point } from '../types/flat-shapes.internal';
  * `localX = dx*cos + dy*sin`, `localY = -dx*sin + dy*cos`다. edge와 corner 위 point를 포함하는
  * closed boundary다.
  *
- * `width <= 0 || height <= 0`인 empty oriented rect는 항상 false다. size 두 성분이나 angle이
+ * `width <= 0 || height <= 0`인 empty oriented rect는 항상 false다. width, height, angle 중 하나가
  * non-finite이면 `RangeError`다. center 또는 point 좌표 non-finite는 검증하지 않고 local 좌표
  * 산술에 전파되며, 그 결과 boundary 비교가 `NaN`/무한대로 false가 되어 항상 false를 반환한다.
  *

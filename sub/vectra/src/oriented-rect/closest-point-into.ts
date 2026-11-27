@@ -10,7 +10,7 @@ import type { OrientedRect, Point, PointWritable } from '../types/flat-shapes.in
  * 위치를 기록한다. 성공하면 true를 반환한다.
  *
  * `width <= 0 || height <= 0`인 empty oriented rect는 false를 반환하고 out을 수정하지 않는다.
- * size 두 성분이나 angle이 non-finite이면 `RangeError`이며 no-mutation을 보장하지 않는다.
+ * width, height, angle 중 하나가 non-finite이면 `RangeError`이며 no-mutation을 보장하지 않는다.
  * center 또는 point 좌표 non-finite는 검증하지 않고 산술 결과를 그대로 기록한다(`NaN`/무한대 가능).
  * center/size/angle/point/clamp 결과를 모두 먼저 확정한 뒤 기록하므로 out과 point가 같은 객체여도 안전하다.
  *

@@ -1,5 +1,5 @@
-import { createOrientedRectQueryFrame, writeOrientedRectCorners } from '../internal/oriented-rect-query';
-import type { OrientedRect, PointWritable, PolygonWritable } from '../types/flat-shapes.internal';
+import { createOrientedRectQueryFrame, writeOrientedRectCornerCoords } from '../internal/oriented-rect-query';
+import type { OrientedRect, PolygonWritable } from '../types/flat-shapes.internal';
 
 /**
  * oriented rect의 4개 corner를 polygon vertex로 담은 새 교차 배치 좌표 배열을 반환한다.
@@ -9,7 +9,7 @@ import type { OrientedRect, PointWritable, PolygonWritable } from '../types/flat
  * 회전 후 center로 평행이동한다.
  *
  * `width <= 0 || height <= 0`인 empty oriented rect에서도 raw 좌표로 vertex 4개를 반환한다.
- * zero/negative size에서는 vertex가 겹치거나 winding이 뒤집힐 수 있다. size 두 성분이나 angle이
+ * zero/negative size에서는 vertex가 겹치거나 winding이 뒤집힐 수 있다. width, height, angle 중 하나가
  * non-finite이면 `RangeError`다. center 좌표 non-finite는 검증하지 않고 산술 결과를 따른다.
  * 배열에는 각 꼭짓점의 x, y 좌표를 교대로 담는다.
  *
@@ -17,9 +17,7 @@ import type { OrientedRect, PointWritable, PolygonWritable } from '../types/flat
  */
 export function toPolygon(rect: OrientedRect): PolygonWritable {
   const frame = createOrientedRectQueryFrame(rect);
-  const corners: PointWritable[] = [];
-  writeOrientedRectCorners(corners, frame);
   const polygon: PolygonWritable = [];
-  for (const { x, y } of corners) polygon.push(x, y);
+  writeOrientedRectCornerCoords(polygon, frame);
   return polygon;
 }
