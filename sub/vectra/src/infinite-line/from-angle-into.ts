@@ -3,7 +3,7 @@ import type { InfiniteLineWritable, Point } from '../types/flat-shapes.internal'
 /**
  * `origin`을 기준점으로, radian `angle` 방향 단위 벡터를 direction으로 `out`에 기록하고 `out`을 반환한다.
  *
- * direction은 `{ x: Math.cos(angle), y: Math.sin(angle) }`이다.
+ * `dx = Math.cos(angle)`, `dy = Math.sin(angle)`이다.
  *
  * `angle = NaN | Infinity | -Infinity` 같은 non-finite 입력은 검증하지 않는다.
  * `Math.cos`/`Math.sin`의 산술 결과(`Math.cos(Infinity) === NaN` 등)가 direction component에 그대로 기록된다.

@@ -16,7 +16,7 @@ import type { InfiniteLineWritable as LegacyInfiniteLineWritable } from '../../.
 import type { InfiniteLineWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('infinite-line lifecycle - createInfiniteLine', () => {
-  test('빈 인자로 origin/direction이 (0,0)인 degenerate infinite-line을 만든다', () => {
+  test('빈 인자로 ox, oy, dx, dy가 모두 0인 degenerate infinite-line을 만든다', () => {
     const line = createInfiniteLine();
     expect(line).toEqual({ ox: 0, oy: 0, dx: 0, dy: 0 });
   });

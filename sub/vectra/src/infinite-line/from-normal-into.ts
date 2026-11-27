@@ -6,7 +6,7 @@ import type { InfiniteLineWritable, Point } from '../types/flat-shapes.internal'
  * `{ dx: -normal.y, dy: normal.x }`로 기록한다 (y-up 수학 관례에서 normal을 좌측으로 90도 회전).
  * `normal`은 normalize하지 않는다. caller가 unit normal을 전달하지 않으면 direction도 같은 scale을 가진다.
  *
- * zero normal(`{ x: 0, y: 0 }`)은 degenerate direction(`{ x: 0, y: 0 }`)을 기록한다.
+ * zero normal(`{ x: 0, y: 0 }`)은 degenerate direction(`dx = dy = 0`)을 기록한다.
  *
  * non-finite normal component는 검증하지 않고 산술 결과를 그대로 direction에 기록한다.
  *
