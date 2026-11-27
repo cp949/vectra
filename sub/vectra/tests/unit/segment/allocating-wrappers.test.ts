@@ -6,7 +6,6 @@
  * 호출마다 새 객체를 반환하는지도 본다.
  * unit 테스트가 `*Into`만 import하던 공백을 메운다.
  */
-import { createLegacySegment } from '../../../src/internal/segment';
 import { describe, expect, test } from 'vitest';
 import { closestPoint } from '../../../src/segment/closest-point';
 import { closestPointInto } from '../../../src/segment/closest-point-into';
@@ -31,15 +30,6 @@ import { startInto } from '../../../src/segment/start-into';
 import { vector } from '../../../src/segment/vector';
 import { vectorInto } from '../../../src/segment/vector-into';
 
-/**
- * 각 case가 공유하는 입력을 만든다.
- * 호출마다 새 객체를 줘서 wrapper가 입력을 바꾸지 않았는지 case 사이에서 구분한다.
- * 길이 5(3-4-5)인 비대칭 segment라 a/b 뒤바뀜과 left/right 뒤바뀜이 값에 드러난다.
- */
-function makeLine() {
-  return { a: { x: 1, y: 2 }, b: { x: 4, y: 6 } };
-}
-
 const point = { x: 7, y: -1 };
 
 /** wrapper 결과와 대응 `*Into` 결과를 같은 입력으로 만드는 case. */
@@ -48,6 +38,11 @@ type Case = {
   actual: () => unknown;
   expected: () => unknown;
 };
+
+/** 아직 전환하지 않은 start와 vector가 읽을 선분을 만든다. */
+function makeLegacyLine() {
+  return { a: { x: 1, y: 2 }, b: { x: 4, y: 6 } };
+}
 
 /** 평평한 선분을 새로 만든다. */
 function makeFlatLine() {
@@ -72,43 +67,43 @@ const cases: Case[] = [
   },
   {
     name: 'normal (기본 side)',
-    actual: () => normal(makeLine()),
-    expected: () => normalInto({ x: 0, y: 0 }, makeLine()),
+    actual: () => normal(makeFlatLine()),
+    expected: () => normalInto({ x: 0, y: 0 }, makeFlatLine()),
   },
   {
     name: 'normal (right)',
-    actual: () => normal(makeLine(), 'right'),
-    expected: () => normalInto({ x: 0, y: 0 }, makeLine(), 'right'),
+    actual: () => normal(makeFlatLine(), 'right'),
+    expected: () => normalInto({ x: 0, y: 0 }, makeFlatLine(), 'right'),
   },
   {
     name: 'pointAtT',
-    actual: () => pointAtT(makeLine(), 1.5),
-    expected: () => pointAtTInto({ x: 0, y: 0 }, makeLine(), 1.5),
+    actual: () => pointAtT(makeFlatLine(), 1.5),
+    expected: () => pointAtTInto({ x: 0, y: 0 }, makeFlatLine(), 1.5),
   },
   {
     name: 'projectPoint',
-    actual: () => projectPoint(makeLine(), point),
-    expected: () => projectPointInto({ x: 0, y: 0 }, makeLine(), point),
+    actual: () => projectPoint(makeFlatLine(), point),
+    expected: () => projectPointInto({ x: 0, y: 0 }, makeFlatLine(), point),
   },
   {
     name: 'reverse',
-    actual: () => reverse(makeLine()),
-    expected: () => reverseInto(createLegacySegment(), makeLine()),
+    actual: () => reverse(makeFlatLine()),
+    expected: () => reverseInto(createSegment(), makeFlatLine()),
   },
   {
     name: 'rotateAround',
-    actual: () => rotateAround(makeLine(), { x: 2, y: -3 }, Math.PI / 5),
-    expected: () => rotateAroundInto(createLegacySegment(), makeLine(), { x: 2, y: -3 }, Math.PI / 5),
+    actual: () => rotateAround(makeFlatLine(), { x: 2, y: -3 }, Math.PI / 5),
+    expected: () => rotateAroundInto(createSegment(), makeFlatLine(), { x: 2, y: -3 }, Math.PI / 5),
   },
   {
     name: 'start',
-    actual: () => start(makeLine()),
-    expected: () => startInto({ x: 0, y: 0 }, makeLine()),
+    actual: () => start(makeLegacyLine()),
+    expected: () => startInto({ x: 0, y: 0 }, makeLegacyLine()),
   },
   {
     name: 'vector',
-    actual: () => vector(makeLine()),
-    expected: () => vectorInto({ x: 0, y: 0 }, makeLine()),
+    actual: () => vector(makeLegacyLine()),
+    expected: () => vectorInto({ x: 0, y: 0 }, makeLegacyLine()),
   },
 ];
 
@@ -126,17 +121,17 @@ describe('segment 할당형 wrapper - 대응 Into와의 동치', () => {
 
 describe('segment 할당형 wrapper - 값 확인', () => {
   test('start와 end는 서로 다른 endpoint를 반환한다', () => {
-    expect(start(makeLine())).toEqual({ x: 1, y: 2 });
+    expect(start(makeLegacyLine())).toEqual({ x: 1, y: 2 });
     expect(end(makeFlatLine())).toEqual({ x: 4, y: 6 });
   });
 
   test('vector는 b - a를 반환한다', () => {
-    expect(vector(makeLine())).toEqual({ x: 3, y: 4 });
+    expect(vector(makeLegacyLine())).toEqual({ x: 3, y: 4 });
   });
 
   test('normal은 side에 따라 단위 법선의 방향이 반대다', () => {
-    const left = normal(makeLine());
-    const right = normal(makeLine(), 'right');
+    const left = normal(makeFlatLine());
+    const right = normal(makeFlatLine(), 'right');
     expect(left.x).toBeCloseTo(-0.8, 12);
     expect(left.y).toBeCloseTo(0.6, 12);
     expect(right.x).toBeCloseTo(0.8, 12);
@@ -144,20 +139,18 @@ describe('segment 할당형 wrapper - 값 확인', () => {
   });
 
   test('reverse는 입력을 바꾸지 않고 endpoint를 교환한 segment를 반환한다', () => {
-    const line = makeLine();
+    const line = makeFlatLine();
     const result = reverse(line);
-    expect(result).toEqual({ a: { x: 4, y: 6 }, b: { x: 1, y: 2 } });
-    expect(line).toEqual(makeLine());
+    expect(result).toEqual({ x1: 4, y1: 6, x2: 1, y2: 2 });
+    expect(line).toEqual(makeFlatLine());
     expect(result).not.toBe(line);
-    expect(result.a).not.toBe(line.b);
-    expect(result.b).not.toBe(line.a);
   });
 
-  test('반환한 point를 바꿔도 입력 segment는 바뀌지 않는다', () => {
-    const line = makeLine();
+  test('반환한 시작점을 바꿔도 입력 선분은 바뀌지 않는다', () => {
+    const line = makeLegacyLine();
     const result = start(line);
     result.x = 99;
-    expect(line).toEqual(makeLine());
+    expect(line).toEqual(makeLegacyLine());
   });
 });
 

@@ -81,14 +81,12 @@ export type PathLike = readonly PathCommand[];
  * `pointAtLengthInto` / `pointAtLength`의 clamp 정책 옵션.
  *
  * `clamp`가 `false`이면 `distance / length` 비율을 그대로 사용해 supporting line 위
- * 점을 extrapolation한다. 기본값(`undefined` 또는 `true`)이면 `distance`를 `[0, length]`
+ * 점을 extrapolation한다. 옵션을 생략하거나 `clamp`가 `true`이면 `distance`를 `[0, length]`
  * 로 clamp한다.
  */
 export interface PointAtLengthOptions {
-  /**
-   * `false`이면 extrapolation을 허용한다. 기본값: `true` (clamp).
-   */
-  clamp?: boolean;
+  /** `false`이면 선분의 연장 위 점을 허용한다. */
+  clamp: boolean;
 }
 
 /**

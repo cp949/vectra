@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike } from '../types';
+import type { Segment } from '../types/flat-shapes.internal';
 
 /**
  * segment a→b의 supporting line에 수직인 직선의 기울기를 반환한다.
@@ -13,13 +11,11 @@ import type { SegmentLike } from '../types';
  *
  * @param line 수직 기울기를 계산할 segment
  */
-export function perpSlope(line: SegmentLike): number {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const dx = readX(b) - ax;
-  const dy = readY(b) - ay;
+export function perpSlope(line: Segment): number {
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   if (dx === 0 && dy === 0) return NaN;
   if (dy === 0) return Number.isFinite(dx) ? Infinity : NaN;
   if (dx === 0) return 0;

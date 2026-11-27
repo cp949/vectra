@@ -1,4 +1,4 @@
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { Segment, PointWritable } from '../types/flat-shapes.internal';
 import { normalInto } from './normal-into';
 
 /**
@@ -7,6 +7,6 @@ import { normalInto } from './normal-into';
  * @param line 법선벡터를 계산할 segment
  * @param side 'left'(기본값, CCW: -dy,dx 정규화) 또는 'right'(CW: dy,-dx 정규화)
  */
-export function normal(line: SegmentLike, side: 'left' | 'right' = 'left'): XYObjectWritable {
+export function normal(line: Segment, side: 'left' | 'right' = 'left'): PointWritable {
   return normalInto({ x: 0, y: 0 }, line, side);
 }

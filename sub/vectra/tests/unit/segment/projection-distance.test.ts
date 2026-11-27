@@ -1,115 +1,92 @@
 /** 선분의 투영, 최근접점, 점까지의 거리와 포함 여부를 검증한다. */
-import { describe, expect, expectTypeOf, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { closestPointInto } from '../../../src/segment/closest-point-into';
 import { containsPoint } from '../../../src/segment/contains-point';
 import { distanceToPoint } from '../../../src/segment/distance-to-point';
 import { distanceToPointSq } from '../../../src/segment/distance-to-point-sq';
 import { projectPointInto } from '../../../src/segment/project-point-into';
 import { projectionT } from '../../../src/segment/projection-t';
-import type { XYWritable } from '../../../src/types';
 
 describe('segment projection - projectionT (unclamped t)', () => {
   test('horizontal segment 중점 위 point의 t는 0.5이다', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     expect(projectionT(seg, { x: 2, y: 0 })).toBe(0.5);
   });
 
   test('segment 시작점의 t는 0이다', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     expect(projectionT(seg, { x: 0, y: 0 })).toBe(0);
   });
 
   test('segment 끝점의 t는 1이다', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     expect(projectionT(seg, { x: 4, y: 0 })).toBe(1);
   });
 
   test('segment 앞 point는 t < 0을 반환한다 (unclamped)', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     expect(projectionT(seg, { x: -1, y: 0 })).toBe(-0.25);
   });
 
   test('segment 뒤 point는 t > 1을 반환한다 (unclamped)', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     expect(projectionT(seg, { x: 5, y: 0 })).toBe(1.25);
   });
 
   test('segment에 수직 방향 offset은 t에 영향을 주지 않는다', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     expect(projectionT(seg, { x: 2, y: 5 })).toBe(0.5);
   });
 
   test('diagonal segment에서 unclamped t를 계산한다', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 3, y: 4 } };
+    const seg = { x1: 0, y1: 0, x2: 3, y2: 4 };
     // dot((3,0), (3,4)) = 9, lenSq = 25 → t = 9/25
     expect(projectionT(seg, { x: 3, y: 0 })).toBeCloseTo(0.36, 10);
   });
 
-  test('tuple endpoint를 가진 segment에서 t를 계산한다', () => {
-    const seg = { a: [0, 0] as const, b: [4, 0] as const };
-    expect(projectionT(seg, [2, 0])).toBe(0.5);
-  });
-
   test('zero-length segment의 projectionT는 0을 반환한다', () => {
-    const seg = { a: { x: 3, y: 4 }, b: { x: 3, y: 4 } };
+    const seg = { x1: 3, y1: 4, x2: 3, y2: 4 };
     expect(projectionT(seg, { x: 10, y: 20 })).toBe(0);
   });
 });
 
 describe('segment projection - projectPointInto (unclamped point)', () => {
   test('segment 위 수직 offset point의 projection은 선 위 수선의 발이다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const out = { x: 0, y: 0 };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     const result = projectPointInto(out, seg, { x: 2, y: 3 });
     expect(result).toBe(out);
     expect(out).toEqual({ x: 2, y: 0 });
   });
 
   test('segment 앞 point의 projection은 clamp되지 않는다 (t < 0)', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const out = { x: 0, y: 0 };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     projectPointInto(out, seg, { x: -2, y: 0 });
     expect(out).toEqual({ x: -2, y: 0 });
   });
 
   test('segment 뒤 point의 projection은 clamp되지 않는다 (t > 1)', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+    const out = { x: 0, y: 0 };
+    const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     projectPointInto(out, seg, { x: 6, y: 0 });
     expect(out).toEqual({ x: 6, y: 0 });
   });
 
   test('diagonal segment에서 unclamped projection point를 계산한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const seg = { a: { x: 0, y: 0 }, b: { x: 3, y: 4 } };
+    const out = { x: 0, y: 0 };
+    const seg = { x1: 0, y1: 0, x2: 3, y2: 4 };
     // t = 9/25, closest = (9/25*3, 9/25*4) = (1.08, 1.44)
     projectPointInto(out, seg, { x: 3, y: 0 });
     expect(out.x).toBeCloseTo(1.08, 10);
     expect(out.y).toBeCloseTo(1.44, 10);
   });
 
-  test('zero-length segment의 projectPointInto는 segment.a를 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const seg = { a: { x: 3, y: 4 }, b: { x: 3, y: 4 } };
+  test('zero-length segment의 projectPointInto는 시작점을 기록한다', () => {
+    const out = { x: 0, y: 0 };
+    const seg = { x1: 3, y1: 4, x2: 3, y2: 4 };
     projectPointInto(out, seg, { x: 10, y: 20 });
     expect(out).toEqual({ x: 3, y: 4 });
-  });
-
-  test('tuple endpoint를 가진 segment에서 unclamped projection을 계산한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const seg = { a: [0, 0] as const, b: [4, 0] as const };
-    projectPointInto(out, seg, [2, 3]);
-    expect(out).toEqual({ x: 2, y: 0 });
-  });
-
-  test('mutable tuple out에 projection 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
-    const result = projectPointInto(out, seg, { x: 2, y: 3 });
-    expect(result).toBe(out);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(0);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 });
 

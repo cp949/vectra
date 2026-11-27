@@ -1,4 +1,4 @@
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { Segment, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtTInto } from './point-at-t-into';
 
 /**
@@ -7,6 +7,6 @@ import { pointAtTInto } from './point-at-t-into';
  * @param line 위치를 계산할 segment
  * @param t parametric 위치. [0, 1] 밖의 값도 clamp 없이 그대로 계산한다
  */
-export function pointAtT(line: SegmentLike, t: number): XYObjectWritable {
+export function pointAtT(line: Segment, t: number): PointWritable {
   return pointAtTInto({ x: 0, y: 0 }, line, t);
 }

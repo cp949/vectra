@@ -53,28 +53,19 @@ describe('segment scalar property - height', () => {
 
 describe('segment scalar property - normalAngle', () => {
   test('horizontal segment의 normalAngle은 Math.PI / 2이다', () => {
-    expect(normalAngle({ a: { x: 0, y: 0 }, b: { x: 1, y: 0 } })).toBeCloseTo(Math.PI / 2);
+    expect(normalAngle({ x1: 0, y1: 0, x2: 1, y2: 0 })).toBeCloseTo(Math.PI / 2);
   });
 
   test('vertical upward segment의 normalAngle은 Math.PI이다', () => {
-    // a→b 방향이 +y (angle = π/2), normalAngle = π/2 + π/2 = π
-    expect(normalAngle({ a: { x: 0, y: 0 }, b: { x: 0, y: 1 } })).toBeCloseTo(Math.PI);
+    // 시작점에서 끝점으로 향하는 방향이 +y (angle = π/2), normalAngle = π/2 + π/2 = π
+    expect(normalAngle({ x1: 0, y1: 0, x2: 0, y2: 1 })).toBeCloseTo(Math.PI);
   });
 
   test('45도 segment(+x+y)의 normalAngle은 Math.PI * 3 / 4이다', () => {
-    expect(normalAngle({ a: { x: 0, y: 0 }, b: { x: 1, y: 1 } })).toBeCloseTo((Math.PI * 3) / 4);
+    expect(normalAngle({ x1: 0, y1: 0, x2: 1, y2: 1 })).toBeCloseTo((Math.PI * 3) / 4);
   });
 
   test('zero-length segment의 normalAngle은 Math.PI / 2이다', () => {
-    expect(normalAngle({ a: { x: 0, y: 0 }, b: { x: 0, y: 0 } })).toBeCloseTo(Math.PI / 2);
-  });
-
-  test('tuple endpoint segment를 지원한다', () => {
-    expect(
-      normalAngle([
-        [0, 0],
-        [1, 0],
-      ])
-    ).toBeCloseTo(Math.PI / 2);
+    expect(normalAngle({ x1: 0, y1: 0, x2: 0, y2: 0 })).toBeCloseTo(Math.PI / 2);
   });
 });

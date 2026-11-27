@@ -7,8 +7,7 @@ import { isZeroLength } from '../../../src/segment/is-zero-length';
 import { length } from '../../../src/segment/length';
 import { lengthSq } from '../../../src/segment/length-sq';
 import { normalInto } from '../../../src/segment/normal-into';
-import type { XYWritable } from '../../../src/types';
-import { expectCloseXY, expectXY, xyOut } from './lifecycle-measurement-test-helpers';
+import { expectCloseXY, expectXY } from './lifecycle-measurement-test-helpers';
 
 describe('segment 측정 - length/lengthSq', () => {
   test.each([
@@ -122,27 +121,27 @@ describe('segment 법선 - normalInto', () => {
   test.each([
     {
       name: '수평 segment의 left normal은 (0, 1)이다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } },
+      seg: { x1: 0, y1: 0, x2: 1, y2: 0 },
       side: undefined,
       expected: { x: 0, y: 1 },
       checkReturn: true,
     },
     {
       name: '수평 segment의 right normal은 (0, -1)이다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } },
+      seg: { x1: 0, y1: 0, x2: 1, y2: 0 },
       side: 'right' as const,
       expected: { x: 0, y: -1 },
       checkReturn: false,
     },
     {
       name: '수직 segment의 left normal은 (-1, 0)이다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 0, y: 1 } },
+      seg: { x1: 0, y1: 0, x2: 0, y2: 1 },
       side: undefined,
       expected: { x: -1, y: 0 },
       checkReturn: false,
     },
   ])('$name', ({ seg, side, expected, checkReturn }) => {
-    const out = xyOut();
+    const out = { x: 0, y: 0 };
 
     const result = normalInto(out, seg, side);
 
@@ -153,20 +152,11 @@ describe('segment 법선 - normalInto', () => {
   });
 
   test('zero-length segment의 normal은 (0, 0)이다', () => {
-    const out: XYWritable = { x: 1, y: 1 };
+    const out = { x: 1, y: 1 };
 
-    normalInto(out, { a: { x: 3, y: 4 }, b: { x: 3, y: 4 } });
+    normalInto(out, { x1: 3, y1: 4, x2: 3, y2: 4 });
 
     expectXY(out, { x: 0, y: 0 });
-  });
-
-  test('mutable tuple out에 normal을 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-
-    const result = normalInto(out, { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } });
-
-    expect(result).toBe(out);
-    expectCloseXY(out, { x: 0, y: 1 });
   });
 });
 

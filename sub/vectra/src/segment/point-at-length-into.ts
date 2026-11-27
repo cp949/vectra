@@ -1,6 +1,5 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { PointAtLengthOptions, SegmentLike, XYWritable } from '../types';
+import type { PointAtLengthOptions } from '../types';
+import type { Segment, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -13,34 +12,45 @@ import { hypot2 } from '../internal/numeric';
  * - `distance`가 `NaN`이면 clamp 비교가 모두 false이므로 default clamp 경로에서 extrapolation과
  *   동일한 NaN 좌표가 기록된다. non-finite 입력은 별도 validation 없이 JavaScript number 연산
  *   결과를 따른다.
- * - self-aliasing 안전: write 전 입력 좌표를 local 변수에 읽는다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param line 대상 segment
  * @param distance segment 시작점에서의 arc-length 거리
  * @param options clamp 정책 옵션
  */
-export function pointAtLengthInto<Out extends XYWritable>(
+export function pointAtLengthInto<Out extends PointWritable>(
   out: Out,
-  line: SegmentLike,
+  line: Segment,
   distance: number,
   options?: PointAtLengthOptions
 ): Out {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const dx = readX(b) - ax;
-  const dy = readY(b) - ay;
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   const len = hypot2(dx, dy);
 
-  if (len === 0) return writeXY(out, ax, ay);
+  if (len === 0) {
+    out.x = ax;
+    out.y = ay;
+    return out;
+  }
 
   const shouldClamp = options?.clamp !== false;
   if (shouldClamp) {
-    if (distance <= 0) return writeXY(out, ax, ay);
-    if (distance >= len) return writeXY(out, ax + dx, ay + dy);
+    if (distance <= 0) {
+      out.x = ax;
+      out.y = ay;
+      return out;
+    }
+    if (distance >= len) {
+      out.x = ax + dx;
+      out.y = ay + dy;
+      return out;
+    }
   }
   const t = distance / len;
-  return writeXY(out, ax + t * dx, ay + t * dy);
+  out.x = ax + t * dx;
+  out.y = ay + t * dy;
+  return out;
 }

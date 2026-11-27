@@ -1,4 +1,5 @@
-import type { PointAtLengthOptions, SegmentLike, XYObjectWritable } from '../types';
+import type { PointAtLengthOptions } from '../types';
+import type { Segment, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtLengthInto } from './point-at-length-into';
 
 /**
@@ -16,6 +17,6 @@ import { pointAtLengthInto } from './point-at-length-into';
  * @param distance segment 시작점에서의 arc-length 거리
  * @param options clamp 정책 옵션
  */
-export function pointAtLength(line: SegmentLike, distance: number, options?: PointAtLengthOptions): XYObjectWritable {
+export function pointAtLength(line: Segment, distance: number, options?: PointAtLengthOptions): PointWritable {
   return pointAtLengthInto({ x: 0, y: 0 }, line, distance, options);
 }

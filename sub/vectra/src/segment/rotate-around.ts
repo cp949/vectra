@@ -1,5 +1,5 @@
-import type { SegmentLike, SegmentWritable, XYInput } from '../types';
-import { createLegacySegment } from '../internal/segment';
+import type { Segment, SegmentWritable, Point } from '../types/flat-shapes.internal';
+import { createZeroSegment } from '../internal/segment';
 import { rotateAroundInto } from './rotate-around-into';
 
 /**
@@ -9,6 +9,6 @@ import { rotateAroundInto } from './rotate-around-into';
  * @param center 회전 중심점
  * @param angle 회전각(radian, CCW)
  */
-export function rotateAround(line: SegmentLike, center: XYInput, angle: number): SegmentWritable {
-  return rotateAroundInto(createLegacySegment(), line, center, angle);
+export function rotateAround(line: Segment, center: Point, angle: number): SegmentWritable {
+  return rotateAroundInto(createZeroSegment(), line, center, angle);
 }

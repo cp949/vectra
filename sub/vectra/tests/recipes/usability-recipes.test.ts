@@ -26,7 +26,6 @@ describe('레시피 1: segment 투영과 snap point 계산', () => {
 
     const line = { x1: 0, y1: 0, x2: 100, y2: 0 };
     // v2-migration: projectionT는 아직 중첩 끝점을 받는다.
-    const legacyLine = { a: { x: line.x1, y: line.y1 }, b: { x: line.x2, y: line.y2 } };
     const pointer = { x: 50, y: 30 };
 
     // caller-owned output — 재사용 가능한 object
@@ -40,7 +39,7 @@ describe('레시피 1: segment 투영과 snap point 계산', () => {
     expect(snap.y).toBeCloseTo(0, 10);
 
     // scalar 결과는 직접 반환한다
-    const t = projectionT(legacyLine, pointer);
+    const t = projectionT(line, pointer);
     expect(t).toBeCloseTo(0.5, 10);
 
     const dist = distanceToPoint(line, pointer);

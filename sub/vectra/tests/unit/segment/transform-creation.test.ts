@@ -45,23 +45,27 @@ describe('segment 변환 - translateInto/rotateAroundInto', () => {
   });
 
   test('원점 기준 CCW 90도 회전 시 (1,0)→(0,1)로 이동한다', () => {
-    const out = segmentOut();
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
 
-    const result = rotateAroundInto(out, { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } }, { x: 0, y: 0 }, Math.PI / 2);
+    const result = rotateAroundInto(out, { x1: 0, y1: 0, x2: 1, y2: 0 }, { x: 0, y: 0 }, Math.PI / 2);
 
     expect(result).toBe(out);
-    expectCloseXY(out.a, { x: 0, y: 0 });
-    expectCloseXY(out.b, { x: 0, y: 1 });
+    expect(out.x1).toBeCloseTo(0);
+    expect(out.y1).toBeCloseTo(0);
+    expect(out.x2).toBeCloseTo(0);
+    expect(out.y2).toBeCloseTo(1);
   });
 
-  test('rotateAroundInto은 out === line 형태의 self-aliasing도 안전하다', () => {
-    const seg: SegmentWritable = { a: { x: 1, y: 0 }, b: { x: 2, y: 0 } };
+  test('rotateAroundInto는 out === line 형태의 self-aliasing도 안전하다', () => {
+    const seg = { x1: 1, y1: 0, x2: 2, y2: 0 };
 
     const result = rotateAroundInto(seg, seg, { x: 0, y: 0 }, Math.PI / 2);
 
     expect(result).toBe(seg);
-    expectCloseXY(seg.a, { x: 0, y: 1 });
-    expectCloseXY(seg.b, { x: 0, y: 2 });
+    expect(seg.x1).toBeCloseTo(0);
+    expect(seg.y1).toBeCloseTo(1);
+    expect(seg.x2).toBeCloseTo(0);
+    expect(seg.y2).toBeCloseTo(2);
   });
 });
 

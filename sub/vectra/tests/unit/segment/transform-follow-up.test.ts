@@ -161,27 +161,27 @@ describe('segment transform - extendInto', () => {
 
 describe('segment transform - rotateInto', () => {
   test('원점 기준 CCW 회전 결과를 반환한다', () => {
-    const o = out();
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
     // (1,0) → (0,1) after 90 degrees CCW
-    rotateInto(o, seg(1, 0, 2, 0), Math.PI / 2);
-    expect((o.a as { x: number; y: number }).x).toBeCloseTo(0);
-    expect((o.a as { x: number; y: number }).y).toBeCloseTo(1);
-    expect((o.b as { x: number; y: number }).x).toBeCloseTo(0);
-    expect((o.b as { x: number; y: number }).y).toBeCloseTo(2);
+    rotateInto(o, { x1: 1, y1: 0, x2: 2, y2: 0 }, Math.PI / 2);
+    expect(o.x1).toBeCloseTo(0);
+    expect(o.y1).toBeCloseTo(1);
+    expect(o.x2).toBeCloseTo(0);
+    expect(o.y2).toBeCloseTo(2);
   });
 
   test('self-aliasing이 올바른 결과를 반환한다', () => {
-    const o = seg(1, 0, 2, 0);
+    const o = { x1: 1, y1: 0, x2: 2, y2: 0 };
     rotateInto(o, o, Math.PI / 2);
-    expect((o.a as { x: number; y: number }).x).toBeCloseTo(0);
-    expect((o.a as { x: number; y: number }).y).toBeCloseTo(1);
+    expect(o.x1).toBeCloseTo(0);
+    expect(o.y1).toBeCloseTo(1);
   });
 
   test('rotate companion이 새 plain object를 반환한다', () => {
-    const result = rotate(seg(1, 0, 2, 0), Math.PI);
-    expect((result.a as { x: number; y: number }).x).toBeCloseTo(-1);
-    expect((result.a as { x: number; y: number }).y).toBeCloseTo(0);
-    expect((result.b as { x: number; y: number }).x).toBeCloseTo(-2);
-    expect((result.b as { x: number; y: number }).y).toBeCloseTo(0);
+    const result = rotate({ x1: 1, y1: 0, x2: 2, y2: 0 }, Math.PI);
+    expect(result.x1).toBeCloseTo(-1);
+    expect(result.y1).toBeCloseTo(0);
+    expect(result.x2).toBeCloseTo(-2);
+    expect(result.y2).toBeCloseTo(0);
   });
 });

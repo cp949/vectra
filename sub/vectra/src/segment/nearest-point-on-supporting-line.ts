@@ -1,4 +1,4 @@
-import type { SegmentLike, XYInput, XYObjectWritable } from '../types';
+import type { Segment, Point, PointWritable } from '../types/flat-shapes.internal';
 import { nearestPointOnSupportingLineInto } from './nearest-point-on-supporting-line-into';
 
 /**
@@ -13,6 +13,6 @@ import { nearestPointOnSupportingLineInto } from './nearest-point-on-supporting-
  * @param line 기준 segment
  * @param point supporting line에 투영할 point
  */
-export function nearestPointOnSupportingLine(line: SegmentLike, point: XYInput): XYObjectWritable {
+export function nearestPointOnSupportingLine(line: Segment, point: Point): PointWritable {
   return nearestPointOnSupportingLineInto({ x: 0, y: 0 }, line, point);
 }

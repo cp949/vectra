@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { SegmentLike, XYInput, XYWritable } from '../types';
+import type { Segment, Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * `point`를 segment의 supporting infinite line에 투영한 점을 out에 기록하고 out을 반환한다.
@@ -13,26 +11,30 @@ import type { SegmentLike, XYInput, XYWritable } from '../types';
  * - self-aliasing 안전: write 전 입력 좌표를 local 변수에 읽는다. `out`과 `point`가 같은
  *   object여도 안전하다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param line 기준 segment
  * @param point supporting line에 투영할 point
  * @see projectPointInto
  */
-export function nearestPointOnSupportingLineInto<Out extends XYWritable>(
+export function nearestPointOnSupportingLineInto<Out extends PointWritable>(
   out: Out,
-  line: SegmentLike,
-  point: XYInput
+  line: Segment,
+  point: Point
 ): Out {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const dx = readX(b) - ax;
-  const dy = readY(b) - ay;
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   const lenSq = dx * dx + dy * dy;
-  if (lenSq === 0) return writeXY(out, ax, ay);
-  const px = readX(point) - ax;
-  const py = readY(point) - ay;
+  if (lenSq === 0) {
+    out.x = ax;
+    out.y = ay;
+    return out;
+  }
+  const px = point.x - ax;
+  const py = point.y - ay;
   const t = (px * dx + py * dy) / lenSq;
-  return writeXY(out, ax + t * dx, ay + t * dy);
+  out.x = ax + t * dx;
+  out.y = ay + t * dy;
+  return out;
 }

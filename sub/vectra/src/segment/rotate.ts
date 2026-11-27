@@ -1,5 +1,5 @@
-import type { SegmentLike, SegmentWritable } from '../types';
-import { createLegacySegment } from '../internal/segment';
+import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
+import { createZeroSegment } from '../internal/segment';
 import { rotateInto } from './rotate-into';
 
 /**
@@ -8,6 +8,6 @@ import { rotateInto } from './rotate-into';
  * @param line 회전할 segment
  * @param angle 회전각(radian, CCW)
  */
-export function rotate(line: SegmentLike, angle: number): SegmentWritable {
-  return rotateInto(createLegacySegment(), line, angle);
+export function rotate(line: Segment, angle: number): SegmentWritable {
+  return rotateInto(createZeroSegment(), line, angle);
 }

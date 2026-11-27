@@ -1,4 +1,4 @@
-import type { SegmentLike, XYInput, XYObjectWritable } from '../types';
+import type { Segment, Point, PointWritable } from '../types/flat-shapes.internal';
 import { projectPointInto } from './project-point-into';
 
 /**
@@ -7,6 +7,6 @@ import { projectPointInto } from './project-point-into';
  * @param line projection을 계산할 segment
  * @param point segment에 투영할 point
  */
-export function projectPoint(line: SegmentLike, point: XYInput): XYObjectWritable {
+export function projectPoint(line: Segment, point: Point): PointWritable {
   return projectPointInto({ x: 0, y: 0 }, line, point);
 }

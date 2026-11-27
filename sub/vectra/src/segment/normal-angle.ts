@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike } from '../types';
+import type { Segment } from '../types/flat-shapes.internal';
 
 /**
  * segment a→b 방향의 left normal 방향각을 radian으로 반환한다. angle(line) + π/2와 같다.
@@ -8,10 +6,10 @@ import type { SegmentLike } from '../types';
  *
  * @param line 법선 각도를 계산할 segment
  */
-export function normalAngle(line: SegmentLike): number {
-  const ax = readX(readSegmentA(line));
-  const ay = readY(readSegmentA(line));
-  const bx = readX(readSegmentB(line));
-  const by = readY(readSegmentB(line));
+export function normalAngle(line: Segment): number {
+  const ax = line.x1;
+  const ay = line.y1;
+  const bx = line.x2;
+  const by = line.y2;
   return Math.atan2(by - ay, bx - ax) + Math.PI / 2;
 }

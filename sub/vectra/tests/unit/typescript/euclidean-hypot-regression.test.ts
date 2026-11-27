@@ -19,10 +19,10 @@ describe('Euclidean hypot regression', () => {
     expect(distance).toBe(Math.hypot(1e308, 1e308));
   });
 
-  test('segment normal preserves unit direction for huge segment vector', () => {
+  test('선분의 방향 벡터가 매우 커도 법선은 단위 벡터다', () => {
     const out = { x: 0, y: 0 };
 
-    normalInto(out, { a: { x: 0, y: 0 }, b: { x: 1e308, y: 1e308 } });
+    normalInto(out, { x1: 0, y1: 0, x2: 1e308, y2: 1e308 });
 
     expect(out.x).toBeCloseTo(-Math.SQRT1_2, 12);
     expect(out.y).toBeCloseTo(Math.SQRT1_2, 12);

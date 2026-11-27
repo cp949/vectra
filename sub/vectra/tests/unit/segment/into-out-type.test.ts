@@ -15,6 +15,16 @@ import { fromNormalInto } from '../../../src/segment/from-normal-into';
 import { fromPointVectorInto } from '../../../src/segment/from-point-vector-into';
 import { markerInto } from '../../../src/segment/marker-into';
 import { midpointInto } from '../../../src/segment/midpoint-into';
+import { nearestPointOnSupportingLine } from '../../../src/segment/nearest-point-on-supporting-line';
+import { nearestPointOnSupportingLineInto } from '../../../src/segment/nearest-point-on-supporting-line-into';
+import { normalInto } from '../../../src/segment/normal-into';
+import { pointAtLengthInto } from '../../../src/segment/point-at-length-into';
+import { pointAtTInto } from '../../../src/segment/point-at-t-into';
+import { projectPointInto } from '../../../src/segment/project-point-into';
+import { reverseInto } from '../../../src/segment/reverse-into';
+import { rotateAroundInto } from '../../../src/segment/rotate-around-into';
+import { rotateInto } from '../../../src/segment/rotate-into';
+import type { PointAtLengthOptions } from '../../../src/types';
 import type { PointWritable, Segment, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
 class OutputPoint {
@@ -125,4 +135,47 @@ test('markerInto는 새 점을 추가하므로 원소 타입을 PointWritable로
   expect(result).toBe(out);
   expect(result).toHaveLength(3);
   expect(result[0]).not.toBeInstanceOf(OutputPoint);
+});
+
+test('nearestPointOnSupportingLine은 평평한 선분을 받는다', () => {
+  expectTypeOf(nearestPointOnSupportingLine).parameter(0).toEqualTypeOf<Segment>();
+});
+
+test('거리 기반 위치 옵션은 clamp 필드를 요구한다', () => {
+  expectTypeOf<PointAtLengthOptions>().toEqualTypeOf<{ clamp: boolean }>();
+});
+
+test('선분 위치와 투영 및 법선 Into는 점 출력의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputPoint();
+  const line = { x1: 1, y1: 2, x2: 5, y2: 2 };
+  const point = { x: 3, y: 8 };
+  const nearest = nearestPointOnSupportingLineInto(out, line, point);
+  const normal = normalInto(out, line);
+  const atLength = pointAtLengthInto(out, line, 2);
+  const atT = pointAtTInto(out, line, 0.5);
+  const projected = projectPointInto(out, line, point);
+
+  expectTypeOf(nearest).toEqualTypeOf<OutputPoint>();
+  expectTypeOf(normal).toEqualTypeOf<OutputPoint>();
+  expectTypeOf(atLength).toEqualTypeOf<OutputPoint>();
+  expectTypeOf(atT).toEqualTypeOf<OutputPoint>();
+  expectTypeOf(projected).toEqualTypeOf<OutputPoint>();
+  for (const result of [nearest, normal, atLength, atT, projected]) {
+    expect(result).toBe(out);
+  }
+});
+
+test('선분 반전과 회전 Into는 선분 출력의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputSegment();
+  const line = { x1: 1, y1: 2, x2: 5, y2: 2 };
+  const reversed = reverseInto(out, line);
+  const rotatedAround = rotateAroundInto(out, line, { x: 1, y: 1 }, Math.PI);
+  const rotated = rotateInto(out, line, Math.PI);
+
+  expectTypeOf(reversed).toEqualTypeOf<OutputSegment>();
+  expectTypeOf(rotatedAround).toEqualTypeOf<OutputSegment>();
+  expectTypeOf(rotated).toEqualTypeOf<OutputSegment>();
+  for (const result of [reversed, rotatedAround, rotated]) {
+    expect(result).toBe(out);
+  }
 });

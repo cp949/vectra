@@ -71,58 +71,49 @@ describe('segment slope', () => {
 
 describe('segment perpSlope', () => {
   test('horizontal segment의 perpSlope는 Infinity이다', () => {
-    expect(perpSlope({ a: { x: 0, y: 0 }, b: { x: 4, y: 0 } })).toBe(Infinity);
+    expect(perpSlope({ x1: 0, y1: 0, x2: 4, y2: 0 })).toBe(Infinity);
   });
 
   test('vertical segment의 perpSlope는 0이다', () => {
-    expect(perpSlope({ a: { x: 2, y: 0 }, b: { x: 2, y: 3 } })).toBe(0);
+    expect(perpSlope({ x1: 2, y1: 0, x2: 2, y2: 3 })).toBe(0);
   });
 
   test('vertical segment (dy < 0)의 perpSlope는 0이다 (음수 dy에서도 -dx/dy=0)', () => {
     // dx=0, dy=-3 → -0 / -3 = 0
-    expect(perpSlope({ a: { x: 2, y: 3 }, b: { x: 2, y: 0 } })).toBe(0);
+    expect(perpSlope({ x1: 2, y1: 3, x2: 2, y2: 0 })).toBe(0);
   });
 
   test('zero-length segment의 perpSlope는 NaN이다', () => {
-    expect(Number.isNaN(perpSlope({ a: { x: 3, y: 3 }, b: { x: 3, y: 3 } }))).toBe(true);
+    expect(Number.isNaN(perpSlope({ x1: 3, y1: 3, x2: 3, y2: 3 }))).toBe(true);
   });
 
   test('diagonal 3-4 segment의 perpSlope는 -dx/dy이다', () => {
     // dx=3, dy=4 → -3/4
-    expect(perpSlope({ a: { x: 0, y: 0 }, b: { x: 3, y: 4 } })).toBeCloseTo(-3 / 4, 10);
+    expect(perpSlope({ x1: 0, y1: 0, x2: 3, y2: 4 })).toBeCloseTo(-3 / 4, 10);
   });
 
   test('reversed diagonal segment의 perpSlope는 같다', () => {
     // dx=-3, dy=-4 → -(-3)/(-4) = 3/-4 = -3/4
-    expect(perpSlope({ a: { x: 3, y: 4 }, b: { x: 0, y: 0 } })).toBeCloseTo(-3 / 4, 10);
-  });
-
-  test('tuple endpoint segment를 지원한다', () => {
-    expect(
-      perpSlope([
-        [0, 0],
-        [3, 4],
-      ])
-    ).toBeCloseTo(-3 / 4, 10);
+    expect(perpSlope({ x1: 3, y1: 4, x2: 0, y2: 0 })).toBeCloseTo(-3 / 4, 10);
   });
 
   describe('non-finite 입력 전파', () => {
-    test('a.x = NaN이면 NaN을 반환한다', () => {
-      expect(Number.isNaN(perpSlope({ a: { x: NaN, y: 0 }, b: { x: 3, y: 4 } }))).toBe(true);
+    test('x1 = NaN이면 NaN을 반환한다', () => {
+      expect(Number.isNaN(perpSlope({ x1: NaN, y1: 0, x2: 3, y2: 4 }))).toBe(true);
     });
 
-    test('b.x = Infinity이면 -Infinity/dy를 반환한다', () => {
+    test('x2 = Infinity이면 -Infinity/dy를 반환한다', () => {
       // dx = Infinity - 0 = Infinity, dy = 4 → -Infinity / 4 = -Infinity
-      expect(perpSlope({ a: { x: 0, y: 0 }, b: { x: Infinity, y: 4 } })).toBe(-Infinity);
+      expect(perpSlope({ x1: 0, y1: 0, x2: Infinity, y2: 4 })).toBe(-Infinity);
     });
 
-    test('b.y = -Infinity이면 0을 반환한다', () => {
+    test('y2 = -Infinity이면 0을 반환한다', () => {
       // dx=3, dy=-Infinity → -3 / (-Infinity) = 0 (IEEE 754)
-      expect(perpSlope({ a: { x: 0, y: 0 }, b: { x: 3, y: -Infinity } })).toBe(0);
+      expect(perpSlope({ x1: 0, y1: 0, x2: 3, y2: -Infinity })).toBe(0);
     });
 
-    test('b.x = NaN이면 NaN을 반환한다 (dx=NaN, dy=0 — horizontal 분기가 NaN을 가로채지 않아야 한다)', () => {
-      expect(Number.isNaN(perpSlope({ a: { x: 0, y: 0 }, b: { x: NaN, y: 0 } }))).toBe(true);
+    test('x2 = NaN이면 NaN을 반환한다 (dx=NaN, dy=0 — horizontal 분기가 NaN을 가로채지 않아야 한다)', () => {
+      expect(Number.isNaN(perpSlope({ x1: 0, y1: 0, x2: NaN, y2: 0 }))).toBe(true);
     });
   });
 });
@@ -225,7 +216,7 @@ describe('segment signedDistanceToSupportingLine', () => {
 // --- sideOfSupportingLine ---
 
 describe('segment sideOfSupportingLine', () => {
-  const seg = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } };
+  const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
 
   test('좌측 point는 1을 반환한다', () => {
     // signed dist = 3 > epsilon → 1
@@ -262,7 +253,7 @@ describe('segment sideOfSupportingLine', () => {
   });
 
   test('zero-length segment는 0을 반환한다', () => {
-    const zeroSeg = { a: { x: 3, y: 3 }, b: { x: 3, y: 3 } };
+    const zeroSeg = { x1: 3, y1: 3, x2: 3, y2: 3 };
     expect(sideOfSupportingLine(zeroSeg, { x: 10, y: 20 })).toBe(0);
   });
 
@@ -272,26 +263,9 @@ describe('segment sideOfSupportingLine', () => {
     expect(sideOfSupportingLine(seg, { x: 2, y: NaN })).toBe(0);
   });
 
-  test('a.x = NaN이면 0을 반환한다 (literal union guard)', () => {
-    const nanSeg = { a: { x: NaN, y: 0 }, b: { x: 4, y: 0 } };
+  test('x1 = NaN이면 0을 반환한다 (literal union guard)', () => {
+    const nanSeg = { x1: NaN, y1: 0, x2: 4, y2: 0 };
     expect(sideOfSupportingLine(nanSeg, { x: 2, y: 3 })).toBe(0);
-  });
-
-  test('tuple endpoint segment를 지원한다', () => {
-    expect(
-      sideOfSupportingLine(
-        [
-          [0, 0],
-          [4, 0],
-        ],
-        { x: 2, y: 3 }
-      )
-    ).toBe(1);
-  });
-
-  test('tuple point input을 지원한다', () => {
-    expect(sideOfSupportingLine(seg, [2, 3])).toBe(1);
-    expect(sideOfSupportingLine(seg, [2, -3])).toBe(-1);
   });
 
   describe('non-finite 입력 전파 — literal union guard', () => {
