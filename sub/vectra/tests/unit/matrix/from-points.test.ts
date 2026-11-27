@@ -1,3 +1,6 @@
+/**
+ * 세 점 쌍의 아핀 행렬과 퇴화 입력을 검증한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { readX, readY } from '../../../src/internal/xy';
 import { fromPoints } from '../../../src/matrix/from-points';
@@ -99,22 +102,6 @@ describe('matrix factory - fromPointsInto', () => {
     expect(out.d).toBeCloseTo(1, 12);
     expect(out.tx).toBeCloseTo(0, 12);
     expect(out.ty).toBeCloseTo(0, 12);
-  });
-
-  test('tuple point input도 처리한다', () => {
-    const out = makeMatrix();
-    const from = [
-      [0, 0],
-      [1, 0],
-      [0, 1],
-    ] as const;
-    const to = [
-      [0, 0],
-      [2, 0],
-      [0, 3],
-    ] as const;
-    expect(fromPointsInto(out, from, to)).toBe(true);
-    expect(out).toEqual({ a: 2, b: 0, c: 0, d: 3, tx: 0, ty: 0 });
   });
 
   test('collinear source 점은 false를 반환하고 out을 수정하지 않는다', () => {

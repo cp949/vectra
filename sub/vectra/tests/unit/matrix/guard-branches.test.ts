@@ -14,8 +14,8 @@ describe('fitBoundsInto — cover 모드', () => {
   test('세로로 긴 src는 width 기준 scale로 dest를 덮는다', () => {
     // src 100×200, dest 100×100 → srcRatio 0.5 <= destRatio 1 → scale = 100/100 = 1
     const out = makeMatrix();
-    const src = { min: { x: 0, y: 0 }, max: { x: 100, y: 200 } };
-    const dest = { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } };
+    const src = { minX: 0, minY: 0, maxX: 100, maxY: 200 };
+    const dest = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
     fitBoundsInto(out, src, dest, { mode: 'cover' });
     expectNearMatrix(out, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: -50 });
   });
@@ -23,8 +23,8 @@ describe('fitBoundsInto — cover 모드', () => {
   test('가로로 긴 src는 height 기준 scale로 dest를 덮는다', () => {
     // src 200×100, dest 100×100 → srcRatio 2 > destRatio 1 → scale = 100/100 = 1
     const out = makeMatrix();
-    const src = { min: { x: 0, y: 0 }, max: { x: 200, y: 100 } };
-    const dest = { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } };
+    const src = { minX: 0, minY: 0, maxX: 200, maxY: 100 };
+    const dest = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
     fitBoundsInto(out, src, dest, { mode: 'cover' });
     expectNearMatrix(out, { a: 1, b: 0, c: 0, d: 1, tx: -50, ty: 0 });
   });
@@ -35,7 +35,7 @@ describe('fitRectInto — cover 모드', () => {
     const out = makeMatrix();
     const src = { x: 0, y: 0, width: 200, height: 100 };
     const dest = { x: 0, y: 0, width: 100, height: 100 };
-    fitRectInto(out, src, dest, { mode: 'cover' });
+    fitRectInto(out, src, dest, { mode: 'cover', flipY: false });
     expectNearMatrix(out, { a: 1, b: 0, c: 0, d: 1, tx: -50, ty: 0 });
   });
 });

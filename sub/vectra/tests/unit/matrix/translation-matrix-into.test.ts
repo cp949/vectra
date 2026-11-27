@@ -1,3 +1,6 @@
+/**
+ * 이동 행렬의 성분과 출력 참조를 검증한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { translationMatrixInto } from '../../../src/matrix/translation-matrix-into';
 import type { MatrixWritable } from '../../../src/types';
@@ -9,12 +12,6 @@ describe('matrix factory - translationMatrixInto', () => {
     const result = translationMatrixInto(out, { x: 3, y: 7 });
     expect(result).toBe(out);
     expect(out).toEqual({ a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 7 });
-  });
-
-  test('tuple offset으로 translation matrix를 기록한다', () => {
-    const out = makeMatrix();
-    translationMatrixInto(out, [5, -2]);
-    expect(out).toEqual({ a: 1, b: 0, c: 0, d: 1, tx: 5, ty: -2 });
   });
 
   test('zero offset은 identity matrix를 기록한다', () => {

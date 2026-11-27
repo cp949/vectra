@@ -4,7 +4,7 @@ export type {
   CenterArcWritable,
   EndpointArcCorrectionWritable,
 } from './arc.internal';
-export type { BoundsLike, BoundsObjectLike, BoundsPaddingLike, BoundsTuple, BoundsWritable } from './bounds.internal';
+export type { BoundsLike, BoundsObjectLike, BoundsTuple, BoundsWritable } from './bounds.internal';
 export type { CapsuleLike, CapsuleObjectLike, CapsuleTuple, CapsuleWritable } from './capsule.internal';
 export type { CircleLike, CircleObjectLike, CircleTuple, CircleWritable } from './circle.internal';
 export type {

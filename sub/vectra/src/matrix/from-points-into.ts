@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { MatrixWritable, XYInput } from '../types';
+import type { MatrixWritable, Point } from '../types/flat-shapes.internal';
 
 /**
  * 세 source 점을 세 target 점으로 보내는 2D affine matrix를 out에 기록하고 성공 여부를 반환한다.
@@ -16,33 +15,33 @@ import type { MatrixWritable, XYInput } from '../types';
  * `out`과 입력 점은 서로 다른 shape이므로 aliasing 의미가 없다. 그래도 좌표를 모두 local로 먼저 읽은 뒤
  * `out`에 기록한다.
  *
- * @param out affine matrix를 기록할 writable output
+ * @param out affine matrix를 기록할 객체
  * @param from source 점 3개
  * @param to from과 같은 index로 대응하는 target 점 3개
  */
-export function fromPointsInto<Out extends MatrixWritable>(
-  out: Out,
-  from: readonly [XYInput, XYInput, XYInput],
-  to: readonly [XYInput, XYInput, XYInput]
+export function fromPointsInto(
+  out: MatrixWritable,
+  from: readonly [Point, Point, Point],
+  to: readonly [Point, Point, Point]
 ): boolean {
-  const f0x = readX(from[0]);
-  const f0y = readY(from[0]);
-  const u1x = readX(from[1]) - f0x;
-  const u1y = readY(from[1]) - f0y;
-  const u2x = readX(from[2]) - f0x;
-  const u2y = readY(from[2]) - f0y;
+  const f0x = from[0].x;
+  const f0y = from[0].y;
+  const u1x = from[1].x - f0x;
+  const u1y = from[1].y - f0y;
+  const u2x = from[2].x - f0x;
+  const u2y = from[2].y - f0y;
 
   const det = u1x * u2y - u2x * u1y;
   if (det === 0) {
     return false;
   }
 
-  const t0x = readX(to[0]);
-  const t0y = readY(to[0]);
-  const v1x = readX(to[1]) - t0x;
-  const v1y = readY(to[1]) - t0y;
-  const v2x = readX(to[2]) - t0x;
-  const v2y = readY(to[2]) - t0y;
+  const t0x = to[0].x;
+  const t0y = to[0].y;
+  const v1x = to[1].x - t0x;
+  const v1y = to[1].y - t0y;
+  const v2x = to[2].x - t0x;
+  const v2y = to[2].y - t0y;
 
   // linear part = [v1 v2] * [u1 u2]^-1
   const a = (v1x * u2y - v2x * u1y) / det;

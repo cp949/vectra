@@ -15,7 +15,7 @@ describe('matrix builder - fitRectInto', () => {
     const out = makeMatrix();
     const src = { x: 0, y: 0, width: 100, height: 100 };
     const dest = { x: 0, y: 0, width: 200, height: 100 };
-    fitRectInto(out, src, dest, { mode: 'contain' });
+    fitRectInto(out, src, dest, { mode: 'contain', flipY: false });
     // srcRatio=1, destRatio=2 → srcRatio <= destRatio → height 기준 scale = 100/100 = 1
     // scaledW=100, center offset = (200-100)/2 = 50
     expect(out.a).toBeCloseTo(1);
@@ -29,7 +29,7 @@ describe('matrix builder - fitRectInto', () => {
     const out = makeMatrix();
     const src = { x: 0, y: 0, width: 200, height: 100 };
     const dest = { x: 0, y: 0, width: 100, height: 100 };
-    fitRectInto(out, src, dest, { mode: 'contain' });
+    fitRectInto(out, src, dest, { mode: 'contain', flipY: false });
     expect(out.a).toBeCloseTo(0.5);
     expect(out.d).toBeCloseTo(0.5);
     expect(out.tx).toBeCloseTo(0);
@@ -41,7 +41,7 @@ describe('matrix builder - fitRectInto', () => {
     const out = makeMatrix();
     const src = { x: 0, y: 0, width: 100, height: 100 };
     const dest = { x: 0, y: 0, width: 200, height: 100 };
-    fitRectInto(out, src, dest, { mode: 'cover' });
+    fitRectInto(out, src, dest, { mode: 'cover', flipY: false });
     expect(out.a).toBeCloseTo(2);
     expect(out.d).toBeCloseTo(2);
   });
@@ -50,7 +50,7 @@ describe('matrix builder - fitRectInto', () => {
     const out = makeMatrix();
     const src = { x: 0, y: 0, width: 100, height: 50 };
     const dest = { x: 10, y: 20, width: 200, height: 100 };
-    fitRectInto(out, src, dest, { mode: 'stretch' });
+    fitRectInto(out, src, dest, { mode: 'stretch', flipY: false });
     expect(out.a).toBeCloseTo(2);
     expect(out.d).toBeCloseTo(2);
     expect(out.tx).toBeCloseTo(10);
@@ -63,7 +63,7 @@ describe('matrix builder - fitRectInto', () => {
     const src = { x: 0, y: 0, width: 100, height: 100 };
     const dest = { x: 0, y: 0, width: 200, height: 100 };
     fitRectInto(out1, src, dest);
-    fitRectInto(out2, src, dest, { mode: 'contain' });
+    fitRectInto(out2, src, dest, { mode: 'contain', flipY: false });
     expectNearMatrix(out1, out2);
   });
 
@@ -88,6 +88,7 @@ describe('matrix builder - fitRectInto', () => {
         { x: 0, y: 0, width: 10, height: 10 },
         {
           mode: 'invalid' as never,
+          flipY: false,
         }
       )
     ).toThrow(RangeError);
@@ -105,13 +106,6 @@ describe('matrix builder - fitRectInto', () => {
     const src = { x: 0, y: 0, width: 100, height: 100 };
     const dest = { x: 0, y: 0, width: 100, height: 100 };
     expect(fitRectInto(out, src, dest)).toBe(out);
-  });
-
-  test('tuple RectLike input도 처리한다', () => {
-    const out = makeMatrix();
-    // [x, y, width, height]
-    fitRectInto(out, [0, 0, 100, 100], [0, 0, 100, 100]);
-    expectNearMatrix(out, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
   });
 
   test('src와 dest 크기가 같으면 identity에 가까운 matrix를 기록한다', () => {
@@ -201,6 +195,7 @@ describe('matrix builder - fitRectInto', () => {
       { x: 0, y: 0, width: 0, height: 100 },
       { x: 0, y: 0, width: 100, height: 100 },
       {
+        mode: 'contain',
         flipY: true,
       }
     );
@@ -214,6 +209,7 @@ describe('matrix builder - fitRectInto', () => {
       { x: 0, y: 0, width: 100, height: 100 },
       { x: 0, y: 0, width: 0, height: 0 },
       {
+        mode: 'contain',
         flipY: true,
       }
     );
@@ -228,6 +224,7 @@ describe('matrix builder - fitRectInto', () => {
         { x: NaN, y: 0, width: 100, height: 100 },
         { x: 0, y: 0, width: 100, height: 100 },
         {
+          mode: 'contain',
           flipY: true,
         }
       )
@@ -242,6 +239,7 @@ describe('matrix builder - fitRectInto', () => {
         { x: Infinity, y: 0, width: 100, height: 100 },
         { x: 0, y: 0, width: 100, height: 100 },
         {
+          mode: 'contain',
           flipY: true,
         }
       )

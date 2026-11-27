@@ -1,11 +1,9 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, MatrixWritable } from '../types';
+import type { Bounds, MatrixWritable } from '../types/flat-shapes.internal';
 
-/** fitBoundsInto / fitBounds 옵션. */
+/** fitBoundsInto / fitBounds 옵션. 옵션을 생략하면 `mode: 'contain'`을 적용한다. */
 export interface FitBoundsOptions {
-  /** fit mode. 기본값 `'contain'`. */
-  mode?: 'contain' | 'cover' | 'stretch';
+  /** 맞춤 방식. */
+  mode: 'contain' | 'cover' | 'stretch';
 }
 
 /**
@@ -18,35 +16,30 @@ export interface FitBoundsOptions {
  * - `'cover'`: aspect ratio 유지, dest를 완전 덮음.
  * - `'stretch'`: aspect ratio 무시, dest에 정확히 맞춤.
  *
- * @param out transform matrix를 기록할 writable output
+ * @param out transform matrix를 기록할 객체
  * @param srcBounds 변환할 source bounds
  * @param destBounds 목적지 bounds
  * @param options fit 옵션
  */
 export function fitBoundsInto<Out extends MatrixWritable>(
   out: Out,
-  srcBounds: BoundsLike,
-  destBounds: BoundsLike,
+  srcBounds: Bounds,
+  destBounds: Bounds,
   options?: FitBoundsOptions
 ): Out {
-  const mode = options?.mode ?? 'contain';
+  const mode = options === undefined ? 'contain' : options.mode;
   if (mode !== 'contain' && mode !== 'cover' && mode !== 'stretch') {
     throw new RangeError(`유효하지 않은 mode: "${String(mode)}". 'contain', 'cover', 'stretch' 중 하나여야 한다.`);
   }
 
-  const srcMin = readBoundsMin(srcBounds);
-  const srcMax = readBoundsMax(srcBounds);
-  const destMin = readBoundsMin(destBounds);
-  const destMax = readBoundsMax(destBounds);
-
-  const sMinX = readX(srcMin);
-  const sMinY = readY(srcMin);
-  const sMaxX = readX(srcMax);
-  const sMaxY = readY(srcMax);
-  const dMinX = readX(destMin);
-  const dMinY = readY(destMin);
-  const dMaxX = readX(destMax);
-  const dMaxY = readY(destMax);
+  const sMinX = srcBounds.minX;
+  const sMinY = srcBounds.minY;
+  const sMaxX = srcBounds.maxX;
+  const sMaxY = srcBounds.maxY;
+  const dMinX = destBounds.minX;
+  const dMinY = destBounds.minY;
+  const dMaxX = destBounds.maxX;
+  const dMaxY = destBounds.maxY;
 
   if (
     !Number.isFinite(sMinX) ||

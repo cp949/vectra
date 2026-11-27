@@ -48,14 +48,6 @@ describe('matrix builder - rotationAroundPointInto', () => {
     expect(out.ty).toBeCloseTo(10);
   });
 
-  test('tuple XYInput point를 처리한다', () => {
-    const out = makeMatrix();
-    rotationAroundPointInto(out, [0, 0], Math.PI / 4);
-    const cosA = Math.cos(Math.PI / 4);
-    const sinA = Math.sin(Math.PI / 4);
-    expectNearMatrix(out, { a: cosA, b: sinA, c: -sinA, d: cosA, tx: 0, ty: 0 });
-  });
-
   test('out을 반환한다', () => {
     const out = makeMatrix();
     expect(rotationAroundPointInto(out, { x: 0, y: 0 }, 0)).toBe(out);

@@ -1,6 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import { readX, readY } from '../internal/xy';
-import type { MatrixLike, MatrixWritable, XYInput } from '../types';
+import type { Matrix, MatrixWritable, Point } from '../types/flat-shapes.internal';
 import { assertFinite } from './viewport.internal';
 
 /**
@@ -14,25 +12,25 @@ import { assertFinite } from './viewport.internal';
  * matrix 또는 focal point component가 finite하지 않으면 `RangeError`를 던진다.
  * 모든 입력 component를 먼저 읽으므로 `out === matrix` aliasing이 안전하다.
  *
- * @param out 합성된 transform matrix를 기록할 writable output
+ * @param out 합성된 transform matrix를 기록할 객체
  * @param matrix zoom을 합성할 기존 transform matrix
  * @param focalPoint output coordinate space에서 고정할 focal point
  * @param scaleFactor 양수 zoom scale factor
  */
 export function zoomAtPointInto<Out extends MatrixWritable>(
   out: Out,
-  matrix: MatrixLike,
-  focalPoint: XYInput,
+  matrix: Matrix,
+  focalPoint: Point,
   scaleFactor: number
 ): Out {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
-  const fx = readX(focalPoint);
-  const fy = readY(focalPoint);
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
+  const fx = focalPoint.x;
+  const fy = focalPoint.y;
 
   assertFinite([a, b, c, d, tx, ty, fx, fy, scaleFactor]);
   if (scaleFactor <= 0) {

@@ -1,19 +1,18 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { MatrixWritable, RectLike } from '../types';
+import type { MatrixWritable, Rect } from '../types/flat-shapes.internal';
 
-/** fitRectInto / fitRect 옵션. */
+/** fitRectInto / fitRect 옵션. 옵션을 생략하면 `mode: 'contain'`과 `flipY: false`을 적용한다. */
 export interface FitRectOptions {
-  /** fit mode. 기본값 `'contain'`. */
-  mode?: 'contain' | 'cover' | 'stretch';
+  /** 맞춤 방식. */
+  mode: 'contain' | 'cover' | 'stretch';
   /**
-   * y축을 뒤집는다. 기본값 `false`.
+   * y축을 뒤집는다.
    *
    * `true`이면 `d < 0`으로 설정해 y축 방향을 반전시킨다.
    * contain / cover 모드에서는 scaled src가 dest 중심에 수직 반전된 채 배치된다.
    * stretch 모드에서는 각 축 독립 scale을 유지하면서 y축만 뒤집는다.
    * src 또는 dest가 empty이면 `flipY: true`여도 identity matrix를 기록한다.
    */
-  flipY?: boolean;
+  flipY: boolean;
 }
 
 /**
@@ -31,31 +30,31 @@ export interface FitRectOptions {
  * stretch 모드에서는 y축 scale만 반전된다.
  * src 또는 dest가 empty이면 `flipY: true`여도 identity matrix를 기록한다.
  *
- * @param out transform matrix를 기록할 writable output
+ * @param out transform matrix를 기록할 객체
  * @param srcRect 변환할 source rect
  * @param destRect 목적지 rect
  * @param options fit 옵션
  */
 export function fitRectInto<Out extends MatrixWritable>(
   out: Out,
-  srcRect: RectLike,
-  destRect: RectLike,
+  srcRect: Rect,
+  destRect: Rect,
   options?: FitRectOptions
 ): Out {
-  const mode = options?.mode ?? 'contain';
+  const mode = options === undefined ? 'contain' : options.mode;
   if (mode !== 'contain' && mode !== 'cover' && mode !== 'stretch') {
     throw new RangeError(`유효하지 않은 mode: "${String(mode)}". 'contain', 'cover', 'stretch' 중 하나여야 한다.`);
   }
   const flipY = options?.flipY === true;
 
-  const sx = readRectX(srcRect);
-  const sy = readRectY(srcRect);
-  const sw = readRectWidth(srcRect);
-  const sh = readRectHeight(srcRect);
-  const dx = readRectX(destRect);
-  const dy = readRectY(destRect);
-  const dw = readRectWidth(destRect);
-  const dh = readRectHeight(destRect);
+  const sx = srcRect.x;
+  const sy = srcRect.y;
+  const sw = srcRect.width;
+  const sh = srcRect.height;
+  const dx = destRect.x;
+  const dy = destRect.y;
+  const dw = destRect.width;
+  const dh = destRect.height;
 
   if (
     !Number.isFinite(sx) ||

@@ -2,45 +2,17 @@
  * matrix viewport zoom helper의 domain-local shared 계산.
  *
  * `zoom-to-fit-into` / `zoom-at-point-into` / `clamp-viewport-bounds-into` leaf가 공유하는
- * padding 정규화, finite 검증, bounds-to-bounds fit matrix, axis clamp 계산을 모은다.
+ * 기본 padding, finite 검증, bounds-to-bounds fit matrix, axis clamp 계산을 모은다.
  * public 함수끼리 import하지 않기 위한 낮은 internal helper다.
  */
 
-import type { BoundsPaddingLike, MatrixWritable } from '../types';
+import type { BoundsPadding, MatrixWritable } from '../types/flat-shapes.internal';
 
 /** zoomToFit fit mode. */
 export type ZoomFitMode = 'contain' | 'cover' | 'stretch';
 
-/** 네 방향 inset으로 정규화한 padding. */
-export interface ResolvedPadding {
-  top: number;
-  right: number;
-  bottom: number;
-  left: number;
-}
-
-/**
- * `number` 또는 `BoundsPaddingLike` padding을 네 방향 inset으로 정규화한다.
- *
- * `number`는 네 방향에 동일 inset을 적용한다. `BoundsPaddingLike`의 누락 방향은 0이다.
- * finite 검증은 하지 않는다. 호출자가 `assertFinite`로 따로 검증한다.
- *
- * @param padding 정규화할 padding 입력. 생략하면 0 inset.
- */
-export function resolvePadding(padding: BoundsPaddingLike | number | undefined): ResolvedPadding {
-  if (padding === undefined) {
-    return { top: 0, right: 0, bottom: 0, left: 0 };
-  }
-  if (typeof padding === 'number') {
-    return { top: padding, right: padding, bottom: padding, left: padding };
-  }
-  return {
-    top: padding.top ?? 0,
-    right: padding.right ?? 0,
-    bottom: padding.bottom ?? 0,
-    left: padding.left ?? 0,
-  };
-}
+/** 옵션을 생략했을 때 사용할 네 방향 inset. */
+export const ZERO_PADDING: BoundsPadding = { top: 0, right: 0, bottom: 0, left: 0 };
 
 /**
  * 모든 scalar component가 finite하지 않으면 `RangeError`를 던진다.

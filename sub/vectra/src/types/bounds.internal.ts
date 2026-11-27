@@ -23,18 +23,3 @@ export interface BoundsWritable<Min extends XYWritable = XYObjectWritable, Max e
   /** 기록 가능한 bounds 최댓값 corner */
   max: Max;
 }
-
-/** top/right/bottom/left 개별 양으로 표현하는 structural bounds padding input. */
-export interface BoundsPaddingLike {
-  /** top 방향 확장량. 미지정 시 0. */
-  readonly top?: number;
-
-  /** right 방향 확장량. 미지정 시 0. */
-  readonly right?: number;
-
-  /** bottom 방향 확장량. 미지정 시 0. */
-  readonly bottom?: number;
-
-  /** left 방향 확장량. 미지정 시 0. */
-  readonly left?: number;
-}

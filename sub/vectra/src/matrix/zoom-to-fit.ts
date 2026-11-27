@@ -1,4 +1,4 @@
-import type { BoundsLike, MatrixWritable } from '../types';
+import type { Bounds, MatrixWritable } from '../types/flat-shapes.internal';
 import { type ZoomToFitOptions, zoomToFitInto } from './zoom-to-fit-into';
 
 /**
@@ -11,10 +11,6 @@ import { type ZoomToFitOptions, zoomToFitInto } from './zoom-to-fit-into';
  * @param viewportBounds content를 담을 viewport bounds. padding으로 안쪽으로 줄어든다.
  * @param options fit mode와 padding 옵션
  */
-export function zoomToFit(
-  contentBounds: BoundsLike,
-  viewportBounds: BoundsLike,
-  options?: ZoomToFitOptions
-): MatrixWritable {
+export function zoomToFit(contentBounds: Bounds, viewportBounds: Bounds, options?: ZoomToFitOptions): MatrixWritable {
   return zoomToFitInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, contentBounds, viewportBounds, options);
 }

@@ -1,15 +1,13 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, BoundsPaddingLike, MatrixWritable } from '../types';
-import { assertFinite, fitBoundsMatrixInto, resolvePadding } from './viewport.internal';
+import type { Bounds, BoundsPadding, MatrixWritable } from '../types/flat-shapes.internal';
+import { assertFinite, fitBoundsMatrixInto, ZERO_PADDING } from './viewport.internal';
 
-/** zoomToFitInto / zoomToFit 옵션. */
+/** zoomToFitInto / zoomToFit 옵션. 옵션을 생략하면 `mode: 'contain'`과 네 방향 padding 0을 적용한다. */
 export interface ZoomToFitOptions {
-  /** fit mode. 기본값 `'contain'`. */
-  mode?: 'contain' | 'cover' | 'stretch';
+  /** 맞춤 방식. */
+  mode: 'contain' | 'cover' | 'stretch';
 
-  /** viewport를 안쪽으로 줄이는 inset. `number`는 네 방향 동일. 기본값 0. */
-  padding?: BoundsPaddingLike | number;
+  /** viewport를 안쪽으로 줄이는 네 방향 inset. */
+  padding: BoundsPadding;
 }
 
 /**
@@ -22,37 +20,32 @@ export interface ZoomToFitOptions {
  * - `'cover'`: aspect ratio 유지, padded viewport를 완전 덮음.
  * - `'stretch'`: aspect ratio 무시, padded viewport에 정확히 맞춤.
  *
- * @param out transform matrix를 기록할 writable output
+ * @param out transform matrix를 기록할 객체
  * @param contentBounds viewport에 맞출 content bounds
  * @param viewportBounds content를 담을 viewport bounds. padding으로 안쪽으로 줄어든다.
  * @param options fit mode와 padding 옵션
  */
 export function zoomToFitInto<Out extends MatrixWritable>(
   out: Out,
-  contentBounds: BoundsLike,
-  viewportBounds: BoundsLike,
+  contentBounds: Bounds,
+  viewportBounds: Bounds,
   options?: ZoomToFitOptions
 ): Out {
-  const mode = options?.mode ?? 'contain';
+  const mode = options === undefined ? 'contain' : options.mode;
   if (mode !== 'contain' && mode !== 'cover' && mode !== 'stretch') {
     throw new RangeError(`유효하지 않은 mode: "${String(mode)}". 'contain', 'cover', 'stretch' 중 하나여야 한다.`);
   }
 
-  const contentMin = readBoundsMin(contentBounds);
-  const contentMax = readBoundsMax(contentBounds);
-  const viewportMin = readBoundsMin(viewportBounds);
-  const viewportMax = readBoundsMax(viewportBounds);
+  const cMinX = contentBounds.minX;
+  const cMinY = contentBounds.minY;
+  const cMaxX = contentBounds.maxX;
+  const cMaxY = contentBounds.maxY;
+  const vMinX = viewportBounds.minX;
+  const vMinY = viewportBounds.minY;
+  const vMaxX = viewportBounds.maxX;
+  const vMaxY = viewportBounds.maxY;
 
-  const cMinX = readX(contentMin);
-  const cMinY = readY(contentMin);
-  const cMaxX = readX(contentMax);
-  const cMaxY = readY(contentMax);
-  const vMinX = readX(viewportMin);
-  const vMinY = readY(viewportMin);
-  const vMaxX = readX(viewportMax);
-  const vMaxY = readY(viewportMax);
-
-  const padding = resolvePadding(options?.padding);
+  const padding = options === undefined ? ZERO_PADDING : options.padding;
   assertFinite([
     cMinX,
     cMinY,

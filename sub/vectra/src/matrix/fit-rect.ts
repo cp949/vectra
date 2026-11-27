@@ -1,4 +1,4 @@
-import type { MatrixWritable, RectLike } from '../types';
+import type { MatrixWritable, Rect } from '../types/flat-shapes.internal';
 import { type FitRectOptions, fitRectInto } from './fit-rect-into';
 
 /**
@@ -16,6 +16,6 @@ import { type FitRectOptions, fitRectInto } from './fit-rect-into';
  * @param destRect 목적지 rect
  * @param options fit 옵션
  */
-export function fitRect(srcRect: RectLike, destRect: RectLike, options?: FitRectOptions): MatrixWritable {
+export function fitRect(srcRect: Rect, destRect: Rect, options?: FitRectOptions): MatrixWritable {
   return fitRectInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, srcRect, destRect, options);
 }

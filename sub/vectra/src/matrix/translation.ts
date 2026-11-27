@@ -1,4 +1,4 @@
-import type { MatrixWritable, XYInput } from '../types';
+import type { MatrixWritable, Point } from '../types/flat-shapes.internal';
 import { translationMatrixInto } from './translation-matrix-into';
 
 /**
@@ -9,6 +9,6 @@ import { translationMatrixInto } from './translation-matrix-into';
  *
  * @param offset matrix의 tx/ty로 기록할 translation offset
  */
-export function translation(offset: XYInput): MatrixWritable {
+export function translation(offset: Point): MatrixWritable {
   return translationMatrixInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, offset);
 }

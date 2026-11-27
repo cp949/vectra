@@ -1,4 +1,4 @@
-import type { MatrixLike, MatrixWritable, XYInput } from '../types';
+import type { Matrix, MatrixWritable, Point } from '../types/flat-shapes.internal';
 import { zoomAtPointInto } from './zoom-at-point-into';
 
 /**
@@ -15,6 +15,6 @@ import { zoomAtPointInto } from './zoom-at-point-into';
  * @param focalPoint output coordinate space에서 고정할 focal point
  * @param scaleFactor 양수 zoom scale factor
  */
-export function zoomAtPoint(matrix: MatrixLike, focalPoint: XYInput, scaleFactor: number): MatrixWritable {
+export function zoomAtPoint(matrix: Matrix, focalPoint: Point, scaleFactor: number): MatrixWritable {
   return zoomAtPointInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, matrix, focalPoint, scaleFactor);
 }

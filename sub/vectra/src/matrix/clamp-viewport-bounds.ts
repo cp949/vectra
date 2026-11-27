@@ -1,4 +1,4 @@
-import type { BoundsLike, BoundsWritable } from '../types';
+import type { Bounds, BoundsWritable } from '../types/flat-shapes.internal';
 import { type ClampViewportBoundsOptions, clampViewportBoundsInto } from './clamp-viewport-bounds-into';
 
 /**
@@ -14,9 +14,9 @@ import { type ClampViewportBoundsOptions, clampViewportBoundsInto } from './clam
  * @param options padding 옵션
  */
 export function clampViewportBounds(
-  viewportBounds: BoundsLike,
-  contentBounds: BoundsLike,
+  viewportBounds: Bounds,
+  contentBounds: Bounds,
   options?: ClampViewportBoundsOptions
 ): BoundsWritable {
-  return clampViewportBoundsInto({ min: { x: 0, y: 0 }, max: { x: 0, y: 0 } }, viewportBounds, contentBounds, options);
+  return clampViewportBoundsInto({ minX: 0, minY: 0, maxX: 0, maxY: 0 }, viewportBounds, contentBounds, options);
 }

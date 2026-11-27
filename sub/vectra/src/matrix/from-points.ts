@@ -1,4 +1,4 @@
-import type { MatrixWritable, XYInput } from '../types';
+import type { MatrixWritable, Point } from '../types/flat-shapes.internal';
 import { fromPointsInto } from './from-points-into';
 
 /**
@@ -15,8 +15,8 @@ import { fromPointsInto } from './from-points-into';
  * @param to from과 같은 index로 대응하는 target 점 3개
  */
 export function fromPoints(
-  from: readonly [XYInput, XYInput, XYInput],
-  to: readonly [XYInput, XYInput, XYInput]
+  from: readonly [Point, Point, Point],
+  to: readonly [Point, Point, Point]
 ): MatrixWritable | undefined {
   const out: MatrixWritable = { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 };
   return fromPointsInto(out, from, to) ? out : undefined;

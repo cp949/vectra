@@ -1,4 +1,4 @@
-import type { BoundsLike, MatrixWritable } from '../types';
+import type { Bounds, MatrixWritable } from '../types/flat-shapes.internal';
 import { type FitBoundsOptions, fitBoundsInto } from './fit-bounds-into';
 
 /**
@@ -11,6 +11,6 @@ import { type FitBoundsOptions, fitBoundsInto } from './fit-bounds-into';
  * @param destBounds 목적지 bounds
  * @param options fit 옵션
  */
-export function fitBounds(srcBounds: BoundsLike, destBounds: BoundsLike, options?: FitBoundsOptions): MatrixWritable {
+export function fitBounds(srcBounds: Bounds, destBounds: Bounds, options?: FitBoundsOptions): MatrixWritable {
   return fitBoundsInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, srcBounds, destBounds, options);
 }
