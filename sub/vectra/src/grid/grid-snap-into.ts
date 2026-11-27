@@ -6,9 +6,9 @@ import type { GridSpec, Point, PointWritable } from '../types/flat-shapes.intern
  * world point를 nearest grid point로 snap한 결과를 out에 기록하고 out을 반환한다.
  *
  * 산식은 `x = originX + round((point.x - originX) / cellWidth) * cellWidth`, y도 동일하다.
- * 정확히 halfway인 점은 `Math.round` 정책을 따른다(0.5는 양의
- * 무한대 방향으로 올림). `cellWidth`와 `cellHeight`이 positive finite number가 아니면(`0`, 음수, `NaN`,
- * `Infinity`, `-Infinity`) `RangeError`다. point 또는 origin 성분이 non-finite이면 `RangeError`다.
+ * 정확히 halfway인 점은 `Math.round` 정책을 따른다(0.5는 양의 무한대 방향으로 올림).
+ * `cellWidth`와 `cellHeight`가 positive finite number가 아니면(`0`, 음수, `NaN`, `Infinity`,
+ * `-Infinity`) `RangeError`다. point 또는 origin 성분이 non-finite이면 `RangeError`다.
  * 계산된 snap coordinate가 overflow해 non-finite가 되면 `RangeError`이고 out은 수정하지 않는다.
  * point 성분을 먼저 모두 읽으므로 `out === point` aliasing은 안전하다.
  *

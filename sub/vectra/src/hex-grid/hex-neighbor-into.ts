@@ -18,7 +18,7 @@ import type { HexAxial, HexAxialWritable } from '../types/flat-shapes.internal';
  * validation한 뒤 기록하므로 input/output aliasing이 안전하고, validation 실패 시 out을 수정하지
  * 않는다. 결과 `-0`은 `0`으로 canonicalize한다.
  *
- * @param out neighbor axial 좌표를 기록할 객체
+ * @param out neighbor axial 좌표를 기록할 axial 객체
  * @param axial neighbor를 구할 center axial coordinate
  * @param direction `0..5` neighbor direction index
  */

@@ -45,6 +45,14 @@ describe('hexDistance - 두 hex coordinate 사이 grid distance', () => {
     ).toThrow(RangeError);
   });
 
+  test('s가 빠진 axial 입력은 cube로 바꾸지 않고 RangeError다', () => {
+    const axial = { q: 1, r: 0 };
+    expect(() =>
+      // @ts-expect-error hexDistance는 s가 있는 cube 좌표만 받는다.
+      hexDistance(axial, { q: 0, r: 0, s: 0 })
+    ).toThrow(RangeError);
+  });
+
   test('반환값은 signed zero 없는 0이다', () => {
     expect(Object.is(hexDistance({ q: -1, r: 2, s: -1 }, { q: -1, r: 2, s: -1 }), 0)).toBe(true);
   });

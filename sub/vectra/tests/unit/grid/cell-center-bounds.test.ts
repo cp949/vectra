@@ -1,9 +1,9 @@
 /**
  * grid cell center/bounds(gridCellCenter* / gridCellBounds*) 계약 테스트.
  *
- * default/custom origin과 square/rectangular cell center, negative cell, bounds x/y/width/height
+ * 원점 위치별 square/rectangular cell center, negative cell, bounds x/y/width/height
  * 기록, out subtype 반환 보존, non-integer cell /
- * invalid cellSize / non-finite origin / computed non-finite RangeError, companion plain object 반환을 검증한다.
+ * invalid 셀 크기 / non-finite origin / computed non-finite RangeError, companion plain object 반환을 검증한다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -56,7 +56,7 @@ describe('gridCellCenterInto - cell coordinate를 world center로 변환', () =>
     }
   );
 
-  test('invalid cellSize는 RangeError다', () => {
+  test('invalid 셀 크기는 RangeError다', () => {
     expect(() =>
       gridCellCenterInto(makeXY(), { col: 1, row: 1 }, { originX: 0, originY: 0, cellWidth: 0, cellHeight: 0 })
     ).toThrow(RangeError);
@@ -130,7 +130,7 @@ describe('gridCellBoundsInto - cell coordinate를 rect region으로 변환', () 
     ).toThrow(RangeError);
   });
 
-  test('invalid cellSize는 RangeError다', () => {
+  test('invalid 셀 크기는 RangeError다', () => {
     expect(() =>
       gridCellBoundsInto(makeRect(), { col: 1, row: 1 }, { originX: 0, originY: 0, cellWidth: -1, cellHeight: 10 })
     ).toThrow(RangeError);

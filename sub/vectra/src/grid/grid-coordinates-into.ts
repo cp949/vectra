@@ -9,7 +9,7 @@ import type { GridCellWritable } from '../types/flat-shapes.internal';
  * 이때 out은 수정하지 않는다(검증을 기록보다 먼저 한다). int32 coercion을 피하려고 bitwise 연산을
  * 쓰지 않는다.
  *
- * @param out 셀 좌표를 기록할 객체
+ * @param out 셀 좌표를 기록할 셀 객체
  * @param index cell coordinate로 변환할 flat index
  * @param columnCount grid 한 row의 column 개수
  */

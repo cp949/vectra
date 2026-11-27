@@ -32,13 +32,13 @@ function buildTileEdges(min: number, max: number, tileSize: number, count: numbe
  * bounds width 또는 height가 0이면 해당 축은 zero-extent tile 하나로 둔다(`boundsSplitGrid`의 zero
  * extent 정책과 일관). `tileSize`는 축별 크기를 지정하는 점 객체이고 각 성분은
  * positive finite여야 하며(`0`, 음수, `NaN`, `Infinity`, `-Infinity`) 위반하면 `RangeError`다.
- * bounds min/max corner 성분이 non-finite이거나 width/height가 음수인 inverted bounds이거나
+ * bounds 좌표가 non-finite이거나 width/height가 음수인 inverted bounds이거나
  * width/height가 overflow해 non-finite가 되면 `RangeError`다. tile 개수가 safe array length
  * (`0xffffffff`)를 넘으면 `RangeError`다. validation이 실패하면 out은 수정하지 않고, 성공 시에만
  * out을 비우고 새 `{ x, y, width, height }` plain object를 push한다.
  *
  * @param out rect collection을 기록할 writable array. 성공 시 비우고 새 object를 push한다.
- * @param bounds tile로 나눌 bounds. min/max corner 순서를 그대로 읽는다.
+ * @param bounds tile로 나눌 경계 상자
  * @param tileSize tile 크기. x는 너비, y는 높이. 각 성분은 positive finite.
  */
 export function boundsTileInto(out: RectWritable[], bounds: Bounds, tileSize: Point): RectWritable[] {

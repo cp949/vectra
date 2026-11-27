@@ -4,7 +4,7 @@ import type { GridCellWritable, RectWritable } from '../types/flat-shapes.intern
  * cell size 두 성분이 positive finite number인지 검증한다.
  *
  * `0`, 음수, `NaN`, `Infinity`, `-Infinity`는 `RangeError`다. 모든 public grid helper가 같은
- * cellSize 정책을 공유하도록 이 helper를 통해 검증한다.
+ * 셀 크기 정책을 공유하도록 이 helper를 통해 검증한다.
  *
  * @param sizeX 검증할 cell x size
  * @param sizeY 검증할 cell y size
@@ -12,7 +12,7 @@ import type { GridCellWritable, RectWritable } from '../types/flat-shapes.intern
 export function validateGridCellSize(sizeX: number, sizeY: number): void {
   if (!Number.isFinite(sizeX) || sizeX <= 0 || !Number.isFinite(sizeY) || sizeY <= 0) {
     throw new RangeError(
-      `grid cellSize components must be positive finite numbers, got (${String(sizeX)}, ${String(sizeY)})`
+      `grid cellWidth/cellHeight must be positive finite numbers, got (${String(sizeX)}, ${String(sizeY)})`
     );
   }
 }
@@ -270,7 +270,7 @@ export function commitGridNeighbors(
 /**
  * GridCellWritable에 col/row를 기록하고 out을 반환한다.
  *
- * @param out cell coordinate를 기록할 writable output
+ * @param out 셀 좌표를 기록할 셀 객체
  * @param col 기록할 column index
  * @param row 기록할 row index
  */

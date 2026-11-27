@@ -15,7 +15,7 @@ import type { HexAxialWritable, HexCube } from '../types/flat-shapes.internal';
  * 입력을 모두 읽고 validation한 뒤 기록하므로 input/output aliasing이 안전하고, validation 실패 시
  * out을 수정하지 않는다.
  *
- * @param out nearest integer axial 좌표를 기록할 객체
+ * @param out nearest integer axial 좌표를 기록할 axial 객체
  * @param input round할 fractional cube coordinate
  */
 export function hexRoundInto<Out extends HexAxialWritable>(out: Out, input: HexCube): Out {

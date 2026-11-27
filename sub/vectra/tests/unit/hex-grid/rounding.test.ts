@@ -56,6 +56,14 @@ describe('hexRoundInto / hexRound - fractional coordinate를 nearest integer axi
     }
   );
 
+  test('s가 빠진 axial 입력은 cube로 바꾸지 않고 RangeError다', () => {
+    const axial = { q: 1.2, r: 0.9 };
+    expect(() =>
+      // @ts-expect-error hexRound는 s가 있는 cube 좌표만 받는다.
+      hexRound(axial)
+    ).toThrow(RangeError);
+  });
+
   test('unsafe integer result는 RangeError다', () => {
     expect(() => hexRound({ q: 2 ** 53, r: 0, s: -(2 ** 53) })).toThrow(RangeError);
   });

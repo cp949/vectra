@@ -5,7 +5,7 @@
  * 이 internal primitive를 통한다. public leaf끼리 서로 import하지 않고 여기로 공유 계산을 내린다.
  */
 
-import type { HexAxialWritable, HexCube } from '../types/flat-shapes.internal';
+import type { HexAxialWritable } from '../types/flat-shapes.internal';
 import type { HexOffsetLayout, HexOrientation } from '../types/hex-grid.internal';
 
 /**
@@ -180,7 +180,7 @@ export function hexCanonicalZero(n: number): number {
 /**
  * HexAxialWritable에 q/r을 기록하고 out을 반환한다.
  *
- * @param out axial coordinate를 기록할 writable output
+ * @param out axial 좌표를 기록할 axial 객체
  * @param q 기록할 axial q 성분
  * @param r 기록할 axial r 성분
  */
@@ -215,7 +215,7 @@ export function validateHexCoordinateFinite(q: number, r: number, s: number): vo
  * round 결과 q/r과 implicit `s = -q - r`가 safe integer가 아니면 `RangeError`다. 결과 `-0`은
  * `0`으로 canonicalize한다.
  *
- * @param out nearest integer axial coordinate를 기록할 writable output
+ * @param out nearest integer axial 좌표를 기록할 axial 객체
  * @param fq fractional cube q 성분
  * @param fr fractional cube r 성분
  * @param fs fractional cube s 성분
@@ -359,13 +359,15 @@ export function hexLerp(a: number, b: number, t: number): number {
 }
 
 /**
- * cube 좌표의 세 성분이 safe integer이고 합이 0인지 검증한다.
+ * integer cube 좌표의 세 성분이 safe integer이고 합이 0인지 검증한다.
  *
- * @param input 검증할 cube 좌표
+ * 호출처가 성분을 지역 변수로 읽은 뒤 넘긴다. 반환 배열을 만들지 않으려고 성분을 직접 받는다.
+ *
+ * @param q 검증할 cube q 성분
+ * @param r 검증할 cube r 성분
+ * @param s 검증할 cube s 성분
  */
-export function toHexCubeChecked(input: HexCube): readonly [number, number, number] {
-  const { q, r, s } = input;
+export function validateHexCube(q: number, r: number, s: number): void {
   validateHexCubeSafeInteger(q, r, s);
   validateHexCubeZeroSum(q, r, s);
-  return [q, r, s];
 }

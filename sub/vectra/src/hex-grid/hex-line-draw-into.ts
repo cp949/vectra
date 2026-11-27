@@ -2,9 +2,9 @@ import {
   commitHexAxialCollection,
   hexLerp,
   hexRoundCubePair,
-  toHexCubeChecked,
   validateHexCollectionCount,
   validateHexComputedSafeInteger,
+  validateHexCube,
 } from '../internal/hex-grid';
 import type { HexAxialWritable, HexCube } from '../types/flat-shapes.internal';
 
@@ -30,8 +30,14 @@ import type { HexAxialWritable, HexCube } from '../types/flat-shapes.internal';
  * @param end line 끝 coordinate. cube
  */
 export function hexLineDrawInto(out: HexAxialWritable[], start: HexCube, end: HexCube): HexAxialWritable[] {
-  const [aq, ar, as] = toHexCubeChecked(start);
-  const [bq, br, bs] = toHexCubeChecked(end);
+  const aq = start.q;
+  const ar = start.r;
+  const as = start.s;
+  const bq = end.q;
+  const br = end.r;
+  const bs = end.s;
+  validateHexCube(aq, ar, as);
+  validateHexCube(bq, br, bs);
 
   const n = Math.max(Math.abs(aq - bq), Math.abs(ar - br), Math.abs(as - bs));
   validateHexComputedSafeInteger(n, 'distance');

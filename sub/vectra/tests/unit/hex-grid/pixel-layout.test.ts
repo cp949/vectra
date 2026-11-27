@@ -72,6 +72,18 @@ describe('hexAxialToPixelInto / hexAxialToPixel - axial을 world pixel로', () =
     ).toThrow(RangeError);
   });
 
+  test('origin 필드가 빠진 layout은 원점 0을 가정하지 않고 RangeError다', () => {
+    const layout = { size: 10, orientation: 'pointy' as const };
+    expect(() =>
+      // @ts-expect-error HexLayout의 originX와 originY는 필수다.
+      hexAxialToPixel({ q: 0, r: 0 }, layout)
+    ).toThrow(RangeError);
+    expect(() =>
+      // @ts-expect-error HexLayout의 originX와 originY는 필수다.
+      hexPixelToAxial({ x: 0, y: 0 }, layout)
+    ).toThrow(RangeError);
+  });
+
   test('invalid orientation은 RangeError다', () => {
     expect(() =>
       hexAxialToPixel({ q: 0, r: 0 }, { originX: 0, originY: 0, size: 10, orientation: 'skew' as HexOrientation })

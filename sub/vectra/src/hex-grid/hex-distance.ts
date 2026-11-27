@@ -1,4 +1,4 @@
-import { toHexCubeChecked, validateHexComputedSafeInteger } from '../internal/hex-grid';
+import { validateHexComputedSafeInteger, validateHexCube } from '../internal/hex-grid';
 import type { HexCube } from '../types/flat-shapes.internal';
 
 /**
@@ -15,8 +15,14 @@ import type { HexCube } from '../types/flat-shapes.internal';
  * @param b 둘째 hex coordinate. cube
  */
 export function hexDistance(a: HexCube, b: HexCube): number {
-  const [aq, ar, as] = toHexCubeChecked(a);
-  const [bq, br, bs] = toHexCubeChecked(b);
+  const aq = a.q;
+  const ar = a.r;
+  const as = a.s;
+  const bq = b.q;
+  const br = b.r;
+  const bs = b.s;
+  validateHexCube(aq, ar, as);
+  validateHexCube(bq, br, bs);
 
   const distance = Math.max(Math.abs(aq - bq), Math.abs(ar - br), Math.abs(as - bs));
   validateHexComputedSafeInteger(distance, 'distance');

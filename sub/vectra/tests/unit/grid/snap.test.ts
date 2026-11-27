@@ -1,7 +1,7 @@
 /**
  * grid snap(gridSnapInto / gridSnap) 계약 테스트.
  *
- * 원점 square snap, rectangular cellSize snap, negative coordinate snap, halfway
+ * 원점 square snap, 축별 셀 크기 snap, negative coordinate snap, halfway
  * Math.round 정책, input/output aliasing 안전, invalid
  * spec과 non-finite point/origin RangeError, companion plain object 반환을 검증한다.
  */
@@ -24,7 +24,7 @@ describe('gridSnapInto - world point를 nearest grid point로 snap', () => {
     expect(out).toEqual({ x: 20, y: 10 });
   });
 
-  test('rectangular cellSize는 축별로 snap한다', () => {
+  test('셀 너비와 높이가 다르면 축별로 snap한다', () => {
     const out = makeXY();
     gridSnapInto(out, { x: 23, y: 7 }, { originX: 0, originY: 0, cellWidth: 10, cellHeight: 5 });
     expect(out).toEqual({ x: 20, y: 5 });
@@ -55,7 +55,7 @@ describe('gridSnapInto - world point를 nearest grid point로 snap', () => {
     expect(point).toEqual({ x: 20, y: 10 });
   });
 
-  test.each([0, -10, Number.NaN, Number.POSITIVE_INFINITY])('cellSize %s는 RangeError다', (cellSize) => {
+  test.each([0, -10, Number.NaN, Number.POSITIVE_INFINITY])('셀 크기 %s는 RangeError다', (cellSize) => {
     expect(() =>
       gridSnapInto(makeXY(), { x: 1, y: 1 }, { originX: 0, originY: 0, cellWidth: cellSize, cellHeight: cellSize })
     ).toThrow(RangeError);
@@ -94,7 +94,7 @@ describe('gridSnap - allocating companion', () => {
     });
   });
 
-  test('companion도 invalid cellSize에서 RangeError다', () => {
+  test('companion도 invalid 셀 크기에서 RangeError다', () => {
     expect(() => gridSnap({ x: 1, y: 1 }, { originX: 0, originY: 0, cellWidth: 0, cellHeight: 0 })).toThrow(RangeError);
   });
 });

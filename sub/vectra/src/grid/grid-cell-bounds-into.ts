@@ -10,10 +10,10 @@ import type { GridCell, GridSpec, RectWritable } from '../types/flat-shapes.inte
  * integer cell coordinate가 덮는 rect region을 out에 기록하고 out을 반환한다.
  *
  * min corner는 `x = originX + col * cellWidth`, `y = originY + row * cellHeight`이고
- * `width = cellWidth`, `height = cellHeight`다. cell col/row가
- * integer가 아니면(`NaN`, `Infinity`, non-integer float) `RangeError`다. `cellWidth`와 `cellHeight`이
- * positive finite number가 아니거나 origin 성분이 non-finite이면 `RangeError`다. 큰 cell index로
- * min corner가 overflow해 non-finite가 되면 `RangeError`다.
+ * `width = cellWidth`, `height = cellHeight`다. cell col/row가 integer가 아니면(`NaN`, `Infinity`,
+ * non-integer float) `RangeError`다. `cellWidth`와 `cellHeight`가 positive finite number가 아니거나
+ * origin 성분이 non-finite이면 `RangeError`다. 큰 cell index로 min corner가 overflow해 non-finite가
+ * 되면 `RangeError`다.
  *
  * @param out 셀 경계를 기록할 사각형 객체
  * @param cell region을 구할 integer cell coordinate

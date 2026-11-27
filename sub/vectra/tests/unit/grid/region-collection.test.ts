@@ -1,8 +1,8 @@
 /**
  * grid rect cell collection(gridCellsInRectInto / gridCellsInRect) 계약 테스트.
  *
- * default/custom origin과 square/rectangular cellSize의 row-major cell list, negative coordinate
- * floor behavior, right/bottom boundary touch exclusion, zero width/height empty, invalid cellSize /
+ * 원점과 정사각·직사각 셀 크기의 row-major cell list, negative coordinate
+ * floor behavior, right/bottom boundary touch exclusion, zero width/height empty, invalid 셀 크기 /
  * non-finite rect·origin / inverted rect / oversized count RangeError, Into 같은 array ref 반환과
  * 성공 시 content 교체, validation 실패 시 out 미수정, companion 새 plain array 반환을 검증한다.
  */
@@ -29,7 +29,7 @@ describe('gridCellsInRectInto - world rect가 덮는 cell collection', () => {
     ]);
   });
 
-  test('custom origin과 rectangular cellSize를 축별로 floor한다', () => {
+  test('custom origin과 축별 셀 크기로 floor한다', () => {
     const out: GridCellWritable[] = [];
     gridCellsInRectInto(
       out,
@@ -95,7 +95,7 @@ describe('gridCellsInRectInto - world rect가 덮는 cell collection', () => {
   });
 
   test.each([0, -10, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
-    'cellSize %s는 RangeError다',
+    '셀 크기 %s는 RangeError다',
     (cellSize) => {
       expect(() =>
         gridCellsInRectInto(
@@ -213,7 +213,7 @@ describe('gridCellsInRect - allocating companion', () => {
     ).toEqual([]);
   });
 
-  test('companion도 invalid cellSize에서 RangeError다', () => {
+  test('companion도 invalid 셀 크기에서 RangeError다', () => {
     expect(() =>
       gridCellsInRect({ x: 0, y: 0, width: 10, height: 10 }, { originX: 0, originY: 0, cellWidth: 0, cellHeight: 0 })
     ).toThrow(RangeError);

@@ -15,7 +15,7 @@ import type { GridCellWritable, GridSpec, Rect } from '../types/flat-shapes.inte
  * 적용한다. order는 row 오름차순, 각 row에서 col 오름차순이다.
  * rect의 오른쪽/아래 edge가 cell boundary에 정확히 닿기만 하면(zero-area 접촉) 다음 cell은
  * 포함하지 않는다. negative world coordinate는 truncation이 아니라 floor로 처리한다. zero width
- * 또는 zero height rect는 empty collection이다. `cellWidth`와 `cellHeight`이 positive finite number가
+ * 또는 zero height rect는 empty collection이다. `cellWidth`와 `cellHeight`가 positive finite number가
  * 아니거나(`0`, 음수, `NaN`, `Infinity`, `-Infinity`) origin 성분이 non-finite이거나 rect 성분이
  * non-finite이면 `RangeError`다. width 또는 height가 음수인 inverted rect는 `RangeError`다.
  * positive extent의 계산된 끝 경계가 정밀도 손실로 시작 경계와 같거나 더 작아지면 `RangeError`다.
