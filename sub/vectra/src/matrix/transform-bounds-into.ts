@@ -6,7 +6,7 @@ import type { Bounds, BoundsWritable, Matrix } from '../types/flat-shapes.intern
  * empty bounds는 sentinel empty bounds를 기록한다. oriented bounds가 아니라 axis-aligned bounds로
  * 감싼다. input과 out이 같은 object여도 안전하다.
  *
- * @param out 변환된 AABB bounds를 기록할 객체
+ * @param out 변환된 AABB bounds를 기록할 경계 상자 객체
  * @param matrix bounds corner에 적용할 matrix
  * @param bounds 변환할 bounds
  */

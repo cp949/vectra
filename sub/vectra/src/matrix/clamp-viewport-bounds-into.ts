@@ -16,7 +16,7 @@ export interface ClampViewportBoundsOptions {
  * bounds 또는 padding scalar가 finite하지 않으면 `RangeError`를 던진다.
  * 입력 좌표를 모두 먼저 읽으므로 `out === viewportBounds`여도 안전하다.
  *
- * @param out 보정된 viewport bounds를 기록할 객체
+ * @param out 보정된 viewport bounds를 기록할 경계 상자 객체
  * @param viewportBounds 보정할 viewport bounds
  * @param contentBounds viewport를 가둘 content bounds. padding으로 안쪽으로 줄어든다.
  * @param options padding 옵션

@@ -5,7 +5,7 @@ import type { Matrix, Point, PointWritable } from '../types/flat-shapes.internal
  *
  * translation component tx/ty를 포함한다. input과 out이 같은 object여도 안전하다.
  *
- * @param out 변환된 point를 기록할 객체
+ * @param out 변환된 point를 기록할 점 객체
  * @param matrix point에 적용할 matrix
  * @param point 변환할 point
  */

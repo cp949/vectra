@@ -450,7 +450,7 @@ describe('matrixComposeInto - non-finite pass-through', () => {
 
 describe('matrixComposeInto - read-before-write aliasing', () => {
   test('out이 nested input object와 같은 비정상 aliasing에서도 안전하다', () => {
-    // out과 translation이 같은 object. MatrixWritable과 XYWritable은 field가 겹치지 않지만
+    // out과 translation이 같은 object. MatrixWritable과 PointWritable은 field가 겹치지 않지만
     // 모든 component를 local로 먼저 읽어 안전성을 보장한다.
     const shared = { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0, x: 5, y: 6 };
     const result = matrixComposeInto(shared, {

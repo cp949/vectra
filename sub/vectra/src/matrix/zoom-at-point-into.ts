@@ -12,7 +12,7 @@ import { assertFinite } from './viewport.internal';
  * matrix 또는 focal point component가 finite하지 않으면 `RangeError`를 던진다.
  * 모든 입력 component를 먼저 읽으므로 `out === matrix` aliasing이 안전하다.
  *
- * @param out 합성된 transform matrix를 기록할 객체
+ * @param out 합성된 transform matrix를 기록할 행렬 객체
  * @param matrix zoom을 합성할 기존 transform matrix
  * @param focalPoint output coordinate space에서 고정할 focal point
  * @param scaleFactor 양수 zoom scale factor

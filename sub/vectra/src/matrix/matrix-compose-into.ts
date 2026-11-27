@@ -26,7 +26,7 @@ import type { MatrixDecompositionWritable } from '../types';
  * `out`이 `decomposition.translation`/`scaling`/`skewing` 중 하나와 같은 object인 비정상 aliasing이어도
  * 모든 component를 local 변수로 먼저 읽으므로(read-before-write) 안전하다.
  *
- * @param out 합성 결과를 기록할 객체
+ * @param out 합성 결과를 기록할 행렬 객체
  * @param decomposition 합성할 translation/rotation/scaling/skewing component
  */
 export function matrixComposeInto<Out extends MatrixWritable>(

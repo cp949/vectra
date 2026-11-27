@@ -33,7 +33,7 @@ export function assertFinite(values: readonly number[]): void {
  * src 또는 dest가 empty(`min >= max`)이면 identity matrix를 기록한다.
  * 입력 scalar는 호출자가 finite로 검증한 뒤 raw component로 전달한다.
  *
- * @param out transform matrix를 기록할 writable output
+ * @param out transform matrix를 기록할 행렬 객체
  * @param sMinX src 최솟값 x
  * @param sMinY src 최솟값 y
  * @param sMaxX src 최댓값 x

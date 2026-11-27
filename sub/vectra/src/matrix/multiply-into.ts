@@ -7,7 +7,7 @@ import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
  * point transform 기준으로 right를 먼저 적용하고 left를 나중에 적용한 composition이다.
  * input과 out이 같은 object여도 안전하다.
  *
- * @param out multiply 결과를 기록할 객체
+ * @param out multiply 결과를 기록할 행렬 객체
  * @param left 왼쪽에 곱할 matrix
  * @param right 오른쪽에 곱할 matrix
  */

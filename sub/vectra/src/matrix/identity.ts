@@ -1,4 +1,4 @@
-import type { MatrixWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
 import { identityInto } from './identity-into';
 
 /**

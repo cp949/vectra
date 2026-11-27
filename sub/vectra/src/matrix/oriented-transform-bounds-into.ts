@@ -16,7 +16,7 @@ import type { OrientedBoundsWritable } from '../types';
  * non-finite matrix/bounds component는 검증하지 않고 산술 결과를 그대로 기록한다 (caller 책임). nested
  * corner storage가 input bounds와 같은 object여도 안전하다(좌표를 모두 먼저 읽은 뒤 기록한다).
  *
- * @param out oriented outline corner를 기록할 객체
+ * @param out oriented outline의 네 꼭짓점을 기록할 객체
  * @param matrix bounds corner에 적용할 matrix
  * @param bounds 변환할 bounds
  */

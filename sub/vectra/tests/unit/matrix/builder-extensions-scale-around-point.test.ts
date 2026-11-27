@@ -23,7 +23,7 @@ describe('matrix builder - scaleAroundPointInto', () => {
     expectNearMatrix(out, { a: 2, b: 0, c: 0, d: 2, tx: -100, ty: -50 });
   });
 
-  test('non-uniform scale: XYInput scale', () => {
+  test('non-uniform scale: 축마다 다른 배율을 적용한다', () => {
     // point=(10,20), scale={x:3,y:2} → tx=10*(1-3)=-20, ty=20*(1-2)=-20
     const out = makeMatrix();
     scaleAroundPointInto(out, { x: 10, y: 20 }, { x: 3, y: 2 });
@@ -67,7 +67,7 @@ describe('matrix builder - scaleAroundPoint', () => {
     expectNearMatrix(result, { a: 2, b: 0, c: 0, d: 2, tx: -100, ty: -50 });
   });
 
-  test('non-uniform scale XYInput도 처리한다', () => {
+  test('축마다 다른 배율도 처리한다', () => {
     const result = scaleAroundPoint({ x: 0, y: 0 }, { x: 3, y: 5 });
     expectNearMatrix(result, { a: 3, b: 0, c: 0, d: 5, tx: 0, ty: 0 });
   });

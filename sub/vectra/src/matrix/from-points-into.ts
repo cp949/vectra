@@ -15,7 +15,7 @@ import type { MatrixWritable, Point } from '../types/flat-shapes.internal';
  * `out`과 입력 점은 서로 다른 shape이므로 aliasing 의미가 없다. 그래도 좌표를 모두 local로 먼저 읽은 뒤
  * `out`에 기록한다.
  *
- * @param out affine matrix를 기록할 객체
+ * @param out affine matrix를 기록할 행렬 객체
  * @param from source 점 3개
  * @param to from과 같은 index로 대응하는 target 점 3개
  */

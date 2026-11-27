@@ -1,4 +1,4 @@
-import type { MatrixWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
 import { rotationMatrixInto } from './rotation-matrix-into';
 
 /**

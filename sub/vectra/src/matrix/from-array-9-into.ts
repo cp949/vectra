@@ -1,4 +1,4 @@
-import type { MatrixWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
 
 /**
  * column-major 9-element array에서 matrix component를 읽어 out에 기록하고 out을 반환한다.
@@ -9,7 +9,7 @@ import type { MatrixWritable } from '../types';
  * 2D affine 마지막 행 `[0, 0, 1]`을 가정한다. 이를 보장하지 않는 array를 넘기면 결과가 정의되지 않는다.
  * NaN/Infinity 입력은 검증 없이 pass through한다. caller 책임이다.
  *
- * @param out matrix component를 기록할 writable output
+ * @param out matrix component를 기록할 행렬 객체
  * @param array 읽을 column-major 9-element readonly tuple
  */
 export function fromArray9Into<Out extends MatrixWritable>(

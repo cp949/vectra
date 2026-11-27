@@ -1,4 +1,4 @@
-import type { MatrixWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
 
 /**
  * 원점을 통과하는 축에 대한 반사 행렬을 out에 기록하고 out을 반환한다.
@@ -9,7 +9,7 @@ import type { MatrixWritable } from '../types';
  *
  * axisAngle이 NaN 또는 Infinity이면 결과가 정의되지 않는다 (caller 책임).
  *
- * @param out 반사 행렬 component를 기록할 writable output
+ * @param out 반사 행렬 component를 기록할 행렬 객체
  * @param axisAngle 반사 축 방향각 (radian). 원점을 통과하는 직선의 방향.
  */
 export function reflectionInto<Out extends MatrixWritable>(out: Out, axisAngle: number): Out {

@@ -8,7 +8,7 @@ import type { MatrixWritable, Point } from '../types/flat-shapes.internal';
  *
  * 결과: `a=sx, b=0, c=0, d=sy, tx=px*(1-sx), ty=py*(1-sy)`.
  *
- * @param out transform matrix를 기록할 객체
+ * @param out transform matrix를 기록할 행렬 객체
  * @param point scale 중심점
  * @param scale x축과 y축 배율
  */

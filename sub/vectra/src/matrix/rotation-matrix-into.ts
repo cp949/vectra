@@ -1,4 +1,4 @@
-import type { MatrixWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
 
 /**
  * identity 기반 rotation matrix를 out에 기록하고 out을 반환한다.
@@ -8,7 +8,7 @@ import type { MatrixWritable } from '../types';
  *
  * NaN/Infinity angle은 검증하지 않는다. `Math.cos`/`Math.sin` 산술 결과를 그대로 기록한다 (caller 책임).
  *
- * @param out rotation component를 기록할 writable output
+ * @param out rotation component를 기록할 행렬 객체
  * @param angle 생성할 rotation angle (radian)
  */
 export function rotationMatrixInto<Out extends MatrixWritable>(out: Out, angle: number): Out {

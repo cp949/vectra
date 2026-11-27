@@ -1,12 +1,11 @@
 /**
- * flat adapter 전용 Matrix 분해 및 좌표 변환 kernel.
- *
+ * flat adapter 전용 행렬 좌표 변환 kernel.
  */
 
 import type { Matrix } from '../../types/flat-shapes.internal';
 
 /**
- * Matrix를 분해하여 `[ax + cy + tx, bx + dy + ty]`를 out 배열의 outIdx, outIdx+1에 기록한다.
+ * 행렬 성분을 읽어 `[ax + cy + tx, bx + dy + ty]`를 out 배열의 outIdx, outIdx+1에 기록한다.
  *
  * 중간 [number, number] 튜플 할당을 제거하여 hot loop 내 GC 압력을 낮춘다.
  *

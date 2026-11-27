@@ -10,7 +10,7 @@ import { decomposeMatrixCore } from './decomposition.internal';
  * (caller 책임). translation 추출은 `tx`/`ty` 값을 그대로 읽으므로 NaN/Infinity 그대로
  * 보존된다.
  *
- * @param out translation을 기록할 객체
+ * @param out translation을 기록할 점 객체
  * @param matrix translation을 추출할 matrix
  */
 export function decomposeTranslationInto<Out extends PointWritable>(out: Out, matrix: Matrix): Out {

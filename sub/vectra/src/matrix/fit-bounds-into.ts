@@ -16,7 +16,7 @@ export interface FitBoundsOptions {
  * - `'cover'`: aspect ratio 유지, dest를 완전 덮음.
  * - `'stretch'`: aspect ratio 무시, dest에 정확히 맞춤.
  *
- * @param out transform matrix를 기록할 객체
+ * @param out transform matrix를 기록할 행렬 객체
  * @param srcBounds 변환할 source bounds
  * @param destBounds 목적지 bounds
  * @param options fit 옵션

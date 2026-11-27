@@ -94,6 +94,13 @@ describe('matrix builder - fitRectInto', () => {
     ).toThrow(RangeError);
   });
 
+  test('mode가 빠진 옵션 객체는 기본값을 쓰지 않고 RangeError를 던진다', () => {
+    const out = makeMatrix();
+    const r = { x: 0, y: 0, width: 100, height: 100 };
+    // @ts-expect-error mode는 필수 필드다.
+    expect(() => fitRectInto(out, r, r, { flipY: false })).toThrow(RangeError);
+  });
+
   test('Infinity component는 RangeError를 던진다', () => {
     const out = makeMatrix();
     expect(() =>

@@ -1,11 +1,11 @@
-import type { MatrixWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
 
 /**
  * identity 기반 scaling matrix를 out에 기록하고 out을 반환한다.
  *
  * 기존 matrix를 합성하지 않고, 주어진 sx/sy로부터 scaling-only component matrix를 새로 생성한다.
  *
- * @param out scaling component를 기록할 writable output
+ * @param out scaling component를 기록할 행렬 객체
  * @param sx x축 scale
  * @param sy y축 scale
  */

@@ -20,7 +20,7 @@ export interface ZoomToFitOptions {
  * - `'cover'`: aspect ratio 유지, padded viewport를 완전 덮음.
  * - `'stretch'`: aspect ratio 무시, padded viewport에 정확히 맞춤.
  *
- * @param out transform matrix를 기록할 객체
+ * @param out transform matrix를 기록할 행렬 객체
  * @param contentBounds viewport에 맞출 content bounds
  * @param viewportBounds content를 담을 viewport bounds. padding으로 안쪽으로 줄어든다.
  * @param options fit mode와 padding 옵션

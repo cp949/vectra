@@ -14,7 +14,7 @@ import type { OrientedBoundsWritable } from '../types';
  *
  * nested corner storage가 input rect와 같은 object여도 안전하다(좌표를 모두 먼저 읽은 뒤 기록한다).
  *
- * @param out oriented outline corner를 기록할 객체
+ * @param out oriented outline의 네 꼭짓점을 기록할 객체
  * @param matrix rect corner에 적용할 matrix
  * @param rect 변환할 rect
  */

@@ -30,7 +30,7 @@ export interface FitRectOptions {
  * stretch 모드에서는 y축 scale만 반전된다.
  * src 또는 dest가 empty이면 `flipY: true`여도 identity matrix를 기록한다.
  *
- * @param out transform matrix를 기록할 객체
+ * @param out transform matrix를 기록할 행렬 객체
  * @param srcRect 변환할 source rect
  * @param destRect 목적지 rect
  * @param options fit 옵션

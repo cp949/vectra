@@ -55,6 +55,13 @@ describe('matrix builder - fitBoundsInto', () => {
     expect(() => fitBoundsInto(out, b, b, { mode: 'fill' as never })).toThrow(RangeError);
   });
 
+  test('mode가 빠진 옵션 객체는 기본값을 쓰지 않고 RangeError를 던진다', () => {
+    const out = makeMatrix();
+    const b = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
+    // @ts-expect-error mode는 필수 필드다.
+    expect(() => fitBoundsInto(out, b, b, {})).toThrow(RangeError);
+  });
+
   test('Infinity component는 RangeError를 던진다', () => {
     const out = makeMatrix();
     const src = { minX: 0, minY: 0, maxX: Infinity, maxY: 100 };

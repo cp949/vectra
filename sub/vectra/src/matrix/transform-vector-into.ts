@@ -6,7 +6,7 @@ import type { Matrix, Point, PointWritable } from '../types/flat-shapes.internal
  * translation component tx/ty는 의도적으로 무시한다. direction, normal, velocity 같은 free vector에
  * 사용한다. input과 out이 같은 object여도 안전하다.
  *
- * @param out 변환된 vector를 기록할 객체
+ * @param out 변환된 vector를 기록할 점 객체
  * @param matrix vector에 적용할 matrix
  * @param vector 변환할 free vector
  */

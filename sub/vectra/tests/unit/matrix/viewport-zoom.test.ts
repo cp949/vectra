@@ -369,6 +369,30 @@ test('zoomToFitInto는 padding 방향이 빠지면 RangeError를 던진다', () 
   }).toThrow(RangeError);
 });
 
+test('zoomToFitInto는 mode가 빠진 옵션 객체에 기본값을 쓰지 않고 RangeError를 던진다', () => {
+  const bounds = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
+  expect(() => {
+    // @ts-expect-error mode는 필수 필드다.
+    zoomToFitInto(makeMatrix(), bounds, bounds, { padding: { top: 0, right: 0, bottom: 0, left: 0 } });
+  }).toThrow(RangeError);
+});
+
+test('zoomToFitInto는 padding이 빠진 옵션 객체에 기본값을 쓰지 않고 TypeError를 던진다', () => {
+  const bounds = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
+  expect(() => {
+    // @ts-expect-error padding은 필수 필드다.
+    zoomToFitInto(makeMatrix(), bounds, bounds, { mode: 'contain' });
+  }).toThrow(TypeError);
+});
+
+test('clampViewportBoundsInto는 padding이 빠진 옵션 객체에 기본값을 쓰지 않고 TypeError를 던진다', () => {
+  const bounds = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
+  expect(() => {
+    // @ts-expect-error padding은 필수 필드다.
+    clampViewportBoundsInto(makeBounds(), bounds, bounds, {});
+  }).toThrow(TypeError);
+});
+
 test('clampViewportBoundsInto는 viewport와 같은 객체를 출력으로 쓸 수 있다', () => {
   const viewport = { minX: -20, minY: -20, maxX: 10, maxY: 10 };
   const content = { minX: 0, minY: 0, maxX: 100, maxY: 100 };

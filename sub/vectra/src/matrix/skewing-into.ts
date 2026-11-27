@@ -13,7 +13,7 @@ import { decomposeMatrixCore } from './decomposition.internal';
  *
  * singular matrix와 NaN/Infinity 입력은 검증 없이 JS 산술 결과를 따른다 (caller 책임).
  *
- * @param out skewing을 기록할 객체
+ * @param out skewing을 기록할 점 객체
  * @param matrix skewing을 추출할 matrix
  */
 export function skewingInto<Out extends PointWritable>(out: Out, matrix: Matrix): Out {

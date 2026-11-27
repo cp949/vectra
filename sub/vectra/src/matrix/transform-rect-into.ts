@@ -6,7 +6,7 @@ import type { Matrix, Rect, RectWritable } from '../types/flat-shapes.internal';
  * empty/degenerate rect도 특별 처리 없이 네 corner를 변환해 axis-aligned rect로 감싼다.
  * input과 out이 같은 object여도 안전하다.
  *
- * @param out 변환된 AABB rect를 기록할 객체
+ * @param out 변환된 AABB rect를 기록할 사각형 객체
  * @param matrix rect corner에 적용할 matrix
  * @param rect 변환할 rect
  */

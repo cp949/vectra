@@ -6,7 +6,7 @@ import type { MatrixWritable, Point } from '../types/flat-shapes.internal';
  * `T(point) * R(angle) * T(-point)`를 직접 전개해 기록한다.
  * 결과: `a=cos, b=sin, c=-sin, d=cos, tx=px*(1-cos)+py*sin, ty=py*(1-cos)-px*sin`.
  *
- * @param out transform matrix를 기록할 객체
+ * @param out transform matrix를 기록할 행렬 객체
  * @param point rotation 중심점
  * @param angle rotation angle (radian)
  */
