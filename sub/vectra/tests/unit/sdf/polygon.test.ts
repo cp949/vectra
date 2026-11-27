@@ -109,18 +109,8 @@ describe('sdfPolygon', () => {
   });
 
   test('repeated-point edge polygon에서 NaN이 발생하지 않는다', () => {
-    const repeated = [
-      0,
-      0,
-      0,
-      0, // 중복 vertex (zero-length edge)
-      10,
-      0,
-      10,
-      10,
-      0,
-      10,
-    ];
+    // 두 번째 꼭짓점이 첫 꼭짓점과 같아 길이 0인 변이 생긴다.
+    const repeated = [0, 0, 0, 0, 10, 0, 10, 10, 0, 10];
     expect(Number.isNaN(sdfPolygon(repeated, { x: 5, y: 5 }))).toBe(false);
     expect(sdfPolygon(repeated, { x: 5, y: 5 })).toBe(-5);
     expect(sdfPolygon(repeated, { x: 0, y: 0 })).toBe(0);

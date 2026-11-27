@@ -18,7 +18,7 @@ import type { FitOptions, PrincipalDirectionsWritable } from './types';
  * `out.primary`/`out.secondary`가 input point와 같은 object여도 alias-safe하다(모든 point 좌표를 먼저
  * 읽은 뒤에만 `out`을 쓴다).
  *
- * @param out principal axis pair를 기록할 writable output
+ * @param out 결과를 기록할 주축 쌍 객체
  * @param points principal direction을 계산할 point collection
  * @param options `epsilon`을 담은 fitting 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`
  */

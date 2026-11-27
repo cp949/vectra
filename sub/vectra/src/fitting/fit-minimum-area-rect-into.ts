@@ -19,9 +19,9 @@ import type { FitOptions } from './types';
  * point 좌표가 NaN/Infinity/-Infinity이거나 `options.epsilon`이 invalid하면 `RangeError`. `epsilon`은
  * unique/collinear/degenerate extent 판정에만 쓰고 finite 검증에는 쓰지 않는다.
  *
- * 모든 점 좌표를 읽은 뒤에 out에 기록한다.
+ * 모든 점 좌표를 읽은 뒤에 out에 기록한다. 결과의 `-0`은 `0`으로 canonicalize한다.
  *
- * @param out oriented rect를 기록할 writable output
+ * @param out 결과를 기록할 회전 사각형 객체
  * @param points oriented rect로 감쌀 point collection
  * @param options `epsilon`을 담은 fitting 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`
  */

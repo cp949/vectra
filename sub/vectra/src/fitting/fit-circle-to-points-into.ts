@@ -19,7 +19,7 @@ import type { FitOptions } from './types';
  *
  * 모든 점 좌표를 읽은 뒤에 out에 기록한다.
  *
- * @param out circle을 기록할 writable output
+ * @param out 결과를 기록할 원 객체
  * @param points circle을 fitting할 point collection
  * @param options `epsilon`을 담은 fitting 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`
  */

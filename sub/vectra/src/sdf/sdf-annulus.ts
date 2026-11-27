@@ -5,7 +5,7 @@ import { hypot2 } from '../internal/numeric';
 /**
  * annulus(ring)와 point 사이의 signed distance를 반환한다.
  *
- * `circle.r`를 outer radius로 쓰고 `innerRadius`를 hole radius로 쓴다. ring interior는 nearest
+ * `circle.r`을 outer radius로 쓰고 `innerRadius`를 hole radius로 쓴다. ring interior는 nearest
  * boundary까지의 음수 거리, inner/outer boundary는 0, hole 내부와 ring 밖은 양수 거리다.
  *
  * `innerRadius === 0`은 hole이 없으므로 같은 outer radius circle과 같은 filled disk signed distance다.
