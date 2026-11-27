@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { CenterArcLike, XYInput } from '../types';
+import type { CenterArc, CubicCurve, QuadraticCurve } from '../types/flat-shapes.internal';
 import { isDegenerateRadii } from './arc.internal';
 import { GL5_NODES, GL5_WEIGHTS } from './speed-length.internal';
 import { hypot2 } from '../internal/numeric';
@@ -24,17 +23,17 @@ export interface CurveSpeed {
 
 /**
  * cubic Bezier의 구간 적분기를 만든다.
- * XYInput은 한 번만 읽어 closure에 담는다.
+ * 곡선 좌표는 한 번만 읽어 closure에 담는다.
  */
-export function cubicSpeed(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput): CurveSpeed {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
+export function cubicSpeed(curve: CubicCurve): CurveSpeed {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const p3x = curve.x3;
+  const p3y = curve.y3;
 
   return {
     integrate: (from, to, segments) => {
@@ -86,15 +85,15 @@ export function cubicSpeed(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput): 
 
 /**
  * quadratic Bezier의 구간 적분기를 만든다.
- * XYInput은 한 번만 읽어 closure에 담는다.
+ * 곡선 좌표는 한 번만 읽어 closure에 담는다.
  */
-export function quadraticSpeed(p0: XYInput, p1: XYInput, p2: XYInput): CurveSpeed {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+export function quadraticSpeed(curve: QuadraticCurve): CurveSpeed {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   return {
     integrate: (from, to, segments) => {
@@ -149,7 +148,7 @@ export function quadraticSpeed(p0: XYInput, p1: XYInput, p2: XYInput): CurveSpee
  * degenerate 반지름(rx <= 0, ry <= 0, NaN)은 길이 0 곡선을 돌려준다.
  * kernel은 from === to를 0으로 처리하므로 leaf에 별도 guard가 필요 없다.
  */
-export function centerArcSpeed(centerArc: CenterArcLike): CurveSpeed {
+export function centerArcSpeed(centerArc: CenterArc): CurveSpeed {
   const { rx, ry, startAngle, endAngle } = centerArc;
 
   if (isDegenerateRadii(rx, ry)) {

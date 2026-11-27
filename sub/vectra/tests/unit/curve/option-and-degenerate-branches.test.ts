@@ -4,11 +4,8 @@
  * 검증 항목:
  *  1. 옵션 객체에서 필드를 지정하거나 생략하면 각각 지정값과 기본값을 쓴다.
  *  2. 반지름이 0이거나 sweep이 0인 arc는 퇴화 결과를 돌려준다.
- *  3. cubic·quadratic bounds는 tuple 모양의 min/max에도 기록한다.
  *
  * 설계 메모:
- *  - tuple min/max는 `BoundsWritable` 타입이 막는 모양이다. 타입을 검사하지 않는 JS 호출자를 위해
- *    `as never`로 우회해 런타임 동작을 고정한다.
  */
 import { describe, expect, test } from 'vitest';
 import { arcBoundsInto } from '../../../src/curve/arc-bounds-into';
@@ -198,23 +195,9 @@ describe('spline polyline 옵션 객체', () => {
 
 describe('cubic·quadratic bounds', () => {
   test('cubicBoundsInto는 y 최솟값 극점이 끝점보다 낮으면 그 값을 쓴다', () => {
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    cubicBoundsInto(out, { x: 0, y: 0 }, { x: 1, y: -3 }, { x: 2, y: -3 }, { x: 3, y: 0 });
-    expect(out.min.y).toBeCloseTo(-2.25, 12);
-    expect(out.max.y).toBe(0);
-  });
-
-  test('cubicBoundsInto는 tuple min/max에도 기록한다', () => {
-    const out = { min: [9, 9], max: [9, 9] };
-    cubicBoundsInto(out as never, { x: 0, y: 0 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 0 });
-    expect(out.min).toEqual([0, 0]);
-    expect(out.max).toEqual([3, 1.5]);
-  });
-
-  test('quadraticBoundsInto는 tuple min/max에도 기록한다', () => {
-    const out = { min: [9, 9], max: [9, 9] };
-    quadraticBoundsInto(out as never, { x: 0, y: 0 }, { x: 1, y: 2 }, { x: 2, y: 0 });
-    expect(out.min).toEqual([0, 0]);
-    expect(out.max).toEqual([2, 1]);
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    cubicBoundsInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: -3, x2: 2, y2: -3, x3: 3, y3: 0 });
+    expect(out.minY).toBeCloseTo(-2.25, 12);
+    expect(out.maxY).toBe(0);
   });
 });

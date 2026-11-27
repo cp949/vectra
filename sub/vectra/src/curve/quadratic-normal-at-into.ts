@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { QuadraticCurve, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -11,24 +10,16 @@ import { hypot2 } from '../internal/numeric';
  * t는 clamp 없이 수식 그대로 계산한다.
  *
  * @param out unit normal vector를 기록할 writable output
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */
-export function quadraticNormalAtInto<Out extends XYWritable>(
-  out: Out,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  t: number
-): Out {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+export function quadraticNormalAtInto<Out extends PointWritable>(out: Out, curve: QuadraticCurve, t: number): Out {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   const twoMt = 2 * (1 - t);
   const twoT = 2 * t;
@@ -39,9 +30,13 @@ export function quadraticNormalAtInto<Out extends XYWritable>(
   const len = hypot2(dx, dy);
 
   if (len === 0) {
-    return writeXY(out, 0, 0);
+    out.x = 0;
+    out.y = 0;
+    return out;
   }
 
   // tangent의 90도 회전: (-ty, tx)
-  return writeXY(out, -dy / len, dx / len);
+  out.x = -dy / len;
+  out.y = dx / len;
+  return out;
 }

@@ -19,9 +19,9 @@ export const GL5_WEIGHTS = [
  * @param curve 곡선 적분기
  * @param options 적분 옵션. segments 기본값: 12
  */
-export function speedLength(curve: CurveSpeed, options?: LengthOptions): number {
+export function speedLength(curve: CurveSpeed, options?: Required<LengthOptions>): number {
   if (curve.from === curve.to) return 0;
-  return Math.abs(curve.integrate(curve.from, curve.to, options?.segments ?? 12));
+  return Math.abs(curve.integrate(curve.from, curve.to, options === undefined ? 12 : options.segments));
 }
 
 /**
@@ -34,12 +34,12 @@ export function speedLength(curve: CurveSpeed, options?: LengthOptions): number 
  * @param t 정규화 파라미터
  * @param options 적분 옵션. segments 기본값: 12
  */
-export function speedLengthAtT(curve: CurveSpeed, t: number, options?: LengthOptions): number {
+export function speedLengthAtT(curve: CurveSpeed, t: number, options?: Required<LengthOptions>): number {
   if (t <= 0) return 0;
   if (curve.from === curve.to) return 0;
   const tClamped = t >= 1 ? 1 : t;
   const end = curve.from + (curve.to - curve.from) * tClamped;
-  return Math.abs(curve.integrate(curve.from, end, options?.segments ?? 12));
+  return Math.abs(curve.integrate(curve.from, end, options === undefined ? 12 : options.segments));
 }
 
 /**
@@ -53,9 +53,9 @@ export function speedLengthAtT(curve: CurveSpeed, t: number, options?: LengthOpt
  * @param distance 목표 arc length
  * @param options 탐색 옵션. tolerance 기본값: 1e-8, maxIterations 기본값: 64, segments 기본값: 12
  */
-export function speedTAtLength(curve: CurveSpeed, distance: number, options?: TAtLengthOptions): number {
-  const tolerance = options?.tolerance ?? 1e-8;
-  const maxIterations = options?.maxIterations ?? 64;
+export function speedTAtLength(curve: CurveSpeed, distance: number, options?: Required<TAtLengthOptions>): number {
+  const tolerance = options === undefined ? 1e-8 : options.tolerance;
+  const maxIterations = options === undefined ? 64 : options.maxIterations;
 
   const totalLength = speedLengthAtT(curve, 1, options);
 

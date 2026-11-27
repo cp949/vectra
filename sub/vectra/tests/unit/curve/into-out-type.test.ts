@@ -14,12 +14,24 @@ import { arcToCubicInto } from '../../../src/curve/arc-to-cubic-into';
 import { bsplinePointAtTInto } from '../../../src/curve/bspline-point-at-t-into';
 import { cardinalPointAtTInto } from '../../../src/curve/cardinal-point-at-t-into';
 import { catmullRomPointAtTInto } from '../../../src/curve/catmull-rom-point-at-t-into';
+import { cubicBoundsInto } from '../../../src/curve/cubic-bounds-into';
+import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
+import { cubicDerivativeAtInto } from '../../../src/curve/cubic-derivative-at-into';
+import { cubicSecondDerivativeAtInto } from '../../../src/curve/cubic-second-derivative-at-into';
+import { cubicNormalAtInto } from '../../../src/curve/cubic-normal-at-into';
+import { cubicTangentAtInto } from '../../../src/curve/cubic-tangent-at-into';
+import { quadraticBoundsInto } from '../../../src/curve/quadratic-bounds-into';
+import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';
+import { quadraticDerivativeAtInto } from '../../../src/curve/quadratic-derivative-at-into';
+import { quadraticNormalAtInto } from '../../../src/curve/quadratic-normal-at-into';
+import { quadraticTangentAtInto } from '../../../src/curve/quadratic-tangent-at-into';
 import type {
   BoundsWritable,
   Point,
   PointWritable,
   CenterArcWritable,
   CubicCurveWritable,
+  CubicCurve,
 } from '../../../src/types/flat-shapes.internal';
 
 import { stepPathInto } from '../../../src/curve/step-path-into';
@@ -155,4 +167,88 @@ test('catmullRomPointAtTInto은 외부 클래스 출력의 참조와 반환 타�
 
 test('계단 경로는 점 객체 배열을 받는다', () => {
   expectTypeOf(stepPathInto).parameter(1).toEqualTypeOf<readonly Point[]>();
+});
+
+const cubic: CubicCurve = { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 1, x3: 3, y3: 0 };
+const quadratic = { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 0 } as const;
+
+test('삼차 베지어의 평가는 평평한 제어점 필드를 받는다', () => {
+  expectTypeOf(cubicPointAtTInto).parameter(1).toEqualTypeOf<CubicCurve>();
+});
+
+test('cubicBoundsInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new BoundsOutput();
+  const result = cubicBoundsInto(out, cubic);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<BoundsOutput>();
+});
+
+test('cubicPointAtTInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = cubicPointAtTInto(out, cubic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('cubicDerivativeAtInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = cubicDerivativeAtInto(out, cubic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('cubicSecondDerivativeAtInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = cubicSecondDerivativeAtInto(out, cubic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('cubicNormalAtInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = cubicNormalAtInto(out, cubic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('cubicTangentAtInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = cubicTangentAtInto(out, cubic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('quadraticBoundsInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new BoundsOutput();
+  const result = quadraticBoundsInto(out, quadratic);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<BoundsOutput>();
+});
+
+test('quadraticPointAtTInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = quadraticPointAtTInto(out, quadratic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('quadraticDerivativeAtInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = quadraticDerivativeAtInto(out, quadratic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('quadraticNormalAtInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = quadraticNormalAtInto(out, quadratic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('quadraticTangentAtInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = quadraticTangentAtInto(out, quadratic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
 });

@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * cubicSpacedPointsInto / cubicSpacedPoints unit test.
  *
@@ -55,10 +56,17 @@ describe('cubicSpacedPointsInto', () => {
     const count = 6;
     const out: { x: number; y: number }[] = [];
     cubicSpacedPointsInto(out, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, count);
-    const total = cubicLength(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3);
+    const total = cubicLength(flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3));
     for (let i = 1; i < count - 1; i++) {
-      const t = cubicTAtLength(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, (total * i) / (count - 1));
-      const expected = cubicPointAtTInto({ x: 0, y: 0 }, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, t);
+      const t = cubicTAtLength(
+        flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3),
+        (total * i) / (count - 1)
+      );
+      const expected = cubicPointAtTInto(
+        { x: 0, y: 0 },
+        flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3),
+        t
+      );
       expect(out[i].x).toBeCloseTo(expected.x, 10);
       expect(out[i].y).toBeCloseTo(expected.y, 10);
     }
@@ -75,7 +83,11 @@ describe('cubicSpacedPointsInto', () => {
     // 대칭 arch fixture는 arc-length mid == t=0.5라 차이를 드러내지 못한다(함정 참고).
     const spaced: { x: number; y: number }[] = [];
     cubicSpacedPointsInto(spaced, ASYM_P0, ASYM_P1, ASYM_P2, ASYM_P3, 5);
-    const uniformMid = cubicPointAtTInto({ x: 0, y: 0 }, ASYM_P0, ASYM_P1, ASYM_P2, ASYM_P3, 0.5);
+    const uniformMid = cubicPointAtTInto(
+      { x: 0, y: 0 },
+      flatCubicFromLegacyPoints(ASYM_P0, ASYM_P1, ASYM_P2, ASYM_P3),
+      0.5
+    );
     const dx = spaced[2].x - uniformMid.x;
     const dy = spaced[2].y - uniformMid.y;
     expect(Math.hypot(dx, dy)).toBeGreaterThan(1e-3);

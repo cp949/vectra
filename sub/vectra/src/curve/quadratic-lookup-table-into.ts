@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../internal/legacy-curve.internal';
 import type { CurveLookupEntry, XYInput } from '../types';
 import { quadraticPointAtTInto } from './quadratic-point-at-t-into';
 import { hypot2 } from '../internal/numeric';
@@ -40,7 +41,7 @@ export function quadraticLookupTableInto(
 
   for (let i = 0; i < steps; i++) {
     const t = i / last;
-    quadraticPointAtTInto(scratch, p0, p1, p2, t);
+    quadraticPointAtTInto(scratch, flatQuadraticFromLegacyPoints(p0, p1, p2), t);
     const x = scratch.x;
     const y = scratch.y;
     if (i > 0) {

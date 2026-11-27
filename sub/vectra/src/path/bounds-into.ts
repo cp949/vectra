@@ -11,6 +11,7 @@ import type {
   PathMeasurementOptions,
   XYWritable,
 } from '../types/index';
+import type { Bounds as FlatBounds } from '../types/flat-shapes.internal';
 import { forEachDrawSegment } from './path-segments.internal';
 
 /** point 하나를 포함하도록 bounds 누적기를 확장한다. */
@@ -23,10 +24,10 @@ function includePoint(out: BoundsWritable, x: number, y: number): void {
   writeXY(out.max, maxX, maxY);
 }
 
-/** segment-local bounds를 path bounds 누적기에 병합한다. */
-function includeBounds(out: BoundsWritable, bounds: BoundsWritable): void {
-  includePoint(out, readX(bounds.min), readY(bounds.min));
-  includePoint(out, readX(bounds.max), readY(bounds.max));
+/** 곡선의 평평한 경계를 기존 경로 경계에 합친다. */
+function includeBounds(out: BoundsWritable, bounds: FlatBounds): void {
+  includePoint(out, bounds.minX, bounds.minY);
+  includePoint(out, bounds.maxX, bounds.maxY);
 }
 
 /**
@@ -57,9 +58,8 @@ export function boundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
   writeXY(outObj.max, -Infinity, -Infinity);
 
   // curve segment 계산에 쓸 함수 로컬 scratch 객체
-  const scratchBounds: BoundsWritable = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
   // v2-migration: path 경계 상자 전환 시 곡선의 평평한 임시 객체를 공유한다.
-  const scratchArcBounds = createZeroBounds();
+  const scratchBounds = createZeroBounds();
   const centerArcBuf: CenterArcWritable = {
     cx: 0,
     cy: 0,
@@ -85,19 +85,36 @@ export function boundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
     } else if (seg.kind === 'quadratic') {
       // quadratic: interior extrema까지 정확히 포함
       const cmd = seg.command;
-      quadraticBoundsInto(scratchBounds, [fromX, fromY], [cmd.x1, cmd.y1], [cmd.x, cmd.y]);
+      quadraticBoundsInto(scratchBounds, {
+        kind: 'quadratic',
+        x0: fromX,
+        y0: fromY,
+        x1: cmd.x1,
+        y1: cmd.y1,
+        x2: cmd.x,
+        y2: cmd.y,
+      });
       includeBounds(outObj, scratchBounds);
     } else if (seg.kind === 'cubic') {
       // cubic: interior extrema까지 정확히 포함
       const cmd = seg.command;
-      cubicBoundsInto(scratchBounds, [fromX, fromY], [cmd.x1, cmd.y1], [cmd.x2, cmd.y2], [cmd.x, cmd.y]);
+      cubicBoundsInto(scratchBounds, {
+        kind: 'cubic',
+        x0: fromX,
+        y0: fromY,
+        x1: cmd.x1,
+        y1: cmd.y1,
+        x2: cmd.x2,
+        y2: cmd.y2,
+        x3: cmd.x,
+        y3: cmd.y,
+      });
       includeBounds(outObj, scratchBounds);
     } else {
       // arc: endpoint form → center form 변환 후 extrema 계산
       endpointArcToCenterInto(centerArcBuf, [fromX, fromY], seg.command);
-      arcBoundsInto(scratchArcBounds, centerArcBuf);
-      includePoint(outObj, scratchArcBounds.minX, scratchArcBounds.minY);
-      includePoint(outObj, scratchArcBounds.maxX, scratchArcBounds.maxY);
+      arcBoundsInto(scratchBounds, centerArcBuf);
+      includeBounds(outObj, scratchBounds);
     }
   });
 

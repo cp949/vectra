@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { BoundsWritable, XYInput } from '../types';
+import type { BoundsWritable, QuadraticCurve } from '../types/flat-shapes.internal';
 
 /**
  * quadratic Bezier curve의 axis-aligned bounding box를 out에 기록하고 out을 반환한다.
@@ -7,18 +6,16 @@ import type { BoundsWritable, XYInput } from '../types';
  * endpoints(t=0, t=1)와 interior extrema(t ∈ (0,1))에서의 점을 모두 고려하여
  * min/max를 계산한다.
  *
- * @param out bounds를 기록할 BoundsWritable output
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param out 결과를 기록할 경계 상자 객체
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  */
-export function quadraticBoundsInto<Out extends BoundsWritable>(out: Out, p0: XYInput, p1: XYInput, p2: XYInput): Out {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+export function quadraticBoundsInto<Out extends BoundsWritable>(out: Out, curve: QuadraticCurve): Out {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   // endpoints로 초기 min/max 결정
   let minX = Math.min(p0x, p2x);
@@ -52,25 +49,9 @@ export function quadraticBoundsInto<Out extends BoundsWritable>(out: Out, p0: XY
     }
   }
 
-  // BoundsWritable의 min/max는 XYWritable이므로 분기해서 기록
-  const minOut = out.min;
-  const maxOut = out.max;
-
-  if (Array.isArray(minOut)) {
-    minOut[0] = minX;
-    minOut[1] = minY;
-  } else {
-    (minOut as { x: number; y: number }).x = minX;
-    (minOut as { x: number; y: number }).y = minY;
-  }
-
-  if (Array.isArray(maxOut)) {
-    maxOut[0] = maxX;
-    maxOut[1] = maxY;
-  } else {
-    (maxOut as { x: number; y: number }).x = maxX;
-    (maxOut as { x: number; y: number }).y = maxY;
-  }
-
+  out.minX = minX;
+  out.minY = minY;
+  out.maxX = maxX;
+  out.maxY = maxY;
   return out;
 }

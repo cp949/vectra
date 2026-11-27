@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * quadraticSpacedPointsInto / quadraticSpacedPoints unit test.
  *
@@ -48,10 +49,17 @@ describe('quadraticSpacedPointsInto', () => {
     const count = 6;
     const out: { x: number; y: number }[] = [];
     quadraticSpacedPointsInto(out, CURVE_P0, CURVE_P1, CURVE_P2, count);
-    const total = quadraticLength(CURVE_P0, CURVE_P1, CURVE_P2);
+    const total = quadraticLength(flatQuadraticFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2));
     for (let i = 1; i < count - 1; i++) {
-      const t = quadraticTAtLength(CURVE_P0, CURVE_P1, CURVE_P2, (total * i) / (count - 1));
-      const expected = quadraticPointAtTInto({ x: 0, y: 0 }, CURVE_P0, CURVE_P1, CURVE_P2, t);
+      const t = quadraticTAtLength(
+        flatQuadraticFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2),
+        (total * i) / (count - 1)
+      );
+      const expected = quadraticPointAtTInto(
+        { x: 0, y: 0 },
+        flatQuadraticFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2),
+        t
+      );
       expect(out[i].x).toBeCloseTo(expected.x, 10);
       expect(out[i].y).toBeCloseTo(expected.y, 10);
     }
@@ -68,7 +76,11 @@ describe('quadraticSpacedPointsInto', () => {
   it('굽은 곡선에서 spaced sampling은 uniform t sampling과 다르다', () => {
     const spaced: { x: number; y: number }[] = [];
     quadraticSpacedPointsInto(spaced, CURVE_P0, CURVE_P1, CURVE_P2, 5);
-    const uniformMid = quadraticPointAtTInto({ x: 0, y: 0 }, CURVE_P0, CURVE_P1, CURVE_P2, 0.5);
+    const uniformMid = quadraticPointAtTInto(
+      { x: 0, y: 0 },
+      flatQuadraticFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2),
+      0.5
+    );
     // 중앙 점이 t=0.5 uniform 점과 일치하지 않아야 한다
     const dx = spaced[2].x - uniformMid.x;
     const dy = spaced[2].y - uniformMid.y;

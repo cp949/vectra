@@ -43,18 +43,18 @@ describe('GL5 상수', () => {
 
 describe('직선 곡선 길이', () => {
   it('균등 매개 직선 cubic의 길이가 chord와 1e-14 안에서 같다', () => {
-    const len = cubicLength({ x: 0, y: 0 }, { x: 10 / 3, y: 0 }, { x: 20 / 3, y: 0 }, { x: 10, y: 0 });
+    const len = cubicLength({ kind: 'cubic', x0: 0, y0: 0, x1: 10 / 3, y1: 0, x2: 20 / 3, y2: 0, x3: 10, y3: 0 });
     expect(Math.abs(len - 10) / 10).toBeLessThan(1e-14);
   });
 
   it('비균등 매개 직선 cubic의 길이가 chord와 1e-14 안에서 같다', () => {
     // (3, 4) 방향 직선. 제어점이 끝점 사이에 있고 매개 속력이 균등하지 않다. chord = 5 * 3.
-    const len = cubicLength({ x: 0, y: 0 }, { x: 0.6, y: 0.8 }, { x: 1.8, y: 2.4 }, { x: 9, y: 12 });
+    const len = cubicLength({ kind: 'cubic', x0: 0, y0: 0, x1: 0.6, y1: 0.8, x2: 1.8, y2: 2.4, x3: 9, y3: 12 });
     expect(Math.abs(len - 15) / 15).toBeLessThan(1e-14);
   });
 
   it('직선 quadratic의 길이가 chord와 1e-14 안에서 같다', () => {
-    const len = quadraticLength({ x: 1, y: 1 }, { x: 2, y: 2 }, { x: 4, y: 4 });
+    const len = quadraticLength({ kind: 'quadratic', x0: 1, y0: 1, x1: 2, y1: 2, x2: 4, y2: 4 });
     const chord = 3 * Math.SQRT2;
     expect(Math.abs(len - chord) / chord).toBeLessThan(1e-14);
   });

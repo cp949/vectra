@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
 import type { CurveSpacedPointsOptions, XYInput, XYObjectWritable } from '../types';
 import { cubicLength } from './cubic-length';
 import { cubicPointAtTInto } from './cubic-point-at-t-into';
@@ -37,7 +38,16 @@ export function cubicSpacedPointsInto(
     throw new RangeError(`count must be a safe integer in [2, 4294967295], got ${count}`);
   }
 
-  const totalLength = cubicLength(p0, p1, p2, p3, options);
+  // v2-migration: 등간격 표본 API 전환 시 기존 옵션 보완을 지운다.
+  const lengthOptions =
+    options === undefined
+      ? undefined
+      : {
+          segments: options.segments ?? 12,
+          tolerance: options.tolerance ?? 1e-8,
+          maxIterations: options.maxIterations ?? 64,
+        };
+  const totalLength = cubicLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), lengthOptions);
   const last = count - 1;
   const temp: XYObjectWritable[] = [];
 
@@ -50,10 +60,10 @@ export function cubicSpacedPointsInto(
       // 마지막 point는 distance === totalLength 경계의 drift 없이 정확한 end point가 되도록 t=1로 고정한다.
       t = 1;
     } else {
-      t = cubicTAtLength(p0, p1, p2, p3, (totalLength * i) / last, options);
+      t = cubicTAtLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), (totalLength * i) / last, lengthOptions);
     }
     const pt: XYObjectWritable = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, p0, p1, p2, p3, t);
+    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), t);
     temp.push(pt);
   }
 

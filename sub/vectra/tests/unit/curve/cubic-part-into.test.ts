@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * cubicPartInto / cubicPart unit test.
  *
@@ -126,7 +127,7 @@ describe('cubicPartInto', () => {
     const out = makeOut();
     cubicPartInto(out, p0, p1, p2, p3, 0.3, 0.7);
     const pt = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, p0, p1, p2, p3, 0.3);
+    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.3);
     expect(relErr(out.p0.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(out.p0.y, pt.y)).toBeLessThan(1e-12);
   });
@@ -135,7 +136,7 @@ describe('cubicPartInto', () => {
     const out = makeOut();
     cubicPartInto(out, p0, p1, p2, p3, 0.3, 0.7);
     const pt = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, p0, p1, p2, p3, 0.7);
+    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.7);
     expect(relErr(out.p3.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(out.p3.y, pt.y)).toBeLessThan(1e-12);
   });
@@ -144,7 +145,7 @@ describe('cubicPartInto', () => {
     const out = makeOut();
     cubicPartInto(out, p0, p1, p2, p3, 0.4, 0.4);
     const pt = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, p0, p1, p2, p3, 0.4);
+    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.4);
     expect(relErr(out.p0.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(out.p0.y, pt.y)).toBeLessThan(1e-12);
     expect(relErr(out.p1.x, pt.x)).toBeLessThan(1e-12);

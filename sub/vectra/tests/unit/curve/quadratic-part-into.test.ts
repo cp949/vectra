@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * quadraticPartInto / quadraticPart unit test.
  *
@@ -115,7 +116,7 @@ describe('quadraticPartInto', () => {
     const out = makeOut();
     quadraticPartInto(out, p0, p1, p2, 0.3, 0.7);
     const pt = { x: 0, y: 0 };
-    quadraticPointAtTInto(pt, p0, p1, p2, 0.3);
+    quadraticPointAtTInto(pt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.3);
     expect(relErr(out.p0.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(out.p0.y, pt.y)).toBeLessThan(1e-12);
   });
@@ -124,7 +125,7 @@ describe('quadraticPartInto', () => {
     const out = makeOut();
     quadraticPartInto(out, p0, p1, p2, 0.3, 0.7);
     const pt = { x: 0, y: 0 };
-    quadraticPointAtTInto(pt, p0, p1, p2, 0.7);
+    quadraticPointAtTInto(pt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.7);
     expect(relErr(out.p2.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(out.p2.y, pt.y)).toBeLessThan(1e-12);
   });
@@ -133,7 +134,7 @@ describe('quadraticPartInto', () => {
     const out = makeOut();
     quadraticPartInto(out, p0, p1, p2, 0.4, 0.4);
     const pt = { x: 0, y: 0 };
-    quadraticPointAtTInto(pt, p0, p1, p2, 0.4);
+    quadraticPointAtTInto(pt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.4);
     expect(relErr(out.p0.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(out.p0.y, pt.y)).toBeLessThan(1e-12);
     expect(relErr(out.p1.x, pt.x)).toBeLessThan(1e-12);

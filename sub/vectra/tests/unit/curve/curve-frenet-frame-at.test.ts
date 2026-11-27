@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curveFrenetFrameAtInto / curveFrenetFrameAt unit test.
  *
@@ -36,10 +37,10 @@ describe('curveFrenetFrameAtInto - quadratic', () => {
       const out = makeOut();
       curveFrenetFrameAtInto(out, quad, t);
 
-      const pt = quadraticPointAtTInto({ x: 0, y: 0 }, quad.p0, quad.p1, quad.p2, t);
-      const tan = quadraticTangentAtInto({ x: 0, y: 0 }, quad.p0, quad.p1, quad.p2, t);
-      const nrm = quadraticNormalAtInto({ x: 0, y: 0 }, quad.p0, quad.p1, quad.p2, t);
-      const kappa = quadraticCurvatureAt(quad.p0, quad.p1, quad.p2, t);
+      const pt = quadraticPointAtTInto({ x: 0, y: 0 }, flatQuadraticFromLegacyPoints(quad.p0, quad.p1, quad.p2), t);
+      const tan = quadraticTangentAtInto({ x: 0, y: 0 }, flatQuadraticFromLegacyPoints(quad.p0, quad.p1, quad.p2), t);
+      const nrm = quadraticNormalAtInto({ x: 0, y: 0 }, flatQuadraticFromLegacyPoints(quad.p0, quad.p1, quad.p2), t);
+      const kappa = quadraticCurvatureAt(flatQuadraticFromLegacyPoints(quad.p0, quad.p1, quad.p2), t);
 
       expect(out.point.x).toBeCloseTo(pt.x, 12);
       expect(out.point.y).toBeCloseTo(pt.y, 12);
@@ -93,10 +94,22 @@ describe('curveFrenetFrameAtInto - cubic', () => {
       const out = makeOut();
       curveFrenetFrameAtInto(out, cubic, t);
 
-      const pt = cubicPointAtTInto({ x: 0, y: 0 }, cubic.p0, cubic.p1, cubic.p2, cubic.p3, t);
-      const tan = cubicTangentAtInto({ x: 0, y: 0 }, cubic.p0, cubic.p1, cubic.p2, cubic.p3, t);
-      const nrm = cubicNormalAtInto({ x: 0, y: 0 }, cubic.p0, cubic.p1, cubic.p2, cubic.p3, t);
-      const kappa = cubicCurvatureAt(cubic.p0, cubic.p1, cubic.p2, cubic.p3, t);
+      const pt = cubicPointAtTInto(
+        { x: 0, y: 0 },
+        flatCubicFromLegacyPoints(cubic.p0, cubic.p1, cubic.p2, cubic.p3),
+        t
+      );
+      const tan = cubicTangentAtInto(
+        { x: 0, y: 0 },
+        flatCubicFromLegacyPoints(cubic.p0, cubic.p1, cubic.p2, cubic.p3),
+        t
+      );
+      const nrm = cubicNormalAtInto(
+        { x: 0, y: 0 },
+        flatCubicFromLegacyPoints(cubic.p0, cubic.p1, cubic.p2, cubic.p3),
+        t
+      );
+      const kappa = cubicCurvatureAt(flatCubicFromLegacyPoints(cubic.p0, cubic.p1, cubic.p2, cubic.p3), t);
 
       expect(out.point.x).toBeCloseTo(pt.x, 12);
       expect(out.point.y).toBeCloseTo(pt.y, 12);
@@ -159,7 +172,11 @@ describe('curveFrenetFrameAtInto - t 외삽', () => {
     for (const t of [-0.5, 1.5]) {
       const out = makeOut();
       curveFrenetFrameAtInto(out, cubic, t);
-      const pt = cubicPointAtTInto({ x: 0, y: 0 }, cubic.p0, cubic.p1, cubic.p2, cubic.p3, t);
+      const pt = cubicPointAtTInto(
+        { x: 0, y: 0 },
+        flatCubicFromLegacyPoints(cubic.p0, cubic.p1, cubic.p2, cubic.p3),
+        t
+      );
       expect(out.point.x).toBeCloseTo(pt.x, 12);
       expect(out.point.y).toBeCloseTo(pt.y, 12);
     }

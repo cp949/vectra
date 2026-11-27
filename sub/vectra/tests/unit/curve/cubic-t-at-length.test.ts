@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * cubicTAtLength unit test.
  *
@@ -28,14 +29,14 @@ describe('cubicTAtLength', () => {
     const b1 = { x: 10 / 3, y: 0 };
     const b2 = { x: 20 / 3, y: 0 };
     const b = { x: 10, y: 0 };
-    const t = cubicTAtLength(a, b1, b2, b, 5);
+    const t = cubicTAtLength(flatCubicFromLegacyPoints(a, b1, b2, b), 5);
     expect(relErr(t, 0.5)).toBeLessThan(1e-6);
   });
 
   it('tuple XYInput을 받는다', () => {
-    const targetLen = cubicLengthAtT(p0, p1, p2, p3, 0.5);
-    const result = cubicTAtLength([0, 0], [1, 3], [3, 3], [4, 0], targetLen);
-    const ref = cubicTAtLength(p0, p1, p2, p3, targetLen);
+    const targetLen = cubicLengthAtT(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
+    const result = cubicTAtLength({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 3, x2: 3, y2: 3, x3: 4, y3: 0 }, targetLen);
+    const ref = cubicTAtLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), targetLen);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
 });

@@ -1,4 +1,5 @@
-import type { LengthOptions, XYInput } from '../types';
+import type { LengthOptions } from '../types';
+import type { CubicCurve } from '../types/flat-shapes.internal';
 import { cubicSpeed } from './curve-speed.internal';
 import { speedLength } from './speed-length.internal';
 
@@ -8,14 +9,11 @@ import { speedLength } from './speed-length.internal';
  * t ∈ [0, 1] 구간을 segments로 분할하여 각 구간에서 5점 GL 적분을 수행한다.
  * global cache 없음. 호출마다 deterministic하게 계산한다.
  *
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options 적분 옵션
  * @param options.segments 구간 분할 수. 기본값: 12
  * @returns arc length
  */
-export function cubicLength(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput, options?: LengthOptions): number {
-  return speedLength(cubicSpeed(p0, p1, p2, p3), options);
+export function cubicLength(curve: CubicCurve, options?: Required<LengthOptions>): number {
+  return speedLength(cubicSpeed(curve), options);
 }

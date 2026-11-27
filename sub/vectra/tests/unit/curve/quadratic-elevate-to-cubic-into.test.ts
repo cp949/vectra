@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * quadraticElevateToCubicInto / quadraticElevateToCubic unit test.
  *
@@ -69,8 +70,8 @@ describe('quadraticElevateToCubicInto', () => {
     quadraticElevateToCubicInto(out, p0, p1, p2);
     const qPt = { x: 0, y: 0 };
     const cPt = { x: 0, y: 0 };
-    quadraticPointAtTInto(qPt, p0, p1, p2, 0);
-    cubicPointAtTInto(cPt, out.p0, out.p1, out.p2, out.p3, 0);
+    quadraticPointAtTInto(qPt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0);
+    cubicPointAtTInto(cPt, flatCubicFromLegacyPoints(out.p0, out.p1, out.p2, out.p3), 0);
     expect(relErr(cPt.x, qPt.x)).toBeLessThan(1e-12);
     expect(relErr(cPt.y, qPt.y)).toBeLessThan(1e-12);
   });
@@ -80,8 +81,8 @@ describe('quadraticElevateToCubicInto', () => {
     quadraticElevateToCubicInto(out, p0, p1, p2);
     const qPt = { x: 0, y: 0 };
     const cPt = { x: 0, y: 0 };
-    quadraticPointAtTInto(qPt, p0, p1, p2, 0.5);
-    cubicPointAtTInto(cPt, out.p0, out.p1, out.p2, out.p3, 0.5);
+    quadraticPointAtTInto(qPt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
+    cubicPointAtTInto(cPt, flatCubicFromLegacyPoints(out.p0, out.p1, out.p2, out.p3), 0.5);
     expect(relErr(cPt.x, qPt.x)).toBeLessThan(1e-12);
     expect(relErr(cPt.y, qPt.y)).toBeLessThan(1e-12);
   });
@@ -91,8 +92,8 @@ describe('quadraticElevateToCubicInto', () => {
     quadraticElevateToCubicInto(out, p0, p1, p2);
     const qPt = { x: 0, y: 0 };
     const cPt = { x: 0, y: 0 };
-    quadraticPointAtTInto(qPt, p0, p1, p2, 1);
-    cubicPointAtTInto(cPt, out.p0, out.p1, out.p2, out.p3, 1);
+    quadraticPointAtTInto(qPt, flatQuadraticFromLegacyPoints(p0, p1, p2), 1);
+    cubicPointAtTInto(cPt, flatCubicFromLegacyPoints(out.p0, out.p1, out.p2, out.p3), 1);
     expect(relErr(cPt.x, qPt.x)).toBeLessThan(1e-12);
     expect(relErr(cPt.y, qPt.y)).toBeLessThan(1e-12);
   });
@@ -102,8 +103,8 @@ describe('quadraticElevateToCubicInto', () => {
     quadraticElevateToCubicInto(out, p0, p1, p2);
     const qPt = { x: 0, y: 0 };
     const cPt = { x: 0, y: 0 };
-    quadraticPointAtTInto(qPt, p0, p1, p2, 0.3);
-    cubicPointAtTInto(cPt, out.p0, out.p1, out.p2, out.p3, 0.3);
+    quadraticPointAtTInto(qPt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.3);
+    cubicPointAtTInto(cPt, flatCubicFromLegacyPoints(out.p0, out.p1, out.p2, out.p3), 0.3);
     expect(relErr(cPt.x, qPt.x)).toBeLessThan(1e-12);
     expect(relErr(cPt.y, qPt.y)).toBeLessThan(1e-12);
   });

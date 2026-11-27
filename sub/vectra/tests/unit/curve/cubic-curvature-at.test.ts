@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * cubicCurvatureAt unit test.
  *
@@ -46,9 +47,9 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
     const p3 = { x: 3, y: 0 };
-    expect(cubicCurvatureAt(p0, p1, p2, p3, 0)).toBe(0);
-    expect(cubicCurvatureAt(p0, p1, p2, p3, 0.5)).toBe(0);
-    expect(cubicCurvatureAt(p0, p1, p2, p3, 1)).toBe(0);
+    expect(cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0)).toBe(0);
+    expect(cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5)).toBe(0);
+    expect(cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 1)).toBe(0);
   });
 
   it('대각선 직선 curve에서 curvature = 0이다', () => {
@@ -56,12 +57,12 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 1 };
     const p2 = { x: 2, y: 2 };
     const p3 = { x: 3, y: 3 };
-    expect(Math.abs(cubicCurvatureAt(p0, p1, p2, p3, 0.5))).toBeLessThan(1e-10);
+    expect(Math.abs(cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5))).toBeLessThan(1e-10);
   });
 
   it('degenerate curve (p0 == p1 == p2 == p3)에서 0을 반환한다', () => {
     const p = { x: 3, y: 3 };
-    expect(cubicCurvatureAt(p, p, p, p, 0.5)).toBe(0);
+    expect(cubicCurvatureAt(flatCubicFromLegacyPoints(p, p, p, p), 0.5)).toBe(0);
   });
 
   it('t=0.5에서 curvature가 수식 기준값과 같다', () => {
@@ -69,7 +70,7 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicCurvatureAt(p0, p1, p2, p3, 0.5);
+    const result = cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     const ref = refCurvature(p0, p1, p2, p3, 0.5);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -79,7 +80,7 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicCurvatureAt(p0, p1, p2, p3, 0);
+    const result = cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0);
     const ref = refCurvature(p0, p1, p2, p3, 0);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -89,7 +90,7 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicCurvatureAt(p0, p1, p2, p3, 1);
+    const result = cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 1);
     const ref = refCurvature(p0, p1, p2, p3, 1);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -99,7 +100,7 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicCurvatureAt(p0, p1, p2, p3, 0.3);
+    const result = cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.3);
     const ref = refCurvature(p0, p1, p2, p3, 0.3);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -110,14 +111,14 @@ describe('cubicCurvatureAt', () => {
     const p1a = { x: 1, y: 2 };
     const p2a = { x: 3, y: 2 };
     const p3a = { x: 4, y: 0 };
-    expect(cubicCurvatureAt(p0a, p1a, p2a, p3a, 0.5)).toBeLessThan(0);
+    expect(cubicCurvatureAt(flatCubicFromLegacyPoints(p0a, p1a, p2a, p3a), 0.5)).toBeLessThan(0);
 
     // p1, p2가 y 음수 방향(screen 위): curvature 양수
     const p0b = { x: 0, y: 0 };
     const p1b = { x: 1, y: -2 };
     const p2b = { x: 3, y: -2 };
     const p3b = { x: 4, y: 0 };
-    expect(cubicCurvatureAt(p0b, p1b, p2b, p3b, 0.5)).toBeGreaterThan(0);
+    expect(cubicCurvatureAt(flatCubicFromLegacyPoints(p0b, p1b, p2b, p3b), 0.5)).toBeGreaterThan(0);
   });
 
   it('tuple XYInput을 받는다', () => {
@@ -125,7 +126,7 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicCurvatureAt([0, 0], [1, 3], [3, 3], [4, 0], 0.5);
+    const result = cubicCurvatureAt({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 3, x2: 3, y2: 3, x3: 4, y3: 0 }, 0.5);
     const ref = refCurvature(p0, p1, p2, p3, 0.5);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -135,7 +136,7 @@ describe('cubicCurvatureAt', () => {
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 3, y: 3 };
     const p3 = { x: 4, y: 0 };
-    const result = cubicCurvatureAt(p0, p1, p2, p3, 0.5);
+    const result = cubicCurvatureAt(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(typeof result).toBe('number');
   });
 });

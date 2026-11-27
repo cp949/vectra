@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
 import type { CurveLookupEntry, XYInput } from '../types';
 import { cubicPointAtTInto } from './cubic-point-at-t-into';
 import { hypot2 } from '../internal/numeric';
@@ -42,7 +43,7 @@ export function cubicLookupTableInto(
 
   for (let i = 0; i < steps; i++) {
     const t = i / last;
-    cubicPointAtTInto(scratch, p0, p1, p2, p3, t);
+    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t);
     const x = scratch.x;
     const y = scratch.y;
     if (i > 0) {

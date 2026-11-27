@@ -203,24 +203,24 @@ describe('speedTAtLength', () => {
 
   test('tolerance가 크면 이른 탐색 종료로 오차가 커진다', () => {
     const exact = speedTAtLength(linearSpeed(), 0.1);
-    const coarse = speedTAtLength(linearSpeed(), 0.1, { tolerance: 0.1 });
+    const coarse = speedTAtLength(linearSpeed(), 0.1, { segments: 12, tolerance: 0.1, maxIterations: 64 });
     expect(Math.abs(coarse - exact)).toBeGreaterThan(1e-4);
     expect(Math.abs(coarse - exact)).toBeLessThan(0.1);
   });
 
   test('maxIterations가 0이면 탐색 없이 구간 중점 0.5를 반환한다', () => {
-    expect(speedTAtLength(linearSpeed(), 0.1, { maxIterations: 0 })).toBe(0.5);
+    expect(speedTAtLength(linearSpeed(), 0.1, { segments: 12, tolerance: 1e-8, maxIterations: 0 })).toBe(0.5);
   });
 
   test('maxIterations가 작으면 큰 maxIterations보다 오차가 크다', () => {
     const exact = speedTAtLength(linearSpeed(), 0.1);
-    const few = speedTAtLength(linearSpeed(), 0.1, { maxIterations: 3 });
+    const few = speedTAtLength(linearSpeed(), 0.1, { segments: 12, tolerance: 1e-8, maxIterations: 3 });
     expect(Math.abs(few - exact)).toBeGreaterThan(1e-3);
   });
 
   test('segments 옵션이 총길이 계산과 탐색의 모든 적분 호출에 전달된다', () => {
     const integrate = vi.fn((a: number, b: number) => 2 * (b - a));
-    speedTAtLength({ integrate, from: 0, to: 3 }, 3, { segments: 1 });
+    speedTAtLength({ integrate, from: 0, to: 3 }, 3, { segments: 1, tolerance: 1e-8, maxIterations: 64 });
     expect(integrate.mock.calls.length).toBeGreaterThan(1);
     for (const call of integrate.mock.calls) {
       expect((call as unknown[])[2]).toBe(1);

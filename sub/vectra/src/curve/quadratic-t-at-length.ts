@@ -1,4 +1,5 @@
-import type { TAtLengthOptions, XYInput } from '../types';
+import type { TAtLengthOptions } from '../types';
+import type { QuadraticCurve } from '../types/flat-shapes.internal';
 import { quadraticSpeed } from './curve-speed.internal';
 import { speedTAtLength } from './speed-length.internal';
 
@@ -9,9 +10,7 @@ import { speedTAtLength } from './speed-length.internal';
  * zero-length curve는 distance와 무관하게 0을 반환한다.
  * 이진 탐색으로 수렴하며, 수렴하지 않으면 마지막 추정값을 반환한다.
  *
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param distance 목표 arc length
  * @param options 탐색 옵션
  * @param options.segments 적분 구간 분할 수. 기본값: 12
@@ -19,11 +18,9 @@ import { speedTAtLength } from './speed-length.internal';
  * @param options.maxIterations 이진 탐색 최대 반복 횟수. 기본값: 64
  */
 export function quadraticTAtLength(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
+  curve: QuadraticCurve,
   distance: number,
-  options?: TAtLengthOptions
+  options?: Required<TAtLengthOptions>
 ): number {
-  return speedTAtLength(quadraticSpeed(p0, p1, p2), distance, options);
+  return speedTAtLength(quadraticSpeed(curve), distance, options);
 }

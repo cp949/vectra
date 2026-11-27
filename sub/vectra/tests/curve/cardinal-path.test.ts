@@ -87,10 +87,17 @@ describe('cardinalPathInto — 수치 일치 (open n=4, si=1 midpoint)', () => {
     const bezMid = { x: 0, y: 0 };
     cubicPointAtTInto(
       bezMid,
-      { x: prevCubic.x, y: prevCubic.y },
-      { x: cubic.x1, y: cubic.y1 },
-      { x: cubic.x2, y: cubic.y2 },
-      { x: cubic.x, y: cubic.y },
+      {
+        kind: 'cubic',
+        x0: prevCubic.x,
+        y0: prevCubic.y,
+        x1: cubic.x1,
+        y1: cubic.y1,
+        x2: cubic.x2,
+        y2: cubic.y2,
+        x3: cubic.x,
+        y3: cubic.y,
+      },
       0.5
     );
 

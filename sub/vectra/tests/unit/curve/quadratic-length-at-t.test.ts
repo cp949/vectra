@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * quadraticLengthAtT unit test.
  *
@@ -27,21 +28,21 @@ describe('quadraticLengthAtT', () => {
     const a = { x: 0, y: 0 };
     const mid = { x: 5, y: 0 };
     const b = { x: 10, y: 0 };
-    const len = quadraticLengthAtT(a, mid, b, 0.5);
+    const len = quadraticLengthAtT(flatQuadraticFromLegacyPoints(a, mid, b), 0.5);
     expect(relErr(len, 5)).toBeLessThan(1e-6);
   });
 
   it('부분 length 합산이 전체 length와 같다 (LengthAtT additivity)', () => {
-    const half = quadraticLengthAtT(p0, p1, p2, 0.5);
-    const total = quadraticLength(p0, p1, p2);
+    const half = quadraticLengthAtT(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
+    const total = quadraticLength(flatQuadraticFromLegacyPoints(p0, p1, p2));
     // t=0.5까지 길이는 전체의 0~100% 사이여야 한다
     expect(half).toBeGreaterThan(0);
     expect(half).toBeLessThan(total);
   });
 
   it('tuple XYInput을 받는다', () => {
-    const result = quadraticLengthAtT([0, 0], [1, 2], [4, 0], 0.5);
-    const ref = quadraticLengthAtT(p0, p1, p2, 0.5);
+    const result = quadraticLengthAtT({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 4, y2: 0 }, 0.5);
+    const ref = quadraticLengthAtT(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
 });

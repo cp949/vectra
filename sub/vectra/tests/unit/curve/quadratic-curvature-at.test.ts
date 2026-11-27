@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * quadraticCurvatureAt unit test.
  *
@@ -42,28 +43,28 @@ describe('quadraticCurvatureAt', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
-    expect(quadraticCurvatureAt(p0, p1, p2, 0)).toBe(0);
-    expect(quadraticCurvatureAt(p0, p1, p2, 0.5)).toBe(0);
-    expect(quadraticCurvatureAt(p0, p1, p2, 1)).toBe(0);
+    expect(quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 0)).toBe(0);
+    expect(quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5)).toBe(0);
+    expect(quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 1)).toBe(0);
   });
 
   it('대각선 직선 curve에서 curvature = 0이다', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 1 };
     const p2 = { x: 2, y: 2 };
-    expect(Math.abs(quadraticCurvatureAt(p0, p1, p2, 0.5))).toBeLessThan(1e-10);
+    expect(Math.abs(quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5))).toBeLessThan(1e-10);
   });
 
   it('degenerate curve (p0 == p1 == p2)에서 0을 반환한다', () => {
     const p = { x: 3, y: 3 };
-    expect(quadraticCurvatureAt(p, p, p, 0.5)).toBe(0);
+    expect(quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p, p, p), 0.5)).toBe(0);
   });
 
   it('t=0.5에서 curvature가 수식 기준값과 같다', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticCurvatureAt(p0, p1, p2, 0.5);
+    const result = quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     const ref = refCurvature(p0, p1, p2, 0.5);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -72,7 +73,7 @@ describe('quadraticCurvatureAt', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticCurvatureAt(p0, p1, p2, 0);
+    const result = quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 0);
     const ref = refCurvature(p0, p1, p2, 0);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -81,7 +82,7 @@ describe('quadraticCurvatureAt', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticCurvatureAt(p0, p1, p2, 1);
+    const result = quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 1);
     const ref = refCurvature(p0, p1, p2, 1);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -91,20 +92,20 @@ describe('quadraticCurvatureAt', () => {
     const p0a = { x: 0, y: 0 };
     const p1a = { x: 1, y: 1 };
     const p2a = { x: 2, y: 0 };
-    expect(quadraticCurvatureAt(p0a, p1a, p2a, 0.5)).toBeLessThan(0);
+    expect(quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0a, p1a, p2a), 0.5)).toBeLessThan(0);
 
     // p1이 y 음수 방향(위, screen coordinate): d1=(2,0), d2=(0,4) → cross=8 → 양수
     const p0b = { x: 0, y: 0 };
     const p1b = { x: 1, y: -1 };
     const p2b = { x: 2, y: 0 };
-    expect(quadraticCurvatureAt(p0b, p1b, p2b, 0.5)).toBeGreaterThan(0);
+    expect(quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0b, p1b, p2b), 0.5)).toBeGreaterThan(0);
   });
 
   it('tuple XYInput을 받는다', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticCurvatureAt([0, 0], [1, 2], [4, 0], 0.5);
+    const result = quadraticCurvatureAt({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 4, y2: 0 }, 0.5);
     const ref = refCurvature(p0, p1, p2, 0.5);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
@@ -113,7 +114,7 @@ describe('quadraticCurvatureAt', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 4, y: 0 };
-    const result = quadraticCurvatureAt(p0, p1, p2, 0.5);
+    const result = quadraticCurvatureAt(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(typeof result).toBe('number');
   });
 });

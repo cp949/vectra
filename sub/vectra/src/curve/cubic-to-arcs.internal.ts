@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
 import { readX, readY } from '../internal/xy';
 import type { CenterArcWritable, XYInput, XYLike } from '../types';
 import { cubicPointAtTInto } from './cubic-point-at-t-into';
@@ -208,13 +209,13 @@ export function subdivideCubicToTolerance(
     const tSpan = t1 - t0;
     const tMid = (t0 + t1) * 0.5;
 
-    cubicPointAtTInto(scratch, p0, p1, p2, p3, t0);
+    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t0);
     const sx = scratch.x;
     const sy = scratch.y;
-    cubicPointAtTInto(scratch, p0, p1, p2, p3, tMid);
+    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), tMid);
     const mx = scratch.x;
     const my = scratch.y;
-    cubicPointAtTInto(scratch, p0, p1, p2, p3, t1);
+    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t1);
     const ex = scratch.x;
     const ey = scratch.y;
 
@@ -245,10 +246,10 @@ export function subdivideCubicToTolerance(
     // error metric: quarter-point 표본의 point-to-circle deviation과 끝점 재구성 오차의 최대값
     // 거의 직선인 segment는 재분할해도 반지름이 그대로라 끝점 오차가 줄지 않는다.
     // 대신 현이 짧아져 circumcircle이 null이 되고 collinear 경로로 수렴한다.
-    cubicPointAtTInto(scratch, p0, p1, p2, p3, t0 + tSpan * 0.25);
+    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t0 + tSpan * 0.25);
     const q1x = scratch.x;
     const q1y = scratch.y;
-    cubicPointAtTInto(scratch, p0, p1, p2, p3, t1 - tSpan * 0.25);
+    cubicPointAtTInto(scratch, flatCubicFromLegacyPoints(p0, p1, p2, p3), t1 - tSpan * 0.25);
     const q3x = scratch.x;
     const q3y = scratch.y;
 

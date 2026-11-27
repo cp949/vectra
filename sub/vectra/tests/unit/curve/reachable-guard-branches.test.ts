@@ -70,23 +70,23 @@ describe('curve-segments helper', () => {
 
 describe('극점 탐색', () => {
   test('quadraticExtrema는 x 극점이 0 미만이면 제외한다', () => {
-    expect(quadraticExtrema({ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 3, y: 2 })).toEqual([]);
+    expect(quadraticExtrema({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 3, y2: 2 })).toEqual([]);
   });
 
   test('quadraticExtrema는 x 극점이 1 초과이면 제외한다', () => {
-    expect(quadraticExtrema({ x: 0, y: 0 }, { x: 2, y: 1 }, { x: 3, y: 2 })).toEqual([]);
+    expect(quadraticExtrema({ kind: 'quadratic', x0: 0, y0: 0, x1: 2, y1: 1, x2: 3, y2: 2 })).toEqual([]);
   });
 
   test('quadraticExtrema는 y 극점이 0 미만이면 제외한다', () => {
-    expect(quadraticExtrema({ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 3 })).toEqual([]);
+    expect(quadraticExtrema({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 3 })).toEqual([]);
   });
 
   test('quadraticExtrema는 y 극점이 1 초과이면 제외한다', () => {
-    expect(quadraticExtrema({ x: 0, y: 0 }, { x: 1, y: 2 }, { x: 2, y: 3 })).toEqual([]);
+    expect(quadraticExtrema({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 3 })).toEqual([]);
   });
 
   test('cubicExtrema는 x와 y의 극점이 같으면 한 번만 돌려준다', () => {
-    expect(cubicExtrema({ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 1 }, { x: 0, y: 0 })).toEqual([0.5]);
+    expect(cubicExtrema({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 1, y2: 1, x3: 0, y3: 0 })).toEqual([0.5]);
   });
 });
 

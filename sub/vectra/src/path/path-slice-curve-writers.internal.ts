@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
 import { cubicSplitInto } from '../curve/cubic-split-into';
 import { cubicTAtLength } from '../curve/cubic-t-at-length';
 import { quadraticSplitInto } from '../curve/quadratic-split-into';
@@ -26,7 +27,7 @@ export function writeQuadraticSplit(
   const p0 = { x: seg.fromX, y: seg.fromY };
   const p1 = { x: cmd.x1, y: cmd.y1 };
   const p2 = { x: cmd.x, y: cmd.y };
-  const t = quadraticTAtLength(p0, p1, p2, local);
+  const t = quadraticTAtLength(flatQuadraticFromLegacyPoints(p0, p1, p2), local);
   const left: QuadraticCurveWritable = {
     p0: { x: 0, y: 0 },
     p1: { x: 0, y: 0 },
@@ -68,7 +69,7 @@ export function writeCubicSplit(
   const p1 = { x: cmd.x1, y: cmd.y1 };
   const p2 = { x: cmd.x2, y: cmd.y2 };
   const p3 = { x: cmd.x, y: cmd.y };
-  const t = cubicTAtLength(p0, p1, p2, p3, local);
+  const t = cubicTAtLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), local);
   const left: CubicCurveWritable = {
     p0: { x: 0, y: 0 },
     p1: { x: 0, y: 0 },

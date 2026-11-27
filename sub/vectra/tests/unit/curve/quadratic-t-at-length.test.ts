@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * quadraticTAtLength unit test.
  *
@@ -27,14 +28,14 @@ describe('quadraticTAtLength', () => {
     const m = { x: 5, y: 0 };
     const b = { x: 10, y: 0 };
     // 직선이므로 arc length = euclidean distance
-    const t = quadraticTAtLength(a, m, b, 5);
+    const t = quadraticTAtLength(flatQuadraticFromLegacyPoints(a, m, b), 5);
     expect(relErr(t, 0.5)).toBeLessThan(1e-6);
   });
 
   it('tuple XYInput을 받는다', () => {
-    const targetLen = quadraticLengthAtT(p0, p1, p2, 0.5);
-    const result = quadraticTAtLength([0, 0], [1, 2], [4, 0], targetLen);
-    const ref = quadraticTAtLength(p0, p1, p2, targetLen);
+    const targetLen = quadraticLengthAtT(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
+    const result = quadraticTAtLength({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 4, y2: 0 }, targetLen);
+    const ref = quadraticTAtLength(flatQuadraticFromLegacyPoints(p0, p1, p2), targetLen);
     expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
 });

@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
 import type { CurveSampleOptions, XYInput, XYObjectWritable } from '../types';
 import { cubicPointAtTInto } from './cubic-point-at-t-into';
 
@@ -32,7 +33,7 @@ export function cubicSampleInto(
   for (let i = 0; i < rawSteps; i++) {
     const t = i / (rawSteps - 1);
     const pt: XYObjectWritable = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, p0, p1, p2, p3, t);
+    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), t);
     out.push(pt);
   }
   return out;

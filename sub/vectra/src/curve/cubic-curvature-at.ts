@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { CubicCurve } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -16,21 +15,18 @@ import { hypot2 } from '../internal/numeric';
  * 양수 curvature는 반시계 방향(CCW) 굽힘을 나타낸다.
  * t는 clamp 없이 수식 그대로 계산한다.
  *
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */
-export function cubicCurvatureAt(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput, t: number): number {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
+export function cubicCurvatureAt(curve: CubicCurve, t: number): number {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const p3x = curve.x3;
+  const p3y = curve.y3;
 
   const mt = 1 - t;
   const mt2 = mt * mt;

@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * quadraticBounds allocating companion unit test.
  *
@@ -16,8 +17,8 @@ describe('quadraticBounds', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 5, y: 10 };
     const p2 = { x: 10, y: 0 };
-    const ref = quadraticBoundsInto({ min: { x: 0, y: 0 }, max: { x: 0, y: 0 } }, p0, p1, p2);
-    const got = quadraticBounds(p0, p1, p2);
+    const ref = quadraticBoundsInto({ minX: 0, minY: 0, maxX: 0, maxY: 0 }, flatQuadraticFromLegacyPoints(p0, p1, p2));
+    const got = quadraticBounds(flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(got).toEqual(ref);
   });
 
@@ -26,30 +27,28 @@ describe('quadraticBounds', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 5, y: 0 };
     const p2 = { x: 10, y: 0 };
-    const got = quadraticBounds(p0, p1, p2);
-    expect(got.min.x).toBe(0);
-    expect(got.min.y).toBe(0);
-    expect(got.max.x).toBe(10);
-    expect(got.max.y).toBe(0);
+    const got = quadraticBounds(flatQuadraticFromLegacyPoints(p0, p1, p2));
+    expect(got.minX).toBe(0);
+    expect(got.minY).toBe(0);
+    expect(got.maxX).toBe(10);
+    expect(got.maxY).toBe(0);
   });
 
   it('호출 시마다 새 object reference를 반환한다 (min/max도 분리)', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 5, y: 10 };
     const p2 = { x: 10, y: 0 };
-    const a = quadraticBounds(p0, p1, p2);
-    const b = quadraticBounds(p0, p1, p2);
+    const a = quadraticBounds(flatQuadraticFromLegacyPoints(p0, p1, p2));
+    const b = quadraticBounds(flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(a).not.toBe(b);
-    expect(a.min).not.toBe(b.min);
-    expect(a.max).not.toBe(b.max);
     expect(a).toEqual(b);
   });
 
   it('반환 bounds는 plain `{ x, y }` 두 corner를 포함한다', () => {
-    const got = quadraticBounds({ x: 0, y: 0 }, { x: 1, y: 2 }, { x: 4, y: 0 });
-    expect(typeof got.min.x).toBe('number');
-    expect(typeof got.min.y).toBe('number');
-    expect(typeof got.max.x).toBe('number');
-    expect(typeof got.max.y).toBe('number');
+    const got = quadraticBounds({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 4, y2: 0 });
+    expect(typeof got.minX).toBe('number');
+    expect(typeof got.minY).toBe('number');
+    expect(typeof got.maxX).toBe('number');
+    expect(typeof got.maxY).toBe('number');
   });
 });

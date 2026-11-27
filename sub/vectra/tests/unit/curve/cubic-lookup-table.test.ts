@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * cubicLookupTableInto / cubicLookupTable unit test.
  *
@@ -58,7 +59,7 @@ describe('cubicLookupTableInto', () => {
   it('굽은 Bezier에서 chord 누적은 exact arc length를 underestimate한다 (approximation)', () => {
     const out: { t: number; length: number }[] = [];
     cubicLookupTableInto(out, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, 4);
-    const exact = cubicLength(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3);
+    const exact = cubicLength(flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3));
     const approx = out[out.length - 1].length;
     expect(approx).toBeGreaterThan(0);
     expect(approx).toBeLessThan(exact);

@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicHullInto } from '../../../src/curve/cubic-hull-into';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
@@ -52,7 +53,7 @@ describe('cubicSplitInto', () => {
     const outR = makeOut();
     cubicSplitInto(outL, outR, p0, p1, p2, p3, 0.5);
     const pt = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, p0, p1, p2, p3, 0.5);
+    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(relErr(outL.p3.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(outL.p3.y, pt.y)).toBeLessThan(1e-12);
   });
@@ -103,7 +104,7 @@ describe('cubicHullInto', () => {
     const out: { x: number; y: number }[] = [];
     cubicHullInto(out, p0, p1, p2, p3, 0.5);
     const pt = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, p0, p1, p2, p3, 0.5);
+    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(relErr(out[9].x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(out[9].y, pt.y)).toBeLessThan(1e-12);
   });

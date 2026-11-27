@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticBoundsInto } from '../../../src/curve/quadratic-bounds-into';
 import { quadraticDerivativeAtInto } from '../../../src/curve/quadratic-derivative-at-into';
@@ -23,14 +24,14 @@ describe('quadraticPointAtTInto', () => {
 
   it('t=0이면 p0을 반환한다', () => {
     const out = { x: 0, y: 0 };
-    quadraticPointAtTInto(out, p0, p1, p2, 0);
+    quadraticPointAtTInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0);
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
   });
 
   it('t=1이면 p2를 반환한다', () => {
     const out = { x: 0, y: 0 };
-    quadraticPointAtTInto(out, p0, p1, p2, 1);
+    quadraticPointAtTInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 1);
     expect(out.x).toBe(4);
     expect(out.y).toBe(0);
   });
@@ -40,29 +41,14 @@ describe('quadraticPointAtTInto', () => {
     // x = 0.25*0 + 0.5*1 + 0.25*4 = 0 + 0.5 + 1 = 1.5
     // y = 0.25*0 + 0.5*2 + 0.25*0 = 1.0
     const out = { x: 0, y: 0 };
-    quadraticPointAtTInto(out, p0, p1, p2, 0.5);
+    quadraticPointAtTInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(relErr(out.x, 1.5)).toBeLessThan(1e-12);
     expect(relErr(out.y, 1.0)).toBeLessThan(1e-12);
-  });
-
-  it('object/tuple mixed XYInput을 받는다', () => {
-    const out = { x: 0, y: 0 };
-    // p0을 tuple로 전달
-    quadraticPointAtTInto(out, [0, 0], p1, p2, 0.5);
-    expect(relErr(out.x, 1.5)).toBeLessThan(1e-12);
-    expect(relErr(out.y, 1.0)).toBeLessThan(1e-12);
-  });
-
-  it('tuple output에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    quadraticPointAtTInto(out, p0, p1, p2, 0.5);
-    expect(relErr(out[0], 1.5)).toBeLessThan(1e-12);
-    expect(relErr(out[1], 1.0)).toBeLessThan(1e-12);
   });
 
   it('out을 반환한다', () => {
     const out = { x: 0, y: 0 };
-    const ret = quadraticPointAtTInto(out, p0, p1, p2, 0.5);
+    const ret = quadraticPointAtTInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(ret).toBe(out);
   });
 });
@@ -75,7 +61,7 @@ describe('quadraticDerivativeAtInto', () => {
   it('t=0에서 derivative 정확값을 반환한다', () => {
     // B'(0) = 2*(p1-p0) = 2*(1,2) = (2, 4)
     const out = { x: 0, y: 0 };
-    quadraticDerivativeAtInto(out, p0, p1, p2, 0);
+    quadraticDerivativeAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0);
     expect(relErr(out.x, 2)).toBeLessThan(1e-12);
     expect(relErr(out.y, 4)).toBeLessThan(1e-12);
   });
@@ -83,7 +69,7 @@ describe('quadraticDerivativeAtInto', () => {
   it('t=1에서 derivative 정확값을 반환한다', () => {
     // B'(1) = 2*(p2-p1) = 2*(3,-2) = (6, -4)
     const out = { x: 0, y: 0 };
-    quadraticDerivativeAtInto(out, p0, p1, p2, 1);
+    quadraticDerivativeAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 1);
     expect(relErr(out.x, 6)).toBeLessThan(1e-12);
     expect(relErr(out.y, -4)).toBeLessThan(1e-12);
   });
@@ -92,14 +78,14 @@ describe('quadraticDerivativeAtInto', () => {
     // B'(t) = 2(1-t)(p1-p0) + 2t(p2-p1)
     // t=0.5: 2*0.5*(1,2) + 2*0.5*(3,-2) = (1,2)+(3,-2) = (4,0)
     const out = { x: 0, y: 0 };
-    quadraticDerivativeAtInto(out, p0, p1, p2, 0.5);
+    quadraticDerivativeAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(relErr(out.x, 4)).toBeLessThan(1e-12);
     expect(out.y).toBe(0);
   });
 
   it('out을 반환한다', () => {
     const out = { x: 0, y: 0 };
-    const ret = quadraticDerivativeAtInto(out, p0, p1, p2, 0);
+    const ret = quadraticDerivativeAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0);
     expect(ret).toBe(out);
   });
 });
@@ -111,7 +97,7 @@ describe('quadraticTangentAtInto', () => {
 
   it('정상 curve에서 unit tangent를 반환한다', () => {
     const out = { x: 0, y: 0 };
-    quadraticTangentAtInto(out, p0, p1, p2, 0);
+    quadraticTangentAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0);
     // B'(0) = (2,4), normalize → (1/√5, 2/√5)
     const len = Math.hypot(out.x, out.y);
     expect(relErr(len, 1)).toBeLessThan(1e-12);
@@ -120,14 +106,14 @@ describe('quadraticTangentAtInto', () => {
   it('degenerate curve (p0==p1==p2)에서 zero vector를 반환한다', () => {
     const out = { x: 1, y: 1 };
     const p = { x: 3, y: 3 };
-    quadraticTangentAtInto(out, p, p, p, 0.5);
+    quadraticTangentAtInto(out, flatQuadraticFromLegacyPoints(p, p, p), 0.5);
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
   });
 
   it('out을 반환한다', () => {
     const out = { x: 0, y: 0 };
-    const ret = quadraticTangentAtInto(out, p0, p1, p2, 0);
+    const ret = quadraticTangentAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0);
     expect(ret).toBe(out);
   });
 });
@@ -140,12 +126,12 @@ describe('quadraticNormalAtInto', () => {
   it('정상 curve에서 unit normal을 반환한다 (tangent 90도 회전)', () => {
     // horizontal line: tangent = (1,0), normal = (0,1) 또는 (0,-1)
     const out = { x: 0, y: 0 };
-    quadraticNormalAtInto(out, p0, p1, p2, 0.5);
+    quadraticNormalAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     const len = Math.hypot(out.x, out.y);
     expect(relErr(len, 1)).toBeLessThan(1e-12);
     // normal은 tangent와 수직
     const tangent = { x: 0, y: 0 };
-    quadraticTangentAtInto(tangent, p0, p1, p2, 0.5);
+    quadraticTangentAtInto(tangent, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     const dot = out.x * tangent.x + out.y * tangent.y;
     expect(Math.abs(dot)).toBeLessThan(1e-12);
   });
@@ -153,14 +139,14 @@ describe('quadraticNormalAtInto', () => {
   it('degenerate curve에서 zero vector를 반환한다', () => {
     const out = { x: 1, y: 1 };
     const p = { x: 5, y: 5 };
-    quadraticNormalAtInto(out, p, p, p, 0.5);
+    quadraticNormalAtInto(out, flatQuadraticFromLegacyPoints(p, p, p), 0.5);
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
   });
 
   it('out을 반환한다', () => {
     const out = { x: 0, y: 0 };
-    const ret = quadraticNormalAtInto(out, p0, p1, p2, 0.5);
+    const ret = quadraticNormalAtInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(ret).toBe(out);
   });
 });
@@ -207,7 +193,7 @@ describe('quadraticSplitInto', () => {
     const outR = makeOut();
     quadraticSplitInto(outL, outR, p0, p1, p2, 0.5);
     const pt = { x: 0, y: 0 };
-    quadraticPointAtTInto(pt, p0, p1, p2, 0.5);
+    quadraticPointAtTInto(pt, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(relErr(outL.p2.x, pt.x)).toBeLessThan(1e-12);
     expect(relErr(outL.p2.y, pt.y)).toBeLessThan(1e-12);
   });
@@ -276,7 +262,7 @@ describe('quadraticExtrema', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
-    const result = quadraticExtrema(p0, p1, p2);
+    const result = quadraticExtrema(flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(result.length).toBe(0);
   });
 
@@ -288,7 +274,7 @@ describe('quadraticExtrema', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 2, y: 0 };
-    const result = quadraticExtrema(p0, p1, p2);
+    const result = quadraticExtrema(flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(result.length).toBeGreaterThan(0);
     for (const t of result) {
       expect(t).toBeGreaterThan(0);
@@ -303,7 +289,7 @@ describe('quadraticExtrema', () => {
     const p0 = { x: 0, y: 3 };
     const p1 = { x: 2, y: 0 };
     const p2 = { x: 4, y: 3 };
-    const result = quadraticExtrema(p0, p1, p2);
+    const result = quadraticExtrema(flatQuadraticFromLegacyPoints(p0, p1, p2));
     for (let i = 1; i < result.length; i++) {
       expect(result[i]).toBeGreaterThanOrEqual(result[i - 1]);
     }
@@ -312,7 +298,7 @@ describe('quadraticExtrema', () => {
   it('y extrema가 x extrema보다 작으면 순서를 바꿔 오름차순으로 반환한다', () => {
     // tx = (0-2)/(0-4+1) = 2/3, ty = (0-3)/(0-6+1) = 3/5
     // 삽입 순서는 [tx, ty]이므로 정렬이 순서를 뒤집어야 한다.
-    const result = quadraticExtrema({ x: 0, y: 0 }, { x: 2, y: 3 }, { x: 1, y: 1 });
+    const result = quadraticExtrema({ kind: 'quadratic', x0: 0, y0: 0, x1: 2, y1: 3, x2: 1, y2: 1 });
     expect(result).toHaveLength(2);
     expect(result[0]).toBeCloseTo(3 / 5, 12);
     expect(result[1]).toBeCloseTo(2 / 3, 12);
@@ -320,7 +306,7 @@ describe('quadraticExtrema', () => {
 
   it('x extrema가 y extrema보다 작으면 삽입 순서를 유지한다', () => {
     // tx = (0-3)/(0-6+1) = 3/5, ty = (0-2)/(0-4+1) = 2/3
-    const result = quadraticExtrema({ x: 0, y: 0 }, { x: 3, y: 2 }, { x: 1, y: 1 });
+    const result = quadraticExtrema({ kind: 'quadratic', x0: 0, y0: 0, x1: 3, y1: 2, x2: 1, y2: 1 });
     expect(result).toHaveLength(2);
     expect(result[0]).toBeCloseTo(3 / 5, 12);
     expect(result[1]).toBeCloseTo(2 / 3, 12);
@@ -328,7 +314,7 @@ describe('quadraticExtrema', () => {
 
   it('degenerate curve (p0==p1==p2)에서 빈 배열을 반환한다', () => {
     const p = { x: 1, y: 1 };
-    const result = quadraticExtrema(p, p, p);
+    const result = quadraticExtrema(flatQuadraticFromLegacyPoints(p, p, p));
     expect(result.length).toBe(0);
   });
 });
@@ -339,67 +325,69 @@ describe('quadraticBoundsInto', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 1 };
     const p2 = { x: 2, y: 2 };
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    quadraticBoundsInto(out, p0, p1, p2);
-    expect(out.min.x).toBe(0);
-    expect(out.min.y).toBe(0);
-    expect(out.max.x).toBe(2);
-    expect(out.max.y).toBe(2);
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    quadraticBoundsInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2));
+    expect(out.minX).toBe(0);
+    expect(out.minY).toBe(0);
+    expect(out.maxX).toBe(2);
+    expect(out.maxY).toBe(2);
   });
 
   it('interior extrema가 bounds를 확장한다', () => {
     // y extrema at t=0.5: p0=(0,0), p1=(1,2), p2=(2,0)
-    // pointAt(0.5).y = 1.0 → bounds.max.y should be 1.0
+    // pointAt(0.5).y = 1.0 → bounds.maxY should be 1.0
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 2 };
     const p2 = { x: 2, y: 0 };
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    quadraticBoundsInto(out, p0, p1, p2);
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    quadraticBoundsInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2));
     // y extrema: t=0.5, B(0.5).y = 1.0
-    expect(relErr(out.max.y, 1)).toBeLessThan(1e-12);
-    expect(out.min.x).toBe(0);
-    expect(out.max.x).toBe(2);
+    expect(relErr(out.maxY, 1)).toBeLessThan(1e-12);
+    expect(out.minX).toBe(0);
+    expect(out.maxX).toBe(2);
   });
 
   it('out을 반환한다', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 1 };
     const p2 = { x: 2, y: 2 };
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    const ret = quadraticBoundsInto(out, p0, p1, p2);
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    const ret = quadraticBoundsInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(ret).toBe(out);
   });
 
   it('x 극값이 endpoint 밖이면 max.x를 확장한다', () => {
     // tx = 0.75, B(0.75).x = 2.25 > max(0, 2)
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    quadraticBoundsInto(out, { x: 0, y: 0 }, { x: 3, y: 1 }, { x: 2, y: 2 });
-    expect(out.max.x).toBeCloseTo(2.25, 12);
-    expect(out.min.x).toBe(0);
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    quadraticBoundsInto(out, { kind: 'quadratic', x0: 0, y0: 0, x1: 3, y1: 1, x2: 2, y2: 2 });
+    expect(out.maxX).toBeCloseTo(2.25, 12);
+    expect(out.minX).toBe(0);
   });
 
   it('x 극값이 endpoint 밖이면 min.x를 확장한다', () => {
     // tx = 3/7, B(3/7).x = 5/7 < min(2, 3)
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    quadraticBoundsInto(out, { x: 2, y: 0 }, { x: -1, y: 1 }, { x: 3, y: 2 });
-    expect(out.min.x).toBeCloseTo(5 / 7, 12);
-    expect(out.max.x).toBe(3);
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    quadraticBoundsInto(out, { kind: 'quadratic', x0: 2, y0: 0, x1: -1, y1: 1, x2: 3, y2: 2 });
+    expect(out.minX).toBeCloseTo(5 / 7, 12);
+    expect(out.maxX).toBe(3);
   });
 
   it('y 극값이 endpoint 밖이면 min.y를 확장한다', () => {
     // ty = 0.5, B(0.5).y = -1
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    quadraticBoundsInto(out, { x: 0, y: 0 }, { x: 1, y: -2 }, { x: 2, y: 0 });
-    expect(out.min.y).toBeCloseTo(-1, 12);
-    expect(out.max.y).toBe(0);
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    quadraticBoundsInto(out, { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: -2, x2: 2, y2: 0 });
+    expect(out.minY).toBeCloseTo(-1, 12);
+    expect(out.maxY).toBe(0);
   });
 
   it('극값 t가 (0, 1) 밖이면 endpoint로 bounds가 정해진다', () => {
     // p1이 양 끝 사이에 있지만 중점이 아니어서 denom은 0이 아니다. tx = ty = -1/8
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    quadraticBoundsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 10, y: 10 });
-    expect(out.min).toEqual({ x: 0, y: 0 });
-    expect(out.max).toEqual({ x: 10, y: 10 });
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    quadraticBoundsInto(out, { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 10, y2: 10 });
+    expect(out.minX).toBe(0);
+    expect(out.minY).toBe(0);
+    expect(out.maxX).toBe(10);
+    expect(out.maxY).toBe(10);
   });
 
   it('여러 curve에서 촘촘한 sampling의 bounds와 같다', () => {
@@ -431,8 +419,8 @@ describe('quadraticBoundsInto', () => {
       ],
     ];
     for (const [a, b, c] of curves) {
-      const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-      quadraticBoundsInto(out, a, b, c);
+      const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+      quadraticBoundsInto(out, flatQuadraticFromLegacyPoints(a, b, c));
       let minX = Infinity;
       let minY = Infinity;
       let maxX = -Infinity;
@@ -448,14 +436,14 @@ describe('quadraticBoundsInto', () => {
         maxY = Math.max(maxY, y);
       }
       // sampling은 극값을 놓치므로 닫힌 형태가 항상 같거나 더 크고, 오차는 sampling 간격의 제곱 수준이다
-      expect(out.min.x).toBeLessThanOrEqual(minX);
-      expect(out.min.y).toBeLessThanOrEqual(minY);
-      expect(out.max.x).toBeGreaterThanOrEqual(maxX);
-      expect(out.max.y).toBeGreaterThanOrEqual(maxY);
-      expect(minX - out.min.x).toBeLessThan(1e-5);
-      expect(minY - out.min.y).toBeLessThan(1e-5);
-      expect(out.max.x - maxX).toBeLessThan(1e-5);
-      expect(out.max.y - maxY).toBeLessThan(1e-5);
+      expect(out.minX).toBeLessThanOrEqual(minX);
+      expect(out.minY).toBeLessThanOrEqual(minY);
+      expect(out.maxX).toBeGreaterThanOrEqual(maxX);
+      expect(out.maxY).toBeGreaterThanOrEqual(maxY);
+      expect(minX - out.minX).toBeLessThan(1e-5);
+      expect(minY - out.minY).toBeLessThan(1e-5);
+      expect(out.maxX - maxX).toBeLessThan(1e-5);
+      expect(out.maxY - maxY).toBeLessThan(1e-5);
     }
   });
 });
@@ -523,7 +511,7 @@ describe('quadraticLength', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
-    const len = quadraticLength(p0, p1, p2);
+    const len = quadraticLength(flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(Math.abs(len - 2)).toBeLessThan(1e-6);
   });
 
@@ -532,7 +520,7 @@ describe('quadraticLength', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 1 };
     const p2 = { x: 2, y: 2 };
-    const len = quadraticLength(p0, p1, p2);
+    const len = quadraticLength(flatQuadraticFromLegacyPoints(p0, p1, p2));
     const expected = 2 * Math.SQRT2;
     expect(Math.abs(len - expected)).toBeLessThan(1e-6);
   });
@@ -541,15 +529,15 @@ describe('quadraticLength', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 3 };
     const p2 = { x: 2, y: 0 };
-    const len4 = quadraticLength(p0, p1, p2, { segments: 4 });
-    const len16 = quadraticLength(p0, p1, p2, { segments: 16 });
+    const len4 = quadraticLength(flatQuadraticFromLegacyPoints(p0, p1, p2), { segments: 4 });
+    const len16 = quadraticLength(flatQuadraticFromLegacyPoints(p0, p1, p2), { segments: 16 });
     // 더 많은 segment로 적분 → 둘의 차이가 매우 작아야 한다
     expect(Math.abs(len4 - len16)).toBeLessThan(1e-4);
   });
 
   it('zero-length curve에서 0을 반환한다', () => {
     const p = { x: 2, y: 3 };
-    const len = quadraticLength(p, p, p);
+    const len = quadraticLength(flatQuadraticFromLegacyPoints(p, p, p));
     expect(len).toBe(0);
   });
 });

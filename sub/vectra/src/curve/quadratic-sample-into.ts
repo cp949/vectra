@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints } from '../internal/legacy-curve.internal';
 import type { CurveSampleOptions, XYInput, XYObjectWritable } from '../types';
 import { quadraticPointAtTInto } from './quadratic-point-at-t-into';
 
@@ -30,7 +31,7 @@ export function quadraticSampleInto(
   for (let i = 0; i < rawSteps; i++) {
     const t = i / (rawSteps - 1);
     const pt: XYObjectWritable = { x: 0, y: 0 };
-    quadraticPointAtTInto(pt, p0, p1, p2, t);
+    quadraticPointAtTInto(pt, flatQuadraticFromLegacyPoints(p0, p1, p2), t);
     out.push(pt);
   }
   return out;

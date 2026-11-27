@@ -1,3 +1,4 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicFlattenInto } from '../../../src/curve/cubic-flatten-into';
 import { cubicLength } from '../../../src/curve/cubic-length';
@@ -61,18 +62,18 @@ describe('cubicFlattenInto', () => {
 
 describe('cubicLength', () => {
   it('직선 cubic의 길이가 정확한 직선 길이에 근사한다', () => {
-    const len = cubicLength({ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 });
+    const len = cubicLength({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 });
     expect(Math.abs(len - 3)).toBeLessThan(1e-6);
   });
 
   it('대각선 직선 cubic의 길이가 정확하다', () => {
-    const len = cubicLength({ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }, { x: 3, y: 3 });
+    const len = cubicLength({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 1, x2: 2, y2: 2, x3: 3, y3: 3 });
     const expected = 3 * Math.SQRT2;
     expect(Math.abs(len - expected) / expected).toBeLessThan(1e-6);
   });
 
   it('symmetric curve의 길이 근사가 합리적 tolerance 내에 있다', () => {
-    const len = cubicLength({ x: 0, y: 0 }, { x: 1, y: 4 }, { x: 3, y: 4 }, { x: 4, y: 0 });
+    const len = cubicLength({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 4, x2: 3, y2: 4, x3: 4, y3: 0 });
     expect(len).toBeGreaterThan(4);
     expect(len).toBeLessThan(11);
   });
@@ -82,8 +83,8 @@ describe('cubicLength', () => {
     const p1 = { x: 1, y: 4 };
     const p2 = { x: 3, y: 4 };
     const p3 = { x: 4, y: 0 };
-    const len12 = cubicLength(p0, p1, p2, p3, { segments: 12 });
-    const len24 = cubicLength(p0, p1, p2, p3, { segments: 24 });
+    const len12 = cubicLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), { segments: 12 });
+    const len24 = cubicLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), { segments: 24 });
     expect(relErr(len12, len24)).toBeLessThan(1e-4);
   });
 });
