@@ -1,6 +1,5 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import { writeXY } from '../internal/xy';
-import type { BarycentricLike, TriangleLike, XYWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
+import type { BarycentricLike } from '../types';
 
 export type { BarycentricLike };
 
@@ -15,24 +14,25 @@ export type { BarycentricLike };
  * degenerate triangle(collinear, 세 vertex가 같은 점 포함)도 affine combination이 정의되므로 실패하지 않는다.
  * non-finite(NaN, Infinity, -Infinity) 입력은 검증 없이 JS 산술 결과를 그대로 기록한다.
  *
- * aliasing: triangle 좌표와 barycentric component를 local에 먼저 읽으므로 out이 triangle.a /
- * triangle.b / triangle.c와 같은 storage여도 안전하다.
+ * triangle 좌표와 barycentric component를 먼저 읽은 뒤 out에 기록한다.
  *
- * @param out point 좌표를 기록할 writable output
+ * @param out point 좌표를 기록할 점 객체
  * @param triangle 기준 triangle
  * @param barycentric vertex A/B/C 가중치 (x = u, y = v, w = w)
  * @returns out
  */
-export function pointFromBarycentricInto<Out extends XYWritable>(
+export function pointFromBarycentricInto<Out extends PointWritable>(
   out: Out,
-  triangle: TriangleLike,
+  triangle: Triangle,
   barycentric: BarycentricLike
 ): Out {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   const u = barycentric.x;
   const v = barycentric.y;
   const w = barycentric.w;
   const px = u * ax + v * bx + w * cx;
   const py = u * ay + v * by + w * cy;
-  return writeXY(out, px, py);
+  out.x = px;
+  out.y = py;
+  return out;
 }

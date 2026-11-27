@@ -1,7 +1,5 @@
 import { polygonContainsPoint } from '../internal/polygon';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { TriangleLike, XYInput } from '../types';
+import type { Triangle, Point } from '../types/flat-shapes.internal';
 import { triangleEdgeClosest } from './closest-point.internal';
 
 /**
@@ -19,10 +17,10 @@ import { triangleEdgeClosest } from './closest-point.internal';
  * @param triangle 거리를 측정할 triangle
  * @param point triangle까지의 거리를 측정할 point
  */
-export function distanceToPoint(triangle: TriangleLike, point: XYInput): number {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-  const px = readX(point);
-  const py = readY(point);
+export function distanceToPoint(triangle: Triangle, point: Point): number {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
+  const px = point.x;
+  const py = point.y;
 
   // non-degenerate 내부/boundary는 0. degenerate는 segment 환원으로 떨어진다.
   const area2x = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);

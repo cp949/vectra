@@ -47,7 +47,7 @@ describe('eulerLineInto', () => {
   });
 
   test('예각삼각형: out.a/out.b는 centroid/orthocenter companion과 일치한다', () => {
-    const g = centroid(acute);
+    const g = centroid({ x1: acute.a.x, y1: acute.a.y, x2: acute.b.x, y2: acute.b.y, x3: acute.c.x, y3: acute.c.y });
     const h = orthocenter(acute);
     expect(h).not.toBeUndefined();
     if (h === undefined) throw new Error('orthocenter가 정의되어야 한다');

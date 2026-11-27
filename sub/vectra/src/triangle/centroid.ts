@@ -1,4 +1,4 @@
-import type { TriangleLike, XYObjectWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { centroidInto } from './centroid-into';
 
 /**
@@ -10,7 +10,7 @@ import { centroidInto } from './centroid-into';
  * clamp/정규화/fallback 정책은 `centroidInto`와 동일하다.
  * tolerance/iteration option 정책은 `centroidInto`와 동일하다.
  */
-export function centroid(triangle: TriangleLike): XYObjectWritable {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function centroid(triangle: Triangle): PointWritable {
+  const seed: PointWritable = { x: 0, y: 0 };
   return centroidInto(seed, triangle);
 }

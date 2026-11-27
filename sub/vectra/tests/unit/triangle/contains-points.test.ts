@@ -10,10 +10,10 @@ import { containsPoints } from '../../../src/triangle/contains-points';
 // ─── 공통 fixture ─────────────────────────────────────────────────────────────
 
 /** CCW triangle: a(0,0) b(4,0) c(0,4) */
-const ccw = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 4 } };
+const ccw = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 };
 
 /** collinear(degenerate) triangle: area=0 */
-const degenerate = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
+const degenerate = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
 
 // ─── containsPoints ───────────────────────────────────────────────────────────
 
@@ -60,16 +60,6 @@ describe('containsPoints', () => {
 
   test('빈 배열은 true를 반환한다', () => {
     expect(containsPoints(ccw, [])).toBe(true);
-  });
-
-  test('TriangleLike tuple과 XYInput tuple point 배열을 처리한다', () => {
-    const tupleTri = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 0, y: 4 },
-    ] as const;
-    const tuplePoints = [[1, 1] as const, [0.5, 0.5] as const];
-    expect(containsPoints(tupleTri, tuplePoints)).toBe(true);
   });
 
   test('epsilon > 0이면 edge 근방 point를 boundary로 인정한다', () => {

@@ -1,7 +1,5 @@
 import { polygonContainsPoint } from '../internal/polygon';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { TriangleLike, XYInput } from '../types';
+import type { Triangle, Point } from '../types/flat-shapes.internal';
 
 /**
  * point가 triangle 내부 또는 경계(edge/vertex) 위에 있으면 true를 반환한다.
@@ -15,14 +13,14 @@ import type { TriangleLike, XYInput } from '../types';
  * @param epsilon boundary proximity threshold (기본값 0)
  * @returns point가 triangle 내부/경계에 있으면 true
  */
-export function containsPoint(triangle: TriangleLike, point: XYInput, epsilon = 0): boolean {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function containsPoint(triangle: Triangle, point: Point, epsilon = 0): boolean {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   // degenerate triangle(area === 0)은 항상 false
   if ((bx - ax) * (cy - ay) - (by - ay) * (cx - ax) === 0) {
     return false;
   }
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
   // 이미 추출한 좌표로 plain object 구성해 polygon 판정에 재사용
   return polygonContainsPoint(
     [

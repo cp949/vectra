@@ -11,7 +11,7 @@ import { describe, expect, test } from 'vitest';
 import { closestPoint } from '../../../src/triangle/closest-point';
 import { closestPointOnEdge } from '../../../src/triangle/closest-point-on-edge';
 import { closestPointOnEdgeInto } from '../../../src/triangle/closest-point-on-edge-into';
-import type { TriangleLike, XYObjectWritable, XYTupleWritable } from '../../../src/types';
+import type { Triangle, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─── 공통 helper ─────────────────────────────────────────────────────────────
 
@@ -21,17 +21,13 @@ function expectXY(actual: { x: number; y: number }, x: number, y: number): void 
   expect(actual.y).toBeCloseTo(y, 12);
 }
 
-/** 새 XYObjectWritable seed를 만든다. */
-function seed(): XYObjectWritable {
+/** 새 PointWritable seed를 만든다. */
+function seed(): PointWritable {
   return { x: Number.NaN, y: Number.NaN };
 }
 
 // 기본 CCW 직각삼각형: A=(0,0), B=(4,0), C=(0,3)
-const BASE: TriangleLike = {
-  a: { x: 0, y: 0 },
-  b: { x: 4, y: 0 },
-  c: { x: 0, y: 3 },
-};
+const BASE: Triangle = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 };
 
 // ─── closestPointOnEdgeInto ──────────────────────────────────────────────────
 
@@ -70,7 +66,7 @@ describe('closestPointOnEdgeInto', () => {
     // CA foot (1,1) dist²=0.5. strict < (AB → BC → CA)로 AB의 (1.5, 0)을 유지한다.
     // foot이 동일했던 기존 aliasing 케이스와 달리 AB-우선 precedence를 실제로 구분한다.
     const out = seed();
-    closestPointOnEdgeInto(out, { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 2, y: 2 } }, { x: 1.5, y: 0.5 });
+    closestPointOnEdgeInto(out, { x1: 0, y1: 0, x2: 2, y2: 0, x3: 2, y3: 2 }, { x: 1.5, y: 0.5 });
     expectXY(out, 1.5, 0);
   });
 
@@ -102,91 +98,26 @@ describe('closestPointOnEdgeInto', () => {
   test('degenerate collinear triangle은 세 segment 최단점으로 환원한다', () => {
     // A=(0,0), B=(2,0), C=(4,0), p=(3,2). BC foot (3,0)와 CA foot (3,0). BC tie-break 유지.
     const out = seed();
-    closestPointOnEdgeInto(out, { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } }, { x: 3, y: 2 });
+    closestPointOnEdgeInto(out, { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 }, { x: 3, y: 2 });
     expectXY(out, 3, 0);
   });
 
   test('degenerate collinear 내부 영역 point도 segment로 환원한다', () => {
     // A=(0,0), B=(4,0), C=(2,0) 일직선. p=(1,0)은 AB 위 (1,0), 거리 0.
     const out = seed();
-    closestPointOnEdgeInto(out, { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 0 } }, { x: 1, y: 0 });
+    closestPointOnEdgeInto(out, { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 0 }, { x: 1, y: 0 });
     expectXY(out, 1, 0);
   });
 
   test('all-same vertex triangle은 그 vertex를 기록한다', () => {
     const out = seed();
-    closestPointOnEdgeInto(out, { a: { x: 5, y: 7 }, b: { x: 5, y: 7 }, c: { x: 5, y: 7 } }, { x: 0, y: 0 });
+    closestPointOnEdgeInto(out, { x1: 5, y1: 7, x2: 5, y2: 7, x3: 5, y3: 7 }, { x: 0, y: 0 });
     expectXY(out, 5, 7);
-  });
-
-  test('tuple TriangleLike 입력을 처리한다', () => {
-    const out = seed();
-    closestPointOnEdgeInto(
-      out,
-      [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: 0, y: 3 },
-      ] as const,
-      { x: 4, y: 3 }
-    );
-    expectXY(out, 2.56, 1.08);
-  });
-
-  test('tuple XYInput point 입력을 처리한다', () => {
-    const out = seed();
-    closestPointOnEdgeInto(out, BASE, [1, 0.5] as const);
-    expectXY(out, 1, 0);
-  });
-
-  test('tuple writable output을 처리한다', () => {
-    const out: XYTupleWritable = [Number.NaN, Number.NaN];
-    closestPointOnEdgeInto(out, BASE, { x: 1, y: 0.5 });
-    expect(out[0]).toBeCloseTo(1, 12);
-    expect(out[1]).toBeCloseTo(0, 12);
-  });
-
-  test('aliasing: out이 triangle.a storage와 같아도 정확히 기록한다', () => {
-    const tri = {
-      a: { x: 0, y: 0 },
-      b: { x: 4, y: 0 },
-      c: { x: 0, y: 3 },
-    };
-    // 내부 point (1, 0.5)의 winner는 vertex a를 읽는 AB edge다. out으로 tri.a를 넘기므로
-    // a를 write 전에 local로 capture하지 못한 구현이면 결과가 깨진다. AB foot (1,0)이어야 한다.
-    closestPointOnEdgeInto(tri.a, tri, { x: 1, y: 0.5 });
-    expectXY(tri.a, 1, 0);
-    expectXY(tri.b, 4, 0);
-    expectXY(tri.c, 0, 3);
-  });
-
-  test('aliasing: out이 triangle.b storage와 같아도 정확히 기록한다', () => {
-    const tri = {
-      a: { x: 0, y: 0 },
-      b: { x: 4, y: 0 },
-      c: { x: 0, y: 3 },
-    };
-    closestPointOnEdgeInto(tri.b, tri, { x: 6, y: -2 });
-    expectXY(tri.b, 4, 0);
-    expectXY(tri.a, 0, 0);
-    expectXY(tri.c, 0, 3);
-  });
-
-  test('aliasing: out이 triangle.c storage와 같아도 정확히 기록한다', () => {
-    const tri = {
-      a: { x: 0, y: 0 },
-      b: { x: 4, y: 0 },
-      c: { x: 0, y: 3 },
-    };
-    closestPointOnEdgeInto(tri.c, tri, { x: -2, y: 5 });
-    expectXY(tri.c, 0, 3);
-    expectXY(tri.a, 0, 0);
-    expectXY(tri.b, 4, 0);
   });
 
   test('aliasing: out이 point storage와 같아도 정확히 투영한다 (내부)', () => {
     // 내부 point (1, 0.5)를 out으로도 넘긴다. AB 위 (1,0)으로 투영돼야 한다.
-    const p: XYObjectWritable = { x: 1, y: 0.5 };
+    const p: PointWritable = { x: 1, y: 0.5 };
     closestPointOnEdgeInto(p, BASE, p);
     expectXY(p, 1, 0);
   });
@@ -220,35 +151,27 @@ describe('closestPointOnEdgeInto', () => {
   test('NaN triangle vertex는 throw 하지 않는다', () => {
     const out = seed();
     expect(() =>
-      closestPointOnEdgeInto(out, { a: { x: Number.NaN, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } }, { x: 1, y: 1 })
+      closestPointOnEdgeInto(out, { x1: Number.NaN, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 }, { x: 1, y: 1 })
     ).not.toThrow();
   });
 
   test('Infinity triangle vertex는 throw 하지 않는다', () => {
     const out = seed();
     expect(() =>
-      closestPointOnEdgeInto(
-        out,
-        { a: { x: 0, y: 0 }, b: { x: Number.POSITIVE_INFINITY, y: 0 }, c: { x: 0, y: 3 } },
-        { x: 1, y: 1 }
-      )
+      closestPointOnEdgeInto(out, { x1: 0, y1: 0, x2: Number.POSITIVE_INFINITY, y2: 0, x3: 0, y3: 3 }, { x: 1, y: 1 })
     ).not.toThrow();
   });
 
   test('-Infinity triangle vertex는 throw 하지 않는다', () => {
     const out = seed();
     expect(() =>
-      closestPointOnEdgeInto(
-        out,
-        { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: Number.NEGATIVE_INFINITY, y: 3 } },
-        { x: 1, y: 1 }
-      )
+      closestPointOnEdgeInto(out, { x1: 0, y1: 0, x2: 4, y2: 0, x3: Number.NEGATIVE_INFINITY, y3: 3 }, { x: 1, y: 1 })
     ).not.toThrow();
   });
 
   test('CW triangle 내부 point도 edge로 투영한다 (winding 무관)', () => {
     // CW: A=(0,0), B=(0,3), C=(4,0). 내부 point (1, 0.5)는 CA edge (y=0) 위 (1,0)으로 투영.
-    const cw: TriangleLike = { a: { x: 0, y: 0 }, b: { x: 0, y: 3 }, c: { x: 4, y: 0 } };
+    const cw: Triangle = { x1: 0, y1: 0, x2: 0, y2: 3, x3: 4, y3: 0 };
     const out = seed();
     closestPointOnEdgeInto(out, cw, { x: 1, y: 0.5 });
     expectXY(out, 1, 0);
@@ -258,7 +181,7 @@ describe('closestPointOnEdgeInto', () => {
 // ─── closestPointOnEdge ──────────────────────────────────────────────────────
 
 describe('closestPointOnEdge', () => {
-  test('새 XYObjectWritable을 반환한다', () => {
+  test('새 PointWritable을 반환한다', () => {
     const p = closestPointOnEdge(BASE, { x: 1, y: 0.5 });
     expectXY(p, 1, 0);
     expect(typeof p.x).toBe('number');
@@ -271,16 +194,12 @@ describe('closestPointOnEdge', () => {
   });
 
   test('input mutation 없음', () => {
-    const tri = {
-      a: { x: 0, y: 0 },
-      b: { x: 4, y: 0 },
-      c: { x: 0, y: 3 },
-    };
+    const tri = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 };
     const point = { x: 4, y: 3 };
     closestPointOnEdge(tri, point);
-    expectXY(tri.a, 0, 0);
-    expectXY(tri.b, 4, 0);
-    expectXY(tri.c, 0, 3);
+    expectXY({ x: tri.x1, y: tri.y1 }, 0, 0);
+    expectXY({ x: tri.x2, y: tri.y2 }, 4, 0);
+    expectXY({ x: tri.x3, y: tri.y3 }, 0, 3);
     expectXY(point, 4, 3);
   });
 

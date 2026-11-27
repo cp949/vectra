@@ -1,4 +1,4 @@
-import type { TriangleLike, XYInput, XYObjectWritable } from '../types';
+import type { Triangle, Point, PointWritable } from '../types/flat-shapes.internal';
 import { closestPointInto } from './closest-point-into';
 
 /**
@@ -19,7 +19,7 @@ import { closestPointInto } from './closest-point-into';
  * @param triangle 대상 triangle
  * @param point closest point를 측정할 기준 point
  */
-export function closestPoint(triangle: TriangleLike, point: XYInput): XYObjectWritable {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function closestPoint(triangle: Triangle, point: Point): PointWritable {
+  const seed: PointWritable = { x: 0, y: 0 };
   return closestPointInto(seed, triangle, point);
 }

@@ -1,5 +1,5 @@
-import { createLegacyBounds } from '../internal/bounds';
-import type { BoundsWritable, TriangleLike } from '../types';
+import { createZeroBounds } from '../internal/bounds';
+import type { BoundsWritable, Triangle } from '../types/flat-shapes.internal';
 import { boundsInto } from './bounds-into';
 
 /**
@@ -11,7 +11,7 @@ import { boundsInto } from './bounds-into';
  * clamp/정규화/fallback 정책은 `boundsInto`와 동일하다.
  * tolerance/iteration option 정책은 `boundsInto`와 동일하다.
  */
-export function bounds(triangle: TriangleLike): BoundsWritable {
-  const seed = createLegacyBounds();
+export function bounds(triangle: Triangle): BoundsWritable {
+  const seed = createZeroBounds();
   return boundsInto(seed, triangle);
 }

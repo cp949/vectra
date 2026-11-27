@@ -1,4 +1,5 @@
 import type { TriangleLike, TriangleTuple, XYInput } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { readX, readY } from './xy';
 
 /** TriangleLike가 tuple인지 확인하는 type guard */
@@ -59,5 +60,22 @@ export function hasNonFiniteVertex(t: TriangleLike): boolean {
     !Number.isFinite(by) ||
     !Number.isFinite(cx) ||
     !Number.isFinite(cy)
+  );
+}
+
+/** 평평한 triangle의 부호 있는 면적을 두 배로 반환한다. */
+export function flatTriangleSignedArea2x(t: Triangle): number {
+  return (t.x2 - t.x1) * (t.y3 - t.y1) - (t.y2 - t.y1) * (t.x3 - t.x1);
+}
+
+/** 평평한 triangle의 꼭짓점에 유한하지 않은 좌표가 있는지 판정한다. */
+export function hasNonFiniteTriangleVertex(t: Triangle): boolean {
+  return (
+    !Number.isFinite(t.x1) ||
+    !Number.isFinite(t.y1) ||
+    !Number.isFinite(t.x2) ||
+    !Number.isFinite(t.y2) ||
+    !Number.isFinite(t.x3) ||
+    !Number.isFinite(t.y3)
   );
 }

@@ -1,5 +1,5 @@
-import { hasNonFiniteVertex, triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle이 degenerate인지 반환한다.
@@ -11,9 +11,9 @@ import type { TriangleLike } from '../types';
  * @param triangle degenerate 여부를 확인할 triangle
  * @param epsilon 넓이 허용 오차 (기본값 0, 음수이면 RangeError)
  */
-export function isDegenerate(triangle: TriangleLike, epsilon = 0): boolean {
+export function isDegenerate(triangle: Triangle, epsilon = 0): boolean {
   if (epsilon < 0) throw new RangeError('epsilon must be non-negative');
-  if (hasNonFiniteVertex(triangle)) return true;
-  // triangleSignedArea2x = signedArea * 2. epsilon * 2로 비교해 Math.abs(signedArea) <= epsilon과 동치를 유지한다.
-  return Math.abs(triangleSignedArea2x(triangle)) <= epsilon * 2;
+  if (hasNonFiniteTriangleVertex(triangle)) return true;
+  // flatTriangleSignedArea2x = signedArea * 2. epsilon * 2로 비교해 Math.abs(signedArea) <= epsilon과 동치를 유지한다.
+  return Math.abs(flatTriangleSignedArea2x(triangle)) <= epsilon * 2;
 }

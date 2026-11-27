@@ -5,7 +5,7 @@ import { solveAsaInto } from '../../../src/triangle/solve-asa-into';
 import { solveSss } from '../../../src/triangle/solve-sss';
 import { solveSssInto } from '../../../src/triangle/solve-sss-into';
 
-const tri = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 3 } };
+const tri = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 3 };
 
 describe('solveSssInto — 세 변으로 내각 계산 (Into 버전)', () => {
   test('유효한 삼각형의 세 내각을 radian으로 기록한다', () => {
@@ -139,7 +139,7 @@ describe('classifyPoint — triangle 내 point 위치 분류', () => {
   });
 
   test('degenerate triangle이면 outside를 반환한다', () => {
-    const degen = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
+    const degen = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
     expect(classifyPoint(degen, { x: 1, y: 0 })).toBe('outside');
   });
 });

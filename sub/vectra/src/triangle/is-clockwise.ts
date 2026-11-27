@@ -1,5 +1,5 @@
-import { triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import { flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle의 vertex 순서가 시계 방향(CW)이면 true를 반환한다.
@@ -8,6 +8,6 @@ import type { TriangleLike } from '../types';
  *
  * @param triangle winding 방향을 확인할 triangle
  */
-export function isClockwise(triangle: TriangleLike): boolean {
-  return triangleSignedArea2x(triangle) < 0;
+export function isClockwise(triangle: Triangle): boolean {
+  return flatTriangleSignedArea2x(triangle) < 0;
 }

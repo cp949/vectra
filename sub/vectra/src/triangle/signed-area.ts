@@ -1,5 +1,5 @@
-import { triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import { flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle의 signed area를 반환한다.
@@ -8,6 +8,6 @@ import type { TriangleLike } from '../types';
  *
  * @param triangle signed area를 계산할 triangle
  */
-export function signedArea(triangle: TriangleLike): number {
-  return triangleSignedArea2x(triangle) / 2;
+export function signedArea(triangle: Triangle): number {
+  return flatTriangleSignedArea2x(triangle) / 2;
 }

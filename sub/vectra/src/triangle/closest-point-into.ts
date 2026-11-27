@@ -1,7 +1,5 @@
 import { polygonContainsPoint } from '../internal/polygon';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { TriangleLike, XYInput, XYWritable } from '../types';
+import type { Triangle, Point, PointWritable } from '../types/flat-shapes.internal';
 import { triangleEdgeClosest } from './closest-point.internal';
 
 /**
@@ -17,17 +15,16 @@ import { triangleEdgeClosest } from './closest-point.internal';
  * non-finite 좌표는 검증 없이 JS 산술 결과를 그대로 기록한다. 모든 후보 거리 비교가 NaN이면
  * 첫 후보 AB 계산 결과를 기록한다. 항상 실패하지 않고 out을 반환한다.
  *
- * aliasing: triangle 좌표와 point 좌표를 local에 먼저 읽으므로 out이 triangle.a / triangle.b /
- * triangle.c / point와 같은 storage여도 안전하다.
+ * triangle 좌표와 point 좌표를 먼저 읽은 뒤 out에 기록한다.
  *
- * @param out closest point를 기록할 writable output
+ * @param out closest point를 기록할 점 객체
  * @param triangle 대상 triangle
  * @param point closest point를 측정할 기준 point
  */
-export function closestPointInto<Out extends XYWritable>(out: Out, triangle: TriangleLike, point: XYInput): Out {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-  const px = readX(point);
-  const py = readY(point);
+export function closestPointInto<Out extends PointWritable>(out: Out, triangle: Triangle, point: Point): Out {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
+  const px = point.x;
+  const py = point.y;
 
   // non-degenerate triangle 내부/boundary는 input point 좌표를 그대로 기록한다.
   // degenerate(signed area 2x === 0)는 closed area로 해석하지 않고 edge 환원으로 떨어진다.
@@ -44,10 +41,14 @@ export function closestPointInto<Out extends XYWritable>(out: Out, triangle: Tri
       0
     );
     if (inside) {
-      return writeXY(out, px, py);
+      out.x = px;
+      out.y = py;
+      return out;
     }
   }
 
   const best = triangleEdgeClosest(ax, ay, bx, by, cx, cy, px, py);
-  return writeXY(out, best.x, best.y);
+  out.x = best.x;
+  out.y = best.y;
+  return out;
 }

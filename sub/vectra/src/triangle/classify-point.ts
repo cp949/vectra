@@ -1,6 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { TriangleLike, XYInput } from '../types';
+import type { Triangle, Point } from '../types/flat-shapes.internal';
 
 /**
  * point의 triangle에 대한 위치를 분류해 반환한다.
@@ -17,15 +15,15 @@ import type { TriangleLike, XYInput } from '../types';
  * @param point 분류할 point
  * @param epsilon 경계 판정 tolerance. 기본값 0
  */
-export function classifyPoint(triangle: TriangleLike, point: XYInput, epsilon = 0): 'inside' | 'on-edge' | 'outside' {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function classifyPoint(triangle: Triangle, point: Point, epsilon = 0): 'inside' | 'on-edge' | 'outside' {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
 
   // degenerate triangle
   const den = (by - cy) * (ax - cx) + (cx - bx) * (ay - cy);
   if (den === 0) return 'outside';
 
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
 
   const u = ((by - cy) * (px - cx) + (cx - bx) * (py - cy)) / den;
   const v = ((cy - ay) * (px - cx) + (ax - cx) * (py - cy)) / den;

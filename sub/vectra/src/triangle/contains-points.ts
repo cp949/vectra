@@ -1,4 +1,4 @@
-import type { TriangleLike, XYInput } from '../types';
+import type { Triangle, Point } from '../types/flat-shapes.internal';
 import { containsPoint } from './contains-point';
 
 /**
@@ -16,6 +16,6 @@ import { containsPoint } from './contains-point';
  * @param epsilon boundary proximity threshold. 각 point 판정에 그대로 전달된다 (기본값 0).
  * @returns 모든 point가 triangle 내부/경계에 있으면 true
  */
-export function containsPoints(triangle: TriangleLike, points: readonly XYInput[], epsilon = 0): boolean {
+export function containsPoints(triangle: Triangle, points: readonly Point[], epsilon = 0): boolean {
   return points.every((point) => containsPoint(triangle, point, epsilon));
 }

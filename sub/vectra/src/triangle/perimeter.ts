@@ -1,5 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -10,7 +9,7 @@ import { hypot2 } from '../internal/numeric';
  *
  * @param triangle 둘레를 계산할 triangle
  */
-export function perimeter(triangle: TriangleLike): number {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function perimeter(triangle: Triangle): number {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   return hypot2(bx - ax, by - ay) + hypot2(cx - bx, cy - by) + hypot2(ax - cx, ay - cy);
 }

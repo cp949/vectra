@@ -1,6 +1,4 @@
-import { readTriangleRawCoords } from '../internal/triangle';
-import { writeXY } from '../internal/xy';
-import type { BoundsWritable, TriangleLike } from '../types';
+import type { BoundsWritable, Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle 세 vertex의 min/max extent를 계산해 out에 기록하고 반환한다.
@@ -9,17 +7,19 @@ import type { BoundsWritable, TriangleLike } from '../types';
  * degenerate triangle(collinear, 점 하나로 수렴)도 inverted bounds가 아닌 실제 extent를 기록한다.
  * non-finite vertex는 IEEE 754 전파 규칙을 따른다.
  *
- * @param out min/max corner를 기록할 writable output
+ * @param out 최솟값과 최댓값을 기록할 bounds 객체
  * @param triangle bounds를 계산할 triangle
  * @returns out
  */
-export function boundsInto<Out extends BoundsWritable>(out: Out, triangle: TriangleLike): Out {
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function boundsInto<Out extends BoundsWritable>(out: Out, triangle: Triangle): Out {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   const minX = Math.min(ax, bx, cx);
   const minY = Math.min(ay, by, cy);
   const maxX = Math.max(ax, bx, cx);
   const maxY = Math.max(ay, by, cy);
-  writeXY(out.min, minX, minY);
-  writeXY(out.max, maxX, maxY);
+  out.minX = minX;
+  out.minY = minY;
+  out.maxX = maxX;
+  out.maxY = maxY;
   return out;
 }
