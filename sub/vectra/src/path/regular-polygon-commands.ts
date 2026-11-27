@@ -13,7 +13,7 @@ import { regularPolygonCommandsInto } from './regular-polygon-commands-into';
  * @param center polygon 중심점
  * @param radius vertex가 위치한 원의 반지름
  * @param sides 꼭짓점 수. 3 이상 정수가 아니면 빈 배열 반환 (non-integer/NaN/Infinity 포함)
- * @param options startAngle, clockwise 옵션
+ * @param options 시작 각도와 진행 방향 옵션. 생략하면 `{ startAngle: -Math.PI / 2, clockwise: true }`를 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function regularPolygonCommands(

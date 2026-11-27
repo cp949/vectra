@@ -41,7 +41,7 @@ function updateMinDistSqFromPolyline(
  *
  * @param commands - 거리 측정 대상 path command sequence
  * @param point - 기준 좌표
- * @param options - flatten 옵션 (flatness, maxRecursion)
+ * @param options - flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function distanceToPoint(
   commands: readonly PathCommand[],

@@ -2,7 +2,7 @@ import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/l
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
 import { readRectHeight, readRectWidth, readRectX, readRectY, rectContainsPointXY } from '../internal/rect';
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { PathCommand, PathMeasurementOptions, RectLike } from '../types';
 
 /**
@@ -38,7 +38,7 @@ export function intersectsPathRect(
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, options);
+  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
   const n = tmp.length;
   if (n === 0) return false;
 

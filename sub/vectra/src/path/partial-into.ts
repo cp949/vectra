@@ -27,7 +27,7 @@ import { splitAtLengthInto } from './split-at-length-into';
  * @param commands 원본 path command sequence (absolute 전제)
  * @param start normalized ratio 시작값 (`[0, 1]`로 clamp)
  * @param end normalized ratio 끝값 (`[0, 1]`로 clamp)
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function partialInto(

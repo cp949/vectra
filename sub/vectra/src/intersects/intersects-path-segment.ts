@@ -2,7 +2,7 @@ import { segmentToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { PathCommand, PathMeasurementOptions, SegmentLike } from '../types';
 
 /**
@@ -26,6 +26,6 @@ export function intersectsPathSegment(
   const b = readSegmentB(line);
   const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, options);
+  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
   return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }

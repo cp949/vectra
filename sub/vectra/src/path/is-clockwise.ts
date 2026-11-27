@@ -13,7 +13,7 @@ import { signedArea } from './signed-area';
  * - NaN signed area → `false` (NaN > 0이 false이므로 자연 처리).
  *
  * @param commands 방향 판정 대상 path command sequence
- * @param options flatten 옵션 (flatness 기본 0.5, maxRecursion 기본 32)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function isClockwise(commands: readonly PathCommand[], options?: PathMeasurementOptions): boolean {
   return signedArea(commands, options) > 0;

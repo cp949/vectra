@@ -6,15 +6,15 @@ import type { PathCommand, RegularPolygonOptions } from '../types/index';
  *
  * `sides`가 3 이상 정수가 아니면 (non-integer, NaN, ±Infinity, `< 3` 포함) out을 clear만 하고 반환한다 (validation throw 없음).
  * finite `radius <= 0`이면 모든 vertex가 center에 모인다.
- * 기본 `startAngle = -Math.PI / 2` (위쪽 vertex 시작), `clockwise = true` (SVG y-down).
+ * 옵션을 생략하면 `startAngle = -Math.PI / 2` (위쪽 vertex 시작), `clockwise = true` (SVG y-down).
  * non-finite radius/startAngle은 그대로 흘러 NaN/Infinity vertex가 push된다 (path invalid numeric pass-through).
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param center polygon 중심점 (Point)
+ * @param center polygon 중심점 (점 객체)
  * @param radius vertex가 위치한 원의 반지름
  * @param sides vertex 수. 3 이상 정수가 아니면 out clear만 (non-integer/NaN/Infinity 포함)
- * @param options startAngle/clockwise 옵션
+ * @param options 시작 각도와 진행 방향 옵션. 생략하면 `{ startAngle: -Math.PI / 2, clockwise: true }`를 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function regularPolygonCommandsInto(

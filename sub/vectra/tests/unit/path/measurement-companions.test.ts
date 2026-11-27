@@ -1,4 +1,8 @@
-/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+/**
+ * 경로 측정 allocating companion이 Into 함수와 같은 값을 새 객체로 반환하는지 검증한다.
+ * bounds, closestPoint, pointAtLength의 빈 경로와 move만 있는 경로 처리를 다룬다.
+ * propertiesAtLength의 위치, 단위 접선, angle, segmentIndex도 확인한다.
+ */
 import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 /**
  * S2-RM-003 companion gap 보완 함수와 propertiesAtLength 단위 테스트.

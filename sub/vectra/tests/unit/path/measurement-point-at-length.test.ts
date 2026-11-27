@@ -1,4 +1,7 @@
-/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+/**
+ * pointAtLengthInto가 호 길이 위치의 점을 기록하는지 검증한다.
+ * 빈 경로와 move만 있는 경로의 false 반환, 시작·끝 clamp, 선분 보간, 길이 0 경로를 다룬다.
+ */
 import { describe, expect, test } from 'vitest';
 import { pointAtLengthInto } from '../../../src/path/point-at-length-into';
 import type { PathCommand, XYObjectWritable } from '../../../src/types/index';

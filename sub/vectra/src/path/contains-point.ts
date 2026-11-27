@@ -66,7 +66,7 @@ function countCrossingsInPolyline(pts: PointWritable[], px: number, py: number):
  *
  * @param commands - path command sequence
  * @param point - 판정 기준 좌표
- * @param options - flatten 옵션 (flatness, maxRecursion)
+ * @param options - flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function containsPoint(
   commands: readonly PathCommand[],

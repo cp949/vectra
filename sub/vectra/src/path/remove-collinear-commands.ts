@@ -13,7 +13,7 @@ import { type RemoveCollinearOptions, removeCollinearCommandsInto } from './remo
  * 성능 최적화가 필요하면 `removeCollinearCommandsInto`를 사용한다.
  *
  * @param commands collinear 제거할 입력 command sequence
- * @param options collinear 판정 옵션 (angleTolerance 기본값 1e-10)
+ * @param options collinear 판정 옵션. 생략하면 `{ angleTolerance: 1e-10 }`을 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function removeCollinearCommands(

@@ -14,7 +14,7 @@ export type { EllipseArcOptions };
  *
  * @param out command를 기록할 mutable PathCommand 배열
  * @param circle 기록할 circle (`{ cx, cy, r }`)
- * @param options 진행 방향 옵션. 생략 시 `clockwise: true`.
+ * @param options 진행 방향 옵션. 생략하면 `{ clockwise: true }`를 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function circleCommandsInto(out: PathCommand[], circle: Circle, options?: EllipseArcOptions): PathCommand[] {

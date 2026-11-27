@@ -15,7 +15,7 @@ import { orientCommandsInto } from './orient-commands-into';
  *
  * @param commands 방향 정렬할 입력 command sequence
  * @param clockwise true이면 clockwise, false이면 counter-clockwise
- * @param options measurement 옵션
+ * @param options direction 판정에 쓰는 flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns 새로 만든 방향 정렬된 PathCommand 배열
  */
 export function orientCommands(

@@ -27,7 +27,7 @@ function copyCommand(command: PathCommand): PathCommand {
  * @param out 결과를 기록할 mutable PathCommand 배열
  * @param commands 정렬할 입력 command sequence
  * @param clockwise desired direction. y-down 좌표계 기준 `true`가 CW.
- * @param options flatten 옵션 (flatness 기본 0.5, maxRecursion 기본 32) — direction 판정에 사용한다.
+ * @param options direction 판정에 쓰는 flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function orientCommandsInto(

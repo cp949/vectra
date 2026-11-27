@@ -16,7 +16,7 @@ import { cubicThroughCommandsInto } from './cubic-through-commands-into';
  * @param from 시작점
  * @param through 통과점
  * @param to 끝점
- * @param options t1, t2 파라미터 옵션
+ * @param options through 점 parameter와 control handle 배율 옵션. 생략하면 `{ t: 0.5, controlScale: 1 }`을 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function cubicThroughCommands(

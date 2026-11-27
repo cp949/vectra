@@ -1,4 +1,8 @@
-/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+/**
+ * subpath 단위 접근 함수를 검증한다.
+ * subpathAt·commandAt의 index 처리, subpathBounds(Into)의 독립 계산과 sentinel 반환을 다룬다.
+ * forEachSegment가 segment 종류와 subpath 시작 정보를 순서대로 넘기는지도 확인한다.
+ */
 import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 /**
  * TASK-02 command core helper unit tests.

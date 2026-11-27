@@ -1,4 +1,8 @@
-/** 경로 함수의 좌표와 분기 동작을 검증한다. */
+/**
+ * transformCommandsInto가 모든 좌표에 affine 행렬을 적용하는지 검증한다.
+ * arcHandling 두 방식, aliasing, 출력 참조 반환을 다룬다.
+ * equalizeSegmentsInto가 짧은 쪽에 길이 0 segment를 넣어 draw 수를 맞추는지도 확인한다.
+ */
 import type { Matrix } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { equalizeSegmentsInto } from '../../../src/path/equalize-segments-into';

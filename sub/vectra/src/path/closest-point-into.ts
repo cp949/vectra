@@ -52,7 +52,7 @@ function updateBestFromPolyline(
  * @param out - 결과를 기록할 점 객체
  * @param commands - 탐색 대상 path command sequence
  * @param point - 가장 가까운 점을 찾을 기준 좌표
- * @param options - flatten 옵션 (flatness, maxRecursion)
+ * @param options - flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function closestPointInto(
   out: PointWritable,

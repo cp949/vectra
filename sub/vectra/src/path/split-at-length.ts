@@ -32,7 +32,7 @@ export interface PathSplitResult {
  * caller-responsibility 가정은 `splitAtLengthInto`와 동일하다.
  * @param commands 분할할 path command sequence (absolute 전제)
  * @param distance path 시작점부터의 arc-length offset
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns `{ first, second }` 새 결과 object
  */
 export function splitAtLength(

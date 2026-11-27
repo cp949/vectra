@@ -3,11 +3,11 @@ import type { PathCommand } from '../types/index';
 
 /** `fromEllipseInto` / `fromEllipse` 옵션. */
 export interface PathFromEllipseOptions {
-  /** sample 개수. 1 이상 정수. 기본 `64`. */
+  /** sample 개수. 1 이상 정수. */
   segments: number;
-  /** 첫 sample 각도, radian. 기본 `0` (+x 축). */
+  /** 첫 sample 각도, radian. `0`은 +x 축이다. */
   startAngle: number;
-  /** true = SVG y-down clockwise. 기본 `true`. */
+  /** true = SVG y-down clockwise. */
   clockwise: boolean;
 }
 
@@ -25,7 +25,7 @@ export interface PathFromEllipseOptions {
  *
  * - `segments` validation: `Number.isInteger && segments >= 1`이 아니면 `RangeError`. `out`은 수정하지
  *   않는다 (`out.length = 0`도 수행하지 않음).
- * - 기본값: `segments = 64`, `startAngle = 0`, `clockwise = true`.
+ * - 옵션을 생략하면 `{ segments: 64, startAngle: 0, clockwise: true }`를 쓴다.
  * - empty ellipse(`radiusX <= 0 || radiusY <= 0`) → out clear만. polygonal approximation이라 zero-extent
  *   입력에는 빈 path가 일관적이다. `pointsInto`는 center 좌표를 segments만큼 기록하는 정책이지만,
  *   path domain에서는 빈 path를 반환한다.
@@ -35,7 +35,7 @@ export interface PathFromEllipseOptions {
  *
  * @param out command를 기록할 mutable PathCommand 배열
  * @param ellipse 변환할 ellipse input
- * @param options segments / startAngle / clockwise
+ * @param options sample 수와 시작 각도, 진행 방향 옵션. 생략하면 `{ segments: 64, startAngle: 0, clockwise: true }`를 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function fromEllipseInto(out: PathCommand[], ellipse: Ellipse, options?: PathFromEllipseOptions): PathCommand[] {

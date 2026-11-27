@@ -39,21 +39,21 @@ class ExternalBounds {
   tag = 'keep';
 }
 
-test('boundsInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+test('boundsInto는 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalBounds();
   const result = boundsInto(out, []);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalBounds>();
 });
 
-test('subpathBoundsInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+test('subpathBoundsInto는 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalBounds();
   const result = subpathBoundsInto(out, [], 0);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalBounds>();
 });
 
-test('arcByEndpointCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('arcByEndpointCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = arcByEndpointCommandsInto(
     out,
@@ -64,56 +64,56 @@ test('arcByEndpointCommandsInto은 고정 원소 타입으로 같은 출력 배�
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('arcThroughCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('arcThroughCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = arcThroughCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 0 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('circleCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('circleCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = circleCommandsInto(out, { cx: 0, cy: 0, r: 1 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('ellipseCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('ellipseCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = ellipseCommandsInto(out, { cx: 0, cy: 0, rx: 2, ry: 1 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('fromEllipseInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('fromEllipseInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = fromEllipseInto(out, { cx: 0, cy: 0, rx: 2, ry: 1 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('lineCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('lineCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = lineCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('segmentCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('segmentCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = segmentCommandsInto(out, { x1: 0, y1: 0, x2: 1, y2: 1 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('cubicThroughCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('cubicThroughCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 0 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('flattenInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('flattenInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PointWritable[] = [];
   const result = flattenInto(out, []);
   expect(result).toBe(out);
@@ -124,14 +124,14 @@ test('다각형 경로 생성은 교차 배치 좌표 배열을 받는다', () =
   expectTypeOf(polygonCommandsInto).parameter(1).toEqualTypeOf<Polygon>();
 });
 
-test('polygonCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('polygonCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = polygonCommandsInto(out, [0, 0, 1, 0, 1, 1]);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('polylineCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('polylineCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = polylineCommandsInto(out, [
     { x: 0, y: 0 },
@@ -141,70 +141,70 @@ test('polylineCommandsInto은 고정 원소 타입으로 같은 출력 배열을
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('quadraticThroughCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('quadraticThroughCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = quadraticThroughCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 0 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('rectCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('rectCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = rectCommandsInto(out, { x: 0, y: 0, width: 4, height: 4 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('roundedRectCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('roundedRectCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = roundedRectCommandsInto(out, { x: 0, y: 0, width: 4, height: 4 }, 1);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('regularPolygonCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('regularPolygonCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = regularPolygonCommandsInto(out, { x: 0, y: 0 }, 2, 3);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('starCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('starCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = starCommandsInto(out, { x: 0, y: 0 }, 1, 2, 5);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('transformCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('transformCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = transformCommandsInto(out, [], { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('partialInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('partialInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = partialInto(out, [], 0, 1);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('orientCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('orientCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = orientCommandsInto(out, [], true);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('sanitizeCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('sanitizeCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = sanitizeCommandsInto(out, []);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });
 
-test('removeCollinearCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+test('removeCollinearCommandsInto는 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
   const out: PathCommand[] = [];
   const result = removeCollinearCommandsInto(out, []);
   expect(result).toBe(out);

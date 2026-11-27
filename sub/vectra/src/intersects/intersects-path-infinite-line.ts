@@ -2,7 +2,7 @@ import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/i
 import { infiniteLineToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { readX, readY } from '../internal/xy';
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { InfiniteLineLike, PathCommand, PathMeasurementOptions } from '../types';
 
 /**
@@ -26,6 +26,6 @@ export function intersectsPathInfiniteLine(
   const d = readInfiniteLineDirection(infiniteLine);
   const lineParam = infiniteLineToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, options);
+  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
   return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }

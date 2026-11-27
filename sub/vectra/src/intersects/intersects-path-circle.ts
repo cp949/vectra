@@ -3,7 +3,7 @@ import { lineFamilyCircleIntersects, segmentToLineFamilyParam } from '../interna
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { CircleLike, PathCommand, PathMeasurementOptions } from '../types';
 
 /**
@@ -38,7 +38,7 @@ export function intersectsPathCircle(
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, options);
+  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
   const n = tmp.length;
   if (n === 0) return false;
 

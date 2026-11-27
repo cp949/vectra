@@ -57,7 +57,7 @@ function writeSplitSegment(
  * empty path / move-only path / `distance <= 0` / `distance >= totalLength` 같은 경계 처리는
  * caller(`splitAtLengthInto`)가 담당한다. 여기서는 split 발생 케이스만 처리한다.
  *
- * @param options flatten 옵션 (flatness, maxRecursion). 기본값은 flattener가 채운다.
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns split 발생 시 true. distance가 어떤 segment 안에서도 발견되지 않으면 false (caller가
  *   distance >= totalLength fallback을 적용해야 한다).
  */

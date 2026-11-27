@@ -3,7 +3,7 @@ import { lineFamilyEllipseIntersects } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { EllipseLike, PathCommand, PathMeasurementOptions } from '../types';
 import { allFinite } from './curve-primitive-relation.internal';
 
@@ -40,7 +40,7 @@ export function intersectsPathEllipse(
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, options);
+  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
   const n = tmp.length;
   if (n === 0) return false;
 

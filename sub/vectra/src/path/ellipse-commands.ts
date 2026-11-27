@@ -12,7 +12,7 @@ import { type EllipseArcOptions, ellipseCommandsInto } from './ellipse-commands-
  *
  * tolerance/iteration option 정책은 `ellipseCommandsInto`와 동일하다.
  * @param ellipse 변환할 ellipse input
- * @param options clockwise, startAngle 옵션
+ * @param options 진행 방향 옵션. 생략하면 `{ clockwise: true }`를 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function ellipseCommands(ellipse: Ellipse, options?: EllipseArcOptions): PathCommand[] {

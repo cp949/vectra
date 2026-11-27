@@ -26,7 +26,7 @@ import { propertiesAtLength } from './properties-at-length';
  * @param out 단위 법선 벡터를 기록할 점 객체
  * @param commands sampling할 path command sequence
  * @param distance path 시작점부터의 arc-length offset
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns 법선 정의 가능 시 true (단위화 실패해도 true), 정의 불가 시 false
  */
 export function normalAtLengthInto(

@@ -145,7 +145,7 @@ function computeWinding(
  *
  * @param commands - path command sequence
  * @param point - 판정 기준 좌표
- * @param options - flatten 옵션 (flatness, maxRecursion)
+ * @param options - flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function winding(commands: readonly PathCommand[], point: Point, options?: PathMeasurementOptions): number {
   const px = point.x;

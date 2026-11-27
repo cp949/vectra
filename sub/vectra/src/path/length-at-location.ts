@@ -20,7 +20,7 @@ import { createSegmentFlattener } from './segment-flattener.internal';
  *
  * @param commands 측정할 path command sequence
  * @param location segment-local 위치
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function lengthAtLocation(
   commands: readonly PathCommand[],

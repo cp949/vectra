@@ -13,7 +13,7 @@ import { flattenPathInto } from './flatten.internal';
  *
  * @param out - 결과 object point를 기록할 mutable 배열
  * @param commands - flatten할 path command sequence
- * @param options - flatten 옵션 (flatness, maxRecursion)
+ * @param options - flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function flattenInto(

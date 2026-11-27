@@ -2,7 +2,7 @@ import { rayToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { PathCommand, PathMeasurementOptions, RayLike } from '../types';
 
 /**
@@ -26,6 +26,6 @@ export function intersectsPathRay(
   const d = readRayDirection(ray);
   const lineParam = rayToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, options);
+  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
   return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }

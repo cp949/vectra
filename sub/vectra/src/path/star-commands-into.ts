@@ -7,16 +7,16 @@ import type { PathCommand, StarOptions } from '../types/index';
  * outer / inner vertex를 번갈아 배치한다 (총 `2 * points` vertex).
  * `points`가 3 이상 정수가 아니면 (non-integer, NaN, ±Infinity, `< 3` 포함) out을 clear만 하고 반환한다 (validation throw 없음).
  * `inner > outer`도 그대로 사용한다 (caller 책임).
- * 기본 `startAngle = -Math.PI / 2` (위쪽 outer vertex 시작), `clockwise = true` (SVG y-down).
+ * 옵션을 생략하면 `startAngle = -Math.PI / 2` (위쪽 outer vertex 시작), `clockwise = true` (SVG y-down).
  * non-finite innerRadius/outerRadius/startAngle은 그대로 흘러 NaN/Infinity vertex가 push된다.
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param center star 중심점 (Point)
+ * @param center star 중심점 (점 객체)
  * @param innerRadius inner vertex가 위치한 원의 반지름
  * @param outerRadius outer vertex가 위치한 원의 반지름
  * @param points outer vertex 수 (별의 꼭짓점 수). 3 이상 정수가 아니면 out clear만 (non-integer/NaN/Infinity 포함)
- * @param options startAngle/clockwise 옵션
+ * @param options 시작 각도와 진행 방향 옵션. 생략하면 `{ startAngle: -Math.PI / 2, clockwise: true }`를 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function starCommandsInto(

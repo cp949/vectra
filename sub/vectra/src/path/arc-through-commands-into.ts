@@ -24,9 +24,9 @@ import { hypot2 } from '../internal/numeric';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param from 시작점 (Point)
- * @param through 호 위를 지나야 할 중간 점 (Point)
- * @param to 끝점 (Point)
+ * @param from 시작점 (점 객체)
+ * @param through 호 위를 지나야 할 중간 점 (점 객체)
+ * @param to 끝점 (점 객체)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function arcThroughCommandsInto(out: PathCommand[], from: Point, through: Point, to: Point): PathCommand[] {

@@ -1,4 +1,8 @@
-/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+/**
+ * boundsInto가 경로의 정확한 경계 상자를 기록하는지 검증한다.
+ * 빈 경로 sentinel, 암묵적 원점, 여러 subpath, close 처리를 다룬다.
+ * 이차·삼차 곡선과 arc의 내부 극값, NaN 전파, 출력 참조 반환도 확인한다.
+ */
 import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { boundsInto } from '../../../src/path/bounds-into';
@@ -14,7 +18,7 @@ function makeBoundsOut(): BoundsWritable {
 }
 
 describe('boundsInto', () => {
-  test('빈 path → sentinel bounds (min: Infinity, max: -Infinity)', () => {
+  test('빈 path → sentinel bounds (minX·minY는 Infinity, maxX·maxY는 -Infinity)', () => {
     const out = makeBoundsOut();
     boundsInto(out, []);
     expect(out.minX).toBe(Infinity);

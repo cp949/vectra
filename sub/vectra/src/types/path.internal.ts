@@ -95,10 +95,10 @@ export interface PointAtLengthOptions {
  * 향후 path-specific 필드(예: subpath 처리 정책) 확장 시 독립적으로 진화할 수 있다.
  */
 export interface PathFlattenOptions {
-  /** geometric error tolerance. 기본값: 0.5 */
+  /** geometric error tolerance. */
   flatness: number;
 
-  /** subdivision 깊이 상한. 기본값: 32 */
+  /** subdivision 깊이 상한. */
   maxRecursion: number;
 }
 
@@ -107,9 +107,9 @@ export interface PathFlattenOptions {
  * length, pointAtLengthInto, boundsInto, closestPointInto, distanceToPoint가 공유한다.
  */
 export interface PathMeasurementOptions {
-  /** adaptive subdivision geometric error tolerance. 기본값: 0.5 */
+  /** adaptive subdivision geometric error tolerance. */
   flatness: number;
-  /** subdivision 깊이 상한. 기본값: 32 */
+  /** subdivision 깊이 상한. */
   maxRecursion: number;
 }
 
@@ -205,7 +205,7 @@ export type PathSegment =
  * `boundaryTolerance`로 boundary 판정 허용 거리를 지정한다.
  */
 export interface ClassifyPointOptions extends PathMeasurementOptions {
-  /** boundary 판정 허용 거리. 기본값 `1e-9`. */
+  /** boundary 판정 허용 거리. */
   boundaryTolerance: number;
 }
 

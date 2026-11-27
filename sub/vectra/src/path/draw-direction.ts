@@ -14,7 +14,7 @@ import { signedArea } from './signed-area';
  * svg-path-commander `getDrawDirection`(boolean)과는 표면 호환이 아니며 의미만 호환된다.
  *
  * @param commands 방향을 판정할 path command sequence
- * @param options flatten 옵션 (flatness 기본 0.5, maxRecursion 기본 32)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function drawDirection(commands: readonly PathCommand[], options?: PathMeasurementOptions): 1 | -1 | 0 {
   const a = signedArea(commands, options);

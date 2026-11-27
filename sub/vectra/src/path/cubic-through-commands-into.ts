@@ -18,10 +18,10 @@ import type { CubicThroughOptions, PathCommand } from '../types/index';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param from 시작점 (Point)
- * @param through cubic 위에서 통과해야 할 점 (Point). 기본 `controlScale = 1`에서 `t = 0.5` 위치 통과
- * @param to 끝점 (Point)
- * @param options through 점 parameter / control handle 배율 옵션 (기본 `t = 0.5`, `controlScale = 1`)
+ * @param from 시작점 (점 객체)
+ * @param through cubic 위에서 통과해야 할 점 (점 객체). `controlScale = 1`이면 parameter `t` 위치를 지난다
+ * @param to 끝점 (점 객체)
+ * @param options through 점 parameter와 control handle 배율 옵션. 생략하면 `{ t: 0.5, controlScale: 1 }`을 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function cubicThroughCommandsInto(

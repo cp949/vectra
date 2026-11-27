@@ -24,7 +24,7 @@ import { distanceToPoint } from './distance-to-point';
  *
  * @param commands 판정 대상 path command sequence
  * @param point 분류 기준 좌표
- * @param options flatten 옵션과 `boundaryTolerance` (기본 `1e-9`)
+ * @param options flatten 옵션과 boundary 허용 거리. 생략하면 `{ flatness: 0.5, maxRecursion: 32, boundaryTolerance: 1e-9 }`를 쓴다.
  */
 export function classifyPoint(
   commands: readonly PathCommand[],

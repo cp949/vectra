@@ -32,28 +32,28 @@ export interface LengthOptions {
 /**
  * `cubicThroughCommandsInto` 옵션.
  *
- * `t`는 through 점이 cubic Bezier 위에 위치하는 parameter (기본 `0.5`).
- * `controlScale`은 control handle 길이 배율 (기본 `1`).
+ * `t`는 through 점이 cubic Bezier 위에 위치하는 parameter다.
+ * `controlScale`은 control handle 길이 배율이다.
  * `controlScale === 1`이면 cubic을 parameter `t`에서 evaluate했을 때 through 점을 정확히 통과한다.
  * `t === 0` 또는 `t === 1`이면 control point 계산에서 분모가 0이 되어 NaN/Infinity로 흐른다.
  */
 export interface CubicThroughOptions {
-  /** through 점의 parameter 위치. 기본값 `0.5`. */
+  /** through 점의 parameter 위치. */
   t: number;
 
-  /** control handle 길이 배율. 기본값 `1`. */
+  /** control handle 길이 배율. */
   controlScale: number;
 }
 
 /**
  * `quadraticThroughCommandsInto` 옵션.
  *
- * `t`는 through 점이 quadratic Bezier 위에 위치하는 parameter (기본 `0.5`).
+ * `t`는 through 점이 quadratic Bezier 위에 위치하는 parameter다.
  * `t === 0` 또는 `t === 1`이면 control point 계산에서 분모가 0이 되어 NaN으로 흐른다
  * (invalid numeric pass-through).
  */
 export interface QuadraticThroughOptions {
-  /** through 점의 parameter 위치. 기본값 `0.5`. */
+  /** through 점의 parameter 위치. */
   t: number;
 }
 

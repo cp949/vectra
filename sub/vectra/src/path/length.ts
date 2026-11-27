@@ -12,7 +12,7 @@ import { hypot2 } from '../internal/numeric';
  * empty path, move-only path는 0을 반환한다.
  *
  * @param commands arc-length를 계산할 path command sequence
- * @param options flatten 허용 오차와 subdivision 깊이 상한
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns path의 총 arc-length (단위: 좌표 단위)
  */
 export function length(commands: readonly PathCommand[], options?: PathMeasurementOptions): number {

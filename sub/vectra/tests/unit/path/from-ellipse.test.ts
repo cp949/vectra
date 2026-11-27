@@ -1,4 +1,8 @@
-/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+/**
+ * fromEllipseInto가 타원을 move·line·close 명령으로 샘플링하는지 검증한다.
+ * 옵션 생략 기본값, segments·startAngle·clockwise 지정, 빈 타원을 다룬다.
+ * segments 검증 RangeError, non-finite 전파, allocating companion도 확인한다.
+ */
 import type { Ellipse } from '../../../src/types/flat-shapes.internal';
 /**
  * S3-RM-046 TASK-04 path.fromEllipse(Into) 단위 테스트.

@@ -12,7 +12,7 @@ import { circleCommandsInto, type EllipseArcOptions } from './circle-commands-in
  *
  * tolerance/iteration option 정책은 `circleCommandsInto`와 동일하다.
  * @param circle 변환할 circle input
- * @param options clockwise, startAngle 옵션
+ * @param options 진행 방향 옵션. 생략하면 `{ clockwise: true }`를 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function circleCommands(circle: Circle, options?: EllipseArcOptions): PathCommand[] {

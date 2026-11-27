@@ -35,7 +35,7 @@ function shoelaceTwiceArea(pts: PointWritable[]): number {
  * @remarks curve segment는 flatness 오차 범위 내에서 polyline으로 근사된 뒤 shoelace를 적용한다.
  *
  * @param commands signed area를 계산할 path command sequence
- * @param options flatten 옵션 (flatness 기본 0.5, maxRecursion 기본 32)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function signedArea(commands: readonly PathCommand[], options?: PathMeasurementOptions): number {
   if (commands.length === 0) return 0;

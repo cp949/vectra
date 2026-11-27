@@ -10,7 +10,7 @@ import type { ArcCommand, PathCommand } from '../types/index';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param from arc 시작점 (Point)
+ * @param from arc 시작점 (점 객체)
  * @param arcCommand SVG endpoint arc command. push 시 같은 reference로 공유된다
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */

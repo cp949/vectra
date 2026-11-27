@@ -18,7 +18,7 @@ import { type SanitizeCommandsOptions, sanitizeCommandsInto } from './sanitize-c
  * 성능 최적화가 필요하면 `sanitizeCommandsInto`를 사용한다.
  *
  * @param commands 정리할 입력 command sequence (absolute 전제)
- * @param options removeDuplicates / removeCollinear / tolerance
+ * @param options 정리 옵션. 생략하면 `{ removeDuplicates: false, removeCollinear: false, tolerance: 1e-10 }`을 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function sanitizeCommands(commands: readonly PathCommand[], options?: SanitizeCommandsOptions): PathCommand[] {

@@ -8,8 +8,6 @@ export interface TransformCommandsOptions {
    *
    * - `'keep'`  : ArcCommand의 endpoint `(x, y)`에만 affine 적용. `rx`/`ry`/`xRotation` 미갱신.
    * - `'error'` : commands에 ArcCommand가 하나라도 있으면 throw.
-   *
-   * 기본값 `'keep'`.
    */
   arcHandling: 'keep' | 'error';
 }
@@ -22,7 +20,7 @@ export interface TransformCommandsOptions {
  *
  * - Move/Line/Quadratic/Cubic: 모든 좌표 field(control point 포함)에 affine 적용.
  * - Close: 좌표가 없으므로 kind만 보존한 새 close marker를 push한다.
- * - Arc: `arcHandling`에 따른다. `'keep'`(기본값)은 endpoint `(x, y)`에만 affine을
+ * - Arc: `arcHandling`에 따른다. `'keep'`은 endpoint `(x, y)`에만 affine을
  *   적용하고 `rx`/`ry`/`xRotation`은 그대로 둔다. **non-uniform scale / skew / rotation
  *   matrix에서는 arc shape가 부정확하다.** 정확한 arc transform은 `rx`/`ry`/`xRotation`
  *   재계산이 필요하며 curve domain 선행 작업이다. 이 한계는 caller가 인지하고 사용한다.
@@ -34,7 +32,7 @@ export interface TransformCommandsOptions {
  * @param out 변환 결과를 기록할 mutable PathCommand 배열
  * @param commands 변환할 입력 command sequence (absolute 전제)
  * @param matrix 적용할 affine matrix. `{ a, b, c, d, tx, ty }` 객체.
- * @param options arc 처리 방식 옵션. 생략 시 `arcHandling: 'keep'`.
+ * @param options arc 처리 방식 옵션. 생략하면 `{ arcHandling: 'keep' }`을 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function transformCommandsInto(

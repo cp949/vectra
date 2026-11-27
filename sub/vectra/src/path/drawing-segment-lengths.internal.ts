@@ -68,7 +68,7 @@ export function drawingSegmentCount(commands: readonly PathCommand[]): number {
  * NaN/Infinity command는 flatten에 진입하지 않고 해당 segment length를 non-finite로 전파한다.
  *
  * @param commands arc-length를 계산할 path command sequence
- * @param options flatten 허용 오차와 subdivision 깊이 상한
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function drawingSegmentLengths(commands: readonly PathCommand[], options?: PathMeasurementOptions): number[] {
   const flattener = createSegmentFlattener(options);

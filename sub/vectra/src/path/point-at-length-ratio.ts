@@ -17,7 +17,7 @@ import { pointAtLengthRatioInto } from './point-at-length-ratio-into';
  *
  * @param commands sampling할 path command sequence
  * @param ratio normalized parameter (`distance / totalLength`)
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function pointAtLengthRatio(
   commands: readonly PathCommand[],

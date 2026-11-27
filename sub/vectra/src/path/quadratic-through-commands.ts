@@ -12,7 +12,7 @@ import { quadraticThroughCommandsInto } from './quadratic-through-commands-into'
  * @param from 시작점
  * @param through 통과점
  * @param to 끝점
- * @param options t 파라미터 옵션 (기본값 0.5)
+ * @param options through 점의 parameter 위치 옵션. 생략하면 `{ t: 0.5 }`를 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function quadraticThroughCommands(

@@ -1,4 +1,8 @@
-/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+/**
+ * closestPointInto가 경로 위 최근접점을 기록하는지 검증한다.
+ * 선분 투영, close segment, 여러 subpath, 곡선과 arc 평탄화 근사를 다룬다.
+ * 빈 경로, move만 있는 경로, NaN 전파, 같은 거리의 앞 segment 우선 규칙도 확인한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { closestPointInto } from '../../../src/path/closest-point-into';
 import { distanceToPoint } from '../../../src/path/distance-to-point';

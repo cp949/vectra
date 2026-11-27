@@ -2,7 +2,7 @@ import type { PathCommand } from '../types/index';
 
 /** collinear 판정 옵션. */
 export interface RemoveCollinearOptions {
-  /** collinear 판정 각도 허용 오차 (radian). 기본값 1e-10. */
+  /** collinear 판정 각도 허용 오차 (radian). */
   angleTolerance: number;
 }
 
@@ -24,7 +24,7 @@ export interface RemoveCollinearOptions {
  *
  * @param out collinear 제거 결과를 기록할 mutable PathCommand 배열
  * @param commands 정리할 입력 command sequence (absolute, normalize 후 전달 가정)
- * @param options angleTolerance(radian, 기본 1e-10)
+ * @param options collinear 판정 옵션. 생략하면 `{ angleTolerance: 1e-10 }`을 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function removeCollinearCommandsInto(

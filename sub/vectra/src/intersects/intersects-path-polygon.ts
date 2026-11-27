@@ -1,6 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonPolylineIntersects } from '../internal/polygon-relation';
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { PathCommand, PathMeasurementOptions, PolygonLike } from '../types';
 
 /**
@@ -25,7 +25,7 @@ export function intersectsPathPolygon(
 ): boolean {
   if (commands.length === 0) return false;
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, options);
+  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
   if (tmp.length === 0) return false;
   return polygonPolylineIntersects(polygon, tmp, DEFAULT_EPSILON);
 }

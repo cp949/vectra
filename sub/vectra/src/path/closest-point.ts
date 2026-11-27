@@ -13,7 +13,7 @@ import { closestPointInto } from './closest-point-into';
  * tolerance/iteration option 정책은 `closestPointInto`와 동일하다.
  * @param commands 탐색 대상 path command sequence
  * @param point 가장 가까운 점을 찾을 기준 좌표
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function closestPoint(
   commands: readonly PathCommand[],

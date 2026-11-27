@@ -1,4 +1,4 @@
-import { flattenPathInto } from '../path/flatten.internal';
+import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
 import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types';
 
 /**
@@ -24,5 +24,5 @@ export function fromPathInto(
   commands: readonly PathCommand[],
   options?: Partial<PathFlattenOptions>
 ): XYObjectWritable[] {
-  return flattenPathInto(outPoints, commands, options);
+  return flattenPathInto(outPoints, commands, fillLegacyFlattenOptions(options));
 }

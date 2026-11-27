@@ -15,7 +15,7 @@ import { createSegmentFlattener } from './segment-flattener.internal';
  * @param out point를 기록할 점 객체
  * @param commands sampling할 path command sequence
  * @param distance path 시작점부터의 arc-length offset
- * @param options flatten 허용 오차와 subdivision 깊이 상한
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns 기록 성공 시 true, drawing segment 없으면 false
  */
 export function pointAtLengthInto(

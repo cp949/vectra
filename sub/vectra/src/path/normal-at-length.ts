@@ -23,7 +23,7 @@ import { normalAtLengthInto } from './normal-at-length-into';
  *
  * @param commands sampling할 path command sequence
  * @param distance path 시작점부터의 arc-length offset
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function normalAtLength(
   commands: readonly PathCommand[],

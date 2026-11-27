@@ -34,11 +34,10 @@ export interface SegmentFlattener {
 /**
  * segment flatten 정책을 한곳에 모은 flattener를 만든다.
  *
- * - `flatness` 기본값은 0.5, `maxRecursion` 기본값은 32다. 이 module만 기본값을 채운다.
- * - 옵션을 생략한 경우에 기본값을 쓴다.
+ * - 옵션을 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * - flatten buffer와 arc center buffer를 함수 로컬로 소유한다. 모듈 레벨 상태는 없다.
  *
- * @param options flatten 허용 오차와 subdivision 깊이 상한
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function createSegmentFlattener(options?: PathMeasurementOptions): SegmentFlattener {
   const { flatness, maxRecursion } = options ?? { flatness: 0.5, maxRecursion: 32 };

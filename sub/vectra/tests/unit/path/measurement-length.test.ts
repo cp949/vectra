@@ -1,4 +1,8 @@
-/** 경로 함수의 좌표와 분기 동작을 검증한다. */
+/**
+ * length가 경로의 호 길이를 계산하는지 검증한다.
+ * 빈 경로, move만 있는 경로, 선분 합산, close 둘레, subpath 사이 간격 제외를 다룬다.
+ * 곡선과 arc 길이, flatness에 따른 길이 변화도 확인한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { length } from '../../../src/path/length';
 import type { PathCommand } from '../../../src/types/index';

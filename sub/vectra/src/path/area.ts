@@ -13,7 +13,7 @@ import { signedArea } from './signed-area';
  * - NaN / Infinity 좌표는 `signedArea`를 통해 그대로 전파된다.
  *
  * @param commands area를 계산할 path command sequence
- * @param options flatten 옵션 (flatness 기본 0.5, maxRecursion 기본 32)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function area(commands: readonly PathCommand[], options?: PathMeasurementOptions): number {
   return Math.abs(signedArea(commands, options));

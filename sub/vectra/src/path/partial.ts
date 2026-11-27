@@ -17,7 +17,7 @@ import { partialInto } from './partial-into';
  * @param commands 원본 path command sequence (absolute 전제)
  * @param start normalized ratio 시작값 (`[0, 1]`로 clamp)
  * @param end normalized ratio 끝값 (`[0, 1]`로 clamp)
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function partial(

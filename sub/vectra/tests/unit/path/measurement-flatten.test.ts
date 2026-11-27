@@ -1,18 +1,24 @@
+/**
+ * flattenInto가 path command를 점 배열로 기록하는지 검증한다.
+ * 빈 경로, move만 있는 경로, 여러 subpath, close 처리, 곡선과 arc 평탄화를 다룬다.
+ * flatness 옵션과 필드가 빠진 옵션 객체, NaN 전파, 출력 배열 재사용도 확인한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { flattenInto } from '../../../src/path/flatten-into';
-import type { PathCommand, XYObjectWritable, XYTupleWritable } from '../../../src/types/index';
+import type { PointWritable } from '../../../src/types/flat-shapes.internal';
+import type { PathCommand, PathFlattenOptions, XYTupleWritable } from '../../../src/types/index';
 
 // ──────────────────────────────────────────────
 // 공통 helper
 // ──────────────────────────────────────────────
 
-/** XYObjectWritable 배열을 새로 생성하여 반환한다. */
-function makeOut(): XYObjectWritable[] {
+/** 시험마다 새 출력 점 배열을 만든다. */
+function makeOut(): PointWritable[] {
   return [];
 }
 
-/** {x, y} point를 구성한다. */
-function pt(x: number, y: number): XYObjectWritable {
+/** 기대값 비교용 점 객체를 만든다. */
+function pt(x: number, y: number): PointWritable {
   return { x, y };
 }
 
@@ -37,7 +43,7 @@ describe('flattenInto', () => {
   });
 
   test('기존 out 내용이 있어도 clear 후 채워진다', () => {
-    const out: XYObjectWritable[] = [pt(99, 99), pt(88, 88)];
+    const out: PointWritable[] = [pt(99, 99), pt(88, 88)];
     flattenInto(out, []);
     expect(out).toHaveLength(0);
   });
@@ -196,6 +202,27 @@ describe('flattenInto', () => {
     expect(outFine.length).toBeGreaterThanOrEqual(outDefault.length);
   });
 
+  test('flatness가 빠진 옵션 객체에는 기본값 0.5를 쓰지 않는다', () => {
+    const cmds: PathCommand[] = [
+      { kind: 'move', x: 0, y: 0 },
+      { kind: 'quadratic', x1: 50, y1: 100, x: 100, y: 0 },
+    ];
+    // 타입을 무시한 JS 호출자를 흉내 낸다.
+    const missingFlatness = { maxRecursion: 8 } as PathFlattenOptions;
+
+    const outMissing = makeOut();
+    flattenInto(outMissing, cmds, missingFlatness);
+    const outDefault = makeOut();
+    flattenInto(outDefault, cmds, { flatness: 0.5, maxRecursion: 8 });
+    const outZero = makeOut();
+    flattenInto(outZero, cmds, { flatness: 0, maxRecursion: 8 });
+
+    // 빈 flatness는 어떤 오차와 비교해도 false라 재귀 상한까지 나눈다.
+    expect(outMissing).toEqual(outZero);
+    expect(outMissing).toHaveLength(257);
+    expect(outDefault.length).toBeLessThan(257);
+  });
+
   test('invalid numeric (NaN) → throw 없이 NaN 전파', () => {
     const cmds: PathCommand[] = [
       { kind: 'move', x: Number.NaN, y: 0 },
@@ -231,7 +258,7 @@ describe('flattenInto', () => {
   });
 
   test('출력 배열에는 새 object point를 push한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     flattenInto(out, [{ kind: 'line', x: 1, y: 2 }]);
     expect(Array.isArray(out[0])).toBe(false);
     expect(out[0]).toEqual(pt(0, 0));

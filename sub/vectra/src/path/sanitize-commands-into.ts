@@ -3,17 +3,15 @@ import { removeCollinearCommandsInto } from './remove-collinear-commands-into';
 
 /** sanitize 옵션. */
 export interface SanitizeCommandsOptions {
-  /** 연속된 동일 endpoint drawing command를 제거한다. 기본값 false. */
+  /** 연속된 동일 endpoint drawing command를 제거한다. */
   removeDuplicates: boolean;
-  /** 직선 구간 collinear 중간 LineCommand를 제거한다. 기본값 false. */
+  /** 직선 구간 collinear 중간 LineCommand를 제거한다. */
   removeCollinear: boolean;
   /**
    * duplicate / collinear 판정 tolerance.
    *
    * - `removeDuplicates`: 직전 endpoint와의 |Δx|, |Δy|가 모두 tolerance 이하면 duplicate로 본다.
    * - `removeCollinear`: `removeCollinearCommandsInto`의 angleTolerance(radian)로 사용한다.
-   *
-   * 기본값 `1e-10` (`removeCollinearCommandsInto` 기본값과 일치).
    */
   tolerance: number;
 }
@@ -48,7 +46,7 @@ function endpointOf(cmd: PathCommand): { x: number; y: number } | undefined {
  *
  * @param out cleanup 결과를 기록할 mutable PathCommand 배열
  * @param commands 정리할 입력 command sequence (absolute 전제)
- * @param options removeDuplicates / removeCollinear / tolerance
+ * @param options 정리 옵션. 생략하면 `{ removeDuplicates: false, removeCollinear: false, tolerance: 1e-10 }`을 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function sanitizeCommandsInto(

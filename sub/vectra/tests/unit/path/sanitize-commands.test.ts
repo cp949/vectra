@@ -1,4 +1,8 @@
-/** 경로 함수의 좌표와 분기 동작을 검증한다. */
+/**
+ * sanitizeCommandsInto가 중복 끝점과 collinear 선분을 옵션대로 제거하는지 검증한다.
+ * tolerance 경계, move·close 보존, 곡선 끝점 비교, 두 옵션의 적용 순서를 다룬다.
+ * aliasing, non-finite 좌표 보존, allocating companion도 확인한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { sanitizeCommands } from '../../../src/path/sanitize-commands';
 import { sanitizeCommandsInto } from '../../../src/path/sanitize-commands-into';

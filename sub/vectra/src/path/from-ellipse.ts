@@ -13,7 +13,7 @@ import { fromEllipseInto, type PathFromEllipseOptions } from './from-ellipse-int
  * `ellipseCommandsInto`(4 cubic Bezier 근사)와는 다른 함수다. caller가 segment 개수를 직접 제어하고
  * 싶을 때 쓴다.
  *
- * - 기본값: `segments = 64`, `startAngle = 0`, `clockwise = true`.
+ * - 옵션을 생략하면 `{ segments: 64, startAngle: 0, clockwise: true }`를 쓴다.
  * - `segments`가 1 이상 정수가 아니면 `RangeError`.
  * - empty ellipse(`radiusX <= 0 || radiusY <= 0`) → 빈 배열.
  * - non-finite 입력은 좌표에 NaN/Infinity가 그대로 전파된다. throw 없음.
@@ -21,7 +21,7 @@ import { fromEllipseInto, type PathFromEllipseOptions } from './from-ellipse-int
  * 성능 최적화가 필요하면 `fromEllipseInto`를 사용한다.
  *
  * @param ellipse 변환할 ellipse input
- * @param options segments / startAngle / clockwise
+ * @param options sample 수와 시작 각도, 진행 방향 옵션. 생략하면 `{ segments: 64, startAngle: 0, clockwise: true }`를 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function fromEllipse(ellipse: Ellipse, options?: PathFromEllipseOptions): PathCommand[] {
