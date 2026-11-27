@@ -1,4 +1,4 @@
-import { createSegment } from '../segment/create-segment';
+import { createLegacySegment } from '../internal/segment';
 import type { BoundsLike, SegmentWritable } from '../types';
 import { connectorLineInto } from './connector-line-into';
 
@@ -9,5 +9,5 @@ import { connectorLineInto } from './connector-line-into';
  * NaN/Infinity 입력은 silent propagation. throw 없음.
  */
 export function connectorLine(from: BoundsLike, to: BoundsLike): SegmentWritable {
-  return connectorLineInto(createSegment(), from, to);
+  return connectorLineInto(createLegacySegment(), from, to);
 }

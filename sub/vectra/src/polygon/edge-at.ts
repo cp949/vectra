@@ -1,4 +1,4 @@
-import { createSegment } from '../segment/create-segment';
+import { createLegacySegment } from '../internal/segment';
 import type { PolygonLike, SegmentWritable } from '../types';
 import { edgeAtInto } from './edge-at-into';
 
@@ -9,7 +9,7 @@ import { edgeAtInto } from './edge-at-into';
  * 마지막 edge(index === pointCount - 1)는 마지막 point → 첫 point segment다.
  */
 export function edgeAt(polygon: PolygonLike, index: number): SegmentWritable | undefined {
-  const seed = createSegment();
+  const seed = createLegacySegment();
   if (!edgeAtInto(seed, polygon, index)) return undefined;
   return seed;
 }

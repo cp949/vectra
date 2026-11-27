@@ -119,47 +119,43 @@ describe('segment transform - centerOnInto', () => {
 
 describe('segment transform - extendInto', () => {
   test('before/after만큼 양쪽 endpoint를 이동한다', () => {
-    const o = out();
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
     // horizontal segment (0,0)→(4,0), unit dir (1,0)
     // before=1: a 뒤쪽으로 1 → (-1,0)
     // after=2: b 앞쪽으로 2 → (6,0)
-    extendInto(o, seg(0, 0, 4, 0), 1, 2);
-    expect(o.a).toEqual({ x: -1, y: 0 });
-    expect(o.b).toEqual({ x: 6, y: 0 });
+    extendInto(o, { x1: 0, y1: 0, x2: 4, y2: 0 }, 1, 2);
+    expect(o).toEqual({ x1: -1, y1: 0, x2: 6, y2: 0 });
   });
 
   test('음수 before/after는 shrink로 동작하고 clamp하지 않는다', () => {
-    const o = out();
-    extendInto(o, seg(0, 0, 4, 0), -1, -1);
-    expect(o.a).toEqual({ x: 1, y: 0 });
-    expect(o.b).toEqual({ x: 3, y: 0 });
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    extendInto(o, { x1: 0, y1: 0, x2: 4, y2: 0 }, -1, -1);
+    expect(o).toEqual({ x1: 1, y1: 0, x2: 3, y2: 0 });
   });
 
   test('endpoint가 교차할 정도로 shrink해도 clamp하지 않는다', () => {
-    const o = out();
-    extendInto(o, seg(0, 0, 2, 0), -3, -3);
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    extendInto(o, { x1: 0, y1: 0, x2: 2, y2: 0 }, -3, -3);
     // a goes to (3,0), b goes to (-1,0) — crossing allowed
-    expect((o.a as { x: number; y: number }).x).toBeCloseTo(3);
-    expect((o.b as { x: number; y: number }).x).toBeCloseTo(-1);
+    expect(o.x1).toBeCloseTo(3);
+    expect(o.x2).toBeCloseTo(-1);
   });
 
   test('self-aliasing: extendInto(out, out, ...)가 올바른 결과를 반환한다', () => {
-    const o = seg(0, 0, 4, 0);
+    const o = { x1: 0, y1: 0, x2: 4, y2: 0 };
     extendInto(o, o, 1, 1);
-    expect(o.a).toEqual({ x: -1, y: 0 });
-    expect(o.b).toEqual({ x: 5, y: 0 });
+    expect(o).toEqual({ x1: -1, y1: 0, x2: 5, y2: 0 });
   });
 
   test('zero-length segment는 input을 그대로 복사한다', () => {
-    const o = out();
-    extendInto(o, seg(3, 5, 3, 5), 2, 2);
-    expect(o.a).toEqual({ x: 3, y: 5 });
-    expect(o.b).toEqual({ x: 3, y: 5 });
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    extendInto(o, { x1: 3, y1: 5, x2: 3, y2: 5 }, 2, 2);
+    expect(o).toEqual({ x1: 3, y1: 5, x2: 3, y2: 5 });
   });
 
   test('extend companion이 새 plain object를 반환한다', () => {
-    const result = extend(seg(0, 0, 4, 0), 1, 1);
-    expect(result).toEqual({ a: { x: -1, y: 0 }, b: { x: 5, y: 0 } });
+    const result = extend({ x1: 0, y1: 0, x2: 4, y2: 0 }, 1, 1);
+    expect(result).toEqual({ x1: -1, y1: 0, x2: 5, y2: 0 });
   });
 });
 

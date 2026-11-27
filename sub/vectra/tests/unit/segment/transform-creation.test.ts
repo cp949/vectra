@@ -1,3 +1,4 @@
+/** 선분의 이동 및 회전과 시작점·각도·길이에 따른 생성을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { fromAngleInto } from '../../../src/segment/from-angle-into';
 import { rotateAroundInto } from '../../../src/segment/rotate-around-into';
@@ -94,19 +95,19 @@ describe('segment 생성 - fromAngleInto', () => {
       checkReturn: false,
     },
   ])('$name', ({ origin, angle, length, expectedA, expectedB, checkReturn }) => {
-    const out = segmentOut();
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
 
     const result = fromAngleInto(out, origin, angle, length);
 
     if (checkReturn) {
       expect(result).toBe(out);
     }
-    expectXY(out.a, expectedA);
-    expectCloseXY(out.b, expectedB);
+    expect({ x: out.x1, y: out.y1 }).toEqual(expectedA);
+    expectCloseXY({ x: out.x2, y: out.y2 }, expectedB);
   });
 
   test('out을 반환한다', () => {
-    const out = segmentOut();
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
 
     const result = fromAngleInto(out, { x: 0, y: 0 }, 0, 1);
 

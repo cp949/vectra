@@ -15,68 +15,32 @@ describe('segment 측정 - length/lengthSq', () => {
     {
       name: '3-4-5 segment의 length를 반환한다',
       fn: length,
-      seg: { a: { x: 0, y: 0 }, b: { x: 3, y: 4 } },
+      seg: { x1: 0, y1: 0, x2: 3, y2: 4 },
       expected: 5,
     },
     {
       name: '음수 좌표를 포함한 segment의 length를 반환한다',
       fn: length,
-      seg: { a: { x: 1, y: 1 }, b: { x: -2, y: 5 } },
+      seg: { x1: 1, y1: 1, x2: -2, y2: 5 },
       expected: 5,
     },
     {
       name: 'zero-length segment의 length는 0이다',
       fn: length,
-      seg: { a: { x: 3, y: 4 }, b: { x: 3, y: 4 } },
+      seg: { x1: 3, y1: 4, x2: 3, y2: 4 },
       expected: 0,
-    },
-    {
-      name: 'tuple endpoint를 가진 segment의 length를 반환한다',
-      fn: length,
-      seg: { a: [0, 0] as const, b: [3, 4] as const },
-      expected: 5,
-    },
-    {
-      name: 'tuple segment shorthand의 length를 반환한다',
-      fn: length,
-      seg: [
-        [0, 0],
-        [3, 4],
-      ] as const,
-      expected: 5,
     },
     {
       name: '3-4-5 segment의 lengthSq는 25이다',
       fn: lengthSq,
-      seg: { a: { x: 0, y: 0 }, b: { x: 3, y: 4 } },
+      seg: { x1: 0, y1: 0, x2: 3, y2: 4 },
       expected: 25,
     },
     {
       name: 'zero-length segment의 lengthSq는 0이다',
       fn: lengthSq,
-      seg: { a: { x: 5, y: 5 }, b: { x: 5, y: 5 } },
+      seg: { x1: 5, y1: 5, x2: 5, y2: 5 },
       expected: 0,
-    },
-    {
-      name: 'tuple endpoint를 가진 segment의 lengthSq를 반환한다',
-      fn: lengthSq,
-      seg: { a: [0, 0] as const, b: [3, 4] as const },
-      expected: 25,
-    },
-    {
-      name: 'tuple segment shorthand의 lengthSq를 반환한다',
-      fn: lengthSq,
-      seg: [
-        [0, 0],
-        [3, 4],
-      ] as const,
-      expected: 25,
-    },
-    {
-      name: 'object와 tuple endpoint 혼합 segment의 lengthSq를 반환한다',
-      fn: lengthSq,
-      seg: { a: { x: 1, y: 0 }, b: [4, 4] as const },
-      expected: 25,
     },
   ])('$name', ({ fn, seg, expected }) => {
     expect(fn(seg)).toBe(expected);
@@ -87,33 +51,27 @@ describe('segment 측정 - isZeroLength/angle', () => {
   test.each([
     {
       name: 'zero-length segment는 기본 epsilon으로 true를 반환한다',
-      seg: { a: { x: 1, y: 2 }, b: { x: 1, y: 2 } },
+      seg: { x1: 1, y1: 2, x2: 1, y2: 2 },
       epsilon: undefined,
       expected: true,
     },
     {
       name: '명확히 non-zero segment는 기본 epsilon으로 false를 반환한다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } },
+      seg: { x1: 0, y1: 0, x2: 1, y2: 0 },
       epsilon: undefined,
       expected: false,
     },
     {
       name: '매우 짧은 segment가 명시 epsilon 안에 있으면 true를 반환한다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 0.0001, y: 0 } },
+      seg: { x1: 0, y1: 0, x2: 0.0001, y2: 0 },
       epsilon: 1e-4,
       expected: true,
     },
     {
       name: '매우 짧은 segment가 명시 epsilon 밖에 있으면 false를 반환한다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 0.001, y: 0 } },
+      seg: { x1: 0, y1: 0, x2: 0.001, y2: 0 },
       epsilon: 1e-4,
       expected: false,
-    },
-    {
-      name: 'tuple endpoint를 가진 zero-length segment를 판정한다',
-      seg: { a: [2, 3] as const, b: [2, 3] as const },
-      epsilon: undefined,
-      expected: true,
     },
   ])('$name', ({ seg, epsilon, expected }) => {
     expect(isZeroLength(seg, epsilon)).toBe(expected);

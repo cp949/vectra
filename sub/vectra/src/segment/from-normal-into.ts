@@ -1,7 +1,5 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { SegmentLike, SegmentWritable, XYWritable } from '../types';
 import { hypot2 } from '../internal/numeric';
+import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment 위 t 위치에서 left normal 방향으로 length만큼 연장한 segment를 out에 기록하고 out을 반환한다.
@@ -13,24 +11,22 @@ import { hypot2 } from '../internal/numeric';
  * NaN/Infinity 입력은 별도 검증 없이 JavaScript 산술 결과를 따른다.
  * out과 segment가 같은 object여도 aliasing이 안전하다.
  *
- * @param out 결과를 기록할 writable segment output
+ * @param out 결과를 기록할 선분 객체
  * @param segment 기준 segment. t 위치와 normal 방향의 기준
  * @param t parametric 위치. clamp하지 않는다
  * @param length normal 방향 연장 길이. 음수는 right normal 방향. clamp하지 않는다
  */
-export function fromNormalInto<Out extends SegmentWritable<XYWritable, XYWritable>>(
+export function fromNormalInto<Out extends SegmentWritable>(
   out: Out,
-  segment: SegmentLike,
+  segment: Segment,
   t: number,
   length: number
 ): Out {
   // aliasing 안전을 위해 segment endpoint를 먼저 local 변수로 읽는다
-  const segA = readSegmentA(segment);
-  const segB = readSegmentB(segment);
-  const ax = readX(segA);
-  const ay = readY(segA);
-  const bx = readX(segB);
-  const by = readY(segB);
+  const ax = segment.x1;
+  const ay = segment.y1;
+  const bx = segment.x2;
+  const by = segment.y2;
   const dx = bx - ax;
   const dy = by - ay;
   // a = pointAtT(segment, t) — unclamped
@@ -39,14 +35,18 @@ export function fromNormalInto<Out extends SegmentWritable<XYWritable, XYWritabl
   const len = hypot2(dx, dy);
   if (len === 0) {
     // zero-length segment: normal 미정, a = b = pointAtT
-    writeXY(out.a, px, py);
-    writeXY(out.b, px, py);
+    out.x1 = px;
+    out.y1 = py;
+    out.x2 = px;
+    out.y2 = py;
   } else {
     // left normal: (-dy/len, dx/len)
     const nx = (-dy / len) * length;
     const ny = (dx / len) * length;
-    writeXY(out.a, px, py);
-    writeXY(out.b, px + nx, py + ny);
+    out.x1 = px;
+    out.y1 = py;
+    out.x2 = px + nx;
+    out.y2 = py + ny;
   }
   return out;
 }

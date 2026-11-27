@@ -95,7 +95,7 @@ describe('segment endpoint 조회 - startInto', () => {
   });
 });
 
-describe('segment endpoint 조회 - vectorInto/midpointInto', () => {
+describe('segment endpoint 조회 - vectorInto', () => {
   test.each([
     {
       name: 'vectorInto가 object endpoint로 b - a 벡터를 계산하여 out에 기록한다',
@@ -118,27 +118,6 @@ describe('segment endpoint 조회 - vectorInto/midpointInto', () => {
       expected: { x: 3, y: 4 },
       checkReturn: false,
     },
-    {
-      name: 'midpointInto가 object endpoint로 중점을 계산하여 out에 기록한다',
-      fn: midpointInto,
-      seg: { a: { x: 0, y: 0 }, b: { x: 4, y: 6 } },
-      expected: { x: 2, y: 3 },
-      checkReturn: true,
-    },
-    {
-      name: 'midpointInto가 tuple endpoint로 중점을 계산한다',
-      fn: midpointInto,
-      seg: { a: [1, 3] as const, b: [5, 7] as const },
-      expected: { x: 3, y: 5 },
-      checkReturn: false,
-    },
-    {
-      name: 'midpointInto가 object와 tuple endpoint 혼합으로 중점을 계산한다',
-      fn: midpointInto,
-      seg: { a: { x: -2, y: -4 }, b: [2, 4] as const },
-      expected: { x: 0, y: 0 },
-      checkReturn: false,
-    },
   ])('$name', ({ fn, seg, expected, checkReturn }) => {
     const out = xyOut();
 
@@ -157,12 +136,6 @@ describe('segment endpoint 조회 - vectorInto/midpointInto', () => {
       seg: { a: { x: 1, y: 2 }, b: { x: 4, y: 6 } },
       expected: [3, 4],
     },
-    {
-      name: 'midpointInto가 mutable tuple out에 중점을 기록하고 tuple reference를 반환한다',
-      fn: midpointInto,
-      seg: { a: { x: 0, y: 0 }, b: { x: 4, y: 6 } },
-      expected: [2, 3],
-    },
   ])('$name', ({ fn, seg, expected }) => {
     const out: [number, number] = [0, 0];
 
@@ -170,6 +143,15 @@ describe('segment endpoint 조회 - vectorInto/midpointInto', () => {
 
     expect(result).toBe(out);
     expect(out).toEqual(expected);
+  });
+});
+
+describe('midpointInto', () => {
+  test('두 끝점의 평균을 출력 점에 기록한다', () => {
+    const out = { x: 0, y: 0 };
+
+    expect(midpointInto(out, { x1: 0, y1: 0, x2: 4, y2: 6 })).toBe(out);
+    expect(out).toEqual({ x: 2, y: 3 });
   });
 });
 

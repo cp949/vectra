@@ -53,14 +53,14 @@ export interface SegmentSubdivideOptions {
 /** segment endpoint marker geometry 생성 옵션. */
 export interface SegmentMarkerOptions {
   /** marker 모양. `arrow`는 chevron 3점, `tick`은 perpendicular 2점. 기본값 `arrow`. */
-  type?: 'arrow' | 'tick';
+  type: 'arrow' | 'tick';
 
   /** marker를 둘 endpoint. 기본값 `end`. `both`는 start/end marker point를 모두 생성한다. */
-  at?: 'end' | 'start' | 'both';
+  at: 'end' | 'start' | 'both';
 
   /** arrow barb 깊이이자 tick perpendicular 전체 길이. finite positive만 허용. 기본값 `10`. */
-  length?: number;
+  length: number;
 
   /** arrow barb 좌우 spread 전체 폭. finite positive만 허용. 기본값 `8`. */
-  width?: number;
+  width: number;
 }

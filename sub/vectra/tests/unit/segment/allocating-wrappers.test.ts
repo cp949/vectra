@@ -6,6 +6,7 @@
  * 호출마다 새 객체를 반환하는지도 본다.
  * unit 테스트가 `*Into`만 import하던 공백을 메운다.
  */
+import { createLegacySegment } from '../../../src/internal/segment';
 import { describe, expect, test } from 'vitest';
 import { closestPoint } from '../../../src/segment/closest-point';
 import { closestPointInto } from '../../../src/segment/closest-point-into';
@@ -92,12 +93,12 @@ const cases: Case[] = [
   {
     name: 'reverse',
     actual: () => reverse(makeLine()),
-    expected: () => reverseInto(createSegment(), makeLine()),
+    expected: () => reverseInto(createLegacySegment(), makeLine()),
   },
   {
     name: 'rotateAround',
     actual: () => rotateAround(makeLine(), { x: 2, y: -3 }, Math.PI / 5),
-    expected: () => rotateAroundInto(createSegment(), makeLine(), { x: 2, y: -3 }, Math.PI / 5),
+    expected: () => rotateAroundInto(createLegacySegment(), makeLine(), { x: 2, y: -3 }, Math.PI / 5),
   },
   {
     name: 'start',

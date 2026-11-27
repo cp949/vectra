@@ -1,5 +1,5 @@
 import type { MatrixLike, SegmentLike, SegmentWritable } from '../types';
-import { createSegment } from './create-segment';
+import { createLegacySegment } from '../internal/segment';
 import { transformInto } from './transform-into';
 
 /**
@@ -9,5 +9,5 @@ import { transformInto } from './transform-into';
  * @param matrix 적용할 matrix
  */
 export function transform(line: SegmentLike, matrix: MatrixLike): SegmentWritable {
-  return transformInto(createSegment(), line, matrix);
+  return transformInto(createLegacySegment(), line, matrix);
 }

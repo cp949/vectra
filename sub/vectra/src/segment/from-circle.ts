@@ -1,5 +1,5 @@
-import type { CircleLike, SegmentWritable } from '../types';
-import { createSegment } from './create-segment';
+import { createZeroSegment } from '../internal/segment';
+import type { Circle, SegmentWritable } from '../types/flat-shapes.internal';
 import { fromCircleInto } from './from-circle-into';
 
 /**
@@ -13,6 +13,6 @@ import { fromCircleInto } from './from-circle-into';
  * @param circle diameter의 기준이 되는 circle input
  * @param angle diameter 방향각(radian). 기본값 0은 horizontal diameter
  */
-export function fromCircle(circle: CircleLike, angle = 0): SegmentWritable {
-  return fromCircleInto(createSegment(), circle, angle);
+export function fromCircle(circle: Circle, angle = 0): SegmentWritable {
+  return fromCircleInto(createZeroSegment(), circle, angle);
 }

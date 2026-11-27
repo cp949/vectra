@@ -2,7 +2,13 @@ import { crossWithin, DEFAULT_EPSILON } from '../internal/numeric';
 import { readSegmentA, readSegmentB, segmentContainsPoint } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { SegmentLike, XYWritable } from '../types';
-import { isZeroLength } from './is-zero-length';
+
+/** v2-migration: 중첩 끝점을 받는 동안 기본 epsilon으로 퇴화 선분을 판별한다. */
+function isLegacyZeroLength(line: SegmentLike): boolean {
+  const dx = readX(readSegmentB(line)) - readX(readSegmentA(line));
+  const dy = readY(readSegmentB(line)) - readY(readSegmentA(line));
+  return dx * dx + dy * dy <= DEFAULT_EPSILON * DEFAULT_EPSILON;
+}
 
 /**
  * 두 segment가 단일 교점을 가지면 out에 기록하고 true를 반환한다. 교점이 없으면 false를 반환하고 out을 수정하지 않는다.
@@ -19,8 +25,8 @@ import { isZeroLength } from './is-zero-length';
 export function singleIntersectionInto(out: XYWritable, a: SegmentLike, b: SegmentLike, epsilon?: number): boolean {
   const distEpsilon = epsilon ?? DEFAULT_EPSILON;
   // zero-length 검출은 caller epsilon과 무관하게 isZeroLength 기본값(1e-9) 사용
-  const aIsZero = isZeroLength(a);
-  const bIsZero = isZeroLength(b);
+  const aIsZero = isLegacyZeroLength(a);
+  const bIsZero = isLegacyZeroLength(b);
 
   if (aIsZero || bIsZero) {
     if (aIsZero && bIsZero) {

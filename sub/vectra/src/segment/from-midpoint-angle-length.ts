@@ -1,5 +1,5 @@
-import type { SegmentWritable, XYInput } from '../types';
-import { createSegment } from './create-segment';
+import { createZeroSegment } from '../internal/segment';
+import type { Point, SegmentWritable } from '../types/flat-shapes.internal';
 import { fromMidpointAngleLengthInto } from './from-midpoint-angle-length-into';
 
 /**
@@ -15,6 +15,6 @@ import { fromMidpointAngleLengthInto } from './from-midpoint-angle-length-into';
  * @param angle segment 방향각(radian)
  * @param length segment 전체 길이. 0이면 midpoint zero-length segment를 반환한다. 음수는 clamp하지 않는다
  */
-export function fromMidpointAngleLength(midpoint: XYInput, angle: number, length: number): SegmentWritable {
-  return fromMidpointAngleLengthInto(createSegment(), midpoint, angle, length);
+export function fromMidpointAngleLength(midpoint: Point, angle: number, length: number): SegmentWritable {
+  return fromMidpointAngleLengthInto(createZeroSegment(), midpoint, angle, length);
 }

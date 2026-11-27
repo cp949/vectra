@@ -210,10 +210,6 @@
       "to": "curve/quadratic-t-at-length.ts"
     },
     {
-      "from": "editor-geometry/connector-line.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
       "from": "ellipse/ellipse-from.ts",
       "to": "ellipse/copy-into.ts"
     },
@@ -510,14 +506,6 @@
       "to": "path/flatten-into.ts"
     },
     {
-      "from": "polygon/edge-at.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "polyline/segment-at.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
       "from": "random-state/create-random-state.ts",
       "to": "random/create-rng.ts"
     },
@@ -674,56 +662,8 @@
       "to": "rect/create-rect.ts"
     },
     {
-      "from": "segment/extend.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/from-angle.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/from-circle.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/from-midpoint-angle-length.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/from-normal.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/from-point-vector.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/reverse.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/rotate-around.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/rotate.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
       "from": "segment/segment-from.ts",
       "to": "segment/copy-into.ts"
-    },
-    {
-      "from": "segment/single-intersection-into.ts",
-      "to": "segment/is-zero-length.ts"
-    },
-    {
-      "from": "segment/transform.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "segment/translate.ts",
-      "to": "segment/create-segment.ts"
     },
     {
       "from": "statistics/standard-deviation.ts",
@@ -742,28 +682,8 @@
       "to": "svg-path/parse-path-data-into.ts"
     },
     {
-      "from": "triangle/altitude.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
       "from": "triangle/contains-points.ts",
       "to": "triangle/contains-point.ts"
-    },
-    {
-      "from": "triangle/euler-line.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "triangle/median.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "triangle/medians.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "triangle/side-at.ts",
-      "to": "segment/create-segment.ts"
     },
     {
       "from": "triangle/triangle-from.ts",

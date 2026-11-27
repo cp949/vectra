@@ -1,12 +1,10 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readY } from '../internal/xy';
-import type { SegmentLike } from '../types';
+import type { Segment } from '../types/flat-shapes.internal';
 
 /**
  * segment endpoint AABB의 높이를 반환한다.
  *
  * @param line 높이를 계산할 segment
  */
-export function height(line: SegmentLike): number {
-  return Math.abs(readY(readSegmentB(line)) - readY(readSegmentA(line)));
+export function height(line: Segment): number {
+  return Math.abs(line.y2 - line.y1);
 }

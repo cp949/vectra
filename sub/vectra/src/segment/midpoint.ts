@@ -1,4 +1,4 @@
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 import { midpointInto } from './midpoint-into';
 
 /**
@@ -6,6 +6,6 @@ import { midpointInto } from './midpoint-into';
  *
  * @param line 대상 segment
  */
-export function midpoint(line: SegmentLike): XYObjectWritable {
+export function midpoint(line: Segment): PointWritable {
   return midpointInto({ x: 0, y: 0 }, line);
 }

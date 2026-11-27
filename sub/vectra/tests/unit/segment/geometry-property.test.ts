@@ -34,29 +34,20 @@ describe('segment scalar property - width', () => {
 });
 
 describe('segment scalar property - height', () => {
-  test('object endpoint segment의 height를 반환한다', () => {
-    expect(height({ a: { x: 0, y: 1 }, b: { x: 0, y: 5 } })).toBe(4);
+  test('선분의 높이를 반환한다', () => {
+    expect(height({ x1: 0, y1: 1, x2: 0, y2: 5 })).toBe(4);
   });
 
   test('reversed endpoint segment의 height는 음수가 아니다', () => {
-    expect(height({ a: { x: 0, y: 5 }, b: { x: 0, y: 1 } })).toBe(4);
-  });
-
-  test('tuple endpoint segment를 지원한다', () => {
-    expect(
-      height([
-        [0, 0],
-        [3, 5],
-      ])
-    ).toBe(5);
+    expect(height({ x1: 0, y1: 5, x2: 0, y2: 1 })).toBe(4);
   });
 
   test('horizontal segment의 height는 0이다', () => {
-    expect(height({ a: { x: 0, y: 2 }, b: { x: 5, y: 2 } })).toBe(0);
+    expect(height({ x1: 0, y1: 2, x2: 5, y2: 2 })).toBe(0);
   });
 
   test('zero-length segment의 height는 0이다', () => {
-    expect(height({ a: { x: 3, y: 3 }, b: { x: 3, y: 3 } })).toBe(0);
+    expect(height({ x1: 3, y1: 3, x2: 3, y2: 3 })).toBe(0);
   });
 });
 

@@ -1,5 +1,5 @@
 import type { SegmentLike, SegmentWritable, XYInput } from '../types';
-import { createSegment } from './create-segment';
+import { createLegacySegment } from '../internal/segment';
 import { translateInto } from './translate-into';
 
 /**
@@ -9,5 +9,5 @@ import { translateInto } from './translate-into';
  * @param offset 이동 벡터
  */
 export function translate(line: SegmentLike, offset: XYInput): SegmentWritable {
-  return translateInto(createSegment(), line, offset);
+  return translateInto(createLegacySegment(), line, offset);
 }

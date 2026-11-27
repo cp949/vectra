@@ -1,5 +1,5 @@
-import type { SegmentWritable, XYInput } from '../types';
-import { createSegment } from './create-segment';
+import { createZeroSegment } from '../internal/segment';
+import type { Point, SegmentWritable } from '../types/flat-shapes.internal';
 import { fromAngleInto } from './from-angle-into';
 
 /**
@@ -9,6 +9,6 @@ import { fromAngleInto } from './from-angle-into';
  * @param angle 방향각(radian)
  * @param length 선분 길이. 0이면 zero-length segment을 반환한다
  */
-export function fromAngle(origin: XYInput, angle: number, length: number): SegmentWritable {
-  return fromAngleInto(createSegment(), origin, angle, length);
+export function fromAngle(origin: Point, angle: number, length: number): SegmentWritable {
+  return fromAngleInto(createZeroSegment(), origin, angle, length);
 }

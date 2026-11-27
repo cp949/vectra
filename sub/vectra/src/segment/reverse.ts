@@ -1,5 +1,5 @@
 import type { SegmentLike, SegmentWritable } from '../types';
-import { createSegment } from './create-segment';
+import { createLegacySegment } from '../internal/segment';
 import { reverseInto } from './reverse-into';
 
 /**
@@ -8,5 +8,5 @@ import { reverseInto } from './reverse-into';
  * @param line 반전할 segment
  */
 export function reverse(line: SegmentLike): SegmentWritable {
-  return reverseInto(createSegment(), line);
+  return reverseInto(createLegacySegment(), line);
 }

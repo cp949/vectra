@@ -1,4 +1,4 @@
-import { createSegment } from '../segment/create-segment';
+import { createLegacySegment } from '../internal/segment';
 import type { TriangleLike } from '../types';
 import { mediansInto, type TriangleMediansWritable } from './medians-into';
 
@@ -20,9 +20,9 @@ import { mediansInto, type TriangleMediansWritable } from './medians-into';
  */
 export function medians(triangle: TriangleLike): TriangleMediansWritable {
   const out: TriangleMediansWritable = {
-    a: createSegment(),
-    b: createSegment(),
-    c: createSegment(),
+    a: createLegacySegment(),
+    b: createLegacySegment(),
+    c: createLegacySegment(),
   };
   return mediansInto(out, triangle);
 }

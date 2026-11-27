@@ -1,5 +1,5 @@
-import type { SegmentWritable, XYInput } from '../types';
-import { createSegment } from './create-segment';
+import { createZeroSegment } from '../internal/segment';
+import type { Point, SegmentWritable } from '../types/flat-shapes.internal';
 import { fromPointVectorInto } from './from-point-vector-into';
 
 /**
@@ -10,8 +10,8 @@ import { fromPointVectorInto } from './from-point-vector-into';
  * NaN/Infinity 입력은 별도 검증 없이 JavaScript 산술 결과를 따른다.
  *
  * @param origin 시작점
- * @param vec 방향 벡터. 반환값 b에 origin + vec를 기록한다
+ * @param vec 방향 벡터. 끝점에 origin + vec를 기록한다
  */
-export function fromPointVector(origin: XYInput, vec: XYInput): SegmentWritable {
-  return fromPointVectorInto(createSegment(), origin, vec);
+export function fromPointVector(origin: Point, vec: Point): SegmentWritable {
+  return fromPointVectorInto(createZeroSegment(), origin, vec);
 }

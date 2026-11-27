@@ -1,4 +1,4 @@
-import { createSegment } from '../segment/create-segment';
+import { createLegacySegment } from '../internal/segment';
 import type { SegmentWritable, TriangleLike } from '../types';
 import { medianInto, type TriangleVertexKey } from './median-into';
 
@@ -21,7 +21,7 @@ import { medianInto, type TriangleVertexKey } from './median-into';
  * @param vertex source vertex key. 'a' | 'b' | 'c' 외 값은 undefined 반환.
  */
 export function median(triangle: TriangleLike, vertex: TriangleVertexKey): SegmentWritable | undefined {
-  const seed = createSegment();
+  const seed = createLegacySegment();
   if (medianInto(seed, triangle, vertex) === false) return undefined;
   return seed;
 }

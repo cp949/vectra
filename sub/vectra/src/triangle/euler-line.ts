@@ -1,4 +1,4 @@
-import { createSegment } from '../segment/create-segment';
+import { createLegacySegment } from '../internal/segment';
 import type { SegmentWritable, TriangleLike } from '../types';
 import { eulerLineInto } from './euler-line-into';
 
@@ -13,7 +13,7 @@ import { eulerLineInto } from './euler-line-into';
  * @param triangle Euler line을 계산할 triangle
  */
 export function eulerLine(triangle: TriangleLike): SegmentWritable | undefined {
-  const seed = createSegment();
+  const seed = createLegacySegment();
   if (!eulerLineInto(seed, triangle)) return undefined;
   return seed;
 }

@@ -1,4 +1,4 @@
-import { createSegment } from '../segment/create-segment';
+import { createLegacySegment } from '../internal/segment';
 import type { PolylineLike, SegmentWritable } from '../types';
 import { segmentAtInto } from './segment-at-into';
 
@@ -8,7 +8,7 @@ import { segmentAtInto } from './segment-at-into';
  * degenerate/empty 입력 처리 정책은 `segmentAtInto`와 동일하다.
  */
 export function segmentAt(polyline: PolylineLike, index: number): SegmentWritable | undefined {
-  const seed = createSegment();
+  const seed = createLegacySegment();
   if (!segmentAtInto(seed, polyline, index)) return undefined;
   return seed;
 }

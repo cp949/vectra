@@ -1,9 +1,11 @@
+/** 중점, 이동과 단일 교점의 할당형 결과를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { midpoint } from '../../../src/segment/midpoint';
 import { singleIntersection } from '../../../src/segment/single-intersection';
 import { translate } from '../../../src/segment/translate';
 import type { SegmentWritable } from '../../../src/types';
 
+/** 중첩 끝점을 받는 함수에 넘길 선분을 만든다. */
 function makeLine(ax = 0, ay = 0, bx = 4, by = 0): SegmentWritable {
   return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
 }
@@ -13,7 +15,7 @@ function makeLine(ax = 0, ay = 0, bx = 4, by = 0): SegmentWritable {
 
 describe('segment companion - midpoint', () => {
   test('중점을 새 object로 반환한다', () => {
-    const result = midpoint(makeLine(0, 0, 4, 4));
+    const result = midpoint({ x1: 0, y1: 0, x2: 4, y2: 4 });
 
     expect(result).toEqual({ x: 2, y: 2 });
   });

@@ -1,5 +1,5 @@
-import type { SegmentLike, SegmentWritable } from '../types';
-import { createSegment } from './create-segment';
+import { createZeroSegment } from '../internal/segment';
+import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
 import { fromNormalInto } from './from-normal-into';
 
 /**
@@ -15,6 +15,6 @@ import { fromNormalInto } from './from-normal-into';
  * @param t parametric 위치. clamp하지 않는다
  * @param length normal 방향 연장 길이. 음수는 right normal 방향. clamp하지 않는다
  */
-export function fromNormal(segment: SegmentLike, t: number, length: number): SegmentWritable {
-  return fromNormalInto(createSegment(), segment, t, length);
+export function fromNormal(segment: Segment, t: number, length: number): SegmentWritable {
+  return fromNormalInto(createZeroSegment(), segment, t, length);
 }

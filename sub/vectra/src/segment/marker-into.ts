@@ -1,10 +1,8 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, SegmentMarkerOptions, XYObjectWritable } from '../types';
 import { hypot2 } from '../internal/numeric';
+import type { SegmentMarkerOptions } from '../types';
+import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 
-const DEFAULT_LENGTH = 10;
-const DEFAULT_WIDTH = 8;
+const DEFAULT_OPTIONS: SegmentMarkerOptions = { type: 'arrow', at: 'end', length: 10, width: 8 };
 
 /** finite positive가 아니면 RangeError로 fail-fast한다. */
 function requireFinitePositive(value: number, name: string): void {
@@ -34,7 +32,7 @@ function requireMarkerAt(value: string): asserts value is 'end' | 'start' | 'bot
  * arrow는 `[leftBarb, tip, rightBarb]` chevron 3점, tick은 endpoint 중심 perpendicular 2점이다.
  */
 function pushMarkerPoints(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   tipX: number,
   tipY: number,
   ux: number,
@@ -67,39 +65,33 @@ function pushMarkerPoints(
  * push한다. arrow는 endpoint당 `[leftBarb, tip, rightBarb]` 3점, tick은 endpoint 중심
  * perpendicular 2점을 push한다.
  *
- * marker 방향 기준: `at: "end"`는 `a → b` 방향으로 tip을 `b`에 둔다. `at: "start"`는 `b → a`
- * 방향으로 tip을 `a`에 둔다. perpendicular 법선은 marker 방향의 좌측(`(-uy, ux)`)이다.
+ * `at: "end"`는 진행 방향으로 끝점에 표시하고 `at: "start"`는 반대 방향으로 시작점에 표시한다. perpendicular 법선은 marker 방향의 좌측(`(-uy, ux)`)이다.
  *
  * zero-length segment나 non-finite 좌표(NaN/±Infinity) segment는 방향이 정의되지 않으므로 빈
  * array를 반환한다(그릴 marker 없음). `length`/`width`가 finite positive가 아니면 `RangeError`로
  * fail-fast한다(zero-length/non-finite 검사보다 먼저 검증한다). `type`/`at`이 허용 literal이 아니면
  * `RangeError`를 던진다. input/output aliasing이 가능하므로 source 좌표를 clear 전에 snapshot한다.
  *
- * @param outPoints marker point를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 표시점을 기록할 점 배열. 기존 원소는 지운다
  * @param line marker를 만들 segment
- * @param options marker type/at/length/width 옵션. 생략 시 end arrow, length 10, width 8
+ * @param options type, at, length, width를 지정한다. 옵션 생략 시 end arrow, length 10, width 8
  */
 export function markerInto(
-  outPoints: XYObjectWritable[],
-  line: SegmentLike,
-  options?: SegmentMarkerOptions
-): XYObjectWritable[] {
-  const type = options?.type ?? 'arrow';
-  const at = options?.at ?? 'end';
-  const length = options?.length ?? DEFAULT_LENGTH;
-  const width = options?.width ?? DEFAULT_WIDTH;
+  outPoints: PointWritable[],
+  line: Segment,
+  options: SegmentMarkerOptions = DEFAULT_OPTIONS
+): PointWritable[] {
+  const { type, at, length, width } = options;
   requireMarkerType(type);
   requireMarkerAt(at);
   requireFinitePositive(length, 'length');
   requireFinitePositive(width, 'width');
 
   // aliasing 안전: clear 전에 source 좌표를 snapshot한다.
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
+  const ax = line.x1;
+  const ay = line.y1;
+  const bx = line.x2;
+  const by = line.y2;
   const dx = bx - ax;
   const dy = by - ay;
   const len = hypot2(dx, dy);
@@ -113,11 +105,11 @@ export function markerInto(
   const uy = dy / len;
 
   if (at === 'start' || at === 'both') {
-    // start marker는 b → a 방향으로 tip을 a에 둔다.
+    // 시작점 표시는 역방향을 향한다.
     pushMarkerPoints(outPoints, ax, ay, -ux, -uy, uy, -ux, type, length, width);
   }
   if (at === 'end' || at === 'both') {
-    // end marker는 a → b 방향으로 tip을 b에 둔다.
+    // 끝점 표시는 진행 방향을 향한다.
     pushMarkerPoints(outPoints, bx, by, ux, uy, -uy, ux, type, length, width);
   }
   return outPoints;

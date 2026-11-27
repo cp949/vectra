@@ -6,7 +6,7 @@
  *   mediansInto, medians
  */
 import { describe, expect, test } from 'vitest';
-import { createSegment } from '../../../src/segment/create-segment';
+import { createLegacySegment } from '../../../src/internal/segment';
 import { median } from '../../../src/triangle/median';
 import { medianInto } from '../../../src/triangle/median-into';
 import { medians } from '../../../src/triangle/medians';
@@ -25,9 +25,9 @@ function expectXY(actual: { x: number; y: number }, x: number, y: number): void 
 /** TriangleMediansWritable seed를 새로 만든다. */
 function seedMedians(): TriangleMediansWritable {
   return {
-    a: createSegment(),
-    b: createSegment(),
-    c: createSegment(),
+    a: createLegacySegment(),
+    b: createLegacySegment(),
+    c: createLegacySegment(),
   };
 }
 
@@ -43,7 +43,7 @@ const BASE: TriangleLike = {
 
 describe('medianInto', () => {
   test("'a': A → midpoint(BC) segment를 기록하고 out을 반환한다", () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     const result = medianInto(out, BASE, 'a');
     expect(result).toBe(out);
     expectXY(out.a, 0, 0);
@@ -51,21 +51,21 @@ describe('medianInto', () => {
   });
 
   test("'b': B → midpoint(CA) segment를 기록한다", () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     medianInto(out, BASE, 'b');
     expectXY(out.a, 4, 0);
     expectXY(out.b, 0, 1.5);
   });
 
   test("'c': C → midpoint(AB) segment를 기록한다", () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     medianInto(out, BASE, 'c');
     expectXY(out.a, 0, 3);
     expectXY(out.b, 2, 0);
   });
 
   test('tuple TriangleLike 입력을 처리한다', () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     medianInto(
       out,
       [
@@ -80,7 +80,7 @@ describe('medianInto', () => {
   });
 
   test('runtime invalid vertex key는 false를 반환하고 out을 수정하지 않는다', () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     out.a.x = 99;
     out.a.y = 88;
     out.b.x = 77;
@@ -95,20 +95,20 @@ describe('medianInto', () => {
   });
 
   test('빈 문자열 vertex key는 false를 반환한다', () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     const result = medianInto(out, BASE, '' as 'a');
     expect(result).toBe(false);
   });
 
   test('대문자 vertex key는 false를 반환한다 (lowercase만 허용)', () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     const result = medianInto(out, BASE, 'A' as 'a');
     expect(result).toBe(false);
   });
 
   test('collinear degenerate triangle도 midpoint 산식으로 기록한다', () => {
     // A=(0,0), B=(2,0), C=(4,0). midpoint(BC) = (3,0).
-    const out = createSegment();
+    const out = createLegacySegment();
     medianInto(out, { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } }, 'a');
     expectXY(out.a, 0, 0);
     expectXY(out.b, 3, 0);
@@ -116,14 +116,14 @@ describe('medianInto', () => {
 
   test('all-same vertex triangle도 segment를 기록한다', () => {
     // A=B=C=(5,7). midpoint(BC) = (5,7). segment = (5,7)→(5,7).
-    const out = createSegment();
+    const out = createLegacySegment();
     medianInto(out, { a: { x: 5, y: 7 }, b: { x: 5, y: 7 }, c: { x: 5, y: 7 } }, 'b');
     expectXY(out.a, 5, 7);
     expectXY(out.b, 5, 7);
   });
 
   test('NaN vertex는 JS 산술 결과를 기록한다 (throw 없음)', () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     expect(() =>
       medianInto(out, { a: { x: Number.NaN, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } }, 'b')
     ).not.toThrow();
@@ -134,7 +134,7 @@ describe('medianInto', () => {
   });
 
   test('+Infinity vertex는 JS 산술 결과를 기록한다 (throw 없음)', () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     expect(() =>
       medianInto(out, { a: { x: Number.POSITIVE_INFINITY, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } }, 'a')
     ).not.toThrow();
@@ -145,7 +145,7 @@ describe('medianInto', () => {
   });
 
   test('-Infinity vertex는 JS 산술 결과를 기록한다 (throw 없음)', () => {
-    const out = createSegment();
+    const out = createLegacySegment();
     expect(() =>
       medianInto(out, { a: { x: 0, y: Number.NEGATIVE_INFINITY }, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } }, 'c')
     ).not.toThrow();
@@ -377,8 +377,8 @@ describe('mediansInto', () => {
     };
     const out: TriangleMediansWritable = {
       a: { a: tri.a, b: { x: 0, y: 0 } },
-      b: createSegment(),
-      c: createSegment(),
+      b: createLegacySegment(),
+      c: createLegacySegment(),
     };
     mediansInto(out, tri);
     // median a: out.a.a = A=(1,2), out.a.b = midpoint(BC) = (2, 1.5).
@@ -400,8 +400,8 @@ describe('mediansInto', () => {
     const triB = { x: 4, y: 0 };
     const out: TriangleMediansWritable = {
       a: { a: triB, b: { x: 0, y: 0 } },
-      b: createSegment(),
-      c: createSegment(),
+      b: createLegacySegment(),
+      c: createLegacySegment(),
     };
     const tri = { a: { x: 1, y: 2 }, b: triB, c: { x: 0, y: 3 } };
     mediansInto(out, tri);
@@ -422,9 +422,9 @@ describe('mediansInto', () => {
     // tri.a storage를 덮어쓰면, 이어지는 median c의 midpoint(AB) 계산에서 A가 오염된다.
     const triA = { x: 1, y: 2 };
     const out: TriangleMediansWritable = {
-      a: createSegment(),
+      a: createLegacySegment(),
       b: { a: { x: 0, y: 0 }, b: triA },
-      c: createSegment(),
+      c: createLegacySegment(),
     };
     const tri = { a: triA, b: { x: 4, y: 0 }, c: { x: 0, y: 3 } };
     mediansInto(out, tri);
