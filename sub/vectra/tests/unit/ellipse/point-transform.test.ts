@@ -8,7 +8,6 @@ import { scale } from '../../../src/ellipse/scale';
 import { scaleInto } from '../../../src/ellipse/scale-into';
 import { translate } from '../../../src/ellipse/translate';
 import { translateInto } from '../../../src/ellipse/translate-into';
-import type { EllipseWritable, XYTupleWritable } from '../../../src/types';
 import { makeEllipse } from './_helpers';
 
 // ─── pointAtAngleInto ────────────────────────────────────────────────────────
@@ -176,49 +175,28 @@ describe('ellipse point - pointAtTurn', () => {
 describe('ellipse transform - translateInto', () => {
   test('center에 offset을 더하고 out을 반환한다', () => {
     const out = makeEllipse();
-    const result = translateInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, { x: 5, y: -1 });
+    const result = translateInto(out, { cx: 1, cy: 2, rx: 3, ry: 4 }, { x: 5, y: -1 });
     expect(result).toBe(out);
-    expect(out.center).toEqual({ x: 6, y: 1 });
-    expect(out.radiusX).toBe(3);
-    expect(out.radiusY).toBe(4);
+    expect(out.cx).toBe(6);
+    expect(out.cy).toBe(1);
+    expect(out.rx).toBe(3);
+    expect(out.ry).toBe(4);
   });
 
   test('radii는 그대로 복사한다', () => {
     const out = makeEllipse();
-    translateInto(out, { center: { x: 0, y: 0 }, radiusX: 7, radiusY: 5 }, { x: 2, y: 3 });
-    expect(out.radiusX).toBe(7);
-    expect(out.radiusY).toBe(5);
+    translateInto(out, { cx: 0, cy: 0, rx: 7, ry: 5 }, { x: 2, y: 3 });
+    expect(out.rx).toBe(7);
+    expect(out.ry).toBe(5);
   });
 
   test('out === ellipse aliasing에서도 안전하게 동작한다', () => {
     const out = makeEllipse(3, 4, 5, 2);
     translateInto(out, out, { x: 1, y: 2 });
-    expect(out.center).toEqual({ x: 4, y: 6 });
-    expect(out.radiusX).toBe(5);
-    expect(out.radiusY).toBe(2);
-  });
-
-  test('tuple offset input을 처리한다', () => {
-    const out = makeEllipse();
-    translateInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, [5, -1]);
-    expect(out.center).toEqual({ x: 6, y: 1 });
-  });
-
-  test('tuple EllipseLike input을 처리한다', () => {
-    const out = makeEllipse();
-    translateInto(out, [[1, 2], 3, 4] as const, { x: 5, y: -1 });
-    expect(out.center).toEqual({ x: 6, y: 1 });
-    expect(out.radiusX).toBe(3);
-    expect(out.radiusY).toBe(4);
-  });
-
-  test('mutable tuple center storage에 기록한다', () => {
-    const center: [number, number] = [0, 0];
-    const out: EllipseWritable<XYTupleWritable> = { center, radiusX: 0, radiusY: 0 };
-    translateInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, { x: 5, y: -1 });
-    expect(center).toEqual([6, 1]);
-    expect(out.radiusX).toBe(3);
-    expect(out.radiusY).toBe(4);
+    expect(out.cx).toBe(4);
+    expect(out.cy).toBe(6);
+    expect(out.rx).toBe(5);
+    expect(out.ry).toBe(2);
   });
 });
 
@@ -226,24 +204,20 @@ describe('ellipse transform - translateInto', () => {
 
 describe('ellipse transform - translate', () => {
   test('center에 offset을 더한 plain object를 반환한다', () => {
-    const result = translate({ center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, { x: 5, y: -1 });
-    expect(result).toEqual({ center: { x: 6, y: 1 }, radiusX: 3, radiusY: 4 });
+    const result = translate({ cx: 1, cy: 2, rx: 3, ry: 4 }, { x: 5, y: -1 });
+    expect(result).toEqual({ cx: 6, cy: 1, rx: 3, ry: 4 });
   });
 
   test('translateInto와 같은 결과를 반환한다', () => {
-    const e = { center: { x: 2, y: -1 }, radiusX: 4, radiusY: 3 };
+    const e = { cx: 2, cy: -1, rx: 4, ry: 3 };
     const offset = { x: -3, y: 7 };
     const out = makeEllipse();
     translateInto(out, e, offset);
     const result = translate(e, offset);
-    expect(result.center).toEqual(out.center);
-    expect(result.radiusX).toBe(out.radiusX);
-    expect(result.radiusY).toBe(out.radiusY);
-  });
-
-  test('tuple EllipseLike input과 tuple offset을 처리한다', () => {
-    const result = translate([[1, 2], 3, 4] as const, [5, -1]);
-    expect(result).toEqual({ center: { x: 6, y: 1 }, radiusX: 3, radiusY: 4 });
+    expect(result.cx).toBe(out.cx);
+    expect(result.cy).toBe(out.cy);
+    expect(result.rx).toBe(out.rx);
+    expect(result.ry).toBe(out.ry);
   });
 });
 
@@ -252,60 +226,39 @@ describe('ellipse transform - translate', () => {
 describe('ellipse transform - scaleInto', () => {
   test('center와 radii에 scale.x, scale.y를 곱하고 out을 반환한다', () => {
     const out = makeEllipse();
-    const result = scaleInto(out, { center: { x: 2, y: 3 }, radiusX: 4, radiusY: 5 }, { x: 2, y: 3 });
+    const result = scaleInto(out, { cx: 2, cy: 3, rx: 4, ry: 5 }, { x: 2, y: 3 });
     expect(result).toBe(out);
-    expect(out.center).toEqual({ x: 4, y: 9 });
-    expect(out.radiusX).toBe(8);
-    expect(out.radiusY).toBe(15);
+    expect(out.cx).toBe(4);
+    expect(out.cy).toBe(9);
+    expect(out.rx).toBe(8);
+    expect(out.ry).toBe(15);
   });
 
   test('non-uniform scale을 각 축에 독립 적용한다', () => {
     const out = makeEllipse();
-    scaleInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, { x: 0.5, y: 2 });
-    expect(out.center).toEqual({ x: 0.5, y: 4 });
-    expect(out.radiusX).toBe(1.5);
-    expect(out.radiusY).toBe(8);
+    scaleInto(out, { cx: 1, cy: 2, rx: 3, ry: 4 }, { x: 0.5, y: 2 });
+    expect(out.cx).toBe(0.5);
+    expect(out.cy).toBe(4);
+    expect(out.rx).toBe(1.5);
+    expect(out.ry).toBe(8);
   });
 
   test('out === ellipse aliasing에서도 안전하게 동작한다', () => {
     const out = makeEllipse(2, 3, 4, 5);
     scaleInto(out, out, { x: 2, y: 3 });
-    expect(out.center).toEqual({ x: 4, y: 9 });
-    expect(out.radiusX).toBe(8);
-    expect(out.radiusY).toBe(15);
+    expect(out.cx).toBe(4);
+    expect(out.cy).toBe(9);
+    expect(out.rx).toBe(8);
+    expect(out.ry).toBe(15);
   });
 
   test('uniform scale (scale.x === scale.y)을 처리한다', () => {
     const out = makeEllipse();
-    scaleInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, { x: 2, y: 2 });
-    expect(out.center).toEqual({ x: 2, y: 4 });
-    expect(out.radiusX).toBe(6);
-    expect(out.radiusY).toBe(8);
-  });
-
-  test('tuple scale input을 처리한다', () => {
-    const out = makeEllipse();
-    scaleInto(out, { center: { x: 2, y: 3 }, radiusX: 4, radiusY: 5 }, [2, 3]);
-    expect(out.center).toEqual({ x: 4, y: 9 });
-    expect(out.radiusX).toBe(8);
-    expect(out.radiusY).toBe(15);
-  });
-
-  test('tuple EllipseLike input을 처리한다', () => {
-    const out = makeEllipse();
-    scaleInto(out, [[2, 3], 4, 5] as const, { x: 2, y: 3 });
-    expect(out.center).toEqual({ x: 4, y: 9 });
-    expect(out.radiusX).toBe(8);
-    expect(out.radiusY).toBe(15);
-  });
-
-  test('mutable tuple center storage에 기록한다', () => {
-    const center: [number, number] = [0, 0];
-    const out: EllipseWritable<XYTupleWritable> = { center, radiusX: 0, radiusY: 0 };
-    scaleInto(out, { center: { x: 2, y: 3 }, radiusX: 4, radiusY: 5 }, { x: 2, y: 3 });
-    expect(center).toEqual([4, 9]);
-    expect(out.radiusX).toBe(8);
-    expect(out.radiusY).toBe(15);
+    scaleInto(out, { cx: 1, cy: 2, rx: 3, ry: 4 }, { x: 2, y: 2 });
+    expect(out.cx).toBe(2);
+    expect(out.cy).toBe(4);
+    expect(out.rx).toBe(6);
+    expect(out.ry).toBe(8);
   });
 });
 
@@ -313,23 +266,19 @@ describe('ellipse transform - scaleInto', () => {
 
 describe('ellipse transform - scale', () => {
   test('center와 radii에 scale.x, scale.y를 곱한 plain object를 반환한다', () => {
-    const result = scale({ center: { x: 2, y: 3 }, radiusX: 4, radiusY: 5 }, { x: 2, y: 3 });
-    expect(result).toEqual({ center: { x: 4, y: 9 }, radiusX: 8, radiusY: 15 });
+    const result = scale({ cx: 2, cy: 3, rx: 4, ry: 5 }, { x: 2, y: 3 });
+    expect(result).toEqual({ cx: 4, cy: 9, rx: 8, ry: 15 });
   });
 
   test('scaleInto와 같은 결과를 반환한다', () => {
-    const e = { center: { x: 2, y: -1 }, radiusX: 4, radiusY: 3 };
+    const e = { cx: 2, cy: -1, rx: 4, ry: 3 };
     const s = { x: 0.5, y: 2 };
     const out = makeEllipse();
     scaleInto(out, e, s);
     const result = scale(e, s);
-    expect(result.center).toEqual(out.center);
-    expect(result.radiusX).toBe(out.radiusX);
-    expect(result.radiusY).toBe(out.radiusY);
-  });
-
-  test('tuple EllipseLike input과 tuple scale을 처리한다', () => {
-    const result = scale([[2, 3], 4, 5] as const, [2, 3]);
-    expect(result).toEqual({ center: { x: 4, y: 9 }, radiusX: 8, radiusY: 15 });
+    expect(result.cx).toBe(out.cx);
+    expect(result.cy).toBe(out.cy);
+    expect(result.rx).toBe(out.rx);
+    expect(result.ry).toBe(out.ry);
   });
 });

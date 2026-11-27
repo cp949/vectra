@@ -15,6 +15,15 @@ import {
   pointAtTurnInto,
   pointsInto,
   projectPointInto,
+  rotatedBoundsInto,
+  rotatedPointAtAngleInto,
+  scaleInto,
+  tangentAtInto,
+  toCircleInto,
+  toRotatedInto,
+  transformInto,
+  transformToRotatedInto,
+  translateInto,
 } from '../../../src/ellipse';
 import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 
@@ -137,4 +146,72 @@ test('pointsInto는 배열 참조를 보존하고 원소 타입을 PointWritable
   expect(result).toBe(out);
   expect(result).toHaveLength(4);
   expect(result[0]).not.toBeInstanceOf(ExternalPoint);
+});
+
+/** 사용자 코드의 회전 타원 출력 클래스를 흉내 낸다. */
+class ExternalRotatedEllipse extends ExternalEllipse {
+  rotation = 0;
+}
+
+/** 사용자 코드의 원 출력 클래스를 흉내 낸다. */
+class ExternalCircle {
+  cx = 0;
+  cy = 0;
+  r = 0;
+  label = 'circle';
+}
+
+test('회전 타원 경계와 표면 점 Into는 외부 출력 타입과 참조를 보존한다', () => {
+  const rotated = { ...ellipse, rotation: Math.PI / 4 };
+  const bounds = new ExternalBounds();
+  const point = new ExternalPoint();
+  const boundsResult = rotatedBoundsInto(bounds, rotated);
+  const pointResult = rotatedPointAtAngleInto(point, rotated, 0);
+  expectTypeOf(boundsResult).toEqualTypeOf<ExternalBounds>();
+  expectTypeOf(pointResult).toEqualTypeOf<ExternalPoint>();
+  expect(boundsResult).toBe(bounds);
+  expect(pointResult).toBe(point);
+});
+
+test('scaleInto와 translateInto는 외부 타원 타입과 참조를 보존한다', () => {
+  const out = new ExternalEllipse();
+  const scaled = scaleInto(out, ellipse, { x: 2, y: 3 });
+  const translated = translateInto(out, ellipse, { x: 2, y: 3 });
+  expectTypeOf(scaled).toEqualTypeOf<ExternalEllipse>();
+  expectTypeOf(translated).toEqualTypeOf<ExternalEllipse>();
+  expect(scaled).toBe(out);
+  expect(translated).toBe(out);
+});
+
+test('tangentAtInto는 외부 점 타입과 참조를 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = tangentAtInto(out, ellipse, 0);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+  expect(result).toBe(out);
+});
+
+test('toCircleInto는 실패 반환과 외부 원 타입을 보존한다', () => {
+  const out = new ExternalCircle();
+  const result = toCircleInto(out, { ...ellipse, ry: ellipse.rx });
+  expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
+  expect(result).toBe(out);
+});
+
+test('toRotatedInto는 외부 회전 타원 타입과 참조를 보존한다', () => {
+  const out = new ExternalRotatedEllipse();
+  const result = toRotatedInto(out, ellipse, Math.PI / 4);
+  expectTypeOf(result).toEqualTypeOf<ExternalRotatedEllipse>();
+  expect(result).toBe(out);
+});
+
+test('행렬 변환 Into는 실패 반환과 외부 타원 타입을 보존한다', () => {
+  const aligned = new ExternalEllipse();
+  const rotated = new ExternalRotatedEllipse();
+  const matrix = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 1 };
+  const alignedResult = transformInto(aligned, ellipse, matrix);
+  const rotatedResult = transformToRotatedInto(rotated, ellipse, matrix);
+  expectTypeOf(alignedResult).toEqualTypeOf<ExternalEllipse | false>();
+  expectTypeOf(rotatedResult).toEqualTypeOf<ExternalRotatedEllipse | false>();
+  expect(alignedResult).toBe(aligned);
+  expect(rotatedResult).toBe(rotated);
 });

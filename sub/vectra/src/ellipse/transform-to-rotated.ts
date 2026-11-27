@@ -1,4 +1,4 @@
-import type { EllipseLike, MatrixLike, RotatedEllipseWritable } from '../types';
+import type { Ellipse, Matrix, RotatedEllipseWritable } from '../types/flat-shapes.internal';
 import { transformToRotatedInto } from './transform-to-rotated-into';
 
 /**
@@ -10,7 +10,7 @@ import { transformToRotatedInto } from './transform-to-rotated-into';
  *
  * 성공 시:
  * - rotation = atan2(b, a) (image x-axis = column1 방향).
- * - radiusX = rx * hypot(a, b), radiusY = ry * hypot(c, d). column length는 비음수이므로
+ * - 결과 rx = 입력 rx * hypot(a, b), 결과 ry = 입력 ry * hypot(c, d). column length는 비음수이므로
  *   reflection이어도 radii 부호는 입력 rx/ry 부호를 따른다. `Math.abs` 적용 없음.
  * - center = (a*cx + c*cy + tx, b*cx + d*cy + ty).
  *
@@ -26,7 +26,7 @@ import { transformToRotatedInto } from './transform-to-rotated-into';
  * @param ellipse transform할 axis-aligned ellipse
  * @param matrix 적용할 2D affine matrix
  */
-export function transformToRotated(ellipse: EllipseLike, matrix: MatrixLike): RotatedEllipseWritable | undefined {
-  const out = transformToRotatedInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0, rotation: 0 }, ellipse, matrix);
+export function transformToRotated(ellipse: Ellipse, matrix: Matrix): RotatedEllipseWritable | undefined {
+  const out = transformToRotatedInto({ cx: 0, cy: 0, rx: 0, ry: 0, rotation: 0 }, ellipse, matrix);
   return out === false ? undefined : out;
 }

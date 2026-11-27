@@ -13,7 +13,7 @@ function dot(tx: number, ty: number, nx: number, ny: number): number {
 }
 
 describe('tangentAtInto / tangentAt', () => {
-  const ellipse = { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 2 };
+  const ellipse = { cx: 0, cy: 0, rx: 3, ry: 2 };
 
   it('θ=0에서 접선 방향은 (0, ry)이다', () => {
     const out = tangentAtInto({ x: 0, y: 0 }, ellipse, 0);
@@ -41,14 +41,14 @@ describe('tangentAtInto / tangentAt', () => {
   });
 
   it('empty ellipse (rx=0)는 zero vector를 반환한다', () => {
-    const empty = { center: { x: 1, y: 2 }, radiusX: 0, radiusY: 2 };
+    const empty = { cx: 1, cy: 2, rx: 0, ry: 2 };
     const out = tangentAtInto({ x: 0, y: 0 }, empty, 0);
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
   });
 
   it('empty ellipse (ry=0)는 zero vector를 반환한다', () => {
-    const empty = { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 0 };
+    const empty = { cx: 0, cy: 0, rx: 3, ry: 0 };
     const out = tangentAtInto({ x: 0, y: 0 }, empty, Math.PI / 4);
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
@@ -66,20 +66,6 @@ describe('tangentAtInto / tangentAt', () => {
     const direct = tangentAt(ellipse, angle);
     expect(direct.x).toBeCloseTo(via.x, 10);
     expect(direct.y).toBeCloseTo(via.y, 10);
-  });
-
-  it('tuple input으로도 동작한다', () => {
-    const tup: [readonly [number, number], number, number] = [[0, 0], 3, 2];
-    const out = tangentAt(tup, 0);
-    expect(out.x).toBeCloseTo(0, 10);
-    expect(out.y).toBeCloseTo(2, 10);
-  });
-
-  it('tuple writable out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    tangentAtInto(out, ellipse, Math.PI / 2);
-    expect(out[0]).toBeCloseTo(-3, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
   });
 });
 
@@ -141,13 +127,13 @@ describe('normalAtInto / normalAt', () => {
 });
 
 describe('tangent ⊥ normal 관계', () => {
-  const ellipse = { center: { x: 2, y: -3 }, radiusX: 5, radiusY: 4 };
+  const ellipse = { cx: 2, cy: -3, rx: 5, ry: 4 };
 
   it.each([0, Math.PI / 6, Math.PI / 4, Math.PI / 3, Math.PI / 2, Math.PI, (3 * Math.PI) / 2])(
     'θ=%f에서 tangent · normal ≈ 0이다',
     (angle) => {
       const t = tangentAt(ellipse, angle);
-      const n = normalAt({ cx: 2, cy: -3, rx: 5, ry: 4 }, angle);
+      const n = normalAt(ellipse, angle);
       expect(dot(t.x, t.y, n.x, n.y)).toBeCloseTo(0, 10);
     }
   );

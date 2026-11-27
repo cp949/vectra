@@ -1,7 +1,4 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { EllipseLike, MatrixLike, RotatedEllipseWritable, XYWritable } from '../types';
+import type { Ellipse, Matrix, RotatedEllipseWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 function directionDot(a: number, b: number, c: number, d: number): number {
@@ -21,7 +18,7 @@ function directionDot(a: number, b: number, c: number, d: number): number {
  *
  * 성공 시:
  * - rotation = atan2(b, a) (image x-axis = column1 방향).
- * - radiusX = rx * hypot(a, b), radiusY = ry * hypot(c, d). column length는 비음수이므로
+ * - 결과 rx = 입력 rx * hypot(a, b), 결과 ry = 입력 ry * hypot(c, d). column length는 비음수이므로
  *   reflection이어도 radii 부호는 입력 rx/ry 부호를 따른다. `Math.abs` 적용 없음.
  * - center = (a*cx + c*cy + tx, b*cx + d*cy + ty).
  *
@@ -33,28 +30,21 @@ function directionDot(a: number, b: number, c: number, d: number): number {
  * 않는다. max-abs-scaled exact zero guard 외 별도 finite 검사를 추가하지 않는다. guard를 통과한
  * finite 산술 결과는 그대로 전파한다(caller 책임). zero column은 해당 방향 radius를 0으로 만들지만,
  * non-empty ellipse의 affine image는 line segment라서 rotated ellipse empty 정책과 충돌한다.
- * out.center가 input ellipse center와 alias되어도 안전하다.
+ * 입력과 출력이 같은 객체여도 안전하다.
  *
- * @param out rotated ellipse를 기록할 writable output
+ * @param out 결과를 기록할 회전 타원 객체
  * @param ellipse transform할 axis-aligned ellipse
  * @param matrix 적용할 2D affine matrix
  */
-export function transformToRotatedInto<Out extends RotatedEllipseWritable<XYWritable>>(
+export function transformToRotatedInto<Out extends RotatedEllipseWritable>(
   out: Out,
-  ellipse: EllipseLike,
-  matrix: MatrixLike
+  ellipse: Ellipse,
+  matrix: Matrix
 ): Out | false {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
+  const { a, b, c, d } = matrix;
 
   // aliasing 안전: out에 기록하기 전에 모든 입력을 local로 읽는다
-  const center = readEllipseCenter(ellipse);
-  const cx = readX(center);
-  const cy = readY(center);
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
+  const { cx, cy, rx, ry } = ellipse;
   const column1Length = hypot2(a, b);
   const column2Length = hypot2(c, d);
   const hasZeroColumn = column1Length === 0 || column2Length === 0;
@@ -67,12 +57,12 @@ export function transformToRotatedInto<Out extends RotatedEllipseWritable<XYWrit
     if (scaledDirectionDot !== 0) return false;
   }
 
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+  const { tx, ty } = matrix;
 
-  writeXY(out.center, a * cx + c * cy + tx, b * cx + d * cy + ty);
-  out.radiusX = rx * column1Length;
-  out.radiusY = ry * column2Length;
+  out.cx = a * cx + c * cy + tx;
+  out.cy = b * cx + d * cy + ty;
+  out.rx = rx * column1Length;
+  out.ry = ry * column2Length;
   out.rotation = Math.atan2(b, a);
   return out;
 }

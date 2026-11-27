@@ -2,7 +2,7 @@
  * ellipse.fromCircle* / toCircle* / containsRect / points* — conversion·sampling·containment 계약 검증.
  *
  * 검증: circle↔ellipse 상호 변환, rect containment, angle-uniform sampling, invalid `segments` `RangeError`,
- * empty input, tuple input, aliasing, non-finite (NaN/±Infinity) pass-through.
+ * empty input, aliasing, non-finite (NaN/±Infinity) pass-through.
  */
 import { describe, expect, it } from 'vitest';
 import { createEllipse } from '../../../src/ellipse/create-ellipse';
@@ -14,11 +14,11 @@ import { pointsInto } from '../../../src/ellipse/points-into';
 import type { EllipsePointsOptions } from '../../../src/ellipse/points-into';
 import { toCircle } from '../../../src/ellipse/to-circle';
 import { toCircleInto } from '../../../src/ellipse/to-circle-into';
-import type { CircleWritable, EllipseWritable } from '../../../src/types';
+import type { CircleWritable } from '../../../src/types/flat-shapes.internal';
 
-/** 전환 전 원 시험용 객체를 만든다. */
+/** 원 변환 시험용 객체를 만든다. */
 function makeCircle(cx = 0, cy = 0, r = 0): CircleWritable {
-  return { center: { x: cx, y: cy }, radius: r };
+  return { cx: cx, cy: cy, r: r };
 }
 
 describe('fromCircleInto / fromCircle', () => {
@@ -69,40 +69,43 @@ describe('fromCircleInto / fromCircle', () => {
 });
 
 describe('toCircleInto / toCircle', () => {
-  it('radiusX === radiusY이면 circle을 기록하고 out을 반환한다', () => {
+  it('rx === ry이면 circle을 기록하고 out을 반환한다', () => {
     const out = makeCircle();
-    const result = toCircleInto(out, { center: { x: 3, y: 4 }, radiusX: 5, radiusY: 5 });
+    const result = toCircleInto(out, { cx: 3, cy: 4, rx: 5, ry: 5 });
     expect(result).toBe(out);
-    expect(out.center).toEqual({ x: 3, y: 4 });
-    expect(out.radius).toBe(5);
+    expect(out.cx).toBe(3);
+    expect(out.cy).toBe(4);
+    expect(out.r).toBe(5);
   });
 
-  it('radiusX !== radiusY이면 false를 반환하고 out을 수정하지 않는다', () => {
+  it('rx !== ry이면 false를 반환하고 out을 수정하지 않는다', () => {
     const out = makeCircle(99, 88, 77);
-    const result = toCircleInto(out, { center: { x: 3, y: 4 }, radiusX: 5, radiusY: 6 });
+    const result = toCircleInto(out, { cx: 3, cy: 4, rx: 5, ry: 6 });
     expect(result).toBe(false);
-    expect(out.center).toEqual({ x: 99, y: 88 });
-    expect(out.radius).toBe(77);
+    expect(out.cx).toBe(99);
+    expect(out.cy).toBe(88);
+    expect(out.r).toBe(77);
   });
 
-  it('radiusX = radiusY = 0이어도 structural circle로 기록한다', () => {
+  it('rx = ry = 0이어도 structural circle로 기록한다', () => {
     const out = makeCircle();
-    toCircleInto(out, { center: { x: 1, y: 2 }, radiusX: 0, radiusY: 0 });
-    expect(out.center).toEqual({ x: 1, y: 2 });
-    expect(out.radius).toBe(0);
+    toCircleInto(out, { cx: 1, cy: 2, rx: 0, ry: 0 });
+    expect(out.cx).toBe(1);
+    expect(out.cy).toBe(2);
+    expect(out.r).toBe(0);
   });
 
-  it('radiusX = radiusY = 같은 음수여도 structural circle로 기록한다', () => {
+  it('rx = ry = 같은 음수여도 structural circle로 기록한다', () => {
     const out = makeCircle();
-    toCircleInto(out, { center: { x: 0, y: 0 }, radiusX: -3, radiusY: -3 });
-    expect(out.radius).toBe(-3);
+    toCircleInto(out, { cx: 0, cy: 0, rx: -3, ry: -3 });
+    expect(out.r).toBe(-3);
   });
 
   it('NaN radii는 실패하고 out을 수정하지 않는다', () => {
     const out = makeCircle(99, 88, 77);
-    const result = toCircleInto(out, { center: { x: 0, y: 0 }, radiusX: Number.NaN, radiusY: Number.NaN });
+    const result = toCircleInto(out, { cx: 0, cy: 0, rx: Number.NaN, ry: Number.NaN });
     expect(result).toBe(false);
-    expect(out.radius).toBe(77);
+    expect(out.r).toBe(77);
   });
 
   it('아주 작은 차이도 epsilon 없이 실패한다', () => {
@@ -110,35 +113,24 @@ describe('toCircleInto / toCircle', () => {
     // 5에서 next representable double은 5 + 4 * Number.EPSILON. 5 + Number.EPSILON은 5로 round되므로 실험 불가.
     const ry = 5 + 4 * Number.EPSILON;
     expect(ry).not.toBe(5);
-    const result = toCircleInto(out, { center: { x: 0, y: 0 }, radiusX: 5, radiusY: ry });
+    const result = toCircleInto(out, { cx: 0, cy: 0, rx: 5, ry: ry });
     expect(result).toBe(false);
   });
 
-  it('tuple ellipse input도 처리한다', () => {
-    const out = makeCircle();
-    toCircleInto(out, [[1, 2], 3, 3] as const);
-    expect(out.center).toEqual({ x: 1, y: 2 });
-    expect(out.radius).toBe(3);
-  });
-
-  it('out.center가 ellipse.center와 같은 object여도 안전하다', () => {
-    const shared = { x: 5, y: 6 };
-    const out: CircleWritable = { center: shared, radius: 0 };
-    toCircleInto(out, { center: shared, radiusX: 4, radiusY: 4 });
-    expect(out.center).toBe(shared);
-    expect(out.center.x).toBe(5);
-    expect(out.center.y).toBe(6);
-    expect(out.radius).toBe(4);
+  it('입력과 출력이 같은 객체여도 안전하다', () => {
+    const shared = { cx: 5, cy: 6, rx: 4, ry: 4, r: 0 };
+    expect(toCircleInto(shared, shared)).toBe(shared);
+    expect(shared).toEqual({ cx: 5, cy: 6, rx: 4, ry: 4, r: 4 });
   });
 
   it('toCircle companion은 성공 시 새 plain object를 반환한다', () => {
-    const c = toCircle({ center: { x: 3, y: 4 }, radiusX: 5, radiusY: 5 });
-    expect(c).toEqual({ center: { x: 3, y: 4 }, radius: 5 });
+    const c = toCircle({ cx: 3, cy: 4, rx: 5, ry: 5 });
+    expect(c).toEqual({ cx: 3, cy: 4, r: 5 });
   });
 
   it('toCircle companion은 실패 시 undefined를 반환한다', () => {
-    expect(toCircle({ center: { x: 0, y: 0 }, radiusX: 5, radiusY: 6 })).toBeUndefined();
-    expect(toCircle({ center: { x: 0, y: 0 }, radiusX: Number.NaN, radiusY: Number.NaN })).toBeUndefined();
+    expect(toCircle({ cx: 0, cy: 0, rx: 5, ry: 6 })).toBeUndefined();
+    expect(toCircle({ cx: 0, cy: 0, rx: Number.NaN, ry: Number.NaN })).toBeUndefined();
   });
 });
 

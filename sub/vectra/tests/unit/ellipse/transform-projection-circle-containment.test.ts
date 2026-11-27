@@ -3,7 +3,7 @@
  *
  * 검증: axis-aligned scale 성공, 90도 swap radii 교환, reflection 부호 전파, rotated/sheared matrix 실패와 out 보존,
  * outside/inside/center/empty point projection, epsilon 전달, bounding-square 기반 containment의 conservative behavior,
- * empty input, tuple input, aliasing, non-finite (NaN/±Infinity) pass-through.
+ * empty input, aliasing, non-finite (NaN/±Infinity) pass-through.
  */
 import { describe, expect, it } from 'vitest';
 import { containsCircle } from '../../../src/ellipse/contains-circle';
@@ -11,12 +11,8 @@ import { projectPoint } from '../../../src/ellipse/project-point';
 import { projectPointInto } from '../../../src/ellipse/project-point-into';
 import { transform } from '../../../src/ellipse/transform';
 import { transformInto } from '../../../src/ellipse/transform-into';
-import type { EllipseWritable, XYTupleWritable } from '../../../src/types';
-
-/** 전환 전 타원 시험용 객체를 만든다. */
-function makeEllipse(cx = 0, cy = 0, rx = 0, ry = 0): EllipseWritable {
-  return { center: { x: cx, y: cy }, radiusX: rx, radiusY: ry };
-}
+import type { EllipseWritable } from '../../../src/types/flat-shapes.internal';
+import { makeEllipse } from './_helpers';
 
 describe('transformInto / transform', () => {
   it('translate + non-uniform scale matrix를 적용한다', () => {
@@ -24,7 +20,7 @@ describe('transformInto / transform', () => {
     // [a, b, c, d, tx, ty] = [2, 0, 0, 3, 10, 20]
     const result = transformInto(
       out,
-      { center: { x: 1, y: 1 }, radiusX: 4, radiusY: 5 },
+      { cx: 1, cy: 1, rx: 4, ry: 5 },
       {
         a: 2,
         b: 0,
@@ -35,36 +31,38 @@ describe('transformInto / transform', () => {
       }
     );
     expect(result).toBe(out);
-    expect(out.center).toEqual({ x: 12, y: 23 });
-    expect(out.radiusX).toBe(8);
-    expect(out.radiusY).toBe(15);
+    expect(out.cx).toBe(12);
+    expect(out.cy).toBe(23);
+    expect(out.rx).toBe(8);
+    expect(out.ry).toBe(15);
   });
 
   it('90도 축 swap matrix는 radii를 swap한다', () => {
     const out = makeEllipse();
     // rotate 90 CW (SVG y-down): [a,b,c,d] = [0, 1, -1, 0]
-    transformInto(out, { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 7 }, { a: 0, b: 1, c: -1, d: 0, tx: 0, ty: 0 });
-    // axisSwap branch: radiusX = ry * c = 7 * -1 = -7; radiusY = rx * b = 3 * 1 = 3
-    expect(out.radiusX).toBe(-7);
-    expect(out.radiusY).toBe(3);
+    transformInto(out, { cx: 0, cy: 0, rx: 3, ry: 7 }, { a: 0, b: 1, c: -1, d: 0, tx: 0, ty: 0 });
+    // axisSwap branch: rx = ry * c = 7 * -1 = -7; ry = rx * b = 3 * 1 = 3
+    expect(out.rx).toBe(-7);
+    expect(out.ry).toBe(3);
   });
 
   it('reflection / negative scale은 radius 부호를 그대로 전파한다', () => {
     const out = makeEllipse();
     // reflect across y axis: a=-1, d=1
-    transformInto(out, { center: { x: 5, y: 5 }, radiusX: 3, radiusY: 4 }, { a: -1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
-    expect(out.center).toEqual({ x: -5, y: 5 });
-    expect(out.radiusX).toBe(-3);
-    expect(out.radiusY).toBe(4);
+    transformInto(out, { cx: 5, cy: 5, rx: 3, ry: 4 }, { a: -1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+    expect(out.cx).toBe(-5);
+    expect(out.cy).toBe(5);
+    expect(out.rx).toBe(-3);
+    expect(out.ry).toBe(4);
   });
 
   it('rotation matrix(45도)는 false를 반환하고 out을 수정하지 않는다', () => {
-    const out: EllipseWritable = { center: { x: 99, y: 99 }, radiusX: 77, radiusY: 88 };
+    const out: EllipseWritable = { cx: 99, cy: 99, rx: 77, ry: 88 };
     const s = Math.SQRT1_2;
     // 45도 rotation: a=cos, b=sin, c=-sin, d=cos
     const result = transformInto(
       out,
-      { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 4 },
+      { cx: 0, cy: 0, rx: 3, ry: 4 },
       {
         a: s,
         b: s,
@@ -75,61 +73,47 @@ describe('transformInto / transform', () => {
       }
     );
     expect(result).toBe(false);
-    expect(out.center).toEqual({ x: 99, y: 99 });
-    expect(out.radiusX).toBe(77);
-    expect(out.radiusY).toBe(88);
+    expect(out.cx).toBe(99);
+    expect(out.cy).toBe(99);
+    expect(out.rx).toBe(77);
+    expect(out.ry).toBe(88);
   });
 
   it('shear matrix는 false를 반환하고 out을 수정하지 않는다', () => {
-    const out: EllipseWritable = { center: { x: 99, y: 99 }, radiusX: 77, radiusY: 88 };
+    const out: EllipseWritable = { cx: 99, cy: 99, rx: 77, ry: 88 };
     // shear: a=1, b=0, c=0.5, d=1 (c != 0)
     const result = transformInto(out, makeEllipse(0, 0, 3, 4), { a: 1, b: 0, c: 0.5, d: 1, tx: 0, ty: 0 });
     expect(result).toBe(false);
-    expect(out.center).toEqual({ x: 99, y: 99 });
-    expect(out.radiusX).toBe(77);
-    expect(out.radiusY).toBe(88);
-  });
-
-  it('tuple matrix input과 tuple ellipse input을 처리한다', () => {
-    const out = makeEllipse();
-    const tupEllipse: readonly [readonly [number, number], number, number] = [[1, 2], 3, 4];
-    const tupMatrix: readonly [number, number, number, number, number, number] = [2, 0, 0, 2, 0, 0];
-    transformInto(out, tupEllipse, tupMatrix);
-    expect(out.center).toEqual({ x: 2, y: 4 });
-    expect(out.radiusX).toBe(6);
-    expect(out.radiusY).toBe(8);
-  });
-
-  it('tuple writable center storage에 기록한다', () => {
-    const center: XYTupleWritable = [0, 0];
-    const out: EllipseWritable<XYTupleWritable> = { center, radiusX: 0, radiusY: 0 };
-    transformInto(out, makeEllipse(1, 2, 3, 4), { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: 0 });
-    expect(out.center[0]).toBe(2);
-    expect(out.center[1]).toBe(4);
+    expect(out.cx).toBe(99);
+    expect(out.cy).toBe(99);
+    expect(out.rx).toBe(77);
+    expect(out.ry).toBe(88);
   });
 
   it('out과 input ellipse가 같은 object여도 안전하다', () => {
     const out = makeEllipse(1, 2, 3, 4);
     transformInto(out, out, { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 });
-    expect(out.center).toEqual({ x: 3, y: 5 });
-    expect(out.radiusX).toBe(6);
-    expect(out.radiusY).toBe(8);
+    expect(out.cx).toBe(3);
+    expect(out.cy).toBe(5);
+    expect(out.rx).toBe(6);
+    expect(out.ry).toBe(8);
   });
 
   it('NaN scale component(b/c가 NaN)는 false (`b === 0`/`c === 0` exact check 통과 안 함)', () => {
-    const out: EllipseWritable = { center: { x: 99, y: 99 }, radiusX: 77, radiusY: 88 };
+    const out: EllipseWritable = { cx: 99, cy: 99, rx: 77, ry: 88 };
     const result = transformInto(out, makeEllipse(0, 0, 3, 4), { a: 1, b: Number.NaN, c: 0, d: 1, tx: 0, ty: 0 });
     expect(result).toBe(false);
-    expect(out.center).toEqual({ x: 99, y: 99 });
+    expect(out.cx).toBe(99);
+    expect(out.cy).toBe(99);
   });
 
   it('NaN a/d component는 axis-aligned guard 통과 후 산술 결과로 전파된다', () => {
     const out = makeEllipse();
     transformInto(out, makeEllipse(1, 1, 3, 4), { a: Number.NaN, b: 0, c: 0, d: 2, tx: 0, ty: 0 });
-    expect(out.center.x).toBeNaN();
-    expect(out.center.y).toBe(2);
-    expect(out.radiusX).toBeNaN();
-    expect(out.radiusY).toBe(8);
+    expect(out.cx).toBeNaN();
+    expect(out.cy).toBe(2);
+    expect(out.rx).toBeNaN();
+    expect(out.ry).toBe(8);
   });
 
   it('Infinity a/d component는 axis-aligned guard 통과 후 산술 결과로 전파된다', () => {
@@ -142,15 +126,15 @@ describe('transformInto / transform', () => {
       tx: 0,
       ty: 0,
     });
-    expect(out.center.x).toBe(Number.POSITIVE_INFINITY);
-    expect(out.center.y).toBe(Number.NEGATIVE_INFINITY);
-    expect(out.radiusX).toBe(Number.POSITIVE_INFINITY);
-    expect(out.radiusY).toBe(Number.NEGATIVE_INFINITY);
+    expect(out.cx).toBe(Number.POSITIVE_INFINITY);
+    expect(out.cy).toBe(Number.NEGATIVE_INFINITY);
+    expect(out.rx).toBe(Number.POSITIVE_INFINITY);
+    expect(out.ry).toBe(Number.NEGATIVE_INFINITY);
   });
 
   it('transform companion은 성공 시 새 plain object를 반환한다', () => {
     const e = transform(makeEllipse(0, 0, 3, 4), { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 });
-    expect(e).toEqual({ center: { x: 1, y: 1 }, radiusX: 6, radiusY: 8 });
+    expect(e).toEqual({ cx: 1, cy: 1, rx: 6, ry: 8 });
   });
 
   it('transform companion은 rotated/sheared matrix에서 undefined를 반환한다', () => {
@@ -184,7 +168,7 @@ describe('projectPointInto / projectPoint', () => {
     expect(out.y).toBeCloseTo(0, 10);
   });
 
-  it('center point tie-break는 (cx + radiusX, cy)이다', () => {
+  it('center point tie-break는 (cx + rx, cy)이다', () => {
     const out = { x: 0, y: 0 };
     projectPointInto(out, { cx: 2, cy: 3, rx: 4, ry: 5 }, { x: 2, y: 3 });
     expect(out.x).toBeCloseTo(2 + 4, 10);

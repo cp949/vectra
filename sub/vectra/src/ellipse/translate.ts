@@ -1,5 +1,5 @@
-import type { EllipseLike, EllipseWritable, XYInput } from '../types';
-import { createLegacyEllipse } from '../internal/ellipse';
+import type { Ellipse, EllipseWritable, Point } from '../types/flat-shapes.internal';
+import { createZeroEllipse } from '../internal/ellipse';
 import { translateInto } from './translate-into';
 
 /**
@@ -10,6 +10,6 @@ import { translateInto } from './translate-into';
  * @param ellipse 이동할 ellipse
  * @param offset center에 더할 이동 벡터
  */
-export function translate(ellipse: EllipseLike, offset: XYInput): EllipseWritable {
-  return translateInto(createLegacyEllipse(), ellipse, offset);
+export function translate(ellipse: Ellipse, offset: Point): EllipseWritable {
+  return translateInto(createZeroEllipse(), ellipse, offset);
 }
