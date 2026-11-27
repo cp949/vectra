@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@release-it/keep-a-changelog": "8.0.1",
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.11",
     "oxc-parser": "^0.160.0",
     "oxfmt": "^0.80.0",
     "oxlint": "^1.95.0",
@@ -53,6 +53,6 @@
     "tsdown": "^0.23.7",
     "turbo": "^2.11.13",
     "typescript": "^7.0.2",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.2"
   }
 }

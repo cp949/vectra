@@ -44,15 +44,15 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^26.6.6",
-    "@vitest/coverage-v8": "^5.1.1",
+    "@types/node": "^26.6.11",
+    "@vitest/coverage-v8": "^5.1.2",
     "oxc-parser": "^0.160.0",
     "oxfmt": "^0.80.0",
     "oxlint": "^1.95.0",
     "rimraf": "^6.1.4",
     "tsdown": "^0.23.7",
     "typescript": "^7.0.2",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.2"
   },
   "exports": {
     ".": {
