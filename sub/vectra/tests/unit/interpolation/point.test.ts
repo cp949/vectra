@@ -26,6 +26,31 @@ test('점 보간은 x/y 필드가 있는 좌표를 받는다', () => {
   expectTypeOf(bilerpPointInto).parameter(0).toEqualTypeOf<PointWritable>();
 });
 
+test('Into 함수는 전달한 out 객체를 그 구체 타입 그대로 반환한다', () => {
+  /** 메서드를 가진 외부 점 클래스. Into 반환값으로 메서드를 이어 부를 수 있어야 한다. */
+  class Sprite {
+    x = 0;
+    y = 0;
+    shift(dx: number): Sprite {
+      this.x += dx;
+      return this;
+    }
+  }
+  const a = { x: 0, y: 0 };
+  const b = { x: 4, y: 6 };
+  const sprite = new Sprite();
+
+  const result = lerpPointInto(sprite, a, b, 0.5);
+  expectTypeOf(result).toEqualTypeOf<Sprite>();
+  expect(result).toBe(sprite);
+  expect(result.shift(1)).toMatchObject({ x: 3, y: 3 });
+
+  expectTypeOf(lerpPointByElapsedInto(sprite, a, b, 5, 10)).toEqualTypeOf<Sprite>();
+  expectTypeOf(midpointInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+  expectTypeOf(moveTowardPointInto(sprite, a, b, 1)).toEqualTypeOf<Sprite>();
+  expectTypeOf(bilerpPointInto(sprite, a, b, a, b, 0.5, 0.5)).toEqualTypeOf<Sprite>();
+});
+
 describe('interpolation point 보간 - lerpPointInto', () => {
   const nonFiniteValues = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
 
