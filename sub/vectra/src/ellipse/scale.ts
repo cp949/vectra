@@ -1,5 +1,5 @@
 import type { EllipseLike, EllipseWritable, XYInput } from '../types';
-import { createEllipse } from './create-ellipse';
+import { createLegacyEllipse } from '../internal/ellipse';
 import { scaleInto } from './scale-into';
 
 /**
@@ -11,5 +11,5 @@ import { scaleInto } from './scale-into';
  * @param scale x/y 축별 scale 배율
  */
 export function scale(ellipse: EllipseLike, scale: XYInput): EllipseWritable {
-  return scaleInto(createEllipse(), ellipse, scale);
+  return scaleInto(createLegacyEllipse(), ellipse, scale);
 }

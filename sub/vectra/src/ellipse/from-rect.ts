@@ -1,5 +1,5 @@
 import type { EllipseWritable, RectLike } from '../types';
-import { createEllipse } from './create-ellipse';
+import { createLegacyEllipse } from '../internal/ellipse';
 import { fromRectInto } from './from-rect-into';
 
 /**
@@ -12,5 +12,5 @@ import { fromRectInto } from './from-rect-into';
  * @param rect ellipse를 생성할 rect
  */
 export function fromRect(rect: RectLike): EllipseWritable {
-  return fromRectInto(createEllipse(), rect);
+  return fromRectInto(createLegacyEllipse(), rect);
 }

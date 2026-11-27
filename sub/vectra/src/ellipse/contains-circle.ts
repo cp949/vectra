@@ -1,7 +1,4 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, EllipseLike } from '../types';
+import type { Circle, Ellipse } from '../types/flat-shapes.internal';
 import { pointInEllipseClosed } from './ellipse-contains.internal';
 
 /**
@@ -13,24 +10,24 @@ import { pointInEllipseClosed } from './ellipse-contains.internal';
  * 이 함수의 범위가 아니다.
  *
  * empty circle(`radius <= 0`)은 true를 반환한다 (empty는 포함됨).
- * empty ellipse(`radiusX <= 0 || radiusY <= 0`)는 empty circle일 때만 true이고 non-empty circle에는 false다.
+ * empty ellipse(`rx <= 0 || ry <= 0`)는 empty circle일 때만 true이고 non-empty circle에는 false다.
  *
  * @param ellipse circle 포함 여부를 판정할 ellipse
  * @param circle ellipse 안에 포함되는지 확인할 circle
  */
-export function containsCircle(ellipse: EllipseLike, circle: CircleLike): boolean {
-  const r = readCircleRadius(circle);
+export function containsCircle(ellipse: Ellipse, circle: Circle): boolean {
+  const r = circle.r;
   // empty circle → true (empty는 포함됨)
   if (r <= 0) return true;
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
+  const rx = ellipse.rx;
+  const ry = ellipse.ry;
   // empty ellipse + non-empty circle → false
   if (rx <= 0 || ry <= 0) return false;
 
-  const cx = readX(readEllipseCenter(ellipse));
-  const cy = readY(readEllipseCenter(ellipse));
-  const ccx = readX(readCircleCenter(circle));
-  const ccy = readY(readCircleCenter(circle));
+  const cx = ellipse.cx;
+  const cy = ellipse.cy;
+  const ccx = circle.cx;
+  const ccy = circle.cy;
 
   // circle의 axis-aligned bounding square 4 corner
   return (

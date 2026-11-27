@@ -1,3 +1,4 @@
+/** 타원의 접선과 법선 방향 및 반지름 확장 계약을 검증한다. */
 import { describe, expect, it } from 'vitest';
 import { expandBy } from '../../../src/ellipse/expand-by';
 import { expandByInto } from '../../../src/ellipse/expand-by-into';
@@ -6,7 +7,7 @@ import { normalAtInto } from '../../../src/ellipse/normal-at-into';
 import { tangentAt } from '../../../src/ellipse/tangent-at';
 import { tangentAtInto } from '../../../src/ellipse/tangent-at-into';
 
-// 테스트 헬퍼: tangent · normal dot product
+/** 접선과 법선 방향의 내적을 구한다. */
 function dot(tx: number, ty: number, nx: number, ny: number): number {
   return tx * nx + ty * ny;
 }
@@ -160,69 +161,62 @@ describe('tangent ⊥ normal 관계', () => {
 });
 
 describe('expandByInto / expandBy', () => {
-  const ellipse = { center: { x: 1, y: 2 }, radiusX: 5, radiusY: 3 };
+  const ellipse = { cx: 1, cy: 2, rx: 5, ry: 3 };
 
   it('양수 delta로 반지름이 증가한다', () => {
-    const out = expandByInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 }, ellipse, 2);
-    expect(out.center.x).toBe(1);
-    expect(out.center.y).toBe(2);
-    expect(out.radiusX).toBe(7);
-    expect(out.radiusY).toBe(5);
+    const out = expandByInto({ cx: 0, cy: 0, rx: 0, ry: 0 }, ellipse, 2);
+    expect(out.cx).toBe(1);
+    expect(out.cy).toBe(2);
+    expect(out.rx).toBe(7);
+    expect(out.ry).toBe(5);
   });
 
   it('음수 delta로 반지름이 감소한다', () => {
-    const out = expandByInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 }, ellipse, -1);
-    expect(out.radiusX).toBe(4);
-    expect(out.radiusY).toBe(2);
+    const out = expandByInto({ cx: 0, cy: 0, rx: 0, ry: 0 }, ellipse, -1);
+    expect(out.rx).toBe(4);
+    expect(out.ry).toBe(2);
   });
 
   it('delta=0이면 복사본과 동일하다', () => {
-    const out = expandByInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 }, ellipse, 0);
-    expect(out.radiusX).toBe(5);
-    expect(out.radiusY).toBe(3);
-    expect(out.center.x).toBe(1);
-    expect(out.center.y).toBe(2);
+    const out = expandByInto({ cx: 0, cy: 0, rx: 0, ry: 0 }, ellipse, 0);
+    expect(out.rx).toBe(5);
+    expect(out.ry).toBe(3);
+    expect(out.cx).toBe(1);
+    expect(out.cy).toBe(2);
   });
 
   it('결과 radius가 음수이면 0으로 clamp된다', () => {
-    const out = expandByInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 }, ellipse, -10);
-    expect(out.radiusX).toBe(0);
-    expect(out.radiusY).toBe(0);
+    const out = expandByInto({ cx: 0, cy: 0, rx: 0, ry: 0 }, ellipse, -10);
+    expect(out.rx).toBe(0);
+    expect(out.ry).toBe(0);
   });
 
   it('정확히 경계값(결과=0)이면 0이다', () => {
-    const e = { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 4 };
-    const out = expandByInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 }, e, -3);
-    expect(out.radiusX).toBe(0);
-    expect(out.radiusY).toBe(1);
+    const e = { cx: 0, cy: 0, rx: 3, ry: 4 };
+    const out = expandByInto({ cx: 0, cy: 0, rx: 0, ry: 0 }, e, -3);
+    expect(out.rx).toBe(0);
+    expect(out.ry).toBe(1);
   });
 
   it('center는 변경되지 않는다', () => {
-    const out = expandByInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 }, ellipse, 100);
-    expect(out.center.x).toBe(1);
-    expect(out.center.y).toBe(2);
+    const out = expandByInto({ cx: 0, cy: 0, rx: 0, ry: 0 }, ellipse, 100);
+    expect(out.cx).toBe(1);
+    expect(out.cy).toBe(2);
   });
 
   it('expandByInto는 out을 반환한다', () => {
-    const out = { center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 };
+    const out = { cx: 0, cy: 0, rx: 0, ry: 0 };
     const result = expandByInto(out, ellipse, 1);
     expect(result).toBe(out);
   });
 
   it('expandBy companion은 같은 결과를 반환한다', () => {
     const delta = 2;
-    const via = expandByInto({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 }, ellipse, delta);
+    const via = expandByInto({ cx: 0, cy: 0, rx: 0, ry: 0 }, ellipse, delta);
     const direct = expandBy(ellipse, delta);
-    expect(direct.center.x).toBe(via.center.x);
-    expect(direct.center.y).toBe(via.center.y);
-    expect(direct.radiusX).toBe(via.radiusX);
-    expect(direct.radiusY).toBe(via.radiusY);
-  });
-
-  it('tuple input으로도 동작한다', () => {
-    const tup: [readonly [number, number], number, number] = [[1, 2], 5, 3];
-    const out = expandBy(tup, 2);
-    expect(out.radiusX).toBe(7);
-    expect(out.radiusY).toBe(5);
+    expect(direct.cx).toBe(via.cx);
+    expect(direct.cy).toBe(via.cy);
+    expect(direct.rx).toBe(via.rx);
+    expect(direct.ry).toBe(via.ry);
   });
 });

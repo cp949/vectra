@@ -1,4 +1,23 @@
-import type { EllipseLike, EllipseTuple, RotatedEllipseLike, RotatedEllipseTuple, XYInput } from '../types';
+import type {
+  EllipseLike,
+  EllipseTuple,
+  EllipseWritable,
+  RotatedEllipseLike,
+  RotatedEllipseTuple,
+  XYInput,
+} from '../types';
+
+import type { EllipseWritable as FlatEllipseWritable } from '../types/flat-shapes.internal';
+
+/** 반지름과 중심 좌표가 모두 0인 타원을 만든다. */
+export function createZeroEllipse(): FlatEllipseWritable {
+  return { cx: 0, cy: 0, rx: 0, ry: 0 };
+}
+
+// v2-migration: 남은 ellipse companion 전환이 끝나면 제거한다.
+export function createLegacyEllipse(): EllipseWritable {
+  return { center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 };
+}
 
 function isEllipseTuple(ellipse: EllipseLike): ellipse is EllipseTuple {
   return Array.isArray(ellipse);

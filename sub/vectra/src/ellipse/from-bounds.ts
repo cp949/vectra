@@ -1,5 +1,5 @@
 import type { BoundsLike, EllipseWritable } from '../types';
-import { createEllipse } from './create-ellipse';
+import { createLegacyEllipse } from '../internal/ellipse';
 import { fromBoundsInto } from './from-bounds-into';
 
 /**
@@ -12,5 +12,5 @@ import { fromBoundsInto } from './from-bounds-into';
  * @param bounds ellipse를 생성할 bounds
  */
 export function fromBounds(bounds: BoundsLike): EllipseWritable {
-  return fromBoundsInto(createEllipse(), bounds);
+  return fromBoundsInto(createLegacyEllipse(), bounds);
 }

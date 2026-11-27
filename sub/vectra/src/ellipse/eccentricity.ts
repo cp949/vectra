@@ -1,5 +1,4 @@
-import { readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import type { EllipseLike } from '../types';
+import type { Ellipse } from '../types/flat-shapes.internal';
 
 /**
  * ellipse의 이심률(eccentricity)을 반환한다.
@@ -10,9 +9,9 @@ import type { EllipseLike } from '../types';
  *
  * @param ellipse 이심률을 계산할 ellipse
  */
-export function eccentricity(ellipse: EllipseLike): number {
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
+export function eccentricity(ellipse: Ellipse): number {
+  const rx = ellipse.rx;
+  const ry = ellipse.ry;
 
   // empty ellipse: 이심률 정의 불가
   if (rx <= 0 || ry <= 0) {

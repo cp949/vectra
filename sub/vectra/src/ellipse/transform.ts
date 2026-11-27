@@ -1,5 +1,5 @@
 import type { EllipseLike, EllipseWritable, MatrixLike } from '../types';
-import { createEllipse } from './create-ellipse';
+import { createLegacyEllipse } from '../internal/ellipse';
 import { transformInto } from './transform-into';
 
 /**
@@ -18,6 +18,6 @@ import { transformInto } from './transform-into';
  * @param matrix 적용할 2D affine matrix
  */
 export function transform(ellipse: EllipseLike, matrix: MatrixLike): EllipseWritable | undefined {
-  const out = createEllipse();
+  const out = createLegacyEllipse();
   return transformInto(out, ellipse, matrix) === false ? undefined : out;
 }

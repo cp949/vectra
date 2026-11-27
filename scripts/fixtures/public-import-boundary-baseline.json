@@ -186,42 +186,6 @@
       "to": "ellipse/copy-into.ts"
     },
     {
-      "from": "ellipse/ellipse-from.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/expand-by.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/from-bounds.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/from-circle.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/from-foci.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/from-rect.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/scale.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/transform.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/translate.ts",
-      "to": "ellipse/create-ellipse.ts"
-    },
-    {
       "from": "infinite-line/from-angle.ts",
       "to": "infinite-line/create-infinite-line.ts"
     },

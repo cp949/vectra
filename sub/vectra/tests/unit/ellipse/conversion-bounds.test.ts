@@ -1,3 +1,4 @@
+/** bounds·rect에서 타원을 생성하고 타원의 축 정렬 경계 상자를 구하는 계약을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { bounds } from '../../../src/ellipse/bounds';
 import { boundsInto } from '../../../src/ellipse/bounds-into';
@@ -205,38 +206,27 @@ describe('ellipse conversion - fromRect', () => {
 describe('ellipse shape output - boundsInto', () => {
   test('ellipse의 AABB를 기록하고 out을 반환한다', () => {
     const out = makeBoundsOut();
-    const result = boundsInto(out, { center: { x: 5, y: 3 }, radiusX: 4, radiusY: 2 });
+    const result = boundsInto(out, { cx: 5, cy: 3, rx: 4, ry: 2 });
     expect(result).toBe(out);
-    expect(out.min).toEqual({ x: 1, y: 1 });
-    expect(out.max).toEqual({ x: 9, y: 5 });
+    expect(out).toEqual({ minX: 1, minY: 1, maxX: 9, maxY: 5 });
   });
 
-  test('tuple center EllipseLike를 처리한다', () => {
+  test('empty ellipse (rx = 0): sentinel empty bounds를 기록한다', () => {
     const out = makeBoundsOut();
-    boundsInto(out, [[5, 3], 4, 2] as const);
-    expect(out.min).toEqual({ x: 1, y: 1 });
-    expect(out.max).toEqual({ x: 9, y: 5 });
+    boundsInto(out, { cx: 5, cy: 5, rx: 0, ry: 3 });
+    expect(out).toEqual({ minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
   });
 
-  test('empty ellipse (radiusX = 0): sentinel empty bounds를 기록한다', () => {
+  test('empty ellipse (ry <= 0): sentinel empty bounds를 기록한다', () => {
     const out = makeBoundsOut();
-    boundsInto(out, { center: { x: 5, y: 5 }, radiusX: 0, radiusY: 3 });
-    expect(out.min).toEqual({ x: Infinity, y: Infinity });
-    expect(out.max).toEqual({ x: -Infinity, y: -Infinity });
-  });
-
-  test('empty ellipse (radiusY <= 0): sentinel empty bounds를 기록한다', () => {
-    const out = makeBoundsOut();
-    boundsInto(out, { center: { x: 5, y: 5 }, radiusX: 3, radiusY: -1 });
-    expect(out.min).toEqual({ x: Infinity, y: Infinity });
-    expect(out.max).toEqual({ x: -Infinity, y: -Infinity });
+    boundsInto(out, { cx: 5, cy: 5, rx: 3, ry: -1 });
+    expect(out).toEqual({ minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
   });
 
   test('origin ellipse의 AABB를 기록한다', () => {
     const out = makeBoundsOut();
-    boundsInto(out, { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 2 });
-    expect(out.min).toEqual({ x: -3, y: -2 });
-    expect(out.max).toEqual({ x: 3, y: 2 });
+    boundsInto(out, { cx: 0, cy: 0, rx: 3, ry: 2 });
+    expect(out).toEqual({ minX: -3, minY: -2, maxX: 3, maxY: 2 });
   });
 });
 
@@ -244,21 +234,20 @@ describe('ellipse shape output - boundsInto', () => {
 
 describe('ellipse shape output - bounds', () => {
   test('ellipse의 AABB를 plain object로 반환한다', () => {
-    const result = bounds({ center: { x: 5, y: 3 }, radiusX: 4, radiusY: 2 });
-    expect(result).toEqual({ min: { x: 1, y: 1 }, max: { x: 9, y: 5 } });
+    const result = bounds({ cx: 5, cy: 3, rx: 4, ry: 2 });
+    expect(result).toEqual({ minX: 1, minY: 1, maxX: 9, maxY: 5 });
   });
 
   test('empty ellipse는 sentinel empty bounds를 반환한다', () => {
-    const result = bounds({ center: { x: 5, y: 5 }, radiusX: 0, radiusY: 3 });
-    expect(result).toEqual({ min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } });
+    const result = bounds({ cx: 5, cy: 5, rx: 0, ry: 3 });
+    expect(result).toEqual({ minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
   });
 
   test('boundsInto와 동일한 결과를 반환한다', () => {
     const out = makeBoundsOut();
-    const e = { center: { x: 2, y: 1 }, radiusX: 5, radiusY: 3 };
+    const e = { cx: 2, cy: 1, rx: 5, ry: 3 };
     boundsInto(out, e);
     const result = bounds(e);
-    expect(result.min).toEqual(out.min);
-    expect(result.max).toEqual(out.max);
+    expect(result).toEqual(out);
   });
 });

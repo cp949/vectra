@@ -1,6 +1,4 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, XYInput } from '../types';
+import type { Ellipse, Point } from '../types/flat-shapes.internal';
 import { ellipseClosestPointAngle } from './ellipse-closest-point.internal';
 import { hypot2 } from '../internal/numeric';
 
@@ -12,22 +10,21 @@ const DEFAULT_EPSILON = 1e-10;
  *
  * closed filled ellipse 기준: point가 ellipse 내부 또는 boundary 위에 있으면 0을 반환한다.
  * 외부 점은 boundary 위 Euclidean closest point까지의 거리를 반환한다.
- * radiusX <= 0 또는 radiusY <= 0인 empty ellipse는 point에서 ellipse center까지 Euclidean 거리를 반환한다.
+ * rx <= 0 또는 ry <= 0인 empty ellipse는 point에서 ellipse center까지 Euclidean 거리를 반환한다.
  *
  * @param ellipse 기준 ellipse
  * @param point 거리를 측정할 point
  * @param epsilon Newton-Raphson 수렴 판정 상대 임계값. 기본값: 1e-10
  */
-export function distanceToPoint(ellipse: EllipseLike, point: XYInput, epsilon = DEFAULT_EPSILON): number {
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
+export function distanceToPoint(ellipse: Ellipse, point: Point, epsilon = DEFAULT_EPSILON): number {
+  const rx = ellipse.rx;
+  const ry = ellipse.ry;
 
-  const center = readEllipseCenter(ellipse);
-  const cx = readX(center);
-  const cy = readY(center);
+  const cx = ellipse.cx;
+  const cy = ellipse.cy;
 
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
 
   // empty ellipse는 center까지 Euclidean 거리를 반환한다
   if (rx <= 0 || ry <= 0) {

@@ -14,10 +14,12 @@ import { toCircle } from '../../../src/ellipse/to-circle';
 import { toCircleInto } from '../../../src/ellipse/to-circle-into';
 import type { CircleWritable, EllipseWritable, XYTupleWritable } from '../../../src/types';
 
+/** 전환 전 타원 시험용 객체를 만든다. */
 function makeEllipse(cx = 0, cy = 0, rx = 0, ry = 0): EllipseWritable {
   return { center: { x: cx, y: cy }, radiusX: rx, radiusY: ry };
 }
 
+/** 전환 전 원 시험용 객체를 만든다. */
 function makeCircle(cx = 0, cy = 0, r = 0): CircleWritable {
   return { center: { x: cx, y: cy }, radius: r };
 }
@@ -172,51 +174,45 @@ describe('toCircleInto / toCircle', () => {
 
 describe('containsRect', () => {
   it('네 corner가 모두 내부이면 true', () => {
-    const e = makeEllipse(0, 0, 10, 10);
+    const e = { cx: 0, cy: 0, rx: 10, ry: 10 };
     // 1x1 rect at center
     expect(containsRect(e, { x: -0.5, y: -0.5, width: 1, height: 1 })).toBe(true);
   });
 
   it('boundary 위 corner도 포함되어 true', () => {
-    const e = makeEllipse(0, 0, 10, 10);
+    const e = { cx: 0, cy: 0, rx: 10, ry: 10 };
     // corner (6, 8): 36/100 + 64/100 = 1 → boundary
     expect(containsRect(e, { x: -6, y: -8, width: 12, height: 16 })).toBe(true);
   });
 
   it('corner 하나가 밖이면 false', () => {
-    const e = makeEllipse(0, 0, 5, 5);
+    const e = { cx: 0, cy: 0, rx: 5, ry: 5 };
     expect(containsRect(e, { x: -3, y: -3, width: 10, height: 10 })).toBe(false);
   });
 
   it('empty rect(width <= 0)는 true', () => {
-    const e = makeEllipse(0, 0, 0, 0);
+    const e = { cx: 0, cy: 0, rx: 0, ry: 0 };
     expect(containsRect(e, { x: 100, y: 100, width: 0, height: 1 })).toBe(true);
     expect(containsRect(e, { x: 100, y: 100, width: -1, height: 1 })).toBe(true);
   });
 
   it('empty rect(height <= 0)는 true', () => {
-    const e = makeEllipse(0, 0, 5, 5);
+    const e = { cx: 0, cy: 0, rx: 5, ry: 5 };
     expect(containsRect(e, { x: 0, y: 0, width: 1, height: 0 })).toBe(true);
     expect(containsRect(e, { x: 0, y: 0, width: 1, height: -1 })).toBe(true);
   });
 
   it('empty ellipse + non-empty rect는 false', () => {
-    const e = makeEllipse(0, 0, 0, 0);
+    const e = { cx: 0, cy: 0, rx: 0, ry: 0 };
     expect(containsRect(e, { x: 0, y: 0, width: 1, height: 1 })).toBe(false);
-    const e2 = makeEllipse(0, 0, 5, 0);
+    const e2 = { cx: 0, cy: 0, rx: 5, ry: 0 };
     expect(containsRect(e2, { x: 0, y: 0, width: 1, height: 1 })).toBe(false);
-    const e3 = makeEllipse(0, 0, -1, -1);
+    const e3 = { cx: 0, cy: 0, rx: -1, ry: -1 };
     expect(containsRect(e3, { x: 0, y: 0, width: 1, height: 1 })).toBe(false);
   });
 
-  it('tuple ellipse input과 tuple rect input을 처리한다', () => {
-    const tupleEllipse: readonly [readonly [number, number], number, number] = [[0, 0], 10, 10];
-    const tupleRect: readonly [number, number, number, number] = [-1, -1, 2, 2];
-    expect(containsRect(tupleEllipse, tupleRect)).toBe(true);
-  });
-
   it('비대칭 ellipse도 axis-aligned로 정확히 평가한다', () => {
-    const e = makeEllipse(0, 0, 10, 2);
+    const e = { cx: 0, cy: 0, rx: 10, ry: 2 };
     // (5, 1): 25/100 + 1/4 = 0.5 ≤ 1
     expect(containsRect(e, { x: -5, y: -1, width: 10, height: 2 })).toBe(true);
     // (5, 1.9): 25/100 + 3.61/4 = 0.25 + 0.9025 > 1

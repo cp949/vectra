@@ -1,5 +1,5 @@
 import type { CircleLike, EllipseWritable } from '../types';
-import { createEllipse } from './create-ellipse';
+import { createLegacyEllipse } from '../internal/ellipse';
 import { fromCircleInto } from './from-circle-into';
 
 /**
@@ -12,5 +12,5 @@ import { fromCircleInto } from './from-circle-into';
  * @param circle ellipse로 upcast할 circle
  */
 export function fromCircle(circle: CircleLike): EllipseWritable {
-  return fromCircleInto(createEllipse(), circle);
+  return fromCircleInto(createLegacyEllipse(), circle);
 }

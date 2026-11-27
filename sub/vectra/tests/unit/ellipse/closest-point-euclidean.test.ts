@@ -59,10 +59,10 @@ function bruteForceClosest(rx: number, ry: number, dx: number, dy: number): Refe
 }
 
 /**
- * center와 반지름으로 EllipseLike 객체를 만든다.
+ * 중심 좌표와 두 반지름으로 평평한 타원 객체를 만든다.
  */
 function makeEllipse(cx: number, cy: number, rx: number, ry: number) {
-  return { center: { x: cx, y: cy }, radiusX: rx, radiusY: ry };
+  return { cx, cy, rx, ry };
 }
 
 const RADII: ReadonlyArray<readonly [number, number]> = [
@@ -163,8 +163,9 @@ describe('ellipse Euclidean 최근접점 - brute-force 대조', () => {
     const expected = closestPoint(ellipse, point);
 
     const into = closestPointInto({ x: 0, y: 0 }, ellipse, point);
-    const projected = projectPoint(ellipse, point);
-    const projectedInto = projectPointInto({ x: 0, y: 0 }, ellipse, point);
+    const legacyEllipse = { center: { x: ellipse.cx, y: ellipse.cy }, radiusX: ellipse.rx, radiusY: ellipse.ry };
+    const projected = projectPoint(legacyEllipse, point);
+    const projectedInto = projectPointInto({ x: 0, y: 0 }, legacyEllipse, point);
 
     for (const actual of [into, projected, projectedInto]) {
       expect(actual.x).toBeCloseTo(expected.x, 12);
@@ -270,7 +271,7 @@ describe('ellipse Euclidean 최근접점 - 중심과 퇴화 입력', () => {
       const center = { x: 2, y: 3 };
       const result = closestPoint(ellipse, center);
       expect(Math.hypot(result.x - 2, result.y - 3)).toBeCloseTo(Math.min(rx, ry), 12);
-      const projected = projectPoint(ellipse, center);
+      const projected = projectPoint({ center, radiusX: rx, radiusY: ry }, center);
       expect(projected.x).toBeCloseTo(result.x, 12);
       expect(projected.y).toBeCloseTo(result.y, 12);
       const into = closestPointInto({ x: 0, y: 0 }, ellipse, center);
@@ -354,12 +355,12 @@ describe('ellipse Euclidean 최근접점 - epsilon', () => {
 describe('intersectsEllipseCircle - Euclidean 최근접 거리', () => {
   test('최근접 거리 1.9640보다 큰 반지름 2 circle은 교차한다', () => {
     // 정규화 공간 투영점까지 거리는 2.163이라 이전에는 false였다
-    const ellipse = makeEllipse(0, 0, 2, 1);
+    const ellipse = { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 1 };
     expect(intersectsEllipseCircle(ellipse, { center: { x: 3, y: 2 }, radius: 2 })).toBe(true);
   });
 
   test('최근접 거리 1.9640보다 작은 반지름 1.95 circle은 교차하지 않는다', () => {
-    const ellipse = makeEllipse(0, 0, 2, 1);
+    const ellipse = { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 1 };
     expect(intersectsEllipseCircle(ellipse, { center: { x: 3, y: 2 }, radius: 1.95 })).toBe(false);
   });
 });

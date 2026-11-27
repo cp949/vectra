@@ -1,58 +1,52 @@
+/** 타원의 이심률, 초점, 초점으로부터의 복원 계약을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { eccentricity } from '../../../src/ellipse/eccentricity';
 import { foci } from '../../../src/ellipse/foci';
 import { fociInto } from '../../../src/ellipse/foci-into';
 import { fromFoci } from '../../../src/ellipse/from-foci';
 import { fromFociInto } from '../../../src/ellipse/from-foci-into';
-import type { EllipseWritable, SegmentWritable, XYObjectWritable } from '../../../src/types';
+import type { SegmentWritable } from '../../../src/types/flat-shapes.internal';
+import { makeEllipse } from './_helpers';
 
 // ─── 헬퍼 ───────────────────────────────────────────────────────────────────
 
-function makeEllipse(cx = 0, cy = 0, rx = 0, ry = 0): EllipseWritable {
-  return { center: { x: cx, y: cy }, radiusX: rx, radiusY: ry };
-}
-
-function makeSegmentOut(): SegmentWritable<XYObjectWritable, XYObjectWritable> {
-  return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+/** 두 초점을 기록할 빈 선분을 만든다. */
+function makeSegmentOut(): SegmentWritable {
+  return { x1: 0, y1: 0, x2: 0, y2: 0 };
 }
 
 // ─── eccentricity ────────────────────────────────────────────────────────────
 
 describe('eccentricity', () => {
   test('원(rx == ry > 0)이면 0을 반환한다', () => {
-    expect(eccentricity(makeEllipse(0, 0, 5, 5))).toBe(0);
+    expect(eccentricity({ cx: 0, cy: 0, rx: 5, ry: 5 })).toBe(0);
   });
 
   test('납작한 타원(ry < rx)의 이심률을 계산한다', () => {
     // rx=5, ry=4 → c=3, e=3/5=0.6
-    expect(eccentricity(makeEllipse(0, 0, 5, 4))).toBeCloseTo(0.6, 10);
+    expect(eccentricity({ cx: 0, cy: 0, rx: 5, ry: 4 })).toBeCloseTo(0.6, 10);
   });
 
   test('세로 타원(rx < ry)의 이심률을 계산한다', () => {
     // ry=5, rx=4 → major=5, c=3, e=0.6
-    expect(eccentricity(makeEllipse(0, 0, 4, 5))).toBeCloseTo(0.6, 10);
+    expect(eccentricity({ cx: 0, cy: 0, rx: 4, ry: 5 })).toBeCloseTo(0.6, 10);
   });
 
   test('3-4-5 직각삼각형 비율 타원', () => {
     // rx=5, ry=3 → c=4, e=4/5=0.8
-    expect(eccentricity(makeEllipse(0, 0, 5, 3))).toBeCloseTo(0.8, 10);
+    expect(eccentricity({ cx: 0, cy: 0, rx: 5, ry: 3 })).toBeCloseTo(0.8, 10);
   });
 
   test('empty ellipse(rx=0)이면 NaN을 반환한다', () => {
-    expect(eccentricity(makeEllipse(0, 0, 0, 3))).toBeNaN();
+    expect(eccentricity({ cx: 0, cy: 0, rx: 0, ry: 3 })).toBeNaN();
   });
 
   test('empty ellipse(ry=0)이면 NaN을 반환한다', () => {
-    expect(eccentricity(makeEllipse(0, 0, 3, 0))).toBeNaN();
+    expect(eccentricity({ cx: 0, cy: 0, rx: 3, ry: 0 })).toBeNaN();
   });
 
   test('음수 반지름이면 NaN을 반환한다', () => {
-    expect(eccentricity(makeEllipse(0, 0, -1, 3))).toBeNaN();
-  });
-
-  test('tuple 입력도 동일하게 처리한다', () => {
-    // [center, rx, ry] tuple 형식
-    expect(eccentricity([[0, 0], 5, 4])).toBeCloseTo(0.6, 10);
+    expect(eccentricity({ cx: 0, cy: 0, rx: -1, ry: 3 })).toBeNaN();
   });
 });
 
@@ -61,75 +55,74 @@ describe('eccentricity', () => {
 describe('fociInto', () => {
   test('원이면 두 초점 모두 center를 기록한다', () => {
     const out = makeSegmentOut();
-    fociInto(out, makeEllipse(3, 4, 5, 5));
-    expect(out.a).toEqual({ x: 3, y: 4 });
-    expect(out.b).toEqual({ x: 3, y: 4 });
+    fociInto(out, { cx: 3, cy: 4, rx: 5, ry: 5 });
+    expect(out.x1).toBe(3);
+    expect(out.y1).toBe(4);
+    expect(out.x2).toBe(3);
+    expect(out.y2).toBe(4);
   });
 
   test('empty ellipse이면 두 초점 모두 center를 기록한다', () => {
     const out = makeSegmentOut();
-    fociInto(out, makeEllipse(1, 2, 0, 0));
-    expect(out.a).toEqual({ x: 1, y: 2 });
-    expect(out.b).toEqual({ x: 1, y: 2 });
+    fociInto(out, { cx: 1, cy: 2, rx: 0, ry: 0 });
+    expect(out.x1).toBe(1);
+    expect(out.y1).toBe(2);
+    expect(out.x2).toBe(1);
+    expect(out.y2).toBe(2);
   });
 
   test('rx > ry 타원이면 초점이 x축 방향으로 위치한다', () => {
     // rx=5, ry=4 → c=3 → 초점 (cx±3, cy)
     const out = makeSegmentOut();
-    fociInto(out, makeEllipse(0, 0, 5, 4));
-    expect(out.a.x).toBeCloseTo(-3, 10);
-    expect(out.a.y).toBeCloseTo(0, 10);
-    expect(out.b.x).toBeCloseTo(3, 10);
-    expect(out.b.y).toBeCloseTo(0, 10);
+    fociInto(out, { cx: 0, cy: 0, rx: 5, ry: 4 });
+    expect(out.x1).toBeCloseTo(-3, 10);
+    expect(out.y1).toBeCloseTo(0, 10);
+    expect(out.x2).toBeCloseTo(3, 10);
+    expect(out.y2).toBeCloseTo(0, 10);
   });
 
   test('ry > rx 타원이면 초점이 y축 방향으로 위치한다', () => {
     // ry=5, rx=4 → c=3 → 초점 (cx, cy±3)
     const out = makeSegmentOut();
-    fociInto(out, makeEllipse(0, 0, 4, 5));
-    expect(out.a.x).toBeCloseTo(0, 10);
-    expect(out.a.y).toBeCloseTo(-3, 10);
-    expect(out.b.x).toBeCloseTo(0, 10);
-    expect(out.b.y).toBeCloseTo(3, 10);
+    fociInto(out, { cx: 0, cy: 0, rx: 4, ry: 5 });
+    expect(out.x1).toBeCloseTo(0, 10);
+    expect(out.y1).toBeCloseTo(-3, 10);
+    expect(out.x2).toBeCloseTo(0, 10);
+    expect(out.y2).toBeCloseTo(3, 10);
   });
 
   test('center가 이동된 타원도 올바르게 계산한다', () => {
     // cx=10, cy=20, rx=5, ry=3 → c=4 → 초점 (6,20), (14,20)
     const out = makeSegmentOut();
-    fociInto(out, makeEllipse(10, 20, 5, 3));
-    expect(out.a.x).toBeCloseTo(6, 10);
-    expect(out.a.y).toBeCloseTo(20, 10);
-    expect(out.b.x).toBeCloseTo(14, 10);
-    expect(out.b.y).toBeCloseTo(20, 10);
+    fociInto(out, { cx: 10, cy: 20, rx: 5, ry: 3 });
+    expect(out.x1).toBeCloseTo(6, 10);
+    expect(out.y1).toBeCloseTo(20, 10);
+    expect(out.x2).toBeCloseTo(14, 10);
+    expect(out.y2).toBeCloseTo(20, 10);
   });
 
   test('out을 반환한다', () => {
     const out = makeSegmentOut();
-    const result = fociInto(out, makeEllipse(0, 0, 5, 4));
+    const result = fociInto(out, { cx: 0, cy: 0, rx: 5, ry: 4 });
     expect(result).toBe(out);
-  });
-
-  test('tuple out도 올바르게 기록한다', () => {
-    const out = { a: [0, 0] as [number, number], b: [0, 0] as [number, number] };
-    fociInto(out, makeEllipse(0, 0, 5, 4));
-    expect(out.a[0]).toBeCloseTo(-3, 10);
-    expect(out.b[0]).toBeCloseTo(3, 10);
   });
 });
 
 // ─── foci (allocating companion) ─────────────────────────────────────────────
 
 describe('foci', () => {
-  test('plain object {a, b}를 반환한다', () => {
-    const result = foci(makeEllipse(0, 0, 5, 4));
-    expect(result.a.x).toBeCloseTo(-3, 10);
-    expect(result.b.x).toBeCloseTo(3, 10);
+  test('plain object {x1, y1, x2, y2}를 반환한다', () => {
+    const result = foci({ cx: 0, cy: 0, rx: 5, ry: 4 });
+    expect(result.x1).toBeCloseTo(-3, 10);
+    expect(result.x2).toBeCloseTo(3, 10);
   });
 
   test('원이면 두 초점 모두 center를 반환한다', () => {
-    const result = foci(makeEllipse(1, 2, 3, 3));
-    expect(result.a).toEqual({ x: 1, y: 2 });
-    expect(result.b).toEqual({ x: 1, y: 2 });
+    const result = foci({ cx: 1, cy: 2, rx: 3, ry: 3 });
+    expect(result.x1).toBe(1);
+    expect(result.y1).toBe(2);
+    expect(result.x2).toBe(1);
+    expect(result.y2).toBe(2);
   });
 });
 
@@ -228,19 +221,19 @@ describe('fromFoci', () => {
 
 describe('fociInto + fromFociInto round-trip', () => {
   test('ellipse → foci → fromFoci로 원본 ellipse를 복원한다', () => {
-    const original = makeEllipse(5, 10, 13, 5);
+    const original = { cx: 5, cy: 10, rx: 13, ry: 5 };
     const segOut = makeSegmentOut();
     fociInto(segOut, original);
 
     // foci → focusA, focusB 사이 거리의 합 = 2 * radiusX
-    const sumOfDist = 2 * original.radiusX;
-    const restored = fromFoci(segOut.a, segOut.b, sumOfDist);
+    const sumOfDist = 2 * original.rx;
+    const restored = fromFoci({ x: segOut.x1, y: segOut.y1 }, { x: segOut.x2, y: segOut.y2 }, sumOfDist);
 
     expect(restored).not.toBe(undefined);
     if (restored === undefined) throw new Error('복원 결과가 undefined여서는 안 된다');
-    expect(restored.center.x).toBeCloseTo(original.center.x, 10);
-    expect(restored.center.y).toBeCloseTo(original.center.y, 10);
-    expect(restored.radiusX).toBeCloseTo(original.radiusX, 10);
-    expect(restored.radiusY).toBeCloseTo(original.radiusY, 10);
+    expect(restored.center.x).toBeCloseTo(original.cx, 10);
+    expect(restored.center.y).toBeCloseTo(original.cy, 10);
+    expect(restored.radiusX).toBeCloseTo(original.rx, 10);
+    expect(restored.radiusY).toBeCloseTo(original.ry, 10);
   });
 });

@@ -13,6 +13,7 @@ import { transform } from '../../../src/ellipse/transform';
 import { transformInto } from '../../../src/ellipse/transform-into';
 import type { EllipseWritable, XYTupleWritable } from '../../../src/types';
 
+/** 전환 전 타원 시험용 객체를 만든다. */
 function makeEllipse(cx = 0, cy = 0, rx = 0, ry = 0): EllipseWritable {
   return { center: { x: cx, y: cy }, radiusX: rx, radiusY: ry };
 }
@@ -242,42 +243,36 @@ describe('projectPointInto / projectPoint', () => {
 describe('containsCircle', () => {
   it('bounding square가 ellipse 안이면 true', () => {
     // ellipse 10x10, circle r=1 at center → bounding square 2x2 안에 있음
-    expect(containsCircle(makeEllipse(0, 0, 10, 10), { center: { x: 0, y: 0 }, radius: 1 })).toBe(true);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 10, ry: 10 }, { cx: 0, cy: 0, r: 1 })).toBe(true);
   });
 
   it('circle perimeter 일부가 ellipse 밖이면 false', () => {
     // ellipse 5x5, circle r=4 at center → bounding square corner (4,4): 16/25+16/25=1.28>1
-    expect(containsCircle(makeEllipse(0, 0, 5, 5), { center: { x: 0, y: 0 }, radius: 4 })).toBe(false);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 5, ry: 5 }, { cx: 0, cy: 0, r: 4 })).toBe(false);
   });
 
   it('conservative false case: 실제 ellipse 안에 들어가는 circle도 bounding square corner가 밖이면 false', () => {
     // ellipse 10x10 (big circle), circle r=8 at center
     // 실제로는 8 < 10 이므로 circle은 ellipse 안에 있다.
     // bounding square corner (8,8): 64/100 + 64/100 = 1.28 > 1 → false (conservative)
-    expect(containsCircle(makeEllipse(0, 0, 10, 10), { center: { x: 0, y: 0 }, radius: 8 })).toBe(false);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 10, ry: 10 }, { cx: 0, cy: 0, r: 8 })).toBe(false);
   });
 
   it('empty circle(radius <= 0)은 true', () => {
-    expect(containsCircle(makeEllipse(0, 0, 0, 0), { center: { x: 100, y: 100 }, radius: 0 })).toBe(true);
-    expect(containsCircle(makeEllipse(0, 0, 5, 5), { center: { x: 100, y: 100 }, radius: -1 })).toBe(true);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 0, ry: 0 }, { cx: 100, cy: 100, r: 0 })).toBe(true);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 5, ry: 5 }, { cx: 100, cy: 100, r: -1 })).toBe(true);
   });
 
   it('empty ellipse + non-empty circle은 false', () => {
-    expect(containsCircle(makeEllipse(0, 0, 0, 0), { center: { x: 0, y: 0 }, radius: 1 })).toBe(false);
-    expect(containsCircle(makeEllipse(0, 0, 5, 0), { center: { x: 0, y: 0 }, radius: 1 })).toBe(false);
-    expect(containsCircle(makeEllipse(0, 0, -1, -1), { center: { x: 0, y: 0 }, radius: 1 })).toBe(false);
-  });
-
-  it('tuple circle input과 tuple ellipse input을 처리한다', () => {
-    const tupEllipse: readonly [readonly [number, number], number, number] = [[0, 0], 10, 10];
-    const tupCircle: readonly [readonly [number, number], number] = [[0, 0], 1];
-    expect(containsCircle(tupEllipse, tupCircle)).toBe(true);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 0, ry: 0 }, { cx: 0, cy: 0, r: 1 })).toBe(false);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 5, ry: 0 }, { cx: 0, cy: 0, r: 1 })).toBe(false);
+    expect(containsCircle({ cx: 0, cy: 0, rx: -1, ry: -1 }, { cx: 0, cy: 0, r: 1 })).toBe(false);
   });
 
   it('off-center circle도 bounding square corner 4개로 평가한다', () => {
     // ellipse 10x10 at origin, circle r=1 at (5, 0)
     // bounding square corners: (4,-1)/(6,-1)/(4,1)/(6,1)
     // (6, 1): 36/100 + 1/100 = 0.37 ≤ 1 → all corners inside → true
-    expect(containsCircle(makeEllipse(0, 0, 10, 10), { center: { x: 5, y: 0 }, radius: 1 })).toBe(true);
+    expect(containsCircle({ cx: 0, cy: 0, rx: 10, ry: 10 }, { cx: 5, cy: 0, r: 1 })).toBe(true);
   });
 });

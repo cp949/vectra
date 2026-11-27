@@ -1,5 +1,5 @@
 import type { EllipseWritable, XYInput, XYObjectWritable } from '../types';
-import { createEllipse } from './create-ellipse';
+import { createLegacyEllipse } from '../internal/ellipse';
 import { fromFociInto } from './from-foci-into';
 
 /**
@@ -17,6 +17,6 @@ export function fromFoci(
   focusB: XYInput,
   sumOfDistances: number
 ): EllipseWritable<XYObjectWritable> | undefined {
-  const result = fromFociInto(createEllipse(), focusA, focusB, sumOfDistances);
+  const result = fromFociInto(createLegacyEllipse(), focusA, focusB, sumOfDistances);
   return result === false ? undefined : result;
 }
