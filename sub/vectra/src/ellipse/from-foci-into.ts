@@ -1,12 +1,11 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { EllipseWritable, XYInput, XYWritable } from '../types';
+import type { EllipseWritable, Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 초점과 초점까지의 거리 합으로 x축 정렬 ellipse를 계산하여 out에 기록하고 out을 반환한다.
  *
  * center = midpoint(focusA, focusB), c = dist/2, a = sumOfDistances/2, b = sqrt(a²-c²).
- * radiusX = a (semi-major), radiusY = b (semi-minor).
+ * rx = a (semi-major), ry = b (semi-minor).
  * invalid 조건이면 false를 반환하고 out을 수정하지 않는다.
  *
  * invalid 조건:
@@ -14,21 +13,21 @@ import { hypot2 } from '../internal/numeric';
  * - 입력에 NaN 또는 ±Infinity 포함
  * - sumOfDistances < dist(focusA, focusB) (삼각형 부등식 위반)
  *
- * @param out 결과를 기록할 EllipseWritable output
+ * @param out 결과를 기록할 타원 객체
  * @param focusA 첫 번째 초점
  * @param focusB 두 번째 초점
  * @param sumOfDistances 타원 위 임의의 점에서 두 초점까지 거리의 합 (= 2a)
  */
-export function fromFociInto<Center extends XYWritable>(
-  out: EllipseWritable<Center>,
-  focusA: XYInput,
-  focusB: XYInput,
+export function fromFociInto<Out extends EllipseWritable>(
+  out: Out,
+  focusA: Point,
+  focusB: Point,
   sumOfDistances: number
-): EllipseWritable<Center> | false {
-  const ax = readX(focusA);
-  const ay = readY(focusA);
-  const bx = readX(focusB);
-  const by = readY(focusB);
+): Out | false {
+  const ax = focusA.x;
+  const ay = focusA.y;
+  const bx = focusB.x;
+  const by = focusB.y;
 
   // non-finite 입력 검사
   if (
@@ -64,9 +63,10 @@ export function fromFociInto<Center extends XYWritable>(
   // semi-minor axis (degenerate일 때 0이 될 수 있음)
   const b = Math.sqrt(a * a - c * c);
 
-  writeXY(out.center, cx, cy);
-  out.radiusX = a;
-  out.radiusY = b;
+  out.cx = cx;
+  out.cy = cy;
+  out.rx = a;
+  out.ry = b;
 
   return out;
 }

@@ -84,7 +84,7 @@ describe('tangentAtInto / tangentAt', () => {
 });
 
 describe('normalAtInto / normalAt', () => {
-  const ellipse = { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 2 };
+  const ellipse = { cx: 0, cy: 0, rx: 3, ry: 2 };
 
   it('θ=0에서 법선 방향은 (1/rx, 0)이다', () => {
     const out = normalAtInto({ x: 0, y: 0 }, ellipse, 0);
@@ -112,14 +112,14 @@ describe('normalAtInto / normalAt', () => {
   });
 
   it('empty ellipse (rx=0)는 zero vector를 반환한다', () => {
-    const empty = { center: { x: 0, y: 0 }, radiusX: 0, radiusY: 2 };
+    const empty = { cx: 0, cy: 0, rx: 0, ry: 2 };
     const out = normalAtInto({ x: 0, y: 0 }, empty, Math.PI / 4);
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
   });
 
   it('empty ellipse (ry=0)는 zero vector를 반환한다', () => {
-    const empty = { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 0 };
+    const empty = { cx: 0, cy: 0, rx: 3, ry: 0 };
     const out = normalAtInto({ x: 0, y: 0 }, empty, Math.PI / 4);
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
@@ -138,13 +138,6 @@ describe('normalAtInto / normalAt', () => {
     expect(direct.x).toBeCloseTo(via.x, 10);
     expect(direct.y).toBeCloseTo(via.y, 10);
   });
-
-  it('tuple writable out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    normalAtInto(out, ellipse, 0);
-    expect(out[0]).toBeCloseTo(1 / 3, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
-  });
 });
 
 describe('tangent ⊥ normal 관계', () => {
@@ -154,7 +147,7 @@ describe('tangent ⊥ normal 관계', () => {
     'θ=%f에서 tangent · normal ≈ 0이다',
     (angle) => {
       const t = tangentAt(ellipse, angle);
-      const n = normalAt(ellipse, angle);
+      const n = normalAt({ cx: 2, cy: -3, rx: 5, ry: 4 }, angle);
       expect(dot(t.x, t.y, n.x, n.y)).toBeCloseTo(0, 10);
     }
   );

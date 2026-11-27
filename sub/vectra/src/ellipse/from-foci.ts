@@ -1,5 +1,5 @@
-import type { EllipseWritable, XYInput, XYObjectWritable } from '../types';
-import { createLegacyEllipse } from '../internal/ellipse';
+import type { EllipseWritable, Point } from '../types/flat-shapes.internal';
+import { createZeroEllipse } from '../internal/ellipse';
 import { fromFociInto } from './from-foci-into';
 
 /**
@@ -12,11 +12,7 @@ import { fromFociInto } from './from-foci-into';
  * @param focusB 두 번째 초점
  * @param sumOfDistances 타원 위 임의의 점에서 두 초점까지 거리의 합 (= 2a)
  */
-export function fromFoci(
-  focusA: XYInput,
-  focusB: XYInput,
-  sumOfDistances: number
-): EllipseWritable<XYObjectWritable> | undefined {
-  const result = fromFociInto(createLegacyEllipse(), focusA, focusB, sumOfDistances);
+export function fromFoci(focusA: Point, focusB: Point, sumOfDistances: number): EllipseWritable | undefined {
+  const result = fromFociInto(createZeroEllipse(), focusA, focusB, sumOfDistances);
   return result === false ? undefined : result;
 }

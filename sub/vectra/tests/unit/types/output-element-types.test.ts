@@ -4,7 +4,7 @@
  * 대상 함수:
  *  - lineCommandsInto, transformCommandsInto : 새 PathCommand를 push하는 path Into
  *  - quadraticLineIntersectionsInto, cubicCubicIntersectionsInto : 새 `{ x, y }` point를 만드는 curve 교차 Into
- *  - fromRectInto, ellipse pointsInto : 새 `{ x, y }` point를 push하는 polygon·ellipse Into
+ *  - fromRectInto : 새 `{ x, y }` point를 push하는 polygon Into
  *  - tangentPointsFromExternalInto : 새 `{ x, y }` point를 push하는 circle Into
  *
  * 고정하는 계약:
@@ -18,7 +18,6 @@ import { describe, expect, expectTypeOf, test } from 'vitest';
 import { tangentPointsFromExternalInto } from '../../../src/circle/tangent-points-from-external-into';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';
-import { pointsInto as ellipsePointsInto } from '../../../src/ellipse/points-into';
 import { lineCommandsInto } from '../../../src/path/line-commands-into';
 import { transformCommandsInto } from '../../../src/path/transform-commands-into';
 import { fromRectInto } from '../../../src/polygon/from-rect-into';
@@ -51,10 +50,6 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
     expectTypeOf(rect).toEqualTypeOf<XYObjectWritable[]>();
     expect(rect).toHaveLength(4);
     expect('id' in rect[0]).toBe(false);
-
-    const ring = ellipsePointsInto(tagged, { center: [0, 0], radiusX: 2, radiusY: 1 }, { segments: 8 });
-    expectTypeOf(ring).toEqualTypeOf<XYObjectWritable[]>();
-    expect(ring).toHaveLength(8);
   });
 
   test('curve 교차 Into는 tuple point를 담는 hit 배열을 받지 않는다', () => {

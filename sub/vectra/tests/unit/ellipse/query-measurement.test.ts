@@ -10,33 +10,28 @@ import { nearEquals } from '../../../src/ellipse/near-equals';
 // ─── isEmpty ─────────────────────────────────────────────────────────────────
 
 describe('ellipse query - isEmpty', () => {
-  test('radiusX = 0이면 true를 반환한다', () => {
-    expect(isEmpty({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 5 })).toBe(true);
+  test('rx = 0이면 true를 반환한다', () => {
+    expect(isEmpty({ cx: 0, cy: 0, rx: 0, ry: 5 })).toBe(true);
   });
 
-  test('radiusY = 0이면 true를 반환한다', () => {
-    expect(isEmpty({ center: { x: 0, y: 0 }, radiusX: 5, radiusY: 0 })).toBe(true);
+  test('ry = 0이면 true를 반환한다', () => {
+    expect(isEmpty({ cx: 0, cy: 0, rx: 5, ry: 0 })).toBe(true);
   });
 
-  test('radiusX < 0이면 true를 반환한다', () => {
-    expect(isEmpty({ center: { x: 0, y: 0 }, radiusX: -1, radiusY: 5 })).toBe(true);
+  test('rx < 0이면 true를 반환한다', () => {
+    expect(isEmpty({ cx: 0, cy: 0, rx: -1, ry: 5 })).toBe(true);
   });
 
-  test('radiusY < 0이면 true를 반환한다', () => {
-    expect(isEmpty({ center: { x: 0, y: 0 }, radiusX: 5, radiusY: -1 })).toBe(true);
+  test('ry < 0이면 true를 반환한다', () => {
+    expect(isEmpty({ cx: 0, cy: 0, rx: 5, ry: -1 })).toBe(true);
   });
 
-  test('radiusX > 0이고 radiusY > 0이면 false를 반환한다', () => {
-    expect(isEmpty({ center: { x: 0, y: 0 }, radiusX: 3, radiusY: 4 })).toBe(false);
+  test('rx > 0이고 ry > 0이면 false를 반환한다', () => {
+    expect(isEmpty({ cx: 0, cy: 0, rx: 3, ry: 4 })).toBe(false);
   });
 
   test('object input을 처리한다', () => {
-    expect(isEmpty({ center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 })).toBe(false);
-  });
-
-  test('tuple input을 처리한다', () => {
-    expect(isEmpty([[1, 2], 3, 4] as const)).toBe(false);
-    expect(isEmpty([[1, 2], 0, 4] as const)).toBe(true);
+    expect(isEmpty({ cx: 1, cy: 2, rx: 3, ry: 4 })).toBe(false);
   });
 });
 
@@ -124,43 +119,43 @@ describe('ellipse query - equals', () => {
 
 describe('ellipse query - nearEquals', () => {
   test('정확히 같은 값이면 true를 반환한다', () => {
-    const a = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
+    const a = { cx: 1, cy: 2, rx: 3, ry: 4 };
     expect(nearEquals(a, a)).toBe(true);
   });
 
   test('epsilon 이내 차이면 true를 반환한다', () => {
-    const a = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
-    const b = { center: { x: 1 + 1e-11, y: 2 }, radiusX: 3, radiusY: 4 };
+    const a = { cx: 1, cy: 2, rx: 3, ry: 4 };
+    const b = { cx: 1 + 1e-11, cy: 2, rx: 3, ry: 4 };
     expect(nearEquals(a, b)).toBe(true);
   });
 
   test('epsilon 초과면 false를 반환한다', () => {
-    const a = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
-    const b = { center: { x: 1 + 1e-9, y: 2 }, radiusX: 3, radiusY: 4 };
+    const a = { cx: 1, cy: 2, rx: 3, ry: 4 };
+    const b = { cx: 1 + 1e-9, cy: 2, rx: 3, ry: 4 };
     expect(nearEquals(a, b)).toBe(false);
   });
 
   test('음수 epsilon이면 항상 false를 반환한다', () => {
-    const a = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
+    const a = { cx: 1, cy: 2, rx: 3, ry: 4 };
     expect(nearEquals(a, a, -1)).toBe(false);
   });
 
   test('기본 epsilon(1e-10) 동작: 1e-11 차이는 true이다', () => {
     // float64에서 1 + 1e-10은 실제 차이가 ~1.0e-10을 초과하므로 1e-11을 사용한다
-    const a = { center: { x: 0, y: 0 }, radiusX: 1, radiusY: 1 };
-    const b = { center: { x: 0, y: 0 }, radiusX: 1 + 1e-11, radiusY: 1 };
+    const a = { cx: 0, cy: 0, rx: 1, ry: 1 };
+    const b = { cx: 0, cy: 0, rx: 1 + 1e-11, ry: 1 };
     expect(nearEquals(a, b)).toBe(true);
   });
 
   test('기본 epsilon(1e-10) 동작: 2e-10 초과 차이는 false이다', () => {
-    const a = { center: { x: 0, y: 0 }, radiusX: 1, radiusY: 1 };
-    const b = { center: { x: 0, y: 0 }, radiusX: 1 + 2e-10, radiusY: 1 };
+    const a = { cx: 0, cy: 0, rx: 1, ry: 1 };
+    const b = { cx: 0, cy: 0, rx: 1 + 2e-10, ry: 1 };
     expect(nearEquals(a, b)).toBe(false);
   });
 
-  test('명시적 epsilon으로 tuple input을 처리한다', () => {
-    const a = [[0, 0], 3, 4] as const;
-    const b = [[0, 0], 3.001, 4] as const;
+  test('명시적 epsilon으로 근사 일치 여부를 판정한다', () => {
+    const a = { cx: 0, cy: 0, rx: 3, ry: 4 };
+    const b = { cx: 0, cy: 0, rx: 3.001, ry: 4 };
     expect(nearEquals(a, b, 0.01)).toBe(true);
     expect(nearEquals(a, b, 0.0001)).toBe(false);
   });

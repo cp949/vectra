@@ -171,7 +171,7 @@ describe('transformInto / transform', () => {
 describe('projectPointInto / projectPoint', () => {
   it('outside point를 boundary closest point로 투영한다', () => {
     const out = { x: 0, y: 0 };
-    const result = projectPointInto(out, makeEllipse(0, 0, 3, 3), { x: 6, y: 0 });
+    const result = projectPointInto(out, { cx: 0, cy: 0, rx: 3, ry: 3 }, { x: 6, y: 0 });
     expect(result).toBe(out);
     expect(out.x).toBeCloseTo(3, 10);
     expect(out.y).toBeCloseTo(0, 10);
@@ -179,45 +179,38 @@ describe('projectPointInto / projectPoint', () => {
 
   it('inside point도 boundary closest point로 투영한다', () => {
     const out = { x: 0, y: 0 };
-    projectPointInto(out, makeEllipse(0, 0, 5, 5), { x: 1, y: 0 });
+    projectPointInto(out, { cx: 0, cy: 0, rx: 5, ry: 5 }, { x: 1, y: 0 });
     expect(out.x).toBeCloseTo(5, 10);
     expect(out.y).toBeCloseTo(0, 10);
   });
 
   it('center point tie-break는 (cx + radiusX, cy)이다', () => {
     const out = { x: 0, y: 0 };
-    projectPointInto(out, makeEllipse(2, 3, 4, 5), { x: 2, y: 3 });
+    projectPointInto(out, { cx: 2, cy: 3, rx: 4, ry: 5 }, { x: 2, y: 3 });
     expect(out.x).toBeCloseTo(2 + 4, 10);
     expect(out.y).toBeCloseTo(3, 10);
   });
 
   it('empty ellipse는 center를 기록한다', () => {
     const out = { x: 0, y: 0 };
-    projectPointInto(out, makeEllipse(7, 8, 0, 5), { x: 100, y: 100 });
+    projectPointInto(out, { cx: 7, cy: 8, rx: 0, ry: 5 }, { x: 100, y: 100 });
     expect(out.x).toBe(7);
     expect(out.y).toBe(8);
 
     const out2 = { x: 0, y: 0 };
-    projectPointInto(out2, makeEllipse(7, 8, 5, 0), { x: 100, y: 100 });
+    projectPointInto(out2, { cx: 7, cy: 8, rx: 5, ry: 0 }, { x: 100, y: 100 });
     expect(out2.x).toBe(7);
     expect(out2.y).toBe(8);
 
     const out3 = { x: 0, y: 0 };
-    projectPointInto(out3, makeEllipse(7, 8, -1, -1), { x: 100, y: 100 });
+    projectPointInto(out3, { cx: 7, cy: 8, rx: -1, ry: -1 }, { x: 100, y: 100 });
     expect(out3.x).toBe(7);
     expect(out3.y).toBe(8);
   });
 
-  it('tuple point input을 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    projectPointInto(out, makeEllipse(0, 0, 3, 3), [6, 0] as const);
-    expect(out.x).toBeCloseTo(3, 10);
-    expect(out.y).toBeCloseTo(0, 10);
-  });
-
   it('out과 point가 같은 object여도 안전하다', () => {
     const shared = { x: 6, y: 0 };
-    projectPointInto(shared, makeEllipse(0, 0, 3, 3), shared);
+    projectPointInto(shared, { cx: 0, cy: 0, rx: 3, ry: 3 }, shared);
     expect(shared.x).toBeCloseTo(3, 10);
     expect(shared.y).toBeCloseTo(0, 10);
   });
@@ -225,8 +218,8 @@ describe('projectPointInto / projectPoint', () => {
   it('epsilon option은 그대로 전달된다 (큰 epsilon은 조기 종료)', () => {
     // 큰 epsilon은 첫 반복에서 종료하기 쉬워 결과 정확도가 떨어진다. 두 epsilon 결과가 같지 않거나 같을 수 있다.
     // 호출 경로 자체를 검증하기 위해 결과가 finite임을 확인한다.
-    const tight = projectPoint(makeEllipse(0, 0, 3, 4), { x: 10, y: 10 }, 1e-12);
-    const loose = projectPoint(makeEllipse(0, 0, 3, 4), { x: 10, y: 10 }, 1);
+    const tight = projectPoint({ cx: 0, cy: 0, rx: 3, ry: 4 }, { x: 10, y: 10 }, 1e-12);
+    const loose = projectPoint({ cx: 0, cy: 0, rx: 3, ry: 4 }, { x: 10, y: 10 }, 1);
     expect(Number.isFinite(tight.x)).toBe(true);
     expect(Number.isFinite(tight.y)).toBe(true);
     expect(Number.isFinite(loose.x)).toBe(true);
@@ -234,7 +227,7 @@ describe('projectPointInto / projectPoint', () => {
   });
 
   it('projectPoint companion은 새 plain object를 반환한다', () => {
-    const p = projectPoint(makeEllipse(0, 0, 3, 3), { x: 6, y: 0 });
+    const p = projectPoint({ cx: 0, cy: 0, rx: 3, ry: 3 }, { x: 6, y: 0 });
     expect(p.x).toBeCloseTo(3, 10);
     expect(p.y).toBeCloseTo(0, 10);
   });

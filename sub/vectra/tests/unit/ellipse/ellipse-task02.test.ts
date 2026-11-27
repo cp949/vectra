@@ -6,7 +6,7 @@ import { fociInto } from '../../../src/ellipse/foci-into';
 import { fromFoci } from '../../../src/ellipse/from-foci';
 import { fromFociInto } from '../../../src/ellipse/from-foci-into';
 import type { SegmentWritable } from '../../../src/types/flat-shapes.internal';
-import { makeEllipse } from './_helpers';
+import { createEllipse } from '../../../src/ellipse/create-ellipse';
 
 // ─── 헬퍼 ───────────────────────────────────────────────────────────────────
 
@@ -131,71 +131,66 @@ describe('foci', () => {
 describe('fromFociInto', () => {
   test('유효한 입력으로 ellipse를 계산한다', () => {
     // focusA=(-3,0), focusB=(3,0), sum=10 → a=5, c=3, b=4
-    const out = makeEllipse();
+    const out = createEllipse();
     const result = fromFociInto(out, { x: -3, y: 0 }, { x: 3, y: 0 }, 10);
     expect(result).toBe(out);
-    expect(out.center).toEqual({ x: 0, y: 0 });
-    expect(out.radiusX).toBeCloseTo(5, 10);
-    expect(out.radiusY).toBeCloseTo(4, 10);
+    expect(out.cx).toBe(0);
+    expect(out.cy).toBe(0);
+    expect(out.rx).toBeCloseTo(5, 10);
+    expect(out.ry).toBeCloseTo(4, 10);
   });
 
   test('center가 이동된 경우도 올바르게 계산한다', () => {
     // focusA=(7,20), focusB=(13,20), sum=10 → center=(10,20), a=5, c=3, b=4
-    const out = makeEllipse();
+    const out = createEllipse();
     fromFociInto(out, { x: 7, y: 20 }, { x: 13, y: 20 }, 10);
-    expect(out.center).toEqual({ x: 10, y: 20 });
-    expect(out.radiusX).toBeCloseTo(5, 10);
-    expect(out.radiusY).toBeCloseTo(4, 10);
+    expect(out.cx).toBe(10);
+    expect(out.cy).toBe(20);
+    expect(out.rx).toBeCloseTo(5, 10);
+    expect(out.ry).toBeCloseTo(4, 10);
   });
 
-  test('sumOfDistances == dist이면 degenerate(radiusY=0) ellipse를 반환한다', () => {
+  test('sumOfDistances == dist이면 degenerate(ry=0) ellipse를 반환한다', () => {
     // focusA=(-3,0), focusB=(3,0), sum=6 == dist → b=0
-    const out = makeEllipse();
+    const out = createEllipse();
     const result = fromFociInto(out, { x: -3, y: 0 }, { x: 3, y: 0 }, 6);
     expect(result).not.toBe(false);
-    expect(out.radiusY).toBeCloseTo(0, 10);
+    expect(out.ry).toBeCloseTo(0, 10);
   });
 
   test('두 초점이 같으면 원을 반환한다', () => {
     // focusA = focusB = (0,0), sum=10 → c=0, a=5, b=5
-    const out = makeEllipse();
+    const out = createEllipse();
     fromFociInto(out, { x: 0, y: 0 }, { x: 0, y: 0 }, 10);
-    expect(out.radiusX).toBeCloseTo(5, 10);
-    expect(out.radiusY).toBeCloseTo(5, 10);
+    expect(out.rx).toBeCloseTo(5, 10);
+    expect(out.ry).toBeCloseTo(5, 10);
   });
 
   test('sumOfDistances <= 0이면 false를 반환하고 out을 수정하지 않는다', () => {
-    const out = makeEllipse(1, 2, 3, 4);
+    const out = { cx: 1, cy: 2, rx: 3, ry: 4 };
     const result = fromFociInto(out, { x: -1, y: 0 }, { x: 1, y: 0 }, 0);
     expect(result).toBe(false);
-    expect(out.radiusX).toBe(3);
-    expect(out.radiusY).toBe(4);
+    expect(out.rx).toBe(3);
+    expect(out.ry).toBe(4);
   });
 
   test('sumOfDistances < dist이면 false를 반환한다', () => {
     // dist=6, sum=5 → 삼각형 부등식 위반
-    const out = makeEllipse();
+    const out = createEllipse();
     const result = fromFociInto(out, { x: -3, y: 0 }, { x: 3, y: 0 }, 5);
     expect(result).toBe(false);
   });
 
   test('NaN 입력이면 false를 반환한다', () => {
-    const out = makeEllipse();
+    const out = createEllipse();
     expect(fromFociInto(out, { x: NaN, y: 0 }, { x: 3, y: 0 }, 10)).toBe(false);
     expect(fromFociInto(out, { x: -3, y: 0 }, { x: 3, y: 0 }, NaN)).toBe(false);
   });
 
   test('Infinity 입력이면 false를 반환한다', () => {
-    const out = makeEllipse();
+    const out = createEllipse();
     expect(fromFociInto(out, { x: -Infinity, y: 0 }, { x: 3, y: 0 }, 10)).toBe(false);
     expect(fromFociInto(out, { x: -3, y: 0 }, { x: 3, y: 0 }, Infinity)).toBe(false);
-  });
-
-  test('tuple 입력도 올바르게 처리한다', () => {
-    const out = makeEllipse();
-    fromFociInto(out, [-3, 0], [3, 0], 10);
-    expect(out.radiusX).toBeCloseTo(5, 10);
-    expect(out.radiusY).toBeCloseTo(4, 10);
   });
 });
 
@@ -206,9 +201,10 @@ describe('fromFoci', () => {
     const result = fromFoci({ x: -3, y: 0 }, { x: 3, y: 0 }, 10);
     expect(result).not.toBe(undefined);
     if (result === undefined) throw new Error('결과가 undefined여서는 안 된다');
-    expect(result.center).toEqual({ x: 0, y: 0 });
-    expect(result.radiusX).toBeCloseTo(5, 10);
-    expect(result.radiusY).toBeCloseTo(4, 10);
+    expect(result.cx).toBe(0);
+    expect(result.cy).toBe(0);
+    expect(result.rx).toBeCloseTo(5, 10);
+    expect(result.ry).toBeCloseTo(4, 10);
   });
 
   test('invalid 입력이면 undefined를 반환한다', () => {
@@ -225,15 +221,15 @@ describe('fociInto + fromFociInto round-trip', () => {
     const segOut = makeSegmentOut();
     fociInto(segOut, original);
 
-    // foci → focusA, focusB 사이 거리의 합 = 2 * radiusX
+    // foci → focusA, focusB 사이 거리의 합 = 2 * rx
     const sumOfDist = 2 * original.rx;
     const restored = fromFoci({ x: segOut.x1, y: segOut.y1 }, { x: segOut.x2, y: segOut.y2 }, sumOfDist);
 
     expect(restored).not.toBe(undefined);
     if (restored === undefined) throw new Error('복원 결과가 undefined여서는 안 된다');
-    expect(restored.center.x).toBeCloseTo(original.cx, 10);
-    expect(restored.center.y).toBeCloseTo(original.cy, 10);
-    expect(restored.radiusX).toBeCloseTo(original.rx, 10);
-    expect(restored.radiusY).toBeCloseTo(original.ry, 10);
+    expect(restored.cx).toBeCloseTo(original.cx, 10);
+    expect(restored.cy).toBeCloseTo(original.cy, 10);
+    expect(restored.rx).toBeCloseTo(original.rx, 10);
+    expect(restored.ry).toBeCloseTo(original.ry, 10);
   });
 });

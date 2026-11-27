@@ -1,16 +1,15 @@
-import { readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import type { EllipseLike } from '../types';
+import type { Ellipse } from '../types/flat-shapes.internal';
 
 /**
  * ellipse가 비어 있는지 확인한다.
  *
- * radiusX <= 0 또는 radiusY <= 0이면 empty로 간주한다.
+ * rx <= 0 또는 ry <= 0이면 empty로 간주한다.
  *
  * @param ellipse 확인할 ellipse
  */
-export function isEmpty(ellipse: EllipseLike): boolean {
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
+export function isEmpty(ellipse: Ellipse): boolean {
+  const rx = ellipse.rx;
+  const ry = ellipse.ry;
 
   return rx <= 0 || ry <= 0;
 }

@@ -163,9 +163,8 @@ describe('ellipse Euclidean 최근접점 - brute-force 대조', () => {
     const expected = closestPoint(ellipse, point);
 
     const into = closestPointInto({ x: 0, y: 0 }, ellipse, point);
-    const legacyEllipse = { center: { x: ellipse.cx, y: ellipse.cy }, radiusX: ellipse.rx, radiusY: ellipse.ry };
-    const projected = projectPoint(legacyEllipse, point);
-    const projectedInto = projectPointInto({ x: 0, y: 0 }, legacyEllipse, point);
+    const projected = projectPoint(ellipse, point);
+    const projectedInto = projectPointInto({ x: 0, y: 0 }, ellipse, point);
 
     for (const actual of [into, projected, projectedInto]) {
       expect(actual.x).toBeCloseTo(expected.x, 12);
@@ -271,7 +270,7 @@ describe('ellipse Euclidean 최근접점 - 중심과 퇴화 입력', () => {
       const center = { x: 2, y: 3 };
       const result = closestPoint(ellipse, center);
       expect(Math.hypot(result.x - 2, result.y - 3)).toBeCloseTo(Math.min(rx, ry), 12);
-      const projected = projectPoint({ center, radiusX: rx, radiusY: ry }, center);
+      const projected = projectPoint(ellipse, center);
       expect(projected.x).toBeCloseTo(result.x, 12);
       expect(projected.y).toBeCloseTo(result.y, 12);
       const into = closestPointInto({ x: 0, y: 0 }, ellipse, center);

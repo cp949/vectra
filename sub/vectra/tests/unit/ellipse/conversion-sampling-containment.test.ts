@@ -5,6 +5,7 @@
  * empty input, tuple input, aliasing, non-finite (NaN/±Infinity) pass-through.
  */
 import { describe, expect, it } from 'vitest';
+import { createEllipse } from '../../../src/ellipse/create-ellipse';
 import { containsRect } from '../../../src/ellipse/contains-rect';
 import { fromCircle } from '../../../src/ellipse/from-circle';
 import { fromCircleInto } from '../../../src/ellipse/from-circle-into';
@@ -12,12 +13,7 @@ import { points } from '../../../src/ellipse/points';
 import { pointsInto } from '../../../src/ellipse/points-into';
 import { toCircle } from '../../../src/ellipse/to-circle';
 import { toCircleInto } from '../../../src/ellipse/to-circle-into';
-import type { CircleWritable, EllipseWritable, XYTupleWritable } from '../../../src/types';
-
-/** 전환 전 타원 시험용 객체를 만든다. */
-function makeEllipse(cx = 0, cy = 0, rx = 0, ry = 0): EllipseWritable {
-  return { center: { x: cx, y: cy }, radiusX: rx, radiusY: ry };
-}
+import type { CircleWritable, EllipseWritable } from '../../../src/types';
 
 /** 전환 전 원 시험용 객체를 만든다. */
 function makeCircle(cx = 0, cy = 0, r = 0): CircleWritable {
@@ -26,75 +22,48 @@ function makeCircle(cx = 0, cy = 0, r = 0): CircleWritable {
 
 describe('fromCircleInto / fromCircle', () => {
   it('object circle을 ellipse로 기록하고 out을 반환한다', () => {
-    const out = makeEllipse();
-    const result = fromCircleInto(out, { center: { x: 3, y: 4 }, radius: 5 });
+    const out = createEllipse();
+    const result = fromCircleInto(out, { cx: 3, cy: 4, r: 5 });
     expect(result).toBe(out);
-    expect(out.center).toEqual({ x: 3, y: 4 });
-    expect(out.radiusX).toBe(5);
-    expect(out.radiusY).toBe(5);
+    expect(out.cx).toBe(3);
+    expect(out.cy).toBe(4);
+    expect(out.rx).toBe(5);
+    expect(out.ry).toBe(5);
   });
 
-  it('tuple circle을 ellipse로 기록한다', () => {
-    const out = makeEllipse();
-    fromCircleInto(out, [[1, 2], 7] as const);
-    expect(out.center).toEqual({ x: 1, y: 2 });
-    expect(out.radiusX).toBe(7);
-    expect(out.radiusY).toBe(7);
-  });
-
-  it('mutable tuple center storage에 기록한다', () => {
-    const center: XYTupleWritable = [0, 0];
-    const out: EllipseWritable<XYTupleWritable> = { center, radiusX: 0, radiusY: 0 };
-    fromCircleInto(out, { center: { x: 9, y: 8 }, radius: 2 });
-    expect(out.center[0]).toBe(9);
-    expect(out.center[1]).toBe(8);
-    expect(out.radiusX).toBe(2);
-    expect(out.radiusY).toBe(2);
-  });
-
-  it('out.center가 circle.center와 같은 object여도 안전하다', () => {
-    const shared = { x: 5, y: 6 };
-    const out: EllipseWritable = { center: shared, radiusX: 0, radiusY: 0 };
-    fromCircleInto(out, { center: shared, radius: 3 });
-    expect(out.center).toBe(shared);
-    expect(out.center.x).toBe(5);
-    expect(out.center.y).toBe(6);
-    expect(out.radiusX).toBe(3);
-    expect(out.radiusY).toBe(3);
+  it('원과 타원이 같은 객체를 사용해도 중심과 반지름을 보존한다', () => {
+    const shared = { cx: 5, cy: 6, r: 3, rx: 0, ry: 0 };
+    expect(fromCircleInto(shared, shared)).toBe(shared);
+    expect(shared).toEqual({ cx: 5, cy: 6, r: 3, rx: 3, ry: 3 });
   });
 
   it('radius 0/음수/NaN/Infinity는 보정 없이 그대로 기록한다', () => {
-    const zero = fromCircleInto(makeEllipse(), { center: { x: 0, y: 0 }, radius: 0 });
-    expect(zero.radiusX).toBe(0);
-    expect(zero.radiusY).toBe(0);
+    const zero = fromCircleInto(createEllipse(), { cx: 0, cy: 0, r: 0 });
+    expect(zero.rx).toBe(0);
+    expect(zero.ry).toBe(0);
 
-    const neg = fromCircleInto(makeEllipse(), { center: { x: 0, y: 0 }, radius: -2 });
-    expect(neg.radiusX).toBe(-2);
-    expect(neg.radiusY).toBe(-2);
+    const neg = fromCircleInto(createEllipse(), { cx: 0, cy: 0, r: -2 });
+    expect(neg.rx).toBe(-2);
+    expect(neg.ry).toBe(-2);
 
-    const nan = fromCircleInto(makeEllipse(), { center: { x: 0, y: 0 }, radius: Number.NaN });
-    expect(nan.radiusX).toBeNaN();
-    expect(nan.radiusY).toBeNaN();
+    const nan = fromCircleInto(createEllipse(), { cx: 0, cy: 0, r: Number.NaN });
+    expect(nan.rx).toBeNaN();
+    expect(nan.ry).toBeNaN();
 
-    const posInf = fromCircleInto(makeEllipse(), { center: { x: 0, y: 0 }, radius: Number.POSITIVE_INFINITY });
-    expect(posInf.radiusX).toBe(Number.POSITIVE_INFINITY);
-    expect(posInf.radiusY).toBe(Number.POSITIVE_INFINITY);
+    const posInf = fromCircleInto(createEllipse(), { cx: 0, cy: 0, r: Number.POSITIVE_INFINITY });
+    expect(posInf.rx).toBe(Number.POSITIVE_INFINITY);
+    expect(posInf.ry).toBe(Number.POSITIVE_INFINITY);
 
-    const negInf = fromCircleInto(makeEllipse(), { center: { x: 0, y: 0 }, radius: Number.NEGATIVE_INFINITY });
-    expect(negInf.radiusX).toBe(Number.NEGATIVE_INFINITY);
-    expect(negInf.radiusY).toBe(Number.NEGATIVE_INFINITY);
+    const negInf = fromCircleInto(createEllipse(), { cx: 0, cy: 0, r: Number.NEGATIVE_INFINITY });
+    expect(negInf.rx).toBe(Number.NEGATIVE_INFINITY);
+    expect(negInf.ry).toBe(Number.NEGATIVE_INFINITY);
   });
 
   it('fromCircle companion은 새 plain object를 반환한다', () => {
-    const src = makeCircle(3, 4, 5);
+    const src = { cx: 3, cy: 4, r: 5 };
     const e = fromCircle(src);
-    expect(e).toEqual({ center: { x: 3, y: 4 }, radiusX: 5, radiusY: 5 });
-    expect(e.center).not.toBe(src.center);
-  });
-
-  it('fromCircle은 tuple circle도 처리한다', () => {
-    const e = fromCircle([[1, 2], 3] as const);
-    expect(e).toEqual({ center: { x: 1, y: 2 }, radiusX: 3, radiusY: 3 });
+    expect(e).toEqual({ cx: 3, cy: 4, rx: 5, ry: 5 });
+    expect(e).not.toBe(src);
   });
 });
 
@@ -223,7 +192,7 @@ describe('containsRect', () => {
 describe('pointsInto / points', () => {
   it('기본값으로 64개 point를 생성한다', () => {
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, 3, 2));
+    pointsInto(out, { cx: 0, cy: 0, rx: 3, ry: 2 });
     expect(out).toHaveLength(64);
     // 첫 sample: angle = 0 → (cx + rx, cy)
     expect(out[0].x).toBeCloseTo(3, 10);
@@ -232,7 +201,7 @@ describe('pointsInto / points', () => {
 
   it('segments option을 따른다', () => {
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: 4 });
+    pointsInto(out, { cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 4, startAngle: 0, clockwise: true });
     expect(out).toHaveLength(4);
     expect(out[0].x).toBeCloseTo(1, 10);
     expect(out[0].y).toBeCloseTo(0, 10);
@@ -246,14 +215,14 @@ describe('pointsInto / points', () => {
 
   it('startAngle을 따른다', () => {
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: 4, startAngle: Math.PI / 2 });
+    pointsInto(out, { cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 4, startAngle: Math.PI / 2, clockwise: true });
     expect(out[0].x).toBeCloseTo(0, 10);
     expect(out[0].y).toBeCloseTo(1, 10);
   });
 
   it('clockwise=false이면 반대 방향으로 진행한다', () => {
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: 4, clockwise: false });
+    pointsInto(out, { cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 4, clockwise: false, startAngle: 0 });
     // angle 0, -π/2, -π, -3π/2
     expect(out[0].y).toBeCloseTo(0, 10);
     expect(out[1].y).toBeCloseTo(-1, 10);
@@ -263,7 +232,7 @@ describe('pointsInto / points', () => {
 
   it('empty ellipse는 각 sample을 center 좌표로 기록한다', () => {
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(7, 8, 0, 5), { segments: 3 });
+    pointsInto(out, { cx: 7, cy: 8, rx: 0, ry: 5 }, { segments: 3, startAngle: 0, clockwise: true });
     expect(out).toHaveLength(3);
     for (const p of out) {
       expect(p.x).toBe(7);
@@ -276,29 +245,28 @@ describe('pointsInto / points', () => {
     const cases: number[] = [0, -1, 0.5, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
     for (const seg of cases) {
       const out = preserved.slice();
-      expect(() => pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: seg })).toThrow(RangeError);
+      expect(() =>
+        pointsInto(out, { cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: seg, startAngle: 0, clockwise: true })
+      ).toThrow(RangeError);
       expect(out).toEqual(preserved);
     }
-  });
-
-  it('segments: undefined는 default 64를 적용한다 (nullish coalescing 정책)', () => {
-    // `?? 64` 가 `|| 64` 로 회귀하면 segments=0이 64로 silently 바뀐다. 회귀 가드.
-    const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: undefined });
-    expect(out).toHaveLength(64);
   });
 
   it('NaN/+Infinity radius는 산술 결과를 그대로 기록한다', () => {
     // NaN은 `rx <= 0` false이므로 산술 분기로 흐른다
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, Number.NaN, 1), { segments: 4 });
+    pointsInto(out, { cx: 0, cy: 0, rx: Number.NaN, ry: 1 }, { segments: 4, startAngle: 0, clockwise: true });
     expect(out).toHaveLength(4);
     expect(out[0].x).toBeNaN();
     expect(out[0].y).toBe(0);
 
     // +Infinity도 `rx <= 0` false이므로 산술 분기로 흐른다
     const out2: { x: number; y: number }[] = [];
-    pointsInto(out2, makeEllipse(0, 0, Number.POSITIVE_INFINITY, 1), { segments: 4 });
+    pointsInto(
+      out2,
+      { cx: 0, cy: 0, rx: Number.POSITIVE_INFINITY, ry: 1 },
+      { segments: 4, startAngle: 0, clockwise: true }
+    );
     expect(out2[0].x).toBe(Number.POSITIVE_INFINITY);
     expect(out2[0].y).toBe(0);
   });
@@ -306,7 +274,11 @@ describe('pointsInto / points', () => {
   it('-Infinity radius는 `rx <= 0` empty 분기로 가서 center를 기록한다', () => {
     // pointAtAngleInto와 동일한 정책: rx <= 0 검사가 산술보다 먼저다
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(7, 8, Number.NEGATIVE_INFINITY, 1), { segments: 3 });
+    pointsInto(
+      out,
+      { cx: 7, cy: 8, rx: Number.NEGATIVE_INFINITY, ry: 1 },
+      { segments: 3, startAngle: 0, clockwise: true }
+    );
     expect(out).toHaveLength(3);
     for (const p of out) {
       expect(p.x).toBe(7);
@@ -316,7 +288,7 @@ describe('pointsInto / points', () => {
 
   it('NaN startAngle은 모든 sample을 NaN으로 기록한다', () => {
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: 4, startAngle: Number.NaN });
+    pointsInto(out, { cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 4, startAngle: Number.NaN, clockwise: true });
     for (const p of out) {
       expect(p.x).toBeNaN();
       expect(p.y).toBeNaN();
@@ -325,38 +297,39 @@ describe('pointsInto / points', () => {
 
   it('Infinity startAngle은 NaN sample을 만든다 (Math.cos/sin(Infinity) = NaN)', () => {
     const out: { x: number; y: number }[] = [];
-    pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: 2, startAngle: Number.POSITIVE_INFINITY });
+    pointsInto(
+      out,
+      { cx: 0, cy: 0, rx: 1, ry: 1 },
+      { segments: 2, startAngle: Number.POSITIVE_INFINITY, clockwise: true }
+    );
     for (const p of out) {
       expect(p.x).toBeNaN();
       expect(p.y).toBeNaN();
     }
   });
 
-  it('tuple ellipse input을 처리한다', () => {
-    const tup: readonly [readonly [number, number], number, number] = [[1, 2], 3, 4];
-    const out: { x: number; y: number }[] = [];
-    pointsInto(out, tup, { segments: 4 });
-    expect(out).toHaveLength(4);
-    expect(out[0].x).toBeCloseTo(4, 10);
-    expect(out[0].y).toBeCloseTo(2, 10);
-  });
-
   it('재사용 시 out.length = 0으로 비운다', () => {
     const out: { x: number; y: number }[] = [{ x: 999, y: 999 }];
-    pointsInto(out, makeEllipse(0, 0, 1, 1), { segments: 3 });
+    pointsInto(out, { cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 3, startAngle: 0, clockwise: true });
     expect(out).toHaveLength(3);
     expect(out[0].x).toBeCloseTo(1, 10);
   });
 
   it('points companion은 새 배열을 반환한다', () => {
-    const arr = points(makeEllipse(0, 0, 1, 1), { segments: 4 });
+    const arr = points({ cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 4, startAngle: 0, clockwise: true });
     expect(arr).toHaveLength(4);
     expect(arr[0].x).toBeCloseTo(1, 10);
   });
 
   it('points companion도 invalid segments에서 RangeError를 던진다', () => {
-    expect(() => points(makeEllipse(0, 0, 1, 1), { segments: 0 })).toThrow(RangeError);
-    expect(() => points(makeEllipse(0, 0, 1, 1), { segments: 0.5 })).toThrow(RangeError);
-    expect(() => points(makeEllipse(0, 0, 1, 1), { segments: Number.NaN })).toThrow(RangeError);
+    expect(() => points({ cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 0, startAngle: 0, clockwise: true })).toThrow(
+      RangeError
+    );
+    expect(() => points({ cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: 0.5, startAngle: 0, clockwise: true })).toThrow(
+      RangeError
+    );
+    expect(() =>
+      points({ cx: 0, cy: 0, rx: 1, ry: 1 }, { segments: Number.NaN, startAngle: 0, clockwise: true })
+    ).toThrow(RangeError);
   });
 });

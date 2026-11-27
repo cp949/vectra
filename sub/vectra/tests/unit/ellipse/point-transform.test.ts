@@ -1,3 +1,4 @@
+/** 타원 표면의 점 계산과 이동·배율 변환 계약을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { pointAtAngle } from '../../../src/ellipse/point-at-angle';
 import { pointAtAngleInto } from '../../../src/ellipse/point-at-angle-into';
@@ -15,7 +16,7 @@ import { makeEllipse } from './_helpers';
 describe('ellipse point - pointAtAngleInto', () => {
   test('angle=0에서 x축 양의 끝점을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    const result = pointAtAngleInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, 0);
+    const result = pointAtAngleInto(out, { cx: 1, cy: 2, rx: 3, ry: 4 }, 0);
     expect(result).toBe(out);
     expect(out.x).toBeCloseTo(4, 10);
     expect(out.y).toBeCloseTo(2, 10);
@@ -23,51 +24,37 @@ describe('ellipse point - pointAtAngleInto', () => {
 
   test('angle=π/2에서 y축 양의 끝점을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    pointAtAngleInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, Math.PI / 2);
+    pointAtAngleInto(out, { cx: 1, cy: 2, rx: 3, ry: 4 }, Math.PI / 2);
     expect(out.x).toBeCloseTo(1, 10);
     expect(out.y).toBeCloseTo(6, 10);
   });
 
   test('angle=π에서 x축 음의 끝점을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    pointAtAngleInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, Math.PI);
+    pointAtAngleInto(out, { cx: 1, cy: 2, rx: 3, ry: 4 }, Math.PI);
     expect(out.x).toBeCloseTo(-2, 10);
     expect(out.y).toBeCloseTo(2, 10);
   });
 
   test('angle=3π/2에서 y축 음의 끝점을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    pointAtAngleInto(out, { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, (3 * Math.PI) / 2);
+    pointAtAngleInto(out, { cx: 1, cy: 2, rx: 3, ry: 4 }, (3 * Math.PI) / 2);
     expect(out.x).toBeCloseTo(1, 10);
     expect(out.y).toBeCloseTo(-2, 10);
   });
 
-  test('empty ellipse (radiusX=0)이면 center를 기록한다', () => {
+  test('empty ellipse (rx=0)이면 center를 기록한다', () => {
     const out = { x: 9, y: 9 };
-    pointAtAngleInto(out, { center: { x: 5, y: 3 }, radiusX: 0, radiusY: 4 }, 0);
+    pointAtAngleInto(out, { cx: 5, cy: 3, rx: 0, ry: 4 }, 0);
     expect(out.x).toBe(5);
     expect(out.y).toBe(3);
   });
 
-  test('empty ellipse (radiusY<=0)이면 center를 기록한다', () => {
+  test('empty ellipse (ry<=0)이면 center를 기록한다', () => {
     const out = { x: 9, y: 9 };
-    pointAtAngleInto(out, { center: { x: 5, y: 3 }, radiusX: 3, radiusY: -1 }, 0);
+    pointAtAngleInto(out, { cx: 5, cy: 3, rx: 3, ry: -1 }, 0);
     expect(out.x).toBe(5);
     expect(out.y).toBe(3);
-  });
-
-  test('mutable tuple output에도 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    pointAtAngleInto(out, { center: { x: 0, y: 0 }, radiusX: 5, radiusY: 2 }, 0);
-    expect(out[0]).toBeCloseTo(5, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
-  });
-
-  test('tuple EllipseLike input을 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    pointAtAngleInto(out, [[0, 0], 5, 2] as const, 0);
-    expect(out.x).toBeCloseTo(5, 10);
-    expect(out.y).toBeCloseTo(0, 10);
   });
 });
 
@@ -75,25 +62,25 @@ describe('ellipse point - pointAtAngleInto', () => {
 
 describe('ellipse point - pointAtAngle', () => {
   test('angle=0에서 x축 양의 끝점 plain object를 반환한다', () => {
-    const result = pointAtAngle({ center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, 0);
+    const result = pointAtAngle({ cx: 1, cy: 2, rx: 3, ry: 4 }, 0);
     expect(result.x).toBeCloseTo(4, 10);
     expect(result.y).toBeCloseTo(2, 10);
   });
 
   test('angle=π/2에서 y축 양의 끝점 plain object를 반환한다', () => {
-    const result = pointAtAngle({ center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 }, Math.PI / 2);
+    const result = pointAtAngle({ cx: 1, cy: 2, rx: 3, ry: 4 }, Math.PI / 2);
     expect(result.x).toBeCloseTo(1, 10);
     expect(result.y).toBeCloseTo(6, 10);
   });
 
   test('empty ellipse이면 center plain object를 반환한다', () => {
-    const result = pointAtAngle({ center: { x: 5, y: 3 }, radiusX: 0, radiusY: 4 }, 0);
+    const result = pointAtAngle({ cx: 5, cy: 3, rx: 0, ry: 4 }, 0);
     expect(result.x).toBe(5);
     expect(result.y).toBe(3);
   });
 
   test('pointAtAngleInto와 같은 좌표를 반환한다', () => {
-    const e = { center: { x: 2, y: -1 }, radiusX: 4, radiusY: 3 };
+    const e = { cx: 2, cy: -1, rx: 4, ry: 3 };
     const out = { x: 0, y: 0 };
     pointAtAngleInto(out, e, 1.2);
     const result = pointAtAngle(e, 1.2);
@@ -106,7 +93,7 @@ describe('ellipse point - pointAtAngle', () => {
 
 describe('ellipse point - pointAtTurnInto', () => {
   test('turn=0에서 angle=0과 같은 좌표를 기록한다', () => {
-    const e = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
+    const e = { cx: 1, cy: 2, rx: 3, ry: 4 };
     const out1 = { x: 0, y: 0 };
     const out2 = { x: 0, y: 0 };
     pointAtAngleInto(out1, e, 0);
@@ -117,7 +104,7 @@ describe('ellipse point - pointAtTurnInto', () => {
   });
 
   test('turn=0.25에서 angle=π/2와 같은 좌표를 기록한다', () => {
-    const e = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
+    const e = { cx: 1, cy: 2, rx: 3, ry: 4 };
     const out1 = { x: 0, y: 0 };
     const out2 = { x: 0, y: 0 };
     pointAtAngleInto(out1, e, Math.PI / 2);
@@ -127,7 +114,7 @@ describe('ellipse point - pointAtTurnInto', () => {
   });
 
   test('turn=0.5에서 angle=π와 같은 좌표를 기록한다', () => {
-    const e = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
+    const e = { cx: 1, cy: 2, rx: 3, ry: 4 };
     const out1 = { x: 0, y: 0 };
     const out2 = { x: 0, y: 0 };
     pointAtAngleInto(out1, e, Math.PI);
@@ -137,7 +124,7 @@ describe('ellipse point - pointAtTurnInto', () => {
   });
 
   test('turn=0.75에서 angle=3π/2와 같은 좌표를 기록한다', () => {
-    const e = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
+    const e = { cx: 1, cy: 2, rx: 3, ry: 4 };
     const out1 = { x: 0, y: 0 };
     const out2 = { x: 0, y: 0 };
     pointAtAngleInto(out1, e, (3 * Math.PI) / 2);
@@ -148,13 +135,13 @@ describe('ellipse point - pointAtTurnInto', () => {
 
   test('empty ellipse이면 center를 기록한다', () => {
     const out = { x: 9, y: 9 };
-    pointAtTurnInto(out, { center: { x: 5, y: 3 }, radiusX: 0, radiusY: 4 }, 0.5);
+    pointAtTurnInto(out, { cx: 5, cy: 3, rx: 0, ry: 4 }, 0.5);
     expect(out.x).toBe(5);
     expect(out.y).toBe(3);
   });
 
   test('turn wrap 없음: turn=1.0은 turn=0과 같다', () => {
-    const e = { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 2 };
+    const e = { cx: 0, cy: 0, rx: 3, ry: 2 };
     const out1 = { x: 0, y: 0 };
     const out2 = { x: 0, y: 0 };
     pointAtTurnInto(out1, e, 0);
@@ -169,7 +156,7 @@ describe('ellipse point - pointAtTurnInto', () => {
 
 describe('ellipse point - pointAtTurn', () => {
   test('turn=0에서 plain object를 반환한다', () => {
-    const e = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 4 };
+    const e = { cx: 1, cy: 2, rx: 3, ry: 4 };
     const result = pointAtTurn(e, 0);
     const ref = { x: 0, y: 0 };
     pointAtTurnInto(ref, e, 0);
@@ -178,7 +165,7 @@ describe('ellipse point - pointAtTurn', () => {
   });
 
   test('empty ellipse이면 center plain object를 반환한다', () => {
-    const result = pointAtTurn({ center: { x: 5, y: 3 }, radiusX: -1, radiusY: 2 }, 0.5);
+    const result = pointAtTurn({ cx: 5, cy: 3, rx: -1, ry: 2 }, 0.5);
     expect(result.x).toBe(5);
     expect(result.y).toBe(3);
   });
