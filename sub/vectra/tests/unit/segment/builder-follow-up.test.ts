@@ -25,7 +25,7 @@ function makeSeg(ax = 0, ay = 0, bx = 0, by = 0): SegmentWritable {
 // ─── fromPointVectorInto ─────────────────────────────────────────────────────
 
 describe('segment builder - fromPointVectorInto', () => {
-  test('object input에서 a = origin, b = origin + vec를 기록한다', () => {
+  test('시작점에 origin, 끝점에 origin + vec를 기록한다', () => {
     const out = makeSeg();
     fromPointVectorInto(out, { x: 1, y: 2 }, { x: 3, y: 4 });
 
@@ -54,7 +54,7 @@ describe('segment builder - fromPointVectorInto', () => {
     expect(Number.isNaN(out.x2)).toBe(true);
   });
 
-  test('vec에 Infinity가 있으면 b에 Infinity가 흐른다', () => {
+  test('vec에 Infinity가 있으면 끝점에 Infinity가 흐른다', () => {
     const out = makeSeg();
     fromPointVectorInto(out, { x: 0, y: 0 }, { x: Infinity, y: 0 });
 
@@ -258,7 +258,7 @@ describe('segment companion - fromCircle', () => {
 
 describe('segment builder - fromNormalInto', () => {
   // 일반 horizontal segment
-  test('horizontal segment t=0.5, length=3이면 a=(2,0) b=(2,3)을 기록한다', () => {
+  test('horizontal segment t=0.5, length=3이면 (2,0)에서 (2,3)까지 기록한다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     fromNormalInto(out, seg, 0.5, 3);
@@ -266,7 +266,7 @@ describe('segment builder - fromNormalInto', () => {
   });
 
   // t < 0, t > 1 extrapolation
-  test('t=2이면 supporting line 위 extrapolation a를 기록한다', () => {
+  test('t=2이면 supporting line 위 extrapolation 시작점을 기록한다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     fromNormalInto(out, seg, 2, 1);
@@ -274,7 +274,7 @@ describe('segment builder - fromNormalInto', () => {
   });
 
   // length = 0
-  test('length=0이면 a = b = pointAtT를 기록한다', () => {
+  test('length=0이면 두 끝점에 pointAtT를 기록한다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     fromNormalInto(out, seg, 0.5, 0);
@@ -290,7 +290,7 @@ describe('segment builder - fromNormalInto', () => {
   });
 
   // zero-length segment
-  test('zero-length 기준 segment에서 finite t이면 a = b = segment.a를 기록한다', () => {
+  test('zero-length 기준 segment에서 finite t이면 두 끝점에 기준 시작점을 기록한다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     const seg = { x1: 3, y1: 5, x2: 3, y2: 5 };
     fromNormalInto(out, seg, 0.5, 10);
@@ -313,7 +313,7 @@ describe('segment builder - fromNormalInto', () => {
   });
 
   // non-finite: length = Infinity
-  test('length=Infinity이면 b.y에 Infinity, b.x에 NaN이 흐른다', () => {
+  test('length=Infinity이면 y2에 Infinity, x2에 NaN이 흐른다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     fromNormalInto(out, { x1: 0, y1: 0, x2: 4, y2: 0 }, 0.5, Infinity);
     expect([out.x1, out.y1]).toEqual([2, 0]);
@@ -324,7 +324,7 @@ describe('segment builder - fromNormalInto', () => {
   // diagonal segment
   test('diagonal segment에서 left unit normal이 정규화되어 length만큼 적용된다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    // (0,0) -> (3,4), length=5, t=0 → a=(0,0), left normal = (-4/5, 3/5), b=(0 + (-4/5)*5, 0 + (3/5)*5) = (-4, 3)
+    // (0,0) -> (3,4), length=5, t=0 → 시작점 (0,0), left normal = (-4/5, 3/5), 끝점 (0 + (-4/5)*5, 0 + (3/5)*5) = (-4, 3)
     fromNormalInto(out, { x1: 0, y1: 0, x2: 3, y2: 4 }, 0, 5);
     expect(out.x1).toBeCloseTo(0, 10);
     expect(out.y1).toBeCloseTo(0, 10);
@@ -333,14 +333,14 @@ describe('segment builder - fromNormalInto', () => {
   });
 
   // t = Infinity
-  test('t=Infinity이면 a.x에 Infinity가 흐른다', () => {
+  test('t=Infinity이면 x1에 Infinity가 흐른다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     fromNormalInto(out, { x1: 0, y1: 0, x2: 4, y2: 0 }, Infinity, 1);
     expect(out.x1).toBe(Infinity);
   });
 
   // non-finite: length = -Infinity
-  test('length=-Infinity이면 b.y에 -Infinity, b.x에 NaN이 흐른다', () => {
+  test('length=-Infinity이면 y2에 -Infinity, x2에 NaN이 흐른다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     fromNormalInto(out, { x1: 0, y1: 0, x2: 4, y2: 0 }, 0.5, -Infinity);
     expect([out.x1, out.y1]).toEqual([2, 0]);
@@ -349,13 +349,13 @@ describe('segment builder - fromNormalInto', () => {
   });
 
   // input endpoint NaN
-  test('segment.a에 NaN이 있으면 결과에 NaN이 흐른다', () => {
+  test('기준 segment 시작점에 NaN이 있으면 결과에 NaN이 흐른다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     fromNormalInto(out, { x1: NaN, y1: 0, x2: 4, y2: 0 }, 0.5, 1);
     expect(Number.isNaN(out.x1)).toBe(true);
   });
 
-  test('segment.b에 NaN이 있으면 결과에 NaN이 흐른다', () => {
+  test('기준 segment 끝점에 NaN이 있으면 결과에 NaN이 흐른다', () => {
     const out: SegmentWritable = { x1: 0, y1: 0, x2: 0, y2: 0 };
     fromNormalInto(out, { x1: 0, y1: 0, x2: NaN, y2: 0 }, 0.5, 1);
     expect(Number.isNaN(out.x1)).toBe(true);

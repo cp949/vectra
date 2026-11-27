@@ -1,25 +1,26 @@
 /** 선분 표시의 방향, 출력 배열 재사용과 옵션 검증을 확인한다. */
-import { describe, expect, test } from 'vitest';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 import { marker } from '../../../src/segment/marker';
 import { markerInto } from '../../../src/segment/marker-into';
+import type { SegmentMarkerOptions } from '../../../src/types';
 import type { Segment, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 const SEG: Segment = { x1: 0, y1: 0, x2: 10, y2: 0 };
 
 describe('segment markerInto - arrow', () => {
-  test('기본 options는 end arrow chevron 3점을 반환한다 (tip은 b)', () => {
+  test('기본 options는 end arrow chevron 3점을 반환한다 (tip은 끝점)', () => {
     const out: PointWritable[] = [];
     const result = markerInto(out, SEG);
     expect(result).toBe(out);
     expect(out).toHaveLength(3);
-    // tip은 index 1, endpoint b
+    // tip은 index 1의 끝점
     expect(out[1]).toEqual({ x: 10, y: 0 });
     // 기본 length 10 → base (0,0), 기본 width 8 → barb ±4
     expect(out[0]).toEqual({ x: 0, y: 4 });
     expect(out[2]).toEqual({ x: 0, y: -4 });
   });
 
-  test('at: "start"는 시작점 기준으로 방향을 반대로 적용한다 (tip은 a)', () => {
+  test('at: "start"는 시작점 기준으로 방향을 반대로 적용한다 (tip은 시작점)', () => {
     const out: PointWritable[] = [];
     markerInto(out, SEG, { type: 'arrow', at: 'start', length: 2, width: 2 });
     expect(out).toHaveLength(3);
@@ -33,9 +34,9 @@ describe('segment markerInto - arrow', () => {
     const out: PointWritable[] = [];
     markerInto(out, SEG, { type: 'arrow', at: 'both', length: 2, width: 2 });
     expect(out).toHaveLength(6);
-    // start marker tip은 index 1 = a
+    // start marker tip은 index 1의 시작점
     expect(out[1]).toEqual({ x: 0, y: 0 });
-    // end marker tip은 index 4 = b
+    // end marker tip은 index 4의 끝점
     expect(out[4]).toEqual({ x: 10, y: 0 });
   });
 });
@@ -43,24 +44,24 @@ describe('segment markerInto - arrow', () => {
 describe('segment markerInto - tick', () => {
   test('type: "tick"은 endpoint 중심 perpendicular 2점을 반환한다', () => {
     const out: PointWritable[] = [];
-    markerInto(out, SEG, { width: 8, type: 'tick', at: 'end', length: 4 });
+    markerInto(out, SEG, { type: 'tick', at: 'end', length: 4, width: 8 });
     expect(out).toHaveLength(2);
     expect(out[0]).toEqual({ x: 10, y: 2 });
     expect(out[1]).toEqual({ x: 10, y: -2 });
   });
 
-  test('tick at: "start"는 a 중심 perpendicular 2점을 반환한다', () => {
+  test('tick at: "start"는 시작점 중심 perpendicular 2점을 반환한다', () => {
     const out: PointWritable[] = [];
-    markerInto(out, SEG, { width: 8, type: 'tick', at: 'start', length: 4 });
+    markerInto(out, SEG, { type: 'tick', at: 'start', length: 4, width: 8 });
     expect(out).toHaveLength(2);
     // tick은 endpoint 중심 대칭이라 normal 부호와 무관하게 a±(0,2)
     expect(out[0]).toEqual({ x: 0, y: -2 });
     expect(out[1]).toEqual({ x: 0, y: 2 });
   });
 
-  test('tick at: "both"는 a/b 각각 perpendicular 2점씩 4점을 반환한다', () => {
+  test('tick at: "both"는 두 끝점에 perpendicular 2점씩 4점을 반환한다', () => {
     const out: PointWritable[] = [];
-    markerInto(out, SEG, { width: 8, type: 'tick', at: 'both', length: 4 });
+    markerInto(out, SEG, { type: 'tick', at: 'both', length: 4, width: 8 });
     expect(out).toHaveLength(4);
     expect(out[0]).toEqual({ x: 0, y: -2 });
     expect(out[1]).toEqual({ x: 0, y: 2 });
@@ -77,7 +78,7 @@ describe('segment markerInto - output 계약', () => {
       { x: 77, y: 77 },
       { x: 66, y: 66 },
     ];
-    const result = markerInto(out, SEG, { width: 8, type: 'tick', at: 'end', length: 4 });
+    const result = markerInto(out, SEG, { type: 'tick', at: 'end', length: 4, width: 8 });
     expect(result).toBe(out);
     expect(out).toHaveLength(2);
     expect(out[0]).toEqual({ x: 10, y: 2 });
@@ -109,7 +110,7 @@ describe('segment markerInto - output 계약', () => {
 describe('segment markerInto - invalid option', () => {
   test('invalid type는 RangeError를 던지고 output을 수정하지 않는다', () => {
     const out: PointWritable[] = [{ x: 1, y: 1 }];
-    expect(() => markerInto(out, SEG, { at: 'end', length: 10, width: 8, type: 'dot' as unknown as 'arrow' })).toThrow(
+    expect(() => markerInto(out, SEG, { type: 'dot' as unknown as 'arrow', at: 'end', length: 10, width: 8 })).toThrow(
       RangeError
     );
     expect(out).toEqual([{ x: 1, y: 1 }]);
@@ -118,18 +119,18 @@ describe('segment markerInto - invalid option', () => {
   test('invalid at은 RangeError를 던지고 output을 수정하지 않는다', () => {
     const out: PointWritable[] = [{ x: 1, y: 1 }];
     expect(() =>
-      markerInto(out, SEG, { type: 'arrow', length: 10, width: 8, at: 'middle' as unknown as 'end' })
+      markerInto(out, SEG, { type: 'arrow', at: 'middle' as unknown as 'end', length: 10, width: 8 })
     ).toThrow(RangeError);
     expect(out).toEqual([{ x: 1, y: 1 }]);
   });
 
   test('invalid length는 RangeError를 던진다', () => {
-    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', width: 8, length: 0 })).toThrow(RangeError);
-    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', width: 8, length: -1 })).toThrow(RangeError);
-    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', width: 8, length: Number.POSITIVE_INFINITY })).toThrow(
+    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', length: 0, width: 8 })).toThrow(RangeError);
+    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', length: -1, width: 8 })).toThrow(RangeError);
+    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', length: Number.POSITIVE_INFINITY, width: 8 })).toThrow(
       RangeError
     );
-    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', width: 8, length: Number.NaN })).toThrow(RangeError);
+    expect(() => markerInto([], SEG, { type: 'arrow', at: 'end', length: Number.NaN, width: 8 })).toThrow(RangeError);
   });
 
   test('invalid width는 RangeError를 던진다', () => {
@@ -141,7 +142,7 @@ describe('segment markerInto - invalid option', () => {
 
 describe('segment marker companion', () => {
   test('새 array를 반환한다', () => {
-    const result = marker(SEG, { width: 8, type: 'tick', at: 'end', length: 4 });
+    const result = marker(SEG, { type: 'tick', at: 'end', length: 4, width: 8 });
     expect(result).toEqual([
       { x: 10, y: 2 },
       { x: 10, y: -2 },
@@ -150,5 +151,16 @@ describe('segment marker companion', () => {
 
   test('zero-length segment는 빈 array를 반환한다', () => {
     expect(marker({ x1: 5, y1: 5, x2: 5, y2: 5 })).toEqual([]);
+  });
+});
+
+describe('segment marker 옵션 타입', () => {
+  test('옵션 객체를 넘기면 네 필드를 모두 지정해야 한다', () => {
+    expectTypeOf<SegmentMarkerOptions>().toEqualTypeOf<{
+      type: 'arrow' | 'tick';
+      at: 'end' | 'start' | 'both';
+      length: number;
+      width: number;
+    }>();
   });
 });

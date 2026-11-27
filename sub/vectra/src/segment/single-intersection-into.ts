@@ -3,7 +3,8 @@ import { readSegmentA, readSegmentB, segmentContainsPoint } from '../internal/se
 import { readX, readY, writeXY } from '../internal/xy';
 import type { SegmentLike, XYWritable } from '../types';
 
-/** v2-migration: 중첩 끝점을 받는 동안 기본 epsilon으로 퇴화 선분을 판별한다. */
+// v2-migration: 입력을 평평한 선분으로 바꾸면 isZeroLength 호출로 되돌린다.
+/** 중첩 끝점 선분이 기본 epsilon 이하 길이인지 판별한다. */
 function isLegacyZeroLength(line: SegmentLike): boolean {
   const dx = readX(readSegmentB(line)) - readX(readSegmentA(line));
   const dy = readY(readSegmentB(line)) - readY(readSegmentA(line));
@@ -24,7 +25,7 @@ function isLegacyZeroLength(line: SegmentLike): boolean {
  */
 export function singleIntersectionInto(out: XYWritable, a: SegmentLike, b: SegmentLike, epsilon?: number): boolean {
   const distEpsilon = epsilon ?? DEFAULT_EPSILON;
-  // zero-length 검출은 caller epsilon과 무관하게 isZeroLength 기본값(1e-9) 사용
+  // zero-length 검출은 caller epsilon과 무관하게 기본 epsilon(1e-9)을 쓴다
   const aIsZero = isLegacyZeroLength(a);
   const bIsZero = isLegacyZeroLength(b);
 

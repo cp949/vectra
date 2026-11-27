@@ -50,17 +50,21 @@ export interface SegmentSubdivideOptions {
   count?: number;
 }
 
-/** segment endpoint marker geometry 생성 옵션. */
+/**
+ * segment endpoint marker geometry 생성 옵션.
+ *
+ * 모든 필드는 필수다. 옵션 객체를 생략하면 `{ type: 'arrow', at: 'end', length: 10, width: 8 }`을 쓴다.
+ */
 export interface SegmentMarkerOptions {
-  /** marker 모양. `arrow`는 chevron 3점, `tick`은 perpendicular 2점. 기본값 `arrow`. */
+  /** marker 모양. `arrow`는 chevron 3점, `tick`은 perpendicular 2점. */
   type: 'arrow' | 'tick';
 
-  /** marker를 둘 endpoint. 기본값 `end`. `both`는 start/end marker point를 모두 생성한다. */
+  /** marker를 둘 endpoint. `both`는 start/end marker point를 모두 생성한다. */
   at: 'end' | 'start' | 'both';
 
-  /** arrow barb 깊이이자 tick perpendicular 전체 길이. finite positive만 허용. 기본값 `10`. */
+  /** arrow barb 깊이이자 tick perpendicular 전체 길이. finite positive만 허용. */
   length: number;
 
-  /** arrow barb 좌우 spread 전체 폭. finite positive만 허용. 기본값 `8`. */
+  /** arrow barb 좌우 spread 전체 폭. finite positive만 허용. */
   width: number;
 }
