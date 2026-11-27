@@ -1,6 +1,7 @@
 /** ADR 0010의 도형 입력과 출력 타입을 모은다. */
 
 import type { CenterArcLike } from './arc.internal';
+import type { HexOrientation } from './hex-grid.internal';
 
 export type { CenterArcWritable } from './arc.internal';
 
@@ -169,6 +170,22 @@ export interface HexOffsetWritable {
 }
 
 export type HexOffset = Readonly<HexOffsetWritable>;
+
+/** cell 크기는 축마다 positive finite여야 한다. */
+export interface GridSpec {
+  readonly originX: number;
+  readonly originY: number;
+  readonly cellWidth: number;
+  readonly cellHeight: number;
+}
+
+/** size는 positive finite여야 한다. */
+export interface HexLayout {
+  readonly originX: number;
+  readonly originY: number;
+  readonly size: number;
+  readonly orientation: HexOrientation;
+}
 
 export interface QuadraticCurveWritable {
   kind: 'quadratic';

@@ -47,6 +47,21 @@
 - 이유: 점과 필드가 겹치는 도형을 점 함수에 넘기면 점 함수가 여러 shape를 본다.
 - `Rect { x, y, width, height }`는 점과 필드가 겹친다. 점 함수에 넘기지 않는다.
 
+### 옵션과 결과 안의 점
+
+- 호출자가 넘기는 옵션 객체는 평평한 필드를 쓴다.
+  - `GridSpec`: `{ originX, originY, cellWidth, cellHeight }`.
+  - `HexLayout`: `{ originX, originY, size, orientation }`.
+  - 모든 필드는 필수다. 필드를 생략한 객체와 채운 객체는 shape가 다르다.
+  - `cellSize: number | XYInput` 같은 값 union은 없앤다.
+- SVG shape의 `points`는 점 목록 규칙을 따른다. `polygon`은 `Polygon`, `polyline`은 `Polyline`이다.
+- `kind`로 구분하는 union 입력은 유지한다. 예: `Curve`, `PathCommand`, SVG shape.
+  - 이유: 분기 뒤 각 가지는 shape 하나만 읽는다.
+- 결과 객체 안의 점은 `{ x, y }` 객체로 둔다.
+  - 이유: 라이브러리가 만들어서 shape가 늘 하나다.
+  - 점 타입은 `PointWritable`로 고정한다. 출력 점 타입을 고르는 제네릭(`P extends XYWritable`)은 없앤다.
+  - `Into` 출력 안의 점도 `PointWritable`이다. 호출자가 넘기는 점이므로 입력과 같은 경고를 따른다.
+
 ### 점 목록
 
 - Node.js v24.21.0에서 입력 생성을 제외하고 목록당 32·256·2048점을 비교했다.

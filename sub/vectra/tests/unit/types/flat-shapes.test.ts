@@ -7,6 +7,8 @@ import type {
   Circle,
   CircleWritable,
   Curve,
+  GridSpec,
+  HexLayout,
   Point,
   PointWritable,
   Polygon,
@@ -33,4 +35,15 @@ test('다각형과 폴리라인은 서로 다른 점 목록을 사용한다', ()
 test('삼차 곡선만 네 번째 제어점 좌표를 요구한다', () => {
   expectTypeOf<Extract<Curve, { kind: 'cubic' }>>().toHaveProperty('x3');
   expectTypeOf<Extract<Curve, { kind: 'quadratic' }>>().not.toHaveProperty('x3');
+});
+
+test('격자와 육각 레이아웃 옵션은 모든 필드를 필수 숫자 필드로 받는다', () => {
+  expectTypeOf<GridSpec>().toEqualTypeOf<{
+    readonly originX: number;
+    readonly originY: number;
+    readonly cellWidth: number;
+    readonly cellHeight: number;
+  }>();
+  expectTypeOf<HexLayout['orientation']>().toEqualTypeOf<'pointy' | 'flat'>();
+  expectTypeOf<{ originX: number; originY: number; size: number }>().not.toExtend<HexLayout>();
 });
