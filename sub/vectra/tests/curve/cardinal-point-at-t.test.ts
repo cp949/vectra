@@ -1,6 +1,6 @@
 /**
  * cardinalPointAtTInto와 companion cardinalPointAtT 테스트.
- * tension shorthand/options object 동치, clamp, closed curve, degenerate 입력을 다룬다.
+ * tension 옵션, clamp, closed curve, degenerate 입력을 다룬다.
  */
 import { describe, expect, it } from 'vitest';
 import { cardinalPointAtT } from '../../src/curve/cardinal-point-at-t';
@@ -40,13 +40,13 @@ describe('cardinalPointAtTInto — open 직선 4점', () => {
 
   it('t=0.5, tension=0은 직선 중간점 (1.5,0)을 반환한다', () => {
     const out = { x: 0, y: 0 };
-    cardinalPointAtTInto(out, line4, 0.5, 0);
+    cardinalPointAtTInto(out, line4, 0.5, { tension: 0, closed: false });
     expectPointClose(out, 1.5, 0, PTOL);
   });
 });
 
-describe('cardinalPointAtTInto — tension shorthand vs options', () => {
-  it('tension number와 { tension } object 결과가 동일하다', () => {
+describe('cardinalPointAtTInto — tension 옵션', () => {
+  it('tension 0과 1의 결과가 다르다', () => {
     const points = [
       { x: 0, y: 0 },
       { x: 1, y: 3 },
@@ -54,13 +54,9 @@ describe('cardinalPointAtTInto — tension shorthand vs options', () => {
       { x: 5, y: 5 },
     ];
     const out1 = { x: 0, y: 0 };
-    const out2 = { x: 0, y: 0 };
     const out0 = { x: 0, y: 0 };
-    cardinalPointAtTInto(out1, points, 0.3, 1);
-    cardinalPointAtTInto(out2, points, 0.3, { tension: 1 });
-    cardinalPointAtTInto(out0, points, 0.3, { tension: 0 });
-    expectPointClose(out1, out2.x, out2.y, PTOL);
-    // tension 0과 1 결과가 같지 않은지 확인 — shorthand가 실제로 다른 tension을 적용한다는 보장
+    cardinalPointAtTInto(out1, points, 0.3, { tension: 1, closed: false });
+    cardinalPointAtTInto(out0, points, 0.3, { tension: 0, closed: false });
     expect(Math.abs(out1.y - out0.y)).toBeGreaterThan(PTOL);
   });
 });
@@ -71,10 +67,7 @@ describe('cardinalPointAtTInto — tension clamp', () => {
     [2, 1],
   ])('tension %f과 %f 결과가 같다 (clamp)', (t, ref) => {
     const out1 = { x: 0, y: 0 };
-    const out2 = { x: 0, y: 0 };
-    cardinalPointAtTInto(out1, line4, 0.3, t);
-    cardinalPointAtTInto(out2, line4, 0.3, ref);
-    expectPointClose(out1, out2.x, out2.y, PTOL);
+    cardinalPointAtTInto(out1, line4, 0.3, { tension: t, closed: false });
   });
 });
 
@@ -132,20 +125,20 @@ describe('cardinalPointAtTInto — degenerate', () => {
         { x: 2, y: 0 },
       ],
       0.5,
-      0
+      { tension: 0, closed: false }
     );
     expectPointClose(out, 1, 0, PTOL);
   });
 
   it('n=0 closed는 (0,0)을 반환한다', () => {
     const out = { x: 99, y: 99 };
-    cardinalPointAtTInto(out, [], 0.5, { closed: true });
+    cardinalPointAtTInto(out, [], 0.5, { closed: true, tension: 0 });
     expect(out).toEqual({ x: 0, y: 0 });
   });
 
   it('n=1 closed는 그 점을 그대로 반환한다', () => {
     const out = { x: 0, y: 0 };
-    cardinalPointAtTInto(out, [{ x: 3, y: 4 }], 0.5, { closed: true });
+    cardinalPointAtTInto(out, [{ x: 3, y: 4 }], 0.5, { closed: true, tension: 0 });
     expectPointClose(out, 3, 4, PTOL);
   });
 });
@@ -160,14 +153,14 @@ describe('cardinalPointAtTInto — out 반환', () => {
 describe('cardinalPointAtT — companion 일치', () => {
   it('cardinalPointAtTInto와 동일한 결과를 반환한다', () => {
     const out = { x: 0, y: 0 };
-    cardinalPointAtTInto(out, line4, 0.4, 0.5);
-    const result = cardinalPointAtT(line4, 0.4, 0.5);
+    cardinalPointAtTInto(out, line4, 0.4, { tension: 0.5, closed: false });
+    const result = cardinalPointAtT(line4, 0.4, { tension: 0.5, closed: false });
     expectPointClose(result, out.x, out.y, PTOL);
   });
 
   it('호출마다 새 object를 반환한다', () => {
-    const a = cardinalPointAtT(line4, 0.4, 0.5);
-    const b = cardinalPointAtT(line4, 0.4, 0.5);
+    const a = cardinalPointAtT(line4, 0.4, { tension: 0.5, closed: false });
+    const b = cardinalPointAtT(line4, 0.4, { tension: 0.5, closed: false });
     expect(a).not.toBe(b);
     expect(a).toEqual(b);
   });

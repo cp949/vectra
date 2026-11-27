@@ -77,7 +77,7 @@ describe('cardinalPathInto — 수치 일치 (open n=4, si=1 midpoint)', () => {
   // si=1의 globalT = (1 + 0.5) / 3 = 0.5
   // cubic(si=1)의 시작점은 out[1].x/y (= pts[1])
   it('si=1 Bezier midpoint가 cardinalPointAtTInto(t=0.5)와 1e-10 이내 일치한다', () => {
-    const options = { tension: 0.3 };
+    const options = { tension: 0.3, closed: false };
     const out: PathCommand[] = [];
     cardinalPathInto(out, pathPts4, options);
 
@@ -112,13 +112,13 @@ describe('cardinalPathInto — closed n=4 구조', () => {
 
   it('move 1개 + cubic 4개 + close 1개로 구성된다', () => {
     const out: PathCommand[] = [];
-    cardinalPathInto(out, square, { closed: true });
+    cardinalPathInto(out, square, { closed: true, tension: 0 });
     expect(out.map((c) => c.kind)).toEqual(['move', 'cubic', 'cubic', 'cubic', 'cubic', 'close']);
   });
 
   it('마지막 cubic endpoint는 move point와 일치한다', () => {
     const out: PathCommand[] = [];
-    cardinalPathInto(out, square, { closed: true });
+    cardinalPathInto(out, square, { closed: true, tension: 0 });
     const move = out[0] as MoveCommand;
     const lastCubic = out[4] as CubicCommand;
     expectClose(lastCubic.x, move.x);

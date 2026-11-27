@@ -180,9 +180,9 @@ const companionCases = [
   },
   {
     name: 'catmullRomPolyline',
-    actual: () => catmullRomPolyline(POINTS, 8),
-    expected: () => collect((out) => catmullRomPolylineInto(out, POINTS, 8)),
-    empty: () => catmullRomPolyline([P0], 8),
+    actual: () => catmullRomPolyline(POINTS, { steps: 8, alpha: 0.5, closed: false }),
+    expected: () => collect((out) => catmullRomPolylineInto(out, POINTS, { steps: 8, alpha: 0.5, closed: false })),
+    empty: () => catmullRomPolyline([P0], { steps: 8, alpha: 0.5, closed: false }),
   },
   {
     name: 'catmullRomPath',
@@ -192,9 +192,9 @@ const companionCases = [
   },
   {
     name: 'cardinalPolyline',
-    actual: () => cardinalPolyline(POINTS, 8),
-    expected: () => collect((out) => cardinalPolylineInto(out, POINTS, 8)),
-    empty: () => cardinalPolyline([P0], 8),
+    actual: () => cardinalPolyline(POINTS, { steps: 8, tension: 0, closed: false }),
+    expected: () => collect((out) => cardinalPolylineInto(out, POINTS, { steps: 8, tension: 0, closed: false })),
+    empty: () => cardinalPolyline([P0], { steps: 8, tension: 0, closed: false }),
   },
   {
     name: 'cardinalPath',
@@ -204,9 +204,9 @@ const companionCases = [
   },
   {
     name: 'bsplinePolyline',
-    actual: () => bsplinePolyline(POINTS, 8),
-    expected: () => collect((out) => bsplinePolylineInto(out, POINTS, 8)),
-    empty: () => bsplinePolyline([P0, P1, P2], 8),
+    actual: () => bsplinePolyline(POINTS, { steps: 8, closed: false }),
+    expected: () => collect((out) => bsplinePolylineInto(out, POINTS, { steps: 8, closed: false })),
+    empty: () => bsplinePolyline([P0, P1, P2], { steps: 8, closed: false }),
   },
   {
     name: 'bsplinePath',

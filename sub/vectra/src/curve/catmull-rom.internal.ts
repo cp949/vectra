@@ -1,25 +1,24 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /** open/closed curve에서 index i의 x 좌표를 반환한다. 범위 밖 index는 phantom/wrap 처리. */
-function resolveX(points: readonly XYInput[], i: number, n: number, closed: boolean): number {
+function resolveX(points: readonly Point[], i: number, n: number, closed: boolean): number {
   if (closed) {
-    return readX(points[((i % n) + n) % n]);
+    return points[((i % n) + n) % n].x;
   }
-  if (i < 0) return 2 * readX(points[0]) - readX(points[1]);
-  if (i >= n) return 2 * readX(points[n - 1]) - readX(points[n - 2]);
-  return readX(points[i]);
+  if (i < 0) return 2 * points[0].x - points[1].x;
+  if (i >= n) return 2 * points[n - 1].x - points[n - 2].x;
+  return points[i].x;
 }
 
 /** open/closed curve에서 index i의 y 좌표를 반환한다. 범위 밖 index는 phantom/wrap 처리. */
-function resolveY(points: readonly XYInput[], i: number, n: number, closed: boolean): number {
+function resolveY(points: readonly Point[], i: number, n: number, closed: boolean): number {
   if (closed) {
-    return readY(points[((i % n) + n) % n]);
+    return points[((i % n) + n) % n].y;
   }
-  if (i < 0) return 2 * readY(points[0]) - readY(points[1]);
-  if (i >= n) return 2 * readY(points[n - 1]) - readY(points[n - 2]);
-  return readY(points[i]);
+  if (i < 0) return 2 * points[0].y - points[1].y;
+  if (i >= n) return 2 * points[n - 1].y - points[n - 2].y;
+  return points[i].y;
 }
 
 /**
@@ -45,7 +44,7 @@ export function catmullRomSegmentCount(n: number, closed: boolean): number {
  * @returns [x0, y0, x1, y1, x2, y2, x3, y3]
  */
 export function catmullRomGetPoints(
-  points: readonly XYInput[],
+  points: readonly Point[],
   segIndex: number,
   closed: boolean
 ): [number, number, number, number, number, number, number, number] {
@@ -82,7 +81,7 @@ export function catmullRomGetPoints(
  * @param closed true이면 closed loop curve
  * @returns phantom 포함 n+2개 knot 배열
  */
-export function catmullRomKnotsFromPoints(points: readonly XYInput[], alpha: number, closed: boolean): number[] {
+export function catmullRomKnotsFromPoints(points: readonly Point[], alpha: number, closed: boolean): number[] {
   const n = points.length;
 
   // phantom 포함 n+2개 knot 생성.
@@ -127,7 +126,7 @@ export function catmullRomKnotsFromPoints(points: readonly XYInput[], alpha: num
  *
  * u: t1 ≤ u ≤ t2 범위의 global knot domain 값.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param x0 p0 x 좌표
  * @param y0 p0 y 좌표
  * @param x1 p1 x 좌표
@@ -143,7 +142,7 @@ export function catmullRomKnotsFromPoints(points: readonly XYInput[], alpha: num
  * @param t3 p3에 대응하는 knot 값
  * @returns out
  */
-export function catmullRomSegmentAt<Out extends XYWritable>(
+export function catmullRomSegmentAt<Out extends PointWritable>(
   out: Out,
   x0: number,
   y0: number,
@@ -184,7 +183,9 @@ export function catmullRomSegmentAt<Out extends XYWritable>(
   const resultX = L012x + ((L123x - L012x) * (u - t1)) / dt12;
   const resultY = L012y + ((L123y - L012y) * (u - t1)) / dt12;
 
-  return writeXY(out, resultX, resultY);
+  out.x = resultX;
+  out.y = resultY;
+  return out;
 }
 
 /**
@@ -193,16 +194,16 @@ export function catmullRomSegmentAt<Out extends XYWritable>(
  * `catmullRomKnotsFromPoints(points, alpha, closed)`의 결과를 넘긴다. knot 표는 점 수에 비례하는 비용이라
  * 같은 곡선을 여러 번 샘플하는 호출은 한 번만 만들어 재사용한다. 호출자는 points.length >= 2를 보장한다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param points control point 배열
  * @param knots `catmullRomKnotsFromPoints`로 만든 knot 표(길이 n + 2)
  * @param t 0~1 곡선 파라미터
  * @param closed true이면 closed loop curve
  * @returns out
  */
-export function catmullRomPointAtTByKnotsInto<Out extends XYWritable>(
+export function catmullRomPointAtTByKnotsInto<Out extends PointWritable>(
   out: Out,
-  points: readonly XYInput[],
+  points: readonly Point[],
   knots: readonly number[],
   t: number,
   closed: boolean

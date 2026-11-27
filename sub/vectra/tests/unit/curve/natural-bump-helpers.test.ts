@@ -5,7 +5,7 @@
  * - naturalSpline: two-point fallback(직선), three-point smooth curve, endpoint second derivative 0 control relation.
  * - naturalSpline polyline: segment endpoint 포함, join duplicate 제거, invalid steps RangeError, non-finite RangeError.
  * - naturalSpline path: move/cubic command 수와 endpoint 통과.
- * - bump X/Y: control point 좌표 정확성, empty/single-point 빈 output, tuple 입력, non-finite pass-through.
+ * - bump X/Y: control point 좌표 정확성, empty/single-point 빈 output, non-finite pass-through.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -13,20 +13,22 @@ import { bumpXPathInto } from '../../../src/curve/bump-x-path-into';
 import { bumpYPathInto } from '../../../src/curve/bump-y-path-into';
 import { naturalSplinePathInto } from '../../../src/curve/natural-spline-path-into';
 import { naturalSplinePolylineInto } from '../../../src/curve/natural-spline-polyline-into';
-import type { CubicCommand, XYInput, XYObjectWritable } from '../../../src/types';
+import type { CubicCommand, XYObjectWritable } from '../../../src/types';
 
-const TWO: XYInput[] = [
+import type { Point } from '../../../src/types/flat-shapes.internal';
+
+const TWO: Point[] = [
   { x: 0, y: 0 },
   { x: 3, y: 6 },
 ];
 
-const TRI: XYInput[] = [
+const TRI: Point[] = [
   { x: 0, y: 0 },
   { x: 1, y: 1 },
   { x: 2, y: 0 },
 ];
 
-const SEG: XYInput[] = [
+const SEG: Point[] = [
   { x: 0, y: 0 },
   { x: 10, y: 4 },
 ];
@@ -136,17 +138,6 @@ describe('bumpXPathInto', () => {
   it('control point가 c1=(midX,y0), c2=(midX,y1)이다', () => {
     const out = bumpXPathInto([], SEG);
     expect(out[0]).toEqual({ kind: 'move', x: 0, y: 0 });
-    expect(out[1]).toEqual({ kind: 'cubic', x1: 5, y1: 0, x2: 5, y2: 4, x: 10, y: 4 });
-  });
-
-  it('tuple 입력도 object 입력과 같은 결과를 만든다', () => {
-    const out = bumpXPathInto(
-      [],
-      [
-        [0, 0],
-        [10, 4],
-      ]
-    );
     expect(out[1]).toEqual({ kind: 'cubic', x1: 5, y1: 0, x2: 5, y2: 4, x: 10, y: 4 });
   });
 

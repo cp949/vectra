@@ -1,4 +1,5 @@
-import type { CatmullRomPolylineOptions, XYInput, XYObjectWritable } from '../types';
+import type { CatmullRomPolylineOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { catmullRomPointAtTInto } from './catmull-rom-point-at-t-into';
 import { catmullRomKnotsFromPoints, catmullRomPointAtTByKnotsInto } from './catmull-rom.internal';
 
@@ -8,27 +9,19 @@ import { catmullRomKnotsFromPoints, catmullRomPointAtTByKnotsInto } from './catm
  * t = 0, 1/steps, 2/steps, ..., (steps-1)/steps 위치를 샘플링한다.
  * t=1은 포함하지 않는다.
  *
- * @param out 결과를 기록할 writable output 배열 (호출 전 내용은 덮어쓴다)
+ * @param out 결과를 기록할 점 배열 (호출 전 내용은 덮어쓴다)
  * @param points control point 배열
- * @param stepsOrOptions 샘플 수 또는 옵션 객체
+ * @param options 샘플링 옵션. 생략하면 32점을 기록한다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function catmullRomPolylineInto(
-  out: XYObjectWritable[],
-  points: readonly XYInput[],
-  stepsOrOptions?: number | CatmullRomPolylineOptions
-): XYObjectWritable[] {
-  let steps = 32;
-  let alpha = 0.5;
-  let closed = false;
-
-  if (typeof stepsOrOptions === 'number') {
-    steps = stepsOrOptions;
-  } else if (stepsOrOptions != null) {
-    if (stepsOrOptions.steps != null) steps = stepsOrOptions.steps;
-    if (stepsOrOptions.alpha != null) alpha = stepsOrOptions.alpha;
-    if (stepsOrOptions.closed != null) closed = stepsOrOptions.closed;
-  }
+  out: PointWritable[],
+  points: readonly Point[],
+  options?: Required<CatmullRomPolylineOptions>
+): PointWritable[] {
+  const steps = options === undefined ? 32 : options.steps;
+  const alpha = options === undefined ? 0.5 : options.alpha;
+  const closed = options === undefined ? false : options.closed;
 
   if (points.length < 2) {
     out.length = 0;

@@ -1,4 +1,5 @@
-import type { CatmullRomOptions, PathCommand, XYInput } from '../types';
+import type { CatmullRomOptions, PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { catmullRomGetPoints, catmullRomKnotsFromPoints, catmullRomSegmentCount } from './catmull-rom.internal';
 
 /**
@@ -10,18 +11,18 @@ import { catmullRomGetPoints, catmullRomKnotsFromPoints, catmullRomSegmentCount 
  *
  * n < 2이면 out.length를 0으로 설정하고 반환한다.
  *
- * @param out 결과를 기록할 writable output 배열
+ * @param out 결과를 기록할 점 배열
  * @param points 곡선이 통과할 보간 점 배열
  * @param options alpha(0=uniform, 0.5=centripetal, 1=chordal), closed 옵션
  * @returns out
  */
 export function catmullRomPathInto(
   out: PathCommand[],
-  points: readonly XYInput[],
-  options?: CatmullRomOptions
+  points: readonly Point[],
+  options?: Required<CatmullRomOptions>
 ): PathCommand[] {
-  const alpha = options?.alpha ?? 0.5;
-  const closed = options?.closed ?? false;
+  const alpha = options === undefined ? 0.5 : options.alpha;
+  const closed = options === undefined ? false : options.closed;
   const n = points.length;
 
   out.length = 0;

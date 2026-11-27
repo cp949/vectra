@@ -1,5 +1,5 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BSplineOptions, XYInput, XYWritable } from '../types';
+import type { BSplineOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { bsplineGetPoints, bsplineSegmentAt, bsplineSegmentCount } from './bspline.internal';
 
 /**
@@ -13,27 +13,39 @@ import { bsplineGetPoints, bsplineSegmentAt, bsplineSegmentCount } from './bspli
  * aliasing: out과 points 간 aliasing 허용. points는 읽기 전용으로만 접근하고
  * out에만 쓰므로 두 인자가 같은 객체를 참조해도 안전하다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param points control point 배열
  * @param t 0~1 곡선 파라미터. 범위 외 값은 clamp하지 않으나 spanIndex를 [0, spanCount-1]로 clamp한다.
  * @param options closed 옵션
  * @returns out
  */
-export function bsplinePointAtTInto<Out extends XYWritable>(
+export function bsplinePointAtTInto<Out extends PointWritable>(
   out: Out,
-  points: readonly XYInput[],
+  points: readonly Point[],
   t: number,
-  options?: BSplineOptions
+  options?: Required<BSplineOptions>
 ): Out {
   const n = points.length;
 
-  if (n === 0) return writeXY(out, 0, 0);
-  if (n === 1) return writeXY(out, readX(points[0]), readY(points[0]));
+  if (n === 0) {
+    out.x = 0;
+    out.y = 0;
+    return out;
+  }
+  if (n === 1) {
+    out.x = points[0].x;
+    out.y = points[0].y;
+    return out;
+  }
 
-  const closed = options?.closed ?? false;
+  const closed = options === undefined ? false : options.closed;
   const spanCount = bsplineSegmentCount(n, closed);
 
-  if (spanCount <= 0) return writeXY(out, readX(points[0]), readY(points[0]));
+  if (spanCount <= 0) {
+    out.x = points[0].x;
+    out.y = points[0].y;
+    return out;
+  }
 
   const raw = t * spanCount;
   const spanIndex = Math.max(0, Math.min(Math.floor(raw), spanCount - 1));

@@ -4,8 +4,7 @@
  * bump X/Y의 cubic control point 정책을 적용해 cubic segment를 생성한다.
  * public bump leaf는 이 helper만 공유하고 서로를 직접 import하지 않는다.
  */
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /** bump control point가 펴지는 축. 'x'는 수평 bump, 'y'는 수직 bump. */
 export type BumpAxis = 'x' | 'y';
@@ -21,19 +20,16 @@ export type BumpAxis = 'x' | 'y';
  * @param axis bump control point가 펴지는 축
  * @returns cubic segment flat 배열과 segment 수
  */
-export function bumpCubicSegments(
-  points: readonly XYInput[],
-  axis: BumpAxis
-): { segments: number[]; segCount: number } {
+export function bumpCubicSegments(points: readonly Point[], axis: BumpAxis): { segments: number[]; segCount: number } {
   const n = points.length;
   const segCount = n - 1;
   const segments = new Array<number>(segCount * 8);
 
   for (let i = 0; i < segCount; i++) {
-    const x0 = readX(points[i]);
-    const y0 = readY(points[i]);
-    const x1 = readX(points[i + 1]);
-    const y1 = readY(points[i + 1]);
+    const x0 = points[i].x;
+    const y0 = points[i].y;
+    const x1 = points[i + 1].x;
+    const y1 = points[i + 1].y;
     const o = i * 8;
     segments[o] = x0;
     segments[o + 1] = y0;

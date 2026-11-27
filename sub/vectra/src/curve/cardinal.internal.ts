@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /** tension을 [0, 1]로 clamp한다. */
 export function clampCardinalTension(tension: number): number {
@@ -29,7 +28,7 @@ export function cardinalSegmentCount(n: number, closed: boolean): number {
  * @returns [x0, y0, x1, y1, x2, y2, x3, y3] — p0..p3 순서
  */
 export function cardinalGetPoints(
-  points: readonly XYInput[],
+  points: readonly Point[],
   segIndex: number,
   closed: boolean
 ): [number, number, number, number, number, number, number, number] {
@@ -60,7 +59,7 @@ export function cardinalGetPoints(
  * m1 = s*(p2 - p0), m2 = s*(p3 - p1)
  * result = h00*p1 + h10*m1 + h01*p2 + h11*m2
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param x0 p0 x 좌표 (이전 점)
  * @param y0 p0 y 좌표
  * @param x1 p1 x 좌표 (segment 시작점)
@@ -73,7 +72,7 @@ export function cardinalGetPoints(
  * @param tension tangent scale 계수 [0, 1]
  * @returns out
  */
-export function cardinalSegmentAt<Out extends XYWritable>(
+export function cardinalSegmentAt<Out extends PointWritable>(
   out: Out,
   x0: number,
   y0: number,
@@ -105,7 +104,9 @@ export function cardinalSegmentAt<Out extends XYWritable>(
   const rx = h00 * x1 + h10 * m1x + h01 * x2 + h11 * m2x;
   const ry = h00 * y1 + h10 * m1y + h01 * y2 + h11 * m2y;
 
-  return writeXY(out, rx, ry);
+  out.x = rx;
+  out.y = ry;
+  return out;
 }
 
 /**
@@ -152,21 +153,21 @@ export function cardinalSegmentToCubic(
 }
 
 /** open/closed curve에서 index i의 x 좌표를 반환한다. 범위 밖 index는 phantom/wrap 처리. */
-function resolveX(points: readonly XYInput[], i: number, n: number, closed: boolean): number {
+function resolveX(points: readonly Point[], i: number, n: number, closed: boolean): number {
   if (closed) {
-    return readX(points[((i % n) + n) % n]);
+    return points[((i % n) + n) % n].x;
   }
-  if (i < 0) return 2 * readX(points[0]) - readX(points[1]);
-  if (i >= n) return 2 * readX(points[n - 1]) - readX(points[n - 2]);
-  return readX(points[i]);
+  if (i < 0) return 2 * points[0].x - points[1].x;
+  if (i >= n) return 2 * points[n - 1].x - points[n - 2].x;
+  return points[i].x;
 }
 
 /** open/closed curve에서 index i의 y 좌표를 반환한다. 범위 밖 index는 phantom/wrap 처리. */
-function resolveY(points: readonly XYInput[], i: number, n: number, closed: boolean): number {
+function resolveY(points: readonly Point[], i: number, n: number, closed: boolean): number {
   if (closed) {
-    return readY(points[((i % n) + n) % n]);
+    return points[((i % n) + n) % n].y;
   }
-  if (i < 0) return 2 * readY(points[0]) - readY(points[1]);
-  if (i >= n) return 2 * readY(points[n - 1]) - readY(points[n - 2]);
-  return readY(points[i]);
+  if (i < 0) return 2 * points[0].y - points[1].y;
+  if (i >= n) return 2 * points[n - 1].y - points[n - 2].y;
+  return points[i].y;
 }

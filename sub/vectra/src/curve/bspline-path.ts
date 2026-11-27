@@ -1,4 +1,5 @@
-import type { BSplineOptions, PathCommand, XYInput } from '../types';
+import type { BSplineOptions, PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { bsplinePathInto } from './bspline-path-into';
 
 /**
@@ -11,6 +12,6 @@ import { bsplinePathInto } from './bspline-path-into';
  * @param options closed 여부 등 옵션
  * @returns 새로 만든 PathCommand 배열
  */
-export function bsplinePath(points: readonly XYInput[], options?: BSplineOptions): PathCommand[] {
+export function bsplinePath(points: readonly Point[], options?: Required<BSplineOptions>): PathCommand[] {
   return bsplinePathInto([], points, options);
 }

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * uniform cubic B-Spline의 span 수를 반환한다.
@@ -26,7 +25,7 @@ export function bsplineSegmentCount(n: number, closed: boolean): number {
  * @returns [x0, y0, x1, y1, x2, y2, x3, y3]
  */
 export function bsplineGetPoints(
-  points: readonly XYInput[],
+  points: readonly Point[],
   spanIndex: number,
   closed: boolean
 ): [number, number, number, number, number, number, number, number] {
@@ -38,27 +37,27 @@ export function bsplineGetPoints(
     const i2 = (((spanIndex + 2) % n) + n) % n;
     const i3 = (((spanIndex + 3) % n) + n) % n;
     return [
-      readX(points[i0]),
-      readY(points[i0]),
-      readX(points[i1]),
-      readY(points[i1]),
-      readX(points[i2]),
-      readY(points[i2]),
-      readX(points[i3]),
-      readY(points[i3]),
+      points[i0].x,
+      points[i0].y,
+      points[i1].x,
+      points[i1].y,
+      points[i2].x,
+      points[i2].y,
+      points[i3].x,
+      points[i3].y,
     ];
   }
 
   const i = spanIndex;
   return [
-    readX(points[i]),
-    readY(points[i]),
-    readX(points[i + 1]),
-    readY(points[i + 1]),
-    readX(points[i + 2]),
-    readY(points[i + 2]),
-    readX(points[i + 3]),
-    readY(points[i + 3]),
+    points[i].x,
+    points[i].y,
+    points[i + 1].x,
+    points[i + 1].y,
+    points[i + 2].x,
+    points[i + 2].y,
+    points[i + 3].x,
+    points[i + 3].y,
   ];
 }
 
@@ -70,7 +69,7 @@ export function bsplineGetPoints(
  * N2(t) = (1/6)(-3t^3 + 3t^2 + 3t + 1)
  * N3(t) = (1/6)t^3
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param x0 p0 x 좌표
  * @param y0 p0 y 좌표
  * @param x1 p1 x 좌표
@@ -82,7 +81,7 @@ export function bsplineGetPoints(
  * @param t span local 파라미터 [0, 1]
  * @returns out
  */
-export function bsplineSegmentAt<Out extends XYWritable>(
+export function bsplineSegmentAt<Out extends PointWritable>(
   out: Out,
   x0: number,
   y0: number,
@@ -102,5 +101,7 @@ export function bsplineSegmentAt<Out extends XYWritable>(
   const n3 = (1 / 6) * t3;
   const rx = n0 * x0 + n1 * x1 + n2 * x2 + n3 * x3;
   const ry = n0 * y0 + n1 * y1 + n2 * y2 + n3 * y3;
-  return writeXY(out, rx, ry);
+  out.x = rx;
+  out.y = ry;
+  return out;
 }

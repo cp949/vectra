@@ -1,4 +1,5 @@
-import type { CardinalOptions, PathCommand, XYInput } from '../types';
+import type { CardinalOptions, PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import {
   cardinalGetPoints,
   cardinalSegmentCount,
@@ -15,18 +16,18 @@ import {
  *
  * n < 2이면 out.length를 0으로 설정하고 반환한다.
  *
- * @param out 결과를 기록할 writable output 배열
+ * @param out 결과를 기록할 점 배열
  * @param points 곡선이 통과할 보간 점 배열
  * @param options tension(0=기본), closed 옵션
  * @returns out
  */
 export function cardinalPathInto(
   out: PathCommand[],
-  points: readonly XYInput[],
-  options?: CardinalOptions
+  points: readonly Point[],
+  options?: Required<CardinalOptions>
 ): PathCommand[] {
-  const tension = options?.tension ?? 0;
-  const closed = options?.closed ?? false;
+  const tension = options === undefined ? 0 : options.tension;
+  const closed = options === undefined ? false : options.closed;
   const n = points.length;
 
   out.length = 0;

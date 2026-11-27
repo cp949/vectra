@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types';
+import type { PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { bumpXPathInto } from './bump-x-path-into';
 
 /**
@@ -14,6 +15,6 @@ import { bumpXPathInto } from './bump-x-path-into';
  * @param points bump curve가 통과할 입력 point 배열
  * @returns 새로 만든 PathCommand 배열
  */
-export function bumpXPath(points: readonly XYInput[]): PathCommand[] {
+export function bumpXPath(points: readonly Point[]): PathCommand[] {
   return bumpXPathInto([], points);
 }

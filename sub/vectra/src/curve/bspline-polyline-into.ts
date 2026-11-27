@@ -1,4 +1,5 @@
-import type { BSplinePolylineOptions, XYInput, XYObjectWritable } from '../types';
+import type { BSplinePolylineOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { bsplinePointAtTInto } from './bspline-point-at-t-into';
 
 /**
@@ -12,25 +13,18 @@ import { bsplinePointAtTInto } from './bspline-point-at-t-into';
  * - closed curve에서 n < 1: out.length = 0 반환
  * - steps ≤ 0: out.length = 0 반환
  *
- * @param out 결과를 기록할 writable output 배열 (호출 전 내용은 덮어쓴다). 루프마다 신규 object를 push하므로 out 요소와 points 간 aliasing 없음
+ * @param out 결과를 기록할 점 배열 (호출 전 내용은 덮어쓴다). 루프마다 신규 object를 push하므로 out 요소와 points 간 aliasing 없음
  * @param points control point 배열
- * @param stepsOrOptions 샘플 수 또는 옵션 객체
+ * @param options 샘플링 옵션. 생략하면 32점을 기록한다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function bsplinePolylineInto(
-  out: XYObjectWritable[],
-  points: readonly XYInput[],
-  stepsOrOptions?: number | BSplinePolylineOptions
-): XYObjectWritable[] {
-  let steps = 32;
-  let closed = false;
-
-  if (typeof stepsOrOptions === 'number') {
-    steps = stepsOrOptions;
-  } else if (stepsOrOptions != null) {
-    if (stepsOrOptions.steps != null) steps = stepsOrOptions.steps;
-    if (stepsOrOptions.closed != null) closed = stepsOrOptions.closed;
-  }
+  out: PointWritable[],
+  points: readonly Point[],
+  options?: Required<BSplinePolylineOptions>
+): PointWritable[] {
+  const steps = options === undefined ? 32 : options.steps;
+  const closed = options === undefined ? false : options.closed;
 
   if (steps <= 0) {
     out.length = 0;

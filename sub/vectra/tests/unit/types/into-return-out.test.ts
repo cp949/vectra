@@ -64,11 +64,11 @@ type FacadeCase = [name: string, call: (out: CurveIntersectionHit[]) => CurveInt
 type PolylineCase = [name: string, call: (out: XYObjectWritable[]) => XYObjectWritable[]];
 
 const controlPoints = [
-  [0, 0],
-  [1, 2],
-  [2, 2],
-  [3, 0],
-  [4, 2],
+  { x: 0, y: 0 },
+  { x: 1, y: 2 },
+  { x: 2, y: 2 },
+  { x: 3, y: 0 },
+  { x: 4, y: 2 },
 ] as const;
 
 describe('curve·intersects 교차 Into는 out을 반환한다', () => {
@@ -171,9 +171,9 @@ describe('curve facade 교차 Into는 out을 반환한다', () => {
 
 describe('spline polyline Into는 out을 반환한다', () => {
   const polylineCases: PolylineCase[] = [
-    ['bspline', (out) => bsplinePolylineInto(out, controlPoints, 4)],
-    ['cardinal', (out) => cardinalPolylineInto(out, controlPoints, 4)],
-    ['catmullRom', (out) => catmullRomPolylineInto(out, controlPoints, 4)],
+    ['bspline', (out) => bsplinePolylineInto(out, controlPoints, { steps: 4, closed: false })],
+    ['cardinal', (out) => cardinalPolylineInto(out, controlPoints, { steps: 4, tension: 0, closed: false })],
+    ['catmullRom', (out) => catmullRomPolylineInto(out, controlPoints, { steps: 4, alpha: 0.5, closed: false })],
   ];
 
   test.each(polylineCases)('%s', (_name, call) => {
@@ -190,7 +190,7 @@ describe('spline polyline Into는 out을 반환한다', () => {
     ['catmullRom', catmullRomPolylineInto],
   ] as const)('%s steps가 1이면 out을 반환한다', (_name, into) => {
     const out: XYObjectWritable[] = [];
-    expect(into(out, controlPoints, 1)).toBe(out);
+    expect(into(out, controlPoints, { steps: 1, tension: 0, alpha: 0.5, closed: false })).toBe(out);
     expect(out.length).toBeGreaterThan(0);
   });
 
@@ -200,7 +200,7 @@ describe('spline polyline Into는 out을 반환한다', () => {
     ['catmullRom', catmullRomPolylineInto],
   ] as const)('%s steps가 0이면 비운 out을 반환한다', (_name, into) => {
     const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
-    const result = into(out, controlPoints, 0);
+    const result = into(out, controlPoints, { steps: 0, tension: 0, alpha: 0.5, closed: false });
     expect(result).toBe(out);
     expect(result).toHaveLength(0);
   });
@@ -211,7 +211,7 @@ describe('spline polyline Into는 out을 반환한다', () => {
     ['catmullRom', catmullRomPolylineInto],
   ] as const)('%s control point가 부족하면 비운 out을 반환한다', (_name, into) => {
     const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
-    const result = into(out, [[0, 0]], 4);
+    const result = into(out, [{ x: 0, y: 0 }], { steps: 4, tension: 0, alpha: 0.5, closed: false });
     expect(result).toBe(out);
     expect(result).toHaveLength(0);
   });

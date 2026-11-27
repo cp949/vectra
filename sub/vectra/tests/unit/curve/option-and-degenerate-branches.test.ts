@@ -136,46 +136,38 @@ describe('spline polyline 옵션 객체', () => {
     { x: 4, y: 3 },
   ];
 
-  test('cardinalPolylineInto는 빈 옵션 객체면 기본값을 쓴다', () => {
-    const fromEmpty = cardinalPolylineInto([], points, {});
+  test('cardinalPolylineInto는 기본값을 명시해도 옵션을 생략한 결과와 같다', () => {
+    const fromEmpty = cardinalPolylineInto([], points, { steps: 32, tension: 0, closed: false });
     const fromDefaults = cardinalPolylineInto([], points);
     expect(fromEmpty).toEqual(fromDefaults);
   });
 
-  test('cardinalPolylineInto는 steps만 지정하면 나머지는 기본값을 쓴다', () => {
-    const out = cardinalPolylineInto([], points, { steps: 4 });
-    expect(out).toEqual(cardinalPolylineInto([], points, { steps: 4, tension: 0, closed: false }));
-  });
-
   test('cardinalPolylineInto는 tension 옵션을 반영한다', () => {
-    const withTension = cardinalPolylineInto([], points, { steps: 4, tension: 0.5 });
-    expect(withTension).not.toEqual(cardinalPolylineInto([], points, { steps: 4 }));
+    const withTension = cardinalPolylineInto([], points, { steps: 4, tension: 0.5, closed: false });
+    expect(withTension).not.toEqual(cardinalPolylineInto([], points, { steps: 4, tension: 0, closed: false }));
   });
 
   test('cardinalPolylineInto는 closed 옵션을 반영한다', () => {
-    const closed = cardinalPolylineInto([], points, { steps: 4, closed: true });
+    const closed = cardinalPolylineInto([], points, { steps: 4, closed: true, tension: 0 });
     expect(closed).toHaveLength(4);
-    expect(closed).not.toEqual(cardinalPolylineInto([], points, { steps: 4 }));
+    expect(closed).not.toEqual(cardinalPolylineInto([], points, { steps: 4, tension: 0, closed: false }));
   });
 
-  test('catmullRomPolylineInto는 빈 옵션 객체면 기본값을 쓴다', () => {
-    expect(catmullRomPolylineInto([], points, {})).toEqual(catmullRomPolylineInto([], points));
+  test('catmullRomPolylineInto는 기본값을 명시해도 옵션을 생략한 결과와 같다', () => {
+    expect(catmullRomPolylineInto([], points, { steps: 32, alpha: 0.5, closed: false })).toEqual(
+      catmullRomPolylineInto([], points)
+    );
   });
 
   test('catmullRomPolylineInto는 alpha 옵션을 반영한다', () => {
-    const withAlpha = catmullRomPolylineInto([], points, { steps: 4, alpha: 0 });
-    expect(withAlpha).not.toEqual(catmullRomPolylineInto([], points, { steps: 4 }));
+    const withAlpha = catmullRomPolylineInto([], points, { steps: 4, alpha: 0, closed: false });
+    expect(withAlpha).not.toEqual(catmullRomPolylineInto([], points, { steps: 4, alpha: 0.5, closed: false }));
   });
 
   test('catmullRomPolylineInto는 closed 옵션을 반영한다', () => {
-    const closed = catmullRomPolylineInto([], points, { steps: 4, closed: true });
+    const closed = catmullRomPolylineInto([], points, { steps: 4, closed: true, alpha: 0.5 });
     expect(closed).toHaveLength(4);
-    expect(closed).not.toEqual(catmullRomPolylineInto([], points, { steps: 4 }));
-  });
-
-  test('catmullRomPolylineInto는 steps만 지정하면 alpha와 closed는 기본값을 쓴다', () => {
-    const out = catmullRomPolylineInto([], points, { steps: 4 });
-    expect(out).toEqual(catmullRomPolylineInto([], points, { steps: 4, alpha: 0.5, closed: false }));
+    expect(closed).not.toEqual(catmullRomPolylineInto([], points, { steps: 4, alpha: 0.5, closed: false }));
   });
 
   test('monotoneYPolylineInto는 steps 옵션 객체와 숫자 인자가 같은 결과를 낸다', () => {

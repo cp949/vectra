@@ -1,4 +1,5 @@
-import type { CatmullRomOptions, PathCommand, XYInput } from '../types';
+import type { CatmullRomOptions, PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { catmullRomPathInto } from './catmull-rom-path-into';
 
 /**
@@ -11,6 +12,6 @@ import { catmullRomPathInto } from './catmull-rom-path-into';
  * @param options alpha(0=uniform, 0.5=centripetal, 1=chordal), closed 옵션
  * @returns 새로 만든 PathCommand 배열
  */
-export function catmullRomPath(points: readonly XYInput[], options?: CatmullRomOptions): PathCommand[] {
+export function catmullRomPath(points: readonly Point[], options?: Required<CatmullRomOptions>): PathCommand[] {
   return catmullRomPathInto([], points, options);
 }

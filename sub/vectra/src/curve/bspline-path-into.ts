@@ -1,4 +1,5 @@
-import type { BSplineOptions, PathCommand, XYInput } from '../types';
+import type { BSplineOptions, PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { bsplineGetPoints, bsplineSegmentCount } from './bspline.internal';
 
 /**
@@ -14,10 +15,10 @@ import { bsplineGetPoints, bsplineSegmentCount } from './bspline.internal';
  */
 export function bsplinePathInto(
   out: PathCommand[],
-  points: readonly XYInput[],
-  options?: BSplineOptions
+  points: readonly Point[],
+  options?: Required<BSplineOptions>
 ): PathCommand[] {
-  const closed = options?.closed ?? false;
+  const closed = options === undefined ? false : options.closed;
   const n = points.length;
   const spanCount = bsplineSegmentCount(n, closed);
 

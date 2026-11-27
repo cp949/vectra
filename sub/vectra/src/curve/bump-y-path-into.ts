@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types';
+import type { PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { bumpCubicSegments } from './bump.internal';
 import { cubicSegmentsToPathInto } from './curve-segments.internal';
 
@@ -15,7 +16,7 @@ import { cubicSegmentsToPathInto } from './curve-segments.internal';
  * @param points bump curve가 통과할 입력 point 배열
  * @returns out
  */
-export function bumpYPathInto(out: PathCommand[], points: readonly XYInput[]): PathCommand[] {
+export function bumpYPathInto(out: PathCommand[], points: readonly Point[]): PathCommand[] {
   out.length = 0;
   if (points.length < 2) return out;
   const { segments, segCount } = bumpCubicSegments(points, 'y');

@@ -1,4 +1,5 @@
-import type { BSplineOptions, XYInput } from '../types';
+import type { BSplineOptions } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { bsplinePointAtTInto } from './bspline-point-at-t-into';
 
 /**
@@ -13,9 +14,9 @@ import { bsplinePointAtTInto } from './bspline-point-at-t-into';
  * @returns {x, y} 좌표
  */
 export function bsplinePointAtT(
-  points: readonly XYInput[],
+  points: readonly Point[],
   t: number,
-  options?: BSplineOptions
+  options?: Required<BSplineOptions>
 ): { x: number; y: number } {
   return bsplinePointAtTInto({ x: 0, y: 0 }, points, t, options);
 }

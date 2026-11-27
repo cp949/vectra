@@ -1,4 +1,5 @@
-import type { CardinalPolylineOptions, XYInput, XYObjectWritable } from '../types';
+import type { CardinalPolylineOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { cardinalPointAtTInto } from './cardinal-point-at-t-into';
 
 /**
@@ -12,27 +13,19 @@ import { cardinalPointAtTInto } from './cardinal-point-at-t-into';
  * - steps <= 0 → out을 비운다.
  * - steps === 1 → t=0 한 점만 push한다.
  *
- * @param out 결과를 기록할 writable output 배열 (호출 전 내용은 덮어쓴다)
+ * @param out 결과를 기록할 점 배열 (호출 전 내용은 덮어쓴다)
  * @param points control point 배열
- * @param stepsOrOptions 샘플 수 또는 옵션 객체
+ * @param options 샘플링 옵션. 생략하면 32점을 기록한다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function cardinalPolylineInto(
-  out: XYObjectWritable[],
-  points: readonly XYInput[],
-  stepsOrOptions?: number | CardinalPolylineOptions
-): XYObjectWritable[] {
-  let steps = 32;
-  let tension = 0;
-  let closed = false;
-
-  if (typeof stepsOrOptions === 'number') {
-    steps = stepsOrOptions;
-  } else if (stepsOrOptions != null) {
-    if (stepsOrOptions.steps != null) steps = stepsOrOptions.steps;
-    if (stepsOrOptions.tension != null) tension = stepsOrOptions.tension;
-    if (stepsOrOptions.closed != null) closed = stepsOrOptions.closed;
-  }
+  out: PointWritable[],
+  points: readonly Point[],
+  options?: Required<CardinalPolylineOptions>
+): PointWritable[] {
+  const steps = options === undefined ? 32 : options.steps;
+  const tension = options === undefined ? 0 : options.tension;
+  const closed = options === undefined ? false : options.closed;
 
   if (points.length < 2) {
     out.length = 0;

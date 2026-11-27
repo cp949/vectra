@@ -11,6 +11,9 @@ import { arcFlattenInto } from '../../../src/curve/arc-flatten-into';
 import { arcSampleInto } from '../../../src/curve/arc-sample-into';
 import { arcSplitAtInto } from '../../../src/curve/arc-split-at-into';
 import { arcToCubicInto } from '../../../src/curve/arc-to-cubic-into';
+import { bsplinePointAtTInto } from '../../../src/curve/bspline-point-at-t-into';
+import { cardinalPointAtTInto } from '../../../src/curve/cardinal-point-at-t-into';
+import { catmullRomPointAtTInto } from '../../../src/curve/catmull-rom-point-at-t-into';
 import type {
   BoundsWritable,
   Point,
@@ -22,6 +25,7 @@ import type {
 import { makeCenterArc } from './arc-test-helpers';
 
 const arc = makeCenterArc();
+const arcPoint = { x: 1, y: 0 };
 
 test('중심 원호 함수는 평평한 점과 경계 상자, 곡선 배열을 사용한다', () => {
   expectTypeOf(arcBoundsInto).parameter(0).toEqualTypeOf<BoundsWritable>();
@@ -121,4 +125,29 @@ test('arcToCubicInto은 고정 원소 타입으로 같은 출력 배열을 반�
   const result = arcToCubicInto(out, arc);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<CubicCurveWritable[]>();
+});
+
+test('B-Spline은 제어점 객체 배열을 받는다', () => {
+  expectTypeOf(bsplinePointAtTInto).parameter(1).toEqualTypeOf<readonly Point[]>();
+});
+
+test('bsplinePointAtTInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = bsplinePointAtTInto(out, [arcPoint], 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('cardinalPointAtTInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = cardinalPointAtTInto(out, [arcPoint], 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('catmullRomPointAtTInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new PointOutput();
+  const result = catmullRomPointAtTInto(out, [arcPoint], 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointOutput>();
 });

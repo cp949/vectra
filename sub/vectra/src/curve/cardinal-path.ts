@@ -1,4 +1,5 @@
-import type { CardinalOptions, PathCommand, XYInput } from '../types';
+import type { CardinalOptions, PathCommand } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { cardinalPathInto } from './cardinal-path-into';
 
 /**
@@ -11,6 +12,6 @@ import { cardinalPathInto } from './cardinal-path-into';
  * @param options tension, closed, startAngle 옵션
  * @returns 새로 만든 PathCommand 배열
  */
-export function cardinalPath(points: readonly XYInput[], options?: CardinalOptions): PathCommand[] {
+export function cardinalPath(points: readonly Point[], options?: Required<CardinalOptions>): PathCommand[] {
   return cardinalPathInto([], points, options);
 }

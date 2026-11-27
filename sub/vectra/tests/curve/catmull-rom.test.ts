@@ -30,7 +30,7 @@ describe('catmullRomPointAtTInto', () => {
       { x: 3, y: 0 },
     ];
     const out = { x: 0, y: 0 };
-    catmullRomPointAtTInto(out, points, 0, { alpha: 0 });
+    catmullRomPointAtTInto(out, points, 0, { alpha: 0, closed: false });
     expectXY(out, { x: 0, y: 0 }, 1e-10);
   });
 
@@ -42,7 +42,7 @@ describe('catmullRomPointAtTInto', () => {
       { x: 3, y: 0 },
     ];
     const out = { x: 0, y: 0 };
-    catmullRomPointAtTInto(out, points, 1, { alpha: 0 });
+    catmullRomPointAtTInto(out, points, 1, { alpha: 0, closed: false });
     expectXY(out, { x: 3, y: 0 }, 1e-10);
   });
 
@@ -55,7 +55,7 @@ describe('catmullRomPointAtTInto', () => {
       { x: 3, y: 0 },
     ];
     const out = { x: 0, y: 0 };
-    catmullRomPointAtTInto(out, points, 0.5, { alpha: 0 });
+    catmullRomPointAtTInto(out, points, 0.5, { alpha: 0, closed: false });
     expectXY(out, { x: 1.5, y: 0 }, 1e-6);
   });
 
@@ -81,7 +81,7 @@ describe('catmullRomPointAtTInto', () => {
         { x: 2, y: 0 },
       ],
       0.5,
-      { alpha: 0 }
+      { alpha: 0, closed: false }
     );
     expectXY(out, { x: 1, y: 0 }, 1e-6);
   });
@@ -95,8 +95,8 @@ describe('catmullRomPointAtTInto', () => {
     ];
     const out0 = { x: 0, y: 0 };
     const out1 = { x: 0, y: 0 };
-    catmullRomPointAtTInto(out0, points, 0, { closed: true });
-    catmullRomPointAtTInto(out1, points, 1, { closed: true });
+    catmullRomPointAtTInto(out0, points, 0, { closed: true, alpha: 0.5 });
+    catmullRomPointAtTInto(out1, points, 1, { closed: true, alpha: 0.5 });
     expectXY(out0, out1, 1e-10);
   });
 
@@ -109,8 +109,8 @@ describe('catmullRomPointAtTInto', () => {
     ];
     const outClosed = { x: 0, y: 0 };
     const outOpen = { x: 0, y: 0 };
-    catmullRomPointAtTInto(outClosed, points, 0.25, { closed: true });
-    catmullRomPointAtTInto(outOpen, points, 0.25, { closed: false });
+    catmullRomPointAtTInto(outClosed, points, 0.25, { closed: true, alpha: 0.5 });
+    catmullRomPointAtTInto(outOpen, points, 0.25, { closed: false, alpha: 0.5 });
     // wrap-around로 인해 두 결과는 달라야 한다
     const dx = Math.abs(outClosed.x - outOpen.x);
     const dy = Math.abs(outClosed.y - outOpen.y);
@@ -128,8 +128,8 @@ describe('catmullRomPointAtTInto', () => {
     ];
     const outUniform = { x: 0, y: 0 };
     const outCentripetal = { x: 0, y: 0 };
-    catmullRomPointAtTInto(outUniform, points, 0.4, { alpha: 0 });
-    catmullRomPointAtTInto(outCentripetal, points, 0.4, { alpha: 0.5 });
+    catmullRomPointAtTInto(outUniform, points, 0.4, { alpha: 0, closed: false });
+    catmullRomPointAtTInto(outCentripetal, points, 0.4, { alpha: 0.5, closed: false });
     const dx = Math.abs(outUniform.x - outCentripetal.x);
     const dy = Math.abs(outUniform.y - outCentripetal.y);
     expect(dx + dy).toBeGreaterThan(1e-6);
@@ -145,7 +145,7 @@ describe('catmullRomPointAtT', () => {
       { x: 4, y: 3 },
     ];
     const t = 0.5;
-    const opts = { alpha: 0.5 };
+    const opts = { alpha: 0.5, closed: false };
 
     const out = { x: 0, y: 0 };
     catmullRomPointAtTInto(out, points, t, opts);
@@ -165,13 +165,13 @@ describe('catmullRomPolylineInto', () => {
 
   it('steps=5, open curve: 5개 점을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    catmullRomPolylineInto(out, basePoints, 5);
+    catmullRomPolylineInto(out, basePoints, { steps: 5, alpha: 0.5, closed: false });
     expect(out.length).toBe(5);
   });
 
   it('steps=4, closed curve: 4개 점을 반환하고 t=0,1/4,1/2,3/4에 대응한다', () => {
     const out: { x: number; y: number }[] = [];
-    catmullRomPolylineInto(out, basePoints, { steps: 4, closed: true });
+    catmullRomPolylineInto(out, basePoints, { steps: 4, closed: true, alpha: 0.5 });
     expect(out.length).toBe(4);
 
     // 각 점이 catmullRomPointAtTInto의 t=0,0.25,0.5,0.75 결과와 일치해야 한다
@@ -185,7 +185,7 @@ describe('catmullRomPolylineInto', () => {
 
   it('degenerate: points.length < 2이면 out.length === 0', () => {
     const out: { x: number; y: number }[] = [{ x: 1, y: 1 }];
-    catmullRomPolylineInto(out, [{ x: 0, y: 0 }], 10);
+    catmullRomPolylineInto(out, [{ x: 0, y: 0 }], { steps: 10, alpha: 0.5, closed: false });
     expect(out.length).toBe(0);
   });
 
@@ -194,7 +194,7 @@ describe('catmullRomPolylineInto', () => {
       { x: 1, y: 1 },
       { x: 2, y: 2 },
     ];
-    catmullRomPolylineInto(out, basePoints, 0);
+    catmullRomPolylineInto(out, basePoints, { steps: 0, alpha: 0.5, closed: false });
     expect(out.length).toBe(0);
   });
 
@@ -205,13 +205,13 @@ describe('catmullRomPolylineInto', () => {
       { x: 1, y: 0 },
       { x: 2, y: 0 },
     ];
-    catmullRomPolylineInto(out, pts, -1);
+    catmullRomPolylineInto(out, pts, { steps: -1, alpha: 0.5, closed: false });
     expect(out.length).toBe(0);
   });
 
   it('degenerate: steps === 1이면 t=0 단일 점만 push한다', () => {
     const out: { x: number; y: number }[] = [];
-    catmullRomPolylineInto(out, basePoints, 1);
+    catmullRomPolylineInto(out, basePoints, { steps: 1, alpha: 0.5, closed: false });
     expect(out.length).toBe(1);
 
     const expected = { x: 0, y: 0 };
@@ -224,7 +224,7 @@ describe('catmullRomPolylineInto', () => {
       { x: 9, y: 9 },
       { x: 8, y: 8 },
     ];
-    catmullRomPolylineInto(out, basePoints, 3);
+    catmullRomPolylineInto(out, basePoints, { steps: 3, alpha: 0.5, closed: false });
     expect(out.length).toBe(3);
   });
 
@@ -241,7 +241,7 @@ describe('catmullRomPolylineInto', () => {
       { x: 0, y: 0 },
       { x: 4, y: 0 },
     ];
-    catmullRomPolylineInto(out, twoPoints, 3);
+    catmullRomPolylineInto(out, twoPoints, { steps: 3, alpha: 0.5, closed: false });
     expect(out.length).toBe(3);
     // t=0은 첫 점, t=2/3은 중간 부근이어야 한다
     expectXY(out[0], { x: 0, y: 0 }, 1e-6);
@@ -340,7 +340,7 @@ describe('catmullRomPathInto', () => {
       { x: 0, y: 2 },
     ];
     const out: PathCommand[] = [];
-    catmullRomPathInto(out, pts, { closed: true });
+    catmullRomPathInto(out, pts, { closed: true, alpha: 0.5 });
     expect(out.length).toBe(6);
     expect(out[0].kind).toBe('move');
     expect(out[1].kind).toBe('cubic');
@@ -359,14 +359,14 @@ describe('catmullRomPathInto', () => {
       { x: 4, y: 0 },
     ];
     const out: PathCommand[] = [];
-    catmullRomPathInto(out, pts, { alpha: 0.5 });
+    catmullRomPathInto(out, pts, { alpha: 0.5, closed: false });
 
     const move = out[0] as MoveCommand;
     const cubic = out[1] as CubicCommand;
     const bezMid = evalBezier(move.x, move.y, cubic.x1, cubic.y1, cubic.x2, cubic.y2, cubic.x, cubic.y, 0.5);
 
     const ref = { x: 0, y: 0 };
-    catmullRomPointAtTInto(ref, pts, 1 / 6, { alpha: 0.5 });
+    catmullRomPointAtTInto(ref, pts, 1 / 6, { alpha: 0.5, closed: false });
 
     expect(Math.abs(bezMid.x - ref.x)).toBeLessThan(TOL);
     expect(Math.abs(bezMid.y - ref.y)).toBeLessThan(TOL);
@@ -380,7 +380,7 @@ describe('catmullRomPathInto', () => {
       { x: 0, y: 2 },
     ];
     const out: PathCommand[] = [];
-    catmullRomPathInto(out, pts, { closed: true });
+    catmullRomPathInto(out, pts, { closed: true, alpha: 0.5 });
     // out: [move, cubic, cubic, cubic, cubic, close]
     const move = out[0] as MoveCommand;
     const lastCubic = out[out.length - 2] as CubicCommand;

@@ -2,7 +2,7 @@
  * catmullRomPolylineInto / catmullRomPointAtTInto — knot 표를 한 번만 만드는 구현이
  * 이전 구현과 비트 단위로 같은지 고정한다.
  *
- * 검증: 객체·tuple·class instance 점이 섞인 control point 0~30개, 중복 점·collinear·정수·실수·큰 값·
+ * 검증: 객체·클래스 인스턴스 점이 섞인 control point 0~30개, 중복 점·collinear·정수·실수·큰 값·
  * ±0·NaN·±Infinity 좌표, alpha(0, 0.5, 1, 음수, NaN 포함), closed 여부, steps(0, 1, 2, 비정수, 음수, NaN,
  * 큰 값)와 숫자 인자·옵션 인자에서 결과 점 목록이 이전 구현과 `Object.is` 수준으로 같다.
  */
@@ -17,18 +17,13 @@ import {
 } from '../../../src/curve/catmull-rom.internal';
 import { readX, readY, writeXY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
-import type {
-  CatmullRomOptions,
-  CatmullRomPolylineOptions,
-  XYInput,
-  XYObjectWritable,
-  XYWritable,
-} from '../../../src/types';
+import type { CatmullRomOptions, CatmullRomPolylineOptions } from '../../../src/types';
+import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // 이전 구현. 점을 샘플할 때마다 knot 표를 새로 만든다. 새 구현의 비교 기준으로만 쓴다.
-function referencePointAtTInto<Out extends XYWritable>(
+function referencePointAtTInto<Out extends PointWritable>(
   out: Out,
-  points: readonly XYInput[],
+  points: readonly Point[],
   t: number,
   options?: CatmullRomOptions
 ): Out {
@@ -70,10 +65,10 @@ function referencePointAtTInto<Out extends XYWritable>(
 }
 
 function referencePolylineInto(
-  out: XYObjectWritable[],
-  points: readonly XYInput[],
+  out: PointWritable[],
+  points: readonly Point[],
   stepsOrOptions?: number | CatmullRomPolylineOptions
-): XYObjectWritable[] {
+): PointWritable[] {
   let steps = 32;
   let alpha = 0.5;
   let closed = false;
@@ -132,13 +127,12 @@ function coord(rng: Rng, kind: number, special: number): number {
   return 1e6 + rng() * 1e-3;
 }
 
-function makePoint(x: number, y: number, form: number): XYInput {
+function makePoint(x: number, y: number, form: number): Point {
   if (form === 0) return { x, y };
-  if (form === 1) return [x, y];
   return new Point2(x, y);
 }
 
-function makePoints(rng: Rng): XYInput[] {
+function makePoints(rng: Rng): Point[] {
   const kind = Math.floor(rng() * 4);
   const special = rng() < 0.6 ? 0 : 0.05;
   // 점 수 0~30. 0, 1, 2, 3, 4개 경계를 자주 만든다.
@@ -184,12 +178,12 @@ function run<T>(fn: () => T): { value?: T; error?: string } {
   }
 }
 
-function sameRun(a: { value?: XYObjectWritable[]; error?: string }, b: { value?: XYObjectWritable[]; error?: string }) {
+function sameRun(a: { value?: PointWritable[]; error?: string }, b: { value?: PointWritable[]; error?: string }) {
   if (a.error !== undefined || b.error !== undefined) return a.error === b.error;
-  return same(a.value as XYObjectWritable[], b.value as XYObjectWritable[]);
+  return same(a.value as PointWritable[], b.value as PointWritable[]);
 }
 
-function same(a: readonly XYObjectWritable[], b: readonly XYObjectWritable[]): boolean {
+function same(a: readonly PointWritable[], b: readonly PointWritable[]): boolean {
   if (a.length !== b.length) return false;
   for (let i = 0; i < a.length; i++) {
     if (!Object.is(a[i].x, b[i].x) || !Object.is(a[i].y, b[i].y)) return false;
@@ -204,7 +198,15 @@ describe('catmullRomPolylineInto — 이전 구현과 출력 동일성', () => {
     for (let i = 0; i < 15_000 && mismatch === ''; i++) {
       const points = makePoints(rng);
       const arg = makeArg(rng);
-      const actual = catmullRomPolylineInto([{ x: 9, y: 9 }], points, arg);
+      const actual = catmullRomPolylineInto(
+        [{ x: 9, y: 9 }],
+        points,
+        arg === undefined
+          ? undefined
+          : typeof arg === 'number'
+            ? { steps: arg, alpha: 0.5, closed: false }
+            : { steps: arg.steps ?? 32, alpha: arg.alpha ?? 0.5, closed: arg.closed ?? false }
+      );
       const expected = referencePolylineInto([{ x: 9, y: 9 }], points, arg);
       if (!same(actual, expected)) mismatch = `#${i} n=${points.length} arg=${JSON.stringify(arg)}`;
     }
@@ -217,7 +219,7 @@ describe('catmullRomPolylineInto — 이전 구현과 출력 동일성', () => {
     let mismatch = '';
     for (let i = 0; i < 15_000 && mismatch === ''; i++) {
       const points = makePoints(rng);
-      const options: CatmullRomOptions = {};
+      const options: Required<CatmullRomOptions> = { alpha: 0.5, closed: false };
       if (rng() < 0.6) options.alpha = ALPHAS[Math.floor(rng() * ALPHAS.length)];
       if (rng() < 0.5) options.closed = rng() < 0.6;
       const r = rng();
@@ -232,10 +234,10 @@ describe('catmullRomPolylineInto — 이전 구현과 출력 동일성', () => {
   });
 
   test('점이 2개 미만이거나 steps가 0 이하이면 이전처럼 out을 비운다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
-    expect(catmullRomPolylineInto(out, [{ x: 0, y: 0 }], 8)).toEqual([]);
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
+    expect(catmullRomPolylineInto(out, [{ x: 0, y: 0 }], { steps: 8, alpha: 0.5, closed: false })).toEqual([]);
 
-    const out2: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out2: PointWritable[] = [{ x: 1, y: 1 }];
     expect(
       catmullRomPolylineInto(
         out2,
@@ -243,7 +245,7 @@ describe('catmullRomPolylineInto — 이전 구현과 출력 동일성', () => {
           { x: 0, y: 0 },
           { x: 1, y: 1 },
         ],
-        0
+        { steps: 0, alpha: 0.5, closed: false }
       )
     ).toEqual([]);
   });
@@ -254,7 +256,7 @@ describe('catmullRomPolylineInto — 이전 구현과 출력 동일성', () => {
       { x: 10, y: 0 },
       { x: 20, y: 10 },
     ];
-    const out = catmullRomPolylineInto([], points, 4);
+    const out = catmullRomPolylineInto([], points, { steps: 4, alpha: 0.5, closed: false });
 
     expect(out).toHaveLength(4);
     expect(out[0]).toEqual({ x: 0, y: 0 });

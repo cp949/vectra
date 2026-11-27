@@ -17,7 +17,7 @@ const polyPts = [
 describe('cardinalPolylineInto — out length', () => {
   it('steps=5 open → out.length=5', () => {
     const out: { x: number; y: number }[] = [];
-    cardinalPolylineInto(out, polyPts, 5);
+    cardinalPolylineInto(out, polyPts, { steps: 5, tension: 0, closed: false });
     expect(out.length).toBe(5);
   });
 
@@ -29,7 +29,7 @@ describe('cardinalPolylineInto — out length', () => {
 
   it('steps=1 → out.length=1', () => {
     const out: { x: number; y: number }[] = [];
-    cardinalPolylineInto(out, polyPts, 1);
+    cardinalPolylineInto(out, polyPts, { steps: 1, tension: 0, closed: false });
     expect(out.length).toBe(1);
   });
 });
@@ -37,13 +37,13 @@ describe('cardinalPolylineInto — out length', () => {
 describe('cardinalPolylineInto — degenerate', () => {
   it('steps=0이면 out을 비운다', () => {
     const out = [{ x: 1, y: 1 }];
-    cardinalPolylineInto(out, polyPts, 0);
+    cardinalPolylineInto(out, polyPts, { steps: 0, tension: 0, closed: false });
     expect(out.length).toBe(0);
   });
 
   it('steps<0이면 out을 비운다', () => {
     const out = [{ x: 1, y: 1 }];
-    cardinalPolylineInto(out, polyPts, -3);
+    cardinalPolylineInto(out, polyPts, { steps: -3, tension: 0, closed: false });
     expect(out.length).toBe(0);
   });
 
@@ -66,7 +66,7 @@ describe('cardinalPolylineInto — 기존 out 교체', () => {
       { x: 99, y: 99 },
       { x: 88, y: 88 },
     ];
-    cardinalPolylineInto(out, polyPts, 3);
+    cardinalPolylineInto(out, polyPts, { steps: 3, tension: 0, closed: false });
     expect(out.length).toBe(3);
     expect(out[0]).not.toEqual({ x: 99, y: 99 });
   });
@@ -88,7 +88,7 @@ describe('cardinalPolylineInto — 샘플 값', () => {
 
   it('steps=1은 t=0 한 점이 cardinalPointAtTInto(t=0)와 일치한다', () => {
     const out: { x: number; y: number }[] = [];
-    cardinalPolylineInto(out, polyPts, 1);
+    cardinalPolylineInto(out, polyPts, { steps: 1, tension: 0, closed: false });
     expect(out.length).toBe(1);
 
     const tmp = { x: 0, y: 0 };

@@ -267,21 +267,21 @@ describe('bsplinePolylineInto — 기본 동작', () => {
     expect(out.length).toBe(32);
   });
 
-  it('steps 숫자 옵션: steps=8 → out.length === 8', () => {
+  it('steps 옵션: steps=8 → out.length === 8', () => {
     const out: { x: number; y: number }[] = [];
-    bsplinePolylineInto(out, points, 8);
+    bsplinePolylineInto(out, points, { steps: 8, closed: false });
     expect(out.length).toBe(8);
   });
 
-  it('steps 객체 옵션: steps=16 → out.length === 16', () => {
+  it('steps 옵션: steps=16 → out.length === 16', () => {
     const out: { x: number; y: number }[] = [];
-    bsplinePolylineInto(out, points, { steps: 16 });
+    bsplinePolylineInto(out, points, { steps: 16, closed: false });
     expect(out.length).toBe(16);
   });
 
   it('steps=1 → out.length === 1 (t=0 단일 점)', () => {
     const out: { x: number; y: number }[] = [];
-    bsplinePolylineInto(out, points, 1);
+    bsplinePolylineInto(out, points, { steps: 1, closed: false });
     expect(out.length).toBe(1);
     // t=0 점과 bsplinePointAtTInto(t=0) 결과 비교
     const ref = { x: 0, y: 0 };
@@ -295,7 +295,7 @@ describe('bsplinePolylineInto — 기본 동작', () => {
       { x: 99, y: 99 },
       { x: 88, y: 88 },
     ];
-    bsplinePolylineInto(out, points, 4);
+    bsplinePolylineInto(out, points, { steps: 4, closed: false });
     expect(out.length).toBe(4);
   });
 });
@@ -357,7 +357,7 @@ describe('bsplinePolylineInto — degenerate 처리', () => {
       { x: 3, y: 0 },
     ];
     const out: { x: number; y: number }[] = [];
-    bsplinePolylineInto(out, pts, 0);
+    bsplinePolylineInto(out, pts, { steps: 0, closed: false });
     expect(out.length).toBe(0);
   });
 
@@ -369,13 +369,13 @@ describe('bsplinePolylineInto — degenerate 처리', () => {
       { x: 3, y: 0 },
     ];
     const out: { x: number; y: number }[] = [];
-    bsplinePolylineInto(out, pts, -1);
+    bsplinePolylineInto(out, pts, { steps: -1, closed: false });
     expect(out.length).toBe(0);
   });
 
   it('closed n=0 → out.length === 0', () => {
     const out: { x: number; y: number }[] = [];
-    bsplinePolylineInto(out, [], { closed: true });
+    bsplinePolylineInto(out, [], { closed: true, steps: 32 });
     expect(out.length).toBe(0);
   });
 });

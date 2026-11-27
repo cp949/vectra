@@ -1,4 +1,5 @@
-import type { CatmullRomOptions, XYInput } from '../types';
+import type { CatmullRomOptions } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { catmullRomPointAtTInto } from './catmull-rom-point-at-t-into';
 
 /**
@@ -10,9 +11,9 @@ import { catmullRomPointAtTInto } from './catmull-rom-point-at-t-into';
  * @returns {x, y} 좌표
  */
 export function catmullRomPointAtT(
-  points: readonly XYInput[],
+  points: readonly Point[],
   t: number,
-  options?: CatmullRomOptions
+  options?: Required<CatmullRomOptions>
 ): { x: number; y: number } {
   return catmullRomPointAtTInto({ x: 0, y: 0 }, points, t, options);
 }
