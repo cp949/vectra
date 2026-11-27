@@ -38,11 +38,6 @@ class OutputRect {
   label = 'rect';
 }
 
-/** 점 배열을 재사용하면서 호출자 상태를 보관한다. */
-class PointBuffer extends Array<PointWritable> {
-  label = 'points';
-}
-
 const rect = { x: 0, y: 0, width: 8, height: 6 };
 const point = { x: 0.5, y: 0.5 };
 
@@ -84,12 +79,13 @@ test('사각형 Into 함수는 출력 객체의 구체 타입과 참조를 보�
   expect(expandedByRect).toBe(out);
 });
 
-test('cornersInto는 출력 배열의 구체 타입과 참조를 보존한다', () => {
-  const out = new PointBuffer();
+test('cornersInto는 새 점을 push하므로 원소 타입을 PointWritable로 고정한다', () => {
+  const out: OutputPoint[] = [];
   const result = cornersInto(out, rect);
 
-  expectTypeOf(result).toEqualTypeOf<PointBuffer>();
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
   expect(result).toBe(out);
+  expect(result[0]).not.toBeInstanceOf(OutputPoint);
 });
 
 test('fitInsideInto는 사각형 객체를 받는다', () => {
@@ -139,10 +135,11 @@ test('정규화와 둘레 점 Into 함수는 점 출력 타입과 참조를 보�
   expect(sampled).toBe(out);
 });
 
-test('perimeterPointsInto는 출력 배열의 타입과 참조를 보존한다', () => {
-  const out = new PointBuffer();
+test('perimeterPointsInto는 새 점을 push하므로 원소 타입을 PointWritable로 고정한다', () => {
+  const out: OutputPoint[] = [];
   const result = perimeterPointsInto(out, rect, { count: 4 });
 
-  expectTypeOf(result).toEqualTypeOf<PointBuffer>();
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
   expect(result).toBe(out);
+  expect(result[0]).not.toBeInstanceOf(OutputPoint);
 });

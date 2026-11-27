@@ -19,7 +19,7 @@ import type { PointWritable, Rect } from '../types/flat-shapes.internal';
  * @param rect corner를 읽을 rect
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function cornersInto<Out extends PointWritable[]>(out: Out, rect: Rect): Out {
+export function cornersInto(out: PointWritable[], rect: Rect): PointWritable[] {
   // aliasing 안전 - 모든 입력 좌표를 먼저 읽은 후 기록한다
   const x = rect.x;
   const y = rect.y;

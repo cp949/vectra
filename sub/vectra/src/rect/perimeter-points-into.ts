@@ -25,11 +25,11 @@ import { perimeterPointInto } from './perimeter-point-into';
  * @param options `{ count, wrap? }` 또는 `{ step, wrap? }` 형태의 sampling 옵션
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function perimeterPointsInto<Out extends PointWritable[]>(
-  out: Out,
+export function perimeterPointsInto(
+  out: PointWritable[],
   rect: Rect,
   options: { count: number; wrap?: boolean } | { step: number; wrap?: boolean }
-): Out {
+): PointWritable[] {
   // 입력 유효성을 먼저 검사한다 (empty rect 여부와 무관하게)
   if ('count' in options) {
     const { count } = options;
