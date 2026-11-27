@@ -1,4 +1,4 @@
-import type { RectLike } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import { cornersInto } from './corners-into';
 
 /**
@@ -11,6 +11,6 @@ import { cornersInto } from './corners-into';
  *
  * @param rect corner를 읽을 rect
  */
-export function corners(rect: RectLike): { x: number; y: number }[] {
+export function corners(rect: Rect): PointWritable[] {
   return cornersInto([], rect);
 }

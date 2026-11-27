@@ -1,3 +1,5 @@
+/** 사각형의 꼭짓점, 변, 중심 기준 생성과 크기 비교를 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { cornersInto } from '../../../src/rect/corners-into';
 import { fromCenterInto } from '../../../src/rect/from-center-into';
@@ -37,18 +39,6 @@ describe('cornersInto', () => {
       cornersInto(out, { x: 5, y: 5, width: 20, height: 20 });
       // 두 번째 호출 결과가 올바르게 반영된다
       expect(out[0]).toEqual({ x: 5, y: 5 });
-    });
-  });
-
-  describe('tuple input', () => {
-    test('tuple rect로부터 4개 corner를 push한다', () => {
-      const out: { x: number; y: number }[] = [];
-      cornersInto(out, [0, 0, 100, 50] as const);
-      expect(out).toHaveLength(4);
-      expect(out[0]).toEqual({ x: 0, y: 0 }); // topLeft
-      expect(out[1]).toEqual({ x: 100, y: 0 }); // topRight
-      expect(out[2]).toEqual({ x: 100, y: 50 }); // bottomRight
-      expect(out[3]).toEqual({ x: 0, y: 50 }); // bottomLeft
     });
   });
 

@@ -1,6 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { RectLike, XYInput, XYWritable } from '../types';
+import type { Rect, Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * rect-local coordinate를 world point로 변환해 `out`에 기록하고 반환한다.
@@ -13,17 +11,19 @@ import type { RectLike, XYInput, XYWritable } from '../types';
  * `NaN`/`Infinity` 입력은 검증 없이 산술 결과로 전파한다.
  * `out`과 `localPoint`가 같은 object여도 안전하다. local 좌표를 먼저 읽은 뒤 기록한다.
  *
- * @param out world point를 기록할 writable output
+ * @param out world point를 기록할 점 객체
  * @param rect 기준 rect
  * @param localPoint world coordinate로 변환할 rect-local point
  */
-export function denormalizePointInto<Out extends XYWritable>(out: Out, rect: RectLike, localPoint: XYInput): Out {
-  const lx = readX(localPoint);
-  const ly = readY(localPoint);
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+export function denormalizePointInto<Out extends PointWritable>(out: Out, rect: Rect, localPoint: Point): Out {
+  const lx = localPoint.x;
+  const ly = localPoint.y;
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
-  return writeXY(out, x + lx * w, y + ly * h);
+  out.x = x + lx * w;
+  out.y = y + ly * h;
+  return out;
 }

@@ -1,4 +1,4 @@
-import type { RectLike, XYInput } from '../types';
+import type { PointWritable, Rect, Point } from '../types/flat-shapes.internal';
 import { clampPointInto } from './clamp-point-into';
 
 /**
@@ -19,6 +19,6 @@ import { clampPointInto } from './clamp-point-into';
  * @param rect clamp 경계가 될 rect
  * @param point rect 안으로 clamp할 point
  */
-export function clampPoint(rect: RectLike, point: XYInput): { x: number; y: number } {
+export function clampPoint(rect: Rect, point: Point): PointWritable {
   return clampPointInto({ x: 0, y: 0 }, rect, point);
 }

@@ -1,6 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { RectLike, XYInput, XYWritable } from '../types';
+import type { Rect, Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * point를 rect의 closed boundary 안으로 clamp해 `out`에 기록하고 반환한다.
@@ -18,23 +16,27 @@ import type { RectLike, XYInput, XYWritable } from '../types';
  * 별도 validation 없이 `Math.min`/`Math.max` 결과를 따른다.
  * `out`과 `point`가 같은 object여도 안전하다. point 좌표를 먼저 읽은 뒤 기록한다.
  *
- * @param out clamp된 좌표를 기록할 writable output
+ * @param out clamp된 좌표를 기록할 점 객체
  * @param rect clamp 경계가 될 rect
  * @param point rect 안으로 clamp할 point
  */
-export function clampPointInto<Out extends XYWritable>(out: Out, rect: RectLike, point: XYInput): Out {
-  const px = readX(point);
-  const py = readY(point);
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+export function clampPointInto<Out extends PointWritable>(out: Out, rect: Rect, point: Point): Out {
+  const px = point.x;
+  const py = point.y;
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
   if (w <= 0 || h <= 0) {
-    return writeXY(out, x, y);
+    out.x = x;
+    out.y = y;
+    return out;
   }
 
   const cx = Math.min(Math.max(px, x), x + w);
   const cy = Math.min(Math.max(py, y), y + h);
-  return writeXY(out, cx, cy);
+  out.x = cx;
+  out.y = cy;
+  return out;
 }

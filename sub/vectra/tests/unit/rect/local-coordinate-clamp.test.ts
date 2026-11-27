@@ -162,11 +162,10 @@ describe('denormalizePointInto', () => {
     expect(out.y).toBeCloseTo(13);
   });
 
-  test('tuple rect + tuple local point를 변환한다', () => {
-    const out: [number, number] = [0, 0];
-    denormalizePointInto(out, [0, 0, 10, 10], [0.2, 0.8]);
-    expect(out[0]).toBeCloseTo(2);
-    expect(out[1]).toBeCloseTo(8);
+  test('서로 다른 x와 y 비율을 각 축에 적용한다', () => {
+    const out = { x: 0, y: 0 };
+    denormalizePointInto(out, { x: 0, y: 0, width: 10, height: 10 }, { x: 0.2, y: 0.8 });
+    expect(out).toEqual({ x: 2, y: 8 });
   });
 
   test('0..1 밖 local coordinate를 clamp하지 않고 extrapolate한다', () => {
@@ -285,13 +284,6 @@ describe('clampPointInto', () => {
     expect(out).toEqual({ x: 15, y: 13 });
   });
 
-  test('tuple rect + tuple point + tuple out을 지원한다', () => {
-    const out: [number, number] = [0, 0];
-    clampPointInto(out, [0, 0, 10, 10], [-5, 20]);
-    expect(out[0]).toBe(0);
-    expect(out[1]).toBe(10);
-  });
-
   test('out === point aliasing 호출도 정의대로 동작한다', () => {
     const shared = { x: -5, y: 15 };
     const ret = clampPointInto(shared, { x: 0, y: 0, width: 10, height: 10 }, shared);
@@ -397,8 +389,8 @@ describe('aspectRatio', () => {
     expect(aspectRatio({ x: 5, y: 3, width: 10, height: 10 })).toBe(1);
   });
 
-  test('tuple rect를 지원한다', () => {
-    expect(aspectRatio([0, 0, 30, 10])).toBe(3);
+  test('너비를 높이로 나눈다', () => {
+    expect(aspectRatio({ x: 0, y: 0, width: 30, height: 10 })).toBe(3);
   });
 
   test('zero width는 NaN을 반환한다', () => {

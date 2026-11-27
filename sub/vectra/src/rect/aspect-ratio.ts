@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth } from '../internal/rect';
-import type { RectLike } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
 
 /**
  * rect의 aspect ratio(`width / height`)를 반환한다.
@@ -11,9 +10,9 @@ import type { RectLike } from '../types';
  *
  * @param rect aspect ratio를 측정할 rect
  */
-export function aspectRatio(rect: RectLike): number {
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+export function aspectRatio(rect: Rect): number {
+  const w = rect.width;
+  const h = rect.height;
   if (w <= 0 || h <= 0) {
     return Number.NaN;
   }

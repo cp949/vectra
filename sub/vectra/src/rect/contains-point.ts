@@ -1,6 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { RectLike, XYInput } from '../types';
+import type { Rect, Point } from '../types/flat-shapes.internal';
 
 /**
  * point가 rect의 closed boundary 안에 있는지 반환한다.
@@ -11,13 +9,13 @@ import type { RectLike, XYInput } from '../types';
  * @param rect point를 포함하는지 검사할 rect
  * @param point rect containment를 검사할 point
  */
-export function containsPoint(rect: RectLike, point: XYInput): boolean {
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const width = readRectWidth(rect);
-  const height = readRectHeight(rect);
+export function containsPoint(rect: Rect, point: Point): boolean {
+  const x = rect.x;
+  const y = rect.y;
+  const width = rect.width;
+  const height = rect.height;
   if (width <= 0 || height <= 0) return false;
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
   return px >= x && px <= x + width && py >= y && py <= y + height;
 }

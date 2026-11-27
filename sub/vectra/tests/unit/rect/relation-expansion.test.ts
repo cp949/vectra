@@ -1,3 +1,5 @@
+/** 사각형의 포함 관계, 경계 확장과 변환을 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { containsPoint } from '../../../src/rect/contains-point';
 import { containsRect } from '../../../src/rect/contains-rect';
@@ -20,10 +22,6 @@ function makeRect(): RectWritable {
 describe('rect - containsPoint (closed boundary)', () => {
   test('내부 점은 true를 반환한다', () => {
     expect(containsPoint({ x: 0, y: 0, width: 10, height: 10 }, { x: 5, y: 5 })).toBe(true);
-  });
-
-  test('tuple rect의 내부 점은 true를 반환한다', () => {
-    expect(containsPoint([0, 0, 10, 10], { x: 5, y: 5 })).toBe(true);
   });
 
   test('left edge 위 점은 포함한다 - true', () => {
@@ -73,18 +71,6 @@ describe('rect - containsPoint (closed boundary)', () => {
   test('음수 origin rect의 내부 점을 포함한다', () => {
     expect(containsPoint({ x: -5, y: -5, width: 10, height: 10 }, { x: 0, y: 0 })).toBe(true);
   });
-
-  test('tuple point 입력도 처리한다', () => {
-    expect(containsPoint({ x: 0, y: 0, width: 10, height: 10 }, [5, 5])).toBe(true);
-  });
-
-  test('tuple point - 경계 위 점도 처리한다', () => {
-    expect(containsPoint({ x: 0, y: 0, width: 10, height: 10 }, [10, 10])).toBe(true);
-  });
-
-  test('tuple point - 경계 밖 점도 처리한다', () => {
-    expect(containsPoint({ x: 0, y: 0, width: 10, height: 10 }, [11, 5])).toBe(false);
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -98,10 +84,6 @@ describe('rect - containsRect (closed boundary)', () => {
 
   test('내부에 완전히 포함된 rect는 true', () => {
     expect(containsRect({ x: 0, y: 0, width: 10, height: 10 }, { x: 2, y: 2, width: 6, height: 6 })).toBe(true);
-  });
-
-  test('tuple rect와 tuple other의 포함 관계를 처리한다', () => {
-    expect(containsRect([0, 0, 10, 10], [2, 2, 6, 6])).toBe(true);
   });
 
   test('edge가 일치하는 rect는 포함한다 - true', () => {
@@ -443,12 +425,6 @@ describe('rect - expandToIncludePointInto', () => {
     const r: RectWritable = { x: 0, y: 0, width: 5, height: 5 };
     expandToIncludePointInto(r, r, { x: 8, y: 3 });
     expect(r).toEqual({ x: 0, y: 0, width: 8, height: 5 });
-  });
-
-  test('tuple point 입력도 처리한다', () => {
-    const out = makeRect();
-    expandToIncludePointInto(out, { x: 0, y: 0, width: 5, height: 5 }, [8, 3]);
-    expect(out).toEqual({ x: 0, y: 0, width: 8, height: 5 });
   });
 });
 

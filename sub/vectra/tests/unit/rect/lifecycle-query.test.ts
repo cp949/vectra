@@ -1,3 +1,5 @@
+/** 사각형 복사와 위치·크기 조회를 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { area } from '../../../src/rect/area';
 import { bottom } from '../../../src/rect/bottom';
@@ -15,40 +17,22 @@ import { topRightInto } from '../../../src/rect/top-right-into';
 import type { RectWritable, XYWritable } from '../../../src/types';
 
 describe('rect lifecycle - copyInto', () => {
-  test('x, y, width, height 인자로 rect를 기록하고 out을 반환한다', () => {
-    const out: RectWritable = { x: 0, y: 0, width: 0, height: 0 };
-
-    const result = copyInto(out, 1, 2, 10, 20);
-
-    expect(result).toBe(out);
-    expect(out).toEqual({ x: 1, y: 2, width: 10, height: 20 });
-  });
-
   test('음수와 zero dimension을 그대로 기록한다', () => {
     const negative: RectWritable = { x: 0, y: 0, width: 0, height: 0 };
     const zero: RectWritable = { x: 0, y: 0, width: 1, height: 1 };
 
-    copyInto(negative, 5, 5, -3, -4);
-    copyInto(zero, 3, 7, 0, 0);
+    copyInto(negative, { x: 5, y: 5, width: -3, height: -4 });
+    copyInto(zero, { x: 3, y: 7, width: 0, height: 0 });
 
     expect(negative).toEqual({ x: 5, y: 5, width: -3, height: -4 });
     expect(zero).toEqual({ x: 3, y: 7, width: 0, height: 0 });
   });
 
-  test('RectLike의 필드를 out에 복사한다', () => {
+  test('사각형의 필드를 out에 복사한다', () => {
     const out: RectWritable = { x: 0, y: 0, width: 0, height: 0 };
     const src = { x: 2, y: 3, width: 8, height: 6 };
 
     const result = copyInto(out, src);
-
-    expect(result).toBe(out);
-    expect(out).toEqual({ x: 2, y: 3, width: 8, height: 6 });
-  });
-
-  test('RectTuple의 component를 out에 복사한다', () => {
-    const out: RectWritable = { x: 0, y: 0, width: 0, height: 0 };
-
-    const result = copyInto(out, [2, 3, 8, 6]);
 
     expect(result).toBe(out);
     expect(out).toEqual({ x: 2, y: 3, width: 8, height: 6 });
@@ -110,10 +94,6 @@ describe('rect query - left/top/right/bottom', () => {
     expect(bottom({ x: 3, y: 7, width: 10, height: 5 })).toBe(12);
   });
 
-  test('tuple rect의 bottom은 y + height를 반환한다', () => {
-    expect(bottom([3, 7, 10, 5])).toBe(12);
-  });
-
   test('음수 x/y에서 edge를 올바르게 계산한다', () => {
     const r = { x: -5, y: -3, width: 10, height: 6 };
 
@@ -167,10 +147,6 @@ describe('rect query - area', () => {
     expect(area({ x: 0, y: 0, width: 4, height: 5 })).toBe(20);
   });
 
-  test('tuple rect의 area를 반환한다', () => {
-    expect(area([0, 0, 4, 5])).toBe(20);
-  });
-
   test('width === 0이면 area는 0이다 (empty)', () => {
     expect(area({ x: 0, y: 0, width: 0, height: 5 })).toBe(0);
   });
@@ -205,14 +181,6 @@ describe('rect 결과 기록 - centerInto', () => {
     expect(out).toEqual({ x: 5, y: 3 });
   });
 
-  test('tuple rect 중심점을 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-
-    centerInto(out, [0, 0, 10, 6]);
-
-    expect(out).toEqual({ x: 5, y: 3 });
-  });
-
   test('원점이 아닌 위치의 rect 중심점을 계산한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
 
@@ -239,16 +207,6 @@ describe('rect 결과 기록 - centerInto', () => {
     // 입력 x=2, y=4, width=6, height=8 → center = (5, 8)
     expect(shared.x).toBe(5);
     expect(shared.y).toBe(8);
-  });
-
-  test('tuple out에 결과를 기록하고 동일 참조를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-
-    const result = centerInto(out, { x: 0, y: 0, width: 10, height: 6 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBe(5);
-    expect(out[1]).toBe(3);
   });
 
   test('반환값이 out의 동일 참조이다', () => {

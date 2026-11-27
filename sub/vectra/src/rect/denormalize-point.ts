@@ -1,4 +1,4 @@
-import type { RectLike, XYInput } from '../types';
+import type { PointWritable, Rect, Point } from '../types/flat-shapes.internal';
 import { denormalizePointInto } from './denormalize-point-into';
 
 /**
@@ -14,6 +14,6 @@ import { denormalizePointInto } from './denormalize-point-into';
  * @param rect 기준 rect
  * @param localPoint world coordinate로 변환할 rect-local point
  */
-export function denormalizePoint(rect: RectLike, localPoint: XYInput): { x: number; y: number } {
+export function denormalizePoint(rect: Rect, localPoint: Point): PointWritable {
   return denormalizePointInto({ x: 0, y: 0 }, rect, localPoint);
 }

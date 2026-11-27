@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectLike } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
 
 /**
  * other rect가 rect의 closed boundary 안에 완전히 포함되는지 반환한다.
@@ -10,15 +9,15 @@ import type { RectLike } from '../types';
  * @param rect 포함 영역으로 사용할 rect
  * @param other rect 안에 포함되는지 검사할 rect
  */
-export function containsRect(rect: RectLike, other: RectLike): boolean {
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const width = readRectWidth(rect);
-  const height = readRectHeight(rect);
-  const otherX = readRectX(other);
-  const otherY = readRectY(other);
-  const otherWidth = readRectWidth(other);
-  const otherHeight = readRectHeight(other);
+export function containsRect(rect: Rect, other: Rect): boolean {
+  const x = rect.x;
+  const y = rect.y;
+  const width = rect.width;
+  const height = rect.height;
+  const otherX = other.x;
+  const otherY = other.y;
+  const otherWidth = other.width;
+  const otherHeight = other.height;
   const otherEmpty = otherWidth <= 0 || otherHeight <= 0;
   const rectEmpty = width <= 0 || height <= 0;
 

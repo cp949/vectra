@@ -1,5 +1,4 @@
-import { readRectHeight, readRectY } from '../internal/rect';
-import type { RectLike } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
 
 /**
  * rect의 bottom 좌표를 반환한다.
@@ -8,6 +7,6 @@ import type { RectLike } from '../types';
  *
  * @param rect bottom 좌표를 읽을 rect
  */
-export function bottom(rect: RectLike): number {
-  return readRectY(rect) + readRectHeight(rect);
+export function bottom(rect: Rect): number {
+  return rect.y + rect.height;
 }

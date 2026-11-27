@@ -1,3 +1,5 @@
+/** 각 도형의 생성 함수와 반환 타입을 시험한다. */
+
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { boundsFrom } from '../../../src/bounds/bounds-from';
 import { createCircle } from '../../../src/circle/create-circle';
@@ -7,16 +9,17 @@ import { createPolyline } from '../../../src/polyline/create-polyline';
 import { polylineFrom } from '../../../src/polyline/polyline-from';
 import { createRect } from '../../../src/rect/create-rect';
 import { rectFrom } from '../../../src/rect/rect-from';
-import type { RectWritable } from '../../../src/types';
+import type { RectWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('shape create/xFrom factories', () => {
-  // 대표 factory: seed 형태 + source/component 복사 + writable 반환 타입을 한 번만 고정한다.
-  test('createRect()는 zero seed를 만들고 rectFrom은 source/component를 복사한다', () => {
+  test('createRect는 기본 사각형을 만들고 rectFrom은 새 객체에 필드를 복사한다', () => {
+    const source = { x: 1, y: 2, width: 3, height: 4 };
+    const result = rectFrom(source);
     expectTypeOf(createRect()).toEqualTypeOf<RectWritable>();
-    expectTypeOf(rectFrom(1, 2, 3, 4)).toEqualTypeOf<RectWritable>();
+    expectTypeOf(result).toEqualTypeOf<RectWritable>();
     expect(createRect()).toEqual({ x: 0, y: 0, width: 0, height: 0 });
-    expect(rectFrom(1, 2, 3, 4)).toEqual({ x: 1, y: 2, width: 3, height: 4 });
-    expect(rectFrom([5, 6, 7, 8])).toEqual({ x: 5, y: 6, width: 7, height: 8 });
+    expect(result).toEqual(source);
+    expect(result).not.toBe(source);
   });
 
   // 대표 factory: nested source의 leaf 컴포넌트가 복사되어 source 참조와 분리되는지 확인한다.

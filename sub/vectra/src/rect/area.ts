@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth } from '../internal/rect';
-import type { RectLike } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
 
 /**
  * rect의 면적을 반환한다.
@@ -8,9 +7,9 @@ import type { RectLike } from '../types';
  *
  * @param rect 면적을 측정할 rect
  */
-export function area(rect: RectLike): number {
-  const width = readRectWidth(rect);
-  const height = readRectHeight(rect);
+export function area(rect: Rect): number {
+  const width = rect.width;
+  const height = rect.height;
   if (width <= 0 || height <= 0) {
     return 0;
   }

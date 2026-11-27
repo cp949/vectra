@@ -15,7 +15,7 @@ domain barrel은 한 domain의 public 함수를 모아 제공한다.
 ```ts
 import * as Rectx from '@cp949/vectra/rect';
 
-const frame = Rectx.rectFrom(0, 0, 320, 180);
+const frame = Rectx.rectFrom({ x: 0, y: 0, width: 320, height: 180 });
 const center = Rectx.centerInto({ x: 0, y: 0 }, frame);
 ```
 
