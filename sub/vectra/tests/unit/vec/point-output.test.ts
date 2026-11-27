@@ -27,7 +27,7 @@ describe('vec point-output - perpendicularInto', () => {
   });
 
   test('양의 x축 입력에서 CCW 90도 수직 벡터를 out에 기록한다', () => {
-    // [1, 0] → (-0, 1) 인데 -0과 +0은 수학적으로 동일하므로 toBeCloseTo로 검증한다
+    // { x: 1, y: 0 } → (-0, 1)인데 -0과 +0은 수학적으로 동일하므로 toBeCloseTo로 검증한다
     const out: XYWritable = { x: 0, y: 0 };
 
     const result = perpendicularInto(out, { x: 1, y: 0 });
