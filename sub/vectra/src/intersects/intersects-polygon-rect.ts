@@ -1,3 +1,4 @@
+import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from '../internal/polygon';
 import { readRectHeight, readRectWidth, readRectX, readRectY, rectContainsPointXY } from '../internal/rect';
 import { readX, readY } from '../internal/xy';
@@ -29,10 +30,11 @@ export function intersectsPolygonRect(polygon: PolygonLike, rect: RectLike): boo
 
   const rx2 = rx + rw;
   const ry2 = ry + rh;
-  if (polygonContainsPoint(pts, rx, ry, 0)) return true;
-  if (polygonContainsPoint(pts, rx2, ry, 0)) return true;
-  if (polygonContainsPoint(pts, rx2, ry2, 0)) return true;
-  if (polygonContainsPoint(pts, rx, ry2, 0)) return true;
+  const flatPolygon = flatPolygonFromLegacyPoints(pts);
+  if (polygonContainsPoint(flatPolygon, rx, ry, 0)) return true;
+  if (polygonContainsPoint(flatPolygon, rx2, ry, 0)) return true;
+  if (polygonContainsPoint(flatPolygon, rx2, ry2, 0)) return true;
+  if (polygonContainsPoint(flatPolygon, rx, ry2, 0)) return true;
 
   const n = pts.length;
   for (let i = 0; i < n; i++) {

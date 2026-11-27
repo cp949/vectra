@@ -1,37 +1,20 @@
+/** 다각형 계산과 출력 계약을 검증한다. */
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { classifyPoint } from '../../../src/polygon/classify-point';
-import type { PolygonLike } from '../../../src/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공통 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolygonLike = { points: [] };
-const TWO_PT: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-  ],
-};
+const EMPTY: Polygon = [];
+const TWO_PT: Polygon = [0, 0, 1, 0];
 
 // 단위 정사각형 (0,0)–(1,0)–(1,1)–(0,1)
-const UNIT_SQUARE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-  ],
-};
+const UNIT_SQUARE: Polygon = [0, 0, 1, 0, 1, 1, 0, 1];
 
 // 3-4-5 직각삼각형
-const TRIANGLE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 3 },
-  ],
-};
+const TRIANGLE: Polygon = [0, 0, 4, 0, 0, 3];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // empty / degenerate polygon
@@ -44,10 +27,6 @@ describe('polygon classify - empty/degenerate', () => {
 
   test('2점 polygon은 outside를 반환한다', () => {
     expect(classifyPoint(TWO_PT, { x: 0.5, y: 0 })).toBe('outside');
-  });
-
-  test('bare empty array는 outside를 반환한다', () => {
-    expect(classifyPoint([], { x: 0, y: 0 })).toBe('outside');
   });
 });
 
@@ -139,11 +118,7 @@ describe('polygon classify - outside', () => {
 
   test('ray casting x 교점 좌표 차이가 overflow해도 outside를 유지한다', () => {
     const huge = Number.MAX_VALUE;
-    const tri = [
-      { x: huge, y: 0 },
-      { x: -huge, y: 2 },
-      { x: huge, y: 4 },
-    ];
+    const tri = [huge, 0, -huge, 2, huge, 4];
 
     expect(classifyPoint(tri, { x: -1, y: 1 })).toBe('outside');
   });
@@ -152,20 +127,3 @@ describe('polygon classify - outside', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // input 형식
 // ─────────────────────────────────────────────────────────────────────────────
-
-describe('polygon classify - input 형식', () => {
-  test('tuple point input을 지원한다', () => {
-    expect(classifyPoint(UNIT_SQUARE, [0.5, 0.5])).toBe('inside');
-    expect(classifyPoint(UNIT_SQUARE, [0.5, 0])).toBe('boundary');
-    expect(classifyPoint(UNIT_SQUARE, [2, 2])).toBe('outside');
-  });
-
-  test('bare point array polygon input을 지원한다', () => {
-    const pts = [
-      { x: 0, y: 0 },
-      { x: 1, y: 0 },
-      { x: 0.5, y: 1 },
-    ] as const;
-    expect(classifyPoint(pts, { x: 0.5, y: 0.3 })).toBe('inside');
-  });
-});

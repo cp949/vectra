@@ -1,4 +1,4 @@
-import type { PolygonLike, XYInput, XYObjectWritable } from '../types';
+import type { Polygon, Point, PointWritable } from '../types/flat-shapes.internal';
 import { closestPointInto } from './closest-point-into';
 
 /**
@@ -6,8 +6,8 @@ import { closestPointInto } from './closest-point-into';
  *
  * degenerate/empty 입력 처리 정책은 `closestPointInto`와 동일하다.
  */
-export function closestPoint(polygon: PolygonLike, point: XYInput): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function closestPoint(polygon: Polygon, point: Point): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   if (!closestPointInto(seed, polygon, point)) return undefined;
   return seed;
 }

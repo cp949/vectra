@@ -1,6 +1,5 @@
-import { polygonBoundaryClosest, readPolygonPoints } from '../internal/polygon';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { PolygonLike, XYInput, XYWritable } from '../types';
+import type { Polygon, Point, PointWritable } from '../types/flat-shapes.internal';
+import { polygonBoundaryClosest } from '../internal/polygon';
 
 /**
  * polygon boundary에서 point와 가장 가까운 점을 out에 기록하고 성공 여부를 반환한다.
@@ -12,23 +11,24 @@ import type { PolygonLike, XYInput, XYWritable } from '../types';
  * repeated-point edge(zero-length segment)는 해당 point를 closest로 반환한다.
  * 여러 edge가 동일 최소 거리를 가지면 가장 작은 edge index의 closest를 채택한다.
  *
- * @param out closest point를 기록할 writable output
+ * @param out closest point를 기록할 writable output (`x, y`)
  * @param polygon closest point를 계산할 polygon
  * @param point 가장 가까운 점을 찾을 기준 point
  */
-export function closestPointInto(out: XYWritable, polygon: PolygonLike, point: XYInput): boolean {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
+export function closestPointInto(out: PointWritable, polygon: Polygon, point: Point): boolean {
+  const n = polygon.length / 2;
   if (n === 0) return false;
 
   // single-point: edge가 없으므로 해당 점을 직접 기록한다
   if (n === 1) {
-    writeXY(out, readX(pts[0]), readY(pts[0]));
+    out.x = polygon[0];
+    out.y = polygon[1];
     return true;
   }
 
   const scratch = { cx: 0, cy: 0 };
-  polygonBoundaryClosest(pts, readX(point), readY(point), scratch);
-  writeXY(out, scratch.cx, scratch.cy);
+  polygonBoundaryClosest(polygon, point.x, point.y, scratch);
+  out.x = scratch.cx;
+  out.y = scratch.cy;
   return true;
 }

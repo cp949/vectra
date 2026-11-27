@@ -1,3 +1,4 @@
+import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { lineFamilyTriangleIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
@@ -68,9 +69,10 @@ export function intersectsPathTriangle(
   // 조건 3: triangle 꼭짓점이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
-    if (polygonContainsPoint(tmp, ax, ay, DEFAULT_EPSILON)) return true;
-    if (polygonContainsPoint(tmp, bx, by, DEFAULT_EPSILON)) return true;
-    if (polygonContainsPoint(tmp, cx, cy, DEFAULT_EPSILON)) return true;
+    const polygon = flatPolygonFromLegacyPoints(tmp);
+    if (polygonContainsPoint(polygon, ax, ay, DEFAULT_EPSILON)) return true;
+    if (polygonContainsPoint(polygon, bx, by, DEFAULT_EPSILON)) return true;
+    if (polygonContainsPoint(polygon, cx, cy, DEFAULT_EPSILON)) return true;
   }
 
   return false;

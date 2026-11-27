@@ -1,6 +1,5 @@
-import { polygonBoundaryDistance, readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike, XYInput } from '../types';
+import type { Polygon, Point } from '../types/flat-shapes.internal';
+import { polygonBoundaryDistance } from '../internal/polygon';
 
 /**
  * polygon에 대한 point의 signed winding number를 반환한다.
@@ -26,27 +25,26 @@ import type { PolygonLike, XYInput } from '../types';
  * @param point 판정 기준 point
  * @param epsilon boundary proximity threshold (기본값 `0`)
  */
-export function polygonWindingNumber(polygon: PolygonLike, point: XYInput, epsilon = 0): number {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
+export function polygonWindingNumber(polygon: Polygon, point: Point, epsilon = 0): number {
+  const n = polygon.length / 2;
   if (n < 3) return 0;
 
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
 
   // boundary proximity는 containsPoint와 같은 거리 threshold로 처리한다. edge까지 거리가 epsilon
   // 이하이면 winding 0이다.
-  if (polygonBoundaryDistance(pts, px, py, null) <= epsilon) return 0;
+  if (polygonBoundaryDistance(polygon, px, py, null) <= epsilon) return 0;
 
   // standard horizontal-crossing winding: upward crossing이며 point가 왼쪽이면 +1,
   // downward crossing이며 point가 오른쪽이면 -1.
   let winding = 0;
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
-    const ax = readX(pts[i]);
-    const ay = readY(pts[i]);
-    const bx = readX(pts[j]);
-    const by = readY(pts[j]);
+    const ax = polygon[2 * i];
+    const ay = polygon[2 * i + 1];
+    const bx = polygon[2 * j];
+    const by = polygon[2 * j + 1];
     if (ay <= py) {
       if (by > py) {
         const cross = (bx - ax) * (py - ay) - (by - ay) * (px - ax);

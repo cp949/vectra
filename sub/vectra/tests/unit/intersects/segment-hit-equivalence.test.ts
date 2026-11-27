@@ -1,3 +1,4 @@
+import { flatPolygonFromLegacyPoints } from '../../../src/internal/legacy-polygon.internal';
 /**
  * intersects.intersectsPolygonSegment / intersectsPolygonRay / intersectsPolygonInfiniteLine /
  * intersectsCircleSegment / intersectsSegmentSegment — 전용 reader, 재사용 param, 경계 근접 건너뛰기를
@@ -53,7 +54,7 @@ function referenceLineFamilyPolygonIntersects(
   }
 
   if (line.kind !== 'finite') return false;
-  return polygonContainsPoint(pts, line.ox, line.oy, epsilon ?? DEFAULT_EPSILON);
+  return polygonContainsPoint(flatPolygonFromLegacyPoints(pts), line.ox, line.oy, epsilon ?? DEFAULT_EPSILON);
 }
 
 function referencePolygonSegment(polygon: PolygonLike, line: SegmentLike, epsilon?: number): boolean {

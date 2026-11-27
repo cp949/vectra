@@ -1,3 +1,4 @@
+import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { boundsContainsPointXY, readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
@@ -27,10 +28,11 @@ export function intersectsPolygonBounds(polygon: PolygonLike, bounds: BoundsLike
   const maxY = readY(readBoundsMax(bounds));
   if (maxX < minX || maxY < minY) return false;
 
-  if (polygonContainsPoint(pts, minX, minY, 0)) return true;
-  if (polygonContainsPoint(pts, maxX, minY, 0)) return true;
-  if (polygonContainsPoint(pts, maxX, maxY, 0)) return true;
-  if (polygonContainsPoint(pts, minX, maxY, 0)) return true;
+  const flatPolygon = flatPolygonFromLegacyPoints(pts);
+  if (polygonContainsPoint(flatPolygon, minX, minY, 0)) return true;
+  if (polygonContainsPoint(flatPolygon, maxX, minY, 0)) return true;
+  if (polygonContainsPoint(flatPolygon, maxX, maxY, 0)) return true;
+  if (polygonContainsPoint(flatPolygon, minX, maxY, 0)) return true;
 
   const n = pts.length;
   for (let i = 0; i < n; i++) {

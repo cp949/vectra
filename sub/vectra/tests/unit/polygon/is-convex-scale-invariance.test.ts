@@ -11,21 +11,21 @@
 
 import { describe, expect, test } from 'vitest';
 import { isConvex } from '../../../src/polygon/is-convex';
-import type { PolygonLike } from '../../../src/types';
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 
 /** 좌표 scale 후보. 길이 임계값이 없어 아주 작은 scale도 다룬다. */
 const SCALES = [1e-10, 1e-8, 1e-6, 1e-5, 1e-3, 1, 1e3, 1e8];
 
 /** 단위 좌표 `[x, y]` 목록을 s배 해 polygon으로 만든다. */
-function scaledPolygon(s: number, points: ReadonlyArray<readonly [number, number]>): PolygonLike {
-  return { points: points.map(([x, y]) => ({ x: x * s, y: y * s })) };
+function scaledPolygon(s: number, points: ReadonlyArray<readonly [number, number]>): Polygon {
+  return points.map(([x, y]) => ({ x: x * s, y: y * s })).flatMap(({ x, y }) => [x, y]);
 }
 
 /**
  * 한 변의 중간 vertex를 안쪽으로 `dent`만큼 들여 만든 정사각형(단위 4)을 s배 한다.
  * 중간 vertex의 turn은 sin θ ≈ dent다. dent가 임계(1e-9)보다 작으면 collinear로 본다.
  */
-function dentedSquare(s: number, dent: number): PolygonLike {
+function dentedSquare(s: number, dent: number): Polygon {
   return scaledPolygon(s, [
     [0, 0],
     [2, dent],

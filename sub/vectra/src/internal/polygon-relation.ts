@@ -1,3 +1,4 @@
+import { flatPolygonFromLegacyPoints } from './legacy-polygon.internal';
 import type { PolygonLike, PolylineLike } from '../types';
 import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from './polygon';
 import { readPolylinePoints } from './polyline';
@@ -26,13 +27,14 @@ export function polygonPolylineIntersects(polygon: PolygonLike, polyline: Polyli
   if (nPoly < 3 || nLine === 0) return false;
 
   // single-point polyline은 point containment만 판정한다.
+  const flatPolygon = flatPolygonFromLegacyPoints(ptsPoly);
   if (nLine === 1) {
-    return polygonContainsPoint(ptsPoly, readX(ptsLine[0]), readY(ptsLine[0]), epsilon);
+    return polygonContainsPoint(flatPolygon, readX(ptsLine[0]), readY(ptsLine[0]), epsilon);
   }
 
   // polyline point가 polygon 내부에 있으면 true (완전 포함 케이스 포함)
   for (let i = 0; i < nLine; i++) {
-    if (polygonContainsPoint(ptsPoly, readX(ptsLine[i]), readY(ptsLine[i]), epsilon)) return true;
+    if (polygonContainsPoint(flatPolygon, readX(ptsLine[i]), readY(ptsLine[i]), epsilon)) return true;
   }
 
   // polyline segment와 polygon edge crossing 확인
@@ -97,7 +99,7 @@ export function polygonPolygonIntersects(a: PolygonLike, b: PolygonLike, epsilon
   }
 
   // edge 교차 없음: 대표 vertex containment로 전체 포함/분리를 가른다
-  if (polygonContainsPoint(ptsB, readX(ptsA[0]), readY(ptsA[0]), epsilon)) return true;
-  if (polygonContainsPoint(ptsA, readX(ptsB[0]), readY(ptsB[0]), epsilon)) return true;
+  if (polygonContainsPoint(flatPolygonFromLegacyPoints(ptsB), readX(ptsA[0]), readY(ptsA[0]), epsilon)) return true;
+  if (polygonContainsPoint(flatPolygonFromLegacyPoints(ptsA), readX(ptsB[0]), readY(ptsB[0]), epsilon)) return true;
   return false;
 }

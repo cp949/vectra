@@ -1,7 +1,9 @@
+/** 다각형 계산과 출력 계약을 검증한다. */
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { isSelfIntersecting } from '../../../src/polygon/is-self-intersecting';
 import { isSimple } from '../../../src/polygon/is-simple';
-import type { PolygonLike, XYInput } from '../../../src/types';
+import type { XYInput } from '../../../src/types';
 
 // S10-RM-010 polygon lightweight validation helpers.
 // 정책 출처: _works/S10-RM-010/.../TASK-01-surface-policy.md.
@@ -10,124 +12,39 @@ import type { PolygonLike, XYInput } from '../../../src/types';
 // 공통 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolygonLike = { points: [] };
-const SINGLE: PolygonLike = { points: [{ x: 1, y: 2 }] };
-const TWO_PT: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-  ],
-};
+const EMPTY: Polygon = [];
+const SINGLE: Polygon = [1, 2];
+const TWO_PT: Polygon = [0, 0, 4, 0];
 
 // 삼각형: non-adjacent edge pair가 없으므로 self-intersection 불가
-const TRIANGLE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 3 },
-  ],
-};
+const TRIANGLE: Polygon = [0, 0, 4, 0, 0, 3];
 
 // 4×4 정사각형 (CCW). 첫 edge와 마지막 edge가 (0,0)을 공유하지만 인접 edge다.
-const SQUARE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 4 },
-    { x: 0, y: 4 },
-  ],
-};
-
-// 같은 정사각형을 bare point array로 전달 (object shape가 아닌 입력 경로)
-const SQUARE_BARE: readonly XYInput[] = [
-  { x: 0, y: 0 },
-  { x: 4, y: 0 },
-  { x: 4, y: 4 },
-  { x: 0, y: 4 },
-];
+const SQUARE: Polygon = [0, 0, 4, 0, 4, 4, 0, 4];
 
 // 볼록 오각형 (n=5): wrap-around 인접 edge 처리 확인
-const PENTAGON: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 5, y: 3 },
-    { x: 2, y: 5 },
-    { x: -1, y: 3 },
-  ],
-};
+const PENTAGON: Polygon = [0, 0, 4, 0, 5, 3, 2, 5, -1, 3];
 
 // bowtie: non-adjacent edge가 (2,2)에서 교차
-const BOWTIE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 4 },
-    { x: 4, y: 0 },
-    { x: 0, y: 4 },
-  ],
-};
+const BOWTIE: Polygon = [0, 0, 4, 4, 4, 0, 0, 4];
 
 // figure-eight: (2,2) vertex를 두 번 방문해 non-adjacent edge가 한 점에서 닿는다
-const SHARED_VERTEX: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 2, y: 2 },
-    { x: 4, y: 0 },
-    { x: 4, y: 4 },
-    { x: 2, y: 2 },
-    { x: 0, y: 4 },
-  ],
-};
+const SHARED_VERTEX: Polygon = [0, 0, 2, 2, 4, 0, 4, 4, 2, 2, 0, 4];
 
 // non-adjacent collinear overlap: edge 1 (0,0)→(4,0)과 edge 4 (2,0)→(6,0)이 y=0에서 겹친다
-const COLLINEAR_OVERLAP: PolygonLike = {
-  points: [
-    { x: 0, y: 3 },
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 3 },
-    { x: 2, y: 0 },
-    { x: 6, y: 0 },
-  ],
-};
+const COLLINEAR_OVERLAP: Polygon = [0, 3, 0, 0, 4, 0, 4, 3, 2, 0, 6, 0];
 
 // consecutive repeated point: (4,0)이 연속 중복되어 zero-length edge를 만든다
-const REPEATED_POINT: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 4 },
-  ],
-};
+const REPEATED_POINT: Polygon = [0, 0, 4, 0, 4, 0, 0, 4];
 
 // explicit-closed 삼각형: 첫 vertex (0,0)을 끝에 다시 넣었다. ring은 implicit closed다.
-const EXPLICIT_CLOSED_TRIANGLE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 3 },
-    { x: 0, y: 0 },
-  ],
-};
+const EXPLICIT_CLOSED_TRIANGLE: Polygon = [0, 0, 4, 0, 0, 3, 0, 0];
 
 // 3개 vertex지만 zero-length edge를 가진 degenerate triangle
-const THREE_POINT_REPEATED: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 0 },
-  ],
-};
+const THREE_POINT_REPEATED: Polygon = [0, 0, 4, 0, 4, 0];
 
 // 3개 vertex지만 implicit close edge가 zero-length가 되는 explicit-closed line
-const THREE_POINT_EXPLICIT_CLOSED: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 0 },
-  ],
-};
+const THREE_POINT_EXPLICIT_CLOSED: Polygon = [0, 0, 4, 0, 0, 0];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // isSelfIntersecting
@@ -152,10 +69,6 @@ describe('isSelfIntersecting', () => {
   test('simple 사각형/오각형은 false다', () => {
     expect(isSelfIntersecting(SQUARE)).toBe(false);
     expect(isSelfIntersecting(PENTAGON)).toBe(false);
-  });
-
-  test('bare point array 입력도 동일하게 판정한다', () => {
-    expect(isSelfIntersecting(SQUARE_BARE)).toBe(false);
   });
 
   test('bowtie crossing은 true다', () => {
@@ -194,10 +107,6 @@ describe('isSimple', () => {
     expect(isSimple(TRIANGLE)).toBe(true);
     expect(isSimple(SQUARE)).toBe(true);
     expect(isSimple(PENTAGON)).toBe(true);
-  });
-
-  test('bare point array 입력도 동일하게 판정한다', () => {
-    expect(isSimple(SQUARE_BARE)).toBe(true);
   });
 
   test('self-intersecting polygon은 false다', () => {
@@ -251,22 +160,8 @@ describe('epsilon cross threshold', () => {
   // 같은 모양의 bowtie를 scale만 다르게 둔다. 두 edge의 cross는 scale s에 대해 s²로 줄어든다.
   // epsilon을 생략하면 sin θ로 판정하므로 scale과 무관하게 교차를 검출한다.
   // epsilon을 명시하면 절대 cross 비교라 작은 scale에서 실제 교차도 parallel로 합쳐진다.
-  const unitBowtie: PolygonLike = {
-    points: [
-      { x: 0, y: 0 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 },
-      { x: 0, y: 1 },
-    ],
-  };
-  const smallBowtie: PolygonLike = {
-    points: [
-      { x: 0, y: 0 },
-      { x: 1e-5, y: 1e-5 },
-      { x: 1e-5, y: 0 },
-      { x: 0, y: 1e-5 },
-    ],
-  };
+  const unitBowtie: Polygon = [0, 0, 1, 1, 1, 0, 0, 1];
+  const smallBowtie: Polygon = [0, 0, 1e-5, 1e-5, 1e-5, 0, 0, 1e-5];
 
   test('scale 1 bowtie는 교차를 검출한다', () => {
     expect(isSelfIntersecting(unitBowtie)).toBe(true);
@@ -296,13 +191,7 @@ describe('epsilon cross threshold', () => {
 describe('isSimple zero-length gate epsilon 분리', () => {
   // n=3 이라 self-intersection 불가, zero-length edge 없음. 큰 epsilon을 줘도 정상 triangle은
   // simple이다. zero-length 판정은 고정 DEFAULT_EPSILON 길이 임계값을 쓰기 때문이다.
-  const shortEdgeTriangle: PolygonLike = {
-    points: [
-      { x: 0, y: 0 },
-      { x: 1, y: 0 },
-      { x: 0, y: 100 },
-    ],
-  };
+  const shortEdgeTriangle: Polygon = [0, 0, 1, 0, 0, 100];
 
   test('큰 cross epsilon이 짧은 edge를 zero-length로 오판하지 않는다', () => {
     expect(isSimple(shortEdgeTriangle, 2)).toBe(true);
@@ -311,14 +200,7 @@ describe('isSimple zero-length gate epsilon 분리', () => {
 
   // 고정 1e-9 길이 임계값은 caller epsilon을 작게 줘도 유지된다(양성 방향).
   // edge 길이 1e-10(lenSq 1e-20 <= 1e-18)인 n=4 polygon은 작은 caller epsilon에서도 zero-length로 잡힌다.
-  const tinyEdgeQuad: PolygonLike = {
-    points: [
-      { x: 0, y: 0 },
-      { x: 1e-10, y: 0 },
-      { x: 4, y: 4 },
-      { x: 0, y: 4 },
-    ],
-  };
+  const tinyEdgeQuad: Polygon = [0, 0, 1e-10, 0, 4, 4, 0, 4];
 
   test('작은 caller epsilon에서도 고정 1e-9 길이 임계값이 zero-length를 잡는다', () => {
     expect(isSimple(tinyEdgeQuad, 1e-12)).toBe(false);

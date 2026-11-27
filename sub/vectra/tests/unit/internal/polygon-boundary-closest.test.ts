@@ -20,11 +20,7 @@ function makeScratch(): PolygonClosestScratch {
 describe('polygonBoundaryDistance / polygonBoundaryClosest', () => {
   test('squared distance(polygonBoundaryClosest) = distance(polygonBoundaryDistance)^2 다', () => {
     // 이등변삼각형 A=(0,10) B=(-5,-5) C=(5,-5), query=(0,0) → 변 AB 위 최근접점(-3,1), distance=sqrt(10)
-    const triangle = [
-      [0, 10],
-      [-5, -5],
-      [5, -5],
-    ] as const;
+    const triangle = [0, 10, -5, -5, 5, -5] as const;
 
     const distance = polygonBoundaryDistance(triangle, 0, 0, null);
     const squared = polygonBoundaryClosest(triangle, 0, 0, null);
@@ -37,11 +33,7 @@ describe('polygonBoundaryDistance / polygonBoundaryClosest', () => {
     // 이등변삼각형 A=(0,10) B=(-5,-5) C=(5,-5), query=(0,0).
     // edge0(A-B)와 edge2(C-A)가 정확히 sqrt(10)로 동률이고, closest는 각각 (-3,1)/(3,1)로 다르다.
     // edge0이 먼저 evaluate되므로 strict `<` 비교에서 edge2로 덮어써지지 않고 edge0의 (-3,1)이 남는다.
-    const triangle = [
-      [0, 10],
-      [-5, -5],
-      [5, -5],
-    ] as const;
+    const triangle = [0, 10, -5, -5, 5, -5] as const;
     const scratch = makeScratch();
 
     polygonBoundaryDistance(triangle, 0, 0, scratch);
@@ -52,10 +44,7 @@ describe('polygonBoundaryDistance / polygonBoundaryClosest', () => {
   test('zero-length edge(반복 vertex)는 해당 vertex를 closest로 사용하고 NaN을 만들지 않는다', () => {
     // 두 edge가 모두 (0,0)-(0,0)인 zero-length polygon이다. query=(0,3)에서 zero-length
     // 분기를 제거하면 모든 edge의 distance가 NaN이 되어 Infinity가 그대로 반환된다.
-    const degenerate = [
-      [0, 0],
-      [0, 0],
-    ] as const;
+    const degenerate = [0, 0, 0, 0] as const;
     const scratch = makeScratch();
 
     const distance = polygonBoundaryDistance(degenerate, 0, 3, scratch);
@@ -65,11 +54,7 @@ describe('polygonBoundaryDistance / polygonBoundaryClosest', () => {
   });
 
   test('outScratch에 null을 넘기면 좌표를 기록하지 않고 거리만 계산한다', () => {
-    const triangle = [
-      [0, 10],
-      [-5, -5],
-      [5, -5],
-    ] as const;
+    const triangle = [0, 10, -5, -5, 5, -5] as const;
 
     expect(() => polygonBoundaryDistance(triangle, 0, 0, null)).not.toThrow();
   });

@@ -1,5 +1,4 @@
-import { readPolygonPoints } from '../internal/polygon';
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import { ringSelfIntersects } from './self-intersection.internal';
 
 /**
@@ -21,6 +20,6 @@ import { ringSelfIntersects } from './self-intersection.internal';
  *   overlap으로 합쳐져 true가 될 수 있고, 작은 좌표 scale에서는 실제 교차도 cross가 epsilon 이하가 되어
  *   parallel로 합쳐지면서 false가 될 수 있다.
  */
-export function isSelfIntersecting(polygon: PolygonLike, epsilon?: number): boolean {
-  return ringSelfIntersects(readPolygonPoints(polygon), epsilon);
+export function isSelfIntersecting(polygon: Polygon, epsilon?: number): boolean {
+  return ringSelfIntersects(polygon, epsilon);
 }

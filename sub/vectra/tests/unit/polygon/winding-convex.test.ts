@@ -1,3 +1,5 @@
+/** 다각형 계산과 출력 계약을 검증한다. */
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 /**
  * polygon light query unit test.
  *
@@ -7,59 +9,27 @@
 import { describe, expect, test } from 'vitest';
 import { isConvex } from '../../../src/polygon/is-convex';
 import { polygonWindingNumber } from '../../../src/polygon/polygon-winding-number';
-import type { PolygonLike } from '../../../src/types';
 
 // 수학적 y-up CCW 사각형 (0,0)→(4,0)→(4,4)→(0,4)
-const CCW_SQUARE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 4 },
-    { x: 0, y: 4 },
-  ],
-};
+const CCW_SQUARE: Polygon = [0, 0, 4, 0, 4, 4, 0, 4];
 
 // 위 사각형의 reverse — CW (0,0)→(0,4)→(4,4)→(4,0)
-const CW_SQUARE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 0, y: 4 },
-    { x: 4, y: 4 },
-    { x: 4, y: 0 },
-  ],
-};
+const CW_SQUARE: Polygon = [0, 0, 0, 4, 4, 4, 4, 0];
 
 // self-intersecting bow-tie (0,0)→(4,4)→(4,0)→(0,4)
-const BOW_TIE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 4 },
-    { x: 4, y: 0 },
-    { x: 0, y: 4 },
-  ],
-};
+const BOW_TIE: Polygon = [0, 0, 4, 4, 4, 0, 0, 4];
 
 describe('polygon light query - polygonWindingNumber', () => {
   test('empty polygon은 0이다', () => {
-    expect(polygonWindingNumber({ points: [] }, { x: 0, y: 0 })).toBe(0);
+    expect(polygonWindingNumber([], { x: 0, y: 0 })).toBe(0);
   });
 
   test('1점 polygon은 0이다', () => {
-    expect(polygonWindingNumber({ points: [{ x: 1, y: 1 }] }, { x: 1, y: 1 })).toBe(0);
+    expect(polygonWindingNumber([1, 1], { x: 1, y: 1 })).toBe(0);
   });
 
   test('2점 polygon은 0이다', () => {
-    expect(
-      polygonWindingNumber(
-        {
-          points: [
-            { x: 0, y: 0 },
-            { x: 4, y: 0 },
-          ],
-        },
-        { x: 2, y: 0 }
-      )
-    ).toBe(0);
+    expect(polygonWindingNumber([0, 0, 4, 0], { x: 2, y: 0 })).toBe(0);
   });
 
   test('CCW 사각형 내부는 1이다', () => {
@@ -95,25 +65,6 @@ describe('polygon light query - polygonWindingNumber', () => {
     expect(polygonWindingNumber(CCW_SQUARE, justInside, 0.5)).toBe(0);
   });
 
-  test('tuple point input과 object point input이 같은 결과를 낸다', () => {
-    expect(polygonWindingNumber(CCW_SQUARE, [2, 2])).toBe(1);
-    expect(polygonWindingNumber(CCW_SQUARE, { x: 2, y: 2 })).toBe(1);
-  });
-
-  test('bare point array polygon input을 읽는다', () => {
-    expect(
-      polygonWindingNumber(
-        [
-          { x: 0, y: 0 },
-          { x: 4, y: 0 },
-          { x: 4, y: 4 },
-          { x: 0, y: 4 },
-        ],
-        { x: 2, y: 2 }
-      )
-    ).toBe(1);
-  });
-
   test('self-intersecting bow-tie는 deterministic winding 결과를 고정한다', () => {
     // 두 lobe는 교차로 인해 반대 부호 winding을 갖는다.
     // 좌측 lobe 내부 (1,2): +1
@@ -141,16 +92,7 @@ describe('polygon light query - polygonWindingNumber', () => {
 
   test('vertex y와 같은 수평선이 concave polygon 내부를 지나도 double-count하지 않는다', () => {
     // L-shape (CCW). 수평선 y=2가 vertex (4,2),(2,2)를 지난다.
-    const L_SHAPE: PolygonLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: 4, y: 2 },
-        { x: 2, y: 2 },
-        { x: 2, y: 4 },
-        { x: 0, y: 4 },
-      ],
-    };
+    const L_SHAPE: Polygon = [0, 0, 4, 0, 4, 2, 2, 2, 2, 4, 0, 4];
     expect(polygonWindingNumber(L_SHAPE, { x: 1, y: 2 })).toBe(1);
     expect(polygonWindingNumber(L_SHAPE, { x: 5, y: 2 })).toBe(0);
   });
@@ -164,14 +106,7 @@ describe('polygon light query - polygonWindingNumber', () => {
   });
 
   test('vertex 좌표 non-finite도 throw 없이 deterministic 결과를 낸다', () => {
-    const INF_VERTEX: PolygonLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: Number.POSITIVE_INFINITY, y: 4 },
-        { x: 0, y: 4 },
-      ],
-    };
+    const INF_VERTEX: Polygon = [0, 0, 4, 0, Number.POSITIVE_INFINITY, 4, 0, 4];
     expect(() => polygonWindingNumber(INF_VERTEX, { x: 1, y: 2 })).not.toThrow();
     expect(Number.isInteger(polygonWindingNumber(INF_VERTEX, { x: 1, y: 2 }))).toBe(true);
   });
@@ -179,15 +114,7 @@ describe('polygon light query - polygonWindingNumber', () => {
 
 describe('polygon light query - isConvex', () => {
   test('triangle은 true다', () => {
-    expect(
-      isConvex({
-        points: [
-          { x: 0, y: 0 },
-          { x: 4, y: 0 },
-          { x: 0, y: 3 },
-        ],
-      })
-    ).toBe(true);
+    expect(isConvex([0, 0, 4, 0, 0, 3])).toBe(true);
   });
 
   test('axis-aligned rectangle은 true다', () => {
@@ -200,69 +127,26 @@ describe('polygon light query - isConvex', () => {
 
   test('concave arrow polygon은 false다', () => {
     // 화살촉 모양: (0,0)→(4,2)→(0,4)→(1,2) — (1,2)가 안쪽으로 들어간 reflex vertex
-    expect(
-      isConvex({
-        points: [
-          { x: 0, y: 0 },
-          { x: 4, y: 2 },
-          { x: 0, y: 4 },
-          { x: 1, y: 2 },
-        ],
-      })
-    ).toBe(false);
+    expect(isConvex([0, 0, 4, 2, 0, 4, 1, 2])).toBe(false);
   });
 
   test('structural empty(< 3)는 false다', () => {
-    expect(isConvex({ points: [] })).toBe(false);
-    expect(isConvex({ points: [{ x: 0, y: 0 }] })).toBe(false);
-    expect(
-      isConvex({
-        points: [
-          { x: 0, y: 0 },
-          { x: 1, y: 1 },
-        ],
-      })
-    ).toBe(false);
+    expect(isConvex([])).toBe(false);
+    expect(isConvex([0, 0])).toBe(false);
+    expect(isConvex([0, 0, 1, 1])).toBe(false);
   });
 
   test('collinear-only zero-area polygon은 false다', () => {
-    expect(
-      isConvex({
-        points: [
-          { x: 0, y: 0 },
-          { x: 1, y: 0 },
-          { x: 2, y: 0 },
-        ],
-      })
-    ).toBe(false);
+    expect(isConvex([0, 0, 1, 0, 2, 0])).toBe(false);
   });
 
   test('consecutive repeated point가 만드는 zero-length edge는 false다', () => {
-    expect(
-      isConvex({
-        points: [
-          { x: 0, y: 0 },
-          { x: 0, y: 0 },
-          { x: 4, y: 0 },
-          { x: 4, y: 4 },
-        ],
-      })
-    ).toBe(false);
+    expect(isConvex([0, 0, 0, 0, 4, 0, 4, 4])).toBe(false);
   });
 
   test('collinear intermediate vertex가 섞인 rectangle-like polygon은 true다', () => {
     // (0,0)→(2,0)→(4,0)→(4,4)→(0,4): (2,0)이 collinear turn
-    expect(
-      isConvex({
-        points: [
-          { x: 0, y: 0 },
-          { x: 2, y: 0 },
-          { x: 4, y: 0 },
-          { x: 4, y: 4 },
-          { x: 0, y: 4 },
-        ],
-      })
-    ).toBe(true);
+    expect(isConvex([0, 0, 2, 0, 4, 0, 4, 4, 0, 4])).toBe(true);
   });
 
   test('self-intersecting bow-tie는 false로 고정한다', () => {
@@ -284,27 +168,11 @@ describe('polygon light query - isConvex', () => {
 
   test('큰 좌표 scale에서도 same-sign turn이면 convex로 판정한다', () => {
     // cross가 거대해도 collinear gate는 sin θ 기준이라 모든 turn이 같은 부호로 센다.
-    expect(
-      isConvex({
-        points: [
-          { x: 0, y: 0 },
-          { x: 1e8, y: 0 },
-          { x: 1e8, y: 1e8 },
-          { x: 0, y: 1e8 },
-        ],
-      })
-    ).toBe(true);
+    expect(isConvex([0, 0, 1e8, 0, 1e8, 1e8, 0, 1e8])).toBe(true);
   });
 
   test('vertex 좌표 non-finite는 finite validation 없이 throw 없이 boolean을 반환한다', () => {
-    const NAN_VERTEX: PolygonLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: 4, y: 4 },
-        { x: Number.NaN, y: 4 },
-      ],
-    };
+    const NAN_VERTEX: Polygon = [0, 0, 4, 0, 4, 4, Number.NaN, 4];
     expect(() => isConvex(NAN_VERTEX)).not.toThrow();
     expect(typeof isConvex(NAN_VERTEX)).toBe('boolean');
   });
@@ -312,14 +180,7 @@ describe('polygon light query - isConvex', () => {
   test.each([Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
     'vertex 좌표가 %s여도 throw 없이 deterministic boolean을 반환한다',
     (coord) => {
-      const INF_VERTEX: PolygonLike = {
-        points: [
-          { x: 0, y: 0 },
-          { x: 4, y: 0 },
-          { x: coord, y: 4 },
-          { x: 0, y: 4 },
-        ],
-      };
+      const INF_VERTEX: Polygon = [0, 0, 4, 0, coord, 4, 0, 4];
       expect(() => isConvex(INF_VERTEX)).not.toThrow();
       expect(typeof isConvex(INF_VERTEX)).toBe('boolean');
       expect(isConvex(INF_VERTEX)).toBe(isConvex(INF_VERTEX));

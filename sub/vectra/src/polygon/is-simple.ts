@@ -1,6 +1,5 @@
+import type { Polygon } from '../types/flat-shapes.internal';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readPolygonPoints } from '../internal/polygon';
-import type { PolygonLike } from '../types';
 import { ringHasZeroLengthEdge, ringSelfIntersects } from './self-intersection.internal';
 
 /**
@@ -21,11 +20,10 @@ import { ringHasZeroLengthEdge, ringSelfIntersects } from './self-intersection.i
  *   near-parallel edge가 overlap으로 합쳐져 false가 될 수 있고, 작은 좌표 scale에서는 실제 교차를 놓쳐
  *   true가 될 수 있다. zero-length edge 판정에는 적용되지 않는다(길이 임계값 DEFAULT_EPSILON 고정).
  */
-export function isSimple(polygon: PolygonLike, epsilon?: number): boolean {
-  const pts = readPolygonPoints(polygon);
-  if (pts.length < 3) return false;
+export function isSimple(polygon: Polygon, epsilon?: number): boolean {
+  if (polygon.length < 6) return false;
   // zero-length edge 판정은 길이 임계값이다. caller epsilon은 cross product(면적) 단위라 길이와
   // 혼용하면 안 되므로, segment domain의 isZeroLength처럼 고정 DEFAULT_EPSILON 길이 임계값을 쓴다.
-  if (ringHasZeroLengthEdge(pts, DEFAULT_EPSILON)) return false;
-  return !ringSelfIntersects(pts, epsilon);
+  if (ringHasZeroLengthEdge(polygon, DEFAULT_EPSILON)) return false;
+  return !ringSelfIntersects(polygon, epsilon);
 }

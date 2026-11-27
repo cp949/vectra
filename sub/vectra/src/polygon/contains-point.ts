@@ -1,6 +1,5 @@
-import { polygonContainsPoint, readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike, XYInput } from '../types';
+import type { Polygon, Point } from '../types/flat-shapes.internal';
+import { polygonContainsPoint } from '../internal/polygon';
 
 /**
  * polygon이 point를 포함하는지 반환한다.
@@ -15,8 +14,7 @@ import type { PolygonLike, XYInput } from '../types';
  * @param point 확인할 point
  * @param epsilon boundary proximity threshold (기본값 0)
  */
-export function containsPoint(polygon: PolygonLike, point: XYInput, epsilon = 0): boolean {
-  const pts = readPolygonPoints(polygon);
-  if (pts.length < 3) return false;
-  return polygonContainsPoint(pts, readX(point), readY(point), epsilon);
+export function containsPoint(polygon: Polygon, point: Point, epsilon = 0): boolean {
+  if (polygon.length < 6) return false;
+  return polygonContainsPoint(polygon, point.x, point.y, epsilon);
 }

@@ -10,12 +10,7 @@ import { describe, expect, test } from 'vitest';
 import { polygonContainsPoint, segmentsIntersect } from '../../../src/internal/polygon-contains.internal';
 
 describe('polygonContainsPoint', () => {
-  const square = [
-    [0, 0],
-    [4, 0],
-    [4, 4],
-    [0, 4],
-  ] as const;
+  const square = [0, 0, 4, 0, 4, 4, 0, 4] as const;
 
   test('내부 점은 true다', () => {
     expect(polygonContainsPoint(square, 2, 2, 0)).toBe(true);
@@ -41,26 +36,14 @@ describe('polygonContainsPoint', () => {
     // V자 notch pentagon: notch vertex (2,2)가 local minimum이고, query point의 py(2)와 같은 y다.
     // A-B, B-C 두 edge가 모두 crossing 후보로 잡히지만 두 flip이 상쇄되고, 나머지 edge(C-D)의
     // 단일 flip만 반영되어 최종 결과가 true(내부)로 확정된다.
-    const notchPentagon = [
-      [0, 4],
-      [2, 2],
-      [4, 4],
-      [4, 0],
-      [0, 0],
-    ] as const;
+    const notchPentagon = [0, 4, 2, 2, 4, 4, 4, 0, 0, 0] as const;
     expect(polygonContainsPoint(notchPentagon, 1, 2, 0)).toBe(true);
   });
 
   test('lower-left rule: 정점을 관통하는 edge에서 <=/< 연산자 선택이 결과를 가른다', () => {
     // (6,2) 정점이 scanline(py=2)을 관통하는 non-extremum 정점이다. 이 fixture는 컨트롤러가
     // <=를 <로 바꾼 mutation을 실제 실행해 결과가 true→false로 바뀌는 것을 확인한 뒤 추가했다.
-    const passThroughVertex = [
-      [0, 0],
-      [4, 0],
-      [6, 2],
-      [4, 4],
-      [0, 4],
-    ] as const;
+    const passThroughVertex = [0, 0, 4, 0, 6, 2, 4, 4, 0, 4] as const;
     expect(polygonContainsPoint(passThroughVertex, 1, 2, 0)).toBe(true);
   });
 });

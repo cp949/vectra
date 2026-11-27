@@ -77,7 +77,7 @@ export const pointInPolygonInto = <Out extends XYWritable>(
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const x = minX + random(rng) * rangeX;
     const y = minY + random(rng) * rangeY;
-    if (containsPoint(polygon, { x, y })) {
+    if (containsPoint(flatPolygonFromLegacyPoints(readPolygonPoints(polygon)), { x, y })) {
       writeXY(out, x, y);
       return true;
     }

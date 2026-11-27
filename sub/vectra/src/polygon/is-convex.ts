@@ -1,7 +1,5 @@
+import type { Polygon } from '../types/flat-shapes.internal';
 import { crossWithin } from '../internal/numeric';
-import { readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike } from '../types';
 
 /**
  * polygon이 convex이면 `true`를 반환하는 light boolean query다.
@@ -27,24 +25,22 @@ import type { PolygonLike } from '../types';
  * @param polygon convex 여부를 확인할 polygon
  * @param epsilon collinear turn으로 볼 cross product 절대값 threshold. 생략하면 `1e-9·|in|·|out|`
  */
-export function isConvex(polygon: PolygonLike, epsilon?: number): boolean {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
+export function isConvex(polygon: Polygon, epsilon?: number): boolean {
+  const n = polygon.length / 2;
   if (n < 3) return false;
 
   let sign = 0;
   for (let i = 0; i < n; i++) {
-    const prev = pts[(i - 1 + n) % n];
-    const cur = pts[i];
-    const next = pts[(i + 1) % n];
-    const cx = readX(cur);
-    const cy = readY(cur);
+    const prev = 2 * ((i - 1 + n) % n);
+    const next = 2 * ((i + 1) % n);
+    const cx = polygon[2 * i];
+    const cy = polygon[2 * i + 1];
 
     // incoming edge prev -> cur, outgoing edge cur -> next
-    const inX = cx - readX(prev);
-    const inY = cy - readY(prev);
-    const outX = readX(next) - cx;
-    const outY = readY(next) - cy;
+    const inX = cx - polygon[prev];
+    const inY = cy - polygon[prev + 1];
+    const outX = polygon[next] - cx;
+    const outY = polygon[next + 1] - cy;
 
     // consecutive repeated point가 만드는 zero-length edge는 convex로 보지 않는다.
     if (outX === 0 && outY === 0) return false;

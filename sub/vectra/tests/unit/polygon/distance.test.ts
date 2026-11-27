@@ -6,46 +6,7 @@ import { describe, expect, test } from 'vitest';
 import { closestPoint } from '../../../src/polygon/closest-point';
 import { closestPointInto } from '../../../src/polygon/closest-point-into';
 import { distanceToPoint } from '../../../src/polygon/distance-to-point';
-import type { PolygonLike, XYObjectWritable, XYWritable } from '../../../src/types';
-
-const EMPTY: PolygonLike = { points: [] };
-const SINGLE: PolygonLike = { points: [{ x: 5, y: 7 }] };
-const TWO_PT: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-  ],
-};
-
-// 수학적 y-up 좌표계 기준 counter-clockwise 3-4-5 삼각형 -> signedArea > 0.
-const CCW_TRI: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 3 },
-  ],
-};
-
-const UNIT_SQUARE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-  ],
-};
-
-const REPEATED_PT: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-  ],
-};
-
-function makePoint(): XYObjectWritable {
-  return { x: 0, y: 0 };
-}
+import { CCW_TRI, EMPTY, makePoint, REPEATED_PT, SINGLE, TWO_PT, UNIT_SQUARE } from './_access-distance-test-helpers';
 
 describe('polygon distance allocating companions', () => {
   test('closestPoint는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
@@ -60,18 +21,6 @@ describe('polygon distance - closestPointInto', () => {
     Object.assign(out, { x: 99, y: 99 });
     expect(closestPointInto(out, EMPTY, { x: 0, y: 0 })).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
-  });
-
-  test('bare point array로 closest point를 계산한다', () => {
-    const points = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 0, y: 3 },
-    ] as const;
-    const out = { x: 99, y: 99 };
-
-    expect(closestPointInto(out, points, { x: 2, y: -1 })).toBe(true);
-    expect(out).toEqual({ x: 2, y: 0 });
   });
 
   test('단일 point polygon은 해당 점을 기록하고 true를 반환한다', () => {
@@ -147,13 +96,6 @@ describe('polygon distance - closestPointInto', () => {
     expect(Number.isNaN(out.y)).toBe(false);
   });
 
-  test('tuple out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(closestPointInto(out, CCW_TRI, { x: 2, y: -1 })).toBe(true);
-    expect(out[0]).toBeCloseTo(2, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
-  });
-
   test('외부 Point class out에 기록한다', () => {
     class Point {
       constructor(
@@ -162,38 +104,10 @@ describe('polygon distance - closestPointInto', () => {
       ) {}
     }
     const p = new Point(0, 0);
-    const result = closestPointInto(p as XYWritable, CCW_TRI, { x: 2, y: -1 });
+    const result = closestPointInto(p, CCW_TRI, { x: 2, y: -1 });
     expect(result).toBe(true);
     expect(p.x).toBeCloseTo(2, 10);
     expect(p.y).toBeCloseTo(0, 10);
-  });
-
-  test('tuple point 입력 polygon에서 closest를 계산한다', () => {
-    const poly: PolygonLike = {
-      points: [
-        [0, 0],
-        [4, 0],
-        [0, 3],
-      ] as const,
-    };
-    const out = makePoint();
-    expect(closestPointInto(out, poly, { x: 2, y: -1 })).toBe(true);
-    expect(out.x).toBeCloseTo(2, 10);
-    expect(out.y).toBeCloseTo(0, 10);
-  });
-
-  test('tuple point input에 tuple out을 사용할 수 있다', () => {
-    const poly: PolygonLike = {
-      points: [
-        [0, 0],
-        [4, 0],
-        [0, 3],
-      ] as const,
-    };
-    const out: [number, number] = [0, 0];
-    expect(closestPointInto(out, poly, [2, -1] as const)).toBe(true);
-    expect(out[0]).toBeCloseTo(2, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
   });
 });
 
@@ -220,10 +134,7 @@ describe('polygon distance - distanceToPoint', () => {
 
   test('2점 polygon의 finite distance 제곱이 overflow해도 finite distance를 반환한다', () => {
     const far = 1e200;
-    const poly = [
-      { x: 0, y: 0 },
-      { x: 1, y: 0 },
-    ];
+    const poly = [0, 0, 1, 0];
     expect(distanceToPoint(poly, { x: 0, y: far })).toBe(far);
   });
 
@@ -233,16 +144,6 @@ describe('polygon distance - distanceToPoint', () => {
 
   test('삼각형 외부 점의 거리는 가장 가까운 edge까지의 거리이다', () => {
     expect(distanceToPoint(CCW_TRI, { x: 2, y: -1 })).toBeCloseTo(1, 10);
-  });
-
-  test('bare point array로 distance를 계산한다', () => {
-    const points = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 0, y: 3 },
-    ] as const;
-
-    expect(distanceToPoint(points, { x: 2, y: -1 })).toBe(1);
   });
 
   test('삼각형 내부 incenter (1,1)의 거리는 inradius=1이다', () => {
@@ -260,24 +161,5 @@ describe('polygon distance - distanceToPoint', () => {
   test('repeated-point edge polygon에서 NaN이 발생하지 않는다', () => {
     const result = distanceToPoint(REPEATED_PT, { x: 0.5, y: 1 });
     expect(Number.isNaN(result)).toBe(false);
-  });
-
-  test('tuple point input을 지원한다', () => {
-    expect(distanceToPoint(CCW_TRI, [2, -1] as const)).toBeCloseTo(1, 10);
-  });
-
-  test('mixed input — object polygon, tuple point', () => {
-    expect(distanceToPoint(CCW_TRI, [2, -1] as const)).toBeCloseTo(1, 10);
-  });
-
-  test('tuple point polygon, tuple point input', () => {
-    const poly: PolygonLike = {
-      points: [
-        [0, 0],
-        [4, 0],
-        [0, 3],
-      ] as const,
-    };
-    expect(distanceToPoint(poly, [2, -1] as const)).toBeCloseTo(1, 10);
   });
 });

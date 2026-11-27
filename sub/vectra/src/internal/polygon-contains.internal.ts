@@ -1,38 +1,37 @@
-import type { XYInput } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import { polygonBoundaryDistance } from './polygon-boundary-closest.internal';
-import { readX, readY } from './xy';
 
 /**
  * ray casting으로 (px, py)가 polygon 내부에 있는지 판정한다.
  *
  * closed boundary 정책: edge 위에 있으면 true. epsilon은 boundary proximity threshold다.
- * 호출자가 `pts.length >= 3`을 보장해야 한다.
+ * 호출자가 `polygon.length >= 6`을 보장해야 한다.
  *
  * horizontal edge와 vertex crossing의 double-count 방지: lower-left rule을 적용한다.
  * edge의 두 y값 중 작은 값이 py와 같을 때만 crossing으로 계산한다.
  *
- * @param pts polygon vertex 배열 (closed)
+ * @param polygon polygon vertex 배열 (closed)
  * @param px 판정할 point의 x 좌표
  * @param py 판정할 point의 y 좌표
  * @param epsilon boundary proximity threshold
  */
-export function polygonContainsPoint(pts: readonly XYInput[], px: number, py: number, epsilon: number): boolean {
-  const n = pts.length;
+export function polygonContainsPoint(polygon: Polygon, px: number, py: number, epsilon: number): boolean {
+  const n = polygon.length / 2;
 
   // 먼저 boundary check (epsilon 포함)
-  if (polygonBoundaryDistance(pts, px, py, null) <= epsilon) return true;
+  if (polygonBoundaryDistance(polygon, px, py, null) <= epsilon) return true;
 
   // ray casting (interior check)
   // +x 방향 반직선을 쏘고 crossing 수가 홀수이면 내부
   let inside = false;
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
-    const ay = readY(pts[i]);
-    const by = readY(pts[j]);
+    const ay = polygon[2 * i + 1];
+    const by = polygon[2 * j + 1];
     // lower-left rule: y 범위에서 py를 포함하고, 교점이 px보다 오른쪽이면 crossing
     if ((ay <= py && by > py) || (by <= py && ay > py)) {
-      const ax = readX(pts[i]);
-      const bx = readX(pts[j]);
+      const ax = polygon[2 * i];
+      const bx = polygon[2 * j];
       // weighted interpolation은 `bx - ax` overflow를 피한다.
       const t = (py - ay) / (by - ay);
       const xCross = ax * (1 - t) + bx * t;

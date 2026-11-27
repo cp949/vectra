@@ -97,12 +97,7 @@ describe('레시피 3: polygon hit-test 후 snap 후보 계산', () => {
     const { boundsInto } = await import('../../src/polygon/bounds-into');
 
     // 시계 방향 사각형 polygon
-    const poly = [
-      { x: 50, y: 50 },
-      { x: 250, y: 50 },
-      { x: 250, y: 200 },
-      { x: 50, y: 200 },
-    ];
+    const poly = [50, 50, 250, 50, 250, 200, 50, 200];
 
     const insidePoint = { x: 150, y: 125 };
     const outsidePoint = { x: 300, y: 300 };
@@ -121,10 +116,7 @@ describe('레시피 3: polygon hit-test 후 snap 후보 계산', () => {
 
     // bounds 계산
     const polyBounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
-    boundsInto(
-      polyBounds,
-      poly.flatMap(({ x, y }) => [x, y])
-    );
+    boundsInto(polyBounds, poly);
     expect(polyBounds.minX).toBeCloseTo(50, 10);
     expect(polyBounds.maxX).toBeCloseTo(250, 10);
   });

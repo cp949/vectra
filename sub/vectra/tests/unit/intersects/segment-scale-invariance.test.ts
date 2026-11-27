@@ -279,23 +279,13 @@ describe('작은 scale에서 intersects 공개 함수가 같은 결과를 낸다
   });
 
   test.each(COORD_SCALES)('scale %s: 작은 bowtie polygon은 simple이 아니다', (s) => {
-    const bowtie = [
-      { x: 0, y: 0 },
-      { x: 2 * s, y: 2 * s },
-      { x: 2 * s, y: 0 },
-      { x: 0, y: 2 * s },
-    ];
+    const bowtie = [0, 0, 2 * s, 2 * s, 2 * s, 0, 0, 2 * s];
 
     expect(isSimple(bowtie)).toBe(false);
   });
 
   test.each(COORD_SCALES)('scale %s: 작은 정사각형 polygon은 simple이다', (s) => {
-    const square = [
-      { x: 0, y: 0 },
-      { x: 2 * s, y: 0 },
-      { x: 2 * s, y: 2 * s },
-      { x: 0, y: 2 * s },
-    ];
+    const square = [0, 0, 2 * s, 0, 2 * s, 2 * s, 0, 2 * s];
 
     expect(isSimple(square)).toBe(true);
   });

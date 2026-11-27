@@ -21,15 +21,6 @@ export function containsPoint(triangle: Triangle, point: Point, epsilon = 0): bo
   }
   const px = point.x;
   const py = point.y;
-  // 이미 추출한 좌표로 plain object 구성해 polygon 판정에 재사용
-  return polygonContainsPoint(
-    [
-      { x: ax, y: ay },
-      { x: bx, y: by },
-      { x: cx, y: cy },
-    ],
-    px,
-    py,
-    epsilon
-  );
+  // 이미 추출한 좌표로 polygon 좌표 배열을 만들어 containment 판정에 사용한다
+  return polygonContainsPoint([ax, ay, bx, by, cx, cy], px, py, epsilon);
 }

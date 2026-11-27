@@ -1,3 +1,4 @@
+import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { lineFamilyEllipseIntersects } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
@@ -65,7 +66,8 @@ export function intersectsPathEllipse(
   // 조건 3: ellipse 중심이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
-    if (polygonContainsPoint(tmp, ccx, ccy, DEFAULT_EPSILON)) return true;
+    const polygon = flatPolygonFromLegacyPoints(tmp);
+    if (polygonContainsPoint(polygon, ccx, ccy, DEFAULT_EPSILON)) return true;
   }
 
   return false;

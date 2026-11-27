@@ -1,12 +1,11 @@
 import { lineFamilyIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import { SWEEP_MIN_VERTEX_COUNT, sweepRingSelfIntersects } from './self-intersection-sweep.internal';
 
 /**
  * closed ring의 non-adjacent edge pair가 교차/접촉/overlap하는지 판정한다.
  *
- * edge i는 `pts[i]` → `pts[(i + 1) % n]` segment다(implicit closed ring). ring에서 인접한 edge
+ * edge i는 `polygon[i]` → `polygon[(i + 1) % n]` segment다(implicit closed ring). ring에서 인접한 edge
  * pair는 정상적으로 한 vertex를 공유하므로 검사에서 제외한다. 첫 edge와 마지막 edge도 첫 vertex를
  * 공유하는 인접 edge다. non-adjacent edge pair는 단일 교점, endpoint touch, collinear overlap을
  * 모두 self-intersection으로 본다. repair나 normalize는 하지 않으므로, vertex가 4개 이상인 ring에서
@@ -26,18 +25,18 @@ import { SWEEP_MIN_VERTEX_COUNT, sweepRingSelfIntersects } from './self-intersec
  * 이 helper로 `isSelfIntersecting`과 `isSimple`이 public 함수끼리 import하지 않고 같은 kernel을
  * 공유한다.
  *
- * @param pts polygon vertex 배열 (implicit closed ring으로 순회)
+ * @param polygon polygon vertex 배열 (implicit closed ring으로 순회)
  * @param epsilon 생략하면 sin θ 기준 상대 판정, 명시하면 cross product 절대값 임계값 (normalize되지 않음)
  */
-export function ringSelfIntersects(pts: readonly XYInput[], epsilon: number | undefined): boolean {
-  const n = pts.length;
+export function ringSelfIntersects(polygon: Polygon, epsilon: number | undefined): boolean {
+  const n = polygon.length / 2;
   if (n < 4) return false;
 
   // edge별 line-family param을 한 번만 만들어 pair 비교(전수 비교와 sweep)에서 재사용한다.
   const edges: ReturnType<typeof segmentToLineFamilyParam>[] = [];
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
-    edges.push(segmentToLineFamilyParam(readX(pts[i]), readY(pts[i]), readX(pts[j]), readY(pts[j])));
+    edges.push(segmentToLineFamilyParam(polygon[2 * i], polygon[2 * i + 1], polygon[2 * j], polygon[2 * j + 1]));
   }
 
   if (epsilon === undefined && n >= SWEEP_MIN_VERTEX_COUNT) {
@@ -59,22 +58,22 @@ export function ringSelfIntersects(pts: readonly XYInput[], epsilon: number | un
 /**
  * implicit closed ring에 zero-length edge가 있는지 판정한다.
  *
- * edge i는 `pts[i]` → `pts[(i + 1) % n]` segment다. epsilon은 길이(거리) 단위 임계값이며,
+ * edge i는 `polygon[i]` → `polygon[(i + 1) % n]` segment다. epsilon은 길이(거리) 단위 임계값이며,
  * edge length squared가 `epsilon * epsilon` 이하면 zero-length로 본다. caller는 cross product
  * 단위 epsilon을 그대로 넘기지 않는다. `isSimple`은 segment domain의 `isZeroLength`처럼 고정
  * DEFAULT_EPSILON 길이 임계값으로 호출한다.
  *
- * @param pts polygon vertex 배열 (implicit closed ring으로 순회)
+ * @param polygon polygon vertex 배열 (implicit closed ring으로 순회)
  * @param epsilon zero-length edge 길이(거리) 임계값
  */
-export function ringHasZeroLengthEdge(pts: readonly XYInput[], epsilon: number): boolean {
-  const n = pts.length;
+export function ringHasZeroLengthEdge(polygon: Polygon, epsilon: number): boolean {
+  const n = polygon.length / 2;
 
   const thresholdSq = epsilon * epsilon;
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
-    const dx = readX(pts[j]) - readX(pts[i]);
-    const dy = readY(pts[j]) - readY(pts[i]);
+    const dx = polygon[2 * j] - polygon[2 * i];
+    const dy = polygon[2 * j + 1] - polygon[2 * i + 1];
     if (dx * dx + dy * dy <= thresholdSq) return true;
   }
   return false;

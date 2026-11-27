@@ -1,7 +1,7 @@
+/** 다각형 계산과 출력 계약을 검증한다. */
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { containsPoint } from '../../../src/polygon/contains-point';
-
-import type { PolygonLike } from '../../../src/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공통 fixture
@@ -9,73 +9,29 @@ import type { PolygonLike } from '../../../src/types';
 
 // 수학적 y-up 좌표계 기준 counter-clockwise 3-4-5 삼각형
 // points: (0,0) → (4,0) → (0,3)
-const CCW_TRI: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 3 },
-  ],
-};
+const CCW_TRI: Polygon = [0, 0, 4, 0, 0, 3];
 
 // 단위 정사각형 (CCW), (0,0)→(1,0)→(1,1)→(0,1)
-const UNIT_SQUARE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-  ],
-};
+const UNIT_SQUARE: Polygon = [0, 0, 1, 0, 1, 1, 0, 1];
 
 // 크기 4×4 정사각형 (CCW)
-const SQUARE_4: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 4 },
-    { x: 0, y: 4 },
-  ],
-};
+const SQUARE_4: Polygon = [0, 0, 4, 0, 4, 4, 0, 4];
 
 // empty polygon
-const EMPTY: PolygonLike = { points: [] };
+const EMPTY: Polygon = [];
 
 // 2점 degenerate
-const TWO_PT: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-  ],
-};
+const TWO_PT: Polygon = [0, 0, 4, 0];
 
 // collinear zero-area
-const COLLINEAR: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 2, y: 0 },
-    { x: 4, y: 0 },
-  ],
-};
+const COLLINEAR: Polygon = [0, 0, 2, 0, 4, 0];
 
 // self-intersecting (나비 모양 — 두 삼각형이 교차)
 // (0,0)→(4,4)→(4,0)→(0,4) → 명시적 deterministic fixture
-const BOWTIE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 4 },
-    { x: 4, y: 0 },
-    { x: 0, y: 4 },
-  ],
-};
+const BOWTIE: Polygon = [0, 0, 4, 4, 4, 0, 0, 4];
 
 // tiny polygon — 매우 작은 면적
-const TINY_TRI: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1e-10, y: 0 },
-    { x: 0, y: 1e-10 },
-  ],
-};
+const TINY_TRI: Polygon = [0, 0, 1e-10, 0, 0, 1e-10];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // containsPoint
@@ -90,16 +46,6 @@ describe('polygon - containsPoint', () => {
 
   test('단위 정사각형 내부 점은 true를 반환한다', () => {
     expect(containsPoint(UNIT_SQUARE, { x: 0.5, y: 0.5 })).toBe(true);
-  });
-
-  test('bare point array로 containment와 relation 함수를 호출한다', () => {
-    const points = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 0, y: 3 },
-    ] as const;
-
-    expect(containsPoint(points, { x: 1, y: 1 })).toBe(true);
   });
 
   // exterior
@@ -227,18 +173,4 @@ describe('polygon - containsPoint', () => {
   });
 
   // tuple input
-  test('tuple point input을 지원한다', () => {
-    expect(containsPoint(UNIT_SQUARE, [0.5, 0.5] as const)).toBe(true);
-  });
-
-  test('tuple point polygon + tuple point input을 지원한다', () => {
-    const poly: PolygonLike = {
-      points: [
-        [0, 0],
-        [4, 0],
-        [0, 3],
-      ] as const,
-    };
-    expect(containsPoint(poly, [1, 0.5] as const)).toBe(true);
-  });
 });

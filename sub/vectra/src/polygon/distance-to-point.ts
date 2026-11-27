@@ -1,6 +1,5 @@
-import { polygonBoundaryDistance, readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike, XYInput } from '../types';
+import type { Polygon, Point } from '../types/flat-shapes.internal';
+import { polygonBoundaryDistance } from '../internal/polygon';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -14,19 +13,18 @@ import { hypot2 } from '../internal/numeric';
  * @param polygon 거리를 측정할 polygon
  * @param point polygon까지의 거리를 측정할 point
  */
-export function distanceToPoint(polygon: PolygonLike, point: XYInput): number {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
+export function distanceToPoint(polygon: Polygon, point: Point): number {
+  const n = polygon.length / 2;
   if (n === 0) return Infinity;
 
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
 
   if (n === 1) {
-    const dx = readX(pts[0]) - px;
-    const dy = readY(pts[0]) - py;
+    const dx = polygon[0] - px;
+    const dy = polygon[1] - py;
     return hypot2(dx, dy);
   }
 
-  return polygonBoundaryDistance(pts, px, py, null);
+  return polygonBoundaryDistance(polygon, px, py, null);
 }

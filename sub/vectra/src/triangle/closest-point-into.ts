@@ -30,16 +30,7 @@ export function closestPointInto<Out extends PointWritable>(out: Out, triangle: 
   // degenerate(signed area 2x === 0)는 closed area로 해석하지 않고 edge 환원으로 떨어진다.
   const area2x = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   if (area2x !== 0) {
-    const inside = polygonContainsPoint(
-      [
-        { x: ax, y: ay },
-        { x: bx, y: by },
-        { x: cx, y: cy },
-      ],
-      px,
-      py,
-      0
-    );
+    const inside = polygonContainsPoint([ax, ay, bx, by, cx, cy], px, py, 0);
     if (inside) {
       out.x = px;
       out.y = py;

@@ -71,7 +71,10 @@ function oracleRingSelfIntersects(pts: readonly Pt[], epsilon: number | undefine
  */
 function compareCase(category: string, label: string, pts: readonly Pt[], epsilon?: number): string | undefined {
   const expected = oracleRingSelfIntersects(pts, epsilon);
-  const actual = ringSelfIntersects(pts, epsilon);
+  const actual = ringSelfIntersects(
+    pts.flatMap(([x, y]) => [x, y]),
+    epsilon
+  );
   const entry = stats.get(category) ?? { cases: 0, trueCases: 0 };
   entry.cases++;
   if (expected) entry.trueCases++;
@@ -404,7 +407,12 @@ describe('ringSelfIntersects sweep 동치', { timeout: LONG_TIMEOUT_MS }, () => 
       ...createCircle(SWEEP_MIN_VERTEX_COUNT, 5, 100, 100),
     ];
     expect(oracleRingSelfIntersects(pts, undefined)).toBe(true);
-    expect(ringSelfIntersects(pts, undefined)).toBe(true);
+    expect(
+      ringSelfIntersects(
+        pts.flatMap(([x, y]) => [x, y]),
+        undefined
+      )
+    ).toBe(true);
   });
 
   test('edge 길이가 한계(약 1.16e77) 전후여도 oracle과 같은 결과를 낸다', () => {
@@ -510,9 +518,14 @@ describe('ringSelfIntersects sweep 동치', { timeout: LONG_TIMEOUT_MS }, () => 
       const ring = createPadShortfallRing();
       expect(ring.length).toBeGreaterThanOrEqual(SWEEP_MIN_VERTEX_COUNT);
       expect(oracleRingSelfIntersects(ring, undefined)).toBe(true);
-      expect(ringSelfIntersects(ring, undefined)).toBe(true);
-      expect(isSelfIntersecting(ring)).toBe(true);
-      expect(isSimple(ring)).toBe(false);
+      expect(
+        ringSelfIntersects(
+          ring.flatMap(([x, y]) => [x, y]),
+          undefined
+        )
+      ).toBe(true);
+      expect(isSelfIntersecting(ring.flatMap(([x, y]) => [x, y]))).toBe(true);
+      expect(isSimple(ring.flatMap(([x, y]) => [x, y]))).toBe(false);
     });
 
     test('인자 순서 비대칭 반례는 oracle과 같이 false다', () => {
@@ -523,8 +536,18 @@ describe('ringSelfIntersects sweep 동치', { timeout: LONG_TIMEOUT_MS }, () => 
       // 전제: 두 인자 순서의 결과가 실제로 다르다.
       expect(lineFamilyIntersects(a, b, undefined)).toBe(true);
       expect(lineFamilyIntersects(b, a, undefined)).toBe(false);
-      expect(ringSelfIntersects(ring, undefined)).toBe(oracleRingSelfIntersects(ring, undefined));
-      expect(ringSelfIntersects(ring, undefined)).toBe(false);
+      expect(
+        ringSelfIntersects(
+          ring.flatMap(([x, y]) => [x, y]),
+          undefined
+        )
+      ).toBe(oracleRingSelfIntersects(ring, undefined));
+      expect(
+        ringSelfIntersects(
+          ring.flatMap(([x, y]) => [x, y]),
+          undefined
+        )
+      ).toBe(false);
     });
 
     test('길이 곱 overflow 반례는 oracle과 같이 true이고 폴백한다', () => {
@@ -542,7 +565,12 @@ describe('ringSelfIntersects sweep 동치', { timeout: LONG_TIMEOUT_MS }, () => 
       });
       expect(sweepRingSelfIntersects(edges)).toBeUndefined();
       expect(oracleRingSelfIntersects(ring, undefined)).toBe(true);
-      expect(ringSelfIntersects(ring, undefined)).toBe(true);
+      expect(
+        ringSelfIntersects(
+          ring.flatMap(([x, y]) => [x, y]),
+          undefined
+        )
+      ).toBe(true);
     });
   });
 

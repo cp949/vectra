@@ -1,3 +1,4 @@
+import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { boundsContainsPointXY, readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
@@ -61,6 +62,7 @@ export function intersectsPathBounds(
   // 조건 3: bounds 꼭짓점이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
+    const polygon = flatPolygonFromLegacyPoints(tmp);
     const corners: [number, number][] = [
       [x0, y0],
       [x1, y0],
@@ -68,7 +70,7 @@ export function intersectsPathBounds(
       [x0, y1],
     ];
     for (const [cx, cy] of corners) {
-      if (polygonContainsPoint(tmp, cx, cy, DEFAULT_EPSILON)) return true;
+      if (polygonContainsPoint(polygon, cx, cy, DEFAULT_EPSILON)) return true;
     }
   }
 
