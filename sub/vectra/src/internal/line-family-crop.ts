@@ -121,13 +121,14 @@ function writeClippedCropInto(
   const bx = ox + hi * dx;
   const by = oy + hi * dy;
   if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(bx) || !Number.isFinite(by)) return false;
-  if ('x1' in out && (kind === 'finite' || !('a' in out))) {
-    out.x1 = ax;
-    out.y1 = ay;
-    out.x2 = bx;
-    out.y2 = by;
+  if (kind === 'finite') {
+    const flat = out as SegmentWritable;
+    flat.x1 = ax;
+    flat.y1 = ay;
+    flat.x2 = bx;
+    flat.y2 = by;
   } else {
-    // v2-migration: ray와 infinite-line의 crop 출력은 아직 중첩 끝점을 쓴다.
+    // v2-migration: ray와 infinite-line을 전환하면 이 분기와 중첩 출력 타입을 지운다.
     const legacy = out as LegacySegmentWritable<XYWritable, XYWritable>;
     writeXY(legacy.a, ax, ay);
     writeXY(legacy.b, bx, by);
@@ -142,7 +143,7 @@ function writeClippedCropInto(
  * tangent(single contact)나 disk와 만나지 않으면 false. 실패 시 out을 수정하지 않는다.
  * out과 source가 좌표를 공유해도 안전하다(caller가 좌표를 먼저 읽어 넘긴다).
  *
- * @param out crop된 segment를 기록할 writable output
+ * @param out 잘라낸 선분을 기록할 객체. `finite`는 평평한 선분, ray와 infinite-line은 중첩 끝점을 쓴다.
  * @param ox line-family origin x
  * @param oy line-family origin y
  * @param dx line-family direction x
@@ -178,7 +179,7 @@ export function cropLineFamilyByCircleInto(
  * box와 만나지 않거나 clip 길이가 0이면 false. 실패 시 out을 수정하지 않는다.
  * out과 source가 좌표를 공유해도 안전하다(caller가 좌표를 먼저 읽어 넘긴다).
  *
- * @param out crop된 segment를 기록할 writable output
+ * @param out 잘라낸 선분을 기록할 객체. `finite`는 평평한 선분, ray와 infinite-line은 중첩 끝점을 쓴다.
  * @param ox line-family origin x
  * @param oy line-family origin y
  * @param dx line-family direction x

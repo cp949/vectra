@@ -1,7 +1,7 @@
 import type { Segment } from '../types/flat-shapes.internal';
 
 /**
- * segment의 a→b 방향벡터 각도를 radian으로 반환한다. zero-length에서는 0을 반환한다.
+ * segment의 `(x1, y1) → (x2, y2)` 방향벡터 각도를 radian으로 반환한다. zero-length에서는 0을 반환한다.
  *
  * @param line 각도를 계산할 segment
  */

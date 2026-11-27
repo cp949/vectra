@@ -6,7 +6,7 @@ import type { Circle, Segment, SegmentWritable } from '../types/flat-shapes.inte
  *
  * segment range `[0, 1]`과 disk 내부 구간의 교집합을 bounded segment로 기록한다. 성공하면
  * `out`에 기록하고 `true`, 실패/empty crop이면 `false`이고 `out`을 수정하지 않는다.
- * crop 결과 endpoint 순서는 원본 `a → b` 진행 방향을 유지한다.
+ * crop 결과 endpoint 순서는 원본 `(x1, y1) → (x2, y2)` 진행 방향을 유지한다.
  * 실패 조건: zero-length(degenerate) segment, circle radius가 finite positive 아님, disk와 만나지
  * 않음, tangent(clip 길이 0). non-finite 좌표는 valid bounded segment를 만들 수 없어 실패한다.
  * `out`과 input segment가 같은 object여도 안전하다.

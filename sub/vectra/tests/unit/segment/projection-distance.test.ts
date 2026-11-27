@@ -122,14 +122,14 @@ describe('segment projection - closestPointInto (clamped t)', () => {
     expect(out).toEqual({ x: 2, y: 0 });
   });
 
-  test('segment 앞 point의 closest는 시작점로 clamp된다 (t=0)', () => {
+  test('segment 앞 point의 closest는 시작점으로 clamp된다 (t=0)', () => {
     const out = { x: 0, y: 0 };
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     closestPointInto(out, seg, { x: -2, y: 0 });
     expect(out).toEqual({ x: 0, y: 0 });
   });
 
-  test('segment 뒤 point의 closest는 끝점로 clamp된다 (t=1)', () => {
+  test('segment 뒤 point의 closest는 끝점으로 clamp된다 (t=1)', () => {
     const out = { x: 0, y: 0 };
     const seg = { x1: 0, y1: 0, x2: 4, y2: 0 };
     closestPointInto(out, seg, { x: 6, y: 0 });
@@ -153,7 +153,7 @@ describe('segment projection - closestPointInto (clamped t)', () => {
     expect(out).toEqual({ x: 3, y: 4 });
   });
 
-  test('zero-length segment의 closestPointInto는 시작점를 기록한다', () => {
+  test('zero-length segment의 closestPointInto는 시작점을 기록한다', () => {
     const out = { x: 0, y: 0 };
     const seg = { x1: 3, y1: 4, x2: 3, y2: 4 };
     closestPointInto(out, seg, { x: 10, y: 20 });
