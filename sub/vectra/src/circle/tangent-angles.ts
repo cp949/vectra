@@ -1,4 +1,4 @@
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 import { tangentAnglesInto } from './tangent-angles-into';
 
 /**
@@ -13,6 +13,6 @@ import { tangentAnglesInto } from './tangent-angles-into';
  * @param circleB 두 번째 원
  * @param inner true이면 inner tangent, false이면 outer tangent (기본값 false)
  */
-export function tangentAngles(circleA: CircleLike, circleB: CircleLike, inner = false): number[] {
+export function tangentAngles(circleA: Circle, circleB: Circle, inner = false): number[] {
   return tangentAnglesInto([], circleA, circleB, inner);
 }

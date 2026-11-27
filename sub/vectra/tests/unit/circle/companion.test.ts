@@ -15,18 +15,11 @@ import { scale } from '../../../src/circle/scale';
 import { scaleInto } from '../../../src/circle/scale-into';
 import { translate } from '../../../src/circle/translate';
 import { translateInto } from '../../../src/circle/translate-into';
-import type { CircleWritable, XYWritable } from '../../../src/types';
-
-import type { CircleWritable as FlatCircleWritable } from '../../../src/types/flat-shapes.internal';
+import type { CircleWritable } from '../../../src/types/flat-shapes.internal';
 
 /** 평평한 원 입력과 출력을 만든다. */
-function makeFlatCircle(cx = 0, cy = 0, r = 5): FlatCircleWritable {
-  return { cx, cy, r };
-}
-
-/** 아직 전환 중인 companion을 검증할 원을 만든다. */
 function makeCircle(cx = 0, cy = 0, r = 5): CircleWritable {
-  return { center: { x: cx, y: cy }, radius: r };
+  return { cx, cy, r };
 }
 
 /** 내접원 입력으로 사용할 경계 상자를 만든다. */
@@ -38,7 +31,7 @@ function makeBounds(minX = 0, minY = 0, maxX = 10, maxY = 10) {
 
 describe('circle companion - closestPoint', () => {
   test('circle 외부 점에서 가장 가까운 표면 위 점을 새 object로 반환한다', () => {
-    const result = closestPoint(makeFlatCircle(0, 0, 5), { x: 10, y: 0 });
+    const result = closestPoint(makeCircle(0, 0, 5), { x: 10, y: 0 });
 
     expect(result.x).toBeCloseTo(5, 10);
     expect(result.y).toBeCloseTo(0, 10);
@@ -46,29 +39,29 @@ describe('circle companion - closestPoint', () => {
 
   test('closestPointInto와 동일한 결과를 반환한다', () => {
     const out = { x: 0, y: 0 };
-    closestPointInto(out, makeFlatCircle(3, 4, 2), { x: 8, y: 4 });
-    const result = closestPoint(makeFlatCircle(3, 4, 2), { x: 8, y: 4 });
+    closestPointInto(out, makeCircle(3, 4, 2), { x: 8, y: 4 });
+    const result = closestPoint(makeCircle(3, 4, 2), { x: 8, y: 4 });
 
     expect(result.x).toBeCloseTo(out.x, 10);
     expect(result.y).toBeCloseTo(out.y, 10);
   });
 
   test('center와 point가 같으면 angle 0 위치 (cx+r, cy)를 반환한다', () => {
-    const result = closestPoint(makeFlatCircle(2, 3, 5), { x: 2, y: 3 });
+    const result = closestPoint(makeCircle(2, 3, 5), { x: 2, y: 3 });
 
     expect(result.x).toBe(7);
     expect(result.y).toBe(3);
   });
 
   test('empty circle(r<=0)은 center 좌표를 반환한다', () => {
-    const result = closestPoint(makeFlatCircle(1, 2, 0), { x: 10, y: 10 });
+    const result = closestPoint(makeCircle(1, 2, 0), { x: 10, y: 10 });
 
     expect(result.x).toBe(1);
     expect(result.y).toBe(2);
   });
 
   test('새 object를 반환하고 입력을 수정하지 않는다', () => {
-    const circle = makeFlatCircle(0, 0, 5);
+    const circle = makeCircle(0, 0, 5);
     const result = closestPoint(circle, { x: 10, y: 0 });
 
     expect(result).not.toBe(circle);
@@ -87,12 +80,12 @@ describe('circle companion - pointAtAngle', () => {
   });
 
   test('pointAtAngleInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out = { x: 0, y: 0 };
     pointAtAngleInto(out, makeCircle(1, 2, 3), Math.PI / 3);
     const result = pointAtAngle(makeCircle(1, 2, 3), Math.PI / 3);
 
-    expect(result.x).toBeCloseTo((out as { x: number; y: number }).x, 10);
-    expect(result.y).toBeCloseTo((out as { x: number; y: number }).y, 10);
+    expect(result.x).toBeCloseTo(out.x, 10);
+    expect(result.y).toBeCloseTo(out.y, 10);
   });
 
   test('empty circle(r<=0)은 center 좌표를 반환한다', () => {
@@ -121,12 +114,12 @@ describe('circle companion - pointAtTurn', () => {
   });
 
   test('pointAtTurnInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out = { x: 0, y: 0 };
     pointAtTurnInto(out, makeCircle(1, 2, 3), 0.25);
     const result = pointAtTurn(makeCircle(1, 2, 3), 0.25);
 
-    expect(result.x).toBeCloseTo((out as { x: number; y: number }).x, 10);
-    expect(result.y).toBeCloseTo((out as { x: number; y: number }).y, 10);
+    expect(result.x).toBeCloseTo(out.x, 10);
+    expect(result.y).toBeCloseTo(out.y, 10);
   });
 
   test('empty circle(r<=0)은 center 좌표를 반환한다', () => {
@@ -141,7 +134,7 @@ describe('circle companion - pointAtTurn', () => {
 
 describe('circle companion - circleFrom', () => {
   test('center와 radius를 새 plain object로 반환한다', () => {
-    const result = circleFrom(makeFlatCircle(3, 4, 5));
+    const result = circleFrom(makeCircle(3, 4, 5));
 
     expect(result.cx).toBe(3);
     expect(result.cy).toBe(4);
@@ -149,9 +142,9 @@ describe('circle companion - circleFrom', () => {
   });
 
   test('copyInto와 동일한 결과를 반환한다', () => {
-    const out: FlatCircleWritable = makeFlatCircle();
-    copyInto(out, makeFlatCircle(1, 2, 3));
-    const result = circleFrom(makeFlatCircle(1, 2, 3));
+    const out: CircleWritable = makeCircle();
+    copyInto(out, makeCircle(1, 2, 3));
+    const result = circleFrom(makeCircle(1, 2, 3));
 
     expect(result.cx).toBe(out.cx);
     expect(result.cy).toBe(out.cy);
@@ -159,7 +152,7 @@ describe('circle companion - circleFrom', () => {
   });
 
   test('새 object를 반환하고 입력을 수정하지 않는다', () => {
-    const circle = makeFlatCircle(3, 4, 5);
+    const circle = makeCircle(3, 4, 5);
     const result = circleFrom(circle);
 
     expect(result).not.toBe(circle);
@@ -179,7 +172,7 @@ describe('circle companion - fromBounds', () => {
   });
 
   test('fromBoundsInto와 동일한 결과를 반환한다', () => {
-    const out: FlatCircleWritable = makeFlatCircle();
+    const out: CircleWritable = makeCircle();
     fromBoundsInto(out, makeBounds(2, 4, 12, 8));
     const result = fromBounds(makeBounds(2, 4, 12, 8));
 
@@ -203,8 +196,9 @@ describe('circle companion - translate', () => {
   test('center를 offset만큼 이동한 새 plain object를 반환한다', () => {
     const result = translate(makeCircle(1, 2, 5), { x: 3, y: -1 });
 
-    expect(result.center).toEqual({ x: 4, y: 1 });
-    expect(result.radius).toBe(5);
+    expect(result.cx).toBe(4);
+    expect(result.cy).toBe(1);
+    expect(result.r).toBe(5);
   });
 
   test('translateInto와 동일한 결과를 반환한다', () => {
@@ -212,9 +206,9 @@ describe('circle companion - translate', () => {
     translateInto(out, makeCircle(1, 2, 3), { x: 4, y: 5 });
     const result = translate(makeCircle(1, 2, 3), { x: 4, y: 5 });
 
-    expect(result.center.x).toBe(out.center.x);
-    expect(result.center.y).toBe(out.center.y);
-    expect(result.radius).toBe(out.radius);
+    expect(result.cx).toBe(out.cx);
+    expect(result.cy).toBe(out.cy);
+    expect(result.r).toBe(out.r);
   });
 });
 
@@ -224,8 +218,9 @@ describe('circle companion - scale', () => {
   test('center와 radius를 scalar로 곱한 새 plain object를 반환한다', () => {
     const result = scale(makeCircle(2, 4, 5), 2);
 
-    expect(result.center).toEqual({ x: 4, y: 8 });
-    expect(result.radius).toBe(10);
+    expect(result.cx).toBe(4);
+    expect(result.cy).toBe(8);
+    expect(result.r).toBe(10);
   });
 
   test('scaleInto와 동일한 결과를 반환한다', () => {
@@ -233,14 +228,14 @@ describe('circle companion - scale', () => {
     scaleInto(out, makeCircle(1, 2, 3), 1.5);
     const result = scale(makeCircle(1, 2, 3), 1.5);
 
-    expect(result.center.x).toBe(out.center.x);
-    expect(result.center.y).toBe(out.center.y);
-    expect(result.radius).toBe(out.radius);
+    expect(result.cx).toBe(out.cx);
+    expect(result.cy).toBe(out.cy);
+    expect(result.r).toBe(out.r);
   });
 
   test('음수 scalar로 음수 radius가 될 수 있다 — caller 책임', () => {
     const result = scale(makeCircle(0, 0, 5), -1);
 
-    expect(result.radius).toBe(-5);
+    expect(result.r).toBe(-5);
   });
 });

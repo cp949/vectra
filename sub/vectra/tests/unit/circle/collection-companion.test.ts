@@ -1,11 +1,13 @@
+/** 접선 각도와 접점을 반환하는 companion의 배열 동작을 검증한다. */
+
 import { describe, expect, test } from 'vitest';
 import { tangentAngles } from '../../../src/circle/tangent-angles';
 import { tangentAnglesInto } from '../../../src/circle/tangent-angles-into';
 import { tangentPointsFromExternal } from '../../../src/circle/tangent-points-from-external';
 import { tangentPointsFromExternalInto } from '../../../src/circle/tangent-points-from-external-into';
 
-const circleA = { center: { x: 0, y: 0 }, radius: 1 };
-const circleB = { center: { x: 5, y: 0 }, radius: 1 };
+const circleA = { cx: 0, cy: 0, r: 1 };
+const circleB = { cx: 5, cy: 0, r: 1 };
 const externalPt = { x: 10, y: 0 };
 
 describe('circle.tangentAngles — 새 배열 반환', () => {
@@ -33,15 +35,15 @@ describe('circle.tangentAngles — 새 배열 반환', () => {
 
   test('접선이 없으면 undefined가 아닌 빈 배열을 반환한다', () => {
     // 한 원이 다른 원 내부에 포함
-    const inner = { center: { x: 0, y: 0 }, radius: 0.5 };
-    const outer = { center: { x: 0, y: 0 }, radius: 2 };
+    const inner = { cx: 0, cy: 0, r: 0.5 };
+    const outer = { cx: 0, cy: 0, r: 2 };
     const result = tangentAngles(inner, outer);
     expect(result).toEqual([]);
     expect(result).not.toBeUndefined();
   });
 
   test('invalid circle(radius <= 0)에서 빈 배열을 반환한다', () => {
-    const zero = { center: { x: 0, y: 0 }, radius: 0 };
+    const zero = { cx: 0, cy: 0, r: 0 };
     expect(tangentAngles(zero, circleB)).toEqual([]);
   });
 });
@@ -76,7 +78,7 @@ describe('circle.tangentPointsFromExternal — 새 배열 반환', () => {
   });
 
   test('empty circle(radius <= 0)에서 빈 배열을 반환한다', () => {
-    const empty = { center: { x: 0, y: 0 }, radius: 0 };
+    const empty = { cx: 0, cy: 0, r: 0 };
     expect(tangentPointsFromExternal(empty, externalPt)).toEqual([]);
   });
 });

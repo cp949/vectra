@@ -1,5 +1,4 @@
-import { readCircleRadius } from '../internal/circle';
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 
 /**
  * circle에서 중심각 centralAngle에 대응하는 활꼴 넓이를 반환한다.
@@ -12,8 +11,8 @@ import type { CircleLike } from '../types';
  * @param circle 활꼴 넓이를 계산할 circle
  * @param centralAngle 활꼴에 대응하는 중심각 (radian, 부호 무시)
  */
-export function segmentArea(circle: CircleLike, centralAngle: number): number {
-  const r = readCircleRadius(circle);
+export function segmentArea(circle: Circle, centralAngle: number): number {
+  const r = circle.r;
   if (r <= 0) return 0;
   return 0.5 * r * r * (Math.abs(centralAngle) - Math.sin(Math.abs(centralAngle)));
 }

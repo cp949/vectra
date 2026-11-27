@@ -1,5 +1,4 @@
-import { readCircleRadius } from '../internal/circle';
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 
 /**
  * circle에서 중심각 centralAngle에 대응하는 활꼴 높이(sagitta)를 반환한다.
@@ -17,8 +16,8 @@ import type { CircleLike } from '../types';
  * @param circle 활꼴 높이를 계산할 circle
  * @param centralAngle 활꼴에 대응하는 중심각 (radian, 부호 무시)
  */
-export function sagitta(circle: CircleLike, centralAngle: number): number {
-  const r = readCircleRadius(circle);
+export function sagitta(circle: Circle, centralAngle: number): number {
+  const r = circle.r;
   if (r <= 0) return 0;
   return r * (1 - Math.cos(Math.abs(centralAngle) / 2));
 }

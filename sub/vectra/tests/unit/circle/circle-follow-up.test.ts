@@ -194,69 +194,69 @@ describe('circle scalar query - chordLength', () => {
 
 describe('circle scalar query - sectorArea', () => {
   test('empty circle (radius=0)이면 0을 반환한다', () => {
-    expect(sectorArea({ center: { x: 0, y: 0 }, radius: 0 }, Math.PI)).toBe(0);
+    expect(sectorArea({ cx: 0, cy: 0, r: 0 }, Math.PI)).toBe(0);
   });
 
   test('empty circle (radius<0)이면 0을 반환한다', () => {
-    expect(sectorArea({ center: { x: 0, y: 0 }, radius: -1 }, Math.PI)).toBe(0);
+    expect(sectorArea({ cx: 0, cy: 0, r: -1 }, Math.PI)).toBe(0);
   });
 
   test('중심각 2π (전원)이면 π*r²을 반환한다', () => {
     // 0.5 * r² * 2π = π * r²
     const r = 5;
-    expect(sectorArea({ center: { x: 0, y: 0 }, radius: r }, 2 * Math.PI)).toBeCloseTo(Math.PI * r * r, 10);
+    expect(sectorArea({ cx: 0, cy: 0, r: r }, 2 * Math.PI)).toBeCloseTo(Math.PI * r * r, 10);
   });
 
   test('중심각 π (반원)이면 π*r²/2를 반환한다', () => {
     // 0.5 * r² * π
     const r = 3;
-    expect(sectorArea({ center: { x: 0, y: 0 }, radius: r }, Math.PI)).toBeCloseTo((Math.PI * r * r) / 2, 10);
+    expect(sectorArea({ cx: 0, cy: 0, r: r }, Math.PI)).toBeCloseTo((Math.PI * r * r) / 2, 10);
   });
 
   test('중심각 0이면 0을 반환한다', () => {
-    expect(sectorArea({ center: { x: 0, y: 0 }, radius: 5 }, 0)).toBe(0);
+    expect(sectorArea({ cx: 0, cy: 0, r: 5 }, 0)).toBe(0);
   });
 
   test('음수 centralAngle도 양수와 같은 결과를 반환한다 (부호 무시)', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     expect(sectorArea(circle, -Math.PI)).toBeCloseTo(sectorArea(circle, Math.PI), 10);
   });
 });
 
 describe('circle scalar query - segmentArea', () => {
   test('empty circle (radius=0)이면 0을 반환한다', () => {
-    expect(segmentArea({ center: { x: 0, y: 0 }, radius: 0 }, Math.PI)).toBe(0);
+    expect(segmentArea({ cx: 0, cy: 0, r: 0 }, Math.PI)).toBe(0);
   });
 
   test('empty circle (radius<0)이면 0을 반환한다', () => {
-    expect(segmentArea({ center: { x: 0, y: 0 }, radius: -1 }, Math.PI)).toBe(0);
+    expect(segmentArea({ cx: 0, cy: 0, r: -1 }, Math.PI)).toBe(0);
   });
 
   test('중심각 0이면 0을 반환한다', () => {
-    expect(segmentArea({ center: { x: 0, y: 0 }, radius: 5 }, 0)).toBe(0);
+    expect(segmentArea({ cx: 0, cy: 0, r: 5 }, 0)).toBe(0);
   });
 
   test('중심각 π (반원)이면 π*r²/2를 반환한다', () => {
     // 0.5 * r² * (π - sin(π)) = 0.5 * r² * π
     const r = 3;
-    expect(segmentArea({ center: { x: 0, y: 0 }, radius: r }, Math.PI)).toBeCloseTo((Math.PI * r * r) / 2, 10);
+    expect(segmentArea({ cx: 0, cy: 0, r: r }, Math.PI)).toBeCloseTo((Math.PI * r * r) / 2, 10);
   });
 
   test('중심각 2π (전원)이면 π*r²에 가까운 값을 반환한다', () => {
     // 0.5 * r² * (2π - sin(2π)) ≈ 0.5 * r² * 2π = π * r²
     const r = 4;
-    expect(segmentArea({ center: { x: 0, y: 0 }, radius: r }, 2 * Math.PI)).toBeCloseTo(Math.PI * r * r, 10);
+    expect(segmentArea({ cx: 0, cy: 0, r: r }, 2 * Math.PI)).toBeCloseTo(Math.PI * r * r, 10);
   });
 
   test('결과는 항상 0 이상이다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     expect(segmentArea(circle, Math.PI / 4)).toBeGreaterThanOrEqual(0);
     expect(segmentArea(circle, Math.PI / 2)).toBeGreaterThanOrEqual(0);
     expect(segmentArea(circle, Math.PI)).toBeGreaterThanOrEqual(0);
   });
 
   test('음수 centralAngle도 양수와 같은 결과를 반환한다 (부호 무시)', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     expect(segmentArea(circle, -Math.PI / 2)).toBeCloseTo(segmentArea(circle, Math.PI / 2), 10);
   });
 
@@ -265,79 +265,79 @@ describe('circle scalar query - segmentArea', () => {
     const r = 4;
     const theta = (3 * Math.PI) / 2;
     const expected = 0.5 * r * r * (theta - Math.sin(theta));
-    expect(segmentArea({ center: { x: 0, y: 0 }, radius: r }, theta)).toBeCloseTo(expected, 10);
+    expect(segmentArea({ cx: 0, cy: 0, r: r }, theta)).toBeCloseTo(expected, 10);
   });
 });
 
 describe('circle scalar query - sagitta', () => {
   test('중심각 π/2이면 r*(1-cos(π/4))를 반환한다', () => {
     // sagitta = 1 * (1 - cos(π/4)) ≈ 0.29289...
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: 1 }, Math.PI / 2)).toBeCloseTo(1 - Math.cos(Math.PI / 4), 10);
+    expect(sagitta({ cx: 0, cy: 0, r: 1 }, Math.PI / 2)).toBeCloseTo(1 - Math.cos(Math.PI / 4), 10);
   });
 
   test('중심각 π (반원)이면 radius와 같다', () => {
     // sagitta = r * (1 - cos(π/2)) = r * (1 - 0) = r
     const r = 5;
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: r }, Math.PI)).toBeCloseTo(r, 10);
+    expect(sagitta({ cx: 0, cy: 0, r: r }, Math.PI)).toBeCloseTo(r, 10);
   });
 
   test('중심각 2π (전체 원)이면 2*radius를 반환한다', () => {
     // sagitta = r * (1 - cos(π)) = r * (1 - (-1)) = 2r
     const r = 3;
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: r }, 2 * Math.PI)).toBeCloseTo(2 * r, 10);
+    expect(sagitta({ cx: 0, cy: 0, r: r }, 2 * Math.PI)).toBeCloseTo(2 * r, 10);
   });
 
   test('중심각 0이면 0을 반환한다', () => {
     // sagitta = r * (1 - cos(0)) = r * 0 = 0
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: 5 }, 0)).toBeCloseTo(0, 10);
+    expect(sagitta({ cx: 0, cy: 0, r: 5 }, 0)).toBeCloseTo(0, 10);
   });
 
   test('음수 centralAngle도 양수와 같은 결과를 반환한다 (부호 무시)', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     expect(sagitta(circle, -Math.PI / 2)).toBeCloseTo(sagitta(circle, Math.PI / 2), 10);
   });
 
   test('empty circle (radius=0)이면 0을 반환한다', () => {
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: 0 }, Math.PI)).toBe(0);
+    expect(sagitta({ cx: 0, cy: 0, r: 0 }, Math.PI)).toBe(0);
   });
 
   test('empty circle (radius<0)이면 0을 반환한다', () => {
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: -1 }, Math.PI)).toBe(0);
+    expect(sagitta({ cx: 0, cy: 0, r: -1 }, Math.PI)).toBe(0);
   });
 
   test('radius가 NaN이면 NaN을 반환한다', () => {
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: NaN }, Math.PI)).toBeNaN();
+    expect(sagitta({ cx: 0, cy: 0, r: NaN }, Math.PI)).toBeNaN();
   });
 
   test('centralAngle이 NaN이면 NaN을 반환한다', () => {
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: 5 }, NaN)).toBeNaN();
+    expect(sagitta({ cx: 0, cy: 0, r: 5 }, NaN)).toBeNaN();
   });
 
   test('centralAngle이 Infinity이면 NaN을 반환한다', () => {
     // cos(Infinity) = NaN이므로 결과도 NaN
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: 5 }, Infinity)).toBeNaN();
+    expect(sagitta({ cx: 0, cy: 0, r: 5 }, Infinity)).toBeNaN();
   });
 
   test('centralAngle이 -Infinity이면 NaN을 반환한다 (Math.abs 후 cos(Infinity) = NaN)', () => {
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: 5 }, -Infinity)).toBeNaN();
+    expect(sagitta({ cx: 0, cy: 0, r: 5 }, -Infinity)).toBeNaN();
   });
 
   test('radius가 Infinity이고 1-cos(|θ|/2) > 0인 angle이면 Infinity를 반환한다', () => {
     // Infinity * (1 - cos(π/4)) > 0 → Infinity
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: Infinity }, Math.PI / 2)).toBe(Infinity);
+    expect(sagitta({ cx: 0, cy: 0, r: Infinity }, Math.PI / 2)).toBe(Infinity);
   });
 
   test('radius가 Infinity이고 angle = 0이면 Infinity * 0 = NaN을 반환한다', () => {
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: Infinity }, 0)).toBeNaN();
+    expect(sagitta({ cx: 0, cy: 0, r: Infinity }, 0)).toBeNaN();
   });
 
   test('radius가 Infinity이고 angle = 4π이면 cos(2π) = 1 → Infinity * 0 = NaN', () => {
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: Infinity }, 4 * Math.PI)).toBeNaN();
+    expect(sagitta({ cx: 0, cy: 0, r: Infinity }, 4 * Math.PI)).toBeNaN();
   });
 
   test('radius가 -Infinity이면 -Infinity <= 0 분기로 0을 반환한다', () => {
     // r <= 0 분기에 NaN 비교가 아닌 -Infinity < 0이 적용된다
-    expect(sagitta({ center: { x: 0, y: 0 }, radius: -Infinity }, Math.PI)).toBe(0);
+    expect(sagitta({ cx: 0, cy: 0, r: -Infinity }, Math.PI)).toBe(0);
   });
 });
 

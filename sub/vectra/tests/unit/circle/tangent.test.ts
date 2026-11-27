@@ -1,9 +1,11 @@
+/** 두 원의 접선 각도와 외부 점의 접점을 검증한다. */
+
 import { describe, expect, test } from 'vitest';
 import { tangentAnglesInto } from '../../../src/circle/tangent-angles-into';
 import { tangentPointsFromExternalInto } from '../../../src/circle/tangent-points-from-external-into';
 
-const circleA = { center: { x: 0, y: 0 }, radius: 1 };
-const circleB = { center: { x: 5, y: 0 }, radius: 1 };
+const circleA = { cx: 0, cy: 0, r: 1 };
+const circleB = { cx: 5, cy: 0, r: 1 };
 
 describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
   test('분리된 두 원에 대해 outer tangent 각도 2개를 반환한다', () => {
@@ -25,8 +27,8 @@ describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
   });
 
   test('한 원이 다른 원을 완전 포함할 때 outer tangent는 없다', () => {
-    const big = { center: { x: 0, y: 0 }, radius: 10 };
-    const small = { center: { x: 1, y: 0 }, radius: 1 };
+    const big = { cx: 0, cy: 0, r: 10 };
+    const small = { cx: 1, cy: 0, r: 1 };
     const out: number[] = [];
     tangentAnglesInto(out, big, small);
 
@@ -34,8 +36,8 @@ describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
   });
 
   test('겹치는 두 원은 inner tangent가 없다', () => {
-    const c1 = { center: { x: 0, y: 0 }, radius: 3 };
-    const c2 = { center: { x: 2, y: 0 }, radius: 3 };
+    const c1 = { cx: 0, cy: 0, r: 3 };
+    const c2 = { cx: 2, cy: 0, r: 3 };
     const out: number[] = [];
     tangentAnglesInto(out, c1, c2, true);
 
@@ -43,8 +45,8 @@ describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
   });
 
   test('중심이 같은 원은 빈 배열을 반환한다', () => {
-    const c1 = { center: { x: 0, y: 0 }, radius: 1 };
-    const c2 = { center: { x: 0, y: 0 }, radius: 2 };
+    const c1 = { cx: 0, cy: 0, r: 1 };
+    const c2 = { cx: 0, cy: 0, r: 2 };
     const out: number[] = [];
     tangentAnglesInto(out, c1, c2);
 
@@ -53,14 +55,14 @@ describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
 
   test('empty circle이 포함되면 빈 배열을 반환한다', () => {
     const out = [1];
-    tangentAnglesInto(out, { center: { x: 0, y: 0 }, radius: 0 }, circleB);
+    tangentAnglesInto(out, { cx: 0, cy: 0, r: 0 }, circleB);
 
     expect(out).toHaveLength(0);
   });
 
   test('외접한 두 원의 inner tangent는 중복 각도를 남기지 않는다', () => {
     const out: number[] = [];
-    tangentAnglesInto(out, { center: { x: 0, y: 0 }, radius: 2 }, { center: { x: 5, y: 0 }, radius: 3 }, true);
+    tangentAnglesInto(out, { cx: 0, cy: 0, r: 2 }, { cx: 5, cy: 0, r: 3 }, true);
 
     expect(out).toHaveLength(1);
     expect(out[0]).toBeCloseTo(0);
@@ -68,7 +70,7 @@ describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
 
   test('내접한 두 원의 outer tangent는 중복 각도를 남기지 않는다', () => {
     const out: number[] = [];
-    tangentAnglesInto(out, { center: { x: 0, y: 0 }, radius: 5 }, { center: { x: 2, y: 0 }, radius: 3 });
+    tangentAnglesInto(out, { cx: 0, cy: 0, r: 5 }, { cx: 2, cy: 0, r: 3 });
 
     expect(out).toHaveLength(1);
     expect(out[0]).toBeCloseTo(0);
@@ -76,7 +78,7 @@ describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
 
   test('반대 방향 내접 outer tangent도 modulo 중복 각도를 남기지 않는다', () => {
     const out: number[] = [];
-    tangentAnglesInto(out, { center: { x: 0, y: 0 }, radius: 3 }, { center: { x: 2, y: 0 }, radius: 5 });
+    tangentAnglesInto(out, { cx: 0, cy: 0, r: 3 }, { cx: 2, cy: 0, r: 5 });
 
     expect(out).toHaveLength(1);
     expect(Math.abs(out[0] as number)).toBeCloseTo(Math.PI);
@@ -84,7 +86,7 @@ describe('tangentAnglesInto — 두 원의 접선 각도 계산', () => {
 });
 
 describe('tangentPointsFromExternalInto — 외부 점에서 원 접선점 계산', () => {
-  const circle = { center: { x: 0, y: 0 }, radius: 1 };
+  const circle = { cx: 0, cy: 0, r: 1 };
 
   test('외부 점에서 접선점 2개를 반환한다', () => {
     const out: { x: number; y: number }[] = [];
@@ -107,7 +109,7 @@ describe('tangentPointsFromExternalInto — 외부 점에서 원 접선점 계�
   });
 
   test('empty circle(radius <= 0)이면 빈 배열을 반환한다', () => {
-    const empty = { center: { x: 0, y: 0 }, radius: 0 };
+    const empty = { cx: 0, cy: 0, r: 0 };
     const out: { x: number; y: number }[] = [];
     tangentPointsFromExternalInto(out, empty, { x: 5, y: 0 });
 

@@ -1,4 +1,4 @@
-import type { CircleLike, XYObjectWritable } from '../types';
+import type { Circle, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtTurnInto } from './point-at-turn-into';
 
 /**
@@ -9,6 +9,6 @@ import { pointAtTurnInto } from './point-at-turn-into';
  * @param circle 표면 point를 계산할 circle
  * @param turn normalized angle fraction (turn = angle / (2π))
  */
-export function pointAtTurn(circle: CircleLike, turn: number): XYObjectWritable {
+export function pointAtTurn(circle: Circle, turn: number): PointWritable {
   return pointAtTurnInto({ x: 0, y: 0 }, circle, turn);
 }

@@ -1,10 +1,10 @@
-import type { CircleLike, SegmentWritable } from '../types';
+import type { Circle, SegmentWritable } from '../types/flat-shapes.internal';
 import { internalTangentsInto } from './internal-tangents-into';
 
 /**
  * 두 원의 internal tangent segment들을 새 배열로 반환한다.
  *
- * 각 segment의 a는 첫 번째 circle 위 tangent point, b는 두 번째 circle 위 tangent point다.
+ * 각 선분의 시작점은 첫 번째 원의 접점이고 끝점은 두 번째 원의 접점이다.
  * 둘 중 하나라도 empty circle(radius <= 0)이면 빈 배열을 반환한다.
  * 중심이 같으면 빈 배열을 반환한다.
  * 두 원이 겹치면 internal tangent가 없으므로 빈 배열을 반환한다.
@@ -14,6 +14,6 @@ import { internalTangentsInto } from './internal-tangents-into';
  * @param circleA 첫 번째 원
  * @param circleB 두 번째 원
  */
-export function internalTangents(circleA: CircleLike, circleB: CircleLike): SegmentWritable[] {
+export function internalTangents(circleA: Circle, circleB: Circle): SegmentWritable[] {
   return internalTangentsInto([], circleA, circleB);
 }

@@ -1,6 +1,4 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 const ANGLE_EPSILON = 1e-12;
@@ -19,16 +17,16 @@ const TWO_PI = Math.PI * 2;
  * @param circleB 두 번째 원
  * @param inner true이면 inner tangent, false이면 outer tangent (기본값 false)
  */
-export function tangentAnglesInto(out: number[], circleA: CircleLike, circleB: CircleLike, inner = false): number[] {
+export function tangentAnglesInto(out: number[], circleA: Circle, circleB: Circle, inner = false): number[] {
   out.length = 0;
 
-  const cx1 = readX(readCircleCenter(circleA));
-  const cy1 = readY(readCircleCenter(circleA));
-  const r1 = readCircleRadius(circleA);
+  const cx1 = circleA.cx;
+  const cy1 = circleA.cy;
+  const r1 = circleA.r;
 
-  const cx2 = readX(readCircleCenter(circleB));
-  const cy2 = readY(readCircleCenter(circleB));
-  const r2 = readCircleRadius(circleB);
+  const cx2 = circleB.cx;
+  const cy2 = circleB.cy;
+  const r2 = circleB.r;
 
   if (r1 <= 0 || r2 <= 0) return out;
 

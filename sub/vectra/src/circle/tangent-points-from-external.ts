@@ -1,4 +1,4 @@
-import type { CircleLike, XYInput, XYObjectWritable } from '../types';
+import type { Circle, Point, PointWritable } from '../types/flat-shapes.internal';
 import { tangentPointsFromExternalInto } from './tangent-points-from-external-into';
 
 /**
@@ -12,6 +12,6 @@ import { tangentPointsFromExternalInto } from './tangent-points-from-external-in
  * @param circle 대상 원
  * @param externalPoint 외부 점
  */
-export function tangentPointsFromExternal(circle: CircleLike, externalPoint: XYInput): XYObjectWritable[] {
+export function tangentPointsFromExternal(circle: Circle, externalPoint: Point): PointWritable[] {
   return tangentPointsFromExternalInto([], circle, externalPoint);
 }

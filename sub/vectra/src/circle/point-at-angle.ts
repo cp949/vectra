@@ -1,4 +1,4 @@
-import type { CircleLike, XYObjectWritable } from '../types';
+import type { Circle, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtAngleInto } from './point-at-angle-into';
 
 /**
@@ -9,6 +9,6 @@ import { pointAtAngleInto } from './point-at-angle-into';
  * @param circle 표면 point를 계산할 circle
  * @param angle 표면 위치를 나타내는 radian angle
  */
-export function pointAtAngle(circle: CircleLike, angle: number): XYObjectWritable {
+export function pointAtAngle(circle: Circle, angle: number): PointWritable {
   return pointAtAngleInto({ x: 0, y: 0 }, circle, angle);
 }

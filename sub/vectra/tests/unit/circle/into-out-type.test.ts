@@ -8,9 +8,14 @@ import {
   copyInto,
   expandByInto,
   fromBoundsInto,
+  fromThreePointsInto,
+  pointAtAngleInto,
+  pointAtTurnInto,
+  scaleInto,
+  translateInto,
   shrinkByInto,
 } from '../../../src/circle';
-import type { Circle } from '../../../src/types/flat-shapes.internal';
+import type { Circle, Point } from '../../../src/types/flat-shapes.internal';
 
 /** 도형 함수 외부에서 정의한 원 출력의 예시다. */
 class ExternalCircle {
@@ -88,6 +93,45 @@ test('fromBoundsInto는 외부 원의 참조와 타입을 보존한다', () => {
 test('shrinkByInto는 외부 원의 참조와 타입을 보존한다', () => {
   const out = new ExternalCircle();
   const result = shrinkByInto(out, circle, 1);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalCircle>();
+});
+
+test('fromThreePointsInto는 평평한 점을 받는다', () => {
+  expectTypeOf(fromThreePointsInto).parameter(1).toEqualTypeOf<Point>();
+});
+
+test('fromThreePointsInto는 성공 시 외부 원의 참조와 타입을 보존한다', () => {
+  const out = new ExternalCircle();
+  const result = fromThreePointsInto(out, { x: 0, y: 0 }, { x: 4, y: 0 }, { x: 0, y: 3 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
+});
+
+test('pointAtAngleInto는 외부 점의 참조와 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = pointAtAngleInto(out, circle, 0);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('pointAtTurnInto는 외부 점의 참조와 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = pointAtTurnInto(out, circle, 0.25);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('scaleInto는 외부 원의 참조와 타입을 보존한다', () => {
+  const out = new ExternalCircle();
+  const result = scaleInto(out, circle, 2);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalCircle>();
+});
+
+test('translateInto는 외부 원의 참조와 타입을 보존한다', () => {
+  const out = new ExternalCircle();
+  const result = translateInto(out, circle, { x: 1, y: 2 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalCircle>();
 });
