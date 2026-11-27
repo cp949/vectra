@@ -1,4 +1,4 @@
-import type { MatrixLike, MatrixWritable } from '../types';
+import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
 import { appendScaleInto } from './append-scale-into';
 
 /**
@@ -10,6 +10,6 @@ import { appendScaleInto } from './append-scale-into';
  * @param sx 오른쪽에 곱할 x축 scale
  * @param sy 오른쪽에 곱할 y축 scale
  */
-export function scale(matrix: MatrixLike, sx: number, sy: number): MatrixWritable {
+export function scale(matrix: Matrix, sx: number, sy: number): MatrixWritable {
   return appendScaleInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, matrix, sx, sy);
 }

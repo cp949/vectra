@@ -1,4 +1,4 @@
-import type { MatrixLike, MatrixWritable, XYInput } from '../types';
+import type { Matrix, MatrixWritable, Point } from '../types/flat-shapes.internal';
 import { appendTranslateInto } from './append-translate-into';
 
 /**
@@ -9,6 +9,6 @@ import { appendTranslateInto } from './append-translate-into';
  * @param matrix translation을 append할 기준 matrix
  * @param offset 오른쪽에 곱할 translation offset
  */
-export function translate(matrix: MatrixLike, offset: XYInput): MatrixWritable {
+export function translate(matrix: Matrix, offset: Point): MatrixWritable {
   return appendTranslateInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, matrix, offset);
 }

@@ -1,5 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 
 /**
  * 두 matrix의 모든 component가 정확히 같으면 true를 반환한다.
@@ -9,13 +8,6 @@ import type { MatrixLike } from '../types';
  * @param a 비교할 첫 번째 matrix
  * @param b 비교할 두 번째 matrix
  */
-export function equals(a: MatrixLike, b: MatrixLike): boolean {
-  return (
-    readMatrixA(a) === readMatrixA(b) &&
-    readMatrixB(a) === readMatrixB(b) &&
-    readMatrixC(a) === readMatrixC(b) &&
-    readMatrixD(a) === readMatrixD(b) &&
-    readMatrixTx(a) === readMatrixTx(b) &&
-    readMatrixTy(a) === readMatrixTy(b)
-  );
+export function equals(a: Matrix, b: Matrix): boolean {
+  return a.a === b.a && a.b === b.b && a.c === b.c && a.d === b.d && a.tx === b.tx && a.ty === b.ty;
 }

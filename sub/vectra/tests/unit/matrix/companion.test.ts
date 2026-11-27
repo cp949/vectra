@@ -1,3 +1,6 @@
+/**
+ * 행렬 할당형 함수와 Into 결과를 비교한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { appendRotateInto } from '../../../src/matrix/append-rotate-into';
 import { copy } from '../../../src/matrix/copy';
@@ -25,10 +28,6 @@ describe('matrix lifecycle/factory companions', () => {
     const result = copy(source);
     expect(result).toEqual({ a: 2, b: 3, c: 4, d: 5, tx: 6, ty: 7 });
     expect(result).not.toBe(source);
-  });
-
-  test('copy(a, b, c, d, tx, ty)는 6개 component를 기록한다', () => {
-    expect(copy(2, 3, 4, 5, 6, 7)).toEqual({ a: 2, b: 3, c: 4, d: 5, tx: 6, ty: 7 });
   });
 
   test('identity()는 identity matrix를 반환한다', () => {

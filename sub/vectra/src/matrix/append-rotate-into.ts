@@ -1,22 +1,21 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import type { MatrixLike, MatrixWritable } from '../types';
+import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
 
 /**
  * matrix 오른쪽에 R(angle)을 append한 결과(`matrix * R(angle)`)를 out에 기록하고 out을 반환한다.
  *
  * 기존 matrix 오른쪽에 rotation을 곱해 합성한다. angle은 radian이며, input과 out이 같은 object여도 안전하다.
  *
- * @param out append 결과를 기록할 writable output
+ * @param out append 결과를 기록할 행렬 객체
  * @param matrix rotation을 append할 기준 matrix
  * @param angle 오른쪽에 곱할 rotation angle
  */
-export function appendRotateInto<Out extends MatrixWritable>(out: Out, matrix: MatrixLike, angle: number): Out {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+export function appendRotateInto<Out extends MatrixWritable>(out: Out, matrix: Matrix, angle: number): Out {
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
   const cosA = Math.cos(angle);
   const sinA = Math.sin(angle);
   // M * R(angle): R = {a:cos,b:sin,c:-sin,d:cos,tx:0,ty:0}

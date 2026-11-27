@@ -1,5 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 
 /**
  * matrix의 determinant 절댓값이 epsilon보다 크면 true를 반환한다.
@@ -9,6 +8,6 @@ import type { MatrixLike } from '../types';
  * @param matrix invertible 여부를 확인할 matrix
  * @param epsilon singular로 볼 determinant 절대값 한계
  */
-export function isInvertible(matrix: MatrixLike, epsilon = 0): boolean {
-  return Math.abs(readMatrixA(matrix) * readMatrixD(matrix) - readMatrixB(matrix) * readMatrixC(matrix)) > epsilon;
+export function isInvertible(matrix: Matrix, epsilon = 0): boolean {
+  return Math.abs(matrix.a * matrix.d - matrix.b * matrix.c) > epsilon;
 }

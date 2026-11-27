@@ -1,3 +1,6 @@
+/**
+ * 행렬 합성, append, 역행렬과 출력 별칭 처리를 검증한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { appendRotateInto } from '../../../src/matrix/append-rotate-into';
 import { appendScaleInto } from '../../../src/matrix/append-scale-into';
@@ -176,13 +179,6 @@ describe('matrix composition - appendTranslateInto', () => {
     expect(result).toBe(out);
     // identity * T(3,7) = T(3,7)
     expect(out).toEqual({ a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 7 });
-  });
-
-  test('tuple offset을 사용할 수 있다', () => {
-    const m = makeIdentity();
-    const out = makeMatrix();
-    appendTranslateInto(out, m, [10, -5]);
-    expect(out).toEqual({ a: 1, b: 0, c: 0, d: 1, tx: 10, ty: -5 });
   });
 
   test('appendTranslateInto(out, M, offset)는 multiplyInto(out, M, T(offset))과 일치한다', () => {

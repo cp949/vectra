@@ -1,3 +1,6 @@
+/**
+ * 행렬 직교 판정과 epsilon 경계를 검증한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { isOrthogonal } from '../../../src/matrix/is-orthogonal';
 import { rotationMatrixInto } from '../../../src/matrix/rotation-matrix-into';
@@ -46,11 +49,6 @@ describe('matrix query - isOrthogonal', () => {
     const m = { a: 1, b: 0, c: -0.005, d: 1, tx: 0, ty: 0 };
     expect(isOrthogonal(m, 0.01)).toBe(true);
     expect(isOrthogonal(m, 0.001)).toBe(false);
-  });
-
-  test('tuple matrix input을 판정한다', () => {
-    expect(isOrthogonal([1, 0, 0, 1, 0, 0])).toBe(true);
-    expect(isOrthogonal([1, 0, Math.tan(0.3), 1, 0, 0])).toBe(false);
   });
 
   test('NaN component는 orthogonal이 아니다', () => {

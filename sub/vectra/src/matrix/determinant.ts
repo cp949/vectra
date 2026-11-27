@@ -1,5 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 
 /**
  * matrix의 2D affine determinant를 반환한다.
@@ -8,6 +7,6 @@ import type { MatrixLike } from '../types';
  *
  * @param matrix determinant를 계산할 matrix
  */
-export function determinant(matrix: MatrixLike): number {
-  return readMatrixA(matrix) * readMatrixD(matrix) - readMatrixB(matrix) * readMatrixC(matrix);
+export function determinant(matrix: Matrix): number {
+  return matrix.a * matrix.d - matrix.b * matrix.c;
 }

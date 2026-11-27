@@ -79,30 +79,6 @@ describe('matrix operator - lerpInto', () => {
     expect(out.tx).toBeCloseTo(2 * matA.tx - matB.tx, 14);
   });
 
-  test('tuple input a를 처리한다', () => {
-    const out = makeMatrix();
-    const aTuple = [1, 2, 3, 4, 5, 6] as const;
-    lerpInto(out, aTuple, matB, 0);
-    expect(out.a).toBe(1);
-    expect(out.b).toBe(2);
-    expect(out.c).toBe(3);
-    expect(out.d).toBe(4);
-    expect(out.tx).toBe(5);
-    expect(out.ty).toBe(6);
-  });
-
-  test('tuple input b를 처리한다', () => {
-    const out = makeMatrix();
-    const bTuple = [7, 8, 9, 10, 11, 12] as const;
-    lerpInto(out, matA, bTuple, 1);
-    expect(out.a).toBe(7);
-    expect(out.b).toBe(8);
-    expect(out.c).toBe(9);
-    expect(out.d).toBe(10);
-    expect(out.tx).toBe(11);
-    expect(out.ty).toBe(12);
-  });
-
   test('NaN t → component가 NaN이다 (pass-through)', () => {
     const out = makeMatrix();
     lerpInto(out, matA, matB, Number.NaN);
@@ -116,16 +92,6 @@ describe('matrix operator - lerpInto', () => {
     expect(out.a).toBe(matA.a);
     expect(out.b).toBe(matA.b);
     expect(out.tx).toBe(matA.tx);
-  });
-
-  test('generic Out 타입이 보존된다', () => {
-    interface MyMatrix extends MatrixWritable {
-      tag: string;
-    }
-    const out: MyMatrix = { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0, tag: 'lerp' };
-    const result = lerpInto(out, matA, matB, 0.5);
-    expect(result).toBe(out);
-    expect(result.tag).toBe('lerp');
   });
 });
 

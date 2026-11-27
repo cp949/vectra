@@ -1,5 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 
 /**
  * matrix의 linear part가 orthogonal하면 true를 반환한다.
@@ -14,10 +13,10 @@ import type { MatrixLike } from '../types';
  * @param matrix orthogonality를 확인할 matrix
  * @param epsilon column dot product 절댓값에 적용할 허용 오차
  */
-export function isOrthogonal(matrix: MatrixLike, epsilon = 0): boolean {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
+export function isOrthogonal(matrix: Matrix, epsilon = 0): boolean {
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
   return Math.abs(a * c + b * d) <= epsilon;
 }

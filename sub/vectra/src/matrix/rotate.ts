@@ -1,4 +1,4 @@
-import type { MatrixLike, MatrixWritable } from '../types';
+import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
 import { appendRotateInto } from './append-rotate-into';
 
 /**
@@ -10,6 +10,6 @@ import { appendRotateInto } from './append-rotate-into';
  * @param matrix rotation을 append할 기준 matrix
  * @param angle 오른쪽에 곱할 rotation angle (radian)
  */
-export function rotate(matrix: MatrixLike, angle: number): MatrixWritable {
+export function rotate(matrix: Matrix, angle: number): MatrixWritable {
   return appendRotateInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, matrix, angle);
 }

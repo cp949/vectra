@@ -1,3 +1,6 @@
+/**
+ * 행렬식 계산과 경계 입력을 검증한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { determinant } from '../../../src/matrix/determinant';
 import { rotationMatrixInto } from '../../../src/matrix/rotation-matrix-into';
@@ -38,9 +41,5 @@ describe('matrix scalar query - determinant', () => {
   test('일반 matrix a*d - b*c를 계산한다', () => {
     // a=2, b=3, c=4, d=5 → det = 2*5 - 3*4 = 10 - 12 = -2
     expect(determinant({ a: 2, b: 3, c: 4, d: 5, tx: 0, ty: 0 })).toBe(-2);
-  });
-
-  test('tuple matrix의 determinant를 계산한다', () => {
-    expect(determinant([2, 3, 4, 5, 0, 0])).toBe(-2);
   });
 });

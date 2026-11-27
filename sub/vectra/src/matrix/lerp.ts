@@ -1,4 +1,4 @@
-import type { MatrixLike, MatrixWritable } from '../types';
+import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
 import { lerpInto } from './lerp-into';
 
 /**
@@ -11,6 +11,6 @@ import { lerpInto } from './lerp-into';
  * @param b 끝 matrix (t = 1일 때 결과)
  * @param t 보간 parameter. clamp 없이 extrapolation 허용.
  */
-export function lerp(a: MatrixLike, b: MatrixLike, t: number): MatrixWritable {
+export function lerp(a: Matrix, b: Matrix, t: number): MatrixWritable {
   return lerpInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, a, b, t);
 }

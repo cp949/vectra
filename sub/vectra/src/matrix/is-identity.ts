@@ -1,5 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 
 /**
  * matrix가 identity matrix와 epsilon 이내로 같으면 true를 반환한다.
@@ -9,13 +8,13 @@ import type { MatrixLike } from '../types';
  * @param matrix identity 여부를 확인할 matrix
  * @param epsilon 각 component에 적용할 절대 허용 오차
  */
-export function isIdentity(matrix: MatrixLike, epsilon = 0): boolean {
+export function isIdentity(matrix: Matrix, epsilon = 0): boolean {
   return (
-    Math.abs(readMatrixA(matrix) - 1) <= epsilon &&
-    Math.abs(readMatrixB(matrix)) <= epsilon &&
-    Math.abs(readMatrixC(matrix)) <= epsilon &&
-    Math.abs(readMatrixD(matrix) - 1) <= epsilon &&
-    Math.abs(readMatrixTx(matrix)) <= epsilon &&
-    Math.abs(readMatrixTy(matrix)) <= epsilon
+    Math.abs(matrix.a - 1) <= epsilon &&
+    Math.abs(matrix.b) <= epsilon &&
+    Math.abs(matrix.c) <= epsilon &&
+    Math.abs(matrix.d - 1) <= epsilon &&
+    Math.abs(matrix.tx) <= epsilon &&
+    Math.abs(matrix.ty) <= epsilon
   );
 }

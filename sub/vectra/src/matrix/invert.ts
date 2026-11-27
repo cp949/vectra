@@ -1,4 +1,4 @@
-import type { MatrixLike, MatrixWritable } from '../types';
+import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
 import { createMatrix } from './create-matrix';
 import { invertInto } from './invert-into';
 
@@ -10,7 +10,7 @@ import { invertInto } from './invert-into';
  *
  * @param matrix inverse를 계산할 matrix
  */
-export function invert(matrix: MatrixLike): MatrixWritable | undefined {
+export function invert(matrix: Matrix): MatrixWritable | undefined {
   const out = createMatrix();
   return invertInto(out, matrix) ? out : undefined;
 }

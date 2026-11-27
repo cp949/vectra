@@ -1,3 +1,6 @@
+/**
+ * 행렬 성분의 정확한 동등 비교를 검증한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { equals } from '../../../src/matrix/equals';
 
@@ -5,12 +8,6 @@ describe('matrix query - equals', () => {
   test('동일 component는 true를 반환한다', () => {
     const m = { a: 1, b: 2, c: 3, d: 4, tx: 5, ty: 6 };
     expect(equals(m, { a: 1, b: 2, c: 3, d: 4, tx: 5, ty: 6 })).toBe(true);
-  });
-
-  test('object matrix와 tuple matrix의 component를 비교한다', () => {
-    const m = { a: 1, b: 2, c: 3, d: 4, tx: 5, ty: 6 };
-    expect(equals(m, [1, 2, 3, 4, 5, 6])).toBe(true);
-    expect(equals([1, 2, 3, 4, 5, 7], m)).toBe(false);
   });
 
   test('같은 object 참조는 true를 반환한다', () => {
