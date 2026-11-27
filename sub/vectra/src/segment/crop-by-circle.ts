@@ -1,4 +1,5 @@
-import type { CircleLike, SegmentLike, SegmentWritable } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { Circle, Segment, SegmentWritable } from '../types/flat-shapes.internal';
 import { cropByCircleInto } from './crop-by-circle-into';
 
 /**
@@ -12,8 +13,8 @@ import { cropByCircleInto } from './crop-by-circle-into';
  * @param line crop할 segment
  * @param circle crop 경계 circle
  */
-export function cropByCircle(line: SegmentLike, circle: CircleLike): SegmentWritable | undefined {
-  const seed: SegmentWritable = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+export function cropByCircle(line: Segment, circle: Circle): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (!cropByCircleInto(seed, line, circle)) return undefined;
   return seed;
 }

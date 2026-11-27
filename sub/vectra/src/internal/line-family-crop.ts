@@ -8,7 +8,8 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { SegmentWritable, XYWritable } from '../types';
+import type { SegmentWritable as LegacySegmentWritable, XYWritable } from '../types';
+import type { SegmentWritable } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { getLineFamilyOwnRangeInterval } from './line-family-range.internal';
 import { writeXY } from './xy';
@@ -102,7 +103,7 @@ function rectCropInterval(
  * endpoint 순서는 source direction의 increasing t를 따른다.
  */
 function writeClippedCropInto(
-  out: SegmentWritable<XYWritable, XYWritable>,
+  out: SegmentWritable | LegacySegmentWritable<XYWritable, XYWritable>,
   ox: number,
   oy: number,
   dx: number,
@@ -120,8 +121,17 @@ function writeClippedCropInto(
   const bx = ox + hi * dx;
   const by = oy + hi * dy;
   if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(bx) || !Number.isFinite(by)) return false;
-  writeXY(out.a, ax, ay);
-  writeXY(out.b, bx, by);
+  if ('x1' in out && (kind === 'finite' || !('a' in out))) {
+    out.x1 = ax;
+    out.y1 = ay;
+    out.x2 = bx;
+    out.y2 = by;
+  } else {
+    // v2-migration: ray와 infinite-line의 crop 출력은 아직 중첩 끝점을 쓴다.
+    const legacy = out as LegacySegmentWritable<XYWritable, XYWritable>;
+    writeXY(legacy.a, ax, ay);
+    writeXY(legacy.b, bx, by);
+  }
   return true;
 }
 
@@ -143,7 +153,7 @@ function writeClippedCropInto(
  * @param r circle 반지름
  */
 export function cropLineFamilyByCircleInto(
-  out: SegmentWritable<XYWritable, XYWritable>,
+  out: SegmentWritable | LegacySegmentWritable<XYWritable, XYWritable>,
   ox: number,
   oy: number,
   dx: number,
@@ -180,7 +190,7 @@ export function cropLineFamilyByCircleInto(
  * @param rh rect 높이
  */
 export function cropLineFamilyByRectInto(
-  out: SegmentWritable<XYWritable, XYWritable>,
+  out: SegmentWritable | LegacySegmentWritable<XYWritable, XYWritable>,
   ox: number,
   oy: number,
   dx: number,

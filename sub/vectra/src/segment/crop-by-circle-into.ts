@@ -1,8 +1,5 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { cropLineFamilyByCircleInto } from '../internal/line-family-crop';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, SegmentLike, SegmentWritable, XYWritable } from '../types';
+import type { Circle, Segment, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment를 circle boundary로 crop한 결과를 out에 기록하고 성공 여부를 반환한다.
@@ -14,31 +11,14 @@ import type { CircleLike, SegmentLike, SegmentWritable, XYWritable } from '../ty
  * 않음, tangent(clip 길이 0). non-finite 좌표는 valid bounded segment를 만들 수 없어 실패한다.
  * `out`과 input segment가 같은 object여도 안전하다.
  *
- * @param out crop된 segment를 기록할 writable output
+ * @param out 잘라낸 선분을 기록할 선분 객체
  * @param line crop할 segment
  * @param circle crop 경계 circle
  */
-export function cropByCircleInto(
-  out: SegmentWritable<XYWritable, XYWritable>,
-  line: SegmentLike,
-  circle: CircleLike
-): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
-  const center = readCircleCenter(circle);
-  return cropLineFamilyByCircleInto(
-    out,
-    ax,
-    ay,
-    bx - ax,
-    by - ay,
-    'finite',
-    readX(center),
-    readY(center),
-    readCircleRadius(circle)
-  );
+export function cropByCircleInto(out: SegmentWritable, line: Segment, circle: Circle): boolean {
+  const ax = line.x1;
+  const ay = line.y1;
+  const bx = line.x2;
+  const by = line.y2;
+  return cropLineFamilyByCircleInto(out, ax, ay, bx - ax, by - ay, 'finite', circle.cx, circle.cy, circle.r);
 }

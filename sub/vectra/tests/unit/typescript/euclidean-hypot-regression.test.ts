@@ -13,8 +13,8 @@ import { normalInto } from '../../../src/segment/normal-into';
 import { isRight } from '../../../src/triangle/is-right';
 
 describe('Euclidean hypot regression', () => {
-  test('segment distance preserves finite huge distance', () => {
-    const distance = segmentDistanceToPoint({ a: { x: 0, y: 0 }, b: { x: 0, y: 0 } }, { x: 1e308, y: 1e308 });
+  test('선분까지의 큰 거리가 유한하게 유지된다', () => {
+    const distance = segmentDistanceToPoint({ x1: 0, y1: 0, x2: 0, y2: 0 }, { x: 1e308, y: 1e308 });
 
     expect(distance).toBe(Math.hypot(1e308, 1e308));
   });

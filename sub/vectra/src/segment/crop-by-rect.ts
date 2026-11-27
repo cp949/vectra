@@ -1,4 +1,5 @@
-import type { RectLike, SegmentLike, SegmentWritable } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { Rect, Segment, SegmentWritable } from '../types/flat-shapes.internal';
 import { cropByRectInto } from './crop-by-rect-into';
 
 /**
@@ -12,8 +13,8 @@ import { cropByRectInto } from './crop-by-rect-into';
  * @param line crop할 segment
  * @param rect crop 경계 rect (axis-aligned)
  */
-export function cropByRect(line: SegmentLike, rect: RectLike): SegmentWritable | undefined {
-  const seed: SegmentWritable = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+export function cropByRect(line: Segment, rect: Rect): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (!cropByRectInto(seed, line, rect)) return undefined;
   return seed;
 }

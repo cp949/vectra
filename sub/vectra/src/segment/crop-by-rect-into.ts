@@ -1,8 +1,5 @@
 import { cropLineFamilyByRectInto } from '../internal/line-family-crop';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { RectLike, SegmentLike, SegmentWritable, XYWritable } from '../types';
+import type { Rect, Segment, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment를 axis-aligned rect boundary로 crop한 결과를 out에 기록하고 성공 여부를 반환한다.
@@ -14,31 +11,14 @@ import type { RectLike, SegmentLike, SegmentWritable, XYWritable } from '../type
  * ±Infinity·NaN), rect와 만나지 않음, clip 길이 0. non-finite 좌표는 valid bounded segment를 만들 수 없어 실패한다.
  * `out`과 input segment가 같은 object여도 안전하다.
  *
- * @param out crop된 segment를 기록할 writable output
+ * @param out 잘라낸 선분을 기록할 선분 객체
  * @param line crop할 segment
  * @param rect crop 경계 rect (axis-aligned)
  */
-export function cropByRectInto(
-  out: SegmentWritable<XYWritable, XYWritable>,
-  line: SegmentLike,
-  rect: RectLike
-): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
-  return cropLineFamilyByRectInto(
-    out,
-    ax,
-    ay,
-    bx - ax,
-    by - ay,
-    'finite',
-    readRectX(rect),
-    readRectY(rect),
-    readRectWidth(rect),
-    readRectHeight(rect)
-  );
+export function cropByRectInto(out: SegmentWritable, line: Segment, rect: Rect): boolean {
+  const ax = line.x1;
+  const ay = line.y1;
+  const bx = line.x2;
+  const by = line.y2;
+  return cropLineFamilyByRectInto(out, ax, ay, bx - ax, by - ay, 'finite', rect.x, rect.y, rect.width, rect.height);
 }

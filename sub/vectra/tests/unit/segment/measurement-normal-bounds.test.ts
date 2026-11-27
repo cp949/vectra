@@ -1,3 +1,4 @@
+/** 선분의 길이, 각도, 법선과 끝점을 감싸는 경계 상자를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { angle } from '../../../src/segment/angle';
 import { bounds } from '../../../src/segment/bounds';
@@ -6,8 +7,8 @@ import { isZeroLength } from '../../../src/segment/is-zero-length';
 import { length } from '../../../src/segment/length';
 import { lengthSq } from '../../../src/segment/length-sq';
 import { normalInto } from '../../../src/segment/normal-into';
-import type { BoundsWritable, XYWritable } from '../../../src/types';
-import { boundsOut, expectCloseXY, expectXY, xyOut } from './lifecycle-measurement-test-helpers';
+import type { XYWritable } from '../../../src/types';
+import { expectCloseXY, expectXY, xyOut } from './lifecycle-measurement-test-helpers';
 
 describe('segment 측정 - length/lengthSq', () => {
   test.each([
@@ -121,37 +122,31 @@ describe('segment 측정 - isZeroLength/angle', () => {
   test.each([
     {
       name: '수평 방향 (1, 0) segment의 angle은 0이다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } },
+      seg: { x1: 0, y1: 0, x2: 1, y2: 0 },
       expected: 0,
       close: false,
     },
     {
       name: '수직 방향 (0, 1) segment의 angle은 π/2이다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 0, y: 1 } },
+      seg: { x1: 0, y1: 0, x2: 0, y2: 1 },
       expected: Math.PI / 2,
       close: true,
     },
     {
       name: '대각선 (1, 1) segment의 angle은 π/4이다',
-      seg: { a: { x: 0, y: 0 }, b: { x: 1, y: 1 } },
+      seg: { x1: 0, y1: 0, x2: 1, y2: 1 },
       expected: Math.PI / 4,
       close: true,
     },
     {
       name: '음수 방향 (-1, 0) segment의 angle은 π이다',
-      seg: { a: { x: 0, y: 0 }, b: { x: -1, y: 0 } },
+      seg: { x1: 0, y1: 0, x2: -1, y2: 0 },
       expected: Math.PI,
       close: true,
     },
     {
       name: 'zero-length segment의 angle은 0이다',
-      seg: { a: { x: 3, y: 4 }, b: { x: 3, y: 4 } },
-      expected: 0,
-      close: false,
-    },
-    {
-      name: 'tuple endpoint를 가진 segment의 angle을 계산한다',
-      seg: { a: [0, 0] as const, b: [1, 0] as const },
+      seg: { x1: 3, y1: 4, x2: 3, y2: 4 },
       expected: 0,
       close: false,
     },
@@ -221,72 +216,48 @@ describe('segment 측정 - boundsInto', () => {
   test.each([
     {
       name: '순방향 segment의 bounds를 계산한다',
-      seg: { a: { x: 1, y: 2 }, b: { x: 4, y: 6 } },
-      min: { x: 1, y: 2 },
-      max: { x: 4, y: 6 },
-      checkReturn: true,
+      seg: { x1: 1, y1: 2, x2: 4, y2: 6 },
+      expected: { minX: 1, minY: 2, maxX: 4, maxY: 6 },
     },
     {
       name: '역방향 segment에서 min/max가 올바르게 교환된다',
-      seg: { a: { x: 5, y: 8 }, b: { x: 1, y: 3 } },
-      min: { x: 1, y: 3 },
-      max: { x: 5, y: 8 },
-      checkReturn: false,
+      seg: { x1: 5, y1: 8, x2: 1, y2: 3 },
+      expected: { minX: 1, minY: 3, maxX: 5, maxY: 8 },
     },
     {
       name: 'zero-length segment의 bounds는 min === max === a이다',
-      seg: { a: { x: 3, y: 7 }, b: { x: 3, y: 7 } },
-      min: { x: 3, y: 7 },
-      max: { x: 3, y: 7 },
-      checkReturn: false,
+      seg: { x1: 3, y1: 7, x2: 3, y2: 7 },
+      expected: { minX: 3, minY: 7, maxX: 3, maxY: 7 },
     },
-  ])('$name', ({ seg, min, max, checkReturn }) => {
-    const out = boundsOut();
+  ])('$name', ({ seg, expected }) => {
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 
     const result = boundsInto(out, seg);
 
-    if (checkReturn) {
-      expect(result).toBe(out);
-    }
-    expectXY(out.min, min);
-    expectXY(out.max, max);
-  });
-
-  test('mutable tuple out에 bounds를 기록하고 out을 반환한다', () => {
-    const min: [number, number] = [0, 0];
-    const max: [number, number] = [0, 0];
-    const out: BoundsWritable<[number, number], [number, number]> = { min, max };
-
-    const result = boundsInto(out, { a: { x: 2, y: 3 }, b: { x: 5, y: 1 } });
-
     expect(result).toBe(out);
-    expect(min).toEqual([2, 1]);
-    expect(max).toEqual([5, 3]);
+    expect(out).toEqual(expected);
   });
 });
 
 describe('segment 측정 - bounds (companion)', () => {
   test('boundsInto와 같은 extent를 새 object로 반환한다', () => {
-    const result = bounds({ a: { x: 5, y: 8 }, b: { x: 1, y: 3 } });
+    const result = bounds({ x1: 5, y1: 8, x2: 1, y2: 3 });
 
-    expectXY(result.min, { x: 1, y: 3 });
-    expectXY(result.max, { x: 5, y: 8 });
+    expect(result).toEqual({ minX: 1, minY: 3, maxX: 5, maxY: 8 });
   });
 
   test('zero-length segment는 점으로 수렴한 bounds를 반환한다', () => {
-    const result = bounds({ a: { x: 3, y: 7 }, b: { x: 3, y: 7 } });
+    const result = bounds({ x1: 3, y1: 7, x2: 3, y2: 7 });
 
-    expectXY(result.min, { x: 3, y: 7 });
-    expectXY(result.max, { x: 3, y: 7 });
+    expect(result).toEqual({ minX: 3, minY: 7, maxX: 3, maxY: 7 });
   });
 
   test('호출마다 새 object를 반환한다', () => {
-    const seg = { a: { x: 0, y: 0 }, b: { x: 2, y: 4 } };
+    const seg = { x1: 0, y1: 0, x2: 2, y2: 4 };
 
     const first = bounds(seg);
     const second = bounds(seg);
 
     expect(first).not.toBe(second);
-    expect(first.min).not.toBe(second.min);
   });
 });

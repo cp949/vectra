@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, XYInput } from '../types';
+import type { Segment, Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -9,14 +7,14 @@ import { hypot2 } from '../internal/numeric';
  * @param line 대상 segment
  * @param point 거리를 측정할 point
  */
-export function distanceToPoint(line: SegmentLike, point: XYInput): number {
-  const ax = readX(readSegmentA(line));
-  const ay = readY(readSegmentA(line));
-  const dx = readX(readSegmentB(line)) - ax;
-  const dy = readY(readSegmentB(line)) - ay;
+export function distanceToPoint(line: Segment, point: Point): number {
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   const lenSq = dx * dx + dy * dy;
-  const px = readX(point) - ax;
-  const py = readY(point) - ay;
+  const px = point.x - ax;
+  const py = point.y - ay;
   if (lenSq === 0) return hypot2(px, py);
   const t = Math.max(0, Math.min(1, (px * dx + py * dy) / lenSq));
   const cx = t * dx - px;

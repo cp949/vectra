@@ -1,7 +1,8 @@
+/** 선분과 연장선에 대한 점의 위치 분류와 허용 오차를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { classifyPoint } from '../../../src/segment/classify-point';
 
-const seg = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 } };
+const seg = { x1: 0, y1: 0, x2: 10, y2: 0 };
 
 describe('classifyPoint — segment 위 point 분류', () => {
   test("segment 위 중간 point는 'on'을 반환한다", () => {
@@ -31,7 +32,7 @@ describe('classifyPoint — segment 위 point 분류', () => {
   });
 
   test('대각선 segment에서 projection이 올바르게 작동한다', () => {
-    const diag = { a: { x: 0, y: 0 }, b: { x: 4, y: 4 } };
+    const diag = { x1: 0, y1: 0, x2: 4, y2: 4 };
     expect(classifyPoint(diag, { x: 2, y: 2 })).toBe('on');
     expect(classifyPoint(diag, { x: -1, y: -1 })).toBe('before');
     expect(classifyPoint(diag, { x: 5, y: 5 })).toBe('after');
@@ -39,7 +40,7 @@ describe('classifyPoint — segment 위 point 분류', () => {
   });
 
   test('zero-length segment에서 endpoint와 같은 point는 on을 반환한다', () => {
-    const pt = { a: { x: 3, y: 3 }, b: { x: 3, y: 3 } };
+    const pt = { x1: 3, y1: 3, x2: 3, y2: 3 };
     expect(classifyPoint(pt, { x: 3, y: 3 })).toBe('on');
     expect(classifyPoint(pt, { x: 5, y: 5 })).toBe('off');
   });

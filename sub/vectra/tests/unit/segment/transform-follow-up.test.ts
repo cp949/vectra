@@ -1,6 +1,4 @@
-/**
- * segment shape transform helpers — transformInto, centerOnInto, extendInto, rotateInto
- */
+/** 선분의 이동, 회전, 중심 맞춤 및 연장에서 끝점과 길이의 변화를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { centerOn } from '../../../src/segment/center-on';
 import { centerOnInto } from '../../../src/segment/center-on-into';
@@ -12,10 +10,12 @@ import { transform } from '../../../src/segment/transform';
 import { transformInto } from '../../../src/segment/transform-into';
 import type { SegmentWritable } from '../../../src/types';
 
-// helper
+/** 중첩 끝점 API의 시험에 쓸 선분을 만든다. */
 function seg(ax: number, ay: number, bx: number, by: number): SegmentWritable {
   return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
 }
+
+/** 중첩 끝점 API의 결과를 받을 선분을 만든다. */
 function out(): SegmentWritable {
   return seg(0, 0, 0, 0);
 }
@@ -82,40 +82,38 @@ describe('segment transform - transformInto', () => {
 
 describe('segment transform - centerOnInto', () => {
   test('midpoint를 target point로 이동한다', () => {
-    const o = out();
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
     // midpoint: (1.5, 1.5)  target: (5, 5)  offset: (3.5, 3.5)
-    centerOnInto(o, seg(1, 1, 2, 2), { x: 5, y: 5 });
-    expect(o.a).toEqual({ x: 4.5, y: 4.5 });
-    expect(o.b).toEqual({ x: 5.5, y: 5.5 });
+    centerOnInto(o, { x1: 1, y1: 1, x2: 2, y2: 2 }, { x: 5, y: 5 });
+    expect(o).toEqual({ x1: 4.5, y1: 4.5, x2: 5.5, y2: 5.5 });
   });
 
   test('length를 보존한다', () => {
-    const line = seg(0, 0, 3, 4); // length 5
-    const o = out();
+    const line = { x1: 0, y1: 0, x2: 3, y2: 4 }; // length 5
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
     centerOnInto(o, line, { x: 10, y: 10 });
-    const dx = (o.b as { x: number; y: number }).x - (o.a as { x: number; y: number }).x;
-    const dy = (o.b as { x: number; y: number }).y - (o.a as { x: number; y: number }).y;
+    const dx = o.x2 - o.x1;
+    const dy = o.y2 - o.y1;
     expect(Math.sqrt(dx * dx + dy * dy)).toBeCloseTo(5);
   });
 
   test('self-aliasing이 length를 보존한다', () => {
-    const o = seg(0, 0, 3, 4);
+    const o = { x1: 0, y1: 0, x2: 3, y2: 4 };
     centerOnInto(o, o, { x: 0, y: 0 });
-    const dx = (o.b as { x: number; y: number }).x - (o.a as { x: number; y: number }).x;
-    const dy = (o.b as { x: number; y: number }).y - (o.a as { x: number; y: number }).y;
+    const dx = o.x2 - o.x1;
+    const dy = o.y2 - o.y1;
     expect(Math.sqrt(dx * dx + dy * dy)).toBeCloseTo(5);
   });
 
   test('zero-length segment에서 두 endpoint가 모두 target point로 이동한다', () => {
-    const o = out();
-    centerOnInto(o, seg(3, 3, 3, 3), { x: 7, y: 8 });
-    expect(o.a).toEqual({ x: 7, y: 8 });
-    expect(o.b).toEqual({ x: 7, y: 8 });
+    const o = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    centerOnInto(o, { x1: 3, y1: 3, x2: 3, y2: 3 }, { x: 7, y: 8 });
+    expect(o).toEqual({ x1: 7, y1: 8, x2: 7, y2: 8 });
   });
 
   test('centerOn companion이 새 plain object를 반환한다', () => {
-    const result = centerOn(seg(0, 0, 2, 0), { x: 5, y: 0 });
-    expect(result).toEqual({ a: { x: 4, y: 0 }, b: { x: 6, y: 0 } });
+    const result = centerOn({ x1: 0, y1: 0, x2: 2, y2: 0 }, { x: 5, y: 0 });
+    expect(result).toEqual({ x1: 4, y1: 0, x2: 6, y2: 0 });
   });
 });
 

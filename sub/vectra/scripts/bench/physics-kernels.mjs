@@ -87,7 +87,7 @@ async function makeCase(name) {
   const { surfaces, rays, circles, points } = makeScene();
   const segmentShapes = surfaces.map((s) => ({ a: { x: s.x1, y: s.y1 }, b: { x: s.x2, y: s.y2 } }));
   const circleShapes = circles.map((c) => ({ center: { x: c.x, y: c.y }, radius: c.r }));
-  const line = { a: { x: 100, y: 100 }, b: { x: 900, y: 700 } };
+  const line = { x1: 100, y1: 100, x2: 900, y2: 700 };
 
   const cases = {
     'ray×segment hand': () => {

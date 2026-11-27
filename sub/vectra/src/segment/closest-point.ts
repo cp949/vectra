@@ -1,4 +1,4 @@
-import type { SegmentLike, XYInput, XYObjectWritable } from '../types';
+import type { Segment, Point, PointWritable } from '../types/flat-shapes.internal';
 import { closestPointInto } from './closest-point-into';
 
 /**
@@ -7,6 +7,6 @@ import { closestPointInto } from './closest-point-into';
  * @param line 대상 segment
  * @param point closest point를 측정할 기준 point
  */
-export function closestPoint(line: SegmentLike, point: XYInput): XYObjectWritable {
+export function closestPoint(line: Segment, point: Point): PointWritable {
   return closestPointInto({ x: 0, y: 0 }, line, point);
 }

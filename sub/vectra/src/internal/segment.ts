@@ -1,3 +1,4 @@
+import type { SegmentWritable as FlatSegmentWritable } from '../types/flat-shapes.internal';
 import type { SegmentLike, SegmentTuple, XYInput } from '../types';
 import { readX, readY } from './xy';
 
@@ -79,4 +80,9 @@ export function segmentContainsPoint(seg: SegmentLike, px: number, py: number, e
     distSq = cx * cx + cy * cy;
   }
   return distSq <= epsilon * epsilon;
+}
+
+/** 두 끝점이 원점인 선분을 만든다. */
+export function createZeroSegment(): FlatSegmentWritable {
+  return { x1: 0, y1: 0, x2: 0, y2: 0 };
 }

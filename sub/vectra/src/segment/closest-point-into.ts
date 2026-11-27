@@ -1,24 +1,22 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { SegmentLike, XYInput, XYWritable } from '../types';
+import type { Segment, Point, PointWritable } from '../types/flat-shapes.internal';
 import { closestPointOnSegment } from './closest-point.internal';
 
 /**
  * t를 [0, 1]로 clamp한 closest point를 out에 기록하고 out을 반환한다. zero-length segment는 시작점을 기록한다.
  *
- * @param out closest point를 기록할 writable output
+ * @param out 최근접점을 기록할 점 객체
  * @param line 대상 segment
  * @param point closest point를 측정할 기준 point
  */
-export function closestPointInto<Out extends XYWritable>(out: Out, line: SegmentLike, point: XYInput): Out {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
-  const px = readX(point);
-  const py = readY(point);
+export function closestPointInto<Out extends PointWritable>(out: Out, line: Segment, point: Point): Out {
+  const ax = line.x1;
+  const ay = line.y1;
+  const bx = line.x2;
+  const by = line.y2;
+  const px = point.x;
+  const py = point.y;
   const cp = closestPointOnSegment(ax, ay, bx, by, px, py);
-  return writeXY(out, cp.x, cp.y);
+  out.x = cp.x;
+  out.y = cp.y;
+  return out;
 }

@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, XYInput } from '../types';
+import type { Segment, Point } from '../types/flat-shapes.internal';
 
 /**
  * point와 line 사이 최단 거리의 제곱을 반환한다.
@@ -8,14 +6,14 @@ import type { SegmentLike, XYInput } from '../types';
  * @param line 대상 segment
  * @param point 거리를 측정할 point
  */
-export function distanceToPointSq(line: SegmentLike, point: XYInput): number {
-  const ax = readX(readSegmentA(line));
-  const ay = readY(readSegmentA(line));
-  const dx = readX(readSegmentB(line)) - ax;
-  const dy = readY(readSegmentB(line)) - ay;
+export function distanceToPointSq(line: Segment, point: Point): number {
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   const lenSq = dx * dx + dy * dy;
-  const px = readX(point) - ax;
-  const py = readY(point) - ay;
+  const px = point.x - ax;
+  const py = point.y - ay;
   if (lenSq === 0) return px * px + py * py;
   const t = Math.max(0, Math.min(1, (px * dx + py * dy) / lenSq));
   const cx = t * dx - px;

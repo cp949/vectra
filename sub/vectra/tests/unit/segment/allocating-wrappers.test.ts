@@ -48,16 +48,21 @@ type Case = {
   expected: () => unknown;
 };
 
+/** 평평한 선분을 새로 만든다. */
+function makeFlatLine() {
+  return { x1: 1, y1: 2, x2: 4, y2: 6 };
+}
+
 const cases: Case[] = [
   {
     name: 'closestPoint',
-    actual: () => closestPoint(makeLine(), point),
-    expected: () => closestPointInto({ x: 0, y: 0 }, makeLine(), point),
+    actual: () => closestPoint(makeFlatLine(), point),
+    expected: () => closestPointInto({ x: 0, y: 0 }, makeFlatLine(), point),
   },
   {
     name: 'end',
-    actual: () => end(makeLine()),
-    expected: () => endInto({ x: 0, y: 0 }, makeLine()),
+    actual: () => end(makeFlatLine()),
+    expected: () => endInto({ x: 0, y: 0 }, makeFlatLine()),
   },
   {
     name: 'fromAngle',
@@ -121,7 +126,7 @@ describe('segment 할당형 wrapper - 대응 Into와의 동치', () => {
 describe('segment 할당형 wrapper - 값 확인', () => {
   test('start와 end는 서로 다른 endpoint를 반환한다', () => {
     expect(start(makeLine())).toEqual({ x: 1, y: 2 });
-    expect(end(makeLine())).toEqual({ x: 4, y: 6 });
+    expect(end(makeFlatLine())).toEqual({ x: 4, y: 6 });
   });
 
   test('vector는 b - a를 반환한다', () => {
@@ -155,31 +160,11 @@ describe('segment 할당형 wrapper - 값 확인', () => {
   });
 });
 
-describe('segment 할당형 wrapper - segmentFrom', () => {
-  test('SegmentLike 하나를 받으면 endpoint를 복사한 새 segment를 반환한다', () => {
-    const line = makeLine();
+describe('segmentFrom', () => {
+  test('두 끝점의 좌표를 새 선분에 복사한다', () => {
+    const line = makeFlatLine();
     const result = segmentFrom(line);
-    expect(result).toEqual({ a: { x: 1, y: 2 }, b: { x: 4, y: 6 } });
+    expect(result).toEqual(line);
     expect(result).not.toBe(line);
-    expect(result.a).not.toBe(line.a);
-    expect(result.b).not.toBe(line.b);
-  });
-
-  test('tuple endpoint를 가진 SegmentLike도 plain object로 복사한다', () => {
-    const result = segmentFrom({ a: [1, 2] as const, b: [4, 6] as const });
-    expect(result).toEqual({ a: { x: 1, y: 2 }, b: { x: 4, y: 6 } });
-  });
-
-  test('두 endpoint를 받으면 a, b 순서대로 새 segment를 만든다', () => {
-    const a = { x: 1, y: 2 };
-    const b = { x: 4, y: 6 };
-    const result = segmentFrom(a, b);
-    expect(result).toEqual({ a: { x: 1, y: 2 }, b: { x: 4, y: 6 } });
-    expect(result.a).not.toBe(a);
-    expect(result.b).not.toBe(b);
-  });
-
-  test('tuple endpoint 두 개로도 segment를 만든다', () => {
-    expect(segmentFrom([1, 2], [4, 6])).toEqual({ a: { x: 1, y: 2 }, b: { x: 4, y: 6 } });
   });
 });

@@ -674,10 +674,6 @@
       "to": "rect/create-rect.ts"
     },
     {
-      "from": "segment/center-on.ts",
-      "to": "segment/create-segment.ts"
-    },
-    {
       "from": "segment/extend.ts",
       "to": "segment/create-segment.ts"
     },
@@ -716,10 +712,6 @@
     {
       "from": "segment/segment-from.ts",
       "to": "segment/copy-into.ts"
-    },
-    {
-      "from": "segment/segment-from.ts",
-      "to": "segment/create-segment.ts"
     },
     {
       "from": "segment/single-intersection-into.ts",

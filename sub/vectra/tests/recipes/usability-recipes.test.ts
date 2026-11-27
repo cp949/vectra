@@ -18,13 +18,15 @@ import * as vec from '../../src/vec/index';
 // ── 레시피 1: 마우스 좌표를 segment에 투영하여 closest point 구하기 ──────────
 // canvas demo의 segment snap 예제와 동일한 흐름을 검증한다.
 describe('레시피 1: segment 투영과 snap point 계산', () => {
-  it('object XYInput으로 closestPointInto, projectionT, distanceToPoint를 연결할 수 있다', async () => {
+  it('점 객체로 최근접점, 투영 위치, 거리를 계산한다', async () => {
     const { closestPointInto } = await import('../../src/segment/closest-point-into');
     const { projectionT } = await import('../../src/segment/projection-t');
     const { distanceToPoint } = await import('../../src/segment/distance-to-point');
     const { length } = await import('../../src/segment/length');
 
-    const line = { a: { x: 0, y: 0 }, b: { x: 100, y: 0 } };
+    const line = { x1: 0, y1: 0, x2: 100, y2: 0 };
+    // v2-migration: projectionT와 length는 아직 중첩 끝점을 받는다.
+    const legacyLine = { a: { x: line.x1, y: line.y1 }, b: { x: line.x2, y: line.y2 } };
     const pointer = { x: 50, y: 30 };
 
     // caller-owned output — 재사용 가능한 object
@@ -38,32 +40,14 @@ describe('레시피 1: segment 투영과 snap point 계산', () => {
     expect(snap.y).toBeCloseTo(0, 10);
 
     // scalar 결과는 직접 반환한다
-    const t = projectionT(line, pointer);
+    const t = projectionT(legacyLine, pointer);
     expect(t).toBeCloseTo(0.5, 10);
 
     const dist = distanceToPoint(line, pointer);
     expect(dist).toBeCloseTo(30, 10);
 
-    const lineLen = length(line);
+    const lineLen = length(legacyLine);
     expect(lineLen).toBeCloseTo(100, 10);
-  });
-
-  it('tuple XYInput으로도 snap point를 구할 수 있다 (억지 캐스팅 없음)', async () => {
-    const { closestPointInto } = await import('../../src/segment/closest-point-into');
-    const { projectionT } = await import('../../src/segment/projection-t');
-
-    // tuple 형태 XYInput — XYWritable도 겸한다
-    const line = { a: [0, 0] as [number, number], b: [100, 0] as [number, number] };
-    const pointer: [number, number] = [75, 40];
-
-    const snap: [number, number] = [0, 0];
-    closestPointInto(snap, line, pointer);
-
-    expect(snap[0]).toBeCloseTo(75, 10);
-    expect(snap[1]).toBeCloseTo(0, 10);
-
-    const t = projectionT(line, pointer);
-    expect(t).toBeCloseTo(0.75, 10);
   });
 });
 

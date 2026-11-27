@@ -1,7 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, XYInput } from '../types';
+import type { Segment, Point } from '../types/flat-shapes.internal';
 
 /**
  * point가 line 위에 있으면 true를 반환한다. distanceToPointSq <= epsilon * epsilon으로 판정한다.
@@ -10,14 +8,14 @@ import type { SegmentLike, XYInput } from '../types';
  * @param point 판정할 point
  * @param epsilon 거리 판정 임계값. 기본값은 DEFAULT_EPSILON
  */
-export function containsPoint(line: SegmentLike, point: XYInput, epsilon: number = DEFAULT_EPSILON): boolean {
-  const ax = readX(readSegmentA(line));
-  const ay = readY(readSegmentA(line));
-  const dx = readX(readSegmentB(line)) - ax;
-  const dy = readY(readSegmentB(line)) - ay;
+export function containsPoint(line: Segment, point: Point, epsilon: number = DEFAULT_EPSILON): boolean {
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   const lenSq = dx * dx + dy * dy;
-  const px = readX(point) - ax;
-  const py = readY(point) - ay;
+  const px = point.x - ax;
+  const py = point.y - ay;
   let distSq: number;
   if (lenSq === 0) {
     distSq = px * px + py * py;

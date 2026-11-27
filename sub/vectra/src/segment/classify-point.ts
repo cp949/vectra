@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, XYInput } from '../types';
+import type { Segment, Point } from '../types/flat-shapes.internal';
 
 /**
  * point와 segment의 관계를 분류해 반환한다.
@@ -16,19 +14,17 @@ import type { SegmentLike, XYInput } from '../types';
  * @param point 분류할 point
  * @param epsilon 수직 거리 판정 임계값. 기본값 0
  */
-export function classifyPoint(segment: SegmentLike, point: XYInput, epsilon = 0): 'on' | 'before' | 'after' | 'off' {
+export function classifyPoint(segment: Segment, point: Point, epsilon = 0): 'on' | 'before' | 'after' | 'off' {
   if (epsilon < 0) {
     throw new RangeError('classifyPoint epsilon must be >= 0');
   }
 
-  const segA = readSegmentA(segment);
-  const segB = readSegmentB(segment);
-  const ax = readX(segA);
-  const ay = readY(segA);
-  const bx = readX(segB);
-  const by = readY(segB);
-  const px = readX(point);
-  const py = readY(point);
+  const ax = segment.x1;
+  const ay = segment.y1;
+  const bx = segment.x2;
+  const by = segment.y2;
+  const px = point.x;
+  const py = point.y;
 
   const dx = bx - ax;
   const dy = by - ay;
