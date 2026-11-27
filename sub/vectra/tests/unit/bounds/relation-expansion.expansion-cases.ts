@@ -169,7 +169,7 @@ describe('bounds - expandToIncludeBoundsInto', () => {
   });
 
   test('inverted other는 raw min/max를 그대로 적용한다', () => {
-    // docs: expandToIncludeBoundsInto는 raw 자연식을 적용 - inverted b.min은 결과에 반영 안됨
+    // docs: expandToIncludeBoundsInto는 raw 자연식을 적용한다. inverted other의 minX, minY는 결과에 반영되지 않는다
     const out = createBounds();
     const bounds = { minX: 0, minY: 0, maxX: 2, maxY: 2 };
     const other = { minX: 20, minY: 20, maxX: 15, maxY: 15 };

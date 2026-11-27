@@ -13,7 +13,7 @@ import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 
 /** `(minX, minY)`~`(maxX, maxY)` plain bounds를 만든다. */
 function box(minX: number, minY: number, maxX: number, maxY: number): BoundsWritable {
-  return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
+  return { minX, minY, maxX, maxY };
 }
 
 describe('boundsFrom', () => {

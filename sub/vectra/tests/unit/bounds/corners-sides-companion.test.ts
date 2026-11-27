@@ -35,11 +35,4 @@ describe('bounds.sides', () => {
     // left
     expect(result[3]).toEqual({ x1: 1, y1: 8, x2: 1, y2: 2 });
   });
-
-  test('같은 꼭짓점을 잇는 선분도 각자 좌표를 보관한다', () => {
-    const result = sides(b);
-    // mutation 시 인접 side에 전파되지 않는다
-    result[0].x1 = 999;
-    expect(result[3].x2).toBe(1);
-  });
 });

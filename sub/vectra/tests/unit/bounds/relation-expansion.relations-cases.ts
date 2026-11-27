@@ -5,7 +5,6 @@ import { containsBounds } from '../../../src/bounds/contains-bounds';
 import { containsPoint } from '../../../src/bounds/contains-point';
 import { createBounds } from '../../../src/bounds/create-bounds';
 import { intersectionInto } from '../../../src/bounds/intersection-into';
-
 import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 import { sentinel } from './relation-expansion.helpers';
 

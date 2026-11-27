@@ -14,7 +14,7 @@ import type { BoundsWritable, PointWritable } from '../../../src/types/flat-shap
 
 /** 지정한 네 좌표로 경계 상자를 만든다. */
 function makeBounds(minX = 0, minY = 0, maxX = 0, maxY = 0): BoundsWritable {
-  return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
+  return { minX, minY, maxX, maxY };
 }
 
 /** 지정한 좌표로 점을 만든다. */
