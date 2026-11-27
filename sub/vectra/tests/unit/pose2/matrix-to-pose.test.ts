@@ -1,7 +1,7 @@
 /**
  * pose2 matrix → pose bridge(matrixToPose* / matrixToPoseInto) 계약 테스트.
  *
- * poseToMatrix round-trip, pure translation+rotation, object/tuple matrix input,
+ * poseToMatrix round-trip, pure translation+rotation, 행렬 입력,
  * out object identity, reflection/scale/skew rigid 판정 실패, 실패 시 out 미수정,
  * non-finite component RangeError, invalid epsilon RangeError, companion undefined 실패를
  * 검증한다.
@@ -11,8 +11,7 @@ import { describe, expect, test } from 'vitest';
 import { matrixToPose } from '../../../src/pose2/matrix-to-pose';
 import { matrixToPoseInto } from '../../../src/pose2/matrix-to-pose-into';
 import { poseToMatrix } from '../../../src/pose2/pose-to-matrix';
-import type { MatrixLike } from '../../../src/types';
-import type { Pose2Writable } from '../../../src/types/flat-shapes.internal';
+import type { Matrix, Pose2Writable } from '../../../src/types/flat-shapes.internal';
 
 /** 원점/zero angle로 초기화한 새 Pose2Writable seed를 만든다. */
 function makePose(): Pose2Writable {
@@ -20,7 +19,7 @@ function makePose(): Pose2Writable {
 }
 
 /** rigid rotation matrix component를 만든다. */
-function rigidMatrix(angle: number, tx: number, ty: number): MatrixLike {
+function rigidMatrix(angle: number, tx: number, ty: number): Matrix {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
   return { a: cos, b: sin, c: -sin, d: cos, tx, ty };
@@ -52,15 +51,6 @@ describe('matrixToPoseInto - rigid 성공', () => {
     const out = makePose();
     matrixToPoseInto(out, rigidMatrix(Math.PI / 2, 0, 0));
     expect(out.angle).toBeCloseTo(Math.PI / 2, 12);
-  });
-
-  test('object matrix input과 tuple matrix input이 같은 결과를 낸다', () => {
-    const angle = 0.7;
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    const objectOut = matrixToPoseInto(makePose(), { a: cos, b: sin, c: -sin, d: cos, tx: 3, ty: 4 });
-    const tupleOut = matrixToPoseInto(makePose(), [cos, sin, -sin, cos, 3, 4]);
-    expect(tupleOut).toEqual(objectOut);
   });
 
   test('atan2 signed zero 경계에서 -π를 π로 맞춘다', () => {

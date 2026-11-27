@@ -1,4 +1,4 @@
-import type { MatrixLike, XYObjectWritable } from '../types';
+import type { Matrix, PointWritable } from '../types/flat-shapes.internal';
 import { skewingInto } from './skewing-into';
 
 /**
@@ -15,6 +15,6 @@ import { skewingInto } from './skewing-into';
  *
  * @param matrix skewing을 추출할 matrix
  */
-export function skewing(matrix: MatrixLike): XYObjectWritable {
+export function skewing(matrix: Matrix): PointWritable {
   return skewingInto({ x: 0, y: 0 }, matrix);
 }

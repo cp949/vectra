@@ -1,6 +1,6 @@
 import type { MatrixWritable, Rect } from '../types/flat-shapes.internal';
 
-/** fitRectInto / fitRect 옵션. 옵션을 생략하면 `mode: 'contain'`과 `flipY: false`을 적용한다. */
+/** fitRectInto / fitRect 옵션. 옵션을 생략하면 `mode: 'contain'`과 `flipY: false`를 적용한다. */
 export interface FitRectOptions {
   /** 맞춤 방식. */
   mode: 'contain' | 'cover' | 'stretch';

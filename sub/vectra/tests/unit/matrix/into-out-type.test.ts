@@ -22,6 +22,14 @@ import { transformBoundsInto } from '../../../src/matrix/transform-bounds-into';
 import { transformRectInto } from '../../../src/matrix/transform-rect-into';
 import { orientedTransformBoundsInto } from '../../../src/matrix/oriented-transform-bounds-into';
 import { orientedTransformRectInto } from '../../../src/matrix/oriented-transform-rect-into';
+import { decomposeInto } from '../../../src/matrix/decompose-into';
+import { decomposeScalingInto } from '../../../src/matrix/decompose-scaling-into';
+import { decomposeTranslationInto } from '../../../src/matrix/decompose-translation-into';
+import { skewingInto } from '../../../src/matrix/skewing-into';
+import { matrixComposeInto } from '../../../src/matrix/matrix-compose-into';
+import { multiplyInto } from '../../../src/matrix/multiply-into';
+import { preMultiplyInto } from '../../../src/matrix/pre-multiply-into';
+import { fromArray6Into } from '../../../src/matrix/from-array-6-into';
 import type { BoundsPadding, Matrix, Point } from '../../../src/types/flat-shapes.internal';
 
 /** 추가 필드를 가진 외부 행렬 출력. */
@@ -218,4 +226,74 @@ test('orientedTransformRectInto은 외부 클래스 출력의 참조와 반환 �
   const result = orientedTransformRectInto(out, new ExternalMatrix(), new ExternalRect());
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalOutline>();
+});
+
+test('decomposeInto는 평평한 행렬을 받는다', () => {
+  expectTypeOf(decomposeInto).parameter(1).toEqualTypeOf<Matrix>();
+});
+
+/** 세 점과 회전각을 담는 외부 분해 결과. */
+class ExternalDecomposition {
+  translation = new ExternalPoint();
+  scaling = new ExternalPoint();
+  skewing = new ExternalPoint();
+  rotation = 0;
+}
+
+test('decomposeInto는 기존 점에 기록하고 외부 분해 결과를 반환한다', () => {
+  const out = new ExternalDecomposition();
+  const translation = out.translation;
+  const result = decomposeInto(out, new ExternalMatrix());
+  expect(result).toBe(out);
+  expect(result.translation).toBe(translation);
+  expectTypeOf(result).toEqualTypeOf<ExternalDecomposition>();
+});
+
+test('decomposeScalingInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = decomposeScalingInto(out, new ExternalMatrix());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('decomposeTranslationInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = decomposeTranslationInto(out, new ExternalMatrix());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('skewingInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = skewingInto(out, new ExternalMatrix());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('matrixComposeInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalMatrix();
+  const result = matrixComposeInto(out, new ExternalDecomposition());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalMatrix>();
+});
+
+test('multiplyInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalMatrix();
+  const result = multiplyInto(out, new ExternalMatrix(), new ExternalMatrix());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalMatrix>();
+});
+
+test('preMultiplyInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalMatrix();
+  const result = preMultiplyInto(out, new ExternalMatrix(), new ExternalMatrix());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalMatrix>();
+});
+
+test('fromArray6Into은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalMatrix();
+  const result = fromArray6Into(out, [1, 0, 0, 1, 2, 3]);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalMatrix>();
 });

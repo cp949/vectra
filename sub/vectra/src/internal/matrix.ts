@@ -1,4 +1,5 @@
-import type { MatrixLike, MatrixObjectLike, MatrixTuple, MatrixWritable } from '../types';
+import type { MatrixLike, MatrixObjectLike, MatrixTuple } from '../types';
+import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
 
 function isMatrixTuple(matrix: MatrixLike): matrix is MatrixTuple {
   return Array.isArray(matrix);
@@ -48,19 +49,19 @@ export function readMatrixTy(matrix: MatrixLike): number {
  * @param left 왼쪽에 곱할 matrix
  * @param right 오른쪽에 곱할 matrix
  */
-export function matrixMultiplyInto<Out extends MatrixWritable>(out: Out, left: MatrixLike, right: MatrixLike): Out {
-  const la = readMatrixA(left);
-  const lb = readMatrixB(left);
-  const lc = readMatrixC(left);
-  const ld = readMatrixD(left);
-  const ltx = readMatrixTx(left);
-  const lty = readMatrixTy(left);
-  const ra = readMatrixA(right);
-  const rb = readMatrixB(right);
-  const rc = readMatrixC(right);
-  const rd = readMatrixD(right);
-  const rtx = readMatrixTx(right);
-  const rty = readMatrixTy(right);
+export function matrixMultiplyInto<Out extends MatrixWritable>(out: Out, left: Matrix, right: Matrix): Out {
+  const la = left.a;
+  const lb = left.b;
+  const lc = left.c;
+  const ld = left.d;
+  const ltx = left.tx;
+  const lty = left.ty;
+  const ra = right.a;
+  const rb = right.b;
+  const rc = right.c;
+  const rd = right.d;
+  const rtx = right.tx;
+  const rty = right.ty;
   out.a = la * ra + lc * rb;
   out.b = lb * ra + ld * rb;
   out.c = la * rc + lc * rd;

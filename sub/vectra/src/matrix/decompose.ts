@@ -1,4 +1,4 @@
-import type { MatrixLike, XYObjectWritable } from '../types';
+import type { Matrix, PointWritable } from '../types/flat-shapes.internal';
 import { decomposeInto } from './decompose-into';
 
 /**
@@ -19,10 +19,10 @@ import { decomposeInto } from './decompose-into';
  *
  * @param matrix 분해할 matrix
  */
-export function decompose(matrix: MatrixLike): {
-  translation: XYObjectWritable;
-  scaling: XYObjectWritable;
-  skewing: XYObjectWritable;
+export function decompose(matrix: Matrix): {
+  translation: PointWritable;
+  scaling: PointWritable;
+  skewing: PointWritable;
   rotation: number;
 } {
   return decomposeInto(

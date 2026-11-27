@@ -1,5 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -53,13 +52,13 @@ function normalizeAtan2(angle: number): number {
  *
  * `Math.atan2`가 `-π`를 반환하면 `π`로, `-0`을 반환하면 `+0`으로 정규화한다.
  */
-export function decomposeMatrixCore(matrix: MatrixLike): MatrixDecompositionScalars {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+export function decomposeMatrixCore(matrix: Matrix): MatrixDecompositionScalars {
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
 
   const r = hypot2(a, b);
   const s = hypot2(c, d);

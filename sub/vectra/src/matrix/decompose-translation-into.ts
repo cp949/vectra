@@ -1,5 +1,4 @@
-import { writeXY } from '../internal/xy';
-import type { MatrixLike, XYWritable } from '../types';
+import type { Matrix, PointWritable } from '../types/flat-shapes.internal';
 import { decomposeMatrixCore } from './decomposition.internal';
 
 /**
@@ -11,10 +10,12 @@ import { decomposeMatrixCore } from './decomposition.internal';
  * (caller 책임). translation 추출은 `tx`/`ty` 값을 그대로 읽으므로 NaN/Infinity 그대로
  * 보존된다.
  *
- * @param out translation을 기록할 writable output
+ * @param out translation을 기록할 객체
  * @param matrix translation을 추출할 matrix
  */
-export function decomposeTranslationInto<Out extends XYWritable>(out: Out, matrix: MatrixLike): Out {
+export function decomposeTranslationInto<Out extends PointWritable>(out: Out, matrix: Matrix): Out {
   const s = decomposeMatrixCore(matrix);
-  return writeXY(out, s.tx, s.ty);
+  out.x = s.tx;
+  out.y = s.ty;
+  return out;
 }

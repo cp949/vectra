@@ -1,5 +1,4 @@
-import { writeXY } from '../internal/xy';
-import type { MatrixLike, XYWritable } from '../types';
+import type { Matrix, PointWritable } from '../types/flat-shapes.internal';
 import { decomposeMatrixCore } from './decomposition.internal';
 
 /**
@@ -14,10 +13,12 @@ import { decomposeMatrixCore } from './decomposition.internal';
  *
  * singular matrix와 NaN/Infinity 입력은 검증 없이 JS 산술 결과를 따른다 (caller 책임).
  *
- * @param out skewing을 기록할 writable output
+ * @param out skewing을 기록할 객체
  * @param matrix skewing을 추출할 matrix
  */
-export function skewingInto<Out extends XYWritable>(out: Out, matrix: MatrixLike): Out {
+export function skewingInto<Out extends PointWritable>(out: Out, matrix: Matrix): Out {
   const s = decomposeMatrixCore(matrix);
-  return writeXY(out, s.skewingX, s.skewingY);
+  out.x = s.skewingX;
+  out.y = s.skewingY;
+  return out;
 }

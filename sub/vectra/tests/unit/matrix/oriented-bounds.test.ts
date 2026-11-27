@@ -10,6 +10,7 @@ import { transformRectInto } from '../../../src/matrix/transform-rect-into';
 import type { Matrix } from '../../../src/types/flat-shapes.internal';
 import type { OrientedBoundsWritable } from '../../../src/types';
 
+/** 네 점을 담은 외곽 출력을 만든다. */
 function makeOriented(): OrientedBoundsWritable {
   return {
     topLeft: { x: 0, y: 0 },

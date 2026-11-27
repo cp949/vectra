@@ -1,10 +1,8 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
 import { validatePoseEpsilon } from '../internal/pose2';
-import type { MatrixLike, MatrixToPoseOptions } from '../types';
-import type { Pose2Writable } from '../types/flat-shapes.internal';
+import type { MatrixToPoseOptions } from '../types';
+import type { Matrix, Pose2Writable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
-// v2-migration: matrix 전환 묶음에서 MatrixLike 입력을 Matrix로 바꾼다.
 /**
  * rigid affine matrix를 rigid pose로 복원해 out에 기록하고, rigid가 아니면 `false`를 반환한다.
  *
@@ -29,16 +27,16 @@ import { hypot2 } from '../internal/numeric';
  */
 export function matrixToPoseInto<Out extends Pose2Writable>(
   out: Out,
-  matrix: MatrixLike,
+  matrix: Matrix,
   options?: MatrixToPoseOptions
 ): Out | false {
   // aliasing 안전 - matrix component를 먼저 모두 읽은 후 기록한다
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
   if (
     !Number.isFinite(a) ||
     !Number.isFinite(b) ||

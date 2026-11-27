@@ -4,7 +4,7 @@
  * transformFlatCoordsInto의 allocating convenience 함수다.
  */
 
-import type { MatrixLike } from '../../types/index';
+import type { Matrix } from '../../types/flat-shapes.internal';
 import { transformFlatCoordsInto } from './transform-flat-coords-into';
 
 /**
@@ -19,6 +19,6 @@ import { transformFlatCoordsInto } from './transform-flat-coords-into';
  * @param matrix - 적용할 2D affine transform matrix
  * @returns matrix가 적용된 `[x0, y0, x1, y1, ...]` 형태의 number 배열
  */
-export function transformFlatCoords(flat: readonly number[], matrix: MatrixLike): number[] {
+export function transformFlatCoords(flat: readonly number[], matrix: Matrix): number[] {
   return transformFlatCoordsInto(new Array<number>(flat.length), flat, matrix);
 }

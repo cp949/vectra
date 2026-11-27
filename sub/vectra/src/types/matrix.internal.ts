@@ -1,5 +1,4 @@
 import type { PointWritable } from './flat-shapes.internal';
-import type { XYObjectWritable, XYWritable } from './xy.internal';
 
 /** tuple 형태의 2D affine transform matrix input. */
 export type MatrixTuple = readonly [a: number, b: number, c: number, d: number, tx: number, ty: number];
@@ -79,19 +78,15 @@ export interface OrientedBoundsWritable {
  * convention)의 component를 nested writable로 기록한다. caller가 각 nested storage를
  * 호출 전에 초기화해 둔다.
  */
-export interface MatrixDecompositionWritable<
-  Translation extends XYWritable = XYObjectWritable,
-  Scaling extends XYWritable = XYObjectWritable,
-  Skewing extends XYWritable = XYObjectWritable,
-> {
+export interface MatrixDecompositionWritable {
   /** 기록 가능한 translation `(tx, ty)` */
-  translation: Translation;
+  translation: PointWritable;
 
   /** 기록 가능한 scaling. reflection은 `scaling.y < 0`으로 인코딩된다. */
-  scaling: Scaling;
+  scaling: PointWritable;
 
   /** 기록 가능한 skewing. radian 단위. 단일 skewX convention에서 `skewing.y`는 항상 0. */
-  skewing: Skewing;
+  skewing: PointWritable;
 
   /** 기록 가능한 rotation. radian 단위. (-π, π] 범위로 정규화된다. */
   rotation: number;

@@ -1,6 +1,5 @@
 import { validatePoseFinite } from '../internal/pose2';
-import type { MatrixWritable } from '../types';
-import type { Pose2 } from '../types/flat-shapes.internal';
+import type { MatrixWritable, Pose2 } from '../types/flat-shapes.internal';
 
 /**
  * rigid pose를 affine transform matrix component로 out에 기록하고 out을 반환한다.

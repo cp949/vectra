@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { MatrixDecompositionWritable, MatrixWritable, XYWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
+import type { MatrixDecompositionWritable } from '../types';
 
 /**
  * decomposition component를 합성한 matrix를 out에 기록하고 out을 반환한다. `decomposeInto`의 역연산이다.
@@ -26,19 +26,19 @@ import type { MatrixDecompositionWritable, MatrixWritable, XYWritable } from '..
  * `out`이 `decomposition.translation`/`scaling`/`skewing` 중 하나와 같은 object인 비정상 aliasing이어도
  * 모든 component를 local 변수로 먼저 읽으므로(read-before-write) 안전하다.
  *
- * @param out 합성 결과를 기록할 writable output
+ * @param out 합성 결과를 기록할 객체
  * @param decomposition 합성할 translation/rotation/scaling/skewing component
  */
 export function matrixComposeInto<Out extends MatrixWritable>(
   out: Out,
-  decomposition: MatrixDecompositionWritable<XYWritable, XYWritable, XYWritable>
+  decomposition: MatrixDecompositionWritable
 ): Out {
-  const tx = readX(decomposition.translation);
-  const ty = readY(decomposition.translation);
+  const tx = decomposition.translation.x;
+  const ty = decomposition.translation.y;
   const r = decomposition.rotation;
-  const sx = readX(decomposition.scaling);
-  const sy = readY(decomposition.scaling);
-  const kx = Math.tan(readX(decomposition.skewing));
+  const sx = decomposition.scaling.x;
+  const sy = decomposition.scaling.y;
+  const kx = Math.tan(decomposition.skewing.x);
 
   const cos = Math.cos(r);
   const sin = Math.sin(r);

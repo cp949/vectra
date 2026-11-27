@@ -20,11 +20,11 @@ import { transformRect } from '../../../src/matrix/transform-rect';
 import { transformVector } from '../../../src/matrix/transform-vector';
 import { translate } from '../../../src/matrix/translate';
 import { translation } from '../../../src/matrix/translation';
-import type { MatrixLike } from '../../../src/types';
+import type { Matrix } from '../../../src/types/flat-shapes.internal';
 
 describe('matrix lifecycle/factory companions', () => {
   test('copy(source)는 source와 다른 새 plain matrix를 반환한다', () => {
-    const source: MatrixLike = { a: 2, b: 3, c: 4, d: 5, tx: 6, ty: 7 };
+    const source: Matrix = { a: 2, b: 3, c: 4, d: 5, tx: 6, ty: 7 };
     const result = copy(source);
     expect(result).toEqual({ a: 2, b: 3, c: 4, d: 5, tx: 6, ty: 7 });
     expect(result).not.toBe(source);
@@ -61,46 +61,46 @@ describe('matrix lifecycle/factory companions', () => {
 
 describe('matrix operation companions', () => {
   test('translate(identity, offset)은 matrix * T(offset)을 반환한다', () => {
-    const identityMatrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    const identityMatrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     expect(translate(identityMatrix, { x: 3, y: 4 })).toEqual({ a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 });
   });
 
   test('translate는 input matrix와 다른 새 object를 반환한다', () => {
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     expect(translate(matrix, { x: 1, y: 2 })).not.toBe(matrix);
   });
 
   test('translate는 non-identity base에서 matrix * T 곱 방향을 적용한다', () => {
     // tx = a*ox + c*oy + tx, ty = b*ox + d*oy + ty. naive tx+=ox이면 깨진다.
-    const matrix: MatrixLike = { a: 2, b: 0, c: 1, d: 3, tx: 1, ty: 1 };
+    const matrix: Matrix = { a: 2, b: 0, c: 1, d: 3, tx: 1, ty: 1 };
     expect(translate(matrix, { x: 5, y: 7 })).toEqual({ a: 2, b: 0, c: 1, d: 3, tx: 18, ty: 22 });
   });
 
   test('scale(matrix, sx, sy)는 matrix * S(sx, sy)를 반환한다', () => {
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: 6 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: 6 };
     expect(scale(matrix, 2, 3)).toEqual({ a: 2, b: 0, c: 0, d: 3, tx: 5, ty: 6 });
   });
 
   test('scale은 input matrix와 다른 새 object를 반환한다', () => {
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: 6 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: 6 };
     expect(scale(matrix, 2, 3)).not.toBe(matrix);
   });
 
   test('scale은 off-diagonal에서 matrix * S 곱 방향을 적용한다', () => {
     // a/b는 sx로, c/d는 sy로 스케일된다. S*matrix면 b/c가 뒤바뀐다.
-    const matrix: MatrixLike = { a: 1, b: 2, c: 3, d: 4, tx: 5, ty: 6 };
+    const matrix: Matrix = { a: 1, b: 2, c: 3, d: 4, tx: 5, ty: 6 };
     expect(scale(matrix, 2, 3)).toEqual({ a: 2, b: 4, c: 9, d: 12, tx: 5, ty: 6 });
   });
 
   test('rotate(matrix, angle)은 appendRotateInto과 같은 결과를 반환한다', () => {
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     const expected = appendRotateInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, matrix, Math.PI / 2);
     expect(rotate(matrix, Math.PI / 2)).toEqual(expected);
   });
 
   test('rotate은 non-identity base에서 matrix * R 방향을 적용한다(translation 불변)', () => {
     // matrix * R은 tx/ty를 회전시키지 않는다. R*matrix면 tx/ty가 회전한다.
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 0 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 0 };
     const result = rotate(matrix, Math.PI / 2);
     expect(result.a).toBeCloseTo(0, 10);
     expect(result.b).toBeCloseTo(1, 10);
@@ -111,19 +111,19 @@ describe('matrix operation companions', () => {
   });
 
   test('rotate는 input matrix와 다른 새 object를 반환한다', () => {
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     expect(rotate(matrix, Math.PI / 2)).not.toBe(matrix);
   });
 
   test('preMultiply(matrix, left)는 left * matrix를 반환한다', () => {
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 };
-    const left: MatrixLike = { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: 0 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 };
+    const left: Matrix = { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: 0 };
     expect(preMultiply(matrix, left)).toEqual({ a: 2, b: 0, c: 0, d: 2, tx: 6, ty: 8 });
   });
 
   test('preMultiply는 input matrix와 다른 새 object를 반환한다', () => {
-    const matrix: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 };
-    const left: MatrixLike = { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: 0 };
+    const matrix: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 };
+    const left: Matrix = { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: 0 };
     expect(preMultiply(matrix, left)).not.toBe(matrix);
   });
 });
@@ -144,17 +144,17 @@ describe('matrix allocating companions', () => {
   });
 
   test('transformPoint는 translation을 포함한 plain point를 반환한다', () => {
-    const matrix: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 10, ty: 20 };
+    const matrix: Matrix = { a: 2, b: 0, c: 0, d: 3, tx: 10, ty: 20 };
     expect(transformPoint(matrix, { x: 1, y: 2 })).toEqual({ x: 12, y: 26 });
   });
 
   test('transformVector는 translation을 제외한 plain vector를 반환한다', () => {
-    const matrix: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 10, ty: 20 };
+    const matrix: Matrix = { a: 2, b: 0, c: 0, d: 3, tx: 10, ty: 20 };
     expect(transformVector(matrix, { x: 1, y: 2 })).toEqual({ x: 2, y: 6 });
   });
 
   test('transformRect는 transformed corner AABB plain rect를 반환한다', () => {
-    const matrix: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
+    const matrix: Matrix = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
     expect(transformRect(matrix, { x: 1, y: 2, width: 3, height: 4 })).toEqual({
       x: 3,
       y: 8,
@@ -164,7 +164,7 @@ describe('matrix allocating companions', () => {
   });
 
   test('transformBounds는 transformed corner AABB plain bounds를 반환한다', () => {
-    const matrix: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
+    const matrix: Matrix = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
     expect(transformBounds(matrix, { minX: 1, minY: 2, maxX: 4, maxY: 6 })).toEqual({
       minX: 3,
       minY: 8,

@@ -1,4 +1,5 @@
-import type { MatrixDecompositionWritable, MatrixWritable, XYWritable } from '../types';
+import type { MatrixWritable } from '../types/flat-shapes.internal';
+import type { MatrixDecompositionWritable } from '../types';
 import { matrixComposeInto } from './matrix-compose-into';
 
 /**
@@ -15,8 +16,6 @@ import { matrixComposeInto } from './matrix-compose-into';
  *
  * @param decomposition 합성할 translation/rotation/scaling/skewing component
  */
-export function matrixCompose(
-  decomposition: MatrixDecompositionWritable<XYWritable, XYWritable, XYWritable>
-): MatrixWritable {
+export function matrixCompose(decomposition: MatrixDecompositionWritable): MatrixWritable {
   return matrixComposeInto({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 }, decomposition);
 }

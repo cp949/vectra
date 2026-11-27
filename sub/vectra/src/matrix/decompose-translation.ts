@@ -1,4 +1,4 @@
-import type { MatrixLike, XYObjectWritable } from '../types';
+import type { Matrix, PointWritable } from '../types/flat-shapes.internal';
 import { decomposeTranslationInto } from './decompose-translation-into';
 
 /**
@@ -11,6 +11,6 @@ import { decomposeTranslationInto } from './decompose-translation-into';
  *
  * @param matrix translation을 추출할 matrix
  */
-export function decomposeTranslation(matrix: MatrixLike): XYObjectWritable {
+export function decomposeTranslation(matrix: Matrix): PointWritable {
   return decomposeTranslationInto({ x: 0, y: 0 }, matrix);
 }

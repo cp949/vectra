@@ -1,4 +1,4 @@
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 import { decomposeMatrixCore } from './decomposition.internal';
 
 /**
@@ -16,6 +16,6 @@ import { decomposeMatrixCore } from './decomposition.internal';
  *
  * @param matrix rotation을 추출할 matrix
  */
-export function rotation(matrix: MatrixLike): number {
+export function rotation(matrix: Matrix): number {
   return decomposeMatrixCore(matrix).rotation;
 }

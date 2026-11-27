@@ -1,5 +1,5 @@
-import { writeXY } from '../internal/xy';
-import type { MatrixDecompositionWritable, MatrixLike, XYWritable } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
+import type { MatrixDecompositionWritable } from '../types';
 import { decomposeMatrixCore } from './decomposition.internal';
 
 /**
@@ -23,20 +23,20 @@ import { decomposeMatrixCore } from './decomposition.internal';
  * matrix component에 NaN/Infinity가 있으면 검증하지 않는다. 분기 비교와 각 분기 안의 산술은
  * JS 결과를 따른다 (caller 책임).
  *
- * out은 nested writable이다. `out.translation`, `out.scaling`, `out.skewing`은 호출 전에
- * `XYWritable` 인스턴스로 초기화되어 있어야 한다.
+ * out은 분해 결과 객체다. `out.translation`, `out.scaling`, `out.skewing`은 호출 전에
+ * `PointWritable` 인스턴스로 초기화되어 있어야 한다.
  *
- * @param out 분해 결과를 기록할 nested writable output
+ * @param out 분해 결과를 기록할 객체
  * @param matrix 분해할 matrix
  */
-export function decomposeInto<Out extends MatrixDecompositionWritable<XYWritable, XYWritable, XYWritable>>(
-  out: Out,
-  matrix: MatrixLike
-): Out {
+export function decomposeInto<Out extends MatrixDecompositionWritable>(out: Out, matrix: Matrix): Out {
   const s = decomposeMatrixCore(matrix);
-  writeXY(out.translation, s.tx, s.ty);
-  writeXY(out.scaling, s.scalingX, s.scalingY);
-  writeXY(out.skewing, s.skewingX, s.skewingY);
+  out.translation.x = s.tx;
+  out.translation.y = s.ty;
+  out.scaling.x = s.scalingX;
+  out.scaling.y = s.scalingY;
+  out.skewing.x = s.skewingX;
+  out.skewing.y = s.skewingY;
   out.rotation = s.rotation;
   return out;
 }

@@ -10,19 +10,22 @@ import type { BoundsWritable, Matrix, RectWritable } from '../../../src/types/fl
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
+/** 시험용 점 출력을 만든다. */
 function makePt(): { x: number; y: number } {
   return { x: 0, y: 0 };
 }
 
+/** 시험용 사각형 출력을 만든다. */
 function makeRect(): RectWritable {
   return { x: 0, y: 0, width: 0, height: 0 };
 }
 
+/** 시험용 경계 상자 출력을 만든다. */
 function makeBounds(): BoundsWritable {
   return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }
 
-// 회전 matrix 생성 helper
+/** 각도에 해당하는 회전 행렬을 만든다. */
 function rotationMatrix(angle: number): Matrix {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);

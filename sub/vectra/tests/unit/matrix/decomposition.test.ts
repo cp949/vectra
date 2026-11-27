@@ -6,7 +6,8 @@ import { matrixComposeInto } from '../../../src/matrix/matrix-compose-into';
 import { multiply } from '../../../src/matrix/multiply';
 import { rotationMatrixInto } from '../../../src/matrix/rotation-matrix-into';
 import { scalingMatrixInto } from '../../../src/matrix/scaling-matrix-into';
-import type { MatrixDecompositionWritable, MatrixLike, MatrixWritable, XYTupleWritable } from '../../../src/types';
+import type { MatrixDecompositionWritable } from '../../../src/types';
+import type { Matrix, MatrixWritable } from '../../../src/types/flat-shapes.internal';
 import { compose, expectMatrixClose, makeDecomp, makeMatrix } from './_decomposition-test-helpers';
 
 // ─── decompose / decomposeInto ────────────────────────────────────────────────
@@ -201,7 +202,7 @@ describe('decomposeInto - skewY를 skewX convention으로 재표현', () => {
 
 describe('decomposeInto - round-trip 재구성', () => {
   test('rotation + scale + skewX + translation을 round-trip 재구성한다', () => {
-    const original: MatrixLike = {
+    const original: Matrix = {
       a: 1.234,
       b: -0.567,
       c: 0.789,
@@ -216,7 +217,7 @@ describe('decomposeInto - round-trip 재구성', () => {
   });
 
   test('reflection을 round-trip 재구성한다', () => {
-    const original: MatrixLike = { a: 1, b: 0, c: 0, d: -1, tx: 0, ty: 0 };
+    const original: Matrix = { a: 1, b: 0, c: 0, d: -1, tx: 0, ty: 0 };
     const out = makeDecomp();
     decomposeInto(out, original);
     expectMatrixClose(compose(out), original, 12);
@@ -243,32 +244,7 @@ describe('decomposeInto - round-trip 재구성', () => {
   });
 });
 
-describe('decomposeInto - tuple matrix input', () => {
-  test('tuple matrix input을 분해한다', () => {
-    const out = makeDecomp();
-    decomposeInto(out, [2, 0, 0, 3, 4, 5]);
-    expect(out.translation).toEqual({ x: 4, y: 5 });
-    expect(out.scaling.x).toBeCloseTo(2, 12);
-    expect(out.scaling.y).toBeCloseTo(3, 12);
-  });
-});
-
-describe('decomposeInto - nested tuple output / object output', () => {
-  test('nested tuple output에 기록한다', () => {
-    const out: MatrixDecompositionWritable<XYTupleWritable, XYTupleWritable, XYTupleWritable> = {
-      translation: [0, 0],
-      scaling: [0, 0],
-      skewing: [0, 0],
-      rotation: 0,
-    };
-    const result = decomposeInto(out, { a: 2, b: 0, c: 0, d: 3, tx: 5, ty: 7 });
-    expect(result).toBe(out);
-    expect(out.translation[0]).toBe(5);
-    expect(out.translation[1]).toBe(7);
-    expect(out.scaling[0]).toBeCloseTo(2, 12);
-    expect(out.scaling[1]).toBeCloseTo(3, 12);
-  });
-
+describe('decomposeInto - 분해 결과 객체', () => {
   test('custom output type이 보존된다', () => {
     const out = {
       translation: { x: 0, y: 0, tag: 't' },
@@ -386,21 +362,10 @@ describe('matrixComposeInto - 표준 케이스', () => {
     };
     expect(matrixCompose(withSkewY)).toEqual(matrixCompose(base));
   });
-
-  test('nested tuple decomposition input을 합성한다', () => {
-    const out = makeMatrix();
-    matrixComposeInto(out, {
-      translation: [4, 5],
-      scaling: [2, 3],
-      skewing: [0, 0],
-      rotation: 0,
-    });
-    expectMatrixClose(out, { a: 2, b: 0, c: 0, d: 3, tx: 4, ty: 5 });
-  });
 });
 
 describe('matrixComposeInto - decompose round-trip', () => {
-  const cases: ReadonlyArray<readonly [string, MatrixLike]> = [
+  const cases: ReadonlyArray<readonly [string, Matrix]> = [
     ['일반 affine', { a: 1.234, b: -0.567, c: 0.789, d: 2.345, tx: 10, ty: -20 }],
     ['reflection', { a: 1, b: 0, c: 0, d: -1, tx: 3, ty: 4 }],
     ['singular fallback (x-basis 0, rotation -π/2)', { a: 0, b: 0, c: 1, d: 0, tx: 5, ty: 6 }],
@@ -417,13 +382,6 @@ describe('matrixComposeInto - decompose round-trip', () => {
       expectMatrixClose(matrixCompose(decomp), original, 10);
     });
   }
-
-  test('tuple matrix input을 분해한 뒤 round-trip한다', () => {
-    const original: MatrixLike = [2, 0, 0, 3, 4, 5];
-    const decomp = makeDecomp();
-    decomposeInto(decomp, original);
-    expectMatrixClose(matrixCompose(decomp), original, 12);
-  });
 });
 
 describe('matrixComposeInto - non-finite pass-through', () => {

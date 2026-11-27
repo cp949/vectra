@@ -7,7 +7,7 @@ import { decomposeTranslationInto } from '../../../src/matrix/decompose-translat
 import { rotation } from '../../../src/matrix/rotation';
 import { skewing } from '../../../src/matrix/skewing';
 import { skewingInto } from '../../../src/matrix/skewing-into';
-import type { MatrixLike, XYTupleWritable } from '../../../src/types';
+import type { Matrix } from '../../../src/types/flat-shapes.internal';
 
 describe('decomposeTranslation - tx/ty 추출', () => {
   test('decomposeTranslationInto는 tx/ty를 기록한다', () => {
@@ -19,17 +19,6 @@ describe('decomposeTranslation - tx/ty 추출', () => {
 
   test('decomposeTranslation은 plain { x, y }를 반환한다', () => {
     expect(decomposeTranslation({ a: 1, b: 0, c: 0, d: 1, tx: -3, ty: 13 })).toEqual({ x: -3, y: 13 });
-  });
-
-  test('tuple matrix input', () => {
-    expect(decomposeTranslation([1, 0, 0, 1, 5, 6])).toEqual({ x: 5, y: 6 });
-  });
-
-  test('tuple output에 기록한다', () => {
-    const out: XYTupleWritable = [0, 0];
-    decomposeTranslationInto(out, { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: 7 });
-    expect(out[0]).toBe(5);
-    expect(out[1]).toBe(7);
   });
 
   test('non-finite tx/ty는 pass through한다', () => {
@@ -99,10 +88,6 @@ describe('rotation - rotation 추출', () => {
   test('zero matrix는 0', () => {
     expect(rotation({ a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 })).toBe(0);
   });
-
-  test('tuple matrix input', () => {
-    expect(rotation([0, 1, -1, 0, 0, 0])).toBeCloseTo(Math.PI / 2, 12);
-  });
 });
 
 describe('skewing - skewing 추출', () => {
@@ -137,7 +122,7 @@ describe('skewing - skewing 추출', () => {
 
 describe('decomposition 부분 함수는 decompose와 같은 oracle을 공유한다', () => {
   test('각 부분 함수의 결과가 decompose 결과와 일치한다', () => {
-    const matrix: MatrixLike = {
+    const matrix: Matrix = {
       a: 1.5,
       b: 0.8,
       c: -0.3,

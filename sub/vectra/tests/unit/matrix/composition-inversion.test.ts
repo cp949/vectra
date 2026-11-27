@@ -13,15 +13,17 @@ import { scalingMatrixInto } from '../../../src/matrix/scaling-matrix-into';
 import { translationMatrixInto } from '../../../src/matrix/translation-matrix-into';
 import type { MatrixWritable } from '../../../src/types';
 
+/** 시험용 영행렬을 만든다. */
 function makeMatrix(): MatrixWritable {
   return { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 };
 }
 
+/** 시험용 항등 행렬을 만든다. */
 function makeIdentity(): MatrixWritable {
   return { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
 }
 
-// matrix에 point를 직접 적용하는 helper (transformPointInto 미구현 시 인라인)
+/** 행렬을 점에 적용해 합성 결과를 검증한다. */
 function applyPoint(m: MatrixWritable, x: number, y: number): [number, number] {
   return [m.a * x + m.c * y + m.tx, m.b * x + m.d * y + m.ty];
 }

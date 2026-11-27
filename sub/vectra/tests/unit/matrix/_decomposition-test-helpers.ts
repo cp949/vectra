@@ -1,20 +1,15 @@
+/**
+ * 행렬 분해 결과의 합성과 성분 비교를 돕는다.
+ */
 import { expect } from 'vitest';
 import { multiply } from '../../../src/matrix/multiply';
 import { rotationMatrixInto } from '../../../src/matrix/rotation-matrix-into';
 import { scalingMatrixInto } from '../../../src/matrix/scaling-matrix-into';
 import { translationMatrixInto } from '../../../src/matrix/translation-matrix-into';
-import type {
-  MatrixDecompositionWritable,
-  MatrixLike,
-  MatrixObjectLike,
-  MatrixTuple,
-  MatrixWritable,
-} from '../../../src/types';
+import type { MatrixDecompositionWritable } from '../../../src/types';
+import type { Matrix, MatrixWritable } from '../../../src/types/flat-shapes.internal';
 
-function isMatrixTuple(matrix: MatrixLike): matrix is MatrixTuple {
-  return Array.isArray(matrix);
-}
-
+/** 분해 결과를 기록할 시험 객체를 만든다. */
 export function makeDecomp(): MatrixDecompositionWritable {
   return {
     translation: { x: 0, y: 0 },
@@ -24,11 +19,12 @@ export function makeDecomp(): MatrixDecompositionWritable {
   };
 }
 
+/** 시험용 항등 행렬을 만든다. */
 export function makeMatrix(): MatrixWritable {
   return { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
 }
 
-// matrix를 분해 결과로부터 다시 구성한다. round-trip 검증용.
+/** 왕복 변환 검증을 위해 분해 결과를 다시 합성한다. */
 export function compose(decomp: MatrixDecompositionWritable): MatrixWritable {
   const T = makeMatrix();
   translationMatrixInto(T, decomp.translation);
@@ -51,19 +47,12 @@ export function compose(decomp: MatrixDecompositionWritable): MatrixWritable {
   return multiply(T, RSK);
 }
 
-function toMatrixObject(matrix: MatrixLike): MatrixObjectLike {
-  if (isMatrixTuple(matrix)) {
-    return { a: matrix[0], b: matrix[1], c: matrix[2], d: matrix[3], tx: matrix[4], ty: matrix[5] };
-  }
-  return matrix;
-}
-
-export function expectMatrixClose(actual: MatrixWritable, expected: MatrixLike, precision = 12): void {
-  const e = toMatrixObject(expected);
-  expect(actual.a).toBeCloseTo(e.a, precision);
-  expect(actual.b).toBeCloseTo(e.b, precision);
-  expect(actual.c).toBeCloseTo(e.c, precision);
-  expect(actual.d).toBeCloseTo(e.d, precision);
-  expect(actual.tx).toBeCloseTo(e.tx, precision);
-  expect(actual.ty).toBeCloseTo(e.ty, precision);
+/** 행렬의 여섯 성분을 오차 범위 안에서 비교한다. */
+export function expectMatrixClose(actual: MatrixWritable, expected: Matrix, precision = 12): void {
+  expect(actual.a).toBeCloseTo(expected.a, precision);
+  expect(actual.b).toBeCloseTo(expected.b, precision);
+  expect(actual.c).toBeCloseTo(expected.c, precision);
+  expect(actual.d).toBeCloseTo(expected.d, precision);
+  expect(actual.tx).toBeCloseTo(expected.tx, precision);
+  expect(actual.ty).toBeCloseTo(expected.ty, precision);
 }

@@ -1,5 +1,4 @@
-import type { MatrixWritable } from '../types';
-import type { Pose2 } from '../types/flat-shapes.internal';
+import type { MatrixWritable, Pose2 } from '../types/flat-shapes.internal';
 import { poseToMatrixInto } from './pose-to-matrix-into';
 
 /**

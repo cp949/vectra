@@ -1,4 +1,4 @@
-import type { MatrixLike, XYObjectWritable } from '../types';
+import type { Matrix, PointWritable } from '../types/flat-shapes.internal';
 import { decomposeScalingInto } from './decompose-scaling-into';
 
 /**
@@ -15,6 +15,6 @@ import { decomposeScalingInto } from './decompose-scaling-into';
  *
  * @param matrix scaling을 추출할 matrix
  */
-export function decomposeScaling(matrix: MatrixLike): XYObjectWritable {
+export function decomposeScaling(matrix: Matrix): PointWritable {
   return decomposeScalingInto({ x: 0, y: 0 }, matrix);
 }

@@ -1,4 +1,4 @@
-import type { MatrixLike, MatrixWritable } from '../types';
+import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
 import { createMatrix } from './create-matrix';
 import { multiplyInto } from './multiply-into';
 
@@ -10,6 +10,6 @@ import { multiplyInto } from './multiply-into';
  * @param left 왼쪽에 곱할 matrix
  * @param right 오른쪽에 곱할 matrix
  */
-export function multiply(left: MatrixLike, right: MatrixLike): MatrixWritable {
+export function multiply(left: Matrix, right: Matrix): MatrixWritable {
   return multiplyInto(createMatrix(), left, right);
 }

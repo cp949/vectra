@@ -4,7 +4,7 @@
  * zero-allocation buffer reuse를 위한 Into 함수다.
  */
 
-import type { MatrixLike } from '../../types/index';
+import type { Matrix } from '../../types/flat-shapes.internal';
 import { applyMatrixInto } from './flat-matrix.internal';
 
 /**
@@ -20,7 +20,7 @@ import { applyMatrixInto } from './flat-matrix.internal';
  * @param matrix - 적용할 2D affine transform matrix
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function transformFlatCoordsInto(out: number[], flat: readonly number[], matrix: MatrixLike): number[] {
+export function transformFlatCoordsInto(out: number[], flat: readonly number[], matrix: Matrix): number[] {
   const count = Math.floor(flat.length / 2);
   for (let i = 0; i < count; i++) {
     // 포인트 i를 먼저 읽고 기록 — aliasing 시에도 순서 보장

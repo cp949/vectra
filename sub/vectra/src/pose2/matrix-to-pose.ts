@@ -1,8 +1,7 @@
-import type { MatrixLike, MatrixToPoseOptions } from '../types';
-import type { Pose2Writable } from '../types/flat-shapes.internal';
+import type { MatrixToPoseOptions } from '../types';
+import type { Matrix, Pose2Writable } from '../types/flat-shapes.internal';
 import { matrixToPoseInto } from './matrix-to-pose-into';
 
-// v2-migration: matrix 전환 묶음에서 MatrixLike 입력을 Matrix로 바꾼다.
 /**
  * rigid affine matrix를 rigid pose로 복원해 새 plain pose object로 반환하고, rigid가 아니면
  * `undefined`를 반환한다.
@@ -21,7 +20,7 @@ import { matrixToPoseInto } from './matrix-to-pose-into';
  * @param matrix pose로 복원할 rigid affine matrix
  * @param options rigid 판정 옵션.
  */
-export function matrixToPose(matrix: MatrixLike, options?: MatrixToPoseOptions): Pose2Writable | undefined {
+export function matrixToPose(matrix: Matrix, options?: MatrixToPoseOptions): Pose2Writable | undefined {
   const out = matrixToPoseInto({ px: 0, py: 0, angle: 0 }, matrix, options);
   return out === false ? undefined : out;
 }

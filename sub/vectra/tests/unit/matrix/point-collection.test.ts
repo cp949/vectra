@@ -8,10 +8,12 @@ import type { Matrix, Point, PointWritable } from '../../../src/types/flat-shape
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
+/** 시험용 점을 만든다. */
 function makePt(): { x: number; y: number } {
   return { x: 0, y: 0 };
 }
 
+/** 기존 점을 담은 출력 배열을 만든다. */
 function makeBuffer(n: number): { x: number; y: number }[] {
   const buf: { x: number; y: number }[] = [];
   for (let i = 0; i < n; i += 1) buf.push(makePt());
