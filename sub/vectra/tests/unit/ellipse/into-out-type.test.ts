@@ -18,6 +18,7 @@ import {
 } from '../../../src/ellipse';
 import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 
+/** 사용자 코드의 bounds 클래스를 흉내 낸다. label 필드로 구체 타입이 남는지 본다. */
 class ExternalBounds {
   minX = 0;
   minY = 0;
@@ -26,12 +27,14 @@ class ExternalBounds {
   label = 'bounds';
 }
 
+/** 사용자 코드의 점 클래스를 흉내 낸다. 배열 Into가 이 클래스 인스턴스를 만들지 않는지도 본다. */
 class ExternalPoint {
   x = 0;
   y = 0;
   label = 'point';
 }
 
+/** 사용자 코드의 타원 클래스를 흉내 낸다. label 필드로 구체 타입이 남는지 본다. */
 class ExternalEllipse {
   cx = 0;
   cy = 0;
@@ -40,6 +43,7 @@ class ExternalEllipse {
   label = 'ellipse';
 }
 
+/** 초점 출력에 쓰는 사용자 코드의 선분 클래스를 흉내 낸다. */
 class ExternalSegment {
   x1 = 0;
   y1 = 0;

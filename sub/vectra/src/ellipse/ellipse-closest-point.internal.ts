@@ -2,7 +2,7 @@
  * ellipse closest point 계산 core.
  *
  * 여러 leaf module에서 공유하는 numeric helper다.
- * 호출자는 radiusX > 0, radiusY > 0을 보장해야 한다.
+ * 호출자는 rx > 0, ry > 0을 보장해야 한다.
  * empty ellipse 분기는 각 leaf module에서 처리한다.
  */
 

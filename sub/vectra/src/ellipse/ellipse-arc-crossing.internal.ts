@@ -2,7 +2,7 @@
  * ellipse와 axis-aligned box edge의 arc crossing 검사 core.
  *
  * 여러 leaf module에서 공유하는 quadratic helper다.
- * 호출자는 radiusX > 0, radiusY > 0을 보장해야 한다.
+ * 호출자는 rx > 0, ry > 0을 보장해야 한다.
  */
 
 /**

@@ -3,7 +3,7 @@ import type { Ellipse } from '../types/flat-shapes.internal';
 /**
  * 두 ellipse가 epsilon 이내에서 근사적으로 같은지 비교한다.
  *
- * center의 x/y, rx, ry 각각 |a - b| <= epsilon을 확인한다.
+ * cx, cy, rx, ry 각각 |a - b| <= epsilon을 확인한다.
  * 음수 epsilon이면 항상 false를 반환한다.
  *
  * @param a 비교할 첫 번째 ellipse

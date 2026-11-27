@@ -11,6 +11,7 @@ import { fromCircle } from '../../../src/ellipse/from-circle';
 import { fromCircleInto } from '../../../src/ellipse/from-circle-into';
 import { points } from '../../../src/ellipse/points';
 import { pointsInto } from '../../../src/ellipse/points-into';
+import type { EllipsePointsOptions } from '../../../src/ellipse/points-into';
 import { toCircle } from '../../../src/ellipse/to-circle';
 import { toCircleInto } from '../../../src/ellipse/to-circle-into';
 import type { CircleWritable, EllipseWritable } from '../../../src/types';
@@ -250,6 +251,12 @@ describe('pointsInto / points', () => {
       ).toThrow(RangeError);
       expect(out).toEqual(preserved);
     }
+  });
+
+  it('옵션 객체에 segments가 없으면 기본값을 쓰지 않고 RangeError를 던진다', () => {
+    const options = { startAngle: 0, clockwise: true } as EllipsePointsOptions;
+
+    expect(() => pointsInto([], { cx: 0, cy: 0, rx: 1, ry: 1 }, options)).toThrow(RangeError);
   });
 
   it('NaN/+Infinity radius는 산술 결과를 그대로 기록한다', () => {
