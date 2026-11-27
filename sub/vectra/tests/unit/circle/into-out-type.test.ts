@@ -7,15 +7,18 @@ import {
   closestPointInto,
   copyInto,
   expandByInto,
+  externalTangentsInto,
   fromBoundsInto,
   fromThreePointsInto,
+  internalTangentsInto,
   pointAtAngleInto,
   pointAtTurnInto,
   scaleInto,
   translateInto,
   shrinkByInto,
+  tangentPointsFromExternalInto,
 } from '../../../src/circle';
-import type { Circle, Point } from '../../../src/types/flat-shapes.internal';
+import type { Circle, Point, PointWritable, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
 /** 도형 함수 외부에서 정의한 원 출력의 예시다. */
 class ExternalCircle {
@@ -44,6 +47,15 @@ class ExternalBounds {
   maxX = 0;
   maxY = 0;
   readonly label = 'bounds';
+}
+
+/** 도형 함수 외부에서 정의한 선분 출력의 예시다. */
+class ExternalSegment {
+  x1 = 0;
+  y1 = 0;
+  x2 = 0;
+  y2 = 0;
+  readonly label = 'segment';
 }
 
 const circle = { cx: 2, cy: 3, r: 4 };
@@ -134,4 +146,32 @@ test('translateInto는 외부 원의 참조와 타입을 보존한다', () => {
   const result = translateInto(out, circle, { x: 1, y: 2 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalCircle>();
+});
+
+test('접선 Into는 새 선분을 추가하므로 원소 타입을 SegmentWritable로 고정한다', () => {
+  const a = { cx: 0, cy: 0, r: 1 };
+  const b = { cx: 5, cy: 0, r: 1 };
+  const externalOut: ExternalSegment[] = [];
+  const internalOut: ExternalSegment[] = [];
+  const external = externalTangentsInto(externalOut, a, b);
+  const internal = internalTangentsInto(internalOut, a, b);
+
+  expectTypeOf(external).toEqualTypeOf<SegmentWritable[]>();
+  expectTypeOf(internal).toEqualTypeOf<SegmentWritable[]>();
+  expect(external).toBe(externalOut);
+  expect(internal).toBe(internalOut);
+  expect(external).toHaveLength(2);
+  expect(internal).toHaveLength(2);
+  expect(external[0]).not.toBeInstanceOf(ExternalSegment);
+  expect(internal[0]).not.toBeInstanceOf(ExternalSegment);
+});
+
+test('tangentPointsFromExternalInto는 새 점을 추가하므로 원소 타입을 PointWritable로 고정한다', () => {
+  const out: ExternalPoint[] = [];
+  const result = tangentPointsFromExternalInto(out, circle, { x: 20, y: 3 });
+
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+  expect(result).toBe(out);
+  expect(result).toHaveLength(2);
+  expect(result[0]).not.toBeInstanceOf(ExternalPoint);
 });
