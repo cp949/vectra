@@ -1,5 +1,5 @@
 /**
- * 물리 시뮬레이션 모양의 hot path를 직접 짠 코드, 구조체 입력 함수, `*XY` 함수로 잰다.
+ * 물리 시뮬레이션 모양의 hot path를 직접 짠 코드와 vectra 함수로 잰다.
  *
  * - 대상은 빌드한 `dist`다. 먼저 `pnpm build`를 실행한다.
  * - 장면 크기는 물리 놀이터 데모에서 가져왔다.
@@ -110,15 +110,6 @@ async function makeCase(name) {
       }
       return sum;
     },
-    'ray×segment raySegmentHitTXY': () => {
-      let sum = 0;
-      for (const r of rays)
-        for (const s of surfaces) {
-          const t = intersects.raySegmentHitTXY(r.x, r.y, r.dx, r.dy, s.x1, s.y1, s.x2, s.y2);
-          if (t < Infinity) sum += t;
-        }
-      return sum;
-    },
     'circle pairs hand': () => {
       let count = 0;
       for (let i = 0; i < circles.length; i++)
@@ -139,16 +130,6 @@ async function makeCase(name) {
           if (intersects.intersectsCircleCircle(circleShapes[i], circleShapes[j])) count++;
       return count;
     },
-    'circle pairs intersectsCircleCircleXY': () => {
-      let count = 0;
-      for (let i = 0; i < circles.length; i++)
-        for (let j = i + 1; j < circles.length; j++) {
-          const a = circles[i];
-          const b = circles[j];
-          if (intersects.intersectsCircleCircleXY(a.x, a.y, a.r, b.x, b.y, b.r)) count++;
-        }
-      return count;
-    },
     'point–segment hand': () => {
       let sum = 0;
       for (const p of points) sum += handSegmentDistance(100, 100, 900, 700, p.x, p.y);
@@ -157,11 +138,6 @@ async function makeCase(name) {
     'point–segment distanceToPoint': () => {
       let sum = 0;
       for (const p of points) sum += segment.distanceToPoint(line, p);
-      return sum;
-    },
-    'point–segment distanceToPointXY': () => {
-      let sum = 0;
-      for (const p of points) sum += segment.distanceToPointXY(100, 100, 900, 700, p.x, p.y);
       return sum;
     },
   };

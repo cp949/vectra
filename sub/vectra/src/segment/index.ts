@@ -14,7 +14,6 @@ export { cropByCircleInto } from './crop-by-circle-into';
 export { cropByRect } from './crop-by-rect';
 export { cropByRectInto } from './crop-by-rect-into';
 export { distanceToPoint } from './distance-to-point';
-export { distanceToPointXY } from './distance-to-point-xy';
 export { distanceToPointSq } from './distance-to-point-sq';
 export { end } from './end';
 export { endInto } from './end-into';

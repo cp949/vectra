@@ -21,7 +21,7 @@
 - [ ] object result는 `Into` convention을 따른다.
 - [ ] scalar, boolean, enum result는 직접 반환한다.
 - [ ] 좌표 입력은 `XYInput` 정책을 따른다.
-- [ ] 숫자 나열 overload를 public API로 추가하지 않았다. `*XY` 함수는 API-018을 따른다.
+- [ ] 숫자 나열 overload를 public API로 추가하지 않았다.
 - [ ] 공유 계산은 낮은 internal primitive helper로 뺐다.
 - [ ] public 함수끼리 domain barrel을 통해 상호 참조하지 않는다.
 - [ ] module top-level side effect가 없다.

@@ -10,10 +10,10 @@ pnpm examples:coverage:write
 
 ## 요약
 
-- 전체 public leaf: 1945
+- 전체 public leaf: 1941
 - covered: 652
 - excepted: 0
-- uncovered: 1293
+- uncovered: 1289
 - 예제 수: 171
 
 ## 표
@@ -707,7 +707,6 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/intersects-capsule-segment` | `intersectsCapsuleSegment` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-circle-bounds` | `intersectsCircleBounds` | `pixi:segment-contact-gates-lab` |  | covered |
 | `@cp949/vectra/intersects/intersects-circle-circle` | `intersectsCircleCircle` | `pixi:circle-circle-overlap` |  | covered |
-| `@cp949/vectra/intersects/intersects-circle-circle-xy` | `intersectsCircleCircleXY` |  |  | uncovered |
 | `@cp949/vectra/intersects/intersects-circle-infinite-line` | `intersectsCircleInfiniteLine` | `pixi:circle-infinite-line-hit` |  | covered |
 | `@cp949/vectra/intersects/intersects-circle-ray` | `intersectsCircleRay` | `pixi:ray-circle-hit`, `pixi:raycast-workbench` |  | covered |
 | `@cp949/vectra/intersects/intersects-circle-rect` | `intersectsCircleRect` | `pixi:circle-rect-overlap`, `pixi:shape-hitbox-lab` |  | covered |
@@ -776,7 +775,6 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/ray-bounds-intersections` | `rayBoundsIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-bounds-intersections-into` | `rayBoundsIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-circle-hit-t` | `rayCircleHitT` |  |  | uncovered |
-| `@cp949/vectra/intersects/ray-circle-hit-t-xy` | `rayCircleHitTXY` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-circle-intersections` | `rayCircleIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-circle-intersections-into` | `rayCircleIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-cubic-intersections` | `rayCubicIntersections` | `pixi:ray-cubic-hits`, `pixi:raycast-workbench` |  | covered |
@@ -795,7 +793,6 @@ pnpm examples:coverage:write
 | `@cp949/vectra/intersects/ray-rect-intersections` | `rayRectIntersections` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-rect-intersections-into` | `rayRectIntersectionsInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/ray-segment-hit-t` | `raySegmentHitT` |  |  | uncovered |
-| `@cp949/vectra/intersects/ray-segment-hit-t-xy` | `raySegmentHitTXY` |  |  | uncovered |
 | `@cp949/vectra/intersects/rays-from-point-to-polygon` | `raysFromPointToPolygon` |  |  | uncovered |
 | `@cp949/vectra/intersects/rays-from-point-to-polygon-into` | `raysFromPointToPolygonInto` |  |  | uncovered |
 | `@cp949/vectra/intersects/rect-rect-area-overlap-detail` | `rectRectAreaOverlapDetail` |  |  | uncovered |
@@ -1627,7 +1624,6 @@ pnpm examples:coverage:write
 | `@cp949/vectra/segment/crop-by-rect-into` | `cropByRectInto` |  |  | uncovered |
 | `@cp949/vectra/segment/distance-to-point` | `distanceToPoint` | `canvas:segment-snap` |  | covered |
 | `@cp949/vectra/segment/distance-to-point-sq` | `distanceToPointSq` | `pixi:segment-offset-normal-lab` |  | covered |
-| `@cp949/vectra/segment/distance-to-point-xy` | `distanceToPointXY` |  |  | uncovered |
 | `@cp949/vectra/segment/end` | `end` |  |  | uncovered |
 | `@cp949/vectra/segment/end-into` | `endInto` |  |  | uncovered |
 | `@cp949/vectra/segment/extend` | `extend` | `pixi:segment-offset-normal-lab` |  | covered |
