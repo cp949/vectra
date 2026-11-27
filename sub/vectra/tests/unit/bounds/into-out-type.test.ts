@@ -13,7 +13,21 @@ import { expandToIncludePointInto } from '../../../src/bounds/expand-to-include-
 import { fromCenterInto } from '../../../src/bounds/from-center-into';
 import { fromPointsInto } from '../../../src/bounds/from-points-into';
 import { fromRectInto } from '../../../src/bounds/from-rect-into';
-import type { Bounds, BoundsPadding, BoundsWritable, PointWritable } from '../../../src/types/flat-shapes.internal';
+import { highInto } from '../../../src/bounds/high-into';
+import { lowInto } from '../../../src/bounds/low-into';
+import { sidesInto } from '../../../src/bounds/sides-into';
+import { toRectInto } from '../../../src/bounds/to-rect-into';
+import { transformInto } from '../../../src/bounds/transform-into';
+import { translateInto } from '../../../src/bounds/translate-into';
+import { unionInto } from '../../../src/bounds/union-into';
+import type {
+  Bounds,
+  BoundsPadding,
+  BoundsWritable,
+  Matrix,
+  PointWritable,
+  SegmentWritable,
+} from '../../../src/types/flat-shapes.internal';
 
 test('centerInto는 평평한 경계 상자를 받는다', () => {
   expectTypeOf(centerInto).parameter(1).toEqualTypeOf<Bounds>();
@@ -102,4 +116,71 @@ test('변환 Into 함수는 경계 상자 출력의 구체 타입과 참조를 �
   for (const result of results) {
     expect(result).toBe(out);
   }
+});
+
+test('highInto는 평평한 경계 상자를 받는다', () => {
+  expectTypeOf(highInto).parameter(1).toEqualTypeOf<Bounds>();
+});
+
+/** 사각형의 네 필드와 호출자 상태를 담는 출력 객체다. */
+class OutputRect {
+  x = 0;
+  y = 0;
+  width = 0;
+  height = 0;
+  label = 'rect';
+}
+
+/** 선분의 네 좌표와 호출자 상태를 담는 출력 객체다. */
+class OutputSegment {
+  x1 = 0;
+  y1 = 0;
+  x2 = 0;
+  y2 = 0;
+  label = 'segment';
+}
+
+test('최솟값과 최댓값 조회는 점 출력의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputPoint();
+  const low = lowInto(out, bounds);
+  const high = highInto(out, bounds);
+
+  expectTypeOf(low).toEqualTypeOf<OutputPoint>();
+  expectTypeOf(high).toEqualTypeOf<OutputPoint>();
+  expect(low).toBe(out);
+  expect(high).toBe(out);
+});
+
+test('toRectInto는 사각형 출력의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputRect();
+  const result = toRectInto(out, bounds);
+
+  expectTypeOf(result).toEqualTypeOf<OutputRect>();
+  expect(result).toBe(out);
+});
+
+test('행렬 변환, 이동과 합집합은 경계 상자 출력의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputBounds();
+  const matrix = { a: 1, b: 0, c: 0, d: 1, tx: 3, ty: 4 };
+  const results = [
+    transformInto(out, bounds, matrix),
+    translateInto(out, bounds, point),
+    unionInto(out, bounds, bounds),
+  ];
+
+  expectTypeOf(transformInto).parameter(2).toEqualTypeOf<Matrix>();
+  expectTypeOf(results).toEqualTypeOf<OutputBounds[]>();
+  for (const result of results) {
+    expect(result).toBe(out);
+  }
+});
+
+test('sidesInto는 새 선분을 추가하므로 원소 타입을 SegmentWritable로 고정한다', () => {
+  const out: OutputSegment[] = [];
+  const result = sidesInto(out, bounds);
+
+  expectTypeOf(result).toEqualTypeOf<SegmentWritable[]>();
+  expect(result).toBe(out);
+  expect(result).toHaveLength(4);
+  expect(result[0]).not.toBeInstanceOf(OutputSegment);
 });

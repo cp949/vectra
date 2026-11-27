@@ -7,83 +7,66 @@ import { expandToIncludeBoundsInto } from '../../../src/bounds/expand-to-include
 import { expandToIncludePointInto } from '../../../src/bounds/expand-to-include-point-into';
 import { translateInto } from '../../../src/bounds/translate-into';
 import { unionInto } from '../../../src/bounds/union-into';
-import type { BoundsWritable } from '../../../src/types';
-import type { BoundsWritable as FlatBoundsWritable } from '../../../src/types/flat-shapes.internal';
-import { flatSentinel, makeBounds, sentinel } from './relation-expansion.helpers';
+import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
+import { sentinel } from './relation-expansion.helpers';
 
 // ---------------------------------------------------------------------------
 // unionInto
 // ---------------------------------------------------------------------------
 describe('bounds - unionInto', () => {
   test('두 non-empty bounds의 union은 min의 최솟값, max의 최댓값을 기록한다', () => {
-    const out = makeBounds();
-    const a = { min: { x: 0, y: 1 }, max: { x: 4, y: 5 } };
-    const b = { min: { x: 2, y: 0 }, max: { x: 6, y: 4 } };
+    const out = createBounds();
+    const a = { minX: 0, minY: 1, maxX: 4, maxY: 5 };
+    const b = { minX: 2, minY: 0, maxX: 6, maxY: 4 };
     const result = unionInto(out, a, b);
-    expect(out.min).toEqual({ x: 0, y: 0 });
-    expect(out.max).toEqual({ x: 6, y: 5 });
+    expect(out).toEqual({ minX: 0, minY: 0, maxX: 6, maxY: 5 });
     expect(result).toBe(out);
   });
 
   test('b가 empty이면 a를 복사한다', () => {
-    const out = makeBounds();
-    const a = { min: { x: 1, y: 2 }, max: { x: 5, y: 6 } };
+    const out = createBounds();
+    const a = { minX: 1, minY: 2, maxX: 5, maxY: 6 };
     const b = sentinel();
     unionInto(out, a, b);
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 5, y: 6 });
+    expect(out).toEqual({ minX: 1, minY: 2, maxX: 5, maxY: 6 });
   });
 
   test('a가 empty이면 b를 복사한다', () => {
-    const out = makeBounds();
+    const out = createBounds();
     const a = sentinel();
-    const b = { min: { x: 1, y: 2 }, max: { x: 5, y: 6 } };
+    const b = { minX: 1, minY: 2, maxX: 5, maxY: 6 };
     unionInto(out, a, b);
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 5, y: 6 });
+    expect(out).toEqual({ minX: 1, minY: 2, maxX: 5, maxY: 6 });
   });
 
   test('둘 다 empty이면 a를 복사한다(sentinel 유지)', () => {
-    const out = makeBounds();
+    const out = createBounds();
     const a = sentinel();
     const b = sentinel();
     unionInto(out, a, b);
-    expect(out.min).toEqual({ x: Infinity, y: Infinity });
-    expect(out.max).toEqual({ x: -Infinity, y: -Infinity });
+    expect(out).toEqual({ minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
   });
 
   test('out === a aliasing: union이 정확하게 기록된다', () => {
-    const a: BoundsWritable = { min: { x: 0, y: 1 }, max: { x: 4, y: 5 } };
-    const b = { min: { x: 2, y: 0 }, max: { x: 6, y: 4 } };
+    const a: BoundsWritable = { minX: 0, minY: 1, maxX: 4, maxY: 5 };
+    const b = { minX: 2, minY: 0, maxX: 6, maxY: 4 };
     unionInto(a, a, b);
-    expect(a.min).toEqual({ x: 0, y: 0 });
-    expect(a.max).toEqual({ x: 6, y: 5 });
+    expect(a).toEqual({ minX: 0, minY: 0, maxX: 6, maxY: 5 });
   });
 
   test('out === b aliasing: union이 정확하게 기록된다', () => {
-    const a = { min: { x: 0, y: 1 }, max: { x: 4, y: 5 } };
-    const b: BoundsWritable = { min: { x: 2, y: 0 }, max: { x: 6, y: 4 } };
+    const a = { minX: 0, minY: 1, maxX: 4, maxY: 5 };
+    const b: BoundsWritable = { minX: 2, minY: 0, maxX: 6, maxY: 4 };
     unionInto(b, a, b);
-    expect(b.min).toEqual({ x: 0, y: 0 });
-    expect(b.max).toEqual({ x: 6, y: 5 });
+    expect(b).toEqual({ minX: 0, minY: 0, maxX: 6, maxY: 5 });
   });
 
   test('inverted b(empty)는 empty로 처리되어 a를 복사한다', () => {
-    const out = makeBounds();
-    const a = { min: { x: 0, y: 0 }, max: { x: 2, y: 2 } };
-    const b = { min: { x: 20, y: 20 }, max: { x: 15, y: 15 } };
+    const out = createBounds();
+    const a = { minX: 0, minY: 0, maxX: 2, maxY: 2 };
+    const b = { minX: 20, minY: 20, maxX: 15, maxY: 15 };
     unionInto(out, a, b);
-    expect(out.min).toEqual({ x: 0, y: 0 });
-    expect(out.max).toEqual({ x: 2, y: 2 });
-  });
-
-  test('tuple min/max 입력도 처리한다', () => {
-    const out = makeBounds();
-    const a = { min: [0, 1] as const, max: [4, 5] as const };
-    const b = { min: [2, 0] as const, max: [6, 4] as const };
-    unionInto(out, a, b);
-    expect(out.min).toEqual({ x: 0, y: 0 });
-    expect(out.max).toEqual({ x: 6, y: 5 });
+    expect(out).toEqual({ minX: 0, minY: 0, maxX: 2, maxY: 2 });
   });
 });
 
@@ -112,7 +95,7 @@ describe('bounds - expandByInto', () => {
   });
 
   test('out === bounds aliasing: 정확하게 기록된다', () => {
-    const bounds: FlatBoundsWritable = { minX: 1, minY: 2, maxX: 7, maxY: 8 };
+    const bounds: BoundsWritable = { minX: 1, minY: 2, maxX: 7, maxY: 8 };
     expandByInto(bounds, bounds, 2);
     expect(bounds).toEqual({ minX: -1, minY: 0, maxX: 9, maxY: 10 });
   });
@@ -146,12 +129,12 @@ describe('bounds - expandToIncludePointInto', () => {
 
   test('sentinel bounds + 점 → point bounds', () => {
     const out = createBounds();
-    expandToIncludePointInto(out, flatSentinel(), { x: 3, y: 7 });
+    expandToIncludePointInto(out, sentinel(), { x: 3, y: 7 });
     expect(out).toEqual({ minX: 3, minY: 7, maxX: 3, maxY: 7 });
   });
 
   test('out === bounds aliasing: 정확하게 기록된다', () => {
-    const bounds: FlatBoundsWritable = { minX: 0, minY: 0, maxX: 5, maxY: 5 };
+    const bounds: BoundsWritable = { minX: 0, minY: 0, maxX: 5, maxY: 5 };
     expandToIncludePointInto(bounds, bounds, { x: 8, y: 7 });
     expect(bounds).toEqual({ minX: 0, minY: 0, maxX: 8, maxY: 7 });
   });
@@ -181,7 +164,7 @@ describe('bounds - expandToIncludeBoundsInto', () => {
   test('sentinel bounds + non-empty other → other의 endpoint 복사', () => {
     const out = createBounds();
     const other = { minX: 2, minY: 3, maxX: 7, maxY: 8 };
-    expandToIncludeBoundsInto(out, flatSentinel(), other);
+    expandToIncludeBoundsInto(out, sentinel(), other);
     expect(out).toEqual({ minX: 2, minY: 3, maxX: 7, maxY: 8 });
   });
 
@@ -196,7 +179,7 @@ describe('bounds - expandToIncludeBoundsInto', () => {
   });
 
   test('out === bounds aliasing: 정확하게 기록된다', () => {
-    const bounds: FlatBoundsWritable = { minX: 0, minY: 0, maxX: 5, maxY: 5 };
+    const bounds: BoundsWritable = { minX: 0, minY: 0, maxX: 5, maxY: 5 };
     const other = { minX: 3, minY: 3, maxX: 9, maxY: 9 };
     expandToIncludeBoundsInto(bounds, bounds, other);
     expect(bounds).toEqual({ minX: 0, minY: 0, maxX: 9, maxY: 9 });
@@ -208,51 +191,32 @@ describe('bounds - expandToIncludeBoundsInto', () => {
 // ---------------------------------------------------------------------------
 describe('bounds - translateInto', () => {
   test('offset을 더해 bounds를 이동한다', () => {
-    const out = makeBounds();
-    const bounds = { min: { x: 1, y: 2 }, max: { x: 5, y: 6 } };
+    const out = createBounds();
+    const bounds = { minX: 1, minY: 2, maxX: 5, maxY: 6 };
     const result = translateInto(out, bounds, { x: 3, y: -1 });
-    expect(out.min).toEqual({ x: 4, y: 1 });
-    expect(out.max).toEqual({ x: 8, y: 5 });
+    expect(out).toEqual({ minX: 4, minY: 1, maxX: 8, maxY: 5 });
     expect(result).toBe(out);
   });
 
   test('zero offset은 bounds를 변경하지 않는다', () => {
-    const out = makeBounds();
-    const bounds = { min: { x: 1, y: 2 }, max: { x: 5, y: 6 } };
+    const out = createBounds();
+    const bounds = { minX: 1, minY: 2, maxX: 5, maxY: 6 };
     translateInto(out, bounds, { x: 0, y: 0 });
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 5, y: 6 });
+    expect(out).toEqual({ minX: 1, minY: 2, maxX: 5, maxY: 6 });
   });
 
   test('sentinel bounds는 translate 후에도 sentinel과 동치이다', () => {
-    const out = makeBounds();
+    const out = createBounds();
     translateInto(out, sentinel(), { x: 5, y: 5 });
-    expect(out.min.x).toBe(Infinity);
-    expect(out.min.y).toBe(Infinity);
-    expect(out.max.x).toBe(-Infinity);
-    expect(out.max.y).toBe(-Infinity);
+    expect(out.minX).toBe(Infinity);
+    expect(out.minY).toBe(Infinity);
+    expect(out.maxX).toBe(-Infinity);
+    expect(out.maxY).toBe(-Infinity);
   });
 
   test('out === bounds aliasing: 정확하게 기록된다', () => {
-    const bounds: BoundsWritable = { min: { x: 1, y: 2 }, max: { x: 5, y: 6 } };
+    const bounds: BoundsWritable = { minX: 1, minY: 2, maxX: 5, maxY: 6 };
     translateInto(bounds, bounds, { x: 3, y: -1 });
-    expect(bounds.min).toEqual({ x: 4, y: 1 });
-    expect(bounds.max).toEqual({ x: 8, y: 5 });
-  });
-
-  test('tuple offset 입력도 처리한다', () => {
-    const out = makeBounds();
-    const bounds = { min: { x: 1, y: 2 }, max: { x: 5, y: 6 } };
-    translateInto(out, bounds, [3, -1]);
-    expect(out.min).toEqual({ x: 4, y: 1 });
-    expect(out.max).toEqual({ x: 8, y: 5 });
-  });
-
-  test('tuple min/max bounds와 tuple offset 입력도 처리한다', () => {
-    const out = makeBounds();
-    const bounds = { min: [1, 2] as const, max: [5, 6] as const };
-    translateInto(out, bounds, [3, -1]);
-    expect(out.min).toEqual({ x: 4, y: 1 });
-    expect(out.max).toEqual({ x: 8, y: 5 });
+    expect(bounds).toEqual({ minX: 4, minY: 1, maxX: 8, maxY: 5 });
   });
 });

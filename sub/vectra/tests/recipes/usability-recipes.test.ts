@@ -97,10 +97,8 @@ describe('레시피 2: 드래그 중 selection bounds 갱신', () => {
     expect(selBounds.maxX).toBeCloseTo(80, 10);
     expect(selBounds.maxY).toBeCloseTo(90, 10);
 
-    // v2-migration: width와 height가 평평한 경계를 받으면 변환을 제거한다.
-    const extent = { min: { x: selBounds.minX, y: selBounds.minY }, max: { x: selBounds.maxX, y: selBounds.maxY } };
-    expect(width(extent)).toBeCloseTo(70, 10);
-    expect(height(extent)).toBeCloseTo(70, 10);
+    expect(width(selBounds)).toBeCloseTo(70, 10);
+    expect(height(selBounds)).toBeCloseTo(70, 10);
 
     // 선택 영역 안에 있는 점 확인
     expect(containsPoint(selBounds, { x: 50, y: 60 })).toBe(true);

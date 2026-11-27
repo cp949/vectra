@@ -33,20 +33,20 @@ describe('bounds.fromRectInto', () => {
 describe('bounds.toRectInto', () => {
   test('정상 bounds를 rect로 변환한다', () => {
     const out = makeRect();
-    const result = toRectInto(out, { min: { x: 1, y: 2 }, max: { x: 5, y: 8 } });
+    const result = toRectInto(out, { minX: 1, minY: 2, maxX: 5, maxY: 8 });
     expect(out).toEqual({ x: 1, y: 2, width: 4, height: 6 });
     expect(result).toBe(out);
   });
 
   test('inverted bounds(empty)를 변환한다 - 음수 width/height rect(empty)가 된다', () => {
     const out = makeRect();
-    toRectInto(out, { min: { x: 5, y: 0 }, max: { x: 2, y: 4 } });
+    toRectInto(out, { minX: 5, minY: 0, maxX: 2, maxY: 4 });
     expect(out).toEqual({ x: 5, y: 0, width: -3, height: 4 });
   });
 
   test('sentinel bounds를 변환한다 - Infinity 좌표 rect가 된다', () => {
     const out = makeRect();
-    toRectInto(out, { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } });
+    toRectInto(out, { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
     expect(out.x).toBe(Infinity);
     expect(out.y).toBe(Infinity);
     expect(out.width).toBe(-Infinity);

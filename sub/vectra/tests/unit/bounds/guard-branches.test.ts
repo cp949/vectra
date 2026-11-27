@@ -9,11 +9,11 @@ import { describe, expect, test } from 'vitest';
 import { boundsFrom } from '../../../src/bounds/bounds-from';
 import { intersectionInto } from '../../../src/bounds/intersection-into';
 import { unionInto } from '../../../src/bounds/union-into';
-import type { BoundsWritable } from '../../../src/types';
+import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 
 /** `(minX, minY)`~`(maxX, maxY)` plain bounds를 만든다. */
 function box(minX: number, minY: number, maxX: number, maxY: number): BoundsWritable {
-  return { min: { x: minX, y: minY }, max: { x: maxX, y: maxY } };
+  return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
 }
 
 describe('boundsFrom', () => {

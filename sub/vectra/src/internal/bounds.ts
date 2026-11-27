@@ -1,4 +1,5 @@
 import type { BoundsLike, BoundsTuple, BoundsWritable, XYInput } from '../types';
+import type { BoundsWritable as FlatBoundsWritable } from '../types/flat-shapes.internal';
 
 function isBoundsTuple(bounds: BoundsLike): bounds is BoundsTuple {
   return Array.isArray(bounds);
@@ -41,4 +42,9 @@ export function boundsContainsPointXY(
 /** 중첩된 min/max를 쓰는 경계 상자를 만든다. */
 export function createLegacyBounds(): BoundsWritable {
   return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+}
+
+/** 네 경계 좌표가 0인 평평한 경계 상자를 만든다. */
+export function createZeroBounds(): FlatBoundsWritable {
+  return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }

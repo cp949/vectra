@@ -1,5 +1,5 @@
-import type { BoundsLike, BoundsWritable } from '../types';
-import { createLegacyBounds } from '../internal/bounds';
+import { createZeroBounds } from '../internal/bounds';
+import type { Bounds, BoundsWritable } from '../types/flat-shapes.internal';
 import { intersectionInto } from './intersection-into';
 
 /**
@@ -10,7 +10,7 @@ import { intersectionInto } from './intersection-into';
  * @param a 교차시킬 첫 번째 bounds
  * @param b 교차시킬 두 번째 bounds
  */
-export function intersection(a: BoundsLike, b: BoundsLike): BoundsWritable | undefined {
-  const out = createLegacyBounds();
+export function intersection(a: Bounds, b: Bounds): BoundsWritable | undefined {
+  const out = createZeroBounds();
   return intersectionInto(out, a, b) ? out : undefined;
 }

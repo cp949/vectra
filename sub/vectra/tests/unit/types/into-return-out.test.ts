@@ -19,7 +19,6 @@ import { fromFloat32ArrayInto } from '../../../src/adapter/flat/from-float32-arr
 import { toFlatCoordsInto } from '../../../src/adapter/flat/to-flat-coords-into';
 import { toFloat32ArrayInto } from '../../../src/adapter/flat/to-float32-array-into';
 import { transformFlatCoordsInto } from '../../../src/adapter/flat/transform-flat-coords-into';
-import { sidesInto as boundsSidesInto } from '../../../src/bounds/sides-into';
 import { bsplinePolylineInto } from '../../../src/curve/bspline-polyline-into';
 import { cardinalPolylineInto } from '../../../src/curve/cardinal-polyline-into';
 import { catmullRomPolylineInto } from '../../../src/curve/catmull-rom-polyline-into';
@@ -46,7 +45,6 @@ import type {
   CurveIntersectionHit,
   CurveLike,
   IntersectionHit,
-  SegmentWritable,
   XYObjectWritable,
   XYTupleWritable,
 } from '../../../src/types';
@@ -266,12 +264,6 @@ describe('adapter·shape 배열 Into는 out을 반환한다', () => {
     const fromOriented: XYObjectWritable[] = [];
     expect(orientedRectCornersInto(fromOriented, orientedRect)).toBe(fromOriented);
     expect(fromOriented).toHaveLength(4);
-  });
-
-  test('bounds sidesInto는 4개 side를 담은 out을 반환한다', () => {
-    const fromBounds: SegmentWritable<XYObjectWritable, XYObjectWritable>[] = [];
-    expect(boundsSidesInto(fromBounds, bounds)).toBe(fromBounds);
-    expect(fromBounds).toHaveLength(4);
   });
 
   test('perimeterPointsInto는 XYObjectWritable[]을 반환한다', () => {

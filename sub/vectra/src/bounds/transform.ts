@@ -1,5 +1,5 @@
-import type { BoundsLike, BoundsWritable, MatrixLike } from '../types';
-import { createLegacyBounds } from '../internal/bounds';
+import { createZeroBounds } from '../internal/bounds';
+import type { Bounds, BoundsWritable, Matrix } from '../types/flat-shapes.internal';
 import { transformInto } from './transform-into';
 
 /**
@@ -10,6 +10,6 @@ import { transformInto } from './transform-into';
  * @param bounds 변환할 bounds
  * @param matrix bounds corner에 적용할 matrix
  */
-export function transform(bounds: BoundsLike, matrix: MatrixLike): BoundsWritable {
-  return transformInto(createLegacyBounds(), bounds, matrix);
+export function transform(bounds: Bounds, matrix: Matrix): BoundsWritable {
+  return transformInto(createZeroBounds(), bounds, matrix);
 }

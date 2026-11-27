@@ -1,3 +1,4 @@
+import { createZeroBounds } from '../internal/bounds';
 import type { BoundsWritable } from '../types/flat-shapes.internal';
 
 /**
@@ -6,5 +7,5 @@ import type { BoundsWritable } from '../types/flat-shapes.internal';
  * 인자를 받지 않는다. `Bounds`를 새 plain object로 복사하려면 `boundsFrom`을 사용한다.
  */
 export function createBounds(): BoundsWritable {
-  return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+  return createZeroBounds();
 }
