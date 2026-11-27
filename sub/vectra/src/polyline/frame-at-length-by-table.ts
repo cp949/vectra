@@ -1,4 +1,5 @@
-import type { PolylineFrameWritable, PolylineLike } from '../types';
+import type { PolylineFrameWritable } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { frameAtLengthByTableInto } from './frame-at-length-by-table-into';
 
 /**
@@ -28,7 +29,7 @@ import { frameAtLengthByTableInto } from './frame-at-length-by-table-into';
  * @param length polyline 시작점부터의 arclength offset
  */
 export function frameAtLengthByTable(
-  polyline: PolylineLike,
+  polyline: Polyline,
   cumulativeLengths: readonly number[],
   length: number
 ): PolylineFrameWritable | undefined {

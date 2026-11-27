@@ -7,17 +7,18 @@
 
 import { describe, expect, test } from 'vitest';
 import { polylineSampleAtLengthInto } from '../../../src/internal/polyline-sampling.internal';
-import type { XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 
-function makeOut(): XYWritable {
+/** 기록 결과를 확인할 초기 출력을 만든다. */
+function makeOut(): PointWritable {
   return { x: Number.NaN, y: Number.NaN };
 }
 
 describe('polylineSampleAtLengthInto', () => {
   const bend = [
-    [0, 0],
-    [4, 0],
-    [4, 4],
+    { x: 0, y: 0 },
+    { x: 4, y: 0 },
+    { x: 4, y: 4 },
   ] as const;
 
   test('target이 첫 segment 안이면 그 segment 위에서 보간한다', () => {
@@ -31,9 +32,9 @@ describe('polylineSampleAtLengthInto', () => {
     // target=8.5는 이 누적 길이를 넘어서므로 `acc+segLen>=target`은 마지막 segment에서도 false다 —
     // 오직 `i===n-1` 강제 분기 덕분에 마지막 segment 위에서 clamp(localT=1) 보간되어 끝점을 반환한다.
     const triangle = [
-      [0, 0],
-      [3, 0],
-      [3, 4],
+      { x: 0, y: 0 },
+      { x: 3, y: 0 },
+      { x: 3, y: 4 },
     ] as const;
     const out = makeOut();
     polylineSampleAtLengthInto(out, triangle, 8.5);
@@ -42,9 +43,9 @@ describe('polylineSampleAtLengthInto', () => {
 
   test('zero-length segment가 target 구간에 걸리면 해당 vertex 좌표를 그대로 반환한다', () => {
     const repeatedStart = [
-      [0, 0],
-      [0, 0],
-      [4, 0],
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 4, y: 0 },
     ] as const;
     const out = makeOut();
     polylineSampleAtLengthInto(out, repeatedStart, 0);

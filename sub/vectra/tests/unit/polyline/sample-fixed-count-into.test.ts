@@ -6,37 +6,32 @@
 
 import { describe, expect, test } from 'vitest';
 import { sampleFixedCountInto } from '../../../src/polyline/sample-fixed-count-into';
-import type { PolylineLike, XYObjectWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공용 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolylineLike = { points: [] };
-const SINGLE: PolylineLike = { points: [{ x: 1, y: 2 }] };
-const REPEATED: PolylineLike = {
-  points: [
-    { x: 3, y: 5 },
-    { x: 3, y: 5 },
-  ],
-};
+const EMPTY: Polyline = [];
+const SINGLE: Polyline = [{ x: 1, y: 2 }];
+const REPEATED: Polyline = [
+  { x: 3, y: 5 },
+  { x: 3, y: 5 },
+];
 
-const HLINE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 10, y: 0 },
-  ],
-};
+const HLINE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 10, y: 0 },
+];
 
-const L_SHAPE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 0 },
-    { x: 3, y: 4 },
-  ],
-};
+const L_SHAPE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 0 },
+  { x: 3, y: 4 },
+];
 
-function makeOut(): XYObjectWritable[] {
+/** 기록 결과를 확인할 초기 출력을 만든다. */
+function makeOut(): PointWritable[] {
   return [];
 }
 
@@ -62,14 +57,14 @@ describe('polyline sampling - sampleFixedCountInto 입력 검증', () => {
 
 describe('polyline sampling - sampleFixedCountInto edge-case', () => {
   test('empty polyline은 outPoints를 비우고 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     const result = sampleFixedCountInto(out, EMPTY, 5);
     expect(result).toBe(out);
     expect(out).toHaveLength(0);
   });
 
   test('single-point polyline은 outPoints를 비우고 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     sampleFixedCountInto(out, SINGLE, 5);
     expect(out).toHaveLength(0);
   });
@@ -155,7 +150,7 @@ describe('polyline sampling - sampleFixedCountInto count>=2', () => {
 
 describe('polyline sampling - sampleFixedCountInto outPoints clear', () => {
   test('기존 outPoints 내용이 clear된다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 99, y: 99 },
       { x: 88, y: 88 },
     ];

@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { tangentAtLengthInto } from './tangent-at-length-into';
 
 /**
@@ -18,7 +18,7 @@ import { tangentAtLengthInto } from './tangent-at-length-into';
  * @param polyline tangent를 계산할 polyline
  * @param length polyline 시작점부터의 arclength offset
  */
-export function tangentAtLength(polyline: PolylineLike, length: number): { x: number; y: number } | undefined {
+export function tangentAtLength(polyline: Polyline, length: number): { x: number; y: number } | undefined {
   const out = { x: 0, y: 0 };
   return tangentAtLengthInto(out, polyline, length) ? out : undefined;
 }

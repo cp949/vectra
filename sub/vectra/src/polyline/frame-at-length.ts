@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { frameAtLengthInto } from './frame-at-length-into';
 
 /** `frameAtLength`가 반환하는 plain nested frame. */
@@ -27,7 +27,7 @@ interface PolylineFrame {
  * @param polyline frame을 계산할 polyline
  * @param length polyline 시작점부터의 arclength offset
  */
-export function frameAtLength(polyline: PolylineLike, length: number): PolylineFrame | undefined {
+export function frameAtLength(polyline: Polyline, length: number): PolylineFrame | undefined {
   const out: PolylineFrame = {
     point: { x: 0, y: 0 },
     tangent: { x: 0, y: 0 },

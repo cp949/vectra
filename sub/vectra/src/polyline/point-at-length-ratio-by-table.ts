@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtLengthRatioByTableInto } from './point-at-length-ratio-by-table-into';
 
 /**
@@ -19,11 +19,11 @@ import { pointAtLengthRatioByTableInto } from './point-at-length-ratio-by-table-
  * @param ratio 전체 길이에 대한 normalized 위치 (distance / totalLength)
  */
 export function pointAtLengthRatioByTable(
-  polyline: PolylineLike,
+  polyline: Polyline,
   cumulativeLengths: readonly number[],
   ratio: number
-): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   if (!pointAtLengthRatioByTableInto(seed, polyline, cumulativeLengths, ratio)) return undefined;
   return seed;
 }

@@ -2,10 +2,9 @@ import {
   assertCumulativeLengthsMatch,
   polylineSampleAtLengthByTableInto,
   polylineSegmentTangentAtLengthByTableInto,
-  readPolylinePoints,
 } from '../internal/polyline';
-import { writeXY } from '../internal/xy';
-import type { PolylineFrameWritable, PolylineLike, XYWritable } from '../types';
+import type { PolylineFrameWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * 미리 만든 누적 길이 표로 polyline의 arclength offset 위치의 point, tangent, left normal을 out frame에 함께 기록한다.
@@ -31,18 +30,18 @@ import type { PolylineFrameWritable, PolylineLike, XYWritable } from '../types';
  * out frame의 field가 polyline point와 alias되어도 안전하다. 필요한 source 좌표를 local로 먼저
  * 계산한 뒤 out에 기록한다. 기존 polyline domain과 맞춰 non-finite 좌표 validation은 수행하지 않는다.
  *
- * @param out point/tangent/normal을 기록할 writable frame output
+ * @param out point/tangent/normal을 기록할 writable frame output (`point`, `tangent`, `normal`의 각 `x`, `y`)
  * @param polyline frame을 계산할 polyline
  * @param cumulativeLengths polyline의 누적 길이 표. 개수는 vertex 개수와 같아야 한다.
  * @param length polyline 시작점부터의 arclength offset
  */
 export function frameAtLengthByTableInto(
-  out: PolylineFrameWritable<XYWritable>,
-  polyline: PolylineLike,
+  out: PolylineFrameWritable<PointWritable>,
+  polyline: Polyline,
   cumulativeLengths: readonly number[],
   length: number
 ): boolean {
-  const points = readPolylinePoints(polyline);
+  const points = polyline;
   assertCumulativeLengthsMatch(points, cumulativeLengths, 'frameAtLengthByTableInto');
   const n = points.length;
   if (n < 2) return false;
@@ -61,8 +60,11 @@ export function frameAtLengthByTableInto(
     polylineSampleAtLengthByTableInto(point, points, cumulativeLengths, target);
   }
 
-  writeXY(out.point, point.x, point.y);
-  writeXY(out.tangent, tangent.x, tangent.y);
-  writeXY(out.normal, -tangent.y, tangent.x);
+  out.point.x = point.x;
+  out.point.y = point.y;
+  out.tangent.x = tangent.x;
+  out.tangent.y = tangent.y;
+  out.normal.x = -tangent.y;
+  out.normal.y = tangent.x;
   return true;
 }

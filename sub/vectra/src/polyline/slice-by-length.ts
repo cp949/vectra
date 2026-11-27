@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { sliceByLengthInto } from './slice-by-length-into';
 
 /**
@@ -16,6 +16,6 @@ import { sliceByLengthInto } from './slice-by-length-into';
  * @param startLength 구간 시작 arc-length offset
  * @param endLength 구간 끝 arc-length offset
  */
-export function sliceByLength(polyline: PolylineLike, startLength: number, endLength: number): XYObjectWritable[] {
+export function sliceByLength(polyline: Polyline, startLength: number, endLength: number): PointWritable[] {
   return sliceByLengthInto([], polyline, startLength, endLength);
 }

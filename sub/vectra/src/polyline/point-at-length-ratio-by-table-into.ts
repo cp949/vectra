@@ -1,10 +1,5 @@
-import {
-  assertCumulativeLengthsMatch,
-  polylineSampleAtLengthByTableInto,
-  readPolylinePoints,
-} from '../internal/polyline';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { PolylineLike, XYWritable } from '../types';
+import { assertCumulativeLengthsMatch, polylineSampleAtLengthByTableInto } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * 미리 만든 누적 길이 표로 polyline의 normalized arclength 위치 ratio에 해당하는 point를 out에 기록한다.
@@ -21,23 +16,25 @@ import type { PolylineLike, XYWritable } from '../types';
  * single-point polyline 또는 total length가 0인 repeated-point polyline은 첫 point를 기록한다.
  * out이 polyline point와 alias되어도 안전하다. 기존 polyline domain과 맞춰 non-finite 좌표 validation은 수행하지 않는다.
  *
- * @param out point를 기록할 writable output
+ * @param out point를 기록할 writable output (`x`, `y`)
  * @param polyline sampling할 polyline
  * @param cumulativeLengths polyline의 누적 길이 표. 개수는 vertex 개수와 같아야 한다.
  * @param ratio 전체 길이에 대한 normalized 위치 (distance / totalLength)
  */
 export function pointAtLengthRatioByTableInto(
-  out: XYWritable,
-  polyline: PolylineLike,
+  out: PointWritable,
+  polyline: Polyline,
   cumulativeLengths: readonly number[],
   ratio: number
 ): boolean {
-  const points = readPolylinePoints(polyline);
+  const points = polyline;
   assertCumulativeLengthsMatch(points, cumulativeLengths, 'pointAtLengthRatioByTableInto');
   if (points.length === 0) return false;
 
   if (points.length === 1) {
-    writeXY(out, readX(points[0]), readY(points[0]));
+    const { x, y } = points[0];
+    out.x = x;
+    out.y = y;
     return true;
   }
 
@@ -45,7 +42,9 @@ export function pointAtLengthRatioByTableInto(
 
   // repeated-point polyline은 sampling 기준 segment가 없으므로 첫 point로 환원한다.
   if (totalLen === 0) {
-    writeXY(out, readX(points[0]), readY(points[0]));
+    const { x, y } = points[0];
+    out.x = x;
+    out.y = y;
     return true;
   }
 

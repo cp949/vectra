@@ -1,5 +1,4 @@
-import { readPolylinePoints } from '../internal/polyline';
-import type { PolylineLike, XYLike, XYObjectWritable, XYTuple } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -19,16 +18,12 @@ import { hypot2 } from '../internal/numeric';
  * @param polyline 샘플링할 polyline
  * @param count 추출할 point 수 (positive integer)
  */
-export function sampleFixedCountInto(
-  outPoints: XYObjectWritable[],
-  polyline: PolylineLike,
-  count: number
-): XYObjectWritable[] {
+export function sampleFixedCountInto(outPoints: PointWritable[], polyline: Polyline, count: number): PointWritable[] {
   if (!Number.isInteger(count) || count <= 0) {
     throw new RangeError('count must be a positive integer');
   }
 
-  const pts = readPolylinePoints(polyline);
+  const pts = polyline;
   const n = pts.length;
 
   // empty 또는 single-point polyline은 segment 없으므로 빈 배열 반환
@@ -38,7 +33,6 @@ export function sampleFixedCountInto(
   }
 
   // 좌표와 누적 길이를 한 번 순회로 만든다. outPoints가 polyline과 같은 배열이어도 안전하도록 clear 전에 모두 읽는다.
-  // 입력 판별은 본문에서 직접 한다. 공유 readX/readY의 인라인 캐시는 라이브러리 전체의 입력 모양을 본다.
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
   // cum[i]는 vertex i까지의 누적 길이다. `polylineTotalLength`와 같은 순서로 더한다(`hypot2`는 pointDist와 같다).
@@ -46,9 +40,7 @@ export function sampleFixedCountInto(
   let acc = 0;
   cum[0] = 0;
   for (let i = 0; i < n; i++) {
-    const p = pts[i];
-    const x = Array.isArray(p) ? (p as XYTuple)[0] : (p as XYLike).x;
-    const y = Array.isArray(p) ? (p as XYTuple)[1] : (p as XYLike).y;
+    const { x, y } = pts[i];
     xs[i] = x;
     ys[i] = y;
     if (i > 0) {

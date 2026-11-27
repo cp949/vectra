@@ -1,6 +1,5 @@
-import { polylineVertexTangentInto, readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import { polylineVertexTangentInto } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 모든 vertex tangent를 계산해 outPoints에 기록한다.
@@ -13,12 +12,12 @@ import type { PolylineLike, XYObjectWritable } from '../types';
  * @param outPoints tangent object를 기록할 writable output array
  * @param polyline tangent를 계산할 polyline
  */
-export function tangentsInto(outPoints: XYObjectWritable[], polyline: PolylineLike): XYObjectWritable[] {
-  const pts = readPolylinePoints(polyline);
+export function tangentsInto(outPoints: PointWritable[], polyline: Polyline): PointWritable[] {
+  const pts = polyline;
   const n = pts.length;
-  const snapshot: XYObjectWritable[] = new Array(n);
+  const snapshot: PointWritable[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    snapshot[i] = { x: readX(pts[i]), y: readY(pts[i]) };
+    snapshot[i] = { x: pts[i].x, y: pts[i].y };
   }
 
   outPoints.length = 0;

@@ -1,5 +1,5 @@
 import { pointDist, readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
+import { readX, readY, writeXY } from '../internal/xy';
 import { pointAtLengthInto } from '../polyline/point-at-length-into';
 import type { PolylineLike, XYWritable } from '../types';
 import type { RandomSource } from './random';
@@ -57,5 +57,16 @@ export const weightedPointOnPolylineInto = <Out extends XYWritable>(
   }
 
   const distance = weightedSegmentOffset(segLengths, weights, rng, 'weightedPointOnPolylineInto');
-  return pointAtLengthInto(out, polyline, distance);
+  // v2-migration: D-7에서 random의 출력 변환을 제거한다.
+  const sample = { x: 0, y: 0 };
+  if (
+    !pointAtLengthInto(
+      sample,
+      points.map((point) => ({ x: readX(point), y: readY(point) })),
+      distance
+    )
+  )
+    return false;
+  writeXY(out, sample.x, sample.y);
+  return true;
 };

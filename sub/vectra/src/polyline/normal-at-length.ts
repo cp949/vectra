@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { normalAtLengthInto } from './normal-at-length-into';
 
 /**
@@ -20,7 +20,7 @@ import { normalAtLengthInto } from './normal-at-length-into';
  * @param polyline normal을 계산할 polyline
  * @param length polyline 시작점부터의 arclength offset
  */
-export function normalAtLength(polyline: PolylineLike, length: number): { x: number; y: number } | undefined {
+export function normalAtLength(polyline: Polyline, length: number): { x: number; y: number } | undefined {
   const out = { x: 0, y: 0 };
   return normalAtLengthInto(out, polyline, length) ? out : undefined;
 }

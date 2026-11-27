@@ -1,4 +1,4 @@
-import type { PolylineLike, XYInput, XYObjectWritable } from '../types';
+import type { Polyline, Point, PointWritable } from '../types/flat-shapes.internal';
 import { closestPointInto } from './closest-point-into';
 
 /**
@@ -6,8 +6,8 @@ import { closestPointInto } from './closest-point-into';
  *
  * clamp/정규화/fallback 정책은 `closestPointInto`와 동일하다.
  */
-export function closestPoint(polyline: PolylineLike, point: XYInput): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function closestPoint(polyline: Polyline, point: Point): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   if (!closestPointInto(seed, polyline, point)) return undefined;
   return seed;
 }

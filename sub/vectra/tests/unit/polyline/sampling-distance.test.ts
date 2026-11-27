@@ -12,7 +12,7 @@ import { pointAtLengthRatio } from '../../../src/polyline/point-at-length-ratio'
 import { pointAtLengthRatioInto } from '../../../src/polyline/point-at-length-ratio-into';
 import { segmentAt } from '../../../src/polyline/segment-at';
 import { segmentAtInto } from '../../../src/polyline/segment-at-into';
-import type { XYObjectWritable, XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 
 import type { Polyline, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
@@ -43,7 +43,7 @@ const L_SHAPE: Polyline = [
 ];
 
 /** 쓰기 여부를 확인할 초기 좌표를 만든다. */
-function makeOut(): XYObjectWritable {
+function makeOut(): PointWritable {
   return { x: 99, y: 99 };
 }
 
@@ -176,7 +176,16 @@ describe('polyline sampling - pointAtLengthRatioInto (normalized length ratio)',
 
   test('점 배열 자체에서 normalized t 위치를 기록한다', () => {
     const out = makeOut();
-    expect(pointAtLengthRatioInto(out, [{ x: 0, y: 0 }, [3, 4]], 0.5)).toBe(true);
+    expect(
+      pointAtLengthRatioInto(
+        out,
+        [
+          { x: 0, y: 0 },
+          { x: 3, y: 4 },
+        ],
+        0.5
+      )
+    ).toBe(true);
     expect(out.x).toBeCloseTo(1.5, 10);
     expect(out.y).toBeCloseTo(2.0, 10);
   });
@@ -226,19 +235,12 @@ describe('polyline sampling - pointAtLengthRatioInto (normalized length ratio)',
 
   test('out이 polyline의 point와 alias되어도 올바르게 기록한다', () => {
     // out이 points[1]과 같은 object일 때 aliasing 안전성 검증
-    const pt: XYWritable = { x: 3, y: 4 };
+    const pt: PointWritable = { x: 3, y: 4 };
     const poly: Polyline = [{ x: 0, y: 0 }, pt];
     // t=0.5 → target=2.5, localT=0.5 → (1.5, 2)
     expect(pointAtLengthRatioInto(pt, poly, 0.5)).toBe(true);
     expect(pt.x).toBeCloseTo(1.5, 10);
     expect(pt.y).toBeCloseTo(2.0, 10);
-  });
-
-  test('tuple out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(pointAtLengthRatioInto(out, TWO_PT, 0.5)).toBe(true);
-    expect(out[0]).toBeCloseTo(1.5, 10);
-    expect(out[1]).toBeCloseTo(2.0, 10);
   });
 });
 
@@ -286,7 +288,16 @@ describe('polyline sampling - pointAtLengthInto (length offset)', () => {
 
   test('점 배열 자체에서 length offset 위치를 기록한다', () => {
     const out = makeOut();
-    expect(pointAtLengthInto(out, [{ x: 0, y: 0 }, [3, 4]], 2.5)).toBe(true);
+    expect(
+      pointAtLengthInto(
+        out,
+        [
+          { x: 0, y: 0 },
+          { x: 3, y: 4 },
+        ],
+        2.5
+      )
+    ).toBe(true);
     expect(out.x).toBeCloseTo(1.5, 10);
     expect(out.y).toBeCloseTo(2.0, 10);
   });
@@ -333,13 +344,6 @@ describe('polyline sampling - pointAtLengthInto (length offset)', () => {
     expect(pointAtLengthInto(out, poly, 2.5)).toBe(true);
     expect(out.x).toBeCloseTo(1.5, 10);
     expect(out.y).toBeCloseTo(2.0, 10);
-  });
-
-  test('tuple out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(pointAtLengthInto(out, TWO_PT, 2.5)).toBe(true);
-    expect(out[0]).toBeCloseTo(1.5, 10);
-    expect(out[1]).toBeCloseTo(2.0, 10);
   });
 });
 
@@ -417,7 +421,7 @@ describe('polyline distance - closestPointInto', () => {
 
   test('input point와 out이 alias되어도 올바르게 기록한다', () => {
     // out과 query가 같은 object일 때: qx,qy를 먼저 읽으므로 안전해야 한다
-    const query: XYWritable = { x: 0, y: 4 };
+    const query: PointWritable = { x: 0, y: 4 };
     // TWO_PT closest to (0,4): t=0.64 → (1.92, 2.56)
     expect(closestPointInto(query, TWO_PT, query)).toBe(true);
     expect(query.x).toBeCloseTo(1.92, 10);
@@ -439,25 +443,20 @@ describe('polyline distance - closestPointInto', () => {
     expect(out.y).toBeCloseTo(1.44, 10);
   });
 
-  test('tuple point input으로 closest를 기록한다', () => {
-    const out = makeOut();
-    expect(closestPointInto(out, TWO_PT, [0, 4])).toBe(true);
-    expect(out.x).toBeCloseTo(1.92, 10);
-    expect(out.y).toBeCloseTo(2.56, 10);
-  });
-
   test('점 배열 자체에서 closest point를 기록한다', () => {
     const out = makeOut();
-    expect(closestPointInto(out, [{ x: 0, y: 0 }, [3, 4]], { x: 0, y: 4 })).toBe(true);
+    expect(
+      closestPointInto(
+        out,
+        [
+          { x: 0, y: 0 },
+          { x: 3, y: 4 },
+        ],
+        { x: 0, y: 4 }
+      )
+    ).toBe(true);
     expect(out.x).toBeCloseTo(1.92, 10);
     expect(out.y).toBeCloseTo(2.56, 10);
-  });
-
-  test('tuple out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(closestPointInto(out, TWO_PT, { x: 0, y: 4 })).toBe(true);
-    expect(out[0]).toBeCloseTo(1.92, 10);
-    expect(out[1]).toBeCloseTo(2.56, 10);
   });
 });
 
@@ -505,7 +504,7 @@ describe('polyline distance - distanceToPoint', () => {
       { x: 4, y: 0 },
       { x: 4, y: 4 },
     ];
-    const closestOut: XYWritable = { x: 0, y: 0 };
+    const closestOut: PointWritable = { x: 0, y: 0 };
     closestPointInto(closestOut, poly, { x: 2, y: 2 });
     const dx = closestOut.x - 2,
       dy = closestOut.y - 2;
@@ -513,11 +512,15 @@ describe('polyline distance - distanceToPoint', () => {
     expect(distanceToPoint(poly, { x: 2, y: 2 })).toBeCloseTo(expectedDist, 10);
   });
 
-  test('tuple point input으로 거리를 계산한다', () => {
-    expect(distanceToPoint(TWO_PT, [0, 4])).toBeCloseTo(2.4, 10);
-  });
-
   test('점 배열 자체에서 거리를 계산한다', () => {
-    expect(distanceToPoint([{ x: 0, y: 0 }, [3, 4]], { x: 0, y: 4 })).toBeCloseTo(2.4, 10);
+    expect(
+      distanceToPoint(
+        [
+          { x: 0, y: 0 },
+          { x: 3, y: 4 },
+        ],
+        { x: 0, y: 4 }
+      )
+    ).toBeCloseTo(2.4, 10);
   });
 });

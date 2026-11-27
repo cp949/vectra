@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtLengthByTableInto } from './point-at-length-by-table-into';
 
 /**
@@ -19,11 +19,11 @@ import { pointAtLengthByTableInto } from './point-at-length-by-table-into';
  * @param length polyline 시작점부터의 arclength offset
  */
 export function pointAtLengthByTable(
-  polyline: PolylineLike,
+  polyline: Polyline,
   cumulativeLengths: readonly number[],
   length: number
-): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   if (!pointAtLengthByTableInto(seed, polyline, cumulativeLengths, length)) return undefined;
   return seed;
 }

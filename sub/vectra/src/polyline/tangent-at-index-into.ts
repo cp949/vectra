@@ -1,5 +1,5 @@
-import { polylineVertexTangentInto, readPolylinePoints } from '../internal/polyline';
-import type { PolylineLike, XYWritable } from '../types';
+import { polylineVertexTangentInto } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 index번째 vertex에서 tangent를 계산해 out에 기록하고 true를 반환한다.
@@ -11,14 +11,14 @@ import type { PolylineLike, XYWritable } from '../types';
  * index가 범위 밖이거나 비정수이면 false를 반환하고 out을 수정하지 않는다.
  * empty / single-point polyline은 항상 false를 반환한다.
  *
- * @param out tangent를 기록할 writable output
+ * @param out tangent를 기록할 writable output (`x`, `y`)
  * @param polyline tangent를 계산할 polyline
  * @param index vertex index (0-based integer)
  */
-export function tangentAtIndexInto<Out extends XYWritable>(out: Out, polyline: PolylineLike, index: number): boolean {
+export function tangentAtIndexInto(out: PointWritable, polyline: Polyline, index: number): boolean {
   if (!Number.isInteger(index)) return false;
 
-  const pts = readPolylinePoints(polyline);
+  const pts = polyline;
   const n = pts.length;
 
   if (index < 0 || index >= n) return false;

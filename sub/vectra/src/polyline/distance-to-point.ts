@@ -1,6 +1,5 @@
-import { readPolylinePoints, segDistSq } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYInput } from '../types';
+import { segDistSq } from '../internal/polyline';
+import type { Polyline, Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -13,26 +12,26 @@ import { hypot2 } from '../internal/numeric';
  * @param polyline 거리를 측정할 polyline
  * @param point polyline까지의 거리를 측정할 point
  */
-export function distanceToPoint(polyline: PolylineLike, point: XYInput): number {
-  const points = readPolylinePoints(polyline);
+export function distanceToPoint(polyline: Polyline, point: Point): number {
+  const points = polyline;
   if (points.length === 0) return Infinity;
 
-  const qx = readX(point);
-  const qy = readY(point);
+  const qx = point.x;
+  const qy = point.y;
 
   if (points.length === 1) {
-    const dx = readX(points[0]) - qx;
-    const dy = readY(points[0]) - qy;
+    const dx = points[0].x - qx;
+    const dy = points[0].y - qy;
     return hypot2(dx, dy);
   }
 
   let bestDistSq = Infinity;
 
   for (let i = 1; i < points.length; i++) {
-    const ax = readX(points[i - 1]);
-    const ay = readY(points[i - 1]);
-    const bx = readX(points[i]);
-    const by = readY(points[i]);
+    const ax = points[i - 1].x;
+    const ay = points[i - 1].y;
+    const bx = points[i].x;
+    const by = points[i].y;
     const dSq = segDistSq(ax, ay, bx, by, qx, qy);
     if (dSq < bestDistSq) bestDistSq = dSq;
   }

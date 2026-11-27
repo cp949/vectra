@@ -16,7 +16,6 @@ import type {
   RectAlignAnchor,
   RectAlignOptions,
   XYObjectWritable,
-  XYWritable,
 } from '../../src/types';
 
 function expectAssignable<T>(value: T): T {
@@ -58,11 +57,5 @@ describe('types entry geometry type exposure 계약', () => {
       normal: { x: 0, y: 1 },
     });
     expectAssignable<PolylineFrameWritable>(objectFrame);
-
-    expectAssignable<PolylineFrameWritable<XYWritable>>({
-      point: [0, 0],
-      tangent: { x: 1, y: 0 },
-      normal: [0, 1],
-    });
   });
 });

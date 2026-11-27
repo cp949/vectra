@@ -1,5 +1,5 @@
-import { polylineTotalLength, readPolylinePoints } from '../internal/polyline';
-import type { PolylineLike } from '../types';
+import { polylineTotalLength } from '../internal/polyline';
+import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 전체 arclength를 반환한다.
@@ -8,6 +8,6 @@ import type { PolylineLike } from '../types';
  *
  * @param polyline 길이를 측정할 polyline
  */
-export function length(polyline: PolylineLike): number {
-  return polylineTotalLength(readPolylinePoints(polyline));
+export function length(polyline: Polyline): number {
+  return polylineTotalLength(polyline);
 }

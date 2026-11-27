@@ -1,6 +1,5 @@
-import { pointDist, readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import { pointDist } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 arc-length 구간 `[startLength, endLength]`을 추출해 outPoints에 새 point object로 기록한다.
@@ -29,19 +28,19 @@ import type { PolylineLike, XYObjectWritable } from '../types';
  * @param endLength 구간 끝 arc-length offset
  */
 export function sliceByLengthInto(
-  outPoints: XYObjectWritable[],
-  polyline: PolylineLike,
+  outPoints: PointWritable[],
+  polyline: Polyline,
   startLength: number,
   endLength: number
-): XYObjectWritable[] {
-  const pts = readPolylinePoints(polyline);
+): PointWritable[] {
+  const pts = polyline;
   const n = pts.length;
   // input/output array aliasing에 대비해 clear 전에 좌표를 snapshot한다.
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
+    xs[i] = pts[i].x;
+    ys[i] = pts[i].y;
   }
 
   outPoints.length = 0;
@@ -96,7 +95,7 @@ export function sliceByLengthInto(
  * 호출자가 n >= 2, total length > 0, target ∈ [0, totalLength] (또는 NaN)를 보장한다.
  * 마지막 segment까지 누적 길이가 target에 도달하지 못해도 마지막 segment 위에서 보간한다.
  */
-function sampleAt(xs: number[], ys: number[], cum: number[], target: number): XYObjectWritable {
+function sampleAt(xs: number[], ys: number[], cum: number[], target: number): PointWritable {
   const n = xs.length;
   for (let i = 1; i < n; i++) {
     const segLen = cum[i] - cum[i - 1];

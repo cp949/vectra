@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { cumulativeLengthsInto } from './cumulative-lengths-into';
 
 /**
@@ -13,6 +13,6 @@ import { cumulativeLengthsInto } from './cumulative-lengths-into';
  *
  * @param polyline 누적 arc-length를 계산할 polyline
  */
-export function cumulativeLengths(polyline: PolylineLike): number[] {
+export function cumulativeLengths(polyline: Polyline): number[] {
   return cumulativeLengthsInto([], polyline);
 }

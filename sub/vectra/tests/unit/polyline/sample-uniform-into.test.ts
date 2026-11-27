@@ -6,39 +6,34 @@
 
 import { describe, expect, test } from 'vitest';
 import { sampleUniformInto } from '../../../src/polyline/sample-uniform-into';
-import type { PolylineLike, XYObjectWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공용 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolylineLike = { points: [] };
-const SINGLE: PolylineLike = { points: [{ x: 1, y: 2 }] };
-const REPEATED: PolylineLike = {
-  points: [
-    { x: 3, y: 5 },
-    { x: 3, y: 5 },
-  ],
-};
+const EMPTY: Polyline = [];
+const SINGLE: Polyline = [{ x: 1, y: 2 }];
+const REPEATED: Polyline = [
+  { x: 3, y: 5 },
+  { x: 3, y: 5 },
+];
 
 /** x축으로 10 단위 직선 polyline */
-const HLINE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 10, y: 0 },
-  ],
-};
+const HLINE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 10, y: 0 },
+];
 
 /** 꺾인 L자 polyline: (0,0)→(3,0)→(3,4), 총 arc-length 7 */
-const L_SHAPE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 0 },
-    { x: 3, y: 4 },
-  ],
-};
+const L_SHAPE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 0 },
+  { x: 3, y: 4 },
+];
 
-function makeOut(): XYObjectWritable[] {
+/** 기록 결과를 확인할 초기 출력을 만든다. */
+function makeOut(): PointWritable[] {
   return [];
 }
 
@@ -67,14 +62,14 @@ describe('polyline sampling - sampleUniformInto 입력 검증', () => {
 
 describe('polyline sampling - sampleUniformInto edge-case', () => {
   test('empty polyline은 outPoints를 비우고 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     const result = sampleUniformInto(out, EMPTY, 1);
     expect(result).toBe(out);
     expect(out).toHaveLength(0);
   });
 
   test('single-point polyline은 outPoints를 비우고 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     sampleUniformInto(out, SINGLE, 1);
     expect(out).toHaveLength(0);
   });
@@ -181,7 +176,7 @@ describe('polyline sampling - sampleUniformInto 꺾인 polyline', () => {
 
 describe('polyline sampling - sampleUniformInto outPoints clear', () => {
   test('기존 outPoints 내용이 clear된다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 99, y: 99 },
       { x: 88, y: 88 },
       { x: 77, y: 77 },

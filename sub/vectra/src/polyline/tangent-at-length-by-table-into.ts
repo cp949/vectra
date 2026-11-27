@@ -1,9 +1,5 @@
-import {
-  assertCumulativeLengthsMatch,
-  polylineSegmentTangentAtLengthByTableInto,
-  readPolylinePoints,
-} from '../internal/polyline';
-import type { PolylineLike, XYWritable } from '../types';
+import { assertCumulativeLengthsMatch, polylineSegmentTangentAtLengthByTableInto } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * 미리 만든 누적 길이 표로 polyline의 arclength offset 위치가 속한 segment의 단위 tangent를 out에 기록한다.
@@ -27,18 +23,18 @@ import type { PolylineLike, XYWritable } from '../types';
  *
  * out이 polyline point와 alias되어도 안전하다. 기존 polyline domain과 맞춰 non-finite 좌표 validation은 수행하지 않는다.
  *
- * @param out tangent를 기록할 writable output
+ * @param out tangent를 기록할 writable output (`x`, `y`)
  * @param polyline tangent를 계산할 polyline
  * @param cumulativeLengths polyline의 누적 길이 표. 개수는 vertex 개수와 같아야 한다.
  * @param length polyline 시작점부터의 arclength offset
  */
 export function tangentAtLengthByTableInto(
-  out: XYWritable,
-  polyline: PolylineLike,
+  out: PointWritable,
+  polyline: Polyline,
   cumulativeLengths: readonly number[],
   length: number
 ): boolean {
-  const points = readPolylinePoints(polyline);
+  const points = polyline;
   assertCumulativeLengthsMatch(points, cumulativeLengths, 'tangentAtLengthByTableInto');
   return polylineSegmentTangentAtLengthByTableInto(out, points, cumulativeLengths, length);
 }

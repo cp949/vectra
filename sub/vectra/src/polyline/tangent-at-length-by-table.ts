@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { tangentAtLengthByTableInto } from './tangent-at-length-by-table-into';
 
 /**
@@ -26,10 +26,10 @@ import { tangentAtLengthByTableInto } from './tangent-at-length-by-table-into';
  * @param length polyline 시작점부터의 arclength offset
  */
 export function tangentAtLengthByTable(
-  polyline: PolylineLike,
+  polyline: Polyline,
   cumulativeLengths: readonly number[],
   length: number
-): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return tangentAtLengthByTableInto(out, polyline, cumulativeLengths, length) ? out : undefined;
 }

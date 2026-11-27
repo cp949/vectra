@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { sampleFixedCountInto } from './sample-fixed-count-into';
 
 /**
@@ -14,6 +14,6 @@ import { sampleFixedCountInto } from './sample-fixed-count-into';
  * @param polyline 샘플링할 polyline
  * @param count 추출할 point 수 (positive integer)
  */
-export function sampleFixedCount(polyline: PolylineLike, count: number): XYObjectWritable[] {
+export function sampleFixedCount(polyline: Polyline, count: number): PointWritable[] {
   return sampleFixedCountInto([], polyline, count);
 }

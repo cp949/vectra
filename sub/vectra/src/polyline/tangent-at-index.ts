@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { tangentAtIndexInto } from './tangent-at-index-into';
 
 /**
@@ -13,7 +13,7 @@ import { tangentAtIndexInto } from './tangent-at-index-into';
  * @param polyline tangent를 계산할 polyline
  * @param index vertex index (0-based integer)
  */
-export function tangentAtIndex(polyline: PolylineLike, index: number): { x: number; y: number } | undefined {
+export function tangentAtIndex(polyline: Polyline, index: number): { x: number; y: number } | undefined {
   const out = { x: 0, y: 0 };
   return tangentAtIndexInto(out, polyline, index) ? out : undefined;
 }

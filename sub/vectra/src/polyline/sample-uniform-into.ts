@@ -1,6 +1,5 @@
-import { pointDist, readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import { pointDist } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline을 arc-length 기준 균등 간격으로 샘플링해 outPoints에 기록한다.
@@ -21,16 +20,16 @@ import type { PolylineLike, XYObjectWritable } from '../types';
  * @param options includeLast — false이면 마지막 vertex를 강제 포함하지 않는다
  */
 export function sampleUniformInto(
-  outPoints: XYObjectWritable[],
-  polyline: PolylineLike,
+  outPoints: PointWritable[],
+  polyline: Polyline,
   spacing: number,
-  options?: { includeLast?: boolean }
-): XYObjectWritable[] {
+  options?: { includeLast: boolean }
+): PointWritable[] {
   if (!Number.isFinite(spacing) || spacing <= 0) {
     throw new RangeError('spacing must be a finite positive number');
   }
 
-  const pts = readPolylinePoints(polyline);
+  const pts = polyline;
   const n = pts.length;
 
   // empty 또는 single-point polyline은 segment 없으므로 빈 배열 반환
@@ -46,8 +45,8 @@ export function sampleUniformInto(
   const ys: number[] = new Array(n);
   const segLens: number[] = new Array(n - 1);
   for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
+    xs[i] = pts[i].x;
+    ys[i] = pts[i].y;
   }
   for (let i = 0; i < n - 1; i++) {
     segLens[i] = pointDist(xs[i], ys[i], xs[i + 1], ys[i + 1]);

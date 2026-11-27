@@ -1,5 +1,5 @@
-import { polylineSegmentTangentAtLengthInto, readPolylinePoints } from '../internal/polyline';
-import type { PolylineLike, XYWritable } from '../types';
+import { polylineSegmentTangentAtLengthInto } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 arclength offset 위치가 속한 segment의 단위 tangent를 out에 기록한다.
@@ -17,10 +17,10 @@ import type { PolylineLike, XYWritable } from '../types';
  * out이 polyline point와 alias되어도 안전하다. segment 좌표를 local로 먼저 읽은 뒤 out에 기록한다.
  * 기존 polyline domain과 맞춰 non-finite 좌표 validation은 수행하지 않는다.
  *
- * @param out tangent를 기록할 writable output
+ * @param out tangent를 기록할 writable output (`x`, `y`)
  * @param polyline tangent를 계산할 polyline
  * @param length polyline 시작점부터의 arclength offset
  */
-export function tangentAtLengthInto(out: XYWritable, polyline: PolylineLike, length: number): boolean {
-  return polylineSegmentTangentAtLengthInto(out, readPolylinePoints(polyline), length);
+export function tangentAtLengthInto(out: PointWritable, polyline: Polyline, length: number): boolean {
+  return polylineSegmentTangentAtLengthInto(out, polyline, length);
 }

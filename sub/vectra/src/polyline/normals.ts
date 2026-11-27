@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { normalsInto } from './normals-into';
 
 /**
@@ -13,6 +13,6 @@ import { normalsInto } from './normals-into';
  *
  * @param polyline normal을 계산할 polyline
  */
-export function normals(polyline: PolylineLike): XYObjectWritable[] {
+export function normals(polyline: Polyline): PointWritable[] {
   return normalsInto([], polyline);
 }

@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { sampleUniformInto } from './sample-uniform-into';
 
 /**
@@ -16,9 +16,9 @@ import { sampleUniformInto } from './sample-uniform-into';
  * @param options includeLast — false이면 마지막 vertex를 강제 포함하지 않는다
  */
 export function sampleUniform(
-  polyline: PolylineLike,
+  polyline: Polyline,
   spacing: number,
-  options?: { includeLast?: boolean }
-): XYObjectWritable[] {
+  options?: { includeLast: boolean }
+): PointWritable[] {
   return sampleUniformInto([], polyline, spacing, options);
 }

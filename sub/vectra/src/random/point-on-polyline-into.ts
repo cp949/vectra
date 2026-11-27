@@ -1,3 +1,5 @@
+import { readPolylinePoints } from '../internal/polyline';
+import { readX, readY, writeXY } from '../internal/xy';
 import { length } from '../polyline/length';
 import { pointAtLengthInto } from '../polyline/point-at-length-into';
 import type { PolylineLike, XYWritable } from '../types';
@@ -30,12 +32,18 @@ export const pointOnPolylineInto = <Out extends XYWritable>(
   polyline: PolylineLike,
   rng?: RandomSource
 ): boolean => {
-  const totalLength = length(polyline);
+  // v2-migration: D-7에서 random의 polyline 입력을 전환하면 변환을 제거한다.
+  const readPoints = () => readPolylinePoints(polyline).map((point) => ({ x: readX(point), y: readY(point) }));
+  const totalLength = length(readPoints());
 
   if (!Number.isFinite(totalLength) || totalLength <= 0) {
     return false;
   }
 
   const distance = random(rng) * totalLength;
-  return pointAtLengthInto(out, polyline, distance);
+  // v2-migration: D-7에서 random의 출력 변환을 제거한다.
+  const sample = { x: 0, y: 0 };
+  if (!pointAtLengthInto(sample, readPoints(), distance)) return false;
+  writeXY(out, sample.x, sample.y);
+  return true;
 };

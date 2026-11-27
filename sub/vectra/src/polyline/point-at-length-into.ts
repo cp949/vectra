@@ -1,6 +1,5 @@
-import { polylineSampleAtLengthInto, polylineTotalLength, readPolylinePoints } from '../internal/polyline';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { PolylineLike, XYWritable } from '../types';
+import { polylineSampleAtLengthInto, polylineTotalLength } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 arclength offset 위치에 해당하는 point를 out에 기록한다.
@@ -9,16 +8,18 @@ import type { PolylineLike, XYWritable } from '../types';
  * single-point polyline 또는 total length가 0인 repeated-point polyline은 첫 point를 기록한다.
  * out이 polyline point와 alias되어도 안전하다.
  *
- * @param out point를 기록할 writable output
+ * @param out point를 기록할 writable output (`x`, `y`)
  * @param polyline sampling할 polyline
  * @param length polyline 시작점부터의 arclength offset
  */
-export function pointAtLengthInto(out: XYWritable, polyline: PolylineLike, length: number): boolean {
-  const points = readPolylinePoints(polyline);
+export function pointAtLengthInto(out: PointWritable, polyline: Polyline, length: number): boolean {
+  const points = polyline;
   if (points.length === 0) return false;
 
   if (points.length === 1) {
-    writeXY(out, readX(points[0]), readY(points[0]));
+    const { x, y } = points[0];
+    out.x = x;
+    out.y = y;
     return true;
   }
 
@@ -26,7 +27,9 @@ export function pointAtLengthInto(out: XYWritable, polyline: PolylineLike, lengt
 
   // repeated-point polyline은 sampling 기준 segment가 없으므로 첫 point로 환원한다.
   if (totalLen === 0) {
-    writeXY(out, readX(points[0]), readY(points[0]));
+    const { x, y } = points[0];
+    out.x = x;
+    out.y = y;
     return true;
   }
 

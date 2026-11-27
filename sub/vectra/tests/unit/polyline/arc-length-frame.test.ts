@@ -16,58 +16,49 @@ import { normals } from '../../../src/polyline/normals';
 import { normalsInto } from '../../../src/polyline/normals-into';
 import { segmentLengths } from '../../../src/polyline/segment-lengths';
 import { segmentLengthsInto } from '../../../src/polyline/segment-lengths-into';
-import type { PolylineFrameWritable, PolylineLike, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { PolylineFrameWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공용 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolylineLike = { points: [] };
-const SINGLE: PolylineLike = { points: [{ x: 1, y: 2 }] };
+const EMPTY: Polyline = [];
+const SINGLE: Polyline = [{ x: 1, y: 2 }];
 
 /** (0,0)→(3,4), 길이=5 */
-const TWO_PT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-  ],
-};
+const TWO_PT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 4 },
+];
 
 /** L자: (0,0)→(1,0)→(1,1), 각 segment 길이=1, 전체=2 */
-const L_SHAPE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-  ],
-};
+const L_SHAPE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+];
 
 /** 중간에 zero-length segment: (0,0)→(1,0)→(1,0)→(1,1), 전체=2 */
-const ZERO_MID: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-  ],
-};
+const ZERO_MID: Polyline = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+];
 
 /** total length 0 repeated-point: (3,5)→(3,5) */
-const REPEATED: PolylineLike = {
-  points: [
-    { x: 3, y: 5 },
-    { x: 3, y: 5 },
-  ],
-};
+const REPEATED: Polyline = [
+  { x: 3, y: 5 },
+  { x: 3, y: 5 },
+];
 
 /** total length가 NaN이 되는 polyline: (0,0)→(1,0)→(NaN,1) */
-const NAN_TOTAL: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: Number.NaN, y: 1 },
-  ],
-};
+const NAN_TOTAL: Polyline = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: Number.NaN, y: 1 },
+];
 
 // ═════════════════════════════════════════════════════════════════════════════
 // TASK-01 length tables
@@ -101,36 +92,22 @@ describe('polyline segmentLengthsInto', () => {
     expect(segmentLengthsInto(out, ZERO_MID)).toEqual([1, 0, 1]);
   });
 
-  test('tuple point input을 지원한다', () => {
-    const out: number[] = [];
-    expect(
-      segmentLengthsInto(out, [
-        [0, 0],
-        [3, 4],
-      ])
-    ).toEqual([5]);
-  });
-
   test('Infinity 좌표는 finite 검증 없이 그대로 전파한다', () => {
     const out: number[] = [];
-    const result = segmentLengthsInto(out, {
-      points: [
-        { x: 0, y: 0 },
-        { x: Number.POSITIVE_INFINITY, y: 0 },
-      ],
-    });
+    const result = segmentLengthsInto(out, [
+      { x: 0, y: 0 },
+      { x: Number.POSITIVE_INFINITY, y: 0 },
+    ]);
     expect(result).toHaveLength(1);
     expect(result[0]).toBe(Number.POSITIVE_INFINITY);
   });
 
   test('NaN 좌표는 finite 검증 없이 그대로 전파한다', () => {
     const out: number[] = [];
-    const result = segmentLengthsInto(out, {
-      points: [
-        { x: 0, y: 0 },
-        { x: Number.NaN, y: 0 },
-      ],
-    });
+    const result = segmentLengthsInto(out, [
+      { x: 0, y: 0 },
+      { x: Number.NaN, y: 0 },
+    ]);
     expect(result).toHaveLength(1);
     expect(Number.isNaN(result[0])).toBe(true);
   });
@@ -180,24 +157,20 @@ describe('polyline cumulativeLengthsInto', () => {
 
   test('Infinity 좌표는 finite 검증 없이 누적에 그대로 전파한다', () => {
     const out: number[] = [];
-    const result = cumulativeLengthsInto(out, {
-      points: [
-        { x: 0, y: 0 },
-        { x: Number.POSITIVE_INFINITY, y: 0 },
-      ],
-    });
+    const result = cumulativeLengthsInto(out, [
+      { x: 0, y: 0 },
+      { x: Number.POSITIVE_INFINITY, y: 0 },
+    ]);
     expect(result[0]).toBe(0);
     expect(result[1]).toBe(Number.POSITIVE_INFINITY);
   });
 
   test('NaN 좌표는 finite 검증 없이 누적에 그대로 전파한다', () => {
     const out: number[] = [];
-    const result = cumulativeLengthsInto(out, {
-      points: [
-        { x: 0, y: 0 },
-        { x: Number.NaN, y: 0 },
-      ],
-    });
+    const result = cumulativeLengthsInto(out, [
+      { x: 0, y: 0 },
+      { x: Number.NaN, y: 0 },
+    ]);
     expect(result[0]).toBe(0);
     expect(Number.isNaN(result[1])).toBe(true);
   });
@@ -222,10 +195,12 @@ describe('polyline cumulativeLengths companion', () => {
 // TASK-02 arc-length normal / frame
 // ═════════════════════════════════════════════════════════════════════════════
 
-function makeOut(): XYObjectWritable {
+/** 기록 결과를 확인할 초기 출력을 만든다. */
+function makeOut(): PointWritable {
   return { x: 99, y: 99 };
 }
 
+/** 프레임의 초기 출력을 만든다. */
 function makeFrame(): PolylineFrameWritable {
   return {
     point: { x: 99, y: 99 },
@@ -322,19 +297,12 @@ describe('polyline normalAtLengthInto', () => {
   });
 
   test('out이 source point와 alias되어도 정의대로 동작한다', () => {
-    const endpoint: XYWritable = { x: 3, y: 4 };
-    const poly: PolylineLike = { points: [{ x: 0, y: 0 }, endpoint] };
+    const endpoint: PointWritable = { x: 3, y: 4 };
+    const poly: Polyline = [{ x: 0, y: 0 }, endpoint];
     // (0,0)→(3,4) 단위 tangent (0.6, 0.8), left normal (-0.8, 0.6)
     expect(normalAtLengthInto(endpoint, poly, 2.5)).toBe(true);
-    expect((endpoint as XYObjectWritable).x).toBeCloseTo(-0.8, 10);
-    expect((endpoint as XYObjectWritable).y).toBeCloseTo(0.6, 10);
-  });
-
-  test('tuple out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(normalAtLengthInto(out, L_SHAPE, 0.5)).toBe(true);
-    expect(out[0]).toBeCloseTo(0, 10);
-    expect(out[1]).toBeCloseTo(1, 10);
+    expect((endpoint as PointWritable).x).toBeCloseTo(-0.8, 10);
+    expect((endpoint as PointWritable).y).toBeCloseTo(0.6, 10);
   });
 });
 
@@ -357,59 +325,45 @@ describe('polyline frameAtLengthInto', () => {
   test('segment 내부에서 point/tangent/normal을 같은 target 기준으로 기록한다', () => {
     const out = makeFrame();
     expect(frameAtLengthInto(out, L_SHAPE, 0.5)).toBe(true);
-    expect((out.point as XYObjectWritable).x).toBeCloseTo(0.5, 10);
-    expect((out.point as XYObjectWritable).y).toBeCloseTo(0, 10);
-    expect((out.tangent as XYObjectWritable).x).toBeCloseTo(1, 10);
-    expect((out.tangent as XYObjectWritable).y).toBeCloseTo(0, 10);
-    expect((out.normal as XYObjectWritable).x).toBeCloseTo(0, 10);
-    expect((out.normal as XYObjectWritable).y).toBeCloseTo(1, 10);
+    expect((out.point as PointWritable).x).toBeCloseTo(0.5, 10);
+    expect((out.point as PointWritable).y).toBeCloseTo(0, 10);
+    expect((out.tangent as PointWritable).x).toBeCloseTo(1, 10);
+    expect((out.tangent as PointWritable).y).toBeCloseTo(0, 10);
+    expect((out.normal as PointWritable).x).toBeCloseTo(0, 10);
+    expect((out.normal as PointWritable).y).toBeCloseTo(1, 10);
   });
 
   test('boundary에서 point는 boundary point, tangent/normal은 앞쪽 segment 기준이다', () => {
     const out = makeFrame();
     expect(frameAtLengthInto(out, L_SHAPE, 1)).toBe(true);
-    expect((out.point as XYObjectWritable).x).toBeCloseTo(1, 10);
-    expect((out.point as XYObjectWritable).y).toBeCloseTo(0, 10);
-    expect((out.tangent as XYObjectWritable).x).toBeCloseTo(1, 10);
-    expect((out.tangent as XYObjectWritable).y).toBeCloseTo(0, 10);
-    expect((out.normal as XYObjectWritable).x).toBeCloseTo(0, 10);
-    expect((out.normal as XYObjectWritable).y).toBeCloseTo(1, 10);
+    expect((out.point as PointWritable).x).toBeCloseTo(1, 10);
+    expect((out.point as PointWritable).y).toBeCloseTo(0, 10);
+    expect((out.tangent as PointWritable).x).toBeCloseTo(1, 10);
+    expect((out.tangent as PointWritable).y).toBeCloseTo(0, 10);
+    expect((out.normal as PointWritable).x).toBeCloseTo(0, 10);
+    expect((out.normal as PointWritable).y).toBeCloseTo(1, 10);
   });
 
   test('length=-Infinity는 첫 non-zero segment 기준으로 clamp된다', () => {
     const out = makeFrame();
     expect(frameAtLengthInto(out, L_SHAPE, Number.NEGATIVE_INFINITY)).toBe(true);
-    expect((out.point as XYObjectWritable).x).toBeCloseTo(0, 10);
-    expect((out.point as XYObjectWritable).y).toBeCloseTo(0, 10);
-    expect((out.tangent as XYObjectWritable).x).toBeCloseTo(1, 10);
-    expect((out.tangent as XYObjectWritable).y).toBeCloseTo(0, 10);
-    expect((out.normal as XYObjectWritable).x).toBeCloseTo(0, 10);
-    expect((out.normal as XYObjectWritable).y).toBeCloseTo(1, 10);
+    expect((out.point as PointWritable).x).toBeCloseTo(0, 10);
+    expect((out.point as PointWritable).y).toBeCloseTo(0, 10);
+    expect((out.tangent as PointWritable).x).toBeCloseTo(1, 10);
+    expect((out.tangent as PointWritable).y).toBeCloseTo(0, 10);
+    expect((out.normal as PointWritable).x).toBeCloseTo(0, 10);
+    expect((out.normal as PointWritable).y).toBeCloseTo(1, 10);
   });
 
   test('length=Infinity는 마지막 non-zero segment 기준으로 clamp된다', () => {
     const out = makeFrame();
     expect(frameAtLengthInto(out, L_SHAPE, Number.POSITIVE_INFINITY)).toBe(true);
-    expect((out.point as XYObjectWritable).x).toBeCloseTo(1, 10);
-    expect((out.point as XYObjectWritable).y).toBeCloseTo(1, 10);
-    expect((out.tangent as XYObjectWritable).x).toBeCloseTo(0, 10);
-    expect((out.tangent as XYObjectWritable).y).toBeCloseTo(1, 10);
-    expect((out.normal as XYObjectWritable).x).toBeCloseTo(-1, 10);
-    expect((out.normal as XYObjectWritable).y).toBeCloseTo(0, 10);
-  });
-
-  test('nested tuple output을 보존한다', () => {
-    const point: [number, number] = [0, 0];
-    const tangent: [number, number] = [0, 0];
-    const normal: [number, number] = [0, 0];
-    const out: PolylineFrameWritable<XYWritable> = { point, tangent, normal };
-    expect(frameAtLengthInto(out, L_SHAPE, 0.5)).toBe(true);
-    expect(out.point).toBe(point);
-    expect(out.tangent).toBe(tangent);
-    expect(out.normal).toBe(normal);
-    expect(point[0]).toBeCloseTo(0.5, 10);
-    expect(tangent[0]).toBeCloseTo(1, 10);
-    expect(normal[1]).toBeCloseTo(1, 10);
+    expect((out.point as PointWritable).x).toBeCloseTo(1, 10);
+    expect((out.point as PointWritable).y).toBeCloseTo(1, 10);
+    expect((out.tangent as PointWritable).x).toBeCloseTo(0, 10);
+    expect((out.tangent as PointWritable).y).toBeCloseTo(1, 10);
+    expect((out.normal as PointWritable).x).toBeCloseTo(-1, 10);
+    expect((out.normal as PointWritable).y).toBeCloseTo(0, 10);
   });
 
   test('실패 시 point/tangent/normal field를 모두 미수정한다', () => {
@@ -425,7 +379,7 @@ describe('polyline frameAtLengthInto', () => {
   test('length=NaN은 모든 component에 NaN을 기록하고 true를 반환한다', () => {
     const out = makeFrame();
     expect(frameAtLengthInto(out, L_SHAPE, Number.NaN)).toBe(true);
-    for (const field of [out.point, out.tangent, out.normal] as XYObjectWritable[]) {
+    for (const field of [out.point, out.tangent, out.normal] as PointWritable[]) {
       expect(Number.isNaN(field.x)).toBe(true);
       expect(Number.isNaN(field.y)).toBe(true);
     }
@@ -434,25 +388,25 @@ describe('polyline frameAtLengthInto', () => {
   test('total length가 NaN이면 모든 component에 NaN을 기록하고 true를 반환한다', () => {
     const out = makeFrame();
     expect(frameAtLengthInto(out, NAN_TOTAL, 0.5)).toBe(true);
-    for (const field of [out.point, out.tangent, out.normal] as XYObjectWritable[]) {
+    for (const field of [out.point, out.tangent, out.normal] as PointWritable[]) {
       expect(Number.isNaN(field.x)).toBe(true);
       expect(Number.isNaN(field.y)).toBe(true);
     }
   });
 
   test('out frame field가 source point와 alias되어도 정의대로 동작한다', () => {
-    const start: XYWritable = { x: 0, y: 0 };
-    const end: XYWritable = { x: 3, y: 4 };
-    const poly: PolylineLike = { points: [start, end] };
+    const start: PointWritable = { x: 0, y: 0 };
+    const end: PointWritable = { x: 3, y: 4 };
+    const poly: Polyline = [start, end];
     const out: PolylineFrameWritable = { point: start, tangent: end, normal: { x: 0, y: 0 } };
     // (0,0)→(3,4): target 2.5 point (1.5, 2.0), tangent (0.6, 0.8), normal (-0.8, 0.6)
     expect(frameAtLengthInto(out, poly, 2.5)).toBe(true);
-    expect((out.point as XYObjectWritable).x).toBeCloseTo(1.5, 10);
-    expect((out.point as XYObjectWritable).y).toBeCloseTo(2, 10);
-    expect((out.tangent as XYObjectWritable).x).toBeCloseTo(0.6, 10);
-    expect((out.tangent as XYObjectWritable).y).toBeCloseTo(0.8, 10);
-    expect((out.normal as XYObjectWritable).x).toBeCloseTo(-0.8, 10);
-    expect((out.normal as XYObjectWritable).y).toBeCloseTo(0.6, 10);
+    expect((out.point as PointWritable).x).toBeCloseTo(1.5, 10);
+    expect((out.point as PointWritable).y).toBeCloseTo(2, 10);
+    expect((out.tangent as PointWritable).x).toBeCloseTo(0.6, 10);
+    expect((out.tangent as PointWritable).y).toBeCloseTo(0.8, 10);
+    expect((out.normal as PointWritable).x).toBeCloseTo(-0.8, 10);
+    expect((out.normal as PointWritable).y).toBeCloseTo(0.6, 10);
   });
 });
 
@@ -477,30 +431,28 @@ describe('polyline frameAtLength companion', () => {
 // ═════════════════════════════════════════════════════════════════════════════
 
 /** x축 직선 2점: (0,0)→(2,0) */
-const STRAIGHT_X: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 2, y: 0 },
-  ],
-};
+const STRAIGHT_X: Polyline = [
+  { x: 0, y: 0 },
+  { x: 2, y: 0 },
+];
 
 describe('polyline normalsInto', () => {
   test('empty polyline은 outPoints를 비우고 빈 배열을 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
+    const out: PointWritable[] = [{ x: 9, y: 9 }];
     const result = normalsInto(out, EMPTY);
     expect(result).toBe(out);
     expect(result).toEqual([]);
   });
 
   test('single-point polyline은 { x: 0, y: 0 } 1개를 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     const result = normalsInto(out, SINGLE);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({ x: 0, y: 0 });
   });
 
   test('2점 x축 직선은 vertex 2개와 normal (0, 1)을 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     const result = normalsInto(out, STRAIGHT_X);
     expect(result).toHaveLength(2);
     for (const normal of result) {
@@ -530,13 +482,11 @@ describe('polyline normalsInto', () => {
   });
 
   test('repeated-only polyline은 각 vertex에 { x: 0, y: 0 }을 반환한다', () => {
-    const repeatedTriple: PolylineLike = {
-      points: [
-        { x: 3, y: 5 },
-        { x: 3, y: 5 },
-        { x: 3, y: 5 },
-      ],
-    };
+    const repeatedTriple: Polyline = [
+      { x: 3, y: 5 },
+      { x: 3, y: 5 },
+      { x: 3, y: 5 },
+    ];
     const result = normalsInto([], repeatedTriple);
     expect(result).toEqual([
       { x: 0, y: 0 },
@@ -546,7 +496,7 @@ describe('polyline normalsInto', () => {
   });
 
   test('기존 outPoints 내용을 clear한다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 1, y: 1 },
       { x: 2, y: 2 },
       { x: 3, y: 3 },
@@ -557,11 +507,11 @@ describe('polyline normalsInto', () => {
   });
 
   test('outPoints와 source points array aliasing 호출도 정의대로 동작한다', () => {
-    const shared: XYObjectWritable[] = [
+    const shared: PointWritable[] = [
       { x: 0, y: 0 },
       { x: 2, y: 0 },
     ];
-    const result = normalsInto(shared, { points: shared });
+    const result = normalsInto(shared, shared);
     expect(result).toHaveLength(2);
     for (const normal of result) {
       expect(normal.x).toBeCloseTo(0, 10);

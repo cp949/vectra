@@ -1,6 +1,5 @@
-import type { XYInput, XYWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { pointDist } from './polyline-distance-primitive.internal';
-import { readX, readY, writeXY } from './xy';
 import { hypot2 } from './numeric';
 
 /**
@@ -10,10 +9,10 @@ import { hypot2 } from './numeric';
  *
  * @param points 길이를 합산할 polyline vertex 목록
  */
-export function polylineTotalLength(points: readonly XYInput[]): number {
+export function polylineTotalLength(points: Polyline): number {
   let total = 0;
   for (let i = 1; i < points.length; i++) {
-    total += pointDist(readX(points[i - 1]), readY(points[i - 1]), readX(points[i]), readY(points[i]));
+    total += pointDist(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
   }
   return total;
 }
@@ -32,7 +31,7 @@ export function polylineTotalLength(points: readonly XYInput[]): number {
  * @param points tangent를 계산할 polyline vertex 목록
  * @param index vertex index (0-based integer)
  */
-export function polylineVertexTangentInto(out: XYWritable, points: readonly XYInput[], index: number): boolean {
+export function polylineVertexTangentInto(out: PointWritable, points: Polyline, index: number): boolean {
   const n = points.length;
   if (n < 2) return false;
 
@@ -41,10 +40,10 @@ export function polylineVertexTangentInto(out: XYWritable, points: readonly XYIn
 
   // 이전 segment (index > 0 이면 존재)
   if (index > 0) {
-    const ax = readX(points[index - 1]);
-    const ay = readY(points[index - 1]);
-    const bx = readX(points[index]);
-    const by = readY(points[index]);
+    const ax = points[index - 1].x;
+    const ay = points[index - 1].y;
+    const bx = points[index].x;
+    const by = points[index].y;
     const len = pointDist(ax, ay, bx, by);
     if (len > 0) {
       tx += (bx - ax) / len;
@@ -54,10 +53,10 @@ export function polylineVertexTangentInto(out: XYWritable, points: readonly XYIn
 
   // 다음 segment (index < n-1 이면 존재)
   if (index < n - 1) {
-    const ax = readX(points[index]);
-    const ay = readY(points[index]);
-    const bx = readX(points[index + 1]);
-    const by = readY(points[index + 1]);
+    const ax = points[index].x;
+    const ay = points[index].y;
+    const bx = points[index + 1].x;
+    const by = points[index + 1].y;
     const len = pointDist(ax, ay, bx, by);
     if (len > 0) {
       tx += (bx - ax) / len;
@@ -69,7 +68,8 @@ export function polylineVertexTangentInto(out: XYWritable, points: readonly XYIn
   const mag = hypot2(tx, ty);
   if (mag === 0) return false;
 
-  writeXY(out, tx / mag, ty / mag);
+  out.x = tx / mag;
+  out.y = ty / mag;
   return true;
 }
 
@@ -90,11 +90,7 @@ export function polylineVertexTangentInto(out: XYWritable, points: readonly XYIn
  * @param points tangent를 계산할 polyline vertex 목록
  * @param length polyline 시작점부터의 arclength offset
  */
-export function polylineSegmentTangentAtLengthInto(
-  out: XYWritable,
-  points: readonly XYInput[],
-  length: number
-): boolean {
+export function polylineSegmentTangentAtLengthInto(out: PointWritable, points: Polyline, length: number): boolean {
   const n = points.length;
   if (n < 2) return false;
 
@@ -103,7 +99,8 @@ export function polylineSegmentTangentAtLengthInto(
 
   const target = Math.max(0, Math.min(length, totalLen));
   if (Number.isNaN(target)) {
-    writeXY(out, Number.NaN, Number.NaN);
+    out.x = Number.NaN;
+    out.y = Number.NaN;
     return true;
   }
 
@@ -113,10 +110,10 @@ export function polylineSegmentTangentAtLengthInto(
   let firstLen = 0;
 
   for (let i = 1; i < n; i++) {
-    const ax = readX(points[i - 1]);
-    const ay = readY(points[i - 1]);
-    const bx = readX(points[i]);
-    const by = readY(points[i]);
+    const ax = points[i - 1].x;
+    const ay = points[i - 1].y;
+    const bx = points[i].x;
+    const by = points[i].y;
     const dx = bx - ax;
     const dy = by - ay;
     const segLen = hypot2(dx, dy);
@@ -132,7 +129,8 @@ export function polylineSegmentTangentAtLengthInto(
     // target이 이 segment 구간 (acc, acc+segLen]에 속하면 이 segment 방향을 사용한다.
     // boundary(target === acc+segLen)는 앞쪽 non-zero segment가 선택된다.
     if (target > acc && target <= acc + segLen) {
-      writeXY(out, dx / segLen, dy / segLen);
+      out.x = dx / segLen;
+      out.y = dy / segLen;
       return true;
     }
 
@@ -141,6 +139,7 @@ export function polylineSegmentTangentAtLengthInto(
 
   // 루프가 owner를 못 찾는 경우는 target === 0뿐이다.
   // 이때 첫 non-zero segment 방향을 사용한다. totalLen > 0이므로 firstLen > 0이 보장된다.
-  writeXY(out, firstDx / firstLen, firstDy / firstLen);
+  out.x = firstDx / firstLen;
+  out.y = firstDy / firstLen;
   return true;
 }

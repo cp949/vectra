@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtLengthRatioInto } from './point-at-length-ratio-into';
 
 /**
@@ -12,8 +12,8 @@ import { pointAtLengthRatioInto } from './point-at-length-ratio-into';
  * @param polyline sampling할 polyline
  * @param ratio 전체 길이에 대한 normalized 위치 (distance / totalLength)
  */
-export function pointAtLengthRatio(polyline: PolylineLike, ratio: number): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+export function pointAtLengthRatio(polyline: Polyline, ratio: number): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   if (!pointAtLengthRatioInto(seed, polyline, ratio)) return undefined;
   return seed;
 }

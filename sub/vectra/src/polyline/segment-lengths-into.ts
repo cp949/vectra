@@ -1,6 +1,5 @@
-import { pointDist, readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike } from '../types';
+import { pointDist } from '../internal/polyline';
+import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 인접 point 쌍별 segment 길이를 outLengths에 기록한다.
@@ -15,13 +14,13 @@ import type { PolylineLike } from '../types';
  * @param outLengths segment 길이를 기록할 writable number 배열
  * @param polyline segment 길이를 계산할 polyline
  */
-export function segmentLengthsInto(outLengths: number[], polyline: PolylineLike): number[] {
-  const points = readPolylinePoints(polyline);
+export function segmentLengthsInto(outLengths: number[], polyline: Polyline): number[] {
+  const points = polyline;
   const n = points.length;
 
   outLengths.length = 0;
   for (let i = 1; i < n; i++) {
-    outLengths.push(pointDist(readX(points[i - 1]), readY(points[i - 1]), readX(points[i]), readY(points[i])));
+    outLengths.push(pointDist(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y));
   }
 
   return outLengths;

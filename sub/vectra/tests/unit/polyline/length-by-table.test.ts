@@ -12,7 +12,7 @@
  *    1점, 2점, 객체/튜플 혼합, length 범위 밖 clamp, NaN, 무한대를 함께 비교한다.
  *  - 표 개수가 vertex 개수와 다르면 RangeError를 던지고 out을 수정하지 않는다.
  *  - 표 내용(비단조, NaN)은 검증하지 않으며 throw하지 않는다.
- *  - out 재사용, tuple out, aliasing, companion 반환 형태를 확인한다.
+ *  - out 재사용, aliasing, companion 반환 형태를 확인한다.
  *
  * 성능은 단위 테스트에서 재지 않는다.
  */
@@ -32,17 +32,18 @@ import { tangentAtLengthByTable } from '../../../src/polyline/tangent-at-length-
 import { tangentAtLengthByTableInto } from '../../../src/polyline/tangent-at-length-by-table-into';
 import { tangentAtLengthInto } from '../../../src/polyline/tangent-at-length-into';
 import { createRng } from '../../../src/random/create-rng';
-import type { PolylineFrameWritable, PolylineLike, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { PolylineFrameWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 const TOLERANCE = 1e-12;
 
 /**
  * seed 고정 난수로 만든 point 목록을 반환한다.
- * 좌표는 객체와 튜플을 번갈아 쓰고, 일부 vertex는 직전 vertex를 반복해 zero-length segment를 만든다.
+ * 일부 vertex는 직전 vertex를 반복해 zero-length segment를 만든다.
  */
-function createRandomPoints(seed: string, count: number): PolylineLike {
+function createRandomPoints(seed: string, count: number): Polyline {
   const rng = createRng(seed);
-  const points: Array<{ x: number; y: number } | [number, number]> = [];
+  const points: PointWritable[] = [];
   let x = 0;
   let y = 0;
   for (let i = 0; i < count; i++) {
@@ -51,12 +52,12 @@ function createRandomPoints(seed: string, count: number): PolylineLike {
       x += (rng() - 0.5) * 20;
       y += (rng() - 0.5) * 20;
     }
-    points.push(i % 2 === 0 ? { x, y } : [x, y]);
+    points.push({ x, y });
   }
   return points;
 }
 
-const FIXTURES: ReadonlyArray<readonly [string, PolylineLike]> = [
+const FIXTURES: ReadonlyArray<readonly [string, Polyline]> = [
   ['empty', []],
   ['single', [{ x: 1, y: 2 }]],
   [
@@ -66,14 +67,21 @@ const FIXTURES: ReadonlyArray<readonly [string, PolylineLike]> = [
       { x: 3, y: 4 },
     ],
   ],
-  ['전체 반복점', [{ x: 3, y: 5 }, [3, 5], { x: 3, y: 5 }]],
+  [
+    '전체 반복점',
+    [
+      { x: 3, y: 5 },
+      { x: 3, y: 5 },
+      { x: 3, y: 5 },
+    ],
+  ],
   [
     '시작 zero-length 구간',
     [
-      [0, 0],
-      [0, 0],
-      [2, 0],
-      [2, 2],
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 2, y: 0 },
+      { x: 2, y: 2 },
     ],
   ],
   [
@@ -95,13 +103,17 @@ const FIXTURES: ReadonlyArray<readonly [string, PolylineLike]> = [
     ],
   ],
   [
-    '객체/튜플 혼합 되돌아가는 경로',
-    {
-      points: [{ x: 0, y: 0 }, [5, 0], { x: 5, y: 5 }, [0, 5], { x: 0, y: 0 }],
-    },
+    '되돌아가는 경로',
+    [
+      { x: 0, y: 0 },
+      { x: 5, y: 0 },
+      { x: 5, y: 5 },
+      { x: 0, y: 5 },
+      { x: 0, y: 0 },
+    ],
   ],
   ['난수 60점', createRandomPoints('length-by-table-60', 60)],
-  ['난수 301점', { points: createRandomPoints('length-by-table-301', 301) as ReadonlyArray<XYObjectWritable> }],
+  ['난수 301점', createRandomPoints('length-by-table-301', 301)],
 ];
 
 /**
@@ -139,18 +151,18 @@ function expectNear(actual: number, expected: number): void {
 }
 
 /** 두 {x, y}를 component별로 비교한다. */
-function expectPointNear(actual: XYObjectWritable, expected: XYObjectWritable): void {
+function expectPointNear(actual: PointWritable, expected: PointWritable): void {
   expectNear(actual.x, expected.x);
   expectNear(actual.y, expected.y);
 }
 
 /** out 수정 여부를 확인하기 위한 sentinel 좌표를 만든다. */
-function sentinel(): XYObjectWritable {
+function sentinel(): PointWritable {
   return { x: -777, y: -888 };
 }
 
 /** 표를 만든다. */
-function tableOf(polyline: PolylineLike): number[] {
+function tableOf(polyline: Polyline): number[] {
   return cumulativeLengthsInto([], polyline);
 }
 
@@ -213,7 +225,7 @@ describe('polyline 누적 길이 표 조회 — 기존 함수와의 동등성', 
 
 describe('polyline 누적 길이 표 조회 — 손으로 계산한 값', () => {
   // L자: (0,0)→(1,0)→(1,2). segment 길이 1, 2. 누적 [0, 1, 3].
-  const L: PolylineLike = [
+  const L: Polyline = [
     { x: 0, y: 0 },
     { x: 1, y: 0 },
     { x: 1, y: 2 },
@@ -245,7 +257,7 @@ describe('polyline 누적 길이 표 조회 — 손으로 계산한 값', () => 
 });
 
 describe('polyline 누적 길이 표 조회 — 표 불일치 입력', () => {
-  const polyline: PolylineLike = [
+  const polyline: Polyline = [
     { x: 0, y: 0 },
     { x: 3, y: 4 },
     { x: 3, y: 10 },
@@ -302,7 +314,7 @@ describe('polyline 누적 길이 표 조회 — 표 불일치 입력', () => {
 });
 
 describe('polyline 누적 길이 표 조회 — out 계약', () => {
-  const polyline: PolylineLike = [
+  const polyline: Polyline = [
     { x: 0, y: 0 },
     { x: 4, y: 0 },
     { x: 4, y: 4 },
@@ -310,10 +322,10 @@ describe('polyline 누적 길이 표 조회 — out 계약', () => {
   const table = tableOf(polyline);
 
   test('degenerate polyline에서 false를 반환하고 out을 수정하지 않는다', () => {
-    const single: PolylineLike = [{ x: 1, y: 2 }];
-    const repeated: PolylineLike = [
-      [3, 3],
-      [3, 3],
+    const single: Polyline = [{ x: 1, y: 2 }];
+    const repeated: Polyline = [
+      { x: 3, y: 3 },
+      { x: 3, y: 3 },
     ];
     const frame = { point: sentinel(), tangent: sentinel(), normal: sentinel() };
 
@@ -331,19 +343,13 @@ describe('polyline 누적 길이 표 조회 — out 계약', () => {
     expect(
       pointAtLengthByTable(
         [
-          [3, 3],
-          [3, 3],
+          { x: 3, y: 3 },
+          { x: 3, y: 3 },
         ],
         [0, 0],
         5
       )
     ).toEqual({ x: 3, y: 3 });
-  });
-
-  test('mutable tuple out에 기록한다', () => {
-    const out: XYWritable = [0, 0];
-    expect(pointAtLengthByTableInto(out, polyline, table, 6)).toBe(true);
-    expect(out).toEqual([4, 2]);
   });
 
   test('out이 polyline point와 alias되어도 같은 결과를 낸다', () => {

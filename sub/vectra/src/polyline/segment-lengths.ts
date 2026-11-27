@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { segmentLengthsInto } from './segment-lengths-into';
 
 /**
@@ -12,6 +12,6 @@ import { segmentLengthsInto } from './segment-lengths-into';
  *
  * @param polyline segment 길이를 계산할 polyline
  */
-export function segmentLengths(polyline: PolylineLike): number[] {
+export function segmentLengths(polyline: Polyline): number[] {
   return segmentLengthsInto([], polyline);
 }

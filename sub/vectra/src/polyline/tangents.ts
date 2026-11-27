@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { tangentsInto } from './tangents-into';
 
 /**
@@ -9,6 +9,6 @@ import { tangentsInto } from './tangents-into';
  *
  * @param polyline tangent를 계산할 polyline
  */
-export function tangents(polyline: PolylineLike): XYObjectWritable[] {
+export function tangents(polyline: Polyline): PointWritable[] {
   return tangentsInto([], polyline);
 }

@@ -8,49 +8,42 @@ import { describe, expect, test } from 'vitest';
 import { tangentAtIndex } from '../../../src/polyline/tangent-at-index';
 import { tangentAtIndexInto } from '../../../src/polyline/tangent-at-index-into';
 import { tangentsInto } from '../../../src/polyline/tangents-into';
-import type { PolylineLike, XYObjectWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공용 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolylineLike = { points: [] };
-const SINGLE: PolylineLike = { points: [{ x: 1, y: 2 }] };
-const REPEATED: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 0, y: 0 },
-  ],
-};
+const EMPTY: Polyline = [];
+const SINGLE: Polyline = [{ x: 1, y: 2 }];
+const REPEATED: Polyline = [
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+];
 
 /** x축 방향 2점 polyline */
-const HLINE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-  ],
-};
+const HLINE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 4, y: 0 },
+];
 
 /** 직각 꺾임: (0,0)→(1,0)→(1,1) */
-const CORNER: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-  ],
-};
+const CORNER: Polyline = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+];
 
 /** zero-length edge가 섞인 polyline */
-const ZERO_MID: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 }, // zero-length segment (다음 점과 같음)
-    { x: 1, y: 0 },
-    { x: 2, y: 0 },
-  ],
-};
+const ZERO_MID: Polyline = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 }, // zero-length segment (다음 점과 같음)
+  { x: 1, y: 0 },
+  { x: 2, y: 0 },
+];
 
-function makeOut(): XYObjectWritable {
+/** 기록 결과를 확인할 초기 출력을 만든다. */
+function makeOut(): PointWritable {
   return { x: 99, y: 99 };
 }
 
@@ -173,21 +166,21 @@ describe('polyline tangent - tangentAtIndex companion', () => {
 
 describe('polyline tangent - tangentsInto', () => {
   test('empty polyline은 outPoints를 비우고 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     const result = tangentsInto(out, EMPTY);
     expect(result).toBe(out);
     expect(out).toHaveLength(0);
   });
 
   test('single-point polyline은 {x:0, y:0} 1개를 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     tangentsInto(out, SINGLE);
     expect(out).toHaveLength(1);
     expect(out[0]).toEqual({ x: 0, y: 0 });
   });
 
   test('2점 직선은 vertex 수(2)와 같은 개수를 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     tangentsInto(out, HLINE);
     expect(out).toHaveLength(2);
     // 양쪽 모두 x축 방향
@@ -198,7 +191,7 @@ describe('polyline tangent - tangentsInto', () => {
   });
 
   test('CORNER 3점 polyline은 3개 tangent를 반환하며 index alignment을 유지한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     tangentsInto(out, CORNER);
     expect(out).toHaveLength(3);
     // index 0: x축 방향
@@ -213,7 +206,7 @@ describe('polyline tangent - tangentsInto', () => {
   });
 
   test('tangent를 계산할 수 없는 vertex는 {x:0, y:0}이다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     tangentsInto(out, REPEATED);
     expect(out).toHaveLength(2);
     expect(out[0]).toEqual({ x: 0, y: 0 });
@@ -221,7 +214,7 @@ describe('polyline tangent - tangentsInto', () => {
   });
 
   test('기존 outPoints 내용이 clear된다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 99, y: 99 },
       { x: 88, y: 88 },
       { x: 77, y: 77 },
@@ -231,7 +224,7 @@ describe('polyline tangent - tangentsInto', () => {
   });
 
   test('반환값이 outPoints 자체다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     const result = tangentsInto(out, HLINE);
     expect(result).toBe(out);
   });

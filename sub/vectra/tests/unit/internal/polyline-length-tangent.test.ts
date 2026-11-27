@@ -15,15 +15,16 @@ import type { XYObjectWritable } from '../../../src/types';
 const SENTINEL_X = 9999;
 const SENTINEL_Y = -7777;
 
+/** 분기별 쓰기 결과를 확인할 초기 좌표를 만든다. */
 function makeOut(): XYObjectWritable {
   return { x: SENTINEL_X, y: SENTINEL_Y };
 }
 
 describe('polylineVertexTangentInto', () => {
   const bend = [
-    [0, 0],
-    [4, 0],
-    [4, 4],
+    { x: 0, y: 0 },
+    { x: 4, y: 0 },
+    { x: 4, y: 4 },
   ] as const;
 
   test('시작점(index 0)은 다음 edge 방향만 사용한다', () => {
@@ -47,9 +48,9 @@ describe('polylineVertexTangentInto', () => {
 
   test('zero-length adjacent edge는 무시하고 유효한 edge만 평균한다', () => {
     const repeatedStart = [
-      [0, 0],
-      [0, 0],
-      [4, 0],
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 4, y: 0 },
     ] as const;
     const out = makeOut();
     expect(polylineVertexTangentInto(out, repeatedStart, 1)).toBe(true);
@@ -58,8 +59,8 @@ describe('polylineVertexTangentInto', () => {
 
   test('유효한 인접 edge가 하나도 없으면 false를 반환하고 out을 수정하지 않는다', () => {
     const allZero = [
-      [0, 0],
-      [0, 0],
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
     ] as const;
     const out = makeOut();
     expect(polylineVertexTangentInto(out, allZero, 0)).toBe(false);
@@ -69,10 +70,10 @@ describe('polylineVertexTangentInto', () => {
 
 describe('polylineSegmentTangentAtLengthInto', () => {
   const threeSegments = [
-    [0, 0],
-    [2, 0],
-    [2, 2],
-    [0, 2],
+    { x: 0, y: 0 },
+    { x: 2, y: 0 },
+    { x: 2, y: 2 },
+    { x: 0, y: 2 },
   ] as const;
 
   test('두 번째 이후 segment boundary에 정확히 걸리면 앞쪽(먼저 끝나는) segment 방향을 사용한다', () => {
@@ -102,8 +103,8 @@ describe('polylineSegmentTangentAtLengthInto', () => {
 
   test('total length가 0인 repeated-point points는 false를 반환하고 out을 수정하지 않는다', () => {
     const zeroLength = [
-      [1, 1],
-      [1, 1],
+      { x: 1, y: 1 },
+      { x: 1, y: 1 },
     ] as const;
     const out = makeOut();
     expect(polylineSegmentTangentAtLengthInto(out, zeroLength, 0)).toBe(false);

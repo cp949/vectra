@@ -1,4 +1,5 @@
-import type { XYInput, XYObjectWritable, XYWritable } from './xy.internal';
+import type { PointWritable } from './flat-shapes.internal';
+import type { XYInput, XYObjectWritable } from './xy.internal';
 
 /** canonical object shape로 표현하는 structural polyline input. */
 export interface PolylineObjectLike {
@@ -16,7 +17,7 @@ export interface PolylineWritable<Point extends XYInput = XYObjectWritable> {
 }
 
 /** `frameAtLengthInto` / `frameAtLength`의 arc-length point/tangent/normal frame output. */
-export interface PolylineFrameWritable<Point extends XYWritable = XYObjectWritable> {
+export interface PolylineFrameWritable<Point extends PointWritable = PointWritable> {
   /** arc-length target 위치의 sampled point storage */
   point: Point;
 

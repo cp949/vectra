@@ -1,6 +1,5 @@
-import { pointDist, readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike } from '../types';
+import { pointDist } from '../internal/polyline';
+import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 vertex별 누적 arc-length lookup table을 outLengths에 기록한다.
@@ -16,8 +15,8 @@ import type { PolylineLike } from '../types';
  * @param outLengths 누적 길이를 기록할 writable number 배열
  * @param polyline 누적 arc-length를 계산할 polyline
  */
-export function cumulativeLengthsInto(outLengths: number[], polyline: PolylineLike): number[] {
-  const points = readPolylinePoints(polyline);
+export function cumulativeLengthsInto(outLengths: number[], polyline: Polyline): number[] {
+  const points = polyline;
   const n = points.length;
 
   outLengths.length = 0;
@@ -26,7 +25,7 @@ export function cumulativeLengthsInto(outLengths: number[], polyline: PolylineLi
   let acc = 0;
   outLengths.push(0);
   for (let i = 1; i < n; i++) {
-    acc += pointDist(readX(points[i - 1]), readY(points[i - 1]), readX(points[i]), readY(points[i]));
+    acc += pointDist(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
     outLengths.push(acc);
   }
 

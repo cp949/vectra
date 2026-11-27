@@ -9,58 +9,49 @@ import { describe, expect, test } from 'vitest';
 import { pointAtLength } from '../../../src/polyline/point-at-length';
 import { tangentAtLength } from '../../../src/polyline/tangent-at-length';
 import { tangentAtLengthInto } from '../../../src/polyline/tangent-at-length-into';
-import type { PolylineLike, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공용 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolylineLike = { points: [] };
-const SINGLE: PolylineLike = { points: [{ x: 1, y: 2 }] };
-const REPEATED: PolylineLike = {
-  points: [
-    { x: 3, y: 5 },
-    { x: 3, y: 5 },
-  ],
-};
+const EMPTY: Polyline = [];
+const SINGLE: Polyline = [{ x: 1, y: 2 }];
+const REPEATED: Polyline = [
+  { x: 3, y: 5 },
+  { x: 3, y: 5 },
+];
 
 /** (0,0)→(3,4), 길이=5, 단위 방향 (0.6, 0.8) */
-const TWO_PT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-  ],
-};
+const TWO_PT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 4 },
+];
 
 /** L자: (0,0)→(1,0)→(1,1), 각 segment 길이=1, 전체=2 */
-const L_SHAPE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-  ],
-};
+const L_SHAPE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+];
 
 /** 앞에 zero-length segment: (0,0)→(0,0)→(1,0), 전체=1 */
-const ZERO_FRONT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-  ],
-};
+const ZERO_FRONT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+];
 
 /** 중간에 zero-length segment: (0,0)→(1,0)→(1,0)→(1,1), 전체=2 */
-const ZERO_MID: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-  ],
-};
+const ZERO_MID: Polyline = [
+  { x: 0, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+];
 
-function makeOut(): XYObjectWritable {
+/** 기록 결과를 확인할 초기 출력을 만든다. */
+function makeOut(): PointWritable {
   return { x: 99, y: 99 };
 }
 
@@ -143,13 +134,11 @@ describe('polyline tangentAtLengthInto - segment 내부와 clamp', () => {
 
   test('total length가 NaN이면 NaN tangent를 기록한다', () => {
     const out = makeOut();
-    const poly: PolylineLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: Number.NaN, y: 1 },
-      ],
-    };
+    const poly: Polyline = [
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: Number.NaN, y: 1 },
+    ];
     expect(tangentAtLengthInto(out, poly, 0.5)).toBe(true);
     expect(Number.isNaN(out.x)).toBe(true);
     expect(Number.isNaN(out.y)).toBe(true);
@@ -228,8 +217,8 @@ describe('polyline tangentAtLengthInto - input 형태와 aliasing', () => {
       tangentAtLengthInto(
         out,
         [
-          [0, 0],
-          [3, 4],
+          { x: 0, y: 0 },
+          { x: 3, y: 4 },
         ],
         2.5
       )
@@ -239,26 +228,19 @@ describe('polyline tangentAtLengthInto - input 형태와 aliasing', () => {
   });
 
   test('out이 polyline의 point와 alias되어도 source 좌표를 먼저 읽고 기록한다', () => {
-    const endpoint: XYWritable = { x: 3, y: 4 };
-    const poly: PolylineLike = { points: [{ x: 0, y: 0 }, endpoint] };
+    const endpoint: PointWritable = { x: 3, y: 4 };
+    const poly: Polyline = [{ x: 0, y: 0 }, endpoint];
     expect(tangentAtLengthInto(endpoint, poly, 2.5)).toBe(true);
     expect(endpoint.x).toBeCloseTo(0.6, 10);
     expect(endpoint.y).toBeCloseTo(0.8, 10);
   });
 
   test('out이 polyline의 시작 point와 alias되어도 source 좌표를 먼저 읽고 기록한다', () => {
-    const start: XYWritable = { x: 0, y: 0 };
-    const poly: PolylineLike = { points: [start, { x: 3, y: 4 }] };
+    const start: PointWritable = { x: 0, y: 0 };
+    const poly: Polyline = [start, { x: 3, y: 4 }];
     expect(tangentAtLengthInto(start, poly, 2.5)).toBe(true);
     expect(start.x).toBeCloseTo(0.6, 10);
     expect(start.y).toBeCloseTo(0.8, 10);
-  });
-
-  test('tuple out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(tangentAtLengthInto(out, TWO_PT, 2.5)).toBe(true);
-    expect(out[0]).toBeCloseTo(0.6, 10);
-    expect(out[1]).toBeCloseTo(0.8, 10);
   });
 });
 

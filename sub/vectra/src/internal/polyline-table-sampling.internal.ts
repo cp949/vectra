@@ -1,6 +1,5 @@
-import type { XYInput, XYWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { pointDist } from './polyline-distance-primitive.internal';
-import { readX, readY, writeXY } from './xy';
 import { hypot2 } from './numeric';
 
 /**
@@ -13,7 +12,7 @@ import { hypot2 } from './numeric';
  * @param fnName RangeError 메시지에 쓸 공개 함수 이름
  */
 export function assertCumulativeLengthsMatch(
-  points: readonly XYInput[],
+  points: Polyline,
   cumulativeLengths: readonly number[],
   fnName: string
 ): void {
@@ -59,24 +58,26 @@ export function findSegmentIndexByLength(cumulativeLengths: readonly number[], t
  * @param target polyline 시작점부터의 length offset
  */
 export function polylineSampleAtLengthByTableInto(
-  out: XYWritable,
-  points: readonly XYInput[],
+  out: PointWritable,
+  points: Polyline,
   cumulativeLengths: readonly number[],
   target: number
 ): void {
   const i = findSegmentIndexByLength(cumulativeLengths, target);
-  const ax = readX(points[i - 1]);
-  const ay = readY(points[i - 1]);
-  const bx = readX(points[i]);
-  const by = readY(points[i]);
+  const ax = points[i - 1].x;
+  const ay = points[i - 1].y;
+  const bx = points[i].x;
+  const by = points[i].y;
   // segment 길이는 표 차분이 아니라 좌표에서 다시 계산한다. 순회 구현과 같은 반올림을 유지한다.
   const segLen = pointDist(ax, ay, bx, by);
   if (segLen === 0) {
-    writeXY(out, ax, ay);
+    out.x = ax;
+    out.y = ay;
     return;
   }
   const localT = Math.max(0, Math.min(1, (target - cumulativeLengths[i - 1]) / segLen));
-  writeXY(out, ax + localT * (bx - ax), ay + localT * (by - ay));
+  out.x = ax + localT * (bx - ax);
+  out.y = ay + localT * (by - ay);
 }
 
 /**
@@ -91,8 +92,8 @@ export function polylineSampleAtLengthByTableInto(
  * @param length polyline 시작점부터의 arclength offset
  */
 export function polylineSegmentTangentAtLengthByTableInto(
-  out: XYWritable,
-  points: readonly XYInput[],
+  out: PointWritable,
+  points: Polyline,
   cumulativeLengths: readonly number[],
   length: number
 ): boolean {
@@ -104,16 +105,18 @@ export function polylineSegmentTangentAtLengthByTableInto(
 
   const target = Math.max(0, Math.min(length, totalLen));
   if (Number.isNaN(target)) {
-    writeXY(out, Number.NaN, Number.NaN);
+    out.x = Number.NaN;
+    out.y = Number.NaN;
     return true;
   }
 
   // target이 0이면 누적 길이가 처음 양수가 되는 segment, 양수이면 (acc, acc + segLen]에 target이
   // 속하는 segment다. Number.MIN_VALUE는 0보다 큰 가장 작은 double이므로 `> 0` 판정과 같다.
   const i = findSegmentIndexByLength(cumulativeLengths, target > 0 ? target : Number.MIN_VALUE);
-  const dx = readX(points[i]) - readX(points[i - 1]);
-  const dy = readY(points[i]) - readY(points[i - 1]);
+  const dx = points[i].x - points[i - 1].x;
+  const dy = points[i].y - points[i - 1].y;
   const segLen = hypot2(dx, dy);
-  writeXY(out, dx / segLen, dy / segLen);
+  out.x = dx / segLen;
+  out.y = dy / segLen;
   return true;
 }

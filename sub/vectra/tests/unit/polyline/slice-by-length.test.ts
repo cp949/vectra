@@ -8,19 +8,17 @@
 import { describe, expect, test } from 'vitest';
 import { sliceByLength } from '../../../src/polyline/slice-by-length';
 import { sliceByLengthInto } from '../../../src/polyline/slice-by-length-into';
-import type { PolylineLike, XYObjectWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
-const L_SHAPE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 10, y: 0 },
-    { x: 10, y: 10 },
-  ],
-};
+const L_SHAPE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 10, y: 0 },
+  { x: 10, y: 10 },
+];
 
 describe('polyline sliceByLength - sliceByLengthInto', () => {
   test('받은 outPoints 자체를 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     expect(sliceByLengthInto(out, L_SHAPE, 5, 15)).toBe(out);
   });
 
@@ -88,14 +86,12 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
     // (5,0) vertex가 zero-length segment로 중복돼도 내부 vertex로 그대로 push된다.
     const out = sliceByLengthInto(
       [],
-      {
-        points: [
-          { x: 0, y: 0 },
-          { x: 5, y: 0 },
-          { x: 5, y: 0 },
-          { x: 10, y: 0 },
-        ],
-      },
+      [
+        { x: 0, y: 0 },
+        { x: 5, y: 0 },
+        { x: 5, y: 0 },
+        { x: 10, y: 0 },
+      ],
       2,
       8
     );
@@ -112,13 +108,11 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
     // segLen === 0 분기로 첫 vertex 좌표를 반환한다 (이 분기에 도달하는 유일한 경로).
     const out = sliceByLengthInto(
       [],
-      {
-        points: [
-          { x: 1, y: 2 },
-          { x: 1, y: 2 },
-          { x: 10, y: 2 },
-        ],
-      },
+      [
+        { x: 1, y: 2 },
+        { x: 1, y: 2 },
+        { x: 10, y: 2 },
+      ],
       0,
       0
     );
@@ -129,11 +123,11 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
   });
 
   test('reversed range도 outPoints === source points aliasing에서 안전하다', () => {
-    const points: XYObjectWritable[] = [
+    const points: PointWritable[] = [
       { x: 0, y: 0 },
       { x: 10, y: 0 },
     ];
-    const result = sliceByLengthInto(points, { points }, 8, 2);
+    const result = sliceByLengthInto(points, points, 8, 2);
     expect(result).toBe(points);
     expect(points).toEqual([
       { x: 8, y: 0 },
@@ -142,29 +136,27 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
   });
 
   test('empty polyline은 out을 clear하고 빈 배열을 반환한다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 9, y: 9 },
       { x: 8, y: 8 },
     ];
-    const result = sliceByLengthInto(out, { points: [] }, 0, 1);
+    const result = sliceByLengthInto(out, [], 0, 1);
     expect(result).toBe(out);
     expect(out).toHaveLength(0);
   });
 
   test('single-point polyline은 첫 point 1개를 반환한다', () => {
-    const out = sliceByLengthInto([], { points: [{ x: 3, y: 4 }] }, 0, 10);
+    const out = sliceByLengthInto([], [{ x: 3, y: 4 }], 0, 10);
     expect(out).toEqual([{ x: 3, y: 4 }]);
   });
 
   test('total length 0 repeated-point polyline은 첫 point 1개를 반환한다', () => {
     const out = sliceByLengthInto(
       [],
-      {
-        points: [
-          { x: 2, y: 2 },
-          { x: 2, y: 2 },
-        ],
-      },
+      [
+        { x: 2, y: 2 },
+        { x: 2, y: 2 },
+      ],
       3,
       7
     );
@@ -172,11 +164,11 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
   });
 
   test('outPoints와 source points 배열이 같아도 안전하다', () => {
-    const points: XYObjectWritable[] = [
+    const points: PointWritable[] = [
       { x: 0, y: 0 },
       { x: 10, y: 0 },
     ];
-    const result = sliceByLengthInto(points, { points }, 2, 8);
+    const result = sliceByLengthInto(points, points, 2, 8);
     expect(result).toBe(points);
     expect(points).toEqual([
       { x: 2, y: 0 },
@@ -187,9 +179,11 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
   test('tuple / object mixed point input을 새 object point로 출력한다', () => {
     const out = sliceByLengthInto(
       [],
-      {
-        points: [[0, 0], { x: 10, y: 0 }, [10, 10]],
-      },
+      [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 },
+        { x: 10, y: 10 },
+      ],
       5,
       15
     );
@@ -202,7 +196,7 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
 
   test('output point object는 input point object와 다른 새 object다', () => {
     const pt = { x: 0, y: 0 };
-    const out = sliceByLengthInto([], { points: [pt, { x: 10, y: 0 }] }, 0, 10);
+    const out = sliceByLengthInto([], [pt, { x: 10, y: 0 }], 0, 10);
     expect(out[0]).toEqual({ x: 0, y: 0 });
     expect(out[0]).not.toBe(pt);
   });
@@ -210,13 +204,11 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
   test('Infinity 좌표는 sanitize 없이 non-finite를 전파한다', () => {
     const out = sliceByLengthInto(
       [],
-      {
-        points: [
-          { x: 0, y: 0 },
-          { x: 10, y: 0 },
-          { x: 10, y: Number.POSITIVE_INFINITY },
-        ],
-      },
+      [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 },
+        { x: 10, y: Number.POSITIVE_INFINITY },
+      ],
       5,
       15
     );
@@ -254,12 +246,10 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
   test('NaN source coordinate는 sampling 결과에 NaN을 전파한다', () => {
     const out = sliceByLengthInto(
       [],
-      {
-        points: [
-          { x: 0, y: 0 },
-          { x: Number.NaN, y: 0 },
-        ],
-      },
+      [
+        { x: 0, y: 0 },
+        { x: Number.NaN, y: 0 },
+      ],
       0,
       0
     );
@@ -288,7 +278,7 @@ describe('polyline sliceByLength - sliceByLength', () => {
       { x: 10, y: 0 },
       { x: 5, y: 0 },
     ]);
-    expect(sliceByLength({ points: [] }, 0, 1)).toEqual([]);
-    expect(sliceByLength({ points: [{ x: 3, y: 4 }] }, 0, 10)).toEqual([{ x: 3, y: 4 }]);
+    expect(sliceByLength([], 0, 1)).toEqual([]);
+    expect(sliceByLength([{ x: 3, y: 4 }], 0, 10)).toEqual([{ x: 3, y: 4 }]);
   });
 });

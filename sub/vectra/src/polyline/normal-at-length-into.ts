@@ -1,6 +1,5 @@
-import { polylineSegmentTangentAtLengthInto, readPolylinePoints } from '../internal/polyline';
-import { writeXY } from '../internal/xy';
-import type { PolylineLike, XYWritable } from '../types';
+import { polylineSegmentTangentAtLengthInto } from '../internal/polyline';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 arclength offset 위치가 속한 segment의 단위 left normal을 out에 기록한다.
@@ -19,14 +18,15 @@ import type { PolylineLike, XYWritable } from '../types';
  * out이 polyline point와 alias되어도 안전하다. tangent를 local로 먼저 계산한 뒤 out에 기록한다.
  * 기존 polyline domain과 맞춰 non-finite 좌표 validation은 수행하지 않는다.
  *
- * @param out left normal을 기록할 writable output
+ * @param out left normal을 기록할 writable output (`x`, `y`)
  * @param polyline normal을 계산할 polyline
  * @param length polyline 시작점부터의 arclength offset
  */
-export function normalAtLengthInto(out: XYWritable, polyline: PolylineLike, length: number): boolean {
+export function normalAtLengthInto(out: PointWritable, polyline: Polyline, length: number): boolean {
   const tangent = { x: 0, y: 0 };
-  if (!polylineSegmentTangentAtLengthInto(tangent, readPolylinePoints(polyline), length)) return false;
+  if (!polylineSegmentTangentAtLengthInto(tangent, polyline, length)) return false;
 
-  writeXY(out, -tangent.y, tangent.x);
+  out.x = -tangent.y;
+  out.y = tangent.x;
   return true;
 }
