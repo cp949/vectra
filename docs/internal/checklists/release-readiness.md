@@ -42,13 +42,12 @@ publish 직전 무엇을 확인해야 하는가를 담는 체크리스트다.
 | Import surface | root / domain barrel | contract test로 package import와 subpath import 확인 |
 | Type declarations | `.d.ts` 포함 | `pnpm --filter @cp949/vectra build` 후 `dist/**/*.d.ts` 확인 |
 | Bundler/browser | ESM package exports를 해석하는 bundler 환경 | bundle size gate 도입 전까지 README support statement와 contract test를 기준으로 확인 |
-| Coordinate input | `{ x, y }` object 또는 readonly `[x, y]` tuple | typed-array / array-like coordinate를 공식 `XYInput`으로 문서화하지 않음 |
+| 좌표·도형 입출력 | [ADR 0010](../adr/0010-flat-shape-input.md) | 공개 타입, JSDoc, 예제가 같은 형식을 사용한다 |
 
 체크리스트:
 
 - [ ] package README의 support matrix가 최신이다
 - [ ] runtime support 기준과 root `package.json` `engines.node`가 충돌하지 않는다
-- [ ] typed-array / array-like 좌표를 공식 coordinate input으로 문서화하지 않았다
 - [ ] leaf package subpath를 공식 import 경로로 문서화하지 않았다
 
 ---

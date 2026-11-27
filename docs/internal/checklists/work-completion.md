@@ -17,11 +17,10 @@
 ## 2. 구현 품질
 
 - [ ] public API는 넓은 geometry/math function catalog 정체성을 따른다.
-- [ ] structural input/output 정책을 API 계약과 일관되게 유지한다.
+- [ ] 입력과 출력이 [ADR 0010](../adr/0010-flat-shape-input.md)의 형식을 따른다.
 - [ ] object result는 `Into` convention을 따른다.
 - [ ] scalar, boolean, enum result는 직접 반환한다.
-- [ ] 좌표 입력은 `XYInput` 정책을 따른다.
-- [ ] 숫자 나열 overload를 public API로 추가하지 않았다.
+- [ ] 도형 필드를 직접 읽고 쓴다.
 - [ ] 공유 계산은 낮은 internal primitive helper로 뺐다.
 - [ ] public 함수끼리 domain barrel을 통해 상호 참조하지 않는다.
 - [ ] module top-level side effect가 없다.
@@ -40,7 +39,6 @@
 - [ ] 기능 구현은 test-first로 진행했다.
 - [ ] unit test가 핵심 동작을 검증한다.
 - [ ] contract test가 public export/subpath를 검증한다.
-- [ ] tuple input과 object input을 모두 고려했다.
 - [ ] degenerate case가 필요한 경우 test로 고정했다.
 - [ ] tolerance/near equality가 필요한 경우 exact/near behavior를 분리해 검증했다.
 - [ ] recipe/docs example test가 필요한 경우 추가했다.

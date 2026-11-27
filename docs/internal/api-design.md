@@ -1,6 +1,6 @@
 # vectra API 설계
 
-이 문서는 `vectra`의 공개 API 스타일을 정의한다.
+이 문서는 `vectra`의 공개 API 스타일을 정의한다. 좌표와 도형의 입출력은 [ADR 0010](./adr/0010-flat-shape-input.md)의 v2 규격을 따른다.
 
 ## 규칙 빠른 참조
 
@@ -17,8 +17,8 @@
 | API-006 | Output 타입 다형성이 없으면 `Into` 없이 직접 반환한다. |
 | API-007 | `Into`가 단일 caller-side object를 기록하면 allocating companion `xxx`를 함께 제공한다. |
 | API-008 | Collection / multi-output도 `xxxInto`와 `xxx`를 함께 제공한다. |
-| API-009 | 좌표 입력은 `XYInput`을 사용한다. 숫자 나열 overload는 public input에 포함하지 않는다. |
-| API-010 | Shape 입력은 `XxxLike`, output은 `XxxWritable`을 사용한다. |
+| API-009 | 좌표 입력은 `Point`를 사용한다. |
+| API-010 | Shape 입력과 출력은 ADR 0010의 고정된 형식을 따른다. |
 | API-011 | Public 함수끼리 직접 import하지 않는다. Companion `xxx` → `xxxInto` leaf import는 예외. |
 | API-012 | Catalog 기본값은 "제공한다". 제외에는 명시적인 이유가 필요하다. |
 | API-013 | 같은 계산이 둘 이상의 domain에서 자연스러우면 cross-domain equivalent를 허용한다. |
@@ -53,7 +53,6 @@ root import는 편의용으로만 둔다.
 ### Sketch 항목
 
 - plain object 사용
-- mutable tuple 사용
 - 외부 class instance 사용
 - 배열/collection 처리
 - `out`과 input이 같은 객체인 aliasing 처리
@@ -62,7 +61,7 @@ root import는 편의용으로만 둔다.
 ### Sketch에서 확인할 것
 
 - `Into` 함수가 caller-provided output을 그대로 반환하는가?
-- 반환 타입이 `XYWritable` 같은 넓은 union으로 뭉개지지 않고 구체 타입을 보존하는가?
+- 반환 타입이 전달한 output의 구체 타입을 보존하는가?
 - collection method(`map`, `filter`, `reduce`) 안에서 자연스럽게 쓸 수 있는가?
 - 외부 object의 method chaining을 깨지 않는가?
 - structural input/output 정책이 제품 경계와 맞는가?
@@ -70,14 +69,9 @@ root import는 편의용으로만 둔다.
 예:
 
 ```ts
-writeXY(point, 100, 100);
-writeXY(tuple, 100, 100);
-writeXY(new Point(0, 0), 100, 100).translateX(10);
-
-points.map((point) => writeXY(point, 100, 100));
 sprites.map((sprite) => Rectx.centerInto(sprite.position, bounds));
 
-const out = Segmentx.closestPointInto(pointer, line, pointer);
+const out = Segmentx.closestPointInto(pointer, segment, pointer);
 ```
 
 ## API-003: Import / Module 규칙
@@ -100,7 +94,7 @@ Caller-side마다 다르게 제공할 가능성이 있는 객체 결과는 `Into
 output에 기록한다.
 
 판단 기준은 반환값이 object인지가 아니라 **caller가 output storage를 선택할 수 있는가**이다.
-좌표, shape, bounds처럼 caller가 tuple, plain object, 외부 renderer object, class instance를
+좌표, shape, bounds처럼 caller가 plain object, 외부 renderer object, class instance를
 output으로 넘길 수 있으면 `Into` 대상이다. 반대로 결과 shape가 library-defined plain result로
 고정되어 caller-side object 다형성이 없으면 API-006에 따라 직접 반환한다.
 
@@ -113,21 +107,13 @@ bounds.fromPointsInto(out, points);
 `Into` 함수는 output의 구체 타입을 보존한다.
 
 ```ts
-function centerInto<Out extends XYWritable>(out: Out, input: ShapeLike): Out;
-function copyInto<Out extends CircleWritable<XYWritable>>(out: Out, circle: CircleLike): Out;
+function centerInto<Out extends PointWritable>(out: Out, rect: Rect): Out;
+function copyInto<Out extends CircleWritable>(out: Out, circle: Circle): Out;
 ```
-
-`centerInto([0, 0], shape)`는 mutable tuple을 반환하고,
-`centerInto(new Point(0, 0), shape)`는 `Point`를 반환한다.
 
 ### 좌표 output 세부 정책
 
-- `XYInput` tuple은 readonly tuple을 허용한다.
-- `XYWritable` tuple은 mutable tuple만 허용한다.
-- `writeXY`는 배열이면 `[0]`, `[1]`에 기록하고, 배열이 아니면 `x`, `y`에 기록한다.
-- 배열과 `x`, `y` field를 동시에 가진 hybrid value는 배열 storage를 우선한다.
-- `XYObjectWritable`에서 배열을 배제하기 위한 `length?: never` 같은 타입 장치는 두지 않는다.
-- 상세 결정은 [ADR 0006](./adr/0006-xy-writable-output-policy.md)을 따른다.
+좌표 출력 형식은 [ADR 0010의 출력 규칙](./adr/0010-flat-shape-input.md#출력)을 따른다.
 
 ## API-005: Scalar / boolean / enum → 직접 반환
 
@@ -155,8 +141,8 @@ solveCubic(a, b, c, d): number[]
 // fixed plain result object — caller-side object 다형성 없음 → 직접 반환
 segmentSegmentDetail(a, b, epsilon?): SegmentSegmentDetail
 
-// XYWritable — tuple / object / external class 모두 가능 → Into 제공
-closestPointInto(out: XYWritable, ...): Out
+// PointWritable을 충족하는 호출자 객체에 기록한다.
+closestPointInto<Out extends PointWritable>(out: Out, segment: Segment, point: Point): Out
 ```
 
 ## API-007: 단일 object `Into` → companion 제공
@@ -223,12 +209,12 @@ catalog 기본값("제공한다", API-012)은 collection output에도 동일하�
 
 point 배열을 `out`으로 받는 collection `xxxInto`는 `out.length = 0` 뒤 새 point object를 push한다.
 
-- 대상: polyline·polygon의 `*PointsInto`, `rect/perimeterPointsInto`, curve의 `*PolylineInto` 등.
+- 대상: point 배열을 반환하는 `*PointsInto`, `rect/perimeterPointsInto`, curve의 `*PolylineInto` 등.
 - 결과 길이는 입력으로 정해진다. 호출 전 `out`의 길이와 내용은 결과에 영향을 주지 않는다.
 - 새 object를 만든다. caller가 쥐고 있던 이전 원소를 수정하지 않는다.
-- polyline·polygon의 `transformPointsInto`는 입력과 `out`이 같은 배열이어도 안전하다.
+- Polyline의 `transformPointsInto`는 입력과 `out`이 같은 배열이어도 안전하다.
 - 대가로 호출마다 point object를 할당한다.
-- 출력 배열의 원소 타입을 제네릭으로 열지 않는다. 함수가 만드는 값이 곧 원소 타입이다. 예: `XYObjectWritable[]`, `PathCommand[]`, `IntersectionHit[]`.
+- 출력 배열의 원소 타입을 제네릭으로 열지 않는다. 함수가 만드는 값이 곧 원소 타입이다. 예: `PointWritable[]`, `PathCommand[]`, `IntersectionHit[]`.
 - 이유: `Out extends MoveCommand[]`처럼 좁은 원소 타입을 받으면 반환 타입이 실제로 push한 command와 달라진다.
 
 예외는 기존 원소를 재사용하는 함수다. 호출 전 `out`의 내용이 결과에 영향을 준다.
@@ -239,99 +225,23 @@ point 배열을 `out`으로 받는 collection `xxxInto`는 `out.length = 0` 뒤 
 | `adapter/flat/decodeFlatCoordsInto`, `adapter/flat/fromFloat32ArrayInto` | 새 object를 할당해 채운다 | 초과 항목을 수정 안 함 |
 
 - 공통: `out[i]`가 있으면 `x`, `y`만 덮어쓴다. `out`의 길이를 줄이지 않는다.
-- `matrix/transformPointsInto`: `out[i]`는 tuple, 외부 point class instance일 수 있다. 호출 전에 caller가 준비한다.
+- `matrix/transformPointsInto`: `out[i]`는 writable point 객체다. 호출 전에 caller가 준비한다.
 - `matrix/transformPointsInto`: 같은 index의 입력을 먼저 읽고 기록하므로 `out[i] === points[i]` aliasing만 안전하다.
-- `adapter/flat`의 두 함수: `out[i]`는 `XYObjectWritable`이어야 한다. tuple은 받지 않는다.
+- `adapter/flat`의 두 함수: `out[i]`는 `PointWritable`이어야 한다.
 - `matrix/transformPointsInto`는 point object를 할당하지 않는다. `adapter/flat`의 두 함수는 `out`이 짧을 때만 할당한다.
 
 새 collection `Into`는 clear 후 push를 따른다. 호출 전 `out`을 재사용하는 buffer로 쓰게 해야 하는 경우에만 원소 재사용을 쓴다.
 
-## API-009: 좌표 입력 (`XYInput`)
+## API-009: 좌표 입력 (`Point`)
 
-좌표 입력은 `XYInput`을 사용한다. 숫자 나열 overload는 public input에 포함하지 않는다.
+좌표 입력과 출력은 [ADR 0010](./adr/0010-flat-shape-input.md)의 `{ x, y }` 형식을 따른다.
+입력 필드는 읽기 전용이다. 출력 필드는 쓰기 가능하다.
 
-```ts
-export interface XYLike {
-  readonly x: number;
-  readonly y: number;
-}
+## API-010: Shape 입력과 출력
 
-export type XYTuple = readonly [x: number, y: number];
-export type XYInput = XYLike | XYTuple;
-
-export interface XYObjectWritable {
-  x: number;
-  y: number;
-}
-
-export type XYTupleWritable = [x: number, y: number];
-export type XYWritable = XYObjectWritable | XYTupleWritable;
-```
-
-```txt
-public input:   { x, y }  /  [x, y]
-not public:     addInto(out, ax, ay, bx, by)
-```
-
-## API-010: Shape 입력 (`XxxLike` / `XxxWritable`)
-
-Shape 입력은 `XxxLike`, output은 `XxxWritable`을 사용한다.
-
-입력은 넓게 받는다. 값은 `vectra` 타입별 structural contract와 맞아야 한다.
-
-`XxxLike`: read-only structural union (input). `XxxWritable`: caller-provided output 타입.
-일부 shape는 canonical object와 의미가 같은 tuple shorthand도 허용한다.
-
-아래는 Segment를 대표 패턴으로 보여준다. 다른 shape(Rect, Bounds, Circle, Matrix 등)도
-같은 패턴을 따른다.
-
-```ts
-export type SegmentTuple = readonly [a: XYInput, b: XYInput];
-
-export type SegmentLike =
-  | {
-      readonly a: XYInput;
-      readonly b: XYInput;
-    }
-  | SegmentTuple;
-
-export interface SegmentWritable<
-  A extends XYWritable = XYObjectWritable,
-  B extends XYWritable = XYObjectWritable,
-> {
-  a: A;
-  b: B;
-}
-```
-
-ordered point list(`PolylineLike`, `PolygonLike`)는 `{ points }` canonical object와 bare
-point array를 모두 허용한다.
-
-```ts
-export type PolylineLike =
-  | readonly XYInput[]
-  | {
-      readonly points: readonly XYInput[];
-    };
-
-export type PolygonLike =
-  | readonly XYInput[]
-  | {
-      readonly points: readonly XYInput[];
-    };
-```
-
-```ts
-closestPointInto(out, { points }, query);
-closestPointInto(out, points, query);
-closestPointInto(out, stroke.vertices, query);
-closestPointInto(out, path.anchors, query);
-polygon.area(points);
-polygon.containsPoint(shape.vertices, query);
-```
-
-`PolygonLike`에서 bare point array는 단일 닫힌 outer ring shorthand로 해석된다. 3점 미만은
-structural empty polygon으로 유지한다.
+도형별 필드와 점 목록 형식은 [ADR 0010](./adr/0010-flat-shape-input.md)의 표를 따른다.
+Polygon의 `transformPointsInto`는 입력과 `out`이 같은 좌표 배열이어도 안전하다.
+Polygon 목록은 단일 닫힌 outer ring을 나타낸다. 점이 3개 미만이면 빈 polygon으로 처리한다.
 
 ## API-011: Public 함수 상호 참조 금지
 
@@ -394,7 +304,7 @@ exclude       = vectra가 의도적으로 제공하지 않을 기능
 model을 소유하거나 mutate하지 않는다.
 
 `exclude`는 geometry 계산이 아니거나, 특정 framework object model에 묶였거나, side effect가
-핵심이거나, structural `Like` input과 `Into` output으로 옮기면 의미가 깨지는 경우에만 사용한다.
+핵심이거나, 고정된 shape 입력과 `Into` output으로 옮기면 의미가 깨지는 경우에만 사용한다.
 
 ## API-013: Cross-domain equivalent 허용
 
@@ -502,7 +412,7 @@ generator boundary    = createRng(seed), rng state export/import 후보
 - 결과는 `t ≥ tMin`인 가장 작은 교점의 `t`다. 교점이 없으면 `Infinity`다.
   - 이유: `t < best`와 `Math.min`에 그대로 쓴다. `NaN`은 `Math.min`을 오염시킨다.
   - non-finite 입력은 throw하지 않는다. 비교가 모두 false가 되어 `Infinity`가 된다.
-- `t`와 `tMin`은 `ray.direction` 길이 단위다. direction을 정규화하지 않는다.
+- `t`와 `tMin`은 방향 벡터 `(dx, dy)`의 길이 단위다. direction을 정규화하지 않는다.
 - `tMin`은 inclusive다. 반사·굴절 직후 출발 면(`t ≈ 0`)을 거르는 용도다.
   - 점을 반환하는 기존 함수는 출발 면을 거를 수 없다. 예: `closestRayPolygonIntersectionInto`는 변 위에서 떠난 ray에 `t = 0`을 반환한다.
   - 거리 상한(`tMax`)은 두지 않는다. 호출자가 `t < best`로 거른다.
@@ -514,4 +424,4 @@ generator boundary    = createRng(seed), rng state export/import 후보
   - rect와 bounds는 closed box다. 모서리·변 접촉은 교점이다.
 - `tMin = 0`일 때 `origin + t * direction`은 기존 점 반환 함수의 첫 교점과 같아야 한다. `±1e-9` 안이며 시험이 난수 입력으로 고정한다.
 - 여러 물체 중 가장 가까운 것을 고르는 일은 호출자가 한다. 물체 순회와 순위 매기기는 제품 범위 밖이다. [제품 범위](./product-scope.md)의 "Spatial and query"를 따른다.
-- 구현은 객체를 만들지 않는다. tuple ray에서도 배열을 만들지 않으려고 `src/internal/ray-scalar.internal.ts`의 scalar reader를 쓴다.
+- 구현은 ray 필드를 직접 읽는다. 임시 객체나 배열을 만들지 않는다.
