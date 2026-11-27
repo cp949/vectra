@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { roundInto } from './round-into';
 
 /**
@@ -9,6 +9,6 @@ import { roundInto } from './round-into';
  *
  * @param input 반올림할 입력 벡터
  */
-export function round(input: XYInput): XYObjectWritable {
+export function round(input: Point): PointWritable {
   return roundInto({ x: 0, y: 0 }, input);
 }

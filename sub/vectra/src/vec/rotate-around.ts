@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { rotateAroundInto } from './rotate-around-into';
 
 /**
@@ -8,6 +8,6 @@ import { rotateAroundInto } from './rotate-around-into';
  * @param center 회전 기준점
  * @param angle CCW 회전각(라디안)
  */
-export function rotateAround(input: XYInput, center: XYInput, angle: number): XYObjectWritable {
+export function rotateAround(input: Point, center: Point, angle: number): PointWritable {
   return rotateAroundInto({ x: 0, y: 0 }, input, center, angle);
 }

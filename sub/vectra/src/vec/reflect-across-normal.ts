@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { reflectAcrossNormalInto } from './reflect-across-normal-into';
 
 /**
@@ -9,6 +9,6 @@ import { reflectAcrossNormalInto } from './reflect-across-normal-into';
  * @param vector 반사할 벡터
  * @param normal 반사 기준 법선 벡터 (unit vector 전제)
  */
-export function reflectAcrossNormal(vector: XYInput, normal: XYInput): XYObjectWritable {
+export function reflectAcrossNormal(vector: Point, normal: Point): PointWritable {
   return reflectAcrossNormalInto({ x: 0, y: 0 }, vector, normal);
 }

@@ -4,7 +4,7 @@
  * perpendicularInto/fromAngleInto/rotateInto/rotateAroundInto 및 관련 companion을 검증한다.
  */
 
-import { describe, expect, expectTypeOf, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import type { XYWritable } from '../../../src/types';
 import { fromAngle } from '../../../src/vec/from-angle';
 import { fromAngleInto } from '../../../src/vec/from-angle-into';
@@ -102,7 +102,7 @@ describe('vec point-output - rotateInto', () => {
   test('(1, 0) 벡터를 180도 회전하면 (-1, 0)이 된다', () => {
     const out: XYWritable = { x: 0, y: 0 };
 
-    rotateInto(out, [1, 0], Math.PI);
+    rotateInto(out, { x: 1, y: 0 }, Math.PI);
 
     expect(out.x).toBeCloseTo(-1, 10);
     expect(out.y).toBeCloseTo(0, 10);
@@ -116,16 +116,6 @@ describe('vec point-output - rotateInto', () => {
 
     expect(vec.x).toBeCloseTo(0, 10);
     expect(vec.y).toBeCloseTo(1, 10);
-  });
-
-  test('mutable tuple out에 회전 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = rotateInto(out, [1, 0], Math.PI / 2);
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(0, 10);
-    expect(out[1]).toBeCloseTo(1, 10);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 });
 
@@ -158,16 +148,6 @@ describe('vec point-output - rotateAroundInto', () => {
     rotateAroundInto(out, { x: 3, y: 2 }, center, Math.PI / 2);
 
     expect(center).toEqual({ x: 2, y: 2 });
-  });
-
-  test('mutable tuple out에 회전 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = rotateAroundInto(out, { x: 3, y: 2 }, { x: 2, y: 2 }, Math.PI / 2);
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(2, 10);
-    expect(out[1]).toBeCloseTo(3, 10);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 });
 

@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 벡터가 위치한 사분면 번호를 반환한다.
@@ -14,9 +13,9 @@ import type { XYInput } from '../types';
  *
  * @param v 사분면을 구할 벡터
  */
-export function quadrant(v: XYInput): 0 | 1 | 2 | 3 | 4 {
-  const x = readX(v);
-  const y = readY(v);
+export function quadrant(v: Point): 0 | 1 | 2 | 3 | 4 {
+  const x = v.x;
+  const y = v.y;
 
   if (x === 0 || y === 0) return 0;
   if (x > 0 && y > 0) return 1;

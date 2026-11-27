@@ -30,6 +30,15 @@ import { normalRightInto } from '../../../src/vec/normal-right-into';
 import { normalizeInto } from '../../../src/vec/normalize-into';
 import { oneInto } from '../../../src/vec/one-into';
 import { perpendicularInto } from '../../../src/vec/perpendicular-into';
+import { pointOnRayInto } from '../../../src/vec/point-on-ray-into';
+import { projectOnInto } from '../../../src/vec/project-on-into';
+import { reflectAcrossNormalInto } from '../../../src/vec/reflect-across-normal-into';
+import { reflectInto } from '../../../src/vec/reflect-into';
+import { rejectFromInto } from '../../../src/vec/reject-from-into';
+import { rotateAroundInto } from '../../../src/vec/rotate-around-into';
+import { rotateInto } from '../../../src/vec/rotate-into';
+import { roundInto } from '../../../src/vec/round-into';
+import { scaleInto } from '../../../src/vec/scale-into';
 
 /** 메서드를 가진 외부 점 클래스. Into 반환값으로 메서드를 이어 부를 수 있어야 한다. */
 class Sprite {
@@ -45,6 +54,11 @@ const a = { x: -1.5, y: 2 };
 const b = { x: 3, y: -4 };
 
 describe('vec Into 반환 타입', () => {
+  test('반직선 위 점을 구할 때 x/y 입력과 출력을 받는다', () => {
+    expectTypeOf(pointOnRayInto).parameter(0).toEqualTypeOf<PointWritable>();
+    expectTypeOf(pointOnRayInto).parameter(1).toEqualTypeOf<Point>();
+  });
+
   test('성분별 최솟값은 x/y 입력과 출력을 받는다', () => {
     expectTypeOf(minInto).parameter(0).toEqualTypeOf<PointWritable>();
     expectTypeOf(minInto).parameter(1).toEqualTypeOf<Point>();
@@ -87,11 +101,20 @@ describe('vec Into 반환 타입', () => {
       (out: Sprite) => normalizeInto(out, a),
       (out: Sprite) => oneInto(out),
       (out: Sprite) => perpendicularInto(out, a),
+      (out: Sprite) => pointOnRayInto(out, a, b, 1),
+      (out: Sprite) => projectOnInto(out, a, b),
+      (out: Sprite) => reflectAcrossNormalInto(out, a, b),
+      (out: Sprite) => reflectInto(out, a, b),
+      (out: Sprite) => rejectFromInto(out, a, b),
+      (out: Sprite) => rotateAroundInto(out, a, b, 1),
+      (out: Sprite) => rotateInto(out, a, 1),
+      (out: Sprite) => roundInto(out, a),
+      (out: Sprite) => scaleInto(out, a, 2),
     ];
     for (const run of cases) {
       const sprite = new Sprite();
       const result = run(sprite);
-      if (result === false) throw new Error('이등분 벡터가 정의되는 입력을 사용한다');
+      if (result === false) throw new Error('결과가 정의되는 입력을 사용한다');
       expect(result).toBe(sprite);
       expect(result.shift(0)).toBe(sprite);
     }
@@ -123,5 +146,14 @@ describe('vec Into 반환 타입', () => {
     expectTypeOf(normalizeInto(sprite, a)).toEqualTypeOf<Sprite>();
     expectTypeOf(oneInto(sprite)).toEqualTypeOf<Sprite>();
     expectTypeOf(perpendicularInto(sprite, a)).toEqualTypeOf<Sprite>();
+    expectTypeOf(pointOnRayInto(sprite, a, b, 1)).toEqualTypeOf<Sprite | false>();
+    expectTypeOf(projectOnInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(reflectAcrossNormalInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(reflectInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(rejectFromInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(rotateAroundInto(sprite, a, b, 1)).toEqualTypeOf<Sprite>();
+    expectTypeOf(rotateInto(sprite, a, 1)).toEqualTypeOf<Sprite>();
+    expectTypeOf(roundInto(sprite, a)).toEqualTypeOf<Sprite>();
+    expectTypeOf(scaleInto(sprite, a, 2)).toEqualTypeOf<Sprite>();
   });
 });

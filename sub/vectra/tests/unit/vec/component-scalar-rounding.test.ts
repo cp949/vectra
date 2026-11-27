@@ -140,8 +140,6 @@ describe('vec component-wise - rounding helpers', () => {
       integerExpected: [3, -5],
       aliasInput: { x: 2.6, y: -1.4 },
       aliasExpected: [3, -1],
-      tupleInput: [1.7, -0.7],
-      tupleExpected: [2, -1],
     },
   ];
 

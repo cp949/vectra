@@ -106,10 +106,10 @@ describe('vec arithmetic - scaleInto', () => {
     expect(out).toEqual({ x: 6, y: -8 });
   });
 
-  test('tuple 입력에 scalar를 곱해 out에 기록한다', () => {
+  test('소수 배율을 곱해 out에 기록한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
 
-    const result = scaleInto(out, [5, 10], 0.5);
+    const result = scaleInto(out, { x: 5, y: 10 }, 0.5);
 
     expect(result).toBe(out);
     expect(out).toEqual({ x: 2.5, y: 5 });
@@ -119,22 +119,12 @@ describe('vec arithmetic - scaleInto', () => {
     // 두 번 연속 호출에서도 같은 out reference를 반환해야 한다
     const out: XYWritable = { x: 99, y: 99 };
 
-    const first = scaleInto(out, [4, 6], 2);
+    const first = scaleInto(out, { x: 4, y: 6 }, 2);
     const second = scaleInto(out, { x: 1, y: -1 }, -3);
 
     expect(first).toBe(out);
     expect(second).toBe(out);
     expect(out).toEqual({ x: -3, y: 3 });
-  });
-
-  test('mutable tuple out에 스케일 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = scaleInto(out, { x: 3, y: -4 }, 2);
-
-    expect(result).toBe(out);
-    expect(out[0]).toBe(6);
-    expect(out[1]).toBe(-8);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 });
 
@@ -214,8 +204,8 @@ describe('vec companion - scale', () => {
 
   test('scaleInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    scaleInto(out, [5, 10], 0.5);
-    const result = scale([5, 10], 0.5);
+    scaleInto(out, { x: 5, y: 10 }, 0.5);
+    const result = scale({ x: 5, y: 10 }, 0.5);
 
     expect(result.x).toBe(out.x);
     expect(result.y).toBe(out.y);

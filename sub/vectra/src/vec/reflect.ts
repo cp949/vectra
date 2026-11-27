@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { reflectInto } from './reflect-into';
 
 /**
@@ -11,6 +11,6 @@ import { reflectInto } from './reflect-into';
  * @param vector 반사할 벡터
  * @param normal 반사 기준 법선 벡터 (임의 길이)
  */
-export function reflect(vector: XYInput, normal: XYInput): XYObjectWritable {
+export function reflect(vector: Point, normal: Point): PointWritable {
   return reflectInto({ x: 0, y: 0 }, vector, normal);
 }

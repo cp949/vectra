@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { pointOnRayInto } from './point-on-ray-into';
 
 /**
@@ -10,7 +10,7 @@ import { pointOnRayInto } from './point-on-ray-into';
  * @param direction ray 방향 벡터
  * @param distance 이동 거리
  */
-export function pointOnRay(origin: XYInput, direction: XYInput, distance: number): XYObjectWritable | undefined {
+export function pointOnRay(origin: Point, direction: Point, distance: number): PointWritable | undefined {
   const out = { x: 0, y: 0 };
   const result = pointOnRayInto(out, origin, direction, distance);
   return result === false ? undefined : out;

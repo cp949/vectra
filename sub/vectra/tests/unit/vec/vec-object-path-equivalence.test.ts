@@ -4,7 +4,7 @@
  * 대상: addInto/add, subInto/sub, scaleInto/scale, addScaledInto/addScaled, subtractScaledInto/subtractScaled,
  * dot, cross, length, lengthSq, distance, distanceSq, normalizeInto, reflectInto, reflectAcrossNormalInto.
  *
- * 점 객체 덧셈은 별도로 검증한다. 나머지 함수는 객체·tuple·외부 클래스와 out aliasing을 함께 검증한다.
+ * 점 객체 함수의 계산 결과와 out aliasing을 검증한다. 전환 전 함수는 tuple과 외부 클래스도 검증한다.
  *
  * 정수·실수·큰 값·±0·NaN·±Infinity·zero vector 좌표에서 결과가 이전 구현과 `Object.is` 수준으로 같다.
  * 이전 구현은 공유 readX/readY/writeXY로 읽고 쓴다.
@@ -212,12 +212,6 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
     > = [
       ['subInto', (o, a, b) => subInto(o, a, b), (o, a, b) => ref.subInto(o, a, b)],
       ['subtractScaledInto', subtractScaledInto, ref.subtractScaledInto],
-      ['reflectInto', (o, a, b) => reflectInto(o, a, b), (o, a, b) => ref.reflectInto(o, a, b)],
-      [
-        'reflectAcrossNormalInto',
-        (o, a, b) => reflectAcrossNormalInto(o, a, b),
-        (o, a, b) => ref.reflectAcrossNormalInto(o, a, b),
-      ],
     ];
     for (let i = 0; i < N; i++) {
       const bias = i % 3 === 0 ? 1 : 0.3;
@@ -242,6 +236,23 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
     }
   });
 
+  test(`무작위 ${N}건: 점 객체 반사 함수가 이전 구현과 같다`, () => {
+    const rng = createRng(20260106);
+    for (let i = 0; i < N; i++) {
+      const a = { x: coord(rng), y: coord(rng) };
+      const b = { x: coord(rng), y: coord(rng) };
+      const useUnitNormal = i % 2 === 0;
+      const reference = useUnitNormal ? ref.reflectAcrossNormalInto : ref.reflectInto;
+      const reflect = useUnitNormal ? reflectAcrossNormalInto : reflectInto;
+      const [expectedX, expectedY] = snapshot(reference({ x: 0, y: 0 }, a, b));
+      const out = i % 3 === 0 ? a : i % 3 === 1 ? b : { x: 0, y: 0 };
+      const result = reflect(out, a, b);
+      if (result !== out || !same(expectedX, out.x) || !same(expectedY, out.y)) {
+        throw new Error(`점 객체 반사 불일치: 반복 ${i}`);
+      }
+    }
+  });
+
   test(`무작위 ${N}건: 한 벡터를 받는 Into 함수가 이전 구현과 같다`, () => {
     const rng = createRng(20260102);
     for (let i = 0; i < N; i++) {
@@ -250,13 +261,10 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       const s = coord(rng);
       const useScale = i % 2 === 0;
       const a = { x: aSpec.x, y: aSpec.y };
-      const expectedOut = useScale ? makeOut(outKind, aSpec, aSpec) : { x: 0, y: 0 };
-      const normalizedOut = outKind === 2 ? a : { x: 0, y: 0 };
-      const actualOut = useScale ? makeOut(outKind, aSpec, aSpec) : normalizedOut;
-      const expectedResult = useScale
-        ? ref.scaleInto(expectedOut, makeVec(aSpec), s)
-        : ref.normalizeInto(expectedOut, a);
-      const actualResult = useScale ? scaleInto(actualOut, makeVec(aSpec), s) : normalizeInto(normalizedOut, a);
+      const actualOut = outKind === 2 ? a : { x: 0, y: 0 };
+      const expectedOut = { x: 0, y: 0 };
+      const expectedResult = useScale ? ref.scaleInto(expectedOut, a, s) : ref.normalizeInto(expectedOut, a);
+      const actualResult = useScale ? scaleInto(actualOut, a, s) : normalizeInto(actualOut, a);
       expect(actualResult).toBe(actualOut);
       const [ex, ey] = snapshot(expectedResult);
       const [ax, ay] = snapshot(actualResult);
@@ -274,9 +282,10 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       const aSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
       const bSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
       const s = coord(rng);
+      const a = { x: aSpec.x, y: aSpec.y };
       const cases: Array<[string, XYObjectWritable, XYWritable]> = [
         ['sub', sub(makeVec(aSpec), makeVec(bSpec)), ref.subInto({ x: 0, y: 0 }, makeVec(aSpec), makeVec(bSpec))],
-        ['scale', scale(makeVec(aSpec), s), ref.scaleInto({ x: 0, y: 0 }, makeVec(aSpec), s)],
+        ['scale', scale(a, s), ref.scaleInto({ x: 0, y: 0 }, a, s)],
         [
           'subtractScaled',
           subtractScaled(makeVec(aSpec), makeVec(bSpec), s),

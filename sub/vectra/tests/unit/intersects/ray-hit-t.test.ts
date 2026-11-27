@@ -551,10 +551,10 @@ describe('광선 추적 소비 시나리오', () => {
     const first = nearestWall([2, 5, 1, -1], [floorAndCeiling[0]], 0);
     expect(first.t).toBe(5);
 
-    const dir = reflectInto([0, 0], [1, -1], [0, 1]);
-    expect(dir).toEqual([1, 1]);
+    const dir = reflectInto({ x: 0, y: 0 }, { x: 1, y: -1 }, { x: 0, y: 1 });
+    expect(dir).toEqual({ x: 1, y: 1 });
 
-    const next: [number, number, number, number] = [7, 0, dir[0], dir[1]];
+    const next: [number, number, number, number] = [7, 0, dir.x, dir.y];
     const withoutTMin = nearestWall(next, floorAndCeiling, 0);
     expect(withoutTMin.index).toBe(0);
     expect(withoutTMin.t).toBeCloseTo(0, 12);
@@ -609,8 +609,9 @@ describe('광선 추적 소비 시나리오', () => {
       expect(hitY).toBeGreaterThanOrEqual(-1e-9);
       expect(hitY).toBeLessThanOrEqual(6 + 1e-9);
 
-      const dir = reflectInto([0, 0], [ray[2], ray[3]], normals[index]);
-      ray = [hitX, hitY, dir[0], dir[1]];
+      const [nx, ny] = normals[index];
+      const dir = reflectInto({ x: 0, y: 0 }, { x: ray[2], y: ray[3] }, { x: nx, y: ny });
+      ray = [hitX, hitY, dir.x, dir.y];
       previous = index;
     }
   });

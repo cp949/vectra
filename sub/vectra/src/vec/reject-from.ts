@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { rejectFromInto } from './reject-from-into';
 
 /**
@@ -11,6 +11,6 @@ import { rejectFromInto } from './reject-from-into';
  * @param vector 분리할 벡터
  * @param basis 제거할 방향 벡터 (임의 길이)
  */
-export function rejectFrom(vector: XYInput, basis: XYInput): XYObjectWritable {
+export function rejectFrom(vector: Point, basis: Point): PointWritable {
   return rejectFromInto({ x: 0, y: 0 }, vector, basis);
 }

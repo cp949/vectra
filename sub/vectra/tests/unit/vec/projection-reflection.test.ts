@@ -66,10 +66,6 @@ describe('projectScalar — projection scalar 계산', () => {
   test('b.x가 NaN이면 NaN을 반환한다', () => {
     expect(projectScalar({ x: 1, y: 0 }, { x: NaN, y: 0 })).toBeNaN();
   });
-
-  test('tuple input을 받는다', () => {
-    expect(projectScalar([3, 4], [1, 0])).toBeCloseTo(3);
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -120,15 +116,6 @@ describe('reflectInto — arbitrary normal에 대한 벡터 반사 (Into 버전)
     expect(v.y).toBeCloseTo(1);
   });
 
-  test('mutable tuple out의 타입이 유지된다', () => {
-    const out: [number, number] = [0, 0];
-    const result = reflectInto(out, { x: 1, y: -1 }, { x: 0, y: 1 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(1);
-    expect(out[1]).toBeCloseTo(1);
-  });
-
   test('NaN 입력은 NaN으로 pass through한다', () => {
     const out = { x: 0, y: 0 };
     reflectInto(out, { x: NaN, y: 0 }, { x: 0, y: 1 });
@@ -163,13 +150,6 @@ describe('reflectInto — arbitrary normal에 대한 벡터 반사 (Into 버전)
     const out = { x: 0, y: 0 };
     reflectInto(out, { x: 1, y: 0 }, { x: -Infinity, y: 0 });
     expect(Number.isFinite(out.x)).toBe(false);
-  });
-
-  test('tuple input을 받는다', () => {
-    const out = { x: 0, y: 0 };
-    reflectInto(out, [1, -1], [0, 1]);
-    expect(out.x).toBeCloseTo(1);
-    expect(out.y).toBeCloseTo(1);
   });
 });
 
@@ -234,15 +214,6 @@ describe('rejectFromInto — basis 방향 성분 제거 (Into 버전)', () => {
     expect(v.y).toBeCloseTo(4);
   });
 
-  test('mutable tuple out의 타입이 유지된다', () => {
-    const out: [number, number] = [0, 0];
-    const result = rejectFromInto(out, { x: 3, y: 4 }, { x: 1, y: 0 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(0);
-    expect(out[1]).toBeCloseTo(4);
-  });
-
   test('NaN 입력은 NaN으로 pass through한다', () => {
     const out = { x: 0, y: 0 };
     rejectFromInto(out, { x: NaN, y: 0 }, { x: 1, y: 0 });
@@ -277,13 +248,6 @@ describe('rejectFromInto — basis 방향 성분 제거 (Into 버전)', () => {
     const out = { x: 0, y: 0 };
     rejectFromInto(out, { x: 1, y: 0 }, { x: -Infinity, y: 0 });
     expect(Number.isFinite(out.x)).toBe(false);
-  });
-
-  test('tuple input을 받는다', () => {
-    const out = { x: 0, y: 0 };
-    rejectFromInto(out, [3, 4], [1, 0]);
-    expect(out.x).toBeCloseTo(0);
-    expect(out.y).toBeCloseTo(4);
   });
 });
 

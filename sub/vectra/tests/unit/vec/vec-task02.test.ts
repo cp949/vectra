@@ -105,7 +105,6 @@ describe('vec subtractScaled - subtractScaled (companion)', () => {
 describe('vec predicate - quadrant', () => {
   test('x>0, y>0이면 1을 반환한다', () => {
     expect(quadrant({ x: 1, y: 1 })).toBe(1);
-    expect(quadrant([3, 5])).toBe(1);
   });
 
   test('x<0, y>0이면 2를 반환한다', () => {

@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { projectOnInto } from './project-on-into';
 
 /**
@@ -9,6 +9,6 @@ import { projectOnInto } from './project-on-into';
  * @param vector 투영할 벡터
  * @param direction 투영 방향 (unit vector 전제)
  */
-export function projectOn(vector: XYInput, direction: XYInput): XYObjectWritable {
+export function projectOn(vector: Point, direction: Point): PointWritable {
   return projectOnInto({ x: 0, y: 0 }, vector, direction);
 }
