@@ -1,3 +1,4 @@
+/** 경로 함수의 입출력과 경계 동작을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { closestPointInto } from '../../../src/path/closest-point-into';
 import { distanceToPoint } from '../../../src/path/distance-to-point';
@@ -151,19 +152,6 @@ describe('closestPointInto', () => {
     expect(out.y).toBeCloseTo(0, 10);
   });
 
-  test('tuple input point / tuple output storage 검증', () => {
-    // tuple 형태 input point와 tuple 형태 output이 동작해야 한다
-    const out: [number, number] = [0, 0];
-    const cmds: PathCommand[] = [
-      { kind: 'move', x: 0, y: 0 },
-      { kind: 'line', x: 100, y: 0 },
-    ];
-    const result = closestPointInto(out, cmds, [40, 30]);
-    expect(result).toBe(true);
-    expect(out[0]).toBeCloseTo(40, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
-  });
-
   test('동거리 앞쪽 segment 우선 tie-break', () => {
     // 단일 subpath에서 두 segment가 같은 거리일 때 앞쪽 segment가 선택된다.
     // path: (0,0)→(10,0)→(20,0), point (10, 5)
@@ -259,10 +247,10 @@ describe('closestPointInto', () => {
     const queryPt = { x: qx, y: qy };
 
     const outCoarse: XYObjectWritable = { x: 0, y: 0 };
-    closestPointInto(outCoarse, cmds, queryPt, { flatness: 20 });
+    closestPointInto(outCoarse, cmds, queryPt, { flatness: 20, maxRecursion: 32 });
 
     const outFine: XYObjectWritable = { x: 0, y: 0 };
-    closestPointInto(outFine, cmds, queryPt, { flatness: 0.1 });
+    closestPointInto(outFine, cmds, queryPt, { flatness: 0.1, maxRecursion: 32 });
 
     // 두 결과 모두 유효한 수여야 한다
     expect(Number.isNaN(outCoarse.x)).toBe(false);

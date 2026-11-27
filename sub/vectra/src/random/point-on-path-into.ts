@@ -1,3 +1,4 @@
+import { writeXY } from '../internal/xy';
 import { length } from '../path/length';
 import { pointAtLengthInto } from '../path/point-at-length-into';
 import type { PathCommand, XYWritable } from '../types';
@@ -37,5 +38,9 @@ export const pointOnPathInto = <Out extends XYWritable>(
   }
 
   const distance = random(rng) * totalLength;
-  return pointAtLengthInto(out, commands, distance);
+  // v2-migration: random 전환 시 점 객체 출력에 직접 기록한다.
+  const point = { x: 0, y: 0 };
+  if (!pointAtLengthInto(point, commands, distance)) return false;
+  writeXY(out, point.x, point.y);
+  return true;
 };

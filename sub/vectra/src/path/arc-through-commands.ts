@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { arcThroughCommandsInto } from './arc-through-commands-into';
 
 /**
@@ -22,6 +23,6 @@ import { arcThroughCommandsInto } from './arc-through-commands-into';
  * @param to 끝점
  * @returns 새로 만든 PathCommand 배열
  */
-export function arcThroughCommands(from: XYInput, through: XYInput, to: XYInput): PathCommand[] {
+export function arcThroughCommands(from: Point, through: Point, to: Point): PathCommand[] {
   return arcThroughCommandsInto([], from, through, to);
 }

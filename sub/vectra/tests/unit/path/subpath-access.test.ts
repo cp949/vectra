@@ -1,3 +1,5 @@
+/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 /**
  * TASK-02 command core helper unit tests.
  *
@@ -9,19 +11,21 @@ import { forEachSegment } from '../../../src/path/for-each-segment';
 import { subpathAt } from '../../../src/path/subpath-at';
 import { subpathBounds } from '../../../src/path/subpath-bounds';
 import { subpathBoundsInto } from '../../../src/path/subpath-bounds-into';
-import type { BoundsWritable, PathCommand, PathSegment } from '../../../src/types/index';
+import type { PathCommand, PathSegment } from '../../../src/types/index';
 
 /** sentinel bounds helper. */
 function sentinelBounds(): BoundsWritable {
   return {
-    min: { x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY },
-    max: { x: Number.NEGATIVE_INFINITY, y: Number.NEGATIVE_INFINITY },
+    minX: Number.POSITIVE_INFINITY,
+    minY: Number.POSITIVE_INFINITY,
+    maxX: Number.NEGATIVE_INFINITY,
+    maxY: Number.NEGATIVE_INFINITY,
   };
 }
 
 /** writable bounds output 새로 생성. */
 function makeBoundsOut(): BoundsWritable {
-  return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }
 
 /** 두 subpath rect-shape path. */
@@ -103,21 +107,25 @@ describe('commandAt', () => {
 describe('subpathBounds', () => {
   test('rect 1st subpath bounds', () => {
     const b = subpathBounds(twoSubpathRect, 0);
-    expect(b.min).toEqual({ x: 0, y: 0 });
-    expect(b.max).toEqual({ x: 10, y: 5 });
+    expect(b.minX).toBe(0);
+    expect(b.minY).toBe(0);
+    expect(b.maxX).toBe(10);
+    expect(b.maxY).toBe(5);
   });
 
   test('rect 2nd subpath bounds', () => {
     const b = subpathBounds(twoSubpathRect, 1);
-    expect(b.min).toEqual({ x: 20, y: 20 });
-    expect(b.max).toEqual({ x: 30, y: 25 });
+    expect(b.minX).toBe(20);
+    expect(b.minY).toBe(20);
+    expect(b.maxX).toBe(30);
+    expect(b.maxY).toBe(25);
   });
 
   test('multi-subpath bounds가 서로 독립적으로 계산된다', () => {
     const b0 = subpathBounds(twoSubpathRect, 0);
     const b1 = subpathBounds(twoSubpathRect, 1);
-    expect(b0.min).not.toEqual(b1.min);
-    expect(b0.max).not.toEqual(b1.max);
+    expect(b0.minX).not.toEqual(b1.minX);
+    expect(b0.maxX).not.toEqual(b1.maxX);
   });
 
   test('drawing segment가 없는 subpath는 sentinel bounds를 반환한다', () => {
@@ -155,8 +163,10 @@ describe('subpathBoundsInto', () => {
   test('정상 case에서 out에 bounds가 기록된다', () => {
     const out = makeBoundsOut();
     subpathBoundsInto(out, twoSubpathRect, 1);
-    expect(out.min).toEqual({ x: 20, y: 20 });
-    expect(out.max).toEqual({ x: 30, y: 25 });
+    expect(out.minX).toBe(20);
+    expect(out.minY).toBe(20);
+    expect(out.maxX).toBe(30);
+    expect(out.maxY).toBe(25);
   });
 
   test('out-of-range로 sentinel 기록 시 이전 값이 완전히 덮어쓰인다', () => {

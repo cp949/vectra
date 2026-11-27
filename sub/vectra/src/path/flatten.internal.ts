@@ -1,4 +1,5 @@
-import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathFlattenOptions } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
 
@@ -7,10 +8,10 @@ import { createSegmentFlattener } from './segment-flattener.internal';
  * public `flattenInto`와 path relation helper가 같은 flatten 정책을 공유한다.
  */
 export function flattenPathInto(
-  out: XYObjectWritable[],
+  out: PointWritable[],
   commands: readonly PathCommand[],
   options?: PathFlattenOptions
-): XYObjectWritable[] {
+): PointWritable[] {
   out.length = 0;
 
   if (commands.length === 0) {

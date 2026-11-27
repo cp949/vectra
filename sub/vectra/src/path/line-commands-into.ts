@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 
 /**
  * from→to 직선을 move + line 2 command로 out에 기록하고 out을 반환한다.
@@ -12,9 +12,9 @@ import type { PathCommand, XYInput } from '../types/index';
  * @param to 끝점 (XYLike 또는 XYTuple)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function lineCommandsInto(out: PathCommand[], from: XYInput, to: XYInput): PathCommand[] {
+export function lineCommandsInto(out: PathCommand[], from: Point, to: Point): PathCommand[] {
   out.length = 0;
-  out.push({ kind: 'move', x: readX(from), y: readY(from) });
-  out.push({ kind: 'line', x: readX(to), y: readY(to) });
+  out.push({ kind: 'move', x: from.x, y: from.y });
+  out.push({ kind: 'line', x: to.x, y: to.y });
   return out;
 }

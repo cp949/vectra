@@ -1,3 +1,4 @@
+/** 경로 함수의 입출력과 경계 동작을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { pointAtLengthInto } from '../../../src/path/point-at-length-into';
 import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
@@ -97,16 +98,5 @@ describe('pointAtLengthInto', () => {
     expect(typeof out.y).toBe('number');
     expect(out.x).toBeCloseTo(40, 10);
     expect(out.y).toBeCloseTo(0, 10);
-  });
-
-  test('tuple output ([x, y]) 검증', () => {
-    const out: [number, number] = [0, 0];
-    const cmds: PathCommand[] = [
-      { kind: 'move', x: 0, y: 0 },
-      { kind: 'line', x: 100, y: 0 },
-    ];
-    pointAtLengthInto(out, cmds, 70);
-    expect(out[0]).toBeCloseTo(70, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
   });
 });

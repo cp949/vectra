@@ -28,18 +28,9 @@ describe('lineCommandsInto', () => {
     ]);
   });
 
-  test('tuple XYInput을 읽는다', () => {
-    const out: PathCommand[] = [];
-    lineCommandsInto(out, [5, 6], [7, 8]);
-    expect(out).toEqual([
-      { kind: 'move', x: 5, y: 6 },
-      { kind: 'line', x: 7, y: 8 },
-    ]);
-  });
-
   test('기존 out content를 clear 후 기록한다', () => {
     const out: PathCommand[] = [{ kind: 'close' }, { kind: 'close' }];
-    lineCommandsInto(out, [0, 0], [1, 1]);
+    lineCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 });
     expect(out).toHaveLength(2);
     expect(out[0]).toEqual({ kind: 'move', x: 0, y: 0 });
   });
@@ -183,7 +174,7 @@ const QUARTER_POINTS: ReadonlyArray<readonly [number, number]> = [
 describe('circleCommandsInto', () => {
   test('move + 4 cubic + close, 총 6 command로 기록한다', () => {
     const out: PathCommand[] = [];
-    const result = circleCommandsInto(out, { center: { x: 0, y: 0 }, radius: 1 });
+    const result = circleCommandsInto(out, { cx: 0, cy: 0, r: 1 });
     expect(result).toBe(out);
     expect(out).toHaveLength(6);
     expect(out[0]).toEqual({ kind: 'move', x: 1, y: 0 });
@@ -193,13 +184,13 @@ describe('circleCommandsInto', () => {
 
   test('시작점은 right-most point (cx + r, cy)', () => {
     const out: PathCommand[] = [];
-    circleCommandsInto(out, { center: [10, 20], radius: 5 });
+    circleCommandsInto(out, { cx: 10, cy: 20, r: 5 });
     expect(out[0]).toEqual({ kind: 'move', x: 15, y: 20 });
   });
 
   test('clockwise(default): cubic endpoint가 4등분 점에 가깝다', () => {
     const out: PathCommand[] = [];
-    circleCommandsInto(out, { center: { x: 0, y: 0 }, radius: 1 });
+    circleCommandsInto(out, { cx: 0, cy: 0, r: 1 });
     const cubics = out.slice(1, 5) as CubicCommand[];
     // y-down clockwise: (1,0) → (0,1) → (-1,0) → (0,-1)
     for (let i = 0; i < 4; i++) {
@@ -211,7 +202,7 @@ describe('circleCommandsInto', () => {
 
   test('clockwise:false는 counter-clockwise 방향으로 기록한다', () => {
     const out: PathCommand[] = [];
-    circleCommandsInto(out, { center: { x: 0, y: 0 }, radius: 1 }, { clockwise: false });
+    circleCommandsInto(out, { cx: 0, cy: 0, r: 1 }, { clockwise: false });
     const cubics = out.slice(1, 5) as CubicCommand[];
     // counter-clockwise: (1,0) → (0,-1) → (-1,0) → (0,1)
     const ccw: ReadonlyArray<readonly [number, number]> = [
@@ -228,7 +219,7 @@ describe('circleCommandsInto', () => {
 
   test('cubic 곡선 bounds가 circle bounds와 거의 같다', () => {
     const out: PathCommand[] = [];
-    circleCommandsInto(out, { center: { x: 3, y: 7 }, radius: 2 });
+    circleCommandsInto(out, { cx: 3, cy: 7, r: 2 });
     // cubic 곡선을 sampling해 bbox를 측정. kappa 근사 오차는 매우 작다 (< 2e-4).
     let minX = Infinity;
     let minY = Infinity;
@@ -263,7 +254,7 @@ describe('circleCommandsInto', () => {
 describe('ellipseCommandsInto', () => {
   test('rx != ry 기본 동작: move + 4 cubic + close', () => {
     const out: PathCommand[] = [];
-    const result = ellipseCommandsInto(out, { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 1 });
+    const result = ellipseCommandsInto(out, { cx: 0, cy: 0, rx: 3, ry: 1 });
     expect(result).toBe(out);
     expect(out).toHaveLength(6);
     expect(out[0]).toEqual({ kind: 'move', x: 3, y: 0 });
@@ -276,15 +267,15 @@ describe('ellipseCommandsInto', () => {
 
   test('rx == ry이면 동일 center/radius circle과 결과가 같다', () => {
     const ellipseOut: PathCommand[] = [];
-    ellipseCommandsInto(ellipseOut, { center: { x: 2, y: 5 }, radiusX: 4, radiusY: 4 });
+    ellipseCommandsInto(ellipseOut, { cx: 2, cy: 5, rx: 4, ry: 4 });
     const circleOut: PathCommand[] = [];
-    circleCommandsInto(circleOut, { center: { x: 2, y: 5 }, radius: 4 });
+    circleCommandsInto(circleOut, { cx: 2, cy: 5, r: 4 });
     expect(ellipseOut).toEqual(circleOut);
   });
 
-  test('tuple ellipse input과 clockwise:false 옵션을 읽는다', () => {
+  test('타원에서 반시계 방향으로 명령을 기록한다', () => {
     const out: PathCommand[] = [];
-    ellipseCommandsInto(out, [[0, 0], 2, 1], { clockwise: false });
+    ellipseCommandsInto(out, { cx: 0, cy: 0, rx: 2, ry: 1 }, { clockwise: false });
     expect(out[0]).toEqual({ kind: 'move', x: 2, y: 0 });
     const cubics = out.slice(1, 5) as CubicCommand[];
     // counter-clockwise 첫 endpoint: (0, -ry)
@@ -294,7 +285,7 @@ describe('ellipseCommandsInto', () => {
 
   test('점이 없는 입력 개념 없음 — degenerate radius 0도 throw 없이 기록한다', () => {
     const out: PathCommand[] = [];
-    ellipseCommandsInto(out, { center: [0, 0], radiusX: 0, radiusY: 0 });
+    ellipseCommandsInto(out, { cx: 0, cy: 0, rx: 0, ry: 0 });
     expect(out).toHaveLength(6);
     expect(out[0]).toEqual({ kind: 'move', x: 0, y: 0 });
   });

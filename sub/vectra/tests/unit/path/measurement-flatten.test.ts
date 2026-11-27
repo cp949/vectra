@@ -191,7 +191,7 @@ describe('flattenInto', () => {
     flattenInto(outDefault, cmds); // flatness = 0.5
 
     const outFine = makeOut();
-    flattenInto(outFine, cmds, { flatness: 0.01 });
+    flattenInto(outFine, cmds, { flatness: 0.01, maxRecursion: 32 });
 
     expect(outFine.length).toBeGreaterThanOrEqual(outDefault.length);
   });

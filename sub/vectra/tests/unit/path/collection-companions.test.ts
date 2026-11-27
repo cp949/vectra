@@ -212,7 +212,7 @@ describe('polygonCommands', () => {
 // ──────────────────────────────────────────────
 describe('circleCommands', () => {
   test('circleCommandsInto 결과와 deep equal이다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 10 };
+    const circle = { cx: 0, cy: 0, r: 10 };
     const expected = circleCommandsInto([], circle);
     expect(circleCommands(circle)).toEqual(expected);
   });
@@ -223,7 +223,7 @@ describe('circleCommands', () => {
 // ──────────────────────────────────────────────
 describe('ellipseCommands', () => {
   test('ellipseCommandsInto 결과와 deep equal이다', () => {
-    const ellipse = { center: { x: 0, y: 0 }, radiusX: 20, radiusY: 10 };
+    const ellipse = { cx: 0, cy: 0, rx: 20, ry: 10 };
     const expected = ellipseCommandsInto([], ellipse);
     expect(ellipseCommands(ellipse)).toEqual(expected);
   });
@@ -234,7 +234,7 @@ describe('ellipseCommands', () => {
 // ──────────────────────────────────────────────
 describe('segmentCommands', () => {
   test('segmentCommandsInto 결과와 deep equal이다', () => {
-    const seg = { a: { x: 1, y: 2 }, b: { x: 3, y: 4 } };
+    const seg = { x1: 1, y1: 2, x2: 3, y2: 4 };
     const expected = segmentCommandsInto([], seg);
     expect(segmentCommands(seg)).toEqual(expected);
   });

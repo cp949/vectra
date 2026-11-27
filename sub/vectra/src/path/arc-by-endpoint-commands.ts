@@ -1,4 +1,5 @@
-import type { ArcCommand, PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { ArcCommand, PathCommand } from '../types/index';
 import { arcByEndpointCommandsInto } from './arc-by-endpoint-commands-into';
 
 /**
@@ -14,6 +15,6 @@ import { arcByEndpointCommandsInto } from './arc-by-endpoint-commands-into';
  * @param arcCommand SVG endpoint arc command
  * @returns 새로 만든 PathCommand 배열
  */
-export function arcByEndpointCommands(from: XYInput, arcCommand: ArcCommand): PathCommand[] {
+export function arcByEndpointCommands(from: Point, arcCommand: ArcCommand): PathCommand[] {
   return arcByEndpointCommandsInto([], from, arcCommand);
 }

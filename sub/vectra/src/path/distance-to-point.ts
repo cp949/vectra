@@ -1,6 +1,6 @@
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { segDistSq } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable } from '../types/index';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
 import { hypot2 } from '../internal/numeric';
@@ -12,7 +12,7 @@ interface DistanceSearchState {
 
 /** minDistSq를 flatPts 배열의 index 1 부터 순회하며 갱신하고 새 값을 반환한다. */
 function updateMinDistSqFromPolyline(
-  flatPts: XYObjectWritable[],
+  flatPts: PointWritable[],
   qx: number,
   qy: number,
   state: DistanceSearchState
@@ -45,14 +45,14 @@ function updateMinDistSqFromPolyline(
  */
 export function distanceToPoint(
   commands: readonly PathCommand[],
-  point: XYInput,
-  options?: PathMeasurementOptions
+  point: Point,
+  options?: Required<PathMeasurementOptions>
 ): number {
   // empty path는 Infinity 반환
   if (commands.length === 0) return Infinity;
 
-  const qx = readX(point);
-  const qy = readY(point);
+  const qx = point.x;
+  const qy = point.y;
   const flattener = createSegmentFlattener(options);
 
   let hasSegment = false;

@@ -1,6 +1,6 @@
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { segClampedT } from '../internal/polyline';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable, XYWritable } from '../types/index';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
 
@@ -13,7 +13,7 @@ interface ClosestPointSearchState {
 
 /** state 최적값을 flatPts 배열의 index 1 부터 순회하며 갱신한다. */
 function updateBestFromPolyline(
-  flatPts: XYObjectWritable[],
+  flatPts: PointWritable[],
   qx: number,
   qy: number,
   state: ClosestPointSearchState
@@ -49,22 +49,22 @@ function updateBestFromPolyline(
  * - Move-only path (측정 가능한 segment가 없는 경우) → 첫 번째 MoveCommand 위치를 기록하고 true 반환.
  *   첫 command가 MoveCommand가 아니면 implicit origin (0, 0)을 기록하고 true 반환.
  *
- * @param out - 결과를 기록할 XYWritable output
+ * @param out - 결과를 기록할 점 객체
  * @param commands - 탐색 대상 path command sequence
  * @param point - 가장 가까운 점을 찾을 기준 좌표
  * @param options - flatten 옵션 (flatness, maxRecursion)
  */
 export function closestPointInto(
-  out: XYWritable,
+  out: PointWritable,
   commands: readonly PathCommand[],
-  point: XYInput,
-  options?: PathMeasurementOptions
+  point: Point,
+  options?: Required<PathMeasurementOptions>
 ): boolean {
   // empty path는 false 반환, out 미수정
   if (commands.length === 0) return false;
 
-  const qx = readX(point);
-  const qy = readY(point);
+  const qx = point.x;
+  const qy = point.y;
   const flattener = createSegmentFlattener(options);
 
   let hasSegment = false;
@@ -111,14 +111,17 @@ export function closestPointInto(
     // move-only path: 첫 번째 MoveCommand 위치를 기록
     const first = commands[0];
     if (first.kind === 'move') {
-      writeXY(out, first.x, first.y);
+      out.x = first.x;
+      out.y = first.y;
     } else {
       // 첫 command가 move가 아니면 implicit origin (0, 0)
-      writeXY(out, 0, 0);
+      out.x = 0;
+      out.y = 0;
     }
     return true;
   }
 
-  writeXY(out, state.bestCx, state.bestCy);
+  out.x = state.bestCx;
+  out.y = state.bestCy;
   return true;
 }

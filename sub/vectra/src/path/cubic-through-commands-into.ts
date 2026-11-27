@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { CubicThroughOptions, PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { CubicThroughOptions, PathCommand } from '../types/index';
 
 /**
  * from → to를 잇는 cubic Bezier가 through 점을 지나도록 control point P1, P2를 계산해
@@ -18,27 +18,27 @@ import type { CubicThroughOptions, PathCommand, XYInput } from '../types/index';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param from 시작점 (XYInput)
- * @param through cubic 위에서 통과해야 할 점 (XYInput). 기본 `controlScale = 1`에서 `t = 0.5` 위치 통과
- * @param to 끝점 (XYInput)
+ * @param from 시작점 (Point)
+ * @param through cubic 위에서 통과해야 할 점 (Point). 기본 `controlScale = 1`에서 `t = 0.5` 위치 통과
+ * @param to 끝점 (Point)
  * @param options through 점 parameter / control handle 배율 옵션 (기본 `t = 0.5`, `controlScale = 1`)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function cubicThroughCommandsInto(
   out: PathCommand[],
-  from: XYInput,
-  through: XYInput,
-  to: XYInput,
-  options?: CubicThroughOptions
+  from: Point,
+  through: Point,
+  to: Point,
+  options?: Required<CubicThroughOptions>
 ): PathCommand[] {
-  const t = options?.t ?? 0.5;
-  const controlScale = options?.controlScale ?? 1;
-  const fx = readX(from);
-  const fy = readY(from);
-  const tx = readX(to);
-  const ty = readY(to);
-  const thx = readX(through);
-  const thy = readY(through);
+  const t = options === undefined ? 0.5 : options.t;
+  const controlScale = options === undefined ? 1 : options.controlScale;
+  const fx = from.x;
+  const fy = from.y;
+  const tx = to.x;
+  const ty = to.y;
+  const thx = through.x;
+  const thy = through.y;
 
   const u = 1 - t;
   const k1 = ((1 + 2 * t) / (3 * t)) * controlScale;

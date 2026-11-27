@@ -1,4 +1,5 @@
-import type { PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { lineCommandsInto } from './line-commands-into';
 
 /**
@@ -12,6 +13,6 @@ import { lineCommandsInto } from './line-commands-into';
  * @param to 끝점 (XYLike 또는 XYTuple)
  * @returns 새로 만든 PathCommand 배열
  */
-export function lineCommands(from: XYInput, to: XYInput): PathCommand[] {
+export function lineCommands(from: Point, to: Point): PathCommand[] {
   return lineCommandsInto([], from, to);
 }

@@ -152,7 +152,7 @@ describe('polyline bridge/collection - fromPathInto', () => {
     const fine = fromPathInto([], cmds, { flatness: 0.01 });
     expect(fine.length).toBeGreaterThan(coarse.length);
     // 같은 옵션이면 flattenInto와 동일하다.
-    expect(fine).toEqual(flattenInto([], cmds, { flatness: 0.01 }));
+    expect(fine).toEqual(flattenInto([], cmds, { flatness: 0.01, maxRecursion: 32 }));
   });
 
   test('cubic/arc path도 flattenInto와 동일한 결과를 만든다', () => {

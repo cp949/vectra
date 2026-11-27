@@ -1,4 +1,5 @@
-import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathFlattenOptions } from '../types/index';
 import { flattenPathInto } from './flatten.internal';
 
 /**
@@ -16,9 +17,9 @@ import { flattenPathInto } from './flatten.internal';
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function flattenInto(
-  out: XYObjectWritable[],
+  out: PointWritable[],
   commands: readonly PathCommand[],
-  options?: PathFlattenOptions
-): XYObjectWritable[] {
+  options?: Required<PathFlattenOptions>
+): PointWritable[] {
   return flattenPathInto(out, commands, options);
 }

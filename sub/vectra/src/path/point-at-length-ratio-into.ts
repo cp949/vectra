@@ -1,4 +1,5 @@
-import type { PathCommand, PathMeasurementOptions, XYWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { length } from './length';
 import { pointAtLengthInto } from './point-at-length-into';
 
@@ -16,17 +17,17 @@ import { pointAtLengthInto } from './point-at-length-into';
  *
  * 내부적으로 `length`와 `pointAtLengthInto`가 path를 각각 한 번씩 순회한다.
  *
- * @param out point를 기록할 writable output
+ * @param out point를 기록할 점 객체
  * @param commands sampling할 path command sequence
  * @param ratio normalized parameter (`distance / totalLength`)
  * @param options flatten 옵션 (flatness, maxRecursion)
  * @returns 기록 성공 시 true, drawing segment 없으면 false
  */
 export function pointAtLengthRatioInto(
-  out: XYWritable,
+  out: PointWritable,
   commands: readonly PathCommand[],
   ratio: number,
-  options?: PathMeasurementOptions
+  options?: Required<PathMeasurementOptions>
 ): boolean {
   const total = length(commands, options);
   return pointAtLengthInto(out, commands, ratio * total, options);

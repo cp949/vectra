@@ -1,4 +1,5 @@
-import type { PathCommand, PathMeasurementOptions, XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { pointAtLengthRatioInto } from './point-at-length-ratio-into';
 
 /**
@@ -21,8 +22,8 @@ import { pointAtLengthRatioInto } from './point-at-length-ratio-into';
 export function pointAtLengthRatio(
   commands: readonly PathCommand[],
   ratio: number,
-  options?: PathMeasurementOptions
-): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  options?: Required<PathMeasurementOptions>
+): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return pointAtLengthRatioInto(out, commands, ratio, options) ? out : undefined;
 }

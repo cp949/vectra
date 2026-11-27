@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { ClassifyPointOptions, PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { ClassifyPointOptions, PathCommand } from '../types/index';
 import { containsPoint } from './contains-point';
 import { distanceToPoint } from './distance-to-point';
 
@@ -28,11 +28,11 @@ import { distanceToPoint } from './distance-to-point';
  */
 export function classifyPoint(
   commands: readonly PathCommand[],
-  point: XYInput,
-  options?: ClassifyPointOptions
+  point: Point,
+  options?: Required<ClassifyPointOptions>
 ): 'inside' | 'outside' | 'boundary' {
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
 
   // fail-safe: non-finite point는 분류 불가 → outside 고정.
   if (!Number.isFinite(px) || !Number.isFinite(py)) {
@@ -43,7 +43,7 @@ export function classifyPoint(
     return 'outside';
   }
 
-  const tolerance = options?.boundaryTolerance ?? 1e-9;
+  const tolerance = options === undefined ? 1e-9 : options.boundaryTolerance;
 
   if (distanceToPoint(commands, point, options) < tolerance) {
     return 'boundary';

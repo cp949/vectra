@@ -1,8 +1,9 @@
-import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathFlattenOptions } from '../types/index';
 import { flattenInto } from './flatten-into';
 
 /**
- * commands를 polyline으로 flatten한 새 XYObjectWritable[] 배열을 반환한다.
+ * commands를 polyline으로 flatten한 새 PointWritable[] 배열을 반환한다.
  *
  * 첫 drawing segment 시작점을 먼저 담은 뒤 각 segment의 끝점만 순차로 담는다
  * (start point + endpoint-only sequence). curve segment는 curve flatten helper를 경유한다.
@@ -12,8 +13,8 @@ import { flattenInto } from './flatten-into';
  *
  * @param commands flatten할 path command sequence
  * @param options flatten 옵션 (flatness, maxRecursion)
- * @returns 새로 만든 XYObjectWritable point 배열
+ * @returns 새로 만든 PointWritable point 배열
  */
-export function flatten(commands: readonly PathCommand[], options?: PathFlattenOptions): XYObjectWritable[] {
+export function flatten(commands: readonly PathCommand[], options?: Required<PathFlattenOptions>): PointWritable[] {
   return flattenInto([], commands, options);
 }

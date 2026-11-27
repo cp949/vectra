@@ -1,4 +1,5 @@
-import type { EllipseLike, PathCommand } from '../types/index';
+import type { Ellipse } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { type EllipseArcOptions, ellipseCommandsInto } from './ellipse-commands-into';
 
 /**
@@ -14,6 +15,6 @@ import { type EllipseArcOptions, ellipseCommandsInto } from './ellipse-commands-
  * @param options clockwise, startAngle 옵션
  * @returns 새로 만든 PathCommand 배열
  */
-export function ellipseCommands(ellipse: EllipseLike, options?: EllipseArcOptions): PathCommand[] {
+export function ellipseCommands(ellipse: Ellipse, options?: Required<EllipseArcOptions>): PathCommand[] {
   return ellipseCommandsInto([], ellipse, options);
 }

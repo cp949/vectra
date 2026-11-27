@@ -139,17 +139,10 @@ describe('containsPoint', () => {
     expect(containsPoint(cmds, { x: 50, y: 10 })).toBe(false);
   });
 
-  // -- tuple input
-
-  test('tuple point input → 동일하게 작동', () => {
-    expect(containsPoint(makeTriangle(), [50, 30])).toBe(true);
-    expect(containsPoint(makeTriangle(), [200, 200])).toBe(false);
-  });
-
   // -- options 전달
 
   test('flatness option 전달 — 결과가 유효한 boolean', () => {
-    const result = containsPoint(makeTriangle(), { x: 50, y: 30 }, { flatness: 0.1 });
+    const result = containsPoint(makeTriangle(), { x: 50, y: 30 }, { flatness: 0.1, maxRecursion: 32 });
     expect(typeof result).toBe('boolean');
     expect(result).toBe(true);
   });
@@ -203,8 +196,6 @@ describe('winding', () => {
     expect(winding(cmds, { x: 50, y: 50 })).toBe(0);
   });
 
-  // -- tuple input
-
   test('tuple point input → 동일하게 작동', () => {
     expect(winding(makeTriangle(), [200, 200])).toBe(0);
     expect(winding(makeTriangle(), [50, 30])).not.toBe(0);
@@ -228,7 +219,7 @@ describe('winding', () => {
   // -- options 전달
 
   test('flatness option 전달 — 결과가 유효한 number', () => {
-    const result = winding(makeTriangle(), { x: 50, y: 30 }, { flatness: 0.1 });
+    const result = winding(makeTriangle(), { x: 50, y: 30 }, { flatness: 0.1, maxRecursion: 32 });
     expect(typeof result).toBe('number');
   });
 });

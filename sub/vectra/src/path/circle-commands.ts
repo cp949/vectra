@@ -1,4 +1,5 @@
-import type { CircleLike, PathCommand } from '../types/index';
+import type { Circle } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { circleCommandsInto, type EllipseArcOptions } from './circle-commands-into';
 
 /**
@@ -14,6 +15,6 @@ import { circleCommandsInto, type EllipseArcOptions } from './circle-commands-in
  * @param options clockwise, startAngle 옵션
  * @returns 새로 만든 PathCommand 배열
  */
-export function circleCommands(circle: CircleLike, options?: EllipseArcOptions): PathCommand[] {
+export function circleCommands(circle: Circle, options?: Required<EllipseArcOptions>): PathCommand[] {
   return circleCommandsInto([], circle, options);
 }

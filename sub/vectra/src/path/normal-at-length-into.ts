@@ -1,5 +1,5 @@
-import { writeXY } from '../internal/xy';
-import type { PathCommand, PathMeasurementOptions, XYWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { propertiesAtLength } from './properties-at-length';
 
 /**
@@ -23,21 +23,22 @@ import { propertiesAtLength } from './properties-at-length';
  *
  * 내부적으로 `propertiesAtLength`가 path를 한 번 순회한다 (target distance 도달 시 조기 종료).
  *
- * @param out 단위 법선 벡터를 기록할 writable output
+ * @param out 단위 법선 벡터를 기록할 점 객체
  * @param commands sampling할 path command sequence
  * @param distance path 시작점부터의 arc-length offset
  * @param options flatten 옵션 (flatness, maxRecursion)
  * @returns 법선 정의 가능 시 true (단위화 실패해도 true), 정의 불가 시 false
  */
 export function normalAtLengthInto(
-  out: XYWritable,
+  out: PointWritable,
   commands: readonly PathCommand[],
   distance: number,
-  options?: PathMeasurementOptions
+  options?: Required<PathMeasurementOptions>
 ): boolean {
   const props = propertiesAtLength(commands, distance, options);
   if (props === undefined) return false;
   // 좌측 90° 회전: (tx, ty) → (-ty, tx). zero tangent는 zero normal로 흐른다.
-  writeXY(out, -props.tangentY, props.tangentX);
+  out.x = -props.tangentY;
+  out.y = props.tangentX;
   return true;
 }

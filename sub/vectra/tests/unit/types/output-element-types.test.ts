@@ -28,7 +28,7 @@ import type { IntersectionHit, MoveCommand, PathCommand, XYObjectWritable, XYTup
 describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
   test('path Into는 PathCommand[]를 받고 PathCommand[]를 반환한다', () => {
     const out: PathCommand[] = [];
-    const result = lineCommandsInto(out, [0, 0], [1, 1]);
+    const result = lineCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 });
     expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
     expect(result).toBe(out);
   });
@@ -36,7 +36,7 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
   test('path Into에 MoveCommand[]를 넘겨도 반환 타입은 MoveCommand[]로 좁혀지지 않는다', () => {
     const narrow: MoveCommand[] = [];
     // 배열은 공변이라 인자는 받는다. 대신 반환 타입이 push된 line command를 가린다
-    const lines = lineCommandsInto(narrow, [0, 0], [1, 1]);
+    const lines = lineCommandsInto(narrow, { x: 0, y: 0 }, { x: 1, y: 1 });
     expectTypeOf(lines).toEqualTypeOf<PathCommand[]>();
     expect(lines.map((command) => command.kind)).toEqual(['move', 'line']);
 

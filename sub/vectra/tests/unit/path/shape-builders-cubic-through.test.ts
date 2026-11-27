@@ -30,7 +30,7 @@ function evaluateCubicAt(from: readonly [number, number], cubic: CubicCommand, t
 describe('cubicThroughCommandsInto', () => {
   test('기본 t = 0.5, controlScale = 1에서 through 점을 통과한다', () => {
     const out: PathCommand[] = [];
-    cubicThroughCommandsInto(out, [0, 0], [3, 6], [6, 0]);
+    cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 });
     const cubic = out[1] as CubicCommand;
     const [x, y] = evaluateCubicAt([0, 0], cubic, 0.5);
     expectClose(x, 3);
@@ -39,7 +39,7 @@ describe('cubicThroughCommandsInto', () => {
 
   test('t = 0.25, controlScale = 1에서 through 점을 통과한다', () => {
     const out: PathCommand[] = [];
-    cubicThroughCommandsInto(out, [0, 0], [3, 6], [6, 0], { t: 0.25 });
+    cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 }, { t: 0.25, controlScale: 1 });
     const cubic = out[1] as CubicCommand;
     const [x, y] = evaluateCubicAt([0, 0], cubic, 0.25);
     expectClose(x, 3);
@@ -48,7 +48,7 @@ describe('cubicThroughCommandsInto', () => {
 
   test('기본 controlScale = 1에서 P1, P2가 공식대로 계산된다', () => {
     const out: PathCommand[] = [];
-    cubicThroughCommandsInto(out, [0, 0], [3, 6], [6, 0]);
+    cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 });
     const cubic = out[1] as CubicCommand;
     // P1 = from + (through - from) * 4/3 = (4, 8)
     expectClose(cubic.x1, 4);
@@ -62,7 +62,7 @@ describe('cubicThroughCommandsInto', () => {
 
   test('controlScale = 0이면 P1 = from, P2 = to (straight line cubic)', () => {
     const out: PathCommand[] = [];
-    cubicThroughCommandsInto(out, [0, 0], [3, 6], [6, 0], { controlScale: 0 });
+    cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 }, { controlScale: 0, t: 0.5 });
     const cubic = out[1] as CubicCommand;
     expectClose(cubic.x1, 0);
     expectClose(cubic.y1, 0);
@@ -72,7 +72,7 @@ describe('cubicThroughCommandsInto', () => {
 
   test('controlScale = 2이면 control handle이 2배 늘어난다', () => {
     const out: PathCommand[] = [];
-    cubicThroughCommandsInto(out, [0, 0], [3, 6], [6, 0], { controlScale: 2 });
+    cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 }, { controlScale: 2, t: 0.5 });
     const cubic = out[1] as CubicCommand;
     // P1 = from + (through - from) * 8/3 = (8, 16)
     expectClose(cubic.x1, 8);
@@ -83,7 +83,7 @@ describe('cubicThroughCommandsInto', () => {
 
   test('degenerate from == to도 cubic을 그대로 구성한다', () => {
     const out: PathCommand[] = [];
-    cubicThroughCommandsInto(out, [0, 0], [1, 1], [0, 0]);
+    cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 0 });
     expect(out).toHaveLength(2);
     expect(out[0]).toEqual({ kind: 'move', x: 0, y: 0 });
     expect(out[1].kind).toBe('cubic');
@@ -91,14 +91,14 @@ describe('cubicThroughCommandsInto', () => {
 
   test('non-finite endpoint를 그대로 흘린다', () => {
     const out: PathCommand[] = [];
-    cubicThroughCommandsInto(out, [Number.NaN, 0], [1, 1], [2, 0]);
+    cubicThroughCommandsInto(out, { x: Number.NaN, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 0 });
     const cubic = out[1] as CubicCommand;
     expect(Number.isNaN(cubic.x1)).toBe(true);
   });
 
   test('aliasing: 기존 out content를 clear 후 기록한다', () => {
     const out: PathCommand[] = [{ kind: 'close' }, { kind: 'close' }];
-    cubicThroughCommandsInto(out, [0, 0], [3, 6], [6, 0]);
+    cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 });
     expect(out).toHaveLength(2);
     expect(out[0].kind).toBe('move');
     expect(out[1].kind).toBe('cubic');
@@ -107,8 +107,8 @@ describe('cubicThroughCommandsInto', () => {
   test('t 옵션이 control point 위치를 바꾼다', () => {
     const a: PathCommand[] = [];
     const b: PathCommand[] = [];
-    cubicThroughCommandsInto(a, [0, 0], [3, 6], [6, 0], { t: 0.5 });
-    cubicThroughCommandsInto(b, [0, 0], [3, 6], [6, 0], { t: 0.25 });
+    cubicThroughCommandsInto(a, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 }, { t: 0.5, controlScale: 1 });
+    cubicThroughCommandsInto(b, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 }, { t: 0.25, controlScale: 1 });
     expect(a).not.toEqual(b);
   });
 });

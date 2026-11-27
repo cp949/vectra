@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { lineCommandsInto } from './line-commands-into';
 import { hypot2 } from '../internal/numeric';
 
@@ -24,23 +24,18 @@ import { hypot2 } from '../internal/numeric';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param from 시작점 (XYInput)
- * @param through 호 위를 지나야 할 중간 점 (XYInput)
- * @param to 끝점 (XYInput)
+ * @param from 시작점 (Point)
+ * @param through 호 위를 지나야 할 중간 점 (Point)
+ * @param to 끝점 (Point)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function arcThroughCommandsInto(
-  out: PathCommand[],
-  from: XYInput,
-  through: XYInput,
-  to: XYInput
-): PathCommand[] {
-  const ax = readX(from);
-  const ay = readY(from);
-  const bx = readX(through);
-  const by = readY(through);
-  const cx = readX(to);
-  const cy = readY(to);
+export function arcThroughCommandsInto(out: PathCommand[], from: Point, through: Point, to: Point): PathCommand[] {
+  const ax = from.x;
+  const ay = from.y;
+  const bx = through.x;
+  const by = through.y;
+  const cx = to.x;
+  const cy = to.y;
 
   // 세 점이 모두 동일하면 빈 commands.
   if (ax === bx && ay === by && bx === cx && by === cy) {

@@ -1,6 +1,6 @@
+import type { Ellipse } from '../types/flat-shapes.internal';
 import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, PathCommand } from '../types/index';
+import type { PathCommand } from '../types/index';
 
 /** `fromEllipseInto` / `fromEllipse` 옵션. */
 export interface PathFromEllipseOptions {
@@ -41,20 +41,20 @@ export interface PathFromEllipseOptions {
  */
 export function fromEllipseInto(
   out: PathCommand[],
-  ellipse: EllipseLike,
-  options?: PathFromEllipseOptions
+  ellipse: Ellipse,
+  options?: Required<PathFromEllipseOptions>
 ): PathCommand[] {
-  const segments = options?.segments ?? 64;
+  const segments = options === undefined ? 64 : options.segments;
   if (!Number.isInteger(segments) || segments < 1) {
     throw new RangeError('fromEllipseInto: segments must be an integer >= 1');
   }
 
-  const startAngle = options?.startAngle ?? 0;
-  const clockwise = options?.clockwise ?? true;
-  const cx = readX(readEllipseCenter(ellipse));
-  const cy = readY(readEllipseCenter(ellipse));
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
+  const startAngle = options === undefined ? 0 : options.startAngle;
+  const clockwise = options === undefined ? true : options.clockwise;
+  const cx = ellipse.cx;
+  const cy = ellipse.cy;
+  const rx = ellipse.rx;
+  const ry = ellipse.ry;
 
   out.length = 0;
 

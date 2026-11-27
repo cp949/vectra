@@ -1,4 +1,5 @@
-import type { PathCommand, SegmentLike } from '../types/index';
+import type { Segment } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { segmentCommandsInto } from './segment-commands-into';
 
 /**
@@ -12,6 +13,6 @@ import { segmentCommandsInto } from './segment-commands-into';
  * @param segment 변환할 segment input
  * @returns 새로 만든 PathCommand 배열
  */
-export function segmentCommands(segment: SegmentLike): PathCommand[] {
+export function segmentCommands(segment: Segment): PathCommand[] {
   return segmentCommandsInto([], segment);
 }

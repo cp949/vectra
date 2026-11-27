@@ -1,4 +1,5 @@
-import type { PathCommand, PathMeasurementOptions, XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { normalAtLengthInto } from './normal-at-length-into';
 
 /**
@@ -27,8 +28,8 @@ import { normalAtLengthInto } from './normal-at-length-into';
 export function normalAtLength(
   commands: readonly PathCommand[],
   distance: number,
-  options?: PathMeasurementOptions
-): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  options?: Required<PathMeasurementOptions>
+): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return normalAtLengthInto(out, commands, distance, options) ? out : undefined;
 }

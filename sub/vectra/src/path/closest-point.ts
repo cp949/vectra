@@ -1,4 +1,5 @@
-import type { PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable } from '../types/index';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { closestPointInto } from './closest-point-into';
 
 /**
@@ -16,9 +17,9 @@ import { closestPointInto } from './closest-point-into';
  */
 export function closestPoint(
   commands: readonly PathCommand[],
-  point: XYInput,
-  options?: PathMeasurementOptions
-): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  point: Point,
+  options?: Required<PathMeasurementOptions>
+): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return closestPointInto(out, commands, point, options) ? out : undefined;
 }

@@ -22,7 +22,7 @@ describe('arcByEndpointCommandsInto', () => {
       x: 10,
       y: 0,
     };
-    const result = arcByEndpointCommandsInto(out, [0, 0], arc);
+    const result = arcByEndpointCommandsInto(out, { x: 0, y: 0 }, arc);
     expect(result).toBe(out);
     expect(out).toHaveLength(2);
     expect(out[0]).toEqual({ kind: 'move', x: 0, y: 0 });
@@ -57,7 +57,7 @@ describe('arcByEndpointCommandsInto', () => {
       x: 1,
       y: 1,
     };
-    arcByEndpointCommandsInto(out, [0, 0], arc);
+    arcByEndpointCommandsInto(out, { x: 0, y: 0 }, arc);
     expect(out[1]).toBe(arc);
   });
 
@@ -73,7 +73,7 @@ describe('arcByEndpointCommandsInto', () => {
       x: 0,
       y: 0,
     };
-    arcByEndpointCommandsInto(out, [Number.NaN, 0], arc);
+    arcByEndpointCommandsInto(out, { x: Number.NaN, y: 0 }, arc);
     expect(Number.isNaN((out[0] as { x: number }).x)).toBe(true);
   });
 
@@ -89,7 +89,7 @@ describe('arcByEndpointCommandsInto', () => {
       x: 1,
       y: 1,
     };
-    arcByEndpointCommandsInto(out, [0, 0], arc);
+    arcByEndpointCommandsInto(out, { x: 0, y: 0 }, arc);
     expect(out).toHaveLength(2);
     expect(out[0].kind).toBe('move');
     expect(out[1].kind).toBe('arc');

@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable } from '../types/index';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { flattenInto } from './flatten-into';
 
 /**
@@ -37,7 +37,7 @@ function isOnSegment(ax: number, ay: number, bx: number, by: number, px: number,
   return cross === 0;
 }
 
-function countCrossingsInPolyline(pts: XYObjectWritable[], px: number, py: number): number {
+function countCrossingsInPolyline(pts: PointWritable[], px: number, py: number): number {
   let count = 0;
   for (let i = 1; i < pts.length; i++) {
     const ax = pts[i - 1].x;
@@ -70,19 +70,19 @@ function countCrossingsInPolyline(pts: XYObjectWritable[], px: number, py: numbe
  */
 export function containsPoint(
   commands: readonly PathCommand[],
-  point: XYInput,
-  options?: PathMeasurementOptions
+  point: Point,
+  options?: Required<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
 
-  const px = readX(point);
-  const py = readY(point);
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
+  const px = point.x;
+  const py = point.y;
+  const flatness = options === undefined ? 0.5 : options.flatness;
+  const maxRecursion = options === undefined ? 32 : options.maxRecursion;
   const flatOpts = { flatness, maxRecursion };
 
   /** 각 closed subpath를 flatten하여 담는 임시 buffer. */
-  const subpathBuf: XYObjectWritable[] = [];
+  const subpathBuf: PointWritable[] = [];
   /** 현재 subpath command를 누적하는 buffer. */
   const subpathCmds: PathCommand[] = [];
 

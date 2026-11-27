@@ -1,3 +1,5 @@
+/** 경로 함수의 입출력과 경계 동작을 검증한다. */
+import type { BoundsWritable } from '../../../src/types/flat-shapes.internal';
 /**
  * S2-RM-003 companion gap 보완 함수와 propertiesAtLength 단위 테스트.
  * bounds / closestPoint / pointAtLength companion은 대응 *-into 함수와 결과를 대조한다.
@@ -11,7 +13,7 @@ import { closestPointInto } from '../../../src/path/closest-point-into';
 import { pointAtLength } from '../../../src/path/point-at-length';
 import { pointAtLengthInto } from '../../../src/path/point-at-length-into';
 import { propertiesAtLength } from '../../../src/path/properties-at-length';
-import type { BoundsWritable, PathCommand, XYObjectWritable } from '../../../src/types/index';
+import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
 
 describe('bounds (boundsInto companion)', () => {
   test('rect path bounds는 boundsInto 결과와 동일하다', () => {
@@ -22,30 +24,29 @@ describe('bounds (boundsInto companion)', () => {
       { kind: 'line', x: 10, y: 70 },
       { kind: 'close' },
     ];
-    const into: BoundsWritable = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    const into: BoundsWritable = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
     boundsInto(into, cmds);
     const result = bounds(cmds);
-    expect(result.min.x).toBe(into.min.x);
-    expect(result.min.y).toBe(into.min.y);
-    expect(result.max.x).toBe(into.max.x);
-    expect(result.max.y).toBe(into.max.y);
-    expect(result.min.x).toBe(10);
-    expect(result.max.x).toBe(110);
+    expect(result.minX).toBe(into.minX);
+    expect(result.minY).toBe(into.minY);
+    expect(result.maxX).toBe(into.maxX);
+    expect(result.maxY).toBe(into.maxY);
+    expect(result.minX).toBe(10);
+    expect(result.maxX).toBe(110);
   });
 
   test('empty path → sentinel bounds 반환', () => {
     const result = bounds([]);
-    expect(result.min.x).toBe(Infinity);
-    expect(result.min.y).toBe(Infinity);
-    expect(result.max.x).toBe(-Infinity);
-    expect(result.max.y).toBe(-Infinity);
+    expect(result.minX).toBe(Infinity);
+    expect(result.minY).toBe(Infinity);
+    expect(result.maxX).toBe(-Infinity);
+    expect(result.maxY).toBe(-Infinity);
   });
 
   test('새 object를 반환한다 (caller 입력과 분리)', () => {
     const a = bounds([{ kind: 'move', x: 1, y: 2 }]);
     const b = bounds([{ kind: 'move', x: 1, y: 2 }]);
     expect(a).not.toBe(b);
-    expect(a.min).not.toBe(a.max);
   });
 });
 
@@ -60,9 +61,9 @@ describe('closestPoint (closestPointInto companion)', () => {
 
   test('성공 시 closestPointInto와 동일한 좌표를 새 object로 반환', () => {
     const into: XYObjectWritable = { x: 0, y: 0 };
-    const ok = closestPointInto(into, square, [50, -10]);
+    const ok = closestPointInto(into, square, { x: 50, y: -10 });
     expect(ok).toBe(true);
-    const result = closestPoint(square, [50, -10]);
+    const result = closestPoint(square, { x: 50, y: -10 });
     expect(result).toBeDefined();
     expect(result?.x).toBeCloseTo(into.x, 10);
     expect(result?.y).toBeCloseTo(into.y, 10);
@@ -71,11 +72,11 @@ describe('closestPoint (closestPointInto companion)', () => {
   });
 
   test('empty path → undefined', () => {
-    expect(closestPoint([], [0, 0])).toBeUndefined();
+    expect(closestPoint([], { x: 0, y: 0 })).toBeUndefined();
   });
 
   test('move-only path → 첫 Move 위치 반환 (companion object)', () => {
-    const result = closestPoint([{ kind: 'move', x: 7, y: 9 }], [100, 100]);
+    const result = closestPoint([{ kind: 'move', x: 7, y: 9 }], { x: 100, y: 100 });
     expect(result).toEqual({ x: 7, y: 9 });
   });
 });

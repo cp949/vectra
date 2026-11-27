@@ -1,6 +1,6 @@
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { polylineSampleAtLengthInto, polylineTotalLength } from '../internal/polyline';
-import { writeXY } from '../internal/xy';
-import type { PathCommand, PathMeasurementOptions, XYWritable } from '../types/index';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
 
@@ -12,17 +12,17 @@ import { createSegmentFlattener } from './segment-flattener.internal';
  * empty path(drawing segment 없음)이면 false를 반환하고 out을 수정하지 않는다.
  * distance <= 0이면 첫 번째 drawing segment의 시작점을 기록한다.
  *
- * @param out point를 기록할 writable output
+ * @param out point를 기록할 점 객체
  * @param commands sampling할 path command sequence
  * @param distance path 시작점부터의 arc-length offset
  * @param options flatten 허용 오차와 subdivision 깊이 상한
  * @returns 기록 성공 시 true, drawing segment 없으면 false
  */
 export function pointAtLengthInto(
-  out: XYWritable,
+  out: PointWritable,
   commands: readonly PathCommand[],
   distance: number,
-  options?: PathMeasurementOptions
+  options?: Required<PathMeasurementOptions>
 ): boolean {
   const flattener = createSegmentFlattener(options);
 
@@ -49,7 +49,8 @@ export function pointAtLengthInto(
       const localTarget = Math.max(0, distance - cumulativeLen);
       if (segLen === 0) {
         // zero-length segment → 시작점 기록
-        writeXY(out, segBuf[0].x, segBuf[0].y);
+        out.x = segBuf[0].x;
+        out.y = segBuf[0].y;
       } else {
         polylineSampleAtLengthInto(out, segBuf, localTarget);
       }
@@ -69,7 +70,8 @@ export function pointAtLengthInto(
 
   if (!found) {
     // distance >= totalLength → 마지막 점 기록
-    writeXY(out, lastX, lastY);
+    out.x = lastX;
+    out.y = lastY;
   }
 
   return true;

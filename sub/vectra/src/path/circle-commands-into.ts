@@ -1,6 +1,6 @@
+import type { Circle } from '../types/flat-shapes.internal';
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, PathCommand } from '../types/index';
+import type { PathCommand } from '../types/index';
 import { type EllipseArcOptions, ellipseArcInto } from './path-ellipse-arc.internal';
 
 export type { EllipseArcOptions };
@@ -14,12 +14,15 @@ export type { EllipseArcOptions };
  * invalid numeric(NaN, Inf)은 throw 없이 그대로 command 좌표에 전파한다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param circle 기록할 circle ({ center, radius } object 또는 [center, radius] tuple)
+ * @param circle 기록할 circle (`{ cx, cy, r }`)
  * @param options 진행 방향 옵션. 생략 시 `clockwise: true`.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function circleCommandsInto(out: PathCommand[], circle: CircleLike, options?: EllipseArcOptions): PathCommand[] {
-  const center = readCircleCenter(circle);
-  const r = readCircleRadius(circle);
-  return ellipseArcInto(out, readX(center), readY(center), r, r, options?.clockwise ?? true);
+export function circleCommandsInto(
+  out: PathCommand[],
+  circle: Circle,
+  options?: Required<EllipseArcOptions>
+): PathCommand[] {
+  const r = circle.r;
+  return ellipseArcInto(out, circle.cx, circle.cy, r, r, options === undefined ? true : options.clockwise);
 }

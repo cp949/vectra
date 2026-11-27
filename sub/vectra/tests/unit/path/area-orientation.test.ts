@@ -389,19 +389,20 @@ describe('classifyPoint', () => {
     expect(classifyPoint(makeUnitSquareCW(), { x: 0.5, y: Number.NEGATIVE_INFINITY })).toBe('outside');
   });
 
-  test('tuple point input → 동일 동작', () => {
-    expect(classifyPoint(makeUnitSquareCW(), [0.5, 0.5])).toBe('inside');
-    expect(classifyPoint(makeUnitSquareCW(), [5, 5])).toBe('outside');
-  });
-
-  test('tuple point boundary input → boundary', () => {
-    // (0.5, 0)은 위쪽 변 위. tuple/object branch가 boundary 분기에서 동일 동작인지 확인.
-    expect(classifyPoint(makeUnitSquareCW(), [0.5, 0])).toBe('boundary');
+  test('경계에 있는 점을 boundary로 분류한다', () => {
+    // (0.5, 0)은 위쪽 변 위. 경계 판정을 확인한다.
+    expect(classifyPoint(makeUnitSquareCW(), { x: 0.5, y: 0 })).toBe('boundary');
   });
 
   test('custom boundaryTolerance: 큰 값이면 인근 외부 점도 boundary로 분류', () => {
     // (1.05, 0.5)는 변 (x=1)에서 0.05 떨어진 외부 점. tolerance 0.1이면 boundary.
-    expect(classifyPoint(makeUnitSquareCW(), { x: 1.05, y: 0.5 }, { boundaryTolerance: 0.1 })).toBe('boundary');
+    expect(
+      classifyPoint(
+        makeUnitSquareCW(),
+        { x: 1.05, y: 0.5 },
+        { boundaryTolerance: 0.1, flatness: 0.5, maxRecursion: 32 }
+      )
+    ).toBe('boundary');
     // 기본 tolerance(1e-9)에서는 outside
     expect(classifyPoint(makeUnitSquareCW(), { x: 1.05, y: 0.5 })).toBe('outside');
   });

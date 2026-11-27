@@ -1,4 +1,5 @@
-import type { CubicThroughOptions, PathCommand, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { CubicThroughOptions, PathCommand } from '../types/index';
 import { cubicThroughCommandsInto } from './cubic-through-commands-into';
 
 /**
@@ -19,10 +20,10 @@ import { cubicThroughCommandsInto } from './cubic-through-commands-into';
  * @returns 새로 만든 PathCommand 배열
  */
 export function cubicThroughCommands(
-  from: XYInput,
-  through: XYInput,
-  to: XYInput,
-  options?: CubicThroughOptions
+  from: Point,
+  through: Point,
+  to: Point,
+  options?: Required<CubicThroughOptions>
 ): PathCommand[] {
   return cubicThroughCommandsInto([], from, through, to, options);
 }
