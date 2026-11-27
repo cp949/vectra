@@ -1,4 +1,5 @@
-import type { OrientedRectLike, XYObjectWritable } from '../types';
+import type { OrientedRectLike } from '../types';
+import type { OrientedRect, PointWritable } from '../types/flat-shapes.internal';
 import {
   readOrientedRectAngle,
   readOrientedRectCenter,
@@ -49,7 +50,8 @@ export interface OrientedRectQueryFrame {
  *
  * @param rect query frame을 만들 oriented rect
  */
-export function readOrientedRectQueryFrame(rect: OrientedRectLike): OrientedRectQueryFrame {
+// v2-migration: intersects의 회전 사각형 관계가 전환되면 제거한다.
+export function readLegacyOrientedRectQueryFrame(rect: OrientedRectLike): OrientedRectQueryFrame {
   const center = readOrientedRectCenter(rect);
   const cx = readX(center);
   const cy = readY(center);
@@ -57,6 +59,12 @@ export function readOrientedRectQueryFrame(rect: OrientedRectLike): OrientedRect
   const width = readX(size);
   const height = readY(size);
   const angle = readOrientedRectAngle(rect);
+  return createOrientedRectQueryFrame({ cx, cy, width, height, angle });
+}
+
+/** 평평한 회전 사각형의 치수와 각도를 검증하고 local-space query frame을 만든다. */
+export function createOrientedRectQueryFrame(rect: OrientedRect): OrientedRectQueryFrame {
+  const { cx, cy, width, height, angle } = rect;
   validateOrientedRectSizeAndAngle(width, height, angle);
 
   return {
@@ -83,7 +91,7 @@ export function readOrientedRectQueryFrame(rect: OrientedRectLike): OrientedRect
  * @param out corner point를 push할 writable array
  * @param frame corner를 생성할 query frame
  */
-export function writeOrientedRectCorners(out: XYObjectWritable[], frame: OrientedRectQueryFrame): void {
+export function writeOrientedRectCorners(out: PointWritable[], frame: OrientedRectQueryFrame): void {
   const { cx, cy, hw, hh, cos, sin } = frame;
   out.length = 0;
   out.push(

@@ -1,14 +1,16 @@
+/** 회전 사각형 최근접점의 좌표와 실패 반환을 검증한다. */
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { closestPoint } from '../../../src/oriented-rect/closest-point';
 import { closestPointInto } from '../../../src/oriented-rect/closest-point-into';
-import type { OrientedRectLike, OrientedRectWritable, XYObjectWritable, XYTupleWritable } from '../../../src/types';
+import type { OrientedRect, PointWritable } from '../../../src/types/flat-shapes.internal';
 
+/** 최근접점을 기록할 빈 점을 만든다. */
 function makeXY(): { x: number; y: number } {
   return { x: 0, y: 0 };
 }
 
 // center (0,0), size 4×2 (hw=2, hh=1), angle 0
-const flat: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: 0 };
+const flat: OrientedRect = { cx: 0, cy: 0, width: 4, height: 2, angle: 0 };
 
 // ─── closestPointInto ────────────────────────────────────────────────
 
@@ -47,7 +49,7 @@ describe('closestPointInto - angle 0', () => {
 
 describe('closestPointInto - 회전', () => {
   // size 4×2 rect를 90도 회전 → world-y 방향으로 hw=2, world-x 방향으로 hh=1
-  const rotated: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: Math.PI / 2 };
+  const rotated: OrientedRect = { cx: 0, cy: 0, width: 4, height: 2, angle: Math.PI / 2 };
 
   test('world-space 외부점을 local clamp 후 되돌린 좌표로 기록한다', () => {
     const out = makeXY();
@@ -65,15 +67,6 @@ describe('closestPointInto - 회전', () => {
   });
 });
 
-describe('closestPointInto - tuple storage', () => {
-  test('tuple input과 tuple output에 기록한다', () => {
-    const out: XYTupleWritable = [0, 0];
-    const result = closestPointInto(out, [[0, 0], [4, 2], 0], [5, 0]);
-    expect(result).toBe(true);
-    expect(out).toEqual([2, 0]);
-  });
-});
-
 describe('closestPointInto - aliasing', () => {
   test('out === point aliasing에서도 정의대로 동작한다', () => {
     const point = { x: 5, y: 0 };
@@ -81,76 +74,59 @@ describe('closestPointInto - aliasing', () => {
     expect(result).toBe(true);
     expect(point).toEqual({ x: 2, y: 0 });
   });
-
-  test('out === rect.center aliasing에서도 정의대로 동작한다', () => {
-    const center = { x: 0, y: 0 };
-    const rect: OrientedRectWritable = { center, size: { x: 4, y: 2 }, angle: 0 };
-    const result = closestPointInto(center, rect, { x: 5, y: 0 });
-    expect(result).toBe(true);
-    expect(center).toEqual({ x: 2, y: 0 });
-  });
-
-  test('out === rect.size aliasing에서도 정의대로 동작한다', () => {
-    // frame이 size를 hw/hh로 먼저 읽은 뒤 기록하므로 size를 out으로 써도 안전
-    const size = { x: 4, y: 2 };
-    const rect: OrientedRectWritable = { center: { x: 0, y: 0 }, size, angle: 0 };
-    const result = closestPointInto(size, rect, { x: 5, y: 0 });
-    expect(result).toBe(true);
-    expect(size).toEqual({ x: 2, y: 0 });
-  });
 });
 
 describe('closestPointInto - empty size', () => {
-  test('size.x <= 0은 false와 no mutation', () => {
+  test('width <= 0은 false와 no mutation', () => {
     const out = { x: 9, y: 9 };
-    const result = closestPointInto(out, { center: { x: 0, y: 0 }, size: { x: 0, y: 2 }, angle: 0 }, { x: 5, y: 0 });
+    const result = closestPointInto(out, { cx: 0, cy: 0, width: 0, height: 2, angle: 0 }, { x: 5, y: 0 });
     expect(result).toBe(false);
     expect(out).toEqual({ x: 9, y: 9 });
   });
 
-  test('size.y < 0은 false와 no mutation', () => {
+  test('height < 0은 false와 no mutation', () => {
     const out = { x: 9, y: 9 };
-    const result = closestPointInto(out, { center: { x: 0, y: 0 }, size: { x: 4, y: -2 }, angle: 0 }, { x: 5, y: 0 });
+    const result = closestPointInto(out, { cx: 0, cy: 0, width: 4, height: -2, angle: 0 }, { x: 5, y: 0 });
     expect(result).toBe(false);
     expect(out).toEqual({ x: 9, y: 9 });
   });
 });
 
 describe('closestPointInto - invalid size/angle', () => {
-  test('size.x NaN이면 RangeError', () => {
-    expect(() =>
-      closestPointInto(makeXY(), { center: { x: 0, y: 0 }, size: { x: NaN, y: 2 }, angle: 0 }, { x: 0, y: 0 })
-    ).toThrow(RangeError);
+  test('width NaN이면 RangeError', () => {
+    expect(() => closestPointInto(makeXY(), { cx: 0, cy: 0, width: NaN, height: 2, angle: 0 }, { x: 0, y: 0 })).toThrow(
+      RangeError
+    );
   });
 
-  test('size.y Infinity이면 RangeError', () => {
+  test('height Infinity이면 RangeError', () => {
     expect(() =>
-      closestPointInto(makeXY(), { center: { x: 0, y: 0 }, size: { x: 4, y: Infinity }, angle: 0 }, { x: 0, y: 0 })
+      closestPointInto(makeXY(), { cx: 0, cy: 0, width: 4, height: Infinity, angle: 0 }, { x: 0, y: 0 })
     ).toThrow(RangeError);
   });
 
   test('angle -Infinity이면 RangeError', () => {
     expect(() =>
-      closestPointInto(makeXY(), { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: -Infinity }, { x: 0, y: 0 })
+      closestPointInto(makeXY(), { cx: 0, cy: 0, width: 4, height: 2, angle: -Infinity }, { x: 0, y: 0 })
     ).toThrow(RangeError);
   });
 });
 
 describe('closestPointInto - center non-finite pass-through', () => {
-  test('center.x Infinity는 throw 없이 non-finite 좌표를 기록한다', () => {
+  test('cx Infinity는 throw 없이 non-finite 좌표를 기록한다', () => {
     const out = makeXY();
     let result: boolean | undefined;
     expect(() => {
-      result = closestPointInto(out, { center: { x: Infinity, y: 0 }, size: { x: 4, y: 2 }, angle: 0 }, { x: 0, y: 0 });
+      result = closestPointInto(out, { cx: Infinity, cy: 0, width: 4, height: 2, angle: 0 }, { x: 0, y: 0 });
     }).not.toThrow();
     expect(result).toBe(true);
     // Infinity - 2 - NaN 형태로 비유한 산술 → non-finite
     expect(Number.isFinite(out.x)).toBe(false);
   });
 
-  test('center.y NaN은 throw 없이 non-finite 좌표를 기록한다', () => {
+  test('cy NaN은 throw 없이 non-finite 좌표를 기록한다', () => {
     const out = makeXY();
-    closestPointInto(out, { center: { x: 0, y: NaN }, size: { x: 4, y: 2 }, angle: 0 }, { x: 0, y: 0 });
+    closestPointInto(out, { cx: 0, cy: NaN, width: 4, height: 2, angle: 0 }, { x: 0, y: 0 });
     expect(Number.isFinite(out.y)).toBe(false);
   });
 
@@ -170,15 +146,11 @@ describe('closestPointInto - center non-finite pass-through', () => {
     expect(Number.isFinite(out.y)).toBe(false);
   });
 
-  test('center.x -Infinity는 throw 없이 non-finite 좌표를 기록한다', () => {
+  test('cx -Infinity는 throw 없이 non-finite 좌표를 기록한다', () => {
     const out = makeXY();
     let result: boolean | undefined;
     expect(() => {
-      result = closestPointInto(
-        out,
-        { center: { x: -Infinity, y: 0 }, size: { x: 4, y: 2 }, angle: 0 },
-        { x: 0, y: 0 }
-      );
+      result = closestPointInto(out, { cx: -Infinity, cy: 0, width: 4, height: 2, angle: 0 }, { x: 0, y: 0 });
     }).not.toThrow();
     expect(result).toBe(true);
     expect(Number.isFinite(out.x)).toBe(false);
@@ -204,13 +176,11 @@ describe('closestPoint', () => {
   });
 
   test('empty size는 undefined', () => {
-    expect(closestPoint({ center: { x: 0, y: 0 }, size: { x: 0, y: 2 }, angle: 0 }, { x: 5, y: 0 })).toBeUndefined();
+    expect(closestPoint({ cx: 0, cy: 0, width: 0, height: 2, angle: 0 }, { x: 5, y: 0 })).toBeUndefined();
   });
 
   test('invalid size는 RangeError', () => {
-    expect(() => closestPoint({ center: { x: 0, y: 0 }, size: { x: 4, y: NaN }, angle: 0 }, { x: 0, y: 0 })).toThrow(
-      RangeError
-    );
+    expect(() => closestPoint({ cx: 0, cy: 0, width: 4, height: NaN, angle: 0 }, { x: 0, y: 0 })).toThrow(RangeError);
   });
 
   test('매 호출마다 새 object를 반환한다', () => {
@@ -219,8 +189,8 @@ describe('closestPoint', () => {
     expect(a).not.toBe(b);
   });
 
-  test('return type은 XYObjectWritable | undefined', () => {
+  test('return type은 PointWritable | undefined', () => {
     const result = closestPoint(flat, { x: 0, y: 0 });
-    expectTypeOf(result).toEqualTypeOf<XYObjectWritable | undefined>();
+    expectTypeOf(result).toEqualTypeOf<PointWritable | undefined>();
   });
 });

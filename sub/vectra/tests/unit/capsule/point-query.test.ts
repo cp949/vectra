@@ -1,12 +1,13 @@
+/** 캡슐의 점 포함과 거리 계산을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { containsPoint } from '../../../src/capsule/contains-point';
 import { distanceToPoint } from '../../../src/capsule/distance-to-point';
-import type { CapsuleLike } from '../../../src/types';
+import type { Capsule } from '../../../src/types/flat-shapes.internal';
 
 // a=(0,0), b=(10,0), r=2 인 수평 capsule
-const horizontal: CapsuleLike = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, radius: 2 };
+const horizontal: Capsule = { x1: 0, y1: 0, x2: 10, y2: 0, r: 2 };
 // zero-axis capsule = center (0,0), radius 5 circle
-const zeroAxis: CapsuleLike = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, radius: 5 };
+const zeroAxis: Capsule = { x1: 0, y1: 0, x2: 0, y2: 0, r: 5 };
 
 // ─── containsPoint ──────────────────────────────────────────────────────────────
 
@@ -56,23 +57,13 @@ describe('containsPoint - zero-axis', () => {
   });
 
   test('finite axis distance 제곱이 overflow해도 false를 반환한다', () => {
-    expect(containsPoint({ a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, radius: 1 }, { x: Number.MAX_VALUE / 2, y: 0 })).toBe(
-      false
-    );
-  });
-});
-
-describe('containsPoint - input 형태', () => {
-  test('tuple input에서도 동작한다', () => {
-    const capsule = [[0, 0], [10, 0], 2] as const;
-    expect(containsPoint(capsule, [5, 1])).toBe(true);
-    expect(containsPoint(capsule, [5, 5])).toBe(false);
+    expect(containsPoint({ x1: 0, y1: 0, x2: 0, y2: 0, r: 1 }, { x: Number.MAX_VALUE / 2, y: 0 })).toBe(false);
   });
 });
 
 describe('containsPoint - invalid radius', () => {
   test.each([-1, NaN, Infinity, -Infinity])('radius %s는 RangeError', (radius) => {
-    expect(() => containsPoint({ a: { x: 0, y: 0 }, b: { x: 1, y: 0 }, radius }, { x: 0, y: 0 })).toThrow(RangeError);
+    expect(() => containsPoint({ x1: 0, y1: 0, x2: 1, y2: 0, r: radius }, { x: 0, y: 0 })).toThrow(RangeError);
   });
 });
 
@@ -129,19 +120,12 @@ describe('distanceToPoint - zero-axis', () => {
 
   test('finite axis distance 제곱이 overflow해도 unsigned distance는 finite distance를 유지한다', () => {
     const far = Number.MAX_VALUE / 2;
-    expect(distanceToPoint({ a: { x: 0, y: 0 }, b: { x: 0, y: 0 }, radius: 1 }, { x: far, y: 0 })).toBe(far);
-  });
-});
-
-describe('distanceToPoint - input 형태', () => {
-  test('tuple input에서도 동작한다', () => {
-    const capsule = [[0, 0], [10, 0], 2] as const;
-    expect(distanceToPoint(capsule, [5, 5])).toBeCloseTo(3, 10);
+    expect(distanceToPoint({ x1: 0, y1: 0, x2: 0, y2: 0, r: 1 }, { x: far, y: 0 })).toBe(far);
   });
 });
 
 describe('distanceToPoint - invalid radius', () => {
   test.each([-1, NaN, Infinity, -Infinity])('radius %s는 RangeError', (radius) => {
-    expect(() => distanceToPoint({ a: { x: 0, y: 0 }, b: { x: 1, y: 0 }, radius }, { x: 0, y: 0 })).toThrow(RangeError);
+    expect(() => distanceToPoint({ x1: 0, y1: 0, x2: 1, y2: 0, r: radius }, { x: 0, y: 0 })).toThrow(RangeError);
   });
 });

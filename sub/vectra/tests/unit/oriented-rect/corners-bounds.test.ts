@@ -1,20 +1,18 @@
-import { describe, expect, expectTypeOf, test } from 'vitest';
+/** 회전 사각형 꼭짓점 순서와 경계 상자 계산을 검증한다. */
+import { describe, expect, test } from 'vitest';
 import { bounds } from '../../../src/oriented-rect/bounds';
 import { boundsInto } from '../../../src/oriented-rect/bounds-into';
 import { corners } from '../../../src/oriented-rect/corners';
 import { cornersInto } from '../../../src/oriented-rect/corners-into';
-import type { BoundsWritable, OrientedRectLike, OrientedRectWritable, XYTupleWritable } from '../../../src/types';
+import type { BoundsWritable, OrientedRect } from '../../../src/types/flat-shapes.internal';
 
+/** 비어 있는 경계 상자 출력 객체를 만든다. */
 function makeBounds(): BoundsWritable {
-  return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-}
-
-function asXY(value: unknown): { x: number; y: number } {
-  return value as { x: number; y: number };
+  return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }
 
 // center (0,0), size 4×2, angle 0
-const flat: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: 0 };
+const flat: OrientedRect = { cx: 0, cy: 0, width: 4, height: 2, angle: 0 };
 
 // ─── cornersInto ────────────────────────────────────────────────────
 
@@ -32,23 +30,12 @@ describe('cornersInto - angle 0', () => {
 
   test('center offset을 반영한다', () => {
     const out: { x: number; y: number }[] = [];
-    cornersInto(out, { center: { x: 3, y: 5 }, size: { x: 4, y: 2 }, angle: 0 });
+    cornersInto(out, { cx: 3, cy: 5, width: 4, height: 2, angle: 0 });
     expect(out).toEqual([
       { x: 1, y: 4 },
       { x: 5, y: 4 },
       { x: 5, y: 6 },
       { x: 1, y: 6 },
-    ]);
-  });
-
-  test('tuple input에서도 같은 corner를 기록한다', () => {
-    const out: { x: number; y: number }[] = [];
-    cornersInto(out, [[0, 0], [4, 2], 0]);
-    expect(out).toEqual([
-      { x: -2, y: -1 },
-      { x: 2, y: -1 },
-      { x: 2, y: 1 },
-      { x: -2, y: 1 },
     ]);
   });
 
@@ -67,7 +54,7 @@ describe('cornersInto - angle 0', () => {
 describe('cornersInto - 회전', () => {
   test('Math.PI / 2 회전 corner를 close하게 기록한다', () => {
     const out: { x: number; y: number }[] = [];
-    cornersInto(out, { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: Math.PI / 2 });
+    cornersInto(out, { cx: 0, cy: 0, width: 4, height: 2, angle: Math.PI / 2 });
     // TL(1,-2) TR(1,2) BR(-1,2) BL(-1,-2)
     expect(out[0].x).toBeCloseTo(1, 10);
     expect(out[0].y).toBeCloseTo(-2, 10);
@@ -81,9 +68,9 @@ describe('cornersInto - 회전', () => {
 });
 
 describe('cornersInto - empty size', () => {
-  test('size.x <= 0이어도 raw corner 4개를 유지한다', () => {
+  test('width <= 0이어도 raw corner 4개를 유지한다', () => {
     const out: { x: number; y: number }[] = [];
-    cornersInto(out, { center: { x: 0, y: 0 }, size: { x: 0, y: 2 }, angle: 0 });
+    cornersInto(out, { cx: 0, cy: 0, width: 0, height: 2, angle: 0 });
     expect(out).toHaveLength(4);
     expect(out).toEqual([
       { x: 0, y: -1 },
@@ -95,7 +82,7 @@ describe('cornersInto - empty size', () => {
 
   test('negative size에서도 raw corner 4개를 유지한다', () => {
     const out: { x: number; y: number }[] = [];
-    cornersInto(out, { center: { x: 0, y: 0 }, size: { x: -4, y: 2 }, angle: 0 });
+    cornersInto(out, { cx: 0, cy: 0, width: -4, height: 2, angle: 0 });
     expect(out).toHaveLength(4);
   });
 });
@@ -103,38 +90,34 @@ describe('cornersInto - empty size', () => {
 describe('cornersInto - center pass-through', () => {
   // cornersInto는 항상 새 {x,y}를 push하므로 input과 aliasing되지 않는다.
   // 별도 aliasing 테스트 대신 center non-finite pass-through를 검증한다.
-  test('center.x Infinity는 throw 없이 corner에 그대로 전파된다', () => {
+  test('cx Infinity는 throw 없이 corner에 그대로 전파된다', () => {
     const out: { x: number; y: number }[] = [];
-    expect(() => cornersInto(out, { center: { x: Infinity, y: 0 }, size: { x: 4, y: 2 }, angle: 0 })).not.toThrow();
+    expect(() => cornersInto(out, { cx: Infinity, cy: 0, width: 4, height: 2, angle: 0 })).not.toThrow();
     expect(out[0].x).toBe(Infinity);
   });
 
-  test('center.y NaN은 throw 없이 corner에 NaN으로 전파된다', () => {
+  test('cy NaN은 throw 없이 corner에 NaN으로 전파된다', () => {
     const out: { x: number; y: number }[] = [];
-    cornersInto(out, { center: { x: 0, y: NaN }, size: { x: 4, y: 2 }, angle: 0 });
+    cornersInto(out, { cx: 0, cy: NaN, width: 4, height: 2, angle: 0 });
     expect(Number.isNaN(out[0].y)).toBe(true);
   });
 });
 
 describe('cornersInto - invalid size/angle', () => {
-  test('size.x NaN이면 RangeError', () => {
-    expect(() => cornersInto([], { center: { x: 0, y: 0 }, size: { x: NaN, y: 2 }, angle: 0 })).toThrow(RangeError);
+  test('width NaN이면 RangeError', () => {
+    expect(() => cornersInto([], { cx: 0, cy: 0, width: NaN, height: 2, angle: 0 })).toThrow(RangeError);
   });
 
-  test('size.y Infinity이면 RangeError', () => {
-    expect(() => cornersInto([], { center: { x: 0, y: 0 }, size: { x: 4, y: Infinity }, angle: 0 })).toThrow(
-      RangeError
-    );
+  test('height Infinity이면 RangeError', () => {
+    expect(() => cornersInto([], { cx: 0, cy: 0, width: 4, height: Infinity, angle: 0 })).toThrow(RangeError);
   });
 
   test('angle -Infinity이면 RangeError', () => {
-    expect(() => cornersInto([], { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: -Infinity })).toThrow(
-      RangeError
-    );
+    expect(() => cornersInto([], { cx: 0, cy: 0, width: 4, height: 2, angle: -Infinity })).toThrow(RangeError);
   });
 
   test('angle NaN이면 RangeError', () => {
-    expect(() => cornersInto([], { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: NaN })).toThrow(RangeError);
+    expect(() => cornersInto([], { cx: 0, cy: 0, width: 4, height: 2, angle: NaN })).toThrow(RangeError);
   });
 });
 
@@ -152,7 +135,7 @@ describe('corners', () => {
   });
 
   test('invalid size는 RangeError', () => {
-    expect(() => corners({ center: { x: 0, y: 0 }, size: { x: 4, y: NaN }, angle: 0 })).toThrow(RangeError);
+    expect(() => corners({ cx: 0, cy: 0, width: 4, height: NaN, angle: 0 })).toThrow(RangeError);
   });
 });
 
@@ -161,122 +144,83 @@ describe('corners', () => {
 describe('boundsInto - angle 0', () => {
   test('center/size AABB를 기록하고 out을 반환한다', () => {
     const out = makeBounds();
-    const result = boundsInto(out, { center: { x: 3, y: 5 }, size: { x: 4, y: 2 }, angle: 0 });
+    const result = boundsInto(out, { cx: 3, cy: 5, width: 4, height: 2, angle: 0 });
     expect(result).toBe(out);
-    expect(asXY(out.min).x).toBeCloseTo(1, 10);
-    expect(asXY(out.min).y).toBeCloseTo(4, 10);
-    expect(asXY(out.max).x).toBeCloseTo(5, 10);
-    expect(asXY(out.max).y).toBeCloseTo(6, 10);
-  });
-
-  test('tuple input에서도 AABB를 기록한다', () => {
-    const out = makeBounds();
-    boundsInto(out, [[0, 0], [4, 2], 0]);
-    expect(asXY(out.min).x).toBeCloseTo(-2, 10);
-    expect(asXY(out.max).y).toBeCloseTo(1, 10);
+    expect(out.minX).toBeCloseTo(1, 10);
+    expect(out.minY).toBeCloseTo(4, 10);
+    expect(out.maxX).toBeCloseTo(5, 10);
+    expect(out.maxY).toBeCloseTo(6, 10);
   });
 });
 
 describe('boundsInto - 회전', () => {
   test('Math.PI / 2 회전 AABB를 기록한다', () => {
     const out = makeBounds();
-    boundsInto(out, { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: Math.PI / 2 });
-    expect(asXY(out.min).x).toBeCloseTo(-1, 10);
-    expect(asXY(out.min).y).toBeCloseTo(-2, 10);
-    expect(asXY(out.max).x).toBeCloseTo(1, 10);
-    expect(asXY(out.max).y).toBeCloseTo(2, 10);
+    boundsInto(out, { cx: 0, cy: 0, width: 4, height: 2, angle: Math.PI / 2 });
+    expect(out.minX).toBeCloseTo(-1, 10);
+    expect(out.minY).toBeCloseTo(-2, 10);
+    expect(out.maxX).toBeCloseTo(1, 10);
+    expect(out.maxY).toBeCloseTo(2, 10);
   });
 
   test('45도 회전 AABB는 대각선 extent를 따른다', () => {
     const out = makeBounds();
     // size 2×2 정사각형을 45도 회전 → 반대각선 half-extent = sqrt(2)
-    boundsInto(out, { center: { x: 0, y: 0 }, size: { x: 2, y: 2 }, angle: Math.PI / 4 });
-    expect(asXY(out.max).x).toBeCloseTo(Math.SQRT2, 10);
-    expect(asXY(out.max).y).toBeCloseTo(Math.SQRT2, 10);
-    expect(asXY(out.min).x).toBeCloseTo(-Math.SQRT2, 10);
+    boundsInto(out, { cx: 0, cy: 0, width: 2, height: 2, angle: Math.PI / 4 });
+    expect(out.maxX).toBeCloseTo(Math.SQRT2, 10);
+    expect(out.maxY).toBeCloseTo(Math.SQRT2, 10);
+    expect(out.minX).toBeCloseTo(-Math.SQRT2, 10);
   });
 });
 
 describe('boundsInto - empty size', () => {
-  test('size.x <= 0이면 sentinel empty bounds를 기록한다', () => {
+  test('width <= 0이면 sentinel empty bounds를 기록한다', () => {
     const out = makeBounds();
-    boundsInto(out, { center: { x: 0, y: 0 }, size: { x: 0, y: 2 }, angle: 0 });
-    expect(asXY(out.min).x).toBe(Infinity);
-    expect(asXY(out.min).y).toBe(Infinity);
-    expect(asXY(out.max).x).toBe(-Infinity);
-    expect(asXY(out.max).y).toBe(-Infinity);
+    boundsInto(out, { cx: 0, cy: 0, width: 0, height: 2, angle: 0 });
+    expect(out.minX).toBe(Infinity);
+    expect(out.minY).toBe(Infinity);
+    expect(out.maxX).toBe(-Infinity);
+    expect(out.maxY).toBe(-Infinity);
   });
 
-  test('size.y <= 0이면 sentinel empty bounds를 기록한다', () => {
+  test('height <= 0이면 sentinel empty bounds를 기록한다', () => {
     const out = makeBounds();
-    boundsInto(out, { center: { x: 1, y: 1 }, size: { x: 4, y: -2 }, angle: 1 });
-    expect(asXY(out.min).x).toBe(Infinity);
-    expect(asXY(out.max).x).toBe(-Infinity);
+    boundsInto(out, { cx: 1, cy: 1, width: 4, height: -2, angle: 1 });
+    expect(out.minX).toBe(Infinity);
+    expect(out.maxX).toBe(-Infinity);
   });
 });
 
 describe('boundsInto - aliasing', () => {
-  test('out.min === rect.center aliasing에서도 정의대로 동작한다', () => {
-    const center = { x: 3, y: 5 };
-    const rect: OrientedRectWritable = { center, size: { x: 4, y: 2 }, angle: 0 };
-    const out: BoundsWritable = { min: center, max: { x: 0, y: 0 } };
-    boundsInto(out, rect);
-    expect(asXY(out.min).x).toBeCloseTo(1, 10);
-    expect(asXY(out.min).y).toBeCloseTo(4, 10);
-    expect(asXY(out.max).x).toBeCloseTo(5, 10);
-    expect(asXY(out.max).y).toBeCloseTo(6, 10);
-  });
-});
-
-describe('boundsInto - mutable tuple storage', () => {
-  test('tuple min/max storage에 기록한다', () => {
-    const min: [number, number] = [0, 0];
-    const max: [number, number] = [0, 0];
-    const out: BoundsWritable<XYTupleWritable, XYTupleWritable> = { min, max };
-    boundsInto(out, { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: 0 });
-    expect(min).toEqual([-2, -1]);
-    expect(max).toEqual([2, 1]);
-  });
-});
-
-describe('boundsInto - generic return type', () => {
-  test('BoundsWritable subtype의 return type을 보존한다', () => {
-    interface TaggedBounds {
-      min: { x: number; y: number };
-      max: { x: number; y: number };
-      tag: string;
-    }
-    const out: TaggedBounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 }, tag: 'test' };
-    const result = boundsInto(out, flat);
-    expectTypeOf(result).toEqualTypeOf<TaggedBounds>();
+  test('입력과 출력이 같은 객체여도 경계를 기록한다', () => {
+    const out = { ...makeBounds(), cx: 3, cy: 5, width: 4, height: 2, angle: 0 };
+    boundsInto(out, out);
+    expect(out.minX).toBeCloseTo(1, 10);
+    expect(out.minY).toBeCloseTo(4, 10);
+    expect(out.maxX).toBeCloseTo(5, 10);
+    expect(out.maxY).toBeCloseTo(6, 10);
   });
 });
 
 describe('boundsInto - center pass-through', () => {
-  test('center.x Infinity는 throw 없이 AABB에 전파된다', () => {
+  test('cx Infinity는 throw 없이 AABB에 전파된다', () => {
     const out = makeBounds();
-    expect(() => boundsInto(out, { center: { x: Infinity, y: 0 }, size: { x: 4, y: 2 }, angle: 0 })).not.toThrow();
-    expect(asXY(out.max).x).toBe(Infinity);
+    expect(() => boundsInto(out, { cx: Infinity, cy: 0, width: 4, height: 2, angle: 0 })).not.toThrow();
+    expect(out.maxX).toBe(Infinity);
   });
 });
 
 describe('boundsInto - invalid size/angle', () => {
   test('size NaN이면 RangeError', () => {
-    expect(() => boundsInto(makeBounds(), { center: { x: 0, y: 0 }, size: { x: NaN, y: 2 }, angle: 0 })).toThrow(
-      RangeError
-    );
+    expect(() => boundsInto(makeBounds(), { cx: 0, cy: 0, width: NaN, height: 2, angle: 0 })).toThrow(RangeError);
   });
 
   test('angle Infinity이면 RangeError', () => {
-    expect(() => boundsInto(makeBounds(), { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: Infinity })).toThrow(
-      RangeError
-    );
+    expect(() => boundsInto(makeBounds(), { cx: 0, cy: 0, width: 4, height: 2, angle: Infinity })).toThrow(RangeError);
   });
 
   test('angle -Infinity이면 RangeError', () => {
-    expect(() => boundsInto(makeBounds(), { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: -Infinity })).toThrow(
-      RangeError
-    );
+    expect(() => boundsInto(makeBounds(), { cx: 0, cy: 0, width: 4, height: 2, angle: -Infinity })).toThrow(RangeError);
   });
 });
 
@@ -284,18 +228,18 @@ describe('boundsInto - invalid size/angle', () => {
 
 describe('bounds', () => {
   test('새 plain object로 AABB를 반환한다', () => {
-    const result = bounds({ center: { x: 3, y: 5 }, size: { x: 4, y: 2 }, angle: 0 });
-    expect(asXY(result.min).x).toBeCloseTo(1, 10);
-    expect(asXY(result.max).y).toBeCloseTo(6, 10);
+    const result = bounds({ cx: 3, cy: 5, width: 4, height: 2, angle: 0 });
+    expect(result.minX).toBeCloseTo(1, 10);
+    expect(result.maxY).toBeCloseTo(6, 10);
   });
 
   test('empty size는 sentinel empty bounds를 반환한다', () => {
-    const result = bounds({ center: { x: 0, y: 0 }, size: { x: 0, y: 0 }, angle: 0 });
-    expect(asXY(result.min).x).toBe(Infinity);
-    expect(asXY(result.max).x).toBe(-Infinity);
+    const result = bounds({ cx: 0, cy: 0, width: 0, height: 0, angle: 0 });
+    expect(result.minX).toBe(Infinity);
+    expect(result.maxX).toBe(-Infinity);
   });
 
   test('invalid angle은 RangeError', () => {
-    expect(() => bounds({ center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: NaN })).toThrow(RangeError);
+    expect(() => bounds({ cx: 0, cy: 0, width: 4, height: 2, angle: NaN })).toThrow(RangeError);
   });
 });

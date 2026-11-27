@@ -1,10 +1,5 @@
-import {
-  readOrientedRectAngle,
-  readOrientedRectSize,
-  validateOrientedRectSizeAndAngle,
-} from '../internal/oriented-rect';
-import { readX, readY } from '../internal/xy';
-import type { OrientedRectLike } from '../types';
+import { validateOrientedRectSizeAndAngle } from '../internal/oriented-rect';
+import type { OrientedRect } from '../types/flat-shapes.internal';
 
 /**
  * oriented rect의 local 단위 axis pair를 새 plain object로 반환한다.
@@ -15,14 +10,11 @@ import type { OrientedRectLike } from '../types';
  *
  * @param rect axis를 읽을 oriented rect
  */
-export function axes(rect: OrientedRectLike): {
+export function axes(rect: OrientedRect): {
   xAxis: { x: number; y: number };
   yAxis: { x: number; y: number };
 } {
-  const size = readOrientedRectSize(rect);
-  const width = readX(size);
-  const height = readY(size);
-  const angle = readOrientedRectAngle(rect);
+  const { width, height, angle } = rect;
   validateOrientedRectSizeAndAngle(width, height, angle);
 
   const cos = Math.cos(angle);

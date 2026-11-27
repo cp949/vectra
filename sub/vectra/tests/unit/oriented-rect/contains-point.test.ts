@@ -1,9 +1,10 @@
+/** 회전 사각형의 닫힌 경계와 점 포함 판정을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { containsPoint } from '../../../src/oriented-rect/contains-point';
-import type { OrientedRectLike } from '../../../src/types';
+import type { OrientedRect } from '../../../src/types/flat-shapes.internal';
 
 // center (0,0), size 4×2 (hw=2, hh=1), angle 0
-const flat: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: 0 };
+const flat: OrientedRect = { cx: 0, cy: 0, width: 4, height: 2, angle: 0 };
 
 describe('containsPoint - angle 0', () => {
   test('center는 true', () => {
@@ -33,7 +34,7 @@ describe('containsPoint - angle 0', () => {
   });
 
   test('center offset을 반영한다', () => {
-    const rect: OrientedRectLike = { center: { x: 3, y: 5 }, size: { x: 4, y: 2 }, angle: 0 };
+    const rect: OrientedRect = { cx: 3, cy: 5, width: 4, height: 2, angle: 0 };
     expect(containsPoint(rect, { x: 3, y: 5 })).toBe(true);
     expect(containsPoint(rect, { x: 5, y: 6 })).toBe(true);
     expect(containsPoint(rect, { x: 0, y: 5 })).toBe(false);
@@ -42,7 +43,7 @@ describe('containsPoint - angle 0', () => {
 
 describe('containsPoint - 회전', () => {
   // size 4×2 rect를 90도 회전 → world-y 방향으로 hw=2, world-x 방향으로 hh=1
-  const rotated: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: Math.PI / 2 };
+  const rotated: OrientedRect = { cx: 0, cy: 0, width: 4, height: 2, angle: Math.PI / 2 };
 
   test('local-space 내부점은 true', () => {
     // world (0, 1.5)는 localX=1.5, localY≈0 → 내부
@@ -60,72 +61,53 @@ describe('containsPoint - 회전', () => {
 
   test('45도 회전 정사각형 local containment', () => {
     // size 2×2 정사각형을 45도 회전. world 대각선 끝 (√2, 0)은 boundary 근처 → 내부
-    const square: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 2, y: 2 }, angle: Math.PI / 4 };
+    const square: OrientedRect = { cx: 0, cy: 0, width: 2, height: 2, angle: Math.PI / 4 };
     expect(containsPoint(square, { x: 1, y: 0 })).toBe(true);
     // 대각 꼭짓점 밖 (1.5, 1.5)는 외부
     expect(containsPoint(square, { x: 1.5, y: 1.5 })).toBe(false);
   });
 });
 
-describe('containsPoint - tuple input', () => {
-  test('tuple input에서도 같은 판정을 한다', () => {
-    const tuple: OrientedRectLike = [[0, 0], [4, 2], 0];
-    expect(containsPoint(tuple, { x: 1, y: 0.5 })).toBe(true);
-    expect(containsPoint(tuple, { x: 3, y: 0 })).toBe(false);
-  });
-
-  test('tuple point input도 읽는다', () => {
-    expect(containsPoint(flat, [1, 0.5])).toBe(true);
-    expect(containsPoint(flat, [3, 0])).toBe(false);
-  });
-});
-
 describe('containsPoint - empty size', () => {
-  test('size.x === 0은 false', () => {
-    const rect: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 0, y: 2 }, angle: 0 };
+  test('width === 0은 false', () => {
+    const rect: OrientedRect = { cx: 0, cy: 0, width: 0, height: 2, angle: 0 };
     expect(containsPoint(rect, { x: 0, y: 0 })).toBe(false);
   });
 
-  test('size.y < 0은 false', () => {
-    const rect: OrientedRectLike = { center: { x: 0, y: 0 }, size: { x: 4, y: -2 }, angle: 0 };
+  test('height < 0은 false', () => {
+    const rect: OrientedRect = { cx: 0, cy: 0, width: 4, height: -2, angle: 0 };
     expect(containsPoint(rect, { x: 0, y: 0 })).toBe(false);
   });
 });
 
 describe('containsPoint - invalid size/angle', () => {
-  test('size.x NaN이면 RangeError', () => {
-    expect(() => containsPoint({ center: { x: 0, y: 0 }, size: { x: NaN, y: 2 }, angle: 0 }, { x: 0, y: 0 })).toThrow(
+  test('width NaN이면 RangeError', () => {
+    expect(() => containsPoint({ cx: 0, cy: 0, width: NaN, height: 2, angle: 0 }, { x: 0, y: 0 })).toThrow(RangeError);
+  });
+
+  test('height Infinity이면 RangeError', () => {
+    expect(() => containsPoint({ cx: 0, cy: 0, width: 4, height: Infinity, angle: 0 }, { x: 0, y: 0 })).toThrow(
       RangeError
     );
   });
 
-  test('size.y Infinity이면 RangeError', () => {
-    expect(() =>
-      containsPoint({ center: { x: 0, y: 0 }, size: { x: 4, y: Infinity }, angle: 0 }, { x: 0, y: 0 })
-    ).toThrow(RangeError);
-  });
-
   test('angle -Infinity이면 RangeError', () => {
-    expect(() =>
-      containsPoint({ center: { x: 0, y: 0 }, size: { x: 4, y: 2 }, angle: -Infinity }, { x: 0, y: 0 })
-    ).toThrow(RangeError);
+    expect(() => containsPoint({ cx: 0, cy: 0, width: 4, height: 2, angle: -Infinity }, { x: 0, y: 0 })).toThrow(
+      RangeError
+    );
   });
 });
 
 describe('containsPoint - center non-finite pass-through', () => {
-  test('center.x Infinity는 throw 없이 false', () => {
+  test('cx Infinity는 throw 없이 false', () => {
     // dx = px - Infinity = -Infinity → localX 비교가 false
-    expect(() =>
-      containsPoint({ center: { x: Infinity, y: 0 }, size: { x: 4, y: 2 }, angle: 0 }, { x: 0, y: 0 })
-    ).not.toThrow();
-    expect(containsPoint({ center: { x: Infinity, y: 0 }, size: { x: 4, y: 2 }, angle: 0 }, { x: 0, y: 0 })).toBe(
-      false
-    );
+    expect(() => containsPoint({ cx: Infinity, cy: 0, width: 4, height: 2, angle: 0 }, { x: 0, y: 0 })).not.toThrow();
+    expect(containsPoint({ cx: Infinity, cy: 0, width: 4, height: 2, angle: 0 }, { x: 0, y: 0 })).toBe(false);
   });
 
-  test('center.y NaN은 throw 없이 false', () => {
+  test('cy NaN은 throw 없이 false', () => {
     // dy = py - NaN = NaN → 비교가 false
-    expect(containsPoint({ center: { x: 0, y: NaN }, size: { x: 4, y: 2 }, angle: 0 }, { x: 0, y: 0 })).toBe(false);
+    expect(containsPoint({ cx: 0, cy: NaN, width: 4, height: 2, angle: 0 }, { x: 0, y: 0 })).toBe(false);
   });
 
   test('point.x Infinity는 throw 없이 false', () => {
@@ -138,11 +120,9 @@ describe('containsPoint - center non-finite pass-through', () => {
     expect(containsPoint(flat, { x: 0, y: NaN })).toBe(false);
   });
 
-  test('center.x -Infinity는 throw 없이 false', () => {
+  test('cx -Infinity는 throw 없이 false', () => {
     // dx = px - (-Infinity) = Infinity → localX 비교가 false
-    expect(containsPoint({ center: { x: -Infinity, y: 0 }, size: { x: 4, y: 2 }, angle: 0 }, { x: 0, y: 0 })).toBe(
-      false
-    );
+    expect(containsPoint({ cx: -Infinity, cy: 0, width: 4, height: 2, angle: 0 }, { x: 0, y: 0 })).toBe(false);
   });
 
   test('point.y -Infinity는 throw 없이 false', () => {

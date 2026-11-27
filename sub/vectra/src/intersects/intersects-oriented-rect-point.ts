@@ -1,5 +1,5 @@
 import { orientedRectFrameContainsPoint } from '../internal/oriented-rect-point-relation';
-import { readOrientedRectQueryFrame } from '../internal/oriented-rect-query';
+import { readLegacyOrientedRectQueryFrame } from '../internal/oriented-rect-query';
 import { readX, readY } from '../internal/xy';
 import type { OrientedRectLike, XYInput } from '../types';
 
@@ -18,6 +18,6 @@ import type { OrientedRectLike, XYInput } from '../types';
  * @param point oriented rect와 교차하는지 판정할 point
  */
 export function intersectsOrientedRectPoint(rect: OrientedRectLike, point: XYInput): boolean {
-  const frame = readOrientedRectQueryFrame(rect);
+  const frame = readLegacyOrientedRectQueryFrame(rect);
   return orientedRectFrameContainsPoint(frame, readX(point), readY(point));
 }

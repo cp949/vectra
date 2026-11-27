@@ -38,7 +38,6 @@ import { rayQuadraticIntersectionsInto } from '../../../src/intersects/ray-quadr
 import { segmentCubicIntersectionsInto } from '../../../src/intersects/segment-cubic-intersections-into';
 import { segmentCurveIntersectionsInto } from '../../../src/intersects/segment-curve-intersections-into';
 import { segmentQuadraticIntersectionsInto } from '../../../src/intersects/segment-quadratic-intersections-into';
-import { cornersInto as orientedRectCornersInto } from '../../../src/oriented-rect/corners-into';
 import { cornersInto as rectCornersInto } from '../../../src/rect/corners-into';
 import { perimeterPointsInto } from '../../../src/rect/perimeter-points-into';
 import type {
@@ -221,7 +220,6 @@ describe('spline polyline Into는 out을 반환한다', () => {
 describe('adapter·shape 배열 Into는 out을 반환한다', () => {
   const rect = { x: 0, y: 0, width: 4, height: 2 };
   const bounds = { min: [0, 0], max: [4, 2] } as const;
-  const orientedRect = { center: [0, 0], size: [4, 2], angle: 0 } as const;
   const points = [
     { x: 0, y: 0 },
     { x: 1, y: 2 },
@@ -260,10 +258,6 @@ describe('adapter·shape 배열 Into는 out을 반환한다', () => {
     const fromRect: { x: number; y: number }[] = [];
     expect(rectCornersInto(fromRect, rect)).toBe(fromRect);
     expect(fromRect).toHaveLength(4);
-
-    const fromOriented: XYObjectWritable[] = [];
-    expect(orientedRectCornersInto(fromOriented, orientedRect)).toBe(fromOriented);
-    expect(fromOriented).toHaveLength(4);
   });
 
   test('perimeterPointsInto는 XYObjectWritable[]을 반환한다', () => {

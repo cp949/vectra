@@ -1,5 +1,5 @@
 import { overlapsOrientedRectFrames } from '../internal/oriented-rect-overlap';
-import { readOrientedRectQueryFrame } from '../internal/oriented-rect-query';
+import { readLegacyOrientedRectQueryFrame } from '../internal/oriented-rect-query';
 import type { OrientedRectLike } from '../types';
 
 /**
@@ -18,5 +18,5 @@ import type { OrientedRectLike } from '../types';
  * @param b 겹침을 판정할 둘째 oriented rect
  */
 export function intersectsOrientedRectOrientedRect(a: OrientedRectLike, b: OrientedRectLike): boolean {
-  return overlapsOrientedRectFrames(readOrientedRectQueryFrame(a), readOrientedRectQueryFrame(b));
+  return overlapsOrientedRectFrames(readLegacyOrientedRectQueryFrame(a), readLegacyOrientedRectQueryFrame(b));
 }
