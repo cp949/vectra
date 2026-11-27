@@ -1,4 +1,4 @@
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 import { vectorInto } from './vector-into';
 
 /**
@@ -6,6 +6,6 @@ import { vectorInto } from './vector-into';
  *
  * @param line 대상 segment
  */
-export function vector(line: SegmentLike): XYObjectWritable {
+export function vector(line: Segment): PointWritable {
   return vectorInto({ x: 0, y: 0 }, line);
 }

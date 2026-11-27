@@ -39,11 +39,6 @@ type Case = {
   expected: () => unknown;
 };
 
-/** 아직 전환하지 않은 start와 vector가 읽을 선분을 만든다. */
-function makeLegacyLine() {
-  return { a: { x: 1, y: 2 }, b: { x: 4, y: 6 } };
-}
-
 /** 평평한 선분을 새로 만든다. */
 function makeFlatLine() {
   return { x1: 1, y1: 2, x2: 4, y2: 6 };
@@ -97,13 +92,13 @@ const cases: Case[] = [
   },
   {
     name: 'start',
-    actual: () => start(makeLegacyLine()),
-    expected: () => startInto({ x: 0, y: 0 }, makeLegacyLine()),
+    actual: () => start(makeFlatLine()),
+    expected: () => startInto({ x: 0, y: 0 }, makeFlatLine()),
   },
   {
     name: 'vector',
-    actual: () => vector(makeLegacyLine()),
-    expected: () => vectorInto({ x: 0, y: 0 }, makeLegacyLine()),
+    actual: () => vector(makeFlatLine()),
+    expected: () => vectorInto({ x: 0, y: 0 }, makeFlatLine()),
   },
 ];
 
@@ -121,12 +116,12 @@ describe('segment 할당형 wrapper - 대응 Into와의 동치', () => {
 
 describe('segment 할당형 wrapper - 값 확인', () => {
   test('start와 end는 서로 다른 endpoint를 반환한다', () => {
-    expect(start(makeLegacyLine())).toEqual({ x: 1, y: 2 });
+    expect(start(makeFlatLine())).toEqual({ x: 1, y: 2 });
     expect(end(makeFlatLine())).toEqual({ x: 4, y: 6 });
   });
 
   test('vector는 b - a를 반환한다', () => {
-    expect(vector(makeLegacyLine())).toEqual({ x: 3, y: 4 });
+    expect(vector(makeFlatLine())).toEqual({ x: 3, y: 4 });
   });
 
   test('normal은 side에 따라 단위 법선의 방향이 반대다', () => {
@@ -147,10 +142,10 @@ describe('segment 할당형 wrapper - 값 확인', () => {
   });
 
   test('반환한 시작점을 바꿔도 입력 선분은 바뀌지 않는다', () => {
-    const line = makeLegacyLine();
+    const line = makeFlatLine();
     const result = start(line);
     result.x = 99;
-    expect(line).toEqual(makeLegacyLine());
+    expect(line).toEqual(makeFlatLine());
   });
 });
 

@@ -1,4 +1,4 @@
-import type { SegmentWritable as FlatSegmentWritable } from '../types/flat-shapes.internal';
+import type { Segment, SegmentWritable as FlatSegmentWritable } from '../types/flat-shapes.internal';
 import type { SegmentLike, SegmentTuple, SegmentWritable, XYInput } from '../types';
 import { readX, readY } from './xy';
 
@@ -62,11 +62,11 @@ export function segmentClosestPointXY(
  * @param py 판정할 point의 y 좌표
  * @param epsilon 허용할 거리 오차
  */
-export function segmentContainsPoint(seg: SegmentLike, px: number, py: number, epsilon: number): boolean {
-  const ax = readX(readSegmentA(seg));
-  const ay = readY(readSegmentA(seg));
-  const dx = readX(readSegmentB(seg)) - ax;
-  const dy = readY(readSegmentB(seg)) - ay;
+export function segmentContainsPoint(seg: Segment, px: number, py: number, epsilon: number): boolean {
+  const ax = seg.x1;
+  const ay = seg.y1;
+  const dx = seg.x2 - ax;
+  const dy = seg.y2 - ay;
   const lenSq = dx * dx + dy * dy;
   const qx = px - ax;
   const qy = py - ay;
@@ -91,4 +91,11 @@ export function createZeroSegment(): FlatSegmentWritable {
 /** 중첩 끝점을 쓰는 선분을 만든다. */
 export function createLegacySegment(): SegmentWritable {
   return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+}
+
+/** 선분 길이가 주어진 오차 이하인지 판정한다. */
+export function segmentIsZeroLength(line: Segment, epsilon: number): boolean {
+  const dx = line.x2 - line.x1;
+  const dy = line.y2 - line.y1;
+  return dx * dx + dy * dy <= epsilon * epsilon;
 }

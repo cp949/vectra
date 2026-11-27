@@ -1,15 +1,6 @@
+import { segmentContainsPoint, segmentIsZeroLength } from '../internal/segment';
 import { crossWithin, DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB, segmentContainsPoint } from '../internal/segment';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { SegmentLike, XYWritable } from '../types';
-
-// v2-migration: 입력을 평평한 선분으로 바꾸면 isZeroLength 호출로 되돌린다.
-/** 중첩 끝점 선분이 기본 epsilon 이하 길이인지 판별한다. */
-function isLegacyZeroLength(line: SegmentLike): boolean {
-  const dx = readX(readSegmentB(line)) - readX(readSegmentA(line));
-  const dy = readY(readSegmentB(line)) - readY(readSegmentA(line));
-  return dx * dx + dy * dy <= DEFAULT_EPSILON * DEFAULT_EPSILON;
-}
+import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 
 /**
  * 두 segment가 단일 교점을 가지면 out에 기록하고 true를 반환한다. 교점이 없으면 false를 반환하고 out을 수정하지 않는다.
@@ -17,53 +8,57 @@ function isLegacyZeroLength(line: SegmentLike): boolean {
  * 교점 좌표는 line a 기준 a0 + t1*(a1-a0)로 계산한다.
  * endpoint touch는 해당 endpoint 좌표를 그대로 기록한다(t1 우선, 그 다음 t2).
  *
- * @param out 교점을 기록할 writable output
+ * @param out 교점을 기록할 점 객체
  * @param a 첫 번째 segment
  * @param b 두 번째 segment
  * @param epsilon 거리 임계값 (기본값 `1e-9`). 생략하면 평행 판정은 `|cross| <= 1e-9·|a|·|b|`(sin θ 기준)로 scale 불변이다.
  *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
-export function singleIntersectionInto(out: XYWritable, a: SegmentLike, b: SegmentLike, epsilon?: number): boolean {
+export function singleIntersectionInto(out: PointWritable, a: Segment, b: Segment, epsilon?: number): boolean {
   const distEpsilon = epsilon ?? DEFAULT_EPSILON;
   // zero-length 검출은 caller epsilon과 무관하게 기본 epsilon(1e-9)을 쓴다
-  const aIsZero = isLegacyZeroLength(a);
-  const bIsZero = isLegacyZeroLength(b);
+  const aIsZero = segmentIsZeroLength(a, DEFAULT_EPSILON);
+  const bIsZero = segmentIsZeroLength(b, DEFAULT_EPSILON);
+
+  const ax = a.x1;
+  const ay = a.y1;
+  const bx = b.x1;
+  const by = b.y1;
 
   if (aIsZero || bIsZero) {
     if (aIsZero && bIsZero) {
       // 점 vs 점: epsilon 거리 이내이면 a의 시작점을 기록
-      const px = readX(readSegmentA(a)) - readX(readSegmentA(b));
-      const py = readY(readSegmentA(a)) - readY(readSegmentA(b));
+      const px = ax - bx;
+      const py = ay - by;
       if (px * px + py * py <= distEpsilon * distEpsilon) {
-        writeXY(out, readX(readSegmentA(a)), readY(readSegmentA(a)));
+        out.x = ax;
+        out.y = ay;
         return true;
       }
       return false;
     }
     if (aIsZero) {
       // a가 점: b 위에 a의 시작점이 있으면 a의 시작점을 기록
-      if (segmentContainsPoint(b, readX(readSegmentA(a)), readY(readSegmentA(a)), distEpsilon)) {
-        writeXY(out, readX(readSegmentA(a)), readY(readSegmentA(a)));
+      if (segmentContainsPoint(b, ax, ay, distEpsilon)) {
+        out.x = ax;
+        out.y = ay;
         return true;
       }
       return false;
     }
     // b가 점: a 위에 b의 시작점이 있으면 b의 시작점을 기록
-    if (segmentContainsPoint(a, readX(readSegmentA(b)), readY(readSegmentA(b)), distEpsilon)) {
-      writeXY(out, readX(readSegmentA(b)), readY(readSegmentA(b)));
+    if (segmentContainsPoint(a, bx, by, distEpsilon)) {
+      out.x = bx;
+      out.y = by;
       return true;
     }
     return false;
   }
 
-  const ax = readX(readSegmentA(a));
-  const ay = readY(readSegmentA(a));
-  const dax = readX(readSegmentB(a)) - ax;
-  const day = readY(readSegmentB(a)) - ay;
-  const bx = readX(readSegmentA(b));
-  const by = readY(readSegmentA(b));
-  const dbx = readX(readSegmentB(b)) - bx;
-  const dby = readY(readSegmentB(b)) - by;
+  const dax = a.x2 - ax;
+  const day = a.y2 - ay;
+  const dbx = b.x2 - bx;
+  const dby = b.y2 - by;
   const cross = dax * dby - day * dbx;
 
   // collinear 또는 parallel: 단일 점이 결정되지 않으므로 항상 false
@@ -83,23 +78,30 @@ export function singleIntersectionInto(out: XYWritable, a: SegmentLike, b: Segme
 
   // endpoint touch: 정밀도 보존을 위해 정확한 endpoint 좌표를 기록한다 (t1 우선)
   if (t1 === 0) {
-    writeXY(out, ax, ay);
+    out.x = ax;
+    out.y = ay;
     return true;
   }
   if (t1 === 1) {
-    writeXY(out, readX(readSegmentB(a)), readY(readSegmentB(a)));
+    const { x2, y2 } = a;
+    out.x = x2;
+    out.y = y2;
     return true;
   }
   if (t2 === 0) {
-    writeXY(out, bx, by);
+    out.x = bx;
+    out.y = by;
     return true;
   }
   if (t2 === 1) {
-    writeXY(out, readX(readSegmentB(b)), readY(readSegmentB(b)));
+    const { x2, y2 } = b;
+    out.x = x2;
+    out.y = y2;
     return true;
   }
 
   // 일반 교차: line a 기준 interpolation
-  writeXY(out, ax + t1 * dax, ay + t1 * day);
+  out.x = ax + t1 * dax;
+  out.y = ay + t1 * day;
   return true;
 }

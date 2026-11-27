@@ -1,4 +1,6 @@
-import type { SegmentLike, SegmentSplit } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { SegmentSplit } from '../types';
+import type { Segment } from '../types/flat-shapes.internal';
 import { splitInto } from './split-into';
 
 /**
@@ -13,10 +15,6 @@ import { splitInto } from './split-into';
  * @param line 분할할 segment
  * @param t normalized 분할 위치. `[0, 1]`로 clamp한다. non-finite면 `RangeError`
  */
-export function split(line: SegmentLike, t: number): SegmentSplit {
-  return splitInto(
-    { left: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } }, right: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } } },
-    line,
-    t
-  );
+export function split(line: Segment, t: number): SegmentSplit {
+  return splitInto({ left: createZeroSegment(), right: createZeroSegment() }, line, t);
 }

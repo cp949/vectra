@@ -135,17 +135,17 @@ describe('root geometry type exposure 계약', () => {
     const lineObject = expectAssignable<SegmentObjectLike>({ a: { x: 0, y: 0 }, b: [1, 1] as const });
     expectAssignable<SegmentLike>(lineObject);
     expectAssignable<SegmentTuple>([{ x: 0, y: 0 }, [1, 1] as const] as const);
-    const lineW = expectAssignable<SegmentWritable<{ x: number; y: number }, [number, number]>>({
+    expectAssignable<SegmentWritable<{ x: number; y: number }, [number, number]>>({
       a: { x: 0, y: 0 },
       b: [1, 1],
     });
-    expectAssignable<SegmentSplitWritable<typeof lineW, SegmentWritable>>({
-      left: lineW,
-      right: { a: { x: 1, y: 1 }, b: { x: 2, y: 2 } },
+    expectAssignable<SegmentSplitWritable>({
+      left: { x1: 0, y1: 0, x2: 1, y2: 1 },
+      right: { x1: 1, y1: 1, x2: 2, y2: 2 },
     });
     expectAssignable<SegmentSplit>({
-      left: { a: { x: 0, y: 0 }, b: { x: 1, y: 1 } },
-      right: { a: { x: 1, y: 1 }, b: { x: 2, y: 2 } },
+      left: { x1: 0, y1: 0, x2: 1, y2: 1 },
+      right: { x1: 1, y1: 1, x2: 2, y2: 2 },
     });
   });
 

@@ -1,7 +1,13 @@
+/** 선분 교차 판정과 단일 교점 반환의 관계를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { intersectsSegmentSegment } from '../../../src/intersects/intersects-segment-segment';
 import { singleIntersectionInto } from '../../../src/segment/single-intersection-into';
 import type { XYWritable } from '../../../src/types';
+
+/** 중첩 끝점 시험 데이터를 단일 교점 함수용 좌표로 옮긴다. */
+function flatSegment({ a, b }: { a: { x: number; y: number }; b: { x: number; y: number } }) {
+  return { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
+}
 
 describe('intersectsSegment — X자 교차', () => {
   test('X자 교차 segment는 true를 반환한다', () => {
@@ -111,7 +117,7 @@ describe('intersectsSegment vs singleIntersectionInto 정책 일관성', () => {
     const a = { a: { x: 0, y: 0 }, b: { x: 10, y: 10 } };
     const b = { a: { x: 0, y: 10 }, b: { x: 10, y: 0 } };
     expect(intersectsSegmentSegment(a, b)).toBe(true);
-    expect(singleIntersectionInto(out, a, b)).toBe(true);
+    expect(singleIntersectionInto(out, flatSegment(a), flatSegment(b))).toBe(true);
   });
 
   test('collinear overlap은 intersectsSegment === true, singleIntersectionInto === false이다', () => {
@@ -119,7 +125,7 @@ describe('intersectsSegment vs singleIntersectionInto 정책 일관성', () => {
     const a = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 } };
     const b = { a: { x: 5, y: 0 }, b: { x: 15, y: 0 } };
     expect(intersectsSegmentSegment(a, b)).toBe(true);
-    expect(singleIntersectionInto(out, a, b)).toBe(false);
+    expect(singleIntersectionInto(out, flatSegment(a), flatSegment(b))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
 });

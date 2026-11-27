@@ -24,6 +24,14 @@ import { projectPointInto } from '../../../src/segment/project-point-into';
 import { reverseInto } from '../../../src/segment/reverse-into';
 import { rotateAroundInto } from '../../../src/segment/rotate-around-into';
 import { rotateInto } from '../../../src/segment/rotate-into';
+import { signedDistanceToSupportingLine } from '../../../src/segment/signed-distance-to-supporting-line';
+import { splitInto } from '../../../src/segment/split-into';
+import { startInto } from '../../../src/segment/start-into';
+import { subdivideInto } from '../../../src/segment/subdivide-into';
+import { transformInto } from '../../../src/segment/transform-into';
+import { translateInto } from '../../../src/segment/translate-into';
+import { vectorInto } from '../../../src/segment/vector-into';
+import type { SegmentSubdivideOptions } from '../../../src/types';
 import type { PointAtLengthOptions } from '../../../src/types';
 import type { PointWritable, Segment, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
@@ -178,4 +186,63 @@ test('선분 반전과 회전 Into는 선분 출력의 구체 타입과 참조�
   for (const result of [reversed, rotatedAround, rotated]) {
     expect(result).toBe(out);
   }
+});
+
+test('signedDistanceToSupportingLine은 평평한 선분을 받는다', () => {
+  expectTypeOf(signedDistanceToSupportingLine).parameter(0).toEqualTypeOf<Segment>();
+});
+
+test('시작점과 방향 벡터 Into는 점 출력의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputPoint();
+  const line = { x1: 1, y1: 2, x2: 5, y2: 2 };
+  const start = startInto(out, line);
+  const vector = vectorInto(out, line);
+
+  expectTypeOf(start).toEqualTypeOf<OutputPoint>();
+  expectTypeOf(vector).toEqualTypeOf<OutputPoint>();
+  expect(start).toBe(out);
+  expect(vector).toBe(out);
+});
+
+test('행렬 변환과 평행 이동 Into는 선분 출력의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputSegment();
+  const line = { x1: 1, y1: 2, x2: 5, y2: 2 };
+  const matrix = { a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 3 };
+  const transformed = transformInto(out, line, matrix);
+  const translated = translateInto(out, line, { x: 2, y: 3 });
+
+  expectTypeOf(transformed).toEqualTypeOf<OutputSegment>();
+  expectTypeOf(translated).toEqualTypeOf<OutputSegment>();
+  expect(transformed).toBe(out);
+  expect(translated).toBe(out);
+});
+
+class OutputSplit {
+  left = new OutputSegment();
+  right = new OutputSegment();
+  label = 'split';
+}
+
+test('splitInto는 분할 출력과 내부 선분의 구체 타입과 참조를 보존한다', () => {
+  const out = new OutputSplit();
+  const { left, right } = out;
+  const result = splitInto(out, { x1: 1, y1: 2, x2: 5, y2: 2 }, 0.5);
+
+  expectTypeOf(result).toEqualTypeOf<OutputSplit>();
+  expectTypeOf(result.left).toEqualTypeOf<OutputSegment>();
+  expectTypeOf(result.right).toEqualTypeOf<OutputSegment>();
+  expect(result).toBe(out);
+  expect(result.left).toBe(left);
+  expect(result.right).toBe(right);
+});
+
+test('subdivideInto는 새 선분을 추가하므로 원소 타입을 SegmentWritable로 고정한다', () => {
+  const out: OutputSegment[] = [];
+  const result = subdivideInto(out, { x1: 1, y1: 2, x2: 5, y2: 2 });
+
+  expectTypeOf<SegmentSubdivideOptions>().toEqualTypeOf<{ count: number }>();
+  expectTypeOf(result).toEqualTypeOf<SegmentWritable[]>();
+  expect(result).toBe(out);
+  expect(result).toHaveLength(2);
+  expect(result[0]).not.toBeInstanceOf(OutputSegment);
 });

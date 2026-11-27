@@ -7,29 +7,20 @@ import { normalAngle } from '../../../src/segment/normal-angle';
 import { width } from '../../../src/segment/width';
 
 describe('segment scalar property - width', () => {
-  test('object endpoint segment의 width를 반환한다', () => {
-    expect(width({ a: { x: 1, y: 0 }, b: { x: 4, y: 0 } })).toBe(3);
+  test('선분의 너비를 반환한다', () => {
+    expect(width({ x1: 1, y1: 0, x2: 4, y2: 0 })).toBe(3);
   });
 
   test('reversed endpoint segment의 width는 음수가 아니다', () => {
-    expect(width({ a: { x: 4, y: 0 }, b: { x: 1, y: 0 } })).toBe(3);
-  });
-
-  test('tuple endpoint segment를 지원한다', () => {
-    expect(
-      width([
-        [0, 0],
-        [5, 3],
-      ])
-    ).toBe(5);
+    expect(width({ x1: 4, y1: 0, x2: 1, y2: 0 })).toBe(3);
   });
 
   test('vertical segment의 width는 0이다', () => {
-    expect(width({ a: { x: 2, y: 0 }, b: { x: 2, y: 5 } })).toBe(0);
+    expect(width({ x1: 2, y1: 0, x2: 2, y2: 5 })).toBe(0);
   });
 
   test('zero-length segment의 width는 0이다', () => {
-    expect(width({ a: { x: 3, y: 3 }, b: { x: 3, y: 3 } })).toBe(0);
+    expect(width({ x1: 3, y1: 3, x2: 3, y2: 3 })).toBe(0);
   });
 });
 

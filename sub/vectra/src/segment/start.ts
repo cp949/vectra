@@ -1,4 +1,4 @@
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 import { startInto } from './start-into';
 
 /**
@@ -6,6 +6,6 @@ import { startInto } from './start-into';
  *
  * @param line 대상 segment
  */
-export function start(line: SegmentLike): XYObjectWritable {
+export function start(line: Segment): PointWritable {
   return startInto({ x: 0, y: 0 }, line);
 }

@@ -3,45 +3,23 @@ import { describe, expect, test } from 'vitest';
 import { fromAngleInto } from '../../../src/segment/from-angle-into';
 import { rotateAroundInto } from '../../../src/segment/rotate-around-into';
 import { translateInto } from '../../../src/segment/translate-into';
-import type { SegmentWritable } from '../../../src/types';
-import { expectCloseXY, expectSegment, expectXY, segmentOut } from './lifecycle-measurement-test-helpers';
+import { expectCloseXY } from './lifecycle-measurement-test-helpers';
 
 describe('segment 변환 - translateInto/rotateAroundInto', () => {
-  test.each([
-    {
-      name: 'object endpoint와 object offset으로 평행이동한다',
-      seg: { a: { x: 1, y: 2 }, b: { x: 3, y: 4 } },
-      offset: { x: 10, y: 20 },
-      expectedA: { x: 11, y: 22 },
-      expectedB: { x: 13, y: 24 },
-      checkReturn: true,
-    },
-    {
-      name: 'tuple endpoint와 object offset으로 평행이동한다',
-      seg: { a: [0, 0] as const, b: [5, 5] as const },
-      offset: { x: -1, y: -2 },
-      expectedA: { x: -1, y: -2 },
-      expectedB: { x: 4, y: 3 },
-      checkReturn: false,
-    },
-  ])('$name', ({ seg, offset, expectedA, expectedB, checkReturn }) => {
-    const out = segmentOut();
-
-    const result = translateInto(out, seg, offset);
-
-    if (checkReturn) {
-      expect(result).toBe(out);
-    }
-    expectSegment(out, expectedA, expectedB);
+  test('두 끝점에 이동량을 더한다', () => {
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    const line = { x1: 1, y1: 2, x2: 3, y2: 4 };
+    expect(translateInto(out, line, { x: 10, y: 20 })).toBe(out);
+    expect(out).toEqual({ x1: 11, y1: 22, x2: 13, y2: 24 });
   });
 
-  test('translateInto은 out === line 형태의 self-aliasing도 안전하다', () => {
-    const seg: SegmentWritable = { a: { x: 1, y: 2 }, b: { x: 3, y: 4 } };
+  test('translateInto는 out === line 형태의 self-aliasing도 안전하다', () => {
+    const seg = { x1: 1, y1: 2, x2: 3, y2: 4 };
 
     const result = translateInto(seg, seg, { x: 5, y: 5 });
 
     expect(result).toBe(seg);
-    expectSegment(seg, { x: 6, y: 7 }, { x: 8, y: 9 });
+    expect(seg).toEqual({ x1: 6, y1: 7, x2: 8, y2: 9 });
   });
 
   test('원점 기준 CCW 90도 회전 시 (1,0)→(0,1)로 이동한다', () => {

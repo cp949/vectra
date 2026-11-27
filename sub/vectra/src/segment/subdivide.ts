@@ -1,4 +1,5 @@
-import type { SegmentLike, SegmentSubdivideOptions, SegmentWritable } from '../types';
+import type { SegmentSubdivideOptions } from '../types';
+import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
 import { subdivideInto } from './subdivide-into';
 
 /**
@@ -22,6 +23,6 @@ import { subdivideInto } from './subdivide-into';
  * @param options `count`(positive integer, 기본 `2`) 분할 옵션
  * @throws {RangeError} `count`가 positive integer가 아니면 던진다.
  */
-export function subdivide(segment: SegmentLike, options?: SegmentSubdivideOptions): SegmentWritable[] {
+export function subdivide(segment: Segment, options?: SegmentSubdivideOptions): SegmentWritable[] {
   return subdivideInto([], segment, options);
 }

@@ -1,6 +1,5 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, SegmentSubdivideOptions, SegmentWritable } from '../types';
+import type { SegmentSubdivideOptions } from '../types';
+import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment를 `count` 기준으로 균등 N분할해 outSegments에 새 plain segment object로 기록하고 반환한다.
@@ -20,17 +19,17 @@ import type { SegmentLike, SegmentSubdivideOptions, SegmentWritable } from '../t
  * `split*`처럼 하지 않는다.
  *
  * input/output aliasing이 가능하므로 clear 전에 source endpoint를 scalar로 snapshot한다. outSegments가
- * source endpoint object를 alias로 포함해도 결과를 보존한다. 출력 segment는 매번 새 plain object
- * `{ a: { x, y }, b: { x, y } }`로 push한다(기존 segment object 재사용 없음).
+ * 입력 선분을 원소로 포함해도 결과를 보존한다. 출력 segment는 매번 새 plain object
+ * `{ x1, y1, x2, y2 }`로 push한다(기존 segment object 재사용 없음).
  *
- * @param outSegments 분할 결과를 기록할 writable segment output array
+ * @param outSegments 분할 결과를 기록할 선분 배열
  * @param segment 분할할 segment
  * @param options `count`(positive integer, 기본 `2`) 분할 옵션
  * @throws {RangeError} `count`가 positive integer가 아니면 던진다.
  */
 export function subdivideInto(
   outSegments: SegmentWritable[],
-  segment: SegmentLike,
+  segment: Segment,
   options?: SegmentSubdivideOptions
 ): SegmentWritable[] {
   const count = options?.count ?? 2;
@@ -39,10 +38,10 @@ export function subdivideInto(
   }
 
   // input/output aliasing 안전: clear 전에 source endpoint를 scalar로 snapshot한다.
-  const ax = readX(readSegmentA(segment));
-  const ay = readY(readSegmentA(segment));
-  const bx = readX(readSegmentB(segment));
-  const by = readY(readSegmentB(segment));
+  const ax = segment.x1;
+  const ay = segment.y1;
+  const bx = segment.x2;
+  const by = segment.y2;
 
   const dx = bx - ax;
   const dy = by - ay;
@@ -65,8 +64,10 @@ export function subdivideInto(
 
   for (let i = 0; i < count; i++) {
     outSegments.push({
-      a: { x: vx[i], y: vy[i] },
-      b: { x: vx[i + 1], y: vy[i + 1] },
+      x1: vx[i],
+      y1: vy[i],
+      x2: vx[i + 1],
+      y2: vy[i + 1],
     });
   }
 

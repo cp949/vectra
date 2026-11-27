@@ -1,3 +1,4 @@
+import type { SegmentWritable as FlatSegmentWritable } from './flat-shapes.internal';
 import type { XYInput, XYObjectWritable, XYWritable } from './xy.internal';
 
 /** tuple 형태의 structural segment input. */
@@ -27,12 +28,12 @@ export interface SegmentWritable<A extends XYWritable = XYObjectWritable, B exte
 /**
  * 단일 segment를 `t` 기준으로 나눈 left/right segment를 기록할 수 있는 multi-output writable.
  *
- * `left.b`와 `right.a`는 같은 분할점 좌표를 갖는다(같은 object reference일 필요는 없다).
- * 각 endpoint storage의 writable shape를 generic으로 보존한다.
+ * `left.x2`·`left.y2`와 `right.x1`·`right.y1`은 같은 분할점 좌표를 갖는다.
+ * 두 출력 선분의 구체 타입을 보존한다.
  */
 export interface SegmentSplitWritable<
-  Left extends SegmentWritable<XYWritable, XYWritable> = SegmentWritable,
-  Right extends SegmentWritable<XYWritable, XYWritable> = SegmentWritable,
+  Left extends FlatSegmentWritable = FlatSegmentWritable,
+  Right extends FlatSegmentWritable = FlatSegmentWritable,
 > {
   /** 분할 결과 앞쪽 segment `a -> p` */
   left: Left;
@@ -44,10 +45,10 @@ export interface SegmentSplitWritable<
 /** allocating companion `split`이 반환하는 plain object 분할 결과. */
 export type SegmentSplit = SegmentSplitWritable;
 
-/** segment를 count 기준 균등 N분할하는 옵션. */
+/** 선분 균등 분할 옵션. 옵션을 생략하면 두 구간으로 나눈다. */
 export interface SegmentSubdivideOptions {
-  /** 균등 분할 개수. positive integer만 허용. 기본값 `2`. */
-  count?: number;
+  /** 균등 분할 개수. 양의 정수만 허용. */
+  count: number;
 }
 
 /**

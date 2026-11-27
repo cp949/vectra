@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 import { singleIntersectionInto } from './single-intersection-into';
 
 /**
@@ -14,11 +14,11 @@ import { singleIntersectionInto } from './single-intersection-into';
  * @param epsilon cross product 절대값 임계값
  */
 export function singleIntersection(
-  a: SegmentLike,
-  b: SegmentLike,
+  a: Segment,
+  b: Segment,
   epsilon: number = DEFAULT_EPSILON
-): XYObjectWritable | undefined {
-  const seed: XYObjectWritable = { x: 0, y: 0 };
+): PointWritable | undefined {
+  const seed: PointWritable = { x: 0, y: 0 };
   if (!singleIntersectionInto(seed, a, b, epsilon)) return undefined;
   return seed;
 }

@@ -12,7 +12,7 @@ import { singleIntersectionInto } from '../../../src/segment/single-intersection
 
 /** `(ax, ay)`에서 `(bx, by)`로 가는 plain segment를 만든다. */
 function seg(ax: number, ay: number, bx: number, by: number) {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
+  return { x1: ax, y1: ay, x2: bx, y2: by };
 }
 
 describe('singleIntersectionInto', () => {

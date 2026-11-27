@@ -20,7 +20,7 @@ import { segmentSegmentDetail } from '../../../src/intersects/segment-segment-de
 import { isSimple } from '../../../src/polygon/is-simple';
 import { singleIntersectionInto as raySingleIntersectionInto } from '../../../src/ray/single-intersection-into';
 import { singleIntersectionInto as segmentSingleIntersectionInto } from '../../../src/segment/single-intersection-into';
-import type { InfiniteLineLike, RayLike, SegmentLike } from '../../../src/types';
+import type { InfiniteLineLike, RayLike } from '../../../src/types';
 import { expectOverlapDetail, expectPointDetail } from './_helpers/segment-segment-detail';
 
 /** 좌표 scale 후보. 선분 길이가 거리 임계값(1e-9)보다 충분히 긴 범위만 쓴다. */
@@ -36,7 +36,7 @@ const PARAM_DIGITS = 6;
  * 기준 좌표(단위 scale)에 scale과 offset을 적용한 segment를 만든다.
  * 모든 좌표에 `offset + s·값`을 쓴다. offset은 큰 좌표 + 작은 선분 케이스에서 쓴다.
  */
-function scaledSegment(s: number, ax: number, ay: number, bx: number, by: number, offset = 0): SegmentLike {
+function scaledSegment(s: number, ax: number, ay: number, bx: number, by: number, offset = 0) {
   return {
     a: { x: offset + s * ax, y: offset + s * ay },
     b: { x: offset + s * bx, y: offset + s * by },
@@ -58,6 +58,11 @@ function scaledLine(s: number, m: number, ox: number, oy: number, dx: number, dy
   return { origin: { x: s * ox, y: s * oy }, direction: { x: m * dx, y: m * dy } };
 }
 
+/** 중첩 끝점 시험 데이터를 단일 교점 함수용 좌표로 옮긴다. */
+function flatSegment({ a, b }: { a: { x: number; y: number }; b: { x: number; y: number } }) {
+  return { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
+}
+
 describe('segment 교차 판정은 좌표 scale에 불변이다', () => {
   test.each(COORD_SCALES)('scale %s: 수직 X자 교차는 point이고 parameter가 0.5다', (s) => {
     const a = scaledSegment(s, -1, -1, 1, 1);
@@ -66,7 +71,7 @@ describe('segment 교차 판정은 좌표 scale에 불변이다', () => {
     expect(intersectsSegmentSegment(a, b)).toBe(true);
     expectPointDetail(segmentSegmentDetail(a, b), { tA: 0.5, tB: 0.5 }, PARAM_DIGITS);
     const out = { x: Number.NaN, y: Number.NaN };
-    expect(segmentSingleIntersectionInto(out, a, b)).toBe(true);
+    expect(segmentSingleIntersectionInto(out, flatSegment(a), flatSegment(b))).toBe(true);
     expect(Math.abs(out.x)).toBeLessThanOrEqual(s * 1e-6);
     expect(Math.abs(out.y)).toBeLessThanOrEqual(s * 1e-6);
   });
@@ -102,7 +107,7 @@ describe('segment 교차 판정은 좌표 scale에 불변이다', () => {
     expect(intersectsSegmentSegment(a, b)).toBe(false);
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
     const out = { x: -7, y: -7 };
-    expect(segmentSingleIntersectionInto(out, a, b)).toBe(false);
+    expect(segmentSingleIntersectionInto(out, flatSegment(a), flatSegment(b))).toBe(false);
     expect(out).toEqual({ x: -7, y: -7 });
   });
 

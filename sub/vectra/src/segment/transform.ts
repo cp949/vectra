@@ -1,5 +1,5 @@
-import type { MatrixLike, SegmentLike, SegmentWritable } from '../types';
-import { createLegacySegment } from '../internal/segment';
+import type { Matrix, Segment, SegmentWritable } from '../types/flat-shapes.internal';
+import { createZeroSegment } from '../internal/segment';
 import { transformInto } from './transform-into';
 
 /**
@@ -8,6 +8,6 @@ import { transformInto } from './transform-into';
  * @param line 변환할 segment
  * @param matrix 적용할 matrix
  */
-export function transform(line: SegmentLike, matrix: MatrixLike): SegmentWritable {
-  return transformInto(createLegacySegment(), line, matrix);
+export function transform(line: Segment, matrix: Matrix): SegmentWritable {
+  return transformInto(createZeroSegment(), line, matrix);
 }

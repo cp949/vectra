@@ -220,7 +220,7 @@ describe('다항식·포함 판정 경계', () => {
   });
 
   test('segmentContainsPoint는 길이 0 segment를 점으로 본다', () => {
-    const point = { a: { x: 1, y: 1 }, b: { x: 1, y: 1 } };
+    const point = { x1: 1, y1: 1, x2: 1, y2: 1 };
     expect(segmentContainsPoint(point, 1, 1, 1e-9)).toBe(true);
     expect(segmentContainsPoint(point, 1, 2, 1e-9)).toBe(false);
   });

@@ -3,11 +3,11 @@ import { describe, expect, test } from 'vitest';
 import { midpoint } from '../../../src/segment/midpoint';
 import { singleIntersection } from '../../../src/segment/single-intersection';
 import { translate } from '../../../src/segment/translate';
-import type { SegmentWritable } from '../../../src/types';
+import type { SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
-/** 중첩 끝점을 받는 함수에 넘길 선분을 만든다. */
+/** 끝점 좌표에서 선분을 만든다. */
 function makeLine(ax = 0, ay = 0, bx = 4, by = 0): SegmentWritable {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
+  return { x1: ax, y1: ay, x2: bx, y2: by };
 }
 
 // companion 함수가 public convenience API로서 정상값을 새 object로 반환하는지
@@ -25,8 +25,7 @@ describe('segment companion - translate', () => {
   test('endpoint를 offset만큼 이동한 새 plain object를 반환한다', () => {
     const result = translate(makeLine(0, 0, 4, 0), { x: 1, y: 2 });
 
-    expect(result.a).toEqual({ x: 1, y: 2 });
-    expect(result.b).toEqual({ x: 5, y: 2 });
+    expect(result).toEqual({ x1: 1, y1: 2, x2: 5, y2: 2 });
   });
 });
 

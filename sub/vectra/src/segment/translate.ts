@@ -1,5 +1,5 @@
-import type { SegmentLike, SegmentWritable, XYInput } from '../types';
-import { createLegacySegment } from '../internal/segment';
+import type { Point, Segment, SegmentWritable } from '../types/flat-shapes.internal';
+import { createZeroSegment } from '../internal/segment';
 import { translateInto } from './translate-into';
 
 /**
@@ -8,6 +8,6 @@ import { translateInto } from './translate-into';
  * @param line 이동할 segment
  * @param offset 이동 벡터
  */
-export function translate(line: SegmentLike, offset: XYInput): SegmentWritable {
-  return translateInto(createLegacySegment(), line, offset);
+export function translate(line: Segment, offset: Point): SegmentWritable {
+  return translateInto(createZeroSegment(), line, offset);
 }

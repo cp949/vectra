@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, XYInput } from '../types';
+import type { Point, Segment } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -15,17 +13,15 @@ import { hypot2 } from '../internal/numeric';
  * @param line 기준 segment
  * @param point 거리를 측정할 point
  */
-export function signedDistanceToSupportingLine(line: SegmentLike, point: XYInput): number {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const dx = readX(b) - ax;
-  const dy = readY(b) - ay;
+export function signedDistanceToSupportingLine(line: Segment, point: Point): number {
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   const len = hypot2(dx, dy);
   if (len === 0) return 0;
-  const px = readX(point) - ax;
-  const py = readY(point) - ay;
+  const px = point.x - ax;
+  const py = point.y - ay;
   // 2D cross product: d × (point - a) = dx * py - dy * px
   return (dx * py - dy * px) / len;
 }

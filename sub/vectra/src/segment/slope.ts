@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike } from '../types';
+import type { Segment } from '../types/flat-shapes.internal';
 
 /**
  * segment a→b의 기울기(dy / dx)를 반환한다.
@@ -11,12 +9,10 @@ import type { SegmentLike } from '../types';
  *
  * @param line 기울기를 계산할 segment
  */
-export function slope(line: SegmentLike): number {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const ax = readX(a);
-  const ay = readY(a);
-  const dx = readX(b) - ax;
-  const dy = readY(b) - ay;
+export function slope(line: Segment): number {
+  const ax = line.x1;
+  const ay = line.y1;
+  const dx = line.x2 - ax;
+  const dy = line.y2 - ay;
   return dy / dx;
 }
