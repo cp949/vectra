@@ -1,6 +1,4 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 
 /**
  * bounds가 other를 완전히 포함하면 true를 반환한다.
@@ -11,17 +9,17 @@ import type { BoundsLike } from '../types';
  * @param bounds 포함 여부를 판정할 기준 bounds
  * @param other bounds 안에 포함되는지 확인할 대상 bounds
  */
-export function containsBounds(bounds: BoundsLike, other: BoundsLike): boolean {
-  const bMinX = readX(readBoundsMin(bounds));
-  const bMinY = readY(readBoundsMin(bounds));
-  const bMaxX = readX(readBoundsMax(bounds));
-  const bMaxY = readY(readBoundsMax(bounds));
+export function containsBounds(bounds: Bounds, other: Bounds): boolean {
+  const bMinX = bounds.minX;
+  const bMinY = bounds.minY;
+  const bMaxX = bounds.maxX;
+  const bMaxY = bounds.maxY;
   const boundsEmpty = bMaxX < bMinX || bMaxY < bMinY;
 
-  const oMinX = readX(readBoundsMin(other));
-  const oMinY = readY(readBoundsMin(other));
-  const oMaxX = readX(readBoundsMax(other));
-  const oMaxY = readY(readBoundsMax(other));
+  const oMinX = other.minX;
+  const oMinY = other.minY;
+  const oMaxX = other.maxX;
+  const oMaxY = other.maxY;
   const otherEmpty = oMaxX < oMinX || oMaxY < oMinY;
 
   if (otherEmpty) return true;

@@ -1,5 +1,5 @@
-import type { BoundsLike, XYInput, XYObjectWritable } from '../types';
-import { clampPointXY } from './closest-point.internal';
+import type { Bounds, Point, PointWritable } from '../types/flat-shapes.internal';
+import { clampCoordinate } from './closest-point.internal';
 import { isEmpty } from './is-empty';
 
 /**
@@ -14,8 +14,9 @@ import { isEmpty } from './is-empty';
  * @param bounds closest point를 탐색할 AABB
  * @param point closest point를 탐색할 기준 좌표
  */
-export function closestPoint(bounds: BoundsLike, point: XYInput): XYObjectWritable | undefined {
+export function closestPoint(bounds: Bounds, point: Point): PointWritable | undefined {
   if (isEmpty(bounds)) return undefined;
-  const [cx, cy] = clampPointXY(bounds, point);
+  const cx = clampCoordinate(point.x, bounds.minX, bounds.maxX);
+  const cy = clampCoordinate(point.y, bounds.minY, bounds.maxY);
   return { x: cx, y: cy };
 }

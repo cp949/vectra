@@ -1,5 +1,5 @@
 import type { BoundsLike, BoundsWritable } from '../types';
-import { createBounds } from './create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import { intersectionInto } from './intersection-into';
 
 /**
@@ -11,6 +11,6 @@ import { intersectionInto } from './intersection-into';
  * @param b 교차시킬 두 번째 bounds
  */
 export function intersection(a: BoundsLike, b: BoundsLike): BoundsWritable | undefined {
-  const out = createBounds();
+  const out = createLegacyBounds();
   return intersectionInto(out, a, b) ? out : undefined;
 }

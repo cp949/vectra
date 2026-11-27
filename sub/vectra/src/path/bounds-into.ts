@@ -1,4 +1,3 @@
-import { emptyInto } from '../bounds/empty-into';
 import { arcBoundsInto } from '../curve/arc-bounds-into';
 import { cubicBoundsInto } from '../curve/cubic-bounds-into';
 import { endpointArcToCenterInto } from '../curve/endpoint-arc-to-center-into';
@@ -52,7 +51,9 @@ export function boundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
   const outObj = out as BoundsWritable;
 
   // empty path sentinel으로 초기화
-  emptyInto(outObj);
+  // v2-migration: path의 경계 상자 출력을 전환할 때 필드에 직접 기록한다.
+  writeXY(outObj.min, Infinity, Infinity);
+  writeXY(outObj.max, -Infinity, -Infinity);
 
   // curve segment 계산에 쓸 함수 로컬 scratch 객체
   const scratchBounds: BoundsWritable = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };

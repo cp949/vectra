@@ -98,20 +98,8 @@
       "to": "bounds/create-bounds.ts"
     },
     {
-      "from": "bounds/intersection.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
       "from": "bounds/to-rect.ts",
       "to": "rect/create-rect.ts"
-    },
-    {
-      "from": "bounds/transform.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
-      "from": "bounds/union.ts",
-      "to": "bounds/create-bounds.ts"
     },
     {
       "from": "circle/circle-from.ts",
@@ -150,10 +138,6 @@
       "to": "circle/create-circle.ts"
     },
     {
-      "from": "curve/arc-bounds.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
       "from": "curve/arc-closest-point-into.ts",
       "to": "curve/arc-point-at-t-into.ts"
     },
@@ -182,10 +166,6 @@
       "to": "curve/catmull-rom-point-at-t-into.ts"
     },
     {
-      "from": "curve/cubic-bounds.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
       "from": "curve/cubic-lookup-table-into.ts",
       "to": "curve/cubic-point-at-t-into.ts"
     },
@@ -210,10 +190,6 @@
       "to": "curve/cubic-t-at-length.ts"
     },
     {
-      "from": "curve/quadratic-bounds.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
       "from": "curve/quadratic-lookup-table-into.ts",
       "to": "curve/quadratic-point-at-t-into.ts"
     },
@@ -236,10 +212,6 @@
     {
       "from": "editor-geometry/connector-line.ts",
       "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "ellipse/bounds.ts",
-      "to": "bounds/create-bounds.ts"
     },
     {
       "from": "ellipse/ellipse-from.ts",
@@ -268,10 +240,6 @@
     {
       "from": "ellipse/from-rect.ts",
       "to": "ellipse/create-ellipse.ts"
-    },
-    {
-      "from": "ellipse/rotated-bounds.ts",
-      "to": "bounds/create-bounds.ts"
     },
     {
       "from": "ellipse/scale.ts",
@@ -422,10 +390,6 @@
       "to": "matrix/create-matrix.ts"
     },
     {
-      "from": "matrix/transform-bounds.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
       "from": "matrix/transform-rect.ts",
       "to": "rect/create-rect.ts"
     },
@@ -436,10 +400,6 @@
     {
       "from": "path/area.ts",
       "to": "path/signed-area.ts"
-    },
-    {
-      "from": "path/bounds-into.ts",
-      "to": "bounds/empty-into.ts"
     },
     {
       "from": "path/bounds-into.ts",
@@ -550,16 +510,8 @@
       "to": "path/flatten-into.ts"
     },
     {
-      "from": "polygon/bounds.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
       "from": "polygon/edge-at.ts",
       "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "polyline/bounds.ts",
-      "to": "bounds/create-bounds.ts"
     },
     {
       "from": "polyline/segment-at.ts",
@@ -722,10 +674,6 @@
       "to": "rect/create-rect.ts"
     },
     {
-      "from": "segment/bounds.ts",
-      "to": "bounds/create-bounds.ts"
-    },
-    {
       "from": "segment/center-on.ts",
       "to": "segment/create-segment.ts"
     },
@@ -804,10 +752,6 @@
     {
       "from": "triangle/altitude.ts",
       "to": "segment/create-segment.ts"
-    },
-    {
-      "from": "triangle/bounds.ts",
-      "to": "bounds/create-bounds.ts"
     },
     {
       "from": "triangle/contains-points.ts",

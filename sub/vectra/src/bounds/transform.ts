@@ -1,5 +1,5 @@
 import type { BoundsLike, BoundsWritable, MatrixLike } from '../types';
-import { createBounds } from './create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import { transformInto } from './transform-into';
 
 /**
@@ -11,5 +11,5 @@ import { transformInto } from './transform-into';
  * @param matrix bounds corner에 적용할 matrix
  */
 export function transform(bounds: BoundsLike, matrix: MatrixLike): BoundsWritable {
-  return transformInto(createBounds(), bounds, matrix);
+  return transformInto(createLegacyBounds(), bounds, matrix);
 }

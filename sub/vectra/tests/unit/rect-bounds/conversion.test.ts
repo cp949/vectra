@@ -1,44 +1,32 @@
 /** 사각형과 경계 상자의 변환 및 점 배열의 범위 계산을 시험한다. */
 
 import { describe, expect, test } from 'vitest';
+import { createBounds } from '../../../src/bounds/create-bounds';
 import { fromPointsInto as boundsFromPointsInto } from '../../../src/bounds/from-points-into';
 import { fromRectInto } from '../../../src/bounds/from-rect-into';
 import { toRectInto } from '../../../src/bounds/to-rect-into';
 import { fromBoundsInto } from '../../../src/rect/from-bounds-into';
 import { fromPointsInto as rectFromPointsInto } from '../../../src/rect/from-points-into';
 import { toBoundsInto } from '../../../src/rect/to-bounds-into';
-import type { BoundsWritable, RectWritable } from '../../../src/types';
+import type { RectWritable } from '../../../src/types';
 
+/** 변환 결과를 기록할 사각형 객체를 만든다. */
 function makeRect(): RectWritable {
   return { x: 0, y: 0, width: 0, height: 0 };
 }
 
-function makeBounds(): BoundsWritable {
-  return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-}
-
 describe('bounds.fromRectInto', () => {
   test('정상 rect를 bounds로 변환한다', () => {
-    const out = makeBounds();
+    const out = createBounds();
     const result = fromRectInto(out, { x: 1, y: 2, width: 4, height: 6 });
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 5, y: 8 });
+    expect(out).toEqual({ minX: 1, minY: 2, maxX: 5, maxY: 8 });
     expect(result).toBe(out);
   });
 
-  // tuple/object 입력 처리 정책 대표: 전 방향 통틀어 이 한 곳에서만 검증
-  test('tuple rect도 object rect와 동일하게 변환한다', () => {
-    const out = makeBounds();
-    fromRectInto(out, [1, 2, 4, 6]);
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 5, y: 8 });
-  });
-
   test('음수 width rect(empty)를 변환한다 - inverted bounds(empty)가 된다', () => {
-    const out = makeBounds();
+    const out = createBounds();
     fromRectInto(out, { x: 5, y: 0, width: -3, height: 4 });
-    expect(out.min).toEqual({ x: 5, y: 0 });
-    expect(out.max).toEqual({ x: 2, y: 4 });
+    expect(out).toEqual({ minX: 5, minY: 0, maxX: 2, maxY: 4 });
   });
 });
 
@@ -68,64 +56,35 @@ describe('bounds.toRectInto', () => {
 
 describe('bounds.fromPointsInto', () => {
   test('빈 배열은 sentinel bounds를 기록한다', () => {
-    const out = makeBounds();
+    const out = createBounds();
     const result = boundsFromPointsInto(out, []);
-    expect(out.min).toEqual({ x: Infinity, y: Infinity });
-    expect(out.max).toEqual({ x: -Infinity, y: -Infinity });
+    expect(out).toEqual({ minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
     expect(result).toBe(out);
   });
 
   test('단일 점은 point bounds를 기록한다 (min === max)', () => {
-    const out = makeBounds();
+    const out = createBounds();
     boundsFromPointsInto(out, [{ x: 3, y: 5 }]);
-    expect(out.min).toEqual({ x: 3, y: 5 });
-    expect(out.max).toEqual({ x: 3, y: 5 });
-  });
-
-  test('단일 tuple 점은 point bounds를 기록한다', () => {
-    const out = makeBounds();
-    boundsFromPointsInto(out, [[4, 7]]);
-    expect(out.min).toEqual({ x: 4, y: 7 });
-    expect(out.max).toEqual({ x: 4, y: 7 });
+    expect(out).toEqual({ minX: 3, minY: 5, maxX: 3, maxY: 5 });
   });
 
   test('복수 object 점의 min/max extent를 기록한다', () => {
-    const out = makeBounds();
+    const out = createBounds();
     boundsFromPointsInto(out, [
       { x: 3, y: 1 },
       { x: 1, y: 5 },
       { x: 6, y: 2 },
     ]);
-    expect(out.min).toEqual({ x: 1, y: 1 });
-    expect(out.max).toEqual({ x: 6, y: 5 });
-  });
-
-  test('복수 tuple 점의 min/max extent를 기록한다', () => {
-    const out = makeBounds();
-    boundsFromPointsInto(out, [
-      [3, 1],
-      [1, 5],
-      [6, 2],
-    ]);
-    expect(out.min).toEqual({ x: 1, y: 1 });
-    expect(out.max).toEqual({ x: 6, y: 5 });
-  });
-
-  test('object와 tuple 혼합 점 배열을 처리한다', () => {
-    const out = makeBounds();
-    boundsFromPointsInto(out, [{ x: 2, y: 8 }, [5, 3]]);
-    expect(out.min).toEqual({ x: 2, y: 3 });
-    expect(out.max).toEqual({ x: 5, y: 8 });
+    expect(out).toEqual({ minX: 1, minY: 1, maxX: 6, maxY: 5 });
   });
 
   test('같은 좌표의 두 점은 point bounds를 만든다', () => {
-    const out = makeBounds();
+    const out = createBounds();
     boundsFromPointsInto(out, [
       { x: 4, y: 4 },
       { x: 4, y: 4 },
     ]);
-    expect(out.min).toEqual({ x: 4, y: 4 });
-    expect(out.max).toEqual({ x: 4, y: 4 });
+    expect(out).toEqual({ minX: 4, minY: 4, maxX: 4, maxY: 4 });
   });
 });
 

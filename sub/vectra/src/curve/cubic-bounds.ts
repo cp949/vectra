@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsWritable, XYInput } from '../types';
 import { cubicBoundsInto } from './cubic-bounds-into';
 
@@ -16,5 +16,5 @@ import { cubicBoundsInto } from './cubic-bounds-into';
  * @returns 새 plain bounds object
  */
 export function cubicBounds(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput): BoundsWritable {
-  return cubicBoundsInto(createBounds(), p0, p1, p2, p3);
+  return cubicBoundsInto(createLegacyBounds(), p0, p1, p2, p3);
 }

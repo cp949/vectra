@@ -1,5 +1,5 @@
 import type { BoundsLike, BoundsWritable } from '../types';
-import { createBounds } from './create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import { unionInto } from './union-into';
 
 /**
@@ -11,5 +11,5 @@ import { unionInto } from './union-into';
  * @param b 합칠 두 번째 bounds
  */
 export function union(a: BoundsLike, b: BoundsLike): BoundsWritable {
-  return unionInto(createBounds(), a, b);
+  return unionInto(createLegacyBounds(), a, b);
 }

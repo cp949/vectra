@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsWritable, CenterArcLike } from '../types';
 import { arcBoundsInto } from './arc-bounds-into';
 
@@ -14,5 +14,5 @@ import { arcBoundsInto } from './arc-bounds-into';
  * @returns 새 plain bounds object
  */
 export function arcBounds(centerArc: CenterArcLike): BoundsWritable {
-  return arcBoundsInto(createBounds(), centerArc);
+  return arcBoundsInto(createLegacyBounds(), centerArc);
 }

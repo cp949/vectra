@@ -1,3 +1,5 @@
+/** 경계 상자의 꼭짓점과 변을 새 배열에 담는 순서를 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { corners } from '../../../src/bounds/corners';
 import { sides } from '../../../src/bounds/sides';
@@ -6,7 +8,7 @@ const b = { min: { x: 1, y: 2 }, max: { x: 5, y: 8 } };
 
 describe('bounds.corners', () => {
   test('topLeft, topRight, bottomRight, bottomLeft 순서로 반환한다', () => {
-    const result = corners(b);
+    const result = corners({ minX: 1, minY: 2, maxX: 5, maxY: 8 });
     expect(result).toHaveLength(4);
     expect(result[0]).toEqual({ x: 1, y: 2 });
     expect(result[1]).toEqual({ x: 5, y: 2 });
@@ -15,7 +17,7 @@ describe('bounds.corners', () => {
   });
 
   test('empty/inverted bounds에서도 4개 point를 반환한다', () => {
-    const inverted = { min: { x: 10, y: 10 }, max: { x: 0, y: 0 } };
+    const inverted = { minX: 10, minY: 10, maxX: 0, maxY: 0 };
     expect(corners(inverted)).toHaveLength(4);
   });
 });

@@ -1,31 +1,18 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BoundsLike, BoundsWritable, XYInput, XYWritable } from '../types';
+import type { Bounds, BoundsWritable } from '../types/flat-shapes.internal';
 
 /**
- * bounds의 min/max 좌표를 out에 복사하고 out을 반환한다.
+ * 경계 좌표를 out에 그대로 복사한다.
  *
- * input과 out이 같은 object여도 안전하다.
+ * 뒤집힌 경계도 정규화하지 않는다. out과 bounds가 같은 객체여도 안전하다.
  *
- * @param out bounds 좌표를 기록할 writable output
- * @param bounds 복사할 bounds 또는 min 좌표
- * @param max max 좌표
+ * @param out 경계 좌표를 기록할 경계 상자 객체
+ * @param bounds 복사할 경계 상자
  */
-export function copyInto<Out extends BoundsWritable<XYWritable, XYWritable>>(out: Out, bounds: BoundsLike): Out;
-export function copyInto<Out extends BoundsWritable<XYWritable, XYWritable>>(out: Out, min: XYInput, max: XYInput): Out;
-export function copyInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
-  out: Out,
-  boundsOrMin: BoundsLike | XYInput,
-  max?: XYInput
-): Out {
-  // aliasing 안전 - 모든 입력을 먼저 읽은 후 기록한다
-  const min = max === undefined ? readBoundsMin(boundsOrMin as BoundsLike) : (boundsOrMin as XYInput);
-  const maxPoint = max === undefined ? readBoundsMax(boundsOrMin as BoundsLike) : max;
-  const minX = readX(min);
-  const minY = readY(min);
-  const maxX = readX(maxPoint);
-  const maxY = readY(maxPoint);
-  writeXY(out.min, minX, minY);
-  writeXY(out.max, maxX, maxY);
+export function copyInto<Out extends BoundsWritable>(out: Out, bounds: Bounds): Out {
+  const { minX, minY, maxX, maxY } = bounds;
+  out.minX = minX;
+  out.minY = minY;
+  out.maxX = maxX;
+  out.maxY = maxY;
   return out;
 }

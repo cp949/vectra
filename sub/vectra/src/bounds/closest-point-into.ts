@@ -1,6 +1,5 @@
-import { writeXY } from '../internal/xy';
-import type { BoundsLike, XYInput, XYWritable } from '../types';
-import { clampPointXY } from './closest-point.internal';
+import type { Bounds, Point, PointWritable } from '../types/flat-shapes.internal';
+import { clampCoordinate } from './closest-point.internal';
 import { isEmpty } from './is-empty';
 
 /**
@@ -10,17 +9,18 @@ import { isEmpty } from './is-empty';
  * non-empty bounds이면 point를 closed AABB에 clamp한 좌표를 out에 기록하고 true를 반환한다.
  * 내부 또는 boundary point는 input point 좌표를 그대로 기록한다.
  *
- * out이 bounds.min, bounds.max, point와 alias되어도 안전하다.
+ * out이 bounds 또는 point와 같은 객체여도 안전하다.
  * non-finite 좌표는 검증하지 않는다. NaN 입력은 NaN으로 전파된다.
  *
- * @param out closest point를 기록할 writable output
+ * @param out 가장 가까운 점을 기록할 점 객체
  * @param bounds closest point를 탐색할 AABB
  * @param point closest point를 탐색할 기준 좌표
  */
-export function closestPointInto(out: XYWritable, bounds: BoundsLike, point: XYInput): boolean {
+export function closestPointInto(out: PointWritable, bounds: Bounds, point: Point): boolean {
   if (isEmpty(bounds)) return false;
-  // aliasing 안전 - clampPointXY가 모든 입력을 먼저 읽은 후 기록한다
-  const [cx, cy] = clampPointXY(bounds, point);
-  writeXY(out, cx, cy);
+  const cx = clampCoordinate(point.x, bounds.minX, bounds.maxX);
+  const cy = clampCoordinate(point.y, bounds.minY, bounds.maxY);
+  out.x = cx;
+  out.y = cy;
   return true;
 }

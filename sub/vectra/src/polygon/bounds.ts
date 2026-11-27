@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsWritable, PolygonLike } from '../types';
 import { boundsInto } from './bounds-into';
 
@@ -9,6 +9,6 @@ import { boundsInto } from './bounds-into';
  * degenerate/empty 입력 처리 정책은 `boundsInto`와 동일하다.
  */
 export function bounds(polygon: PolygonLike): BoundsWritable {
-  const seed = createBounds();
+  const seed = createLegacyBounds();
   return boundsInto(seed, polygon);
 }

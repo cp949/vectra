@@ -1,4 +1,4 @@
-import type { BoundsWritable, XYInput } from '../types';
+import type { BoundsWritable, Point } from '../types/flat-shapes.internal';
 import { createBounds } from './create-bounds';
 import { fromCenterInto } from './from-center-into';
 
@@ -12,8 +12,8 @@ import { fromCenterInto } from './from-center-into';
  * non-finite 좌표는 검증하지 않는다. NaN 입력은 NaN으로 전파된다.
  *
  * @param center bounds 중심 좌표
- * @param size bounds의 width/height를 담은 XYInput (x=width, y=height)
+ * @param size bounds의 width/height를 담은 Point (x=width, y=height)
  */
-export function fromCenter(center: XYInput, size: XYInput): BoundsWritable {
+export function fromCenter(center: Point, size: Point): BoundsWritable {
   return fromCenterInto(createBounds(), center, size);
 }

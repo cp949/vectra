@@ -1,7 +1,7 @@
 /**
  * bounds 인자 형태와 축별 min/max 선택 경계 테스트.
  *
- * `boundsFrom(min, max)` 두 인자 형태, `intersectionInto`에서 b가 empty인 경우와 각 축에서 b가 더
+ * `boundsFrom`의 뒤집힌 경계 복사, `intersectionInto`에서 b가 empty인 경우와 각 축에서 b가 더
  * 안쪽인 경우, `unionInto`에서 b가 각 축으로 더 바깥인 경우를 확인한다.
  */
 
@@ -17,9 +17,11 @@ function box(minX: number, minY: number, maxX: number, maxY: number): BoundsWrit
 }
 
 describe('boundsFrom', () => {
-  test('min과 max 두 인자로 새 bounds를 만든다', () => {
-    const result = boundsFrom({ x: 1, y: 2 }, { x: 3, y: 4 });
-    expect(result).toEqual(box(1, 2, 3, 4));
+  test('뒤집힌 경계 좌표를 새 객체에 그대로 복사한다', () => {
+    const input = { minX: 3, minY: 4, maxX: 1, maxY: 2 };
+    const result = boundsFrom(input);
+    expect(result).toEqual(input);
+    expect(result).not.toBe(input);
   });
 });
 

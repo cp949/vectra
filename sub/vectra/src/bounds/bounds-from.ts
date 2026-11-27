@@ -1,20 +1,14 @@
-import type { BoundsLike, BoundsWritable, XYInput } from '../types';
+import type { Bounds, BoundsWritable } from '../types/flat-shapes.internal';
 import { copyInto } from './copy-into';
 import { createBounds } from './create-bounds';
 
 /**
- * `BoundsLike` source의 min/max를 새 plain object로 복사해 반환한다.
+ * `Bounds` source의 min/max를 새 plain object로 복사해 반환한다.
+ *
+ * 뒤집힌 경계도 정규화하지 않는다.
  *
  * @param bounds 복사할 source bounds
  */
-export function boundsFrom(bounds: BoundsLike): BoundsWritable;
-/**
- * min/max component로 새 plain bounds writable을 만든다.
- */
-export function boundsFrom(min: XYInput, max: XYInput): BoundsWritable;
-export function boundsFrom(boundsOrMin: BoundsLike | XYInput, max?: XYInput): BoundsWritable {
-  if (max === undefined) {
-    return copyInto(createBounds(), boundsOrMin as BoundsLike);
-  }
-  return copyInto(createBounds(), boundsOrMin as XYInput, max);
+export function boundsFrom(bounds: Bounds): BoundsWritable {
+  return copyInto(createBounds(), bounds);
 }

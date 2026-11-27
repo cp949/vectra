@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsWritable, RotatedEllipseLike } from '../types';
 import { rotatedBoundsInto } from './rotated-bounds-into';
 
@@ -16,5 +16,5 @@ import { rotatedBoundsInto } from './rotated-bounds-into';
  * @param ellipse bounds로 변환할 rotated ellipse
  */
 export function rotatedBounds(ellipse: RotatedEllipseLike): BoundsWritable {
-  return rotatedBoundsInto(createBounds(), ellipse);
+  return rotatedBoundsInto(createLegacyBounds(), ellipse);
 }

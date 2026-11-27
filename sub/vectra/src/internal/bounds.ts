@@ -1,4 +1,4 @@
-import type { BoundsLike, BoundsTuple, XYInput } from '../types';
+import type { BoundsLike, BoundsTuple, BoundsWritable, XYInput } from '../types';
 
 function isBoundsTuple(bounds: BoundsLike): bounds is BoundsTuple {
   return Array.isArray(bounds);
@@ -35,4 +35,10 @@ export function boundsContainsPointXY(
   py: number
 ): boolean {
   return px >= minX && px <= maxX && py >= minY && py <= maxY;
+}
+
+// v2-migration: 경계 상자를 반환하는 호출처를 전환한 뒤 제거한다.
+/** 중첩된 min/max를 쓰는 경계 상자를 만든다. */
+export function createLegacyBounds(): BoundsWritable {
+  return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
 }

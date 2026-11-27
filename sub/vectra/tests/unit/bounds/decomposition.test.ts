@@ -1,3 +1,5 @@
+/** 경계 상자의 꼭짓점과 변을 추출하는 정책을 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { cornersInto } from '../../../src/bounds/corners-into';
 import { sidesInto } from '../../../src/bounds/sides-into';
@@ -10,12 +12,12 @@ describe('cornersInto', () => {
   describe('object input', () => {
     test('4개 corner를 topLeft, topRight, bottomRight, bottomLeft 순서로 push한다', () => {
       const out: { x: number; y: number }[] = [];
-      cornersInto(out, { min: { x: 10, y: 20 }, max: { x: 40, y: 60 } });
+      cornersInto(out, { minX: 10, minY: 20, maxX: 40, maxY: 60 });
       expect(out).toHaveLength(4);
-      expect(out[0]).toEqual({ x: 10, y: 20 }); // topLeft = (min.x, min.y)
-      expect(out[1]).toEqual({ x: 40, y: 20 }); // topRight = (max.x, min.y)
-      expect(out[2]).toEqual({ x: 40, y: 60 }); // bottomRight = (max.x, max.y)
-      expect(out[3]).toEqual({ x: 10, y: 60 }); // bottomLeft = (min.x, max.y)
+      expect(out[0]).toEqual({ x: 10, y: 20 }); // topLeft = (minX, minY)
+      expect(out[1]).toEqual({ x: 40, y: 20 }); // topRight = (maxX, minY)
+      expect(out[2]).toEqual({ x: 40, y: 60 }); // bottomRight = (maxX, maxY)
+      expect(out[3]).toEqual({ x: 10, y: 60 }); // bottomLeft = (minX, maxY)
     });
 
     test('호출 전 배열에 기존 값이 있어도 out.length = 0 후 새 object를 push한다', () => {
@@ -23,61 +25,34 @@ describe('cornersInto', () => {
         { x: 999, y: 999 },
         { x: 888, y: 888 },
       ];
-      cornersInto(out, { min: { x: 1, y: 2 }, max: { x: 3, y: 4 } });
+      cornersInto(out, { minX: 1, minY: 2, maxX: 3, maxY: 4 });
       expect(out).toHaveLength(4);
       expect(out[0]).toEqual({ x: 1, y: 2 });
     });
 
     test('push된 object는 새 인스턴스이다', () => {
       const out: { x: number; y: number }[] = [];
-      cornersInto(out, { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } });
-      cornersInto(out, { min: { x: 5, y: 5 }, max: { x: 25, y: 25 } });
+      cornersInto(out, { minX: 0, minY: 0, maxX: 10, maxY: 10 });
+      cornersInto(out, { minX: 5, minY: 5, maxX: 25, maxY: 25 });
       expect(out[0]).toEqual({ x: 5, y: 5 });
-    });
-  });
-
-  describe('tuple input', () => {
-    test('tuple bounds로부터 4개 corner를 push한다', () => {
-      const out: { x: number; y: number }[] = [];
-      cornersInto(out, [
-        [0, 0],
-        [100, 50],
-      ] as const);
-      expect(out).toHaveLength(4);
-      expect(out[0]).toEqual({ x: 0, y: 0 }); // topLeft
-      expect(out[1]).toEqual({ x: 100, y: 0 }); // topRight
-      expect(out[2]).toEqual({ x: 100, y: 50 }); // bottomRight
-      expect(out[3]).toEqual({ x: 0, y: 50 }); // bottomLeft
-    });
-
-    test('tuple point를 포함한 tuple bounds', () => {
-      const out: { x: number; y: number }[] = [];
-      cornersInto(out, [
-        [5, 10],
-        [20, 30],
-      ] as const);
-      expect(out[0]).toEqual({ x: 5, y: 10 });
-      expect(out[1]).toEqual({ x: 20, y: 10 });
-      expect(out[2]).toEqual({ x: 20, y: 30 });
-      expect(out[3]).toEqual({ x: 5, y: 30 });
     });
   });
 
   describe('empty / inverted bounds', () => {
     test('inverted bounds에서도 raw 좌표로 4개 corner를 push한다', () => {
       const out: { x: number; y: number }[] = [];
-      // inverted: max.x < min.x
-      cornersInto(out, { min: { x: 20, y: 0 }, max: { x: 5, y: 10 } });
+      // inverted: maxX < minX
+      cornersInto(out, { minX: 20, minY: 0, maxX: 5, maxY: 10 });
       expect(out).toHaveLength(4);
-      expect(out[0]).toEqual({ x: 20, y: 0 }); // min.x, min.y
-      expect(out[1]).toEqual({ x: 5, y: 0 }); // max.x, min.y
-      expect(out[2]).toEqual({ x: 5, y: 10 }); // max.x, max.y
-      expect(out[3]).toEqual({ x: 20, y: 10 }); // min.x, max.y
+      expect(out[0]).toEqual({ x: 20, y: 0 }); // minX, minY
+      expect(out[1]).toEqual({ x: 5, y: 0 }); // maxX, minY
+      expect(out[2]).toEqual({ x: 5, y: 10 }); // maxX, maxY
+      expect(out[3]).toEqual({ x: 20, y: 10 }); // minX, maxY
     });
 
     test('sentinel bounds에서도 raw Infinity 좌표로 4개 corner를 push한다', () => {
       const out: { x: number; y: number }[] = [];
-      cornersInto(out, { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } });
+      cornersInto(out, { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
       expect(out).toHaveLength(4);
       expect(out[0]).toEqual({ x: Infinity, y: Infinity });
       expect(out[1]).toEqual({ x: -Infinity, y: Infinity });
@@ -87,7 +62,7 @@ describe('cornersInto', () => {
 
     test('degenerate point bounds에서도 4개 corner를 push한다', () => {
       const out: { x: number; y: number }[] = [];
-      cornersInto(out, { min: { x: 5, y: 5 }, max: { x: 5, y: 5 } });
+      cornersInto(out, { minX: 5, minY: 5, maxX: 5, maxY: 5 });
       expect(out).toHaveLength(4);
       for (const p of out) {
         expect(p).toEqual({ x: 5, y: 5 });
@@ -98,7 +73,7 @@ describe('cornersInto', () => {
   describe('line bounds', () => {
     test('수평선 bounds에서도 4개 corner를 push한다', () => {
       const out: { x: number; y: number }[] = [];
-      cornersInto(out, { min: { x: 0, y: 5 }, max: { x: 10, y: 5 } });
+      cornersInto(out, { minX: 0, minY: 5, maxX: 10, maxY: 5 });
       expect(out).toHaveLength(4);
       expect(out[0]).toEqual({ x: 0, y: 5 });
       expect(out[1]).toEqual({ x: 10, y: 5 });

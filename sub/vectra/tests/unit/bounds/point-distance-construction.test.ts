@@ -1,3 +1,5 @@
+/** 최근접점과 거리, 방향별 확장, 경계 상자 생성 정책을 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { closestPoint } from '../../../src/bounds/closest-point';
 import { closestPointInto } from '../../../src/bounds/closest-point-into';
@@ -8,13 +10,15 @@ import { fromCenter } from '../../../src/bounds/from-center';
 import { fromCenterInto } from '../../../src/bounds/from-center-into';
 import { fromPoints } from '../../../src/bounds/from-points';
 import { fromRect } from '../../../src/bounds/from-rect';
-import type { BoundsWritable, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { BoundsWritable, PointWritable } from '../../../src/types/flat-shapes.internal';
 
+/** 지정한 네 좌표로 경계 상자를 만든다. */
 function makeBounds(minX = 0, minY = 0, maxX = 0, maxY = 0): BoundsWritable {
-  return { min: { x: minX, y: minY }, max: { x: maxX, y: maxY } };
+  return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
 }
 
-function makePoint(x = 0, y = 0): XYObjectWritable {
+/** 지정한 좌표로 점을 만든다. */
+function makePoint(x = 0, y = 0): PointWritable {
   return { x, y };
 }
 
@@ -34,25 +38,25 @@ describe('closestPointInto', () => {
     expect(out).toEqual({ x: 0, y: 5 });
   });
 
-  test('left 방향 외부 point는 min.x로 clamp한다', () => {
+  test('left 방향 외부 point는 minX로 clamp한다', () => {
     const out = makePoint();
     closestPointInto(out, makeBounds(2, 2, 8, 8), { x: -3, y: 5 });
     expect(out).toEqual({ x: 2, y: 5 });
   });
 
-  test('right 방향 외부 point는 max.x로 clamp한다', () => {
+  test('right 방향 외부 point는 maxX로 clamp한다', () => {
     const out = makePoint();
     closestPointInto(out, makeBounds(2, 2, 8, 8), { x: 15, y: 5 });
     expect(out).toEqual({ x: 8, y: 5 });
   });
 
-  test('top 방향 외부 point는 min.y로 clamp한다', () => {
+  test('top 방향 외부 point는 minY로 clamp한다', () => {
     const out = makePoint();
     closestPointInto(out, makeBounds(2, 2, 8, 8), { x: 5, y: -1 });
     expect(out).toEqual({ x: 5, y: 2 });
   });
 
-  test('bottom 방향 외부 point는 max.y로 clamp한다', () => {
+  test('bottom 방향 외부 point는 maxY로 clamp한다', () => {
     const out = makePoint();
     closestPointInto(out, makeBounds(2, 2, 8, 8), { x: 5, y: 20 });
     expect(out).toEqual({ x: 5, y: 8 });
@@ -89,59 +93,17 @@ describe('closestPointInto', () => {
     const out = makePoint(99, 99);
     const result = closestPointInto(
       out,
-      { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } },
+      { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity },
       { x: 0, y: 0 }
     );
     expect(result).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
 
-  test('out이 bounds.min과 alias되어도 안전하다', () => {
-    const minPt: XYWritable = { x: 0, y: 0 };
-    const bounds: BoundsWritable = { min: minPt, max: { x: 10, y: 10 } };
-    closestPointInto(minPt, bounds, { x: 15, y: 5 });
-    expect(minPt).toEqual({ x: 10, y: 5 });
-  });
-
-  test('out이 bounds.max와 alias되어도 안전하다', () => {
-    const maxPt: XYWritable = { x: 10, y: 10 };
-    const bounds: BoundsWritable = { min: { x: 0, y: 0 }, max: maxPt };
-    closestPointInto(maxPt, bounds, { x: -5, y: 5 });
-    expect(maxPt).toEqual({ x: 0, y: 5 });
-  });
-
   test('out이 point와 alias되어도 안전하다', () => {
-    const pt: XYWritable = { x: 15, y: 5 };
+    const pt: PointWritable = { x: 15, y: 5 };
     closestPointInto(pt, makeBounds(0, 0, 10, 10), pt);
     expect(pt).toEqual({ x: 10, y: 5 });
-  });
-
-  test('tuple BoundsLike를 처리한다', () => {
-    const out = makePoint();
-    const result = closestPointInto(
-      out,
-      [
-        [2, 2],
-        [8, 8],
-      ],
-      { x: 12, y: 5 }
-    );
-    expect(result).toBe(true);
-    expect(out).toEqual({ x: 8, y: 5 });
-  });
-
-  test('tuple XYInput을 처리한다', () => {
-    const out = makePoint();
-    closestPointInto(out, makeBounds(2, 2, 8, 8), [12, 5]);
-    expect(out).toEqual({ x: 8, y: 5 });
-  });
-
-  test('tuple XYWritable에 기록하고 동일 참조를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = closestPointInto(out, makeBounds(0, 0, 10, 10), { x: 5, y: 5 });
-    expect(result).toBe(true);
-    expect(out[0]).toBe(5);
-    expect(out[1]).toBe(5);
   });
 
   test('NaN 입력은 NaN으로 전파된다', () => {
@@ -181,7 +143,7 @@ describe('closestPoint', () => {
 
   test('sentinel bounds에서 undefined를 반환한다', () => {
     expect(
-      closestPoint({ min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } }, { x: 0, y: 0 })
+      closestPoint({ minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }, { x: 0, y: 0 })
     ).toBeUndefined();
   });
 
@@ -246,21 +208,9 @@ describe('distanceToPoint', () => {
   });
 
   test('sentinel bounds에서 Infinity를 반환한다', () => {
-    expect(
-      distanceToPoint({ min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } }, { x: 0, y: 0 })
-    ).toBe(Infinity);
-  });
-
-  test('tuple BoundsLike를 처리한다', () => {
-    expect(
-      distanceToPoint(
-        [
-          [0, 0],
-          [10, 10],
-        ],
-        { x: 15, y: 5 }
-      )
-    ).toBe(5);
+    expect(distanceToPoint({ minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }, { x: 0, y: 0 })).toBe(
+      Infinity
+    );
   });
 
   test('NaN 입력은 NaN으로 전파된다', () => {
@@ -284,68 +234,46 @@ describe('expandBySidesInto', () => {
   test('모든 방향을 개별 양만큼 확장한다', () => {
     const out = makeBounds();
     expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: 1, right: 2, bottom: 3, left: 4 });
-    expect(out.min).toEqual({ x: -2, y: 1 });
-    expect(out.max).toEqual({ x: 10, y: 11 });
+    expect(out).toEqual({ minX: -2, minY: 1, maxX: 10, maxY: 11 });
   });
 
   test('누락 field는 0으로 처리한다', () => {
     const out = makeBounds();
     expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: 5 });
-    expect(out.min).toEqual({ x: 2, y: -3 });
-    expect(out.max).toEqual({ x: 8, y: 8 });
+    expect(out).toEqual({ minX: 2, minY: -3, maxX: 8, maxY: 8 });
   });
 
   test('빈 padding object는 bounds를 그대로 복사한다', () => {
     const out = makeBounds();
     expandBySidesInto(out, makeBounds(2, 2, 8, 8), {});
-    expect(out.min).toEqual({ x: 2, y: 2 });
-    expect(out.max).toEqual({ x: 8, y: 8 });
+    expect(out).toEqual({ minX: 2, minY: 2, maxX: 8, maxY: 8 });
   });
 
   test('음수 padding은 deflate이며 inverted 결과를 허용한다', () => {
     const out = makeBounds();
     expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: -10, bottom: -10 });
-    // min.y = 2 - (-10) = 12, max.y = 8 + (-10) = -2 → inverted
-    expect(out.min.y).toBe(12);
-    expect(out.max.y).toBe(-2);
+    // minY = 2 - (-10) = 12, maxY = 8 + (-10) = -2 → inverted
+    expect(out.minY).toBe(12);
+    expect(out.maxY).toBe(-2);
   });
 
   test('out === bounds여도 안전하다', () => {
     const out = makeBounds(2, 2, 8, 8);
     expandBySidesInto(out, out, { top: 1, right: 2, bottom: 3, left: 4 });
-    expect(out.min).toEqual({ x: -2, y: 1 });
-    expect(out.max).toEqual({ x: 10, y: 11 });
+    expect(out).toEqual({ minX: -2, minY: 1, maxX: 10, maxY: 11 });
   });
 
   test('sentinel bounds에도 raw 산식을 적용한다', () => {
     const out = makeBounds();
-    expandBySidesInto(
-      out,
-      { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } },
-      { top: 5, bottom: 5 }
-    );
-    expect(out.min.x).toBe(Infinity);
-    expect(out.max.x).toBe(-Infinity);
+    expandBySidesInto(out, { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }, { top: 5, bottom: 5 });
+    expect(out.minX).toBe(Infinity);
+    expect(out.maxX).toBe(-Infinity);
   });
 
   test('반환값이 out의 동일 참조이다', () => {
     const out = makeBounds();
     const result = expandBySidesInto(out, makeBounds(2, 2, 8, 8), { top: 1 });
     expect(result).toBe(out);
-  });
-
-  test('tuple BoundsLike를 처리한다', () => {
-    const out = makeBounds();
-    expandBySidesInto(
-      out,
-      [
-        [2, 2],
-        [8, 8],
-      ],
-      { right: 3, left: 1 }
-    );
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 11, y: 8 });
   });
 });
 
@@ -354,12 +282,12 @@ describe('expandBySidesInto', () => {
 describe('expandBySides', () => {
   test('새 plain bounds object를 반환한다', () => {
     const result = expandBySides(makeBounds(2, 2, 8, 8), { top: 1, right: 2, bottom: 3, left: 4 });
-    expect(result).toEqual({ min: { x: -2, y: 1 }, max: { x: 10, y: 11 } });
+    expect(result).toEqual({ minX: -2, minY: 1, maxX: 10, maxY: 11 });
   });
 
   test('음수 padding은 deflate이다', () => {
     const result = expandBySides(makeBounds(2, 2, 8, 8), { left: -5 });
-    expect(result.min.x).toBe(7);
+    expect(result.minX).toBe(7);
   });
 });
 
@@ -368,34 +296,29 @@ describe('expandBySides', () => {
 describe('fromRect', () => {
   test('rect extent를 bounds로 변환한다', () => {
     const result = fromRect({ x: 2, y: 3, width: 6, height: 4 });
-    expect(result).toEqual({ min: { x: 2, y: 3 }, max: { x: 8, y: 7 } });
+    expect(result).toEqual({ minX: 2, minY: 3, maxX: 8, maxY: 7 });
   });
 
   test('fromRectInto와 동일한 결과를 반환한다', () => {
     const r = { x: -1, y: 2, width: 5, height: 3 };
     const result = fromRect(r);
-    expect(result).toEqual({ min: { x: -1, y: 2 }, max: { x: 4, y: 5 } });
+    expect(result).toEqual({ minX: -1, minY: 2, maxX: 4, maxY: 5 });
   });
 
   test('line rect(zero-height)는 line bounds가 된다', () => {
     const result = fromRect({ x: 0, y: 5, width: 10, height: 0 });
-    expect(result).toEqual({ min: { x: 0, y: 5 }, max: { x: 10, y: 5 } });
+    expect(result).toEqual({ minX: 0, minY: 5, maxX: 10, maxY: 5 });
   });
 
   test('point rect(zero-width, zero-height)는 point bounds가 된다', () => {
     const result = fromRect({ x: 3, y: 4, width: 0, height: 0 });
-    expect(result).toEqual({ min: { x: 3, y: 4 }, max: { x: 3, y: 4 } });
+    expect(result).toEqual({ minX: 3, minY: 4, maxX: 3, maxY: 4 });
   });
 
   test('negative dimension rect는 inverted bounds가 된다', () => {
     const result = fromRect({ x: 5, y: 5, width: -3, height: 2 });
-    expect(result.min.x).toBe(5);
-    expect(result.max.x).toBe(2);
-  });
-
-  test('tuple RectLike를 처리한다', () => {
-    const result = fromRect([2, 3, 6, 4]);
-    expect(result).toEqual({ min: { x: 2, y: 3 }, max: { x: 8, y: 7 } });
+    expect(result.minX).toBe(5);
+    expect(result.maxX).toBe(2);
   });
 });
 
@@ -408,28 +331,20 @@ describe('fromPoints', () => {
       { x: 5, y: 0 },
       { x: 3, y: 7 },
     ]);
-    expect(result).toEqual({ min: { x: 1, y: 0 }, max: { x: 5, y: 7 } });
+    expect(result).toEqual({ minX: 1, minY: 0, maxX: 5, maxY: 7 });
   });
 
   test('빈 배열은 sentinel bounds를 반환한다', () => {
     const result = fromPoints([]);
-    expect(result.min.x).toBe(Infinity);
-    expect(result.min.y).toBe(Infinity);
-    expect(result.max.x).toBe(-Infinity);
-    expect(result.max.y).toBe(-Infinity);
+    expect(result.minX).toBe(Infinity);
+    expect(result.minY).toBe(Infinity);
+    expect(result.maxX).toBe(-Infinity);
+    expect(result.maxY).toBe(-Infinity);
   });
 
   test('단일 point는 point bounds를 반환한다', () => {
     const result = fromPoints([{ x: 3, y: 4 }]);
-    expect(result).toEqual({ min: { x: 3, y: 4 }, max: { x: 3, y: 4 } });
-  });
-
-  test('tuple XYInput을 처리한다', () => {
-    const result = fromPoints([
-      [1, 2],
-      [5, 0],
-    ]);
-    expect(result).toEqual({ min: { x: 1, y: 0 }, max: { x: 5, y: 2 } });
+    expect(result).toEqual({ minX: 3, minY: 4, maxX: 3, maxY: 4 });
   });
 });
 
@@ -439,15 +354,13 @@ describe('fromCenterInto', () => {
   test('center와 positive size로 bounds를 기록한다', () => {
     const out = makeBounds();
     fromCenterInto(out, { x: 5, y: 5 }, { x: 6, y: 4 });
-    expect(out.min).toEqual({ x: 2, y: 3 });
-    expect(out.max).toEqual({ x: 8, y: 7 });
+    expect(out).toEqual({ minX: 2, minY: 3, maxX: 8, maxY: 7 });
   });
 
   test('zero size는 point bounds가 된다', () => {
     const out = makeBounds();
     fromCenterInto(out, { x: 5, y: 5 }, { x: 0, y: 0 });
-    expect(out.min).toEqual({ x: 5, y: 5 });
-    expect(out.max).toEqual({ x: 5, y: 5 });
+    expect(out).toEqual({ minX: 5, minY: 5, maxX: 5, maxY: 5 });
   });
 
   test('negative size는 inverted bounds가 된다', () => {
@@ -455,8 +368,7 @@ describe('fromCenterInto', () => {
     fromCenterInto(out, { x: 5, y: 5 }, { x: -4, y: 2 });
     // hw = -2, hh = 1
     // min = (5 - (-2), 5 - 1) = (7, 4), max = (5 + (-2), 5 + 1) = (3, 6)
-    expect(out.min).toEqual({ x: 7, y: 4 });
-    expect(out.max).toEqual({ x: 3, y: 6 });
+    expect(out).toEqual({ minX: 7, minY: 4, maxX: 3, maxY: 6 });
   });
 
   test('반환값이 out의 동일 참조이다', () => {
@@ -466,32 +378,23 @@ describe('fromCenterInto', () => {
   });
 
   test('out이 center와 alias되어도 안전하다', () => {
-    const center: XYWritable = { x: 5, y: 5 };
-    const out: BoundsWritable = { min: center, max: { x: 0, y: 0 } };
-    fromCenterInto(out, center, { x: 6, y: 4 });
-    expect(out.min).toEqual({ x: 2, y: 3 });
-    expect(out.max).toEqual({ x: 8, y: 7 });
-  });
-
-  test('tuple center와 size를 처리한다', () => {
-    const out = makeBounds();
-    fromCenterInto(out, [5, 5], [6, 4]);
-    expect(out.min).toEqual({ x: 2, y: 3 });
-    expect(out.max).toEqual({ x: 8, y: 7 });
+    const out = { ...makeBounds(), x: 5, y: 5 };
+    fromCenterInto(out, out, { x: 6, y: 4 });
+    expect(out).toMatchObject({ minX: 2, minY: 3, maxX: 8, maxY: 7 });
   });
 
   test('NaN 입력은 NaN으로 전파된다', () => {
     const out = makeBounds();
     fromCenterInto(out, { x: NaN, y: 5 }, { x: 4, y: 4 });
-    expect(Number.isNaN(out.min.x)).toBe(true);
-    expect(Number.isNaN(out.max.x)).toBe(true);
+    expect(Number.isNaN(out.minX)).toBe(true);
+    expect(Number.isNaN(out.maxX)).toBe(true);
   });
 
   test('Infinity size는 검증 없이 그대로 전파된다', () => {
     const out = makeBounds();
     fromCenterInto(out, { x: 0, y: 0 }, { x: Infinity, y: 4 });
-    expect(out.min.x).toBe(-Infinity);
-    expect(out.max.x).toBe(Infinity);
+    expect(out.minX).toBe(-Infinity);
+    expect(out.maxX).toBe(Infinity);
   });
 });
 
@@ -500,21 +403,16 @@ describe('fromCenterInto', () => {
 describe('fromCenter', () => {
   test('center와 positive size로 새 plain bounds를 반환한다', () => {
     const result = fromCenter({ x: 5, y: 5 }, { x: 6, y: 4 });
-    expect(result).toEqual({ min: { x: 2, y: 3 }, max: { x: 8, y: 7 } });
+    expect(result).toEqual({ minX: 2, minY: 3, maxX: 8, maxY: 7 });
   });
 
   test('zero size는 point bounds를 반환한다', () => {
     const result = fromCenter({ x: 3, y: 4 }, { x: 0, y: 0 });
-    expect(result).toEqual({ min: { x: 3, y: 4 }, max: { x: 3, y: 4 } });
+    expect(result).toEqual({ minX: 3, minY: 4, maxX: 3, maxY: 4 });
   });
 
   test('negative size는 inverted bounds를 반환한다', () => {
     const result = fromCenter({ x: 5, y: 5 }, { x: -4, y: 2 });
-    expect(result.min.x).toBeGreaterThan(result.max.x);
-  });
-
-  test('tuple input을 처리한다', () => {
-    const result = fromCenter([5, 5], [6, 4]);
-    expect(result).toEqual({ min: { x: 2, y: 3 }, max: { x: 8, y: 7 } });
+    expect(result.minX).toBeGreaterThan(result.maxX);
   });
 });

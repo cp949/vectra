@@ -1,6 +1,6 @@
-import { distanceSqXY, readX, readY } from '../internal/xy';
-import type { BoundsLike, XYInput } from '../types';
-import { clampPointXY } from './closest-point.internal';
+import { distanceSqXY } from '../internal/xy';
+import type { Bounds, Point } from '../types/flat-shapes.internal';
+import { clampCoordinate } from './closest-point.internal';
 import { isEmpty } from './is-empty';
 
 /**
@@ -15,10 +15,11 @@ import { isEmpty } from './is-empty';
  * @param bounds 거리를 측정할 AABB
  * @param point 거리를 측정할 기준 좌표
  */
-export function distanceToPoint(bounds: BoundsLike, point: XYInput): number {
+export function distanceToPoint(bounds: Bounds, point: Point): number {
   if (isEmpty(bounds)) return Infinity;
-  const [cx, cy] = clampPointXY(bounds, point);
-  const px = readX(point);
-  const py = readY(point);
+  const cx = clampCoordinate(point.x, bounds.minX, bounds.maxX);
+  const cy = clampCoordinate(point.y, bounds.minY, bounds.maxY);
+  const px = point.x;
+  const py = point.y;
   return Math.sqrt(distanceSqXY(px, py, cx, cy));
 }

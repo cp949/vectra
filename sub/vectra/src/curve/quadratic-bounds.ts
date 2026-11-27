@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsWritable, XYInput } from '../types';
 import { quadraticBoundsInto } from './quadratic-bounds-into';
 
@@ -15,5 +15,5 @@ import { quadraticBoundsInto } from './quadratic-bounds-into';
  * @returns 새 plain bounds object
  */
 export function quadraticBounds(p0: XYInput, p1: XYInput, p2: XYInput): BoundsWritable {
-  return quadraticBoundsInto(createBounds(), p0, p1, p2);
+  return quadraticBoundsInto(createLegacyBounds(), p0, p1, p2);
 }

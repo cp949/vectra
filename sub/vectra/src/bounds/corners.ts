@@ -1,4 +1,4 @@
-import type { BoundsLike } from '../types';
+import type { Bounds, PointWritable } from '../types/flat-shapes.internal';
 import { cornersInto } from './corners-into';
 
 /**
@@ -14,6 +14,6 @@ import { cornersInto } from './corners-into';
  * finite/non-finite 입력과 결과 처리 정책은 `cornersInto`와 동일하다.
  * @param bounds corner를 읽을 bounds
  */
-export function corners(bounds: BoundsLike): { x: number; y: number }[] {
+export function corners(bounds: Bounds): PointWritable[] {
   return cornersInto([], bounds);
 }

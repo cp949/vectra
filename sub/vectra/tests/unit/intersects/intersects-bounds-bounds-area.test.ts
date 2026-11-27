@@ -1,16 +1,9 @@
 import { describe, expect, test } from 'vitest';
-import { emptyInto } from '../../../src/bounds/empty-into';
 import { intersectsBoundsBounds } from '../../../src/intersects/intersects-bounds-bounds';
-import type { BoundsWritable } from '../../../src/types';
 
-function makeBounds(): BoundsWritable {
-  return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-}
-
-function sentinel(): BoundsWritable {
-  const out = makeBounds();
-  emptyInto(out);
-  return out;
+/** 중첩 경계를 받는 교차 판정에 빈 값 표지를 전달한다. */
+function sentinel() {
+  return { min: { x: Infinity, y: Infinity }, max: { x: -Infinity, y: -Infinity } };
 }
 
 describe('bounds - intersectsBounds (closed boundary, edge touch = true)', () => {

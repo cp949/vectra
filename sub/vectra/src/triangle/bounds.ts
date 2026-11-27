@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsWritable, TriangleLike } from '../types';
 import { boundsInto } from './bounds-into';
 
@@ -12,6 +12,6 @@ import { boundsInto } from './bounds-into';
  * tolerance/iteration option 정책은 `boundsInto`와 동일하다.
  */
 export function bounds(triangle: TriangleLike): BoundsWritable {
-  const seed = createBounds();
+  const seed = createLegacyBounds();
   return boundsInto(seed, triangle);
 }

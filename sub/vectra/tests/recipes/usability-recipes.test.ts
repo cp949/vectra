@@ -78,10 +78,10 @@ describe('레시피 2: 드래그 중 selection bounds 갱신', () => {
     const { height } = await import('../../src/bounds/height');
 
     // caller-owned output — 드래그 루프에서 재사용한다
-    const selBounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    const selBounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
     emptyInto(selBounds);
 
-    // 드래그 포인트 목록 (object XYInput)
+    // 드래그 포인트 목록
     const points = [
       { x: 10, y: 20 },
       { x: 80, y: 50 },
@@ -92,37 +92,19 @@ describe('레시피 2: 드래그 중 selection bounds 갱신', () => {
       expandToIncludePointInto(selBounds, selBounds, pt);
     }
 
-    expect(selBounds.min.x).toBeCloseTo(10, 10);
-    expect(selBounds.min.y).toBeCloseTo(20, 10);
-    expect(selBounds.max.x).toBeCloseTo(80, 10);
-    expect(selBounds.max.y).toBeCloseTo(90, 10);
+    expect(selBounds.minX).toBeCloseTo(10, 10);
+    expect(selBounds.minY).toBeCloseTo(20, 10);
+    expect(selBounds.maxX).toBeCloseTo(80, 10);
+    expect(selBounds.maxY).toBeCloseTo(90, 10);
 
-    expect(width(selBounds)).toBeCloseTo(70, 10);
-    expect(height(selBounds)).toBeCloseTo(70, 10);
+    // v2-migration: width와 height가 평평한 경계를 받으면 변환을 제거한다.
+    const extent = { min: { x: selBounds.minX, y: selBounds.minY }, max: { x: selBounds.maxX, y: selBounds.maxY } };
+    expect(width(extent)).toBeCloseTo(70, 10);
+    expect(height(extent)).toBeCloseTo(70, 10);
 
     // 선택 영역 안에 있는 점 확인
     expect(containsPoint(selBounds, { x: 50, y: 60 })).toBe(true);
     expect(containsPoint(selBounds, { x: 200, y: 200 })).toBe(false);
-  });
-
-  it('tuple 포인트로도 bounds를 갱신할 수 있다', async () => {
-    const { emptyInto } = await import('../../src/bounds/empty-into');
-    const { expandToIncludePointInto } = await import('../../src/bounds/expand-to-include-point-into');
-
-    const selBounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    emptyInto(selBounds);
-
-    const tuplePoints: Array<[number, number]> = [
-      [5, 15],
-      [95, 85],
-    ];
-
-    for (const pt of tuplePoints) {
-      expandToIncludePointInto(selBounds, selBounds, pt);
-    }
-
-    expect(selBounds.min.x).toBeCloseTo(5, 10);
-    expect(selBounds.max.x).toBeCloseTo(95, 10);
   });
 });
 

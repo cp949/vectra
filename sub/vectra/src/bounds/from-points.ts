@@ -1,4 +1,4 @@
-import type { BoundsWritable, XYInput } from '../types';
+import type { BoundsWritable, Point } from '../types/flat-shapes.internal';
 import { createBounds } from './create-bounds';
 import { fromPointsInto } from './from-points-into';
 
@@ -9,6 +9,6 @@ import { fromPointsInto } from './from-points-into';
  *
  * @param points bounds에 포함시킬 point 목록
  */
-export function fromPoints(points: readonly XYInput[]): BoundsWritable {
+export function fromPoints(points: readonly Point[]): BoundsWritable {
   return fromPointsInto(createBounds(), points);
 }

@@ -1,7 +1,6 @@
 /** 각 도형의 생성 함수와 반환 타입을 시험한다. */
 
 import { describe, expect, expectTypeOf, test } from 'vitest';
-import { boundsFrom } from '../../../src/bounds/bounds-from';
 import { createCircle } from '../../../src/circle/create-circle';
 import { createPolygon } from '../../../src/polygon/create-polygon';
 import { polygonFrom } from '../../../src/polygon/polygon-from';
@@ -20,13 +19,6 @@ describe('shape create/xFrom factories', () => {
     expect(createRect()).toEqual({ x: 0, y: 0, width: 0, height: 0 });
     expect(result).toEqual(source);
     expect(result).not.toBe(source);
-  });
-
-  // 대표 factory: nested source의 leaf 컴포넌트가 복사되어 source 참조와 분리되는지 확인한다.
-  test('boundsFrom은 nested source min/max를 새 객체로 복사한다', () => {
-    const src = { min: [3, 4] as const, max: [7, 8] as const };
-    expect(boundsFrom(src)).toEqual({ min: { x: 3, y: 4 }, max: { x: 7, y: 8 } });
-    expect(boundsFrom(src).min).not.toBe(src.min);
   });
 
   test('createCircle()는 zero seed를 만들고 circleFrom은 source/component를 복사한다', () => {

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BoundsWritable, XYInput } from '../types';
+import type { BoundsWritable, Point } from '../types/flat-shapes.internal';
 
 /**
  * points를 모두 포함하는 bounds를 out에 기록한다.
@@ -7,32 +6,35 @@ import type { BoundsWritable, XYInput } from '../types';
  * 빈 points는 emptyInto와 같은 sentinel empty bounds를 기록한다. 단일 점 입력은 point bounds로
  * 기록한다. input과 out이 같은 object여도 안전하다.
  *
- * @param out points의 extent를 기록할 writable output
+ * @param out 결과를 기록할 경계 상자 객체
  * @param points bounds에 포함시킬 point 목록
  */
-export function fromPointsInto<Out extends BoundsWritable>(out: Out, points: readonly XYInput[]): Out {
+export function fromPointsInto<Out extends BoundsWritable>(out: Out, points: readonly Point[]): Out {
   if (points.length === 0) {
-    // 빈 입력은 sentinel bounds를 기록한다
-    writeXY(out.min, Infinity, Infinity);
-    writeXY(out.max, -Infinity, -Infinity);
+    out.minX = Infinity;
+    out.minY = Infinity;
+    out.maxX = -Infinity;
+    out.maxY = -Infinity;
     return out;
   }
 
-  let minX = readX(points[0]);
-  let minY = readY(points[0]);
+  let minX = points[0].x;
+  let minY = points[0].y;
   let maxX = minX;
   let maxY = minY;
 
   for (let i = 1; i < points.length; i++) {
-    const px = readX(points[i]);
-    const py = readY(points[i]);
+    const px = points[i].x;
+    const py = points[i].y;
     if (px < minX) minX = px;
     if (py < minY) minY = py;
     if (px > maxX) maxX = px;
     if (py > maxY) maxY = py;
   }
 
-  writeXY(out.min, minX, minY);
-  writeXY(out.max, maxX, maxY);
+  out.minX = minX;
+  out.minY = minY;
+  out.maxX = maxX;
+  out.maxY = maxY;
   return out;
 }

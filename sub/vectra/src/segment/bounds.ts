@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsWritable, SegmentLike } from '../types';
 import { boundsInto } from './bounds-into';
 
@@ -12,5 +12,5 @@ import { boundsInto } from './bounds-into';
  * @param line 대상 segment
  */
 export function bounds(line: SegmentLike): BoundsWritable {
-  return boundsInto(createBounds(), line);
+  return boundsInto(createLegacyBounds(), line);
 }

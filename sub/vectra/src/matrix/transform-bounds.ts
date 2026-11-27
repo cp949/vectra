@@ -1,4 +1,4 @@
-import { createBounds } from '../bounds/create-bounds';
+import { createLegacyBounds } from '../internal/bounds';
 import type { BoundsLike, BoundsWritable, MatrixLike } from '../types';
 import { transformBoundsInto } from './transform-bounds-into';
 
@@ -11,5 +11,5 @@ import { transformBoundsInto } from './transform-bounds-into';
  * @param bounds 변환할 bounds
  */
 export function transformBounds(matrix: MatrixLike, bounds: BoundsLike): BoundsWritable {
-  return transformBoundsInto(createBounds(), matrix, bounds);
+  return transformBoundsInto(createLegacyBounds(), matrix, bounds);
 }
