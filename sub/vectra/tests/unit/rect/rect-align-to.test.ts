@@ -1,7 +1,7 @@
 /**
  * rect.rectAlignToInto / rect.rectAlignTo — target 크기를 유지한 채 container anchor에 정렬한다.
  *
- * 검증: 9개 anchor 산식, default center, target 크기 보존, tuple rect 입력,
+ * 검증: 9개 anchor 산식, default center, target 크기 보존,
  * out===target / out===container aliasing, zero/negative dimension raw 산식,
  * non-finite pass-through(left/top 보존, center/right/bottom 전파), invalid anchor RangeError,
  * companion plain object 반환과 Into 일치.
@@ -9,7 +9,8 @@
 import { describe, expect, test } from 'vitest';
 import { rectAlignTo } from '../../../src/rect/rect-align-to';
 import { rectAlignToInto } from '../../../src/rect/rect-align-to-into';
-import type { RectAlignAnchor, RectWritable } from '../../../src/types';
+import type { RectAlignAnchor } from '../../../src/types';
+import type { RectWritable } from '../../../src/types/flat-shapes.internal';
 
 function makeRect(): RectWritable {
   return { x: 0, y: 0, width: 0, height: 0 };
@@ -63,12 +64,6 @@ describe('rect - rectAlignToInto', () => {
     rectAlignToInto(out, { x: 0, y: 0, width: 120, height: 140 }, CONTAINER, { anchor: 'center' });
     // x = 0 + (100 - 120)/2 = -10, y = 0 + (100 - 140)/2 = -20
     expect(out).toEqual({ x: -10, y: -20, width: 120, height: 140 });
-  });
-
-  test('tuple rect 입력도 처리한다', () => {
-    const out = makeRect();
-    rectAlignToInto(out, [7, 9, 40, 20], [0, 0, 100, 100], { anchor: 'bottom-right' });
-    expect(out).toEqual({ x: 60, y: 80, width: 40, height: 20 });
   });
 
   test('aliasing: out === target', () => {

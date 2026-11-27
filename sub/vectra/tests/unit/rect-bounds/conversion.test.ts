@@ -155,18 +155,16 @@ describe('rect.fromBoundsInto', () => {
 
 describe('rect.toBoundsInto', () => {
   test('정상 rect를 bounds로 변환한다', () => {
-    const out = makeBounds();
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
     const result = toBoundsInto(out, { x: 1, y: 2, width: 4, height: 6 });
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 5, y: 8 });
+    expect(out).toEqual({ minX: 1, minY: 2, maxX: 5, maxY: 8 });
     expect(result).toBe(out);
   });
 
   test('음수 width rect(empty)를 변환한다 - inverted bounds(empty)가 된다', () => {
-    const out = makeBounds();
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
     toBoundsInto(out, { x: 5, y: 0, width: -3, height: 4 });
-    expect(out.min).toEqual({ x: 5, y: 0 });
-    expect(out.max).toEqual({ x: 2, y: 4 });
+    expect(out).toEqual({ minX: 5, minY: 0, maxX: 2, maxY: 4 });
   });
 });
 

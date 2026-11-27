@@ -14,7 +14,7 @@ import { sizeInto } from '../../../src/rect/size-into';
 import { top } from '../../../src/rect/top';
 import { topLeftInto } from '../../../src/rect/top-left-into';
 import { topRightInto } from '../../../src/rect/top-right-into';
-import type { RectWritable, XYWritable } from '../../../src/types';
+import type { PointWritable, RectWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('rect lifecycle - copyInto', () => {
   test('음수와 zero dimension을 그대로 기록한다', () => {
@@ -74,16 +74,8 @@ describe('rect query - left/top/right/bottom', () => {
     expect(top({ x: 3, y: 7, width: 10, height: 5 })).toBe(7);
   });
 
-  test('tuple rect의 top은 두 번째 component를 반환한다', () => {
-    expect(top([3, 7, 10, 5])).toBe(7);
-  });
-
   test('right는 rect.x + rect.width를 반환한다', () => {
     expect(right({ x: 3, y: 7, width: 10, height: 5 })).toBe(13);
-  });
-
-  test('tuple rect의 right는 x + width를 반환한다', () => {
-    expect(right([3, 7, 10, 5])).toBe(13);
   });
 
   test('bottom은 rect.y + rect.height를 반환한다', () => {
@@ -166,7 +158,7 @@ describe('rect query - area', () => {
 
 describe('rect 결과 기록 - centerInto', () => {
   test('rect 중심점을 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     centerInto(out, { x: 0, y: 0, width: 10, height: 6 });
 
@@ -174,7 +166,7 @@ describe('rect 결과 기록 - centerInto', () => {
   });
 
   test('원점이 아닌 위치의 rect 중심점을 계산한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     centerInto(out, { x: 2, y: 4, width: 6, height: 8 });
 
@@ -182,7 +174,7 @@ describe('rect 결과 기록 - centerInto', () => {
   });
 
   test('음수 좌표 rect의 중심점을 계산한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     centerInto(out, { x: -4, y: -6, width: 8, height: 12 });
 
@@ -192,7 +184,7 @@ describe('rect 결과 기록 - centerInto', () => {
   test('out === rect 좌표공유 aliasing에서도 안전하다', () => {
     // out과 rect는 타입이 다르므로 직접 동일성은 없지만
     // 같은 x/y 필드를 가진 object를 공유할 수 있다
-    const shared: RectWritable & XYWritable = { x: 2, y: 4, width: 6, height: 8 };
+    const shared: RectWritable & PointWritable = { x: 2, y: 4, width: 6, height: 8 };
 
     centerInto(shared, shared);
 
@@ -202,7 +194,7 @@ describe('rect 결과 기록 - centerInto', () => {
   });
 
   test('반환값이 out의 동일 참조이다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = centerInto(out, { x: 0, y: 0, width: 10, height: 6 });
 
@@ -232,7 +224,7 @@ describe('rect 결과 기록 - centerInto', () => {
 
 describe('rect 결과 기록 - sizeInto', () => {
   test('rect size(width, height)를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     sizeInto(out, { x: 0, y: 0, width: 10, height: 6 });
 
@@ -240,7 +232,7 @@ describe('rect 결과 기록 - sizeInto', () => {
   });
 
   test('음수 dimension을 raw로 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     sizeInto(out, { x: 0, y: 0, width: -3, height: -4 });
 
@@ -250,7 +242,7 @@ describe('rect 결과 기록 - sizeInto', () => {
   test('out === rect 좌표공유 aliasing에서도 안전하다', () => {
     // out과 rect가 같은 object를 공유하면 x/y가 width/height로 덮여쓰인다.
     // 사전 read가 깨지면 두 번째 write에서 손상된 값을 읽을 수 있다.
-    const shared: RectWritable & XYWritable = { x: 2, y: 4, width: 6, height: 8 };
+    const shared: RectWritable & PointWritable = { x: 2, y: 4, width: 6, height: 8 };
 
     sizeInto(shared, shared);
 
@@ -263,32 +255,32 @@ describe('rect 결과 기록 - corner Into 함수', () => {
   const r = { x: 2, y: 3, width: 8, height: 6 };
 
   test('topLeftInto는 (x, y)를 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     topLeftInto(out, r);
     expect(out).toEqual({ x: 2, y: 3 });
   });
 
   test('topRightInto는 (right, y)를 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     topRightInto(out, r);
     expect(out).toEqual({ x: 10, y: 3 });
   });
 
   test('bottomLeftInto는 (x, bottom)을 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     bottomLeftInto(out, r);
     expect(out).toEqual({ x: 2, y: 9 });
   });
 
   test('bottomRightInto는 (right, bottom)을 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     bottomRightInto(out, r);
     expect(out).toEqual({ x: 10, y: 9 });
   });
 
   test('음수 origin rect의 corner를 올바르게 계산한다', () => {
     const nr = { x: -5, y: -3, width: 10, height: 6 };
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     topLeftInto(out, nr);
     expect(out).toEqual({ x: -5, y: -3 });
@@ -303,18 +295,10 @@ describe('rect 결과 기록 - corner Into 함수', () => {
     expect(out).toEqual({ x: 5, y: 3 });
   });
 
-  test('topLeftInto: tuple out에 기록하고 동일 참조를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = topLeftInto(out, r);
-    expect(result).toBe(out);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
-  });
-
   test('topRightInto: out === rect aliasing에서도 안전하다', () => {
     // out과 rect가 같은 object를 공유하면 x는 rect.x + rect.width로 덮여쓰인다.
     // 사전 read 없이 out.x를 먼저 쓰면 후속 width 계산이 오염될 수 있다.
-    const shared: RectWritable & XYWritable = { x: 2, y: 4, width: 6, height: 8 };
+    const shared: RectWritable & PointWritable = { x: 2, y: 4, width: 6, height: 8 };
 
     topRightInto(shared, shared);
 
@@ -323,7 +307,7 @@ describe('rect 결과 기록 - corner Into 함수', () => {
   });
 
   test('bottomLeftInto: out === rect aliasing에서도 안전하다', () => {
-    const shared: RectWritable & XYWritable = { x: 2, y: 4, width: 6, height: 8 };
+    const shared: RectWritable & PointWritable = { x: 2, y: 4, width: 6, height: 8 };
 
     bottomLeftInto(shared, shared);
 
@@ -333,7 +317,7 @@ describe('rect 결과 기록 - corner Into 함수', () => {
 
   test('bottomRightInto: out === rect aliasing에서도 안전하다', () => {
     // x/y 모두 +width/+height에 의존하므로 corner 4종 중 회귀 표면이 가장 넓다.
-    const shared: RectWritable & XYWritable = { x: 2, y: 4, width: 6, height: 8 };
+    const shared: RectWritable & PointWritable = { x: 2, y: 4, width: 6, height: 8 };
 
     bottomRightInto(shared, shared);
 

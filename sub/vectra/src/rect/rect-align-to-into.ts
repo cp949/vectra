@@ -1,5 +1,5 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectAlignAnchor, RectAlignOptions, RectLike, RectWritable } from '../types';
+import type { RectAlignAnchor, RectAlignOptions } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 
 const VALID_ANCHORS: readonly RectAlignAnchor[] = [
   'top-left',
@@ -35,15 +35,15 @@ const VALID_ANCHORS: readonly RectAlignAnchor[] = [
  * 산식에 사용하므로 산술 결과(`NaN`/`Infinity`)를 그대로 기록한다(예: `right`에서 `cw`/`tw`가 모두
  * `Infinity`면 `Infinity - Infinity = NaN`). out과 target/container가 같은 object여도 안전하다.
  *
- * @param out 정렬 결과 rect를 기록할 writable output
+ * @param out 결과를 기록할 사각형 객체
  * @param target 크기와 정렬 대상이 되는 source rect. 위치(x/y)는 결과에 반영되지 않는다.
  * @param container 정렬 기준이 되는 container rect
  * @param options 정렬 옵션. `anchor` 생략 시 `'center'`. 9개 literal 외 anchor는 `RangeError`.
  */
 export function rectAlignToInto<Out extends RectWritable>(
   out: Out,
-  target: RectLike,
-  container: RectLike,
+  target: Rect,
+  container: Rect,
   options?: RectAlignOptions
 ): Out {
   const anchor = options?.anchor ?? 'center';
@@ -54,12 +54,12 @@ export function rectAlignToInto<Out extends RectWritable>(
   }
 
   // aliasing 안전 - 모든 입력을 먼저 읽은 후 기록한다
-  const tw = readRectWidth(target);
-  const th = readRectHeight(target);
-  const cx = readRectX(container);
-  const cy = readRectY(container);
-  const cw = readRectWidth(container);
-  const ch = readRectHeight(container);
+  const tw = target.width;
+  const th = target.height;
+  const cx = container.x;
+  const cy = container.y;
+  const cw = container.width;
+  const ch = container.height;
 
   // 각 분기는 (cw - tw) * factor 형태를 쓰지 않아 0*Infinity NaN을 피한다.
   // left는 cx만 복사하고, right/center만 target extent(tw)를 산식에 쓴다.

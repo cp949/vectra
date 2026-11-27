@@ -1,6 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { RectLike, RectWritable, XYInput } from '../types';
+import type { Point, Rect, RectWritable } from '../types/flat-shapes.internal';
 
 /**
  * rect를 4개 사분면으로 분할하여 `out`의 각 사각형에 기록하고 `out`을 반환한다.
@@ -21,7 +19,7 @@ import type { RectLike, RectWritable, XYInput } from '../types';
  * `center`와 동일한 object여도 결과가 정확히 계산된다.
  * 모든 입력 값(`rect`, `center`)을 local 변수로 먼저 읽은 후 기록한다.
  *
- * @param out 사분면 rect를 기록할 writable output
+ * @param out 사분면을 기록할 사각형 묶음
  * @param rect 분할할 rect
  * @param center 분할 기준점. 생략하면 rect의 raw center
  */
@@ -32,15 +30,15 @@ export function quadrantsInto<
     se: RectWritable;
     sw: RectWritable;
   },
->(out: Out, rect: RectLike, center?: XYInput): Out {
+>(out: Out, rect: Rect, center?: Point): Out {
   // aliasing 안전 - 모든 입력 값을 먼저 local 변수로 읽은 후 기록한다
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
-  const cx = center !== undefined ? readX(center) : x + w / 2;
-  const cy = center !== undefined ? readY(center) : y + h / 2;
+  const cx = center !== undefined ? center.x : x + w / 2;
+  const cy = center !== undefined ? center.y : y + h / 2;
 
   const r = x + w;
   const b = y + h;

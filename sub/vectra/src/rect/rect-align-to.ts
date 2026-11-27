@@ -1,4 +1,5 @@
-import type { RectAlignOptions, RectLike, RectWritable } from '../types';
+import type { RectAlignOptions } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 import { createRect } from './create-rect';
 import { rectAlignToInto } from './rect-align-to-into';
 
@@ -19,6 +20,6 @@ import { rectAlignToInto } from './rect-align-to-into';
  * @param container 정렬 기준이 되는 container rect
  * @param options 정렬 옵션. `anchor` 생략 시 `'center'`. 9개 literal 외 anchor는 `RangeError`.
  */
-export function rectAlignTo(target: RectLike, container: RectLike, options?: RectAlignOptions): RectWritable {
+export function rectAlignTo(target: Rect, container: Rect, options?: RectAlignOptions): RectWritable {
   return rectAlignToInto(createRect(), target, container, options);
 }

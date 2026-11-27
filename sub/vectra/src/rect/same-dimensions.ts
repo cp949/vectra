@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth } from '../internal/rect';
-import type { RectLike } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
 
 /**
  * 두 rect의 width와 height가 같은지 비교하여 boolean을 반환한다.
@@ -10,6 +9,6 @@ import type { RectLike } from '../types';
  * @param a 비교할 첫 번째 rect
  * @param b 비교할 두 번째 rect
  */
-export function sameDimensions(a: RectLike, b: RectLike): boolean {
-  return readRectWidth(a) === readRectWidth(b) && readRectHeight(a) === readRectHeight(b);
+export function sameDimensions(a: Rect, b: Rect): boolean {
+  return a.width === b.width && a.height === b.height;
 }

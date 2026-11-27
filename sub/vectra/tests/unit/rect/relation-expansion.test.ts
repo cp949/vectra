@@ -10,7 +10,7 @@ import { intersectionInto } from '../../../src/rect/intersection-into';
 import { scaleInto } from '../../../src/rect/scale-into';
 import { translateInto } from '../../../src/rect/translate-into';
 import { unionInto } from '../../../src/rect/union-into';
-import type { RectWritable } from '../../../src/types';
+import type { RectWritable } from '../../../src/types/flat-shapes.internal';
 
 function makeRect(): RectWritable {
   return { x: 0, y: 0, width: 0, height: 0 };
@@ -197,12 +197,6 @@ describe('rect - unionInto', () => {
     expect(result).toBe(out);
   });
 
-  test('tuple rect union을 기록한다', () => {
-    const out = makeRect();
-    unionInto(out, [0, 1, 4, 4], [2, 0, 4, 5]);
-    expect(out).toEqual({ x: 0, y: 0, width: 6, height: 5 });
-  });
-
   test('b가 empty이면 a를 복사한다', () => {
     const out = makeRect();
     const a = { x: 1, y: 2, width: 5, height: 4 };
@@ -269,12 +263,6 @@ describe('rect - translateInto', () => {
     expect(result).toBe(out);
   });
 
-  test('tuple rect를 이동한다', () => {
-    const out = makeRect();
-    translateInto(out, [1, 2, 5, 3], { x: 3, y: -1 });
-    expect(out).toEqual({ x: 4, y: 1, width: 5, height: 3 });
-  });
-
   test('음수 offset으로 rect를 이동한다', () => {
     const out = makeRect();
     translateInto(out, { x: 5, y: 5, width: 5, height: 5 }, { x: -3, y: -4 });
@@ -298,12 +286,6 @@ describe('rect - translateInto', () => {
     const r: RectWritable = { x: 1, y: 2, width: 5, height: 3 };
     translateInto(r, r, { x: 3, y: -1 });
     expect(r).toEqual({ x: 4, y: 1, width: 5, height: 3 });
-  });
-
-  test('tuple offset 입력도 처리한다', () => {
-    const out = makeRect();
-    translateInto(out, { x: 1, y: 2, width: 5, height: 3 }, [3, -1]);
-    expect(out).toEqual({ x: 4, y: 1, width: 5, height: 3 });
   });
 });
 

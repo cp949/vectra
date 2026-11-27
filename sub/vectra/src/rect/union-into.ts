@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 
 /**
  * 두 rect의 union rect를 out에 기록한다.
@@ -8,20 +7,20 @@ import type { RectLike, RectWritable } from '../types';
  * 비-empty 두 rect는 raw min/max extent로 결합한다.
  * out과 입력 rect가 같은 object여도 안전하다.
  *
- * @param out union 결과 rect를 기록할 writable output
+ * @param out 결과를 기록할 사각형 객체
  * @param a union을 계산할 첫 번째 rect
  * @param b union을 계산할 두 번째 rect
  */
-export function unionInto<Out extends RectWritable>(out: Out, a: RectLike, b: RectLike): Out {
+export function unionInto<Out extends RectWritable>(out: Out, a: Rect, b: Rect): Out {
   // aliasing 안전 - 모든 입력을 먼저 읽은 후 기록한다
-  const ax = readRectX(a);
-  const ay = readRectY(a);
-  const aw = readRectWidth(a);
-  const ah = readRectHeight(a);
-  const bx = readRectX(b);
-  const by = readRectY(b);
-  const bw = readRectWidth(b);
-  const bh = readRectHeight(b);
+  const ax = a.x;
+  const ay = a.y;
+  const aw = a.width;
+  const ah = a.height;
+  const bx = b.x;
+  const by = b.y;
+  const bw = b.width;
+  const bh = b.height;
 
   const aEmpty = aw <= 0 || ah <= 0;
   const bEmpty = bw <= 0 || bh <= 0;

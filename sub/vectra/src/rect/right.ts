@@ -1,5 +1,4 @@
-import { readRectWidth, readRectX } from '../internal/rect';
-import type { RectLike } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
 
 /**
  * rect의 right 좌표를 반환한다.
@@ -8,6 +7,6 @@ import type { RectLike } from '../types';
  *
  * @param rect right 좌표를 읽을 rect
  */
-export function right(rect: RectLike): number {
-  return readRectX(rect) + readRectWidth(rect);
+export function right(rect: Rect): number {
+  return rect.x + rect.width;
 }

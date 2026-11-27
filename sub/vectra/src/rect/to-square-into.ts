@@ -1,5 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 
 /**
  * rect를 정사각형으로 변환한 결과를 out에 기록한다.
@@ -10,20 +9,20 @@ import type { RectLike, RectWritable } from '../types';
  * 그 외 mode 값은 `RangeError`를 던진다.
  * out과 rect가 같은 object여도 안전하다.
  *
- * @param out 정사각형 rect를 기록할 writable output
+ * @param out 결과를 기록할 사각형 객체
  * @param rect 변환할 source rect
  * @param mode 'min'은 짧은 변 길이, 'max'는 긴 변 길이를 한 변으로 사용한다. 기본값 'min'.
  */
-export function toSquareInto<Out extends RectWritable>(out: Out, rect: RectLike, mode: 'min' | 'max' = 'min'): Out {
+export function toSquareInto<Out extends RectWritable>(out: Out, rect: Rect, mode: 'min' | 'max' = 'min'): Out {
   if (mode !== 'min' && mode !== 'max') {
     throw new RangeError(`유효하지 않은 mode: "${String(mode)}". 'min', 'max' 중 하나여야 한다.`);
   }
 
   // aliasing 안전 - 모든 입력을 먼저 읽은 후 기록한다
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
   // empty rect → rect 복사
   if (w <= 0 || h <= 0) {

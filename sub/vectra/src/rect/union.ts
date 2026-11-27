@@ -1,4 +1,4 @@
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 import { createRect } from './create-rect';
 import { unionInto } from './union-into';
 
@@ -10,6 +10,6 @@ import { unionInto } from './union-into';
  * @param a union을 계산할 첫 번째 rect
  * @param b union을 계산할 두 번째 rect
  */
-export function union(a: RectLike, b: RectLike): RectWritable {
+export function union(a: Rect, b: Rect): RectWritable {
   return unionInto(createRect(), a, b);
 }

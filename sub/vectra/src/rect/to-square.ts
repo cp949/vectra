@@ -1,4 +1,4 @@
-import type { RectLike, RectWritable } from '../types';
+import type { Rect, RectWritable } from '../types/flat-shapes.internal';
 import { createRect } from './create-rect';
 import { toSquareInto } from './to-square-into';
 
@@ -13,6 +13,6 @@ import { toSquareInto } from './to-square-into';
  * @param rect 변환할 source rect
  * @param mode 'min'은 짧은 변 길이, 'max'는 긴 변 길이를 한 변으로 사용한다. 기본값 'min'.
  */
-export function toSquare(rect: RectLike, mode: 'min' | 'max' = 'min'): RectWritable {
+export function toSquare(rect: Rect, mode: 'min' | 'max' = 'min'): RectWritable {
   return toSquareInto(createRect(), rect, mode);
 }

@@ -1,4 +1,4 @@
-import type { RectLike, XYInput } from '../types';
+import type { Point, Rect } from '../types/flat-shapes.internal';
 import { quadrantsInto } from './quadrants-into';
 
 /**
@@ -23,8 +23,8 @@ import { quadrantsInto } from './quadrants-into';
  * @param center 분할 기준점. 생략하면 rect의 raw center
  */
 export function quadrants(
-  rect: RectLike,
-  center?: XYInput
+  rect: Rect,
+  center?: Point
 ): {
   nw: { x: number; y: number; width: number; height: number };
   ne: { x: number; y: number; width: number; height: number };

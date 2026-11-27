@@ -20,7 +20,18 @@ import { inflateInto } from '../../../src/rect/inflate-into';
 import { normalizePointInto } from '../../../src/rect/normalize-point-into';
 import { perimeterPointInto } from '../../../src/rect/perimeter-point-into';
 import { perimeterPointsInto } from '../../../src/rect/perimeter-points-into';
-import type { PointWritable, Rect } from '../../../src/types/flat-shapes.internal';
+import { quadrantsInto } from '../../../src/rect/quadrants-into';
+import { rectAlignToInto } from '../../../src/rect/rect-align-to-into';
+import { scaleInto } from '../../../src/rect/scale-into';
+import { sidesInto } from '../../../src/rect/sides-into';
+import { sizeInto } from '../../../src/rect/size-into';
+import { toBoundsInto } from '../../../src/rect/to-bounds-into';
+import { toSquareInto } from '../../../src/rect/to-square-into';
+import { topLeftInto } from '../../../src/rect/top-left-into';
+import { topRightInto } from '../../../src/rect/top-right-into';
+import { translateInto } from '../../../src/rect/translate-into';
+import { unionInto } from '../../../src/rect/union-into';
+import type { PointWritable, Rect, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
 /** 점 좌표에 호출자 상태를 덧붙인 출력 객체다. */
 class OutputPoint {
@@ -142,4 +153,87 @@ test('perimeterPointsInto는 새 점을 push하므로 원소 타입을 PointWrit
   expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
   expect(result).toBe(out);
   expect(result[0]).not.toBeInstanceOf(OutputPoint);
+});
+
+test('quadrantsInto는 사각형 객체를 받는다', () => {
+  expectTypeOf(quadrantsInto).parameter(1).toEqualTypeOf<Rect>();
+});
+
+/** 사분면과 호출자 상태를 담는 출력 객체다. */
+class QuadrantsOutput {
+  nw = new OutputRect();
+  ne = new OutputRect();
+  se = new OutputRect();
+  sw = new OutputRect();
+  label = 'quadrants';
+}
+
+/** 경계 좌표에 호출자 상태를 덧붙인 출력 객체다. */
+class OutputBounds {
+  minX = 0;
+  minY = 0;
+  maxX = 0;
+  maxY = 0;
+  label = 'bounds';
+}
+
+/** 선분 좌표에 호출자 상태를 덧붙인 출력 객체다. */
+class OutputSegment {
+  x1 = 0;
+  y1 = 0;
+  x2 = 0;
+  y2 = 0;
+  label = 'segment';
+}
+
+test('quadrantsInto는 사분면 출력 타입과 참조를 보존한다', () => {
+  const out = new QuadrantsOutput();
+  const result = quadrantsInto(out, rect, point);
+
+  expectTypeOf(result).toEqualTypeOf<QuadrantsOutput>();
+  expect(result).toBe(out);
+});
+
+test('정렬, 크기 조절, 정사각형 변환, 이동, 합집합은 사각형 출력 타입과 참조를 보존한다', () => {
+  const out = new OutputRect();
+  const results = [
+    rectAlignToInto(out, rect, rect),
+    scaleInto(out, rect, 2),
+    toSquareInto(out, rect),
+    translateInto(out, rect, point),
+    unionInto(out, rect, rect),
+  ];
+
+  expectTypeOf(results).toEqualTypeOf<OutputRect[]>();
+  for (const result of results) {
+    expect(result).toBe(out);
+  }
+});
+
+test('크기와 위쪽 꼭짓점 조회는 점 출력 타입과 참조를 보존한다', () => {
+  const out = new OutputPoint();
+  const results = [sizeInto(out, rect), topLeftInto(out, rect), topRightInto(out, rect)];
+
+  expectTypeOf(results).toEqualTypeOf<OutputPoint[]>();
+  for (const result of results) {
+    expect(result).toBe(out);
+  }
+});
+
+test('toBoundsInto는 경계 상자 출력 타입과 참조를 보존한다', () => {
+  const out = new OutputBounds();
+  const result = toBoundsInto(out, rect);
+
+  expectTypeOf(result).toEqualTypeOf<OutputBounds>();
+  expect(result).toBe(out);
+});
+
+test('sidesInto는 새 선분을 추가하므로 원소 타입을 SegmentWritable로 고정한다', () => {
+  const out: OutputSegment[] = [];
+  const result = sidesInto(out, rect);
+
+  expectTypeOf(result).toEqualTypeOf<SegmentWritable[]>();
+  expect(result).toBe(out);
+  expect(result).toHaveLength(4);
+  expect(result[0]).not.toBeInstanceOf(OutputSegment);
 });

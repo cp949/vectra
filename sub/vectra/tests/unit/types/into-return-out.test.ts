@@ -43,7 +43,6 @@ import { segmentQuadraticIntersectionsInto } from '../../../src/intersects/segme
 import { cornersInto as orientedRectCornersInto } from '../../../src/oriented-rect/corners-into';
 import { cornersInto as rectCornersInto } from '../../../src/rect/corners-into';
 import { perimeterPointsInto } from '../../../src/rect/perimeter-points-into';
-import { sidesInto as rectSidesInto } from '../../../src/rect/sides-into';
 import type {
   CurveIntersectionHit,
   CurveLike,
@@ -274,11 +273,7 @@ describe('adapter·shape 배열 Into는 out을 반환한다', () => {
     expect(fromOriented).toHaveLength(4);
   });
 
-  test('sidesInto는 4개 side를 담은 out을 반환한다', () => {
-    const fromRect: SegmentWritable<XYObjectWritable, XYObjectWritable>[] = [];
-    expect(rectSidesInto(fromRect, rect)).toBe(fromRect);
-    expect(fromRect).toHaveLength(4);
-
+  test('bounds sidesInto는 4개 side를 담은 out을 반환한다', () => {
     const fromBounds: SegmentWritable<XYObjectWritable, XYObjectWritable>[] = [];
     expect(boundsSidesInto(fromBounds, bounds)).toBe(fromBounds);
     expect(fromBounds).toHaveLength(4);

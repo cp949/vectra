@@ -6,7 +6,7 @@
  */
 import { describe, expect, test } from 'vitest';
 import { toSquareInto } from '../../../src/rect/to-square-into';
-import type { RectWritable } from '../../../src/types';
+import type { RectWritable } from '../../../src/types/flat-shapes.internal';
 
 function makeRect(): RectWritable {
   return { x: 0, y: 0, width: 0, height: 0 };
@@ -59,12 +59,6 @@ describe('rect - toSquareInto', () => {
     toSquareInto(out, { x: 10, y: 20, width: 10, height: 4 }, 'min');
     // cx = 15, cy = 22, side = 4 → x = 13, y = 20
     expect(out).toEqual({ x: 13, y: 20, width: 4, height: 4 });
-  });
-
-  test('tuple rect 입력도 처리한다', () => {
-    const out = makeRect();
-    toSquareInto(out, [0, 0, 10, 4]);
-    expect(out).toEqual({ x: 3, y: 0, width: 4, height: 4 });
   });
 
   test('empty rect (width=0): rect 그대로 복사', () => {
