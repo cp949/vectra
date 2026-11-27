@@ -22,6 +22,7 @@
 | [테스트 메커니즘](./testing-mechanics.md) | runner, 파일 조직, 표준 검증 시나리오, 함정을 확인할 때 |
 | [주석 작성 규칙](./comment-style.md) | public JSDoc과 테스트 주석을 작성할 때 |
 | [ADR](./adr/) | 과거 결정 이유를 확인할 때 |
+| [ADR 0010: v2 도형 입출력](./adr/0010-flat-shape-input.md) | v2 입력 타입과 출력 형식을 확인할 때 |
 | [체크리스트](./checklists/) | release 또는 작업 완료 전 확인할 때 |
 
 ## 회귀 방지 자료

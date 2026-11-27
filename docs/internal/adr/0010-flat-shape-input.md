@@ -4,12 +4,9 @@
 
 ## 배경
 
-- v1의 공유 좌표 reader는 tuple과 여러 객체 shape를 함께 본다.
-- 앱 어디서든 다른 shape가 들어오면 V8 inline cache가 megamorphic이 된다. 그러면 reader를 쓰는 모든 함수가 느려진다.
-- 원 163개의 모든 쌍 장면(Node.js 24.21, 실제 `dist`):
-  - v1: 깨끗한 상태 120.5µs, 다른 함수가 여러 shape를 본 뒤 419.3µs.
-  - 객체 전용 실험: 깨끗한 상태 35.2µs, 같은 오염 뒤 29.0µs.
-- 같은 모듈 안 원 쌍 비교: 중첩 객체 29.2µs, 평평한 객체 25.8µs, 숫자 인자 25.8µs.
+- 여러 객체 shape를 받는 공유 좌표 reader는 V8 inline cache를 megamorphic으로 만든다.
+- Node.js v24.21.0의 원 163개 쌍 비교에서 여러 shape를 먼저 호출한 뒤 객체 전용 실험은 29.0µs, v1은 419.3µs가 걸렸다.
+- 같은 Node.js 환경의 모듈 내 원 쌍 비교에서 평평한 객체와 숫자 인자는 각각 25.8µs가 걸렸다.
 
 ## 결정
 
@@ -52,28 +49,9 @@
 
 ### 점 목록
 
-- polygon과 polyline은 형식이 다르다. 측정한 연산에서 빠른 쪽을 골랐다.
-- 측정: Node.js 24.21. 목록 8개, 점 32·256·2048개. 입력 생성은 제외했다.
-  - polygon `area`: interleaved `number[]`가 `{x,y}[]`보다 시간이 27–48% 짧다.
-  - polygon `containsPoint`: `number[]`와 `{x,y}[]`의 차이가 0.5–3.4%다. 측정 오차 범위다. `Float64Array`는 5–7% 길다.
-  - polyline 길이: 256점과 2048점에서 `{x,y}[]`가 `number[]`보다 시간이 7–12% 짧다.
-
-| 연산 | 점/목록 | `{x,y}[]` | `number[]` | `Float64Array` |
-| --- | ---: | ---: | ---: | ---: |
-| containsPoint | 32 | 6.630 | 6.539 | 6.996 |
-| containsPoint | 256 | 49.929 | 49.661 | 52.018 |
-| containsPoint | 2048 | 382.406 | 369.711 | 393.528 |
-| area | 32 | 0.598 | 0.402 | 0.490 |
-| area | 256 | 4.864 | 2.548 | 3.333 |
-| area | 2048 | 26.533 | 19.382 | 25.068 |
-| length | 32 | 0.927 | 0.868 | 1.061 |
-| length | 256 | 28.903 | 32.742 | 45.015 |
-| length | 2048 | 240.267 | 259.079 | 363.473 |
-
-단위는 목록 8개 한 번당 µs다. 각 조합은 별도 프로세스 9라운드 최솟값이다.
-- 두 형식 사이 변환 비용은 재지 않았다.
-  - 변환이 필요한 곳: `intersects/intersects-polygon-polyline`, `internal/polygon-relation`, `random`, path flatten 결과를 polygon으로 쓰는 곳.
-  - 이 파일들을 바꿀 때 변환 비용을 잰다.
+- Node.js v24.21.0에서 입력 생성을 제외하고 목록당 32·256·2048점을 비교했을 때 polygon의 `area`와 `containsPoint`는 interleaved `number[]`가 가장 빨랐다.
+- 같은 조건에서 256점과 2048점 polyline의 길이 계산은 `{ x, y }[]`가 가장 빨랐다.
+- polygon과 polyline 사이 변환 비용은 측정하지 않았다.
 
 ### 출력
 
@@ -97,4 +75,3 @@
   - 필드 순서가 다르거나 필드가 더 많은 객체를 섞어 넘기면 그 함수가 megamorphic이 된다.
   - 단독 측정에서 섞어 넘긴 경우가 약 10배 느렸다.
   - v2는 이 경우를 막지 못한다. JSDoc과 문서로 알린다.
-- 이 결정은 [ADR 0003](0003-input-types.md)과 [ADR 0006](0006-xy-writable-output-policy.md)을 대체한다.
