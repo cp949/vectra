@@ -1,4 +1,4 @@
-import type { XYInput } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { midpointInto } from './midpoint-into';
 
 /**
@@ -10,6 +10,6 @@ import { midpointInto } from './midpoint-into';
  * @param a 중점을 구할 첫 번째 좌표
  * @param b 중점을 구할 두 번째 좌표
  */
-export function midpoint(a: XYInput, b: XYInput): { x: number; y: number } {
+export function midpoint(a: Point, b: Point): PointWritable {
   return midpointInto({ x: 0, y: 0 }, a, b);
 }

@@ -1,3 +1,5 @@
+/** 점 보간의 입력과 출력 형식, 경계값, out과 입력을 공유하는 경우를 검증한다. */
+
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { bilerpPoint } from '../../../src/interpolation/bilerp-point';
 import { bilerpPointInto } from '../../../src/interpolation/bilerp-point-into';
@@ -9,6 +11,20 @@ import { midpoint } from '../../../src/interpolation/midpoint';
 import { midpointInto } from '../../../src/interpolation/midpoint-into';
 import { moveTowardPoint } from '../../../src/interpolation/move-toward-point';
 import { moveTowardPointInto } from '../../../src/interpolation/move-toward-point-into';
+import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
+
+test('점 보간은 x/y 필드가 있는 좌표를 받는다', () => {
+  expectTypeOf(lerpPoint).parameter(0).toEqualTypeOf<Point>();
+  expectTypeOf(lerpPointByElapsed).parameter(0).toEqualTypeOf<Point>();
+  expectTypeOf(midpoint).parameter(0).toEqualTypeOf<Point>();
+  expectTypeOf(moveTowardPoint).parameter(0).toEqualTypeOf<Point>();
+  expectTypeOf(bilerpPoint).parameter(0).toEqualTypeOf<Point>();
+  expectTypeOf(lerpPointInto).parameter(0).toEqualTypeOf<PointWritable>();
+  expectTypeOf(lerpPointByElapsedInto).parameter(0).toEqualTypeOf<PointWritable>();
+  expectTypeOf(midpointInto).parameter(0).toEqualTypeOf<PointWritable>();
+  expectTypeOf(moveTowardPointInto).parameter(0).toEqualTypeOf<PointWritable>();
+  expectTypeOf(bilerpPointInto).parameter(0).toEqualTypeOf<PointWritable>();
+});
 
 describe('interpolation point 보간 - lerpPointInto', () => {
   const nonFiniteValues = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -36,21 +52,6 @@ describe('interpolation point 보간 - lerpPointInto', () => {
     const out = { x: 0, y: 0 };
     lerpPointInto(out, { x: 0, y: 0 }, { x: 4, y: 6 }, 2);
     expect(out).toEqual({ x: 8, y: 12 });
-  });
-
-  test('tuple input을 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    lerpPointInto(out, [0, 0], [10, 20], 0.5);
-    expect(out).toEqual({ x: 5, y: 10 });
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = lerpPointInto(out, { x: 0, y: 0 }, { x: 4, y: 6 }, 0.5);
-    expect(result).toBe(out);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('out === a aliasing에서도 올바른 결과를 반환한다', () => {
@@ -110,20 +111,6 @@ describe('interpolation point 보간 - midpointInto', () => {
     expect(out.y).toBe(expected.y);
   });
 
-  test('tuple input을 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    midpointInto(out, [0, 0], [10, 20]);
-    expect(out).toEqual({ x: 5, y: 10 });
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = midpointInto(out, { x: 0, y: 0 }, { x: 4, y: 6 });
-    expect(result).toBe(out);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
-  });
-
   test('out === a aliasing에서도 올바른 결과를 반환한다', () => {
     const pt: { x: number; y: number } = { x: 0, y: 0 };
     midpointInto(pt, pt, { x: 4, y: 6 });
@@ -181,13 +168,6 @@ describe('interpolation point 보간 - moveTowardPointInto', () => {
     const out = { x: 0, y: 0 };
     moveTowardPointInto(out, { x: 1, y: 2 }, { x: 5, y: 8 }, 0);
     expect(out).toEqual({ x: 1, y: 2 });
-  });
-
-  test('tuple input을 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    moveTowardPointInto(out, [0, 0], [10, 0], 3);
-    expect(out.x).toBeCloseTo(3, 10);
-    expect(out.y).toBeCloseTo(0, 10);
   });
 
   test('out === target aliasing에서 distance > maxDistance일 때 partial move가 올바르다', () => {
@@ -262,34 +242,40 @@ describe('interpolation 쌍선형 보간 - bilerpPointInto', () => {
     expect(out.y).toBeCloseTo(2, 10);
   });
 
-  test('tuple input을 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    bilerpPointInto(out, [0, 0], [2, 0], [0, 2], [2, 2], 0.5, 0.5);
-    expect(out).toEqual({ x: 1, y: 1 });
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = bilerpPointInto(out, [0, 0], [2, 0], [0, 2], [2, 2], 0.5, 0.5);
-    expect(result).toBe(out);
-    expect(out[0]).toBe(1);
-    expect(out[1]).toBe(1);
-  });
-
   test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
     'finite하지 않은 input %s는 RangeError를 던진다',
     (value) => {
       const base = { x: 0, y: 0 };
-      expect(() => bilerpPointInto(base, { x: value, y: 0 }, [1, 0], [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, { x: 0, y: value }, [1, 0], [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], { x: value, y: 0 }, [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], { x: 0, y: value }, [0, 1], [1, 1], 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], [1, 0], { x: value, y: 1 }, [1, 1], 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], [1, 0], { x: 0, y: value }, [1, 1], 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], { x: value, y: 1 }, 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], { x: 1, y: value }, 0.5, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], [1, 1], value, 0.5)).toThrow(RangeError);
-      expect(() => bilerpPointInto(base, [0, 0], [1, 0], [0, 1], [1, 1], 0.5, value)).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: value, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: value }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: value, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: 0, y: value }, { x: 0, y: 1 }, { x: 1, y: 1 }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: value, y: 1 }, { x: 1, y: 1 }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: value }, { x: 1, y: 1 }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: value, y: 1 }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: value }, 0.5, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, value, 0.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        bilerpPointInto(base, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, 0.5, value)
+      ).toThrow(RangeError);
     }
   );
 });
@@ -333,20 +319,6 @@ describe('interpolation point elapsed-time - lerpPointByElapsedInto', () => {
     const out = { x: 0, y: 0 };
     lerpPointByElapsedInto(out, { x: 0, y: 0 }, { x: 4, y: 6 }, 15, 10);
     expect(out).toEqual({ x: 6, y: 9 });
-  });
-
-  test('tuple input을 처리한다', () => {
-    const out = { x: 0, y: 0 };
-    lerpPointByElapsedInto(out, [0, 0], [10, 20], 5, 10);
-    expect(out).toEqual({ x: 5, y: 10 });
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = lerpPointByElapsedInto(out, { x: 0, y: 0 }, { x: 4, y: 6 }, 5, 10);
-    expect(result).toBe(out);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
   });
 
   test('out === a aliasing에서도 올바른 결과를 반환한다', () => {

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { assertFinite5 } from './interpolation.internal';
 import { hypot2 } from '../internal/numeric';
 
@@ -13,21 +12,21 @@ import { hypot2 } from '../internal/numeric';
  * 모든 input의 x/y와 maxDistance는 finite number여야 한다.
  * out이 current 또는 target과 같은 object여도 안전하다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param current 이동 시작 좌표
  * @param target 이동 목표 좌표
  * @param maxDistance 최대 이동 거리. 0 이상의 finite number여야 한다.
  */
-export function moveTowardPointInto<Out extends XYWritable>(
+export function moveTowardPointInto<Out extends PointWritable>(
   out: Out,
-  current: XYInput,
-  target: XYInput,
+  current: Point,
+  target: Point,
   maxDistance: number
 ): Out {
-  const cx = readX(current);
-  const cy = readY(current);
-  const tx = readX(target);
-  const ty = readY(target);
+  const cx = current.x;
+  const cy = current.y;
+  const tx = target.x;
+  const ty = target.y;
   assertFinite5(cx, cy, tx, ty, maxDistance);
 
   if (maxDistance < 0) {
@@ -42,9 +41,13 @@ export function moveTowardPointInto<Out extends XYWritable>(
 
   // distance가 maxDistance 이하이면 target에 도달한다 (distance === 0 포함)
   if (dist <= maxDistance) {
-    return writeXY(out, tx, ty);
+    out.x = tx;
+    out.y = ty;
+    return out;
   }
 
   // target 방향 단위 벡터로 maxDistance만큼 이동한다
-  return writeXY(out, cx + (dx / dist) * maxDistance, cy + (dy / dist) * maxDistance);
+  out.x = cx + (dx / dist) * maxDistance;
+  out.y = cy + (dy / dist) * maxDistance;
+  return out;
 }

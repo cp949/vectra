@@ -1,4 +1,4 @@
-import type { XYInput } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { lerpPointInto } from './lerp-point-into';
 
 /**
@@ -11,6 +11,6 @@ import { lerpPointInto } from './lerp-point-into';
  * @param b 보간 끝 좌표
  * @param t 보간 비율. clamp 없음, extrapolation 허용
  */
-export function lerpPoint(a: XYInput, b: XYInput, t: number): { x: number; y: number } {
+export function lerpPoint(a: Point, b: Point, t: number): PointWritable {
   return lerpPointInto({ x: 0, y: 0 }, a, b, t);
 }

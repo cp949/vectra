@@ -1,4 +1,4 @@
-import type { XYInput } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { bilerpPointInto } from './bilerp-point-into';
 
 /**
@@ -14,13 +14,6 @@ import { bilerpPointInto } from './bilerp-point-into';
  * @param tx x 방향 보간 비율. clamp 없음, extrapolation 허용
  * @param ty y 방향 보간 비율. clamp 없음, extrapolation 허용
  */
-export function bilerpPoint(
-  p00: XYInput,
-  p10: XYInput,
-  p01: XYInput,
-  p11: XYInput,
-  tx: number,
-  ty: number
-): { x: number; y: number } {
+export function bilerpPoint(p00: Point, p10: Point, p01: Point, p11: Point, tx: number, ty: number): PointWritable {
   return bilerpPointInto({ x: 0, y: 0 }, p00, p10, p01, p11, tx, ty);
 }

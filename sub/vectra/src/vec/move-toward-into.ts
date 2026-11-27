@@ -1,3 +1,4 @@
+import { readX, readY, writeXY } from '../internal/xy';
 import { moveTowardPointInto } from '../interpolation/move-toward-point-into';
 import type { XYInput, XYWritable } from '../types';
 
@@ -20,5 +21,14 @@ export function moveTowardInto<Out extends XYWritable>(
   target: XYInput,
   maxDistance: number
 ): Out {
-  return moveTowardPointInto(out, current, target, maxDistance);
+  // v2-migration: vec의 tuple 입력 계약을 유지한다.
+  const currentPoint = { x: readX(current), y: readY(current) };
+  const targetPoint = { x: readX(target), y: readY(target) };
+  if (Array.isArray(out)) {
+    const point = moveTowardPointInto({ x: 0, y: 0 }, currentPoint, targetPoint, maxDistance);
+    return writeXY(out, point.x, point.y);
+  }
+
+  moveTowardPointInto(out, currentPoint, targetPoint, maxDistance);
+  return out;
 }

@@ -1,4 +1,4 @@
-import type { XYInput } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { lerpPointByElapsedInto } from './lerp-point-by-elapsed-into';
 
 /**
@@ -14,11 +14,6 @@ import { lerpPointByElapsedInto } from './lerp-point-by-elapsed-into';
  * @param elapsed 경과 시간
  * @param duration 전체 구간 길이. finite이고 `> 0`이어야 한다
  */
-export function lerpPointByElapsed(
-  a: XYInput,
-  b: XYInput,
-  elapsed: number,
-  duration: number
-): { x: number; y: number } {
+export function lerpPointByElapsed(a: Point, b: Point, elapsed: number, duration: number): PointWritable {
   return lerpPointByElapsedInto({ x: 0, y: 0 }, a, b, elapsed, duration);
 }

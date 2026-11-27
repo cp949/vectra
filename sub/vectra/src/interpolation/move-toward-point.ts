@@ -1,4 +1,4 @@
-import type { XYInput } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { moveTowardPointInto } from './move-toward-point-into';
 
 /**
@@ -11,6 +11,6 @@ import { moveTowardPointInto } from './move-toward-point-into';
  * @param target 이동 목표 좌표
  * @param maxDistance 최대 이동 거리. 0 이상의 finite number여야 한다.
  */
-export function moveTowardPoint(current: XYInput, target: XYInput, maxDistance: number): { x: number; y: number } {
+export function moveTowardPoint(current: Point, target: Point, maxDistance: number): PointWritable {
   return moveTowardPointInto({ x: 0, y: 0 }, current, target, maxDistance);
 }

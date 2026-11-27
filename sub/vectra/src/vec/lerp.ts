@@ -1,3 +1,4 @@
+import { readX, readY } from '../internal/xy';
 import { lerpPoint } from '../interpolation/lerp-point';
 import type { XYInput } from '../types';
 
@@ -13,5 +14,8 @@ import type { XYInput } from '../types';
  * @param t 보간 비율. clamp 없음, extrapolation 허용
  */
 export function lerp(a: XYInput, b: XYInput, t: number): { x: number; y: number } {
-  return lerpPoint(a, b, t);
+  // v2-migration: vec의 tuple 입력 계약을 유지한다.
+  const aPoint = { x: readX(a), y: readY(a) };
+  const bPoint = { x: readX(b), y: readY(b) };
+  return lerpPoint(aPoint, bPoint, t);
 }

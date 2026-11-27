@@ -1,3 +1,4 @@
+import { readX, readY, writeXY } from '../internal/xy';
 import { midpointInto as midpointIntoImpl } from '../interpolation/midpoint-into';
 import type { XYInput, XYWritable } from '../types';
 
@@ -13,5 +14,14 @@ import type { XYInput, XYWritable } from '../types';
  * @param b 중점을 구할 두 번째 벡터
  */
 export function midpointInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInput): Out {
-  return midpointIntoImpl(out, a, b);
+  // v2-migration: vec의 tuple 입력 계약을 유지한다.
+  const aPoint = { x: readX(a), y: readY(a) };
+  const bPoint = { x: readX(b), y: readY(b) };
+  if (Array.isArray(out)) {
+    const point = midpointIntoImpl({ x: 0, y: 0 }, aPoint, bPoint);
+    return writeXY(out, point.x, point.y);
+  }
+
+  midpointIntoImpl(out, aPoint, bPoint);
+  return out;
 }

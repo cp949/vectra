@@ -1,3 +1,4 @@
+import { readX, readY } from '../internal/xy';
 import { moveTowardPoint } from '../interpolation/move-toward-point';
 import type { XYInput } from '../types';
 
@@ -13,5 +14,8 @@ import type { XYInput } from '../types';
  * @param maxDistance 최대 이동 거리. 0 이상의 finite number여야 한다.
  */
 export function moveToward(current: XYInput, target: XYInput, maxDistance: number): { x: number; y: number } {
-  return moveTowardPoint(current, target, maxDistance);
+  // v2-migration: vec의 tuple 입력 계약을 유지한다.
+  const currentPoint = { x: readX(current), y: readY(current) };
+  const targetPoint = { x: readX(target), y: readY(target) };
+  return moveTowardPoint(currentPoint, targetPoint, maxDistance);
 }
