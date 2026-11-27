@@ -26,8 +26,14 @@ for (const file of files) {
   }
 }
 
-const sources = files.filter((file) => file.startsWith('src' + sep));
-const unitTests = files.filter((file) => file.startsWith(['tests', 'unit', ''].join(sep)));
+// contract 시험은 중간 묶음에서 실패가 정상이다. H단계에서 돌린다.
+const contractDir = ['tests', 'contract', ''].join(sep);
+const testable = files.filter(
+  (file) => (file.startsWith('src' + sep) || file.startsWith('tests' + sep)) && !file.startsWith(contractDir)
+);
+// 시험 파일은 직접 돌린다. 소스와 시험 헬퍼는 import하는 시험을 찾아 돌린다.
+const testFiles = testable.filter((file) => file.endsWith('.test.ts'));
+const sources = testable.filter((file) => !file.endsWith('.test.ts'));
 const commands = [['typecheck']];
 
 if (sources.length) {
@@ -44,8 +50,8 @@ if (sources.length) {
     ...sources,
   ]);
 }
-if (unitTests.length) {
-  commands.push(['exec', 'vitest', 'run', '--config', 'vitest.config.ts', ...unitTests]);
+if (testFiles.length) {
+  commands.push(['exec', 'vitest', 'run', '--config', 'vitest.config.ts', ...testFiles]);
 }
 
 commands.push(
