@@ -33,7 +33,7 @@ export function subpathBoundsInto<Out extends BoundsWritable>(
   out: Out,
   commands: readonly PathCommand[],
   index: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): Out {
   if (!Number.isInteger(index) || index < 0) {
     return boundsInto(out, [], options);

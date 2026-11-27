@@ -26,7 +26,7 @@ import type { CircleLike, PathCommand, PathMeasurementOptions } from '../types';
 export function intersectsPathCircle(
   commands: readonly PathCommand[],
   circle: CircleLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const r = readCircleRadius(circle);

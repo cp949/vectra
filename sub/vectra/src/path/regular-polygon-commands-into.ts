@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, RegularPolygonOptions, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand, RegularPolygonOptions } from '../types/index';
 
 /**
  * regular polygon을 move + (sides - 1) line + close, 총 sides + 1 command로 out에 기록하고 out을 반환한다.
@@ -11,7 +11,7 @@ import type { PathCommand, RegularPolygonOptions, XYInput } from '../types/index
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param center polygon 중심점 (XYInput)
+ * @param center polygon 중심점 (Point)
  * @param radius vertex가 위치한 원의 반지름
  * @param sides vertex 수. 3 이상 정수가 아니면 out clear만 (non-integer/NaN/Infinity 포함)
  * @param options startAngle/clockwise 옵션
@@ -19,10 +19,10 @@ import type { PathCommand, RegularPolygonOptions, XYInput } from '../types/index
  */
 export function regularPolygonCommandsInto(
   out: PathCommand[],
-  center: XYInput,
+  center: Point,
   radius: number,
   sides: number,
-  options?: RegularPolygonOptions
+  options?: Required<RegularPolygonOptions>
 ): PathCommand[] {
   out.length = 0;
   if (!Number.isInteger(sides) || sides < 3) {
@@ -30,10 +30,10 @@ export function regularPolygonCommandsInto(
     return out;
   }
 
-  const startAngle = options?.startAngle ?? -Math.PI / 2;
-  const clockwise = options?.clockwise ?? true;
-  const cx = readX(center);
-  const cy = readY(center);
+  const startAngle = options === undefined ? -Math.PI / 2 : options.startAngle;
+  const clockwise = options === undefined ? true : options.clockwise;
+  const cx = center.x;
+  const cy = center.y;
   // step 부호: clockwise(true)면 SVG y-down에서 각도 증가 = 시계 방향이다.
   const step = ((clockwise ? 1 : -1) * (2 * Math.PI)) / sides;
 

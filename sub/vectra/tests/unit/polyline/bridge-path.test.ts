@@ -79,7 +79,16 @@ describe('polyline bridge/collection - toPathInto', () => {
   });
 
   test('기존 path.polylineCommandsInto와 같은 command sequence를 만든다', () => {
-    expect(toPathInto([], THREE_PT)).toEqual(polylineCommandsInto([], THREE_PT));
+    expect(toPathInto([], THREE_PT)).toEqual(
+      polylineCommandsInto(
+        [],
+        [
+          { x: 0, y: 0 },
+          { x: 3, y: 4 },
+          { x: 6, y: 8 },
+        ]
+      )
+    );
   });
 });
 

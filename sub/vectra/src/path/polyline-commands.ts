@@ -1,4 +1,5 @@
-import type { PathCommand, PolylineLike } from '../types/index';
+import type { Polyline } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { polylineCommandsInto } from './polyline-commands-into';
 
 /**
@@ -11,6 +12,6 @@ import { polylineCommandsInto } from './polyline-commands-into';
  * @param polyline 변환할 polyline input
  * @returns 새로 만든 PathCommand 배열
  */
-export function polylineCommands(polyline: PolylineLike): PathCommand[] {
+export function polylineCommands(polyline: Polyline): PathCommand[] {
   return polylineCommandsInto([], polyline);
 }

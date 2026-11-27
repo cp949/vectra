@@ -33,7 +33,7 @@ export function normalAtLengthInto(
   out: PointWritable,
   commands: readonly PathCommand[],
   distance: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): boolean {
   const props = propertiesAtLength(commands, distance, options);
   if (props === undefined) return false;

@@ -58,7 +58,7 @@ export function closestPointInto(
   out: PointWritable,
   commands: readonly PathCommand[],
   point: Point,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): boolean {
   // empty path는 false 반환, out 미수정
   if (commands.length === 0) return false;

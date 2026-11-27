@@ -22,7 +22,7 @@ export function pointAtLengthInto(
   out: PointWritable,
   commands: readonly PathCommand[],
   distance: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): boolean {
   const flattener = createSegmentFlattener(options);
 

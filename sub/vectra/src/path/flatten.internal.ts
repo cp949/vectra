@@ -10,7 +10,7 @@ import { createSegmentFlattener } from './segment-flattener.internal';
 export function flattenPathInto(
   out: PointWritable[],
   commands: readonly PathCommand[],
-  options?: PathFlattenOptions
+  options?: Partial<PathFlattenOptions>
 ): PointWritable[] {
   out.length = 0;
 
@@ -18,7 +18,10 @@ export function flattenPathInto(
     return out;
   }
 
-  const flattener = createSegmentFlattener(options);
+  // v2-migration: polyline과 intersects 전환 후 평평한 옵션을 그대로 넘긴다.
+  const flattener = createSegmentFlattener(
+    options === undefined ? undefined : { flatness: options.flatness ?? 0.5, maxRecursion: options.maxRecursion ?? 32 }
+  );
 
   const pushPoint = (x: number, y: number): void => {
     out.push({ x, y });

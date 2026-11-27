@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable } from '../types/index';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { flattenInto } from './flatten-into';
 
 /**
@@ -31,7 +31,7 @@ function accumulateWinding(ax: number, ay: number, bx: number, by: number, px: n
  * boundary 교차(px,py가 segment 위에 있음): crossing 조건을 충족하지 않으므로 자연스럽게 0 처리.
  * 단, py가 꼭짓점과 정확히 일치하는 수평 edge 특수 케이스는 상단 포함/하단 제외 규칙으로 처리한다.
  */
-function windingFromPolyline(pts: XYObjectWritable[], px: number, py: number): number {
+function windingFromPolyline(pts: PointWritable[], px: number, py: number): number {
   let w = 0;
   for (let i = 1; i < pts.length; i++) {
     w += accumulateWinding(pts[i - 1].x, pts[i - 1].y, pts[i].x, pts[i].y, px, py);
@@ -53,14 +53,14 @@ function computeWinding(
 ): number {
   if (commands.length === 0) return 0;
 
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
+  const flatness = options === undefined ? 0.5 : options.flatness;
+  const maxRecursion = options === undefined ? 32 : options.maxRecursion;
   const flatOpts = { flatness, maxRecursion };
 
   let totalWinding = 0;
 
   /** 현재 subpath를 flatten할 임시 buffer. */
-  const subpathBuf: XYObjectWritable[] = [];
+  const subpathBuf: PointWritable[] = [];
   /** 현재 subpath의 임시 command buffer. */
   const subpathCmds: PathCommand[] = [];
   /** 현재 subpath가 closed인지 여부. */
@@ -147,8 +147,8 @@ function computeWinding(
  * @param point - 판정 기준 좌표
  * @param options - flatten 옵션 (flatness, maxRecursion)
  */
-export function winding(commands: readonly PathCommand[], point: XYInput, options?: PathMeasurementOptions): number {
-  const px = readX(point);
-  const py = readY(point);
+export function winding(commands: readonly PathCommand[], point: Point, options?: PathMeasurementOptions): number {
+  const px = point.x;
+  const py = point.y;
   return computeWinding(commands, px, py, options);
 }

@@ -39,10 +39,10 @@ export interface LengthOptions {
  */
 export interface CubicThroughOptions {
   /** through 점의 parameter 위치. 기본값 `0.5`. */
-  t?: number;
+  t: number;
 
   /** control handle 길이 배율. 기본값 `1`. */
-  controlScale?: number;
+  controlScale: number;
 }
 
 /**
@@ -54,7 +54,7 @@ export interface CubicThroughOptions {
  */
 export interface QuadraticThroughOptions {
   /** through 점의 parameter 위치. 기본값 `0.5`. */
-  t?: number;
+  t: number;
 }
 
 /**

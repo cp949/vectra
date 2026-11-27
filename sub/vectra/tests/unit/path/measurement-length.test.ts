@@ -1,3 +1,4 @@
+/** 경로 함수의 좌표와 분기 동작을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { length } from '../../../src/path/length';
 import type { PathCommand } from '../../../src/types/index';
@@ -90,7 +91,7 @@ describe('length', () => {
       { kind: 'quadratic', x1: 50, y1: 100, x: 100, y: 0 },
     ];
     const lenDefault = length(cmds); // flatness = 0.5
-    const lenFine = length(cmds, { flatness: 0.01 });
+    const lenFine = length(cmds, { flatness: 0.01, maxRecursion: 32 });
     // 정밀도가 높을수록 같거나 더 길어진다
     expect(lenFine).toBeGreaterThanOrEqual(lenDefault - 1e-9);
   });

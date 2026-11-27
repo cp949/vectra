@@ -46,7 +46,7 @@ function updateMinDistSqFromPolyline(
 export function distanceToPoint(
   commands: readonly PathCommand[],
   point: Point,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): number {
   // empty path는 Infinity 반환
   if (commands.length === 0) return Infinity;

@@ -196,11 +196,6 @@ describe('winding', () => {
     expect(winding(cmds, { x: 50, y: 50 })).toBe(0);
   });
 
-  test('tuple point input → 동일하게 작동', () => {
-    expect(winding(makeTriangle(), [200, 200])).toBe(0);
-    expect(winding(makeTriangle(), [50, 30])).not.toBe(0);
-  });
-
   // -- multi-subpath 누적
 
   test('donut outer 영역 — outer만 1회 crossing → winding !== 0', () => {

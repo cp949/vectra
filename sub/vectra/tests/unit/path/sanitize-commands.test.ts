@@ -1,3 +1,4 @@
+/** 경로 함수의 좌표와 분기 동작을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { sanitizeCommands } from '../../../src/path/sanitize-commands';
 import { sanitizeCommandsInto } from '../../../src/path/sanitize-commands-into';
@@ -29,7 +30,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 10, y: 0 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, removeCollinear: false, tolerance: 1e-10 });
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 5, y: 5 },
@@ -45,7 +46,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 10, y: 0 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, tolerance: 1e-3 });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, tolerance: 1e-3, removeCollinear: false });
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 5, y: 5 },
@@ -60,7 +61,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 5 + 1e-4, y: 5 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, tolerance: 1e-10 });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, tolerance: 1e-10, removeCollinear: false });
     expect(out).toEqual(cmds);
   });
 
@@ -72,7 +73,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'close' },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, removeCollinear: false, tolerance: 1e-10 });
     expect(out).toEqual(cmds);
   });
 
@@ -84,7 +85,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 10, y: 10 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, removeCollinear: false, tolerance: 1e-10 });
     expect(out).toEqual(cmds);
   });
 
@@ -97,7 +98,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 10, y: 10 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, removeCollinear: false, tolerance: 1e-10 });
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'cubic', x1: 1, y1: 2, x2: 3, y2: 4, x: 5, y: 6 },
@@ -112,7 +113,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 10, y: 0 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeCollinear: true });
+    sanitizeCommandsInto(out, cmds, { removeCollinear: true, removeDuplicates: false, tolerance: 1e-10 });
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -126,7 +127,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 10, y: 0 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeCollinear: true, tolerance: 1e-3 });
+    sanitizeCommandsInto(out, cmds, { removeCollinear: true, tolerance: 1e-3, removeDuplicates: false });
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -142,7 +143,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 10, y: 0 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, removeCollinear: true });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, removeCollinear: true, tolerance: 1e-10 });
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -156,7 +157,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: 5, y: 5 },
       { kind: 'line', x: 10, y: 0 },
     ];
-    sanitizeCommandsInto(arr, arr, { removeDuplicates: true });
+    sanitizeCommandsInto(arr, arr, { removeDuplicates: true, removeCollinear: false, tolerance: 1e-10 });
     expect(arr).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 5, y: 5 },
@@ -172,7 +173,7 @@ describe('sanitizeCommandsInto', () => {
       { kind: 'line', x: Number.NEGATIVE_INFINITY, y: 0 },
     ];
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, tolerance: 1 });
+    sanitizeCommandsInto(out, cmds, { removeDuplicates: true, tolerance: 1, removeCollinear: false });
     expect(out).toEqual(cmds);
   });
 });
@@ -184,7 +185,7 @@ describe('sanitizeCommands companion', () => {
       { kind: 'line', x: 5, y: 5 },
       { kind: 'line', x: 5, y: 5 },
     ];
-    const result = sanitizeCommands(cmds, { removeDuplicates: true });
+    const result = sanitizeCommands(cmds, { removeDuplicates: true, removeCollinear: false, tolerance: 1e-10 });
     expect(result).not.toBe(cmds);
     expect(result).toEqual([
       { kind: 'move', x: 0, y: 0 },

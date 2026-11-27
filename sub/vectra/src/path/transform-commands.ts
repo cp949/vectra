@@ -1,4 +1,5 @@
-import type { MatrixLike, PathCommand } from '../types/index';
+import type { Matrix } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { type TransformCommandsOptions, transformCommandsInto } from './transform-commands-into';
 
 /**
@@ -22,7 +23,7 @@ import { type TransformCommandsOptions, transformCommandsInto } from './transfor
  */
 export function transformCommands(
   commands: readonly PathCommand[],
-  matrix: MatrixLike,
+  matrix: Matrix,
   options?: TransformCommandsOptions
 ): PathCommand[] {
   return transformCommandsInto([], commands, matrix, options);

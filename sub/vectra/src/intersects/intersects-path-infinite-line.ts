@@ -19,7 +19,7 @@ import type { InfiniteLineLike, PathCommand, PathMeasurementOptions } from '../t
 export function intersectsPathInfiniteLine(
   commands: readonly PathCommand[],
   infiniteLine: InfiniteLineLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const o = readInfiniteLineOrigin(infiniteLine);

@@ -29,7 +29,7 @@ import { distanceToPoint } from './distance-to-point';
 export function classifyPoint(
   commands: readonly PathCommand[],
   point: Point,
-  options?: Required<ClassifyPointOptions>
+  options?: ClassifyPointOptions
 ): 'inside' | 'outside' | 'boundary' {
   const px = point.x;
   const py = point.y;

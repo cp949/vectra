@@ -1,4 +1,5 @@
-import type { PathCommand, RegularPolygonOptions, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand, RegularPolygonOptions } from '../types/index';
 import { regularPolygonCommandsInto } from './regular-polygon-commands-into';
 
 /**
@@ -16,10 +17,10 @@ import { regularPolygonCommandsInto } from './regular-polygon-commands-into';
  * @returns 새로 만든 PathCommand 배열
  */
 export function regularPolygonCommands(
-  center: XYInput,
+  center: Point,
   radius: number,
   sides: number,
-  options?: RegularPolygonOptions
+  options?: Required<RegularPolygonOptions>
 ): PathCommand[] {
   return regularPolygonCommandsInto([], center, radius, sides, options);
 }

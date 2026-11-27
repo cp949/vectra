@@ -216,13 +216,21 @@ describe('알 수 없는 command kind', () => {
   test('sanitizeCommandsInto는 끝점을 읽을 수 없어 중복으로 보지 않고 남긴다', () => {
     const unknown = unknownCommand(0, 0);
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, [move(0, 0), unknown], { removeDuplicates: true });
+    sanitizeCommandsInto(out, [move(0, 0), unknown], {
+      removeDuplicates: true,
+      removeCollinear: false,
+      tolerance: 1e-10,
+    });
     expect(out).toEqual([move(0, 0), unknown]);
   });
 
   test('sanitizeCommandsInto는 move 바로 뒤의 close를 쓰고도 current point를 옮기지 않는다', () => {
     const out: PathCommand[] = [];
-    sanitizeCommandsInto(out, [move(5, 5), close, line(5, 5)], { removeDuplicates: true });
+    sanitizeCommandsInto(out, [move(5, 5), close, line(5, 5)], {
+      removeDuplicates: true,
+      removeCollinear: false,
+      tolerance: 1e-10,
+    });
     expect(out).toEqual([move(5, 5), close]);
   });
 

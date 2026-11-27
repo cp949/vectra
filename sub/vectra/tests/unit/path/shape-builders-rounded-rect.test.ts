@@ -2,7 +2,7 @@
  * roundedRectCommandsInto unit test.
  *
  * radius=0 / clamp / 일반 case command 구성, KAPPA 기반 corner cubic handle 위치,
- * 음수 width 위임, NaN radius pass-through, tuple input을 검증한다.
+ * 음수 width 위임, NaN radius pass-through을 검증한다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -76,13 +76,5 @@ describe('roundedRectCommandsInto', () => {
     // 첫 command의 x = 0 + NaN = NaN이 그대로 흘러야 한다.
     const move = out[0] as { kind: 'move'; x: number; y: number };
     expect(Number.isNaN(move.x)).toBe(true);
-  });
-
-  test('rect tuple input도 지원한다', () => {
-    const out: PathCommand[] = [];
-    roundedRectCommandsInto(out, [0, 0, 100, 100], 0);
-    const plain: PathCommand[] = [];
-    rectCommandsInto(plain, [0, 0, 100, 100]);
-    expect(out).toEqual(plain);
   });
 });

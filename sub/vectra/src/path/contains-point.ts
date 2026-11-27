@@ -71,7 +71,7 @@ function countCrossingsInPolyline(pts: PointWritable[], px: number, py: number):
 export function containsPoint(
   commands: readonly PathCommand[],
   point: Point,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): boolean {
   if (commands.length === 0) return false;
 

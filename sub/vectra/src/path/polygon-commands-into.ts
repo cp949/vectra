@@ -1,6 +1,5 @@
-import { readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, PolygonLike } from '../types/index';
+import type { Polygon } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 
 /**
  * polygon을 move(첫 점) + line(나머지 점) + close, 총 N+1 command로 out에 기록하고 out을 반환한다.
@@ -10,22 +9,19 @@ import type { PathCommand, PolygonLike } from '../types/index';
  * 점 < 3여도 throw 없이 구성 가능한 만큼만 기록한다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param polygon 기록할 polygon (`readonly XYInput[]` 또는 `{ points }` object)
+ * @param polygon 기록할 다각형 좌표 배열 (`[x0, y0, x1, y1, …]`, 길이는 짝수)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function polygonCommandsInto(out: PathCommand[], polygon: PolygonLike): PathCommand[] {
-  const points = readPolygonPoints(polygon);
-
-  // clear 전에 길이를 읽어 두면 out과 무관하게 안전하다 (구조상 aliasing 불가).
+export function polygonCommandsInto(out: PathCommand[], polygon: Polygon): PathCommand[] {
   out.length = 0;
 
-  if (points.length === 0) {
+  if (polygon.length === 0) {
     return out;
   }
 
-  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) });
-  for (let i = 1; i < points.length; i++) {
-    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) });
+  out.push({ kind: 'move', x: polygon[0], y: polygon[1] });
+  for (let i = 2; i < polygon.length; i += 2) {
+    out.push({ kind: 'line', x: polygon[i], y: polygon[i + 1] });
   }
   out.push({ kind: 'close' });
   return out;

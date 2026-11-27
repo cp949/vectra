@@ -9,8 +9,8 @@ import { lineCommandsInto } from './line-commands-into';
  * invalid numeric(NaN, Inf)은 throw 없이 그대로 전파한다.
  * 성능 최적화가 필요하면 `lineCommandsInto`를 사용한다.
  *
- * @param from 시작점 (XYLike 또는 XYTuple)
- * @param to 끝점 (XYLike 또는 XYTuple)
+ * @param from 시작점 (점 객체)
+ * @param to 끝점 (점 객체)
  * @returns 새로 만든 PathCommand 배열
  */
 export function lineCommands(from: Point, to: Point): PathCommand[] {

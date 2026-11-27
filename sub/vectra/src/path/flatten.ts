@@ -15,6 +15,6 @@ import { flattenInto } from './flatten-into';
  * @param options flatten 옵션 (flatness, maxRecursion)
  * @returns 새로 만든 PointWritable point 배열
  */
-export function flatten(commands: readonly PathCommand[], options?: Required<PathFlattenOptions>): PointWritable[] {
+export function flatten(commands: readonly PathCommand[], options?: PathFlattenOptions): PointWritable[] {
   return flattenInto([], commands, options);
 }

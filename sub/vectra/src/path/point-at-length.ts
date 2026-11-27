@@ -16,7 +16,7 @@ import { pointAtLengthInto } from './point-at-length-into';
 export function pointAtLength(
   commands: readonly PathCommand[],
   distance: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): PointWritable | undefined {
   const out: PointWritable = { x: 0, y: 0 };
   return pointAtLengthInto(out, commands, distance, options) ? out : undefined;

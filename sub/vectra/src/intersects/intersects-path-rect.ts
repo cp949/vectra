@@ -25,7 +25,7 @@ import type { PathCommand, PathMeasurementOptions, RectLike } from '../types';
 export function intersectsPathRect(
   commands: readonly PathCommand[],
   rect: RectLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const rw = readRectWidth(rect);

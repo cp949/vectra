@@ -54,18 +54,6 @@ describe('rectCommandsInto', () => {
     ]);
   });
 
-  test('tuple rect input을 읽는다', () => {
-    const out: PathCommand[] = [];
-    rectCommandsInto(out, [0, 0, 2, 2]);
-    expect(out).toEqual([
-      { kind: 'move', x: 0, y: 0 },
-      { kind: 'line', x: 2, y: 0 },
-      { kind: 'line', x: 2, y: 2 },
-      { kind: 'line', x: 0, y: 2 },
-      { kind: 'close' },
-    ]);
-  });
-
   test('음수 width/height도 validation 없이 그대로 사용한다', () => {
     const out: PathCommand[] = [];
     rectCommandsInto(out, { x: 0, y: 0, width: -4, height: -2 });
@@ -86,29 +74,15 @@ describe('polylineCommandsInto', () => {
   test('N점을 move + (N-1) line, 총 N command로 기록한다', () => {
     const out: PathCommand[] = [];
     const result = polylineCommandsInto(out, [
-      [0, 0],
-      [1, 0],
-      [1, 1],
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 1, y: 1 },
     ]);
     expect(result).toBe(out);
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 1, y: 0 },
       { kind: 'line', x: 1, y: 1 },
-    ]);
-  });
-
-  test('point object form { points }를 읽는다', () => {
-    const out: PathCommand[] = [];
-    polylineCommandsInto(out, {
-      points: [
-        { x: 2, y: 3 },
-        { x: 4, y: 5 },
-      ],
-    });
-    expect(out).toEqual([
-      { kind: 'move', x: 2, y: 3 },
-      { kind: 'line', x: 4, y: 5 },
     ]);
   });
 
@@ -121,7 +95,7 @@ describe('polylineCommandsInto', () => {
 
   test('점 1개면 move만 기록한다', () => {
     const out: PathCommand[] = [];
-    polylineCommandsInto(out, [[9, 9]]);
+    polylineCommandsInto(out, [{ x: 9, y: 9 }]);
     expect(out).toEqual([{ kind: 'move', x: 9, y: 9 }]);
   });
 });
@@ -132,11 +106,7 @@ describe('polylineCommandsInto', () => {
 describe('polygonCommandsInto', () => {
   test('N점을 move + (N-1) line + close, 총 N+1 command로 기록한다', () => {
     const out: PathCommand[] = [];
-    const result = polygonCommandsInto(out, [
-      [0, 0],
-      [4, 0],
-      [4, 4],
-    ]);
+    const result = polygonCommandsInto(out, [0, 0, 4, 0, 4, 4]);
     expect(result).toBe(out);
     expect(out).toEqual([
       { kind: 'move', x: 0, y: 0 },
@@ -154,7 +124,7 @@ describe('polygonCommandsInto', () => {
 
   test('점 1개여도 throw 없이 move + close를 기록한다', () => {
     const out: PathCommand[] = [];
-    polygonCommandsInto(out, [[3, 3]]);
+    polygonCommandsInto(out, [3, 3]);
     expect(out).toEqual([{ kind: 'move', x: 3, y: 3 }, { kind: 'close' }]);
   });
 });

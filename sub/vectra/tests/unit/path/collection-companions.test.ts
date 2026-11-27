@@ -170,19 +170,17 @@ describe('roundedRectCommands', () => {
 // ──────────────────────────────────────────────
 describe('polylineCommands', () => {
   test('polylineCommandsInto 결과와 deep equal이다', () => {
-    const polyline = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 10, y: 0 },
-        { x: 10, y: 10 },
-      ],
-    };
+    const polyline = [
+      { x: 0, y: 0 },
+      { x: 10, y: 0 },
+      { x: 10, y: 10 },
+    ];
     const expected = polylineCommandsInto([], polyline);
     expect(polylineCommands(polyline)).toEqual(expected);
   });
 
   test('empty points는 empty array를 반환한다', () => {
-    expect(polylineCommands({ points: [] })).toEqual([]);
+    expect(polylineCommands([])).toEqual([]);
   });
 });
 
@@ -191,19 +189,13 @@ describe('polylineCommands', () => {
 // ──────────────────────────────────────────────
 describe('polygonCommands', () => {
   test('polygonCommandsInto 결과와 deep equal이다', () => {
-    const polygon = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 10, y: 0 },
-        { x: 5, y: 10 },
-      ],
-    };
+    const polygon = [0, 0, 10, 0, 5, 10];
     const expected = polygonCommandsInto([], polygon);
     expect(polygonCommands(polygon)).toEqual(expected);
   });
 
   test('empty points는 empty array를 반환한다', () => {
-    expect(polygonCommands({ points: [] })).toEqual([]);
+    expect(polygonCommands([])).toEqual([]);
   });
 });
 

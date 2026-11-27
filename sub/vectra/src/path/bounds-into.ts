@@ -6,7 +6,7 @@ import { quadraticBoundsInto } from '../curve/quadratic-bounds-into';
 import { createZeroBounds } from '../internal/bounds';
 import type { CenterArcWritable, PathCommand, PathMeasurementOptions } from '../types/index';
 import type { Bounds as FlatBounds } from '../types/flat-shapes.internal';
-import { forEachDrawSegment } from './path-segments.internal';
+import { cubicCurveFromSegment, forEachDrawSegment, quadraticCurveFromSegment } from './path-segments.internal';
 
 /** point 하나를 포함하도록 bounds 누적기를 확장한다. */
 function includePoint(out: BoundsWritable, x: number, y: number): void {
@@ -37,7 +37,7 @@ function includeBounds(out: BoundsWritable, bounds: FlatBounds): void {
 export function boundsInto<Out extends BoundsWritable>(
   out: Out,
   commands: readonly PathCommand[],
-  _options?: Required<PathMeasurementOptions>
+  _options?: PathMeasurementOptions
 ): Out {
   out.minX = Infinity;
   out.minY = Infinity;
@@ -69,31 +69,11 @@ export function boundsInto<Out extends BoundsWritable>(
       includePoint(out, seg.subpathStartX, seg.subpathStartY);
     } else if (seg.kind === 'quadratic') {
       // quadratic: interior extrema까지 정확히 포함
-      const cmd = seg.command;
-      quadraticBoundsInto(scratchBounds, {
-        kind: 'quadratic',
-        x0: fromX,
-        y0: fromY,
-        x1: cmd.x1,
-        y1: cmd.y1,
-        x2: cmd.x,
-        y2: cmd.y,
-      });
+      quadraticBoundsInto(scratchBounds, quadraticCurveFromSegment(seg));
       includeBounds(out, scratchBounds);
     } else if (seg.kind === 'cubic') {
       // cubic: interior extrema까지 정확히 포함
-      const cmd = seg.command;
-      cubicBoundsInto(scratchBounds, {
-        kind: 'cubic',
-        x0: fromX,
-        y0: fromY,
-        x1: cmd.x1,
-        y1: cmd.y1,
-        x2: cmd.x2,
-        y2: cmd.y2,
-        x3: cmd.x,
-        y3: cmd.y,
-      });
+      cubicBoundsInto(scratchBounds, cubicCurveFromSegment(seg));
       includeBounds(out, scratchBounds);
     } else {
       // arc: endpoint form → center form 변환 후 extrema 계산

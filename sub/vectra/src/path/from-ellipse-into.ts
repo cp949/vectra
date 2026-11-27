@@ -1,15 +1,14 @@
 import type { Ellipse } from '../types/flat-shapes.internal';
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import type { PathCommand } from '../types/index';
 
 /** `fromEllipseInto` / `fromEllipse` 옵션. */
 export interface PathFromEllipseOptions {
   /** sample 개수. 1 이상 정수. 기본 `64`. */
-  segments?: number;
+  segments: number;
   /** 첫 sample 각도, radian. 기본 `0` (+x 축). */
-  startAngle?: number;
+  startAngle: number;
   /** true = SVG y-down clockwise. 기본 `true`. */
-  clockwise?: boolean;
+  clockwise: boolean;
 }
 
 /**
@@ -39,11 +38,7 @@ export interface PathFromEllipseOptions {
  * @param options segments / startAngle / clockwise
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function fromEllipseInto(
-  out: PathCommand[],
-  ellipse: Ellipse,
-  options?: Required<PathFromEllipseOptions>
-): PathCommand[] {
+export function fromEllipseInto(out: PathCommand[], ellipse: Ellipse, options?: PathFromEllipseOptions): PathCommand[] {
   const segments = options === undefined ? 64 : options.segments;
   if (!Number.isInteger(segments) || segments < 1) {
     throw new RangeError('fromEllipseInto: segments must be an integer >= 1');

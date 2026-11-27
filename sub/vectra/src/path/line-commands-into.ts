@@ -8,8 +8,8 @@ import type { PathCommand } from '../types/index';
  * invalid numeric(NaN, Inf)은 throw 없이 그대로 전파한다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param from 시작점 (XYLike 또는 XYTuple)
- * @param to 끝점 (XYLike 또는 XYTuple)
+ * @param from 시작점 (점 객체)
+ * @param to 끝점 (점 객체)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function lineCommandsInto(out: PathCommand[], from: Point, to: Point): PathCommand[] {

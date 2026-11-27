@@ -1,5 +1,4 @@
 import type { Ellipse } from '../types/flat-shapes.internal';
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import type { PathCommand } from '../types/index';
 import { type EllipseArcOptions, ellipseArcInto } from './path-ellipse-arc.internal';
 
@@ -20,11 +19,7 @@ export type { EllipseArcOptions };
  * @param options 진행 방향 옵션. 생략 시 `clockwise: true`.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function ellipseCommandsInto(
-  out: PathCommand[],
-  ellipse: Ellipse,
-  options?: Required<EllipseArcOptions>
-): PathCommand[] {
+export function ellipseCommandsInto(out: PathCommand[], ellipse: Ellipse, options?: EllipseArcOptions): PathCommand[] {
   const rx = ellipse.rx;
   const ry = ellipse.ry;
   return ellipseArcInto(out, ellipse.cx, ellipse.cy, rx, ry, options === undefined ? true : options.clockwise);

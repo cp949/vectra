@@ -19,7 +19,7 @@ import { flattenPathInto } from './flatten.internal';
 export function flattenInto(
   out: PointWritable[],
   commands: readonly PathCommand[],
-  options?: Required<PathFlattenOptions>
+  options?: PathFlattenOptions
 ): PointWritable[] {
   return flattenPathInto(out, commands, options);
 }

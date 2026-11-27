@@ -1,4 +1,5 @@
-import type { PathCommand, QuadraticThroughOptions, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand, QuadraticThroughOptions } from '../types/index';
 import { quadraticThroughCommandsInto } from './quadratic-through-commands-into';
 
 /**
@@ -15,9 +16,9 @@ import { quadraticThroughCommandsInto } from './quadratic-through-commands-into'
  * @returns 새로 만든 PathCommand 배열
  */
 export function quadraticThroughCommands(
-  from: XYInput,
-  through: XYInput,
-  to: XYInput,
+  from: Point,
+  through: Point,
+  to: Point,
   options?: QuadraticThroughOptions
 ): PathCommand[] {
   return quadraticThroughCommandsInto([], from, through, to, options);

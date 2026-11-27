@@ -1,4 +1,5 @@
-import type { PathCommand, RectLike } from '../types/index';
+import type { Rect } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { roundedRectCommandsInto } from './rounded-rect-commands-into';
 
 /**
@@ -13,6 +14,6 @@ import { roundedRectCommandsInto } from './rounded-rect-commands-into';
  * @param radius corner radius
  * @returns 새로 만든 PathCommand 배열
  */
-export function roundedRectCommands(rect: RectLike, radius: number): PathCommand[] {
+export function roundedRectCommands(rect: Rect, radius: number): PathCommand[] {
   return roundedRectCommandsInto([], rect, radius);
 }

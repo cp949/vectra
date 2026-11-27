@@ -29,7 +29,7 @@ export function cubicThroughCommandsInto(
   from: Point,
   through: Point,
   to: Point,
-  options?: Required<CubicThroughOptions>
+  options?: CubicThroughOptions
 ): PathCommand[] {
   const t = options === undefined ? 0.5 : options.t;
   const controlScale = options === undefined ? 1 : options.controlScale;

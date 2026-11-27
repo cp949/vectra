@@ -1,4 +1,5 @@
-import type { PathCommand, PathMeasurementOptions, XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { tangentAtLengthInto } from './tangent-at-length-into';
 
 /**
@@ -27,7 +28,7 @@ export function tangentAtLength(
   commands: readonly PathCommand[],
   distance: number,
   options?: PathMeasurementOptions
-): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return tangentAtLengthInto(out, commands, distance, options) ? out : undefined;
 }

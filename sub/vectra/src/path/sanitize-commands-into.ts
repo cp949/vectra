@@ -4,9 +4,9 @@ import { removeCollinearCommandsInto } from './remove-collinear-commands-into';
 /** sanitize 옵션. */
 export interface SanitizeCommandsOptions {
   /** 연속된 동일 endpoint drawing command를 제거한다. 기본값 false. */
-  removeDuplicates?: boolean;
+  removeDuplicates: boolean;
   /** 직선 구간 collinear 중간 LineCommand를 제거한다. 기본값 false. */
-  removeCollinear?: boolean;
+  removeCollinear: boolean;
   /**
    * duplicate / collinear 판정 tolerance.
    *
@@ -15,7 +15,7 @@ export interface SanitizeCommandsOptions {
    *
    * 기본값 `1e-10` (`removeCollinearCommandsInto` 기본값과 일치).
    */
-  tolerance?: number;
+  tolerance: number;
 }
 
 /** drawing endpoint command의 끝점 좌표를 반환한다. close/move는 caller가 별도로 처리한다. */
@@ -56,9 +56,9 @@ export function sanitizeCommandsInto(
   commands: readonly PathCommand[],
   options?: SanitizeCommandsOptions
 ): PathCommand[] {
-  const removeDuplicates = options?.removeDuplicates ?? false;
-  const removeCollinear = options?.removeCollinear ?? false;
-  const tolerance = options?.tolerance ?? 1e-10;
+  const removeDuplicates = options === undefined ? false : options.removeDuplicates;
+  const removeCollinear = options === undefined ? false : options.removeCollinear;
+  const tolerance = options === undefined ? 1e-10 : options.tolerance;
 
   // aliasing 대비: out === commands인 경우 clear 전에 snapshot
   const snapshot = commands === (out as readonly PathCommand[]) ? Array.from(commands) : commands;

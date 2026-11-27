@@ -24,6 +24,6 @@ import { fromEllipseInto, type PathFromEllipseOptions } from './from-ellipse-int
  * @param options segments / startAngle / clockwise
  * @returns 새로 만든 PathCommand 배열
  */
-export function fromEllipse(ellipse: Ellipse, options?: Required<PathFromEllipseOptions>): PathCommand[] {
+export function fromEllipse(ellipse: Ellipse, options?: PathFromEllipseOptions): PathCommand[] {
   return fromEllipseInto([], ellipse, options);
 }

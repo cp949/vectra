@@ -4,7 +4,7 @@ import { hypot2 } from '../internal/numeric';
 /** circle/ellipse cubic Bezier 근사 공통 옵션. */
 export interface EllipseArcOptions {
   /** true = clockwise (SVG y-down 좌표계 기본). 기본값 true. */
-  clockwise?: boolean;
+  clockwise: boolean;
 }
 
 /**

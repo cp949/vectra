@@ -1,5 +1,6 @@
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { pointDist, polylineTotalLength } from '../internal/polyline';
-import type { PathCommand, PathMeasurementOptions, PathPropertiesResult, XYObjectWritable } from '../types/index';
+import type { PathCommand, PathMeasurementOptions, PathPropertiesResult } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
 import { hypot2 } from '../internal/numeric';
@@ -24,7 +25,7 @@ function writeTangent(result: PathPropertiesResult, ax: number, ay: number, bx: 
  * segment polyline에서 localTarget 위치의 점과 그 점이 놓인 edge 방향을 result에 기록한다.
  * 호출자가 points.length >= 2를 보장한다. 마지막 edge까지 누적이 모자라도 마지막 edge에서 보간한다.
  */
-function sampleSegment(result: PathPropertiesResult, points: readonly XYObjectWritable[], localTarget: number): void {
+function sampleSegment(result: PathPropertiesResult, points: readonly PointWritable[], localTarget: number): void {
   const n = points.length;
   let acc = 0;
   for (let i = 1; i < n; i++) {
@@ -69,7 +70,7 @@ export function propertiesAtLength(
 ): PathPropertiesResult | undefined {
   const flattener = createSegmentFlattener(options);
   // distance >= totalLength 처리를 위한 마지막 segment polyline 스냅샷
-  const lastBuf: XYObjectWritable[] = [];
+  const lastBuf: PointWritable[] = [];
 
   const result: PathPropertiesResult = { x: 0, y: 0, tangentX: 0, tangentY: 0, angle: 0, segmentIndex: 0 };
 

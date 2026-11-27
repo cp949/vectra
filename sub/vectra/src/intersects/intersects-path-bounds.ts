@@ -26,7 +26,7 @@ import type { BoundsLike, PathCommand, PathMeasurementOptions } from '../types';
 export function intersectsPathBounds(
   commands: readonly PathCommand[],
   bounds: BoundsLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const min = readBoundsMin(bounds);

@@ -19,7 +19,7 @@ import type { PathCommand, PathMeasurementOptions, RayLike } from '../types';
 export function intersectsPathRay(
   commands: readonly PathCommand[],
   ray: RayLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const o = readRayOrigin(ray);

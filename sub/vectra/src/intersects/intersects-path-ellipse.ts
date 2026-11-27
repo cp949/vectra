@@ -27,7 +27,7 @@ import { allFinite } from './curve-primitive-relation.internal';
 export function intersectsPathEllipse(
   commands: readonly PathCommand[],
   ellipse: EllipseLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const rx = readEllipseRadiusX(ellipse);

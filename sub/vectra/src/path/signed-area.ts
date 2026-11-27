@@ -1,4 +1,5 @@
-import type { PathCommand, PathMeasurementOptions, XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { flattenInto } from './flatten-into';
 
 /**
@@ -8,7 +9,7 @@ import { flattenInto } from './flatten-into';
  * caller가 시작 점을 마지막에 다시 push한 경우 마지막 edge가 zero 기여로 흘러간다.
  * 점이 2개 미만이면 0이다.
  */
-function shoelaceTwiceArea(pts: XYObjectWritable[]): number {
+function shoelaceTwiceArea(pts: PointWritable[]): number {
   let acc = 0;
   for (let i = 0; i < pts.length; i++) {
     const j = i + 1 === pts.length ? 0 : i + 1;
@@ -39,14 +40,14 @@ function shoelaceTwiceArea(pts: XYObjectWritable[]): number {
 export function signedArea(commands: readonly PathCommand[], options?: PathMeasurementOptions): number {
   if (commands.length === 0) return 0;
 
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
+  const flatness = options === undefined ? 0.5 : options.flatness;
+  const maxRecursion = options === undefined ? 32 : options.maxRecursion;
   const flatOpts = { flatness, maxRecursion };
 
   let total = 0;
 
   /** 현재 subpath를 flatten할 임시 buffer. */
-  const subpathBuf: XYObjectWritable[] = [];
+  const subpathBuf: PointWritable[] = [];
   /** 현재 subpath command를 누적하는 buffer. */
   const subpathCmds: PathCommand[] = [];
   /** 현재 subpath에 drawing segment가 존재하는지. */

@@ -12,6 +12,6 @@ import { boundsInto } from './bounds-into';
  * @param commands bounds를 계산할 path command sequence
  * @param options adaptive subdivision option (exact bounds 사용이므로 미활용)
  */
-export function bounds(commands: readonly PathCommand[], options?: Required<PathMeasurementOptions>): BoundsWritable {
+export function bounds(commands: readonly PathCommand[], options?: PathMeasurementOptions): BoundsWritable {
   return boundsInto(createZeroBounds(), commands, options);
 }

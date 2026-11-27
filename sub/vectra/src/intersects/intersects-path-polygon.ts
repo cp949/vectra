@@ -21,7 +21,7 @@ import type { PathCommand, PathMeasurementOptions, PolygonLike } from '../types'
 export function intersectsPathPolygon(
   commands: readonly PathCommand[],
   polygon: PolygonLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const tmp: { x: number; y: number }[] = [];

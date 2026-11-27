@@ -3,7 +3,7 @@ import type { PathCommand } from '../types/index';
 /** collinear 판정 옵션. */
 export interface RemoveCollinearOptions {
   /** collinear 판정 각도 허용 오차 (radian). 기본값 1e-10. */
-  angleTolerance?: number;
+  angleTolerance: number;
 }
 
 /**
@@ -41,7 +41,7 @@ export function removeCollinearCommandsInto(
     return out;
   }
 
-  const tol = options?.angleTolerance ?? 1e-10;
+  const tol = options === undefined ? 1e-10 : options.angleTolerance;
 
   // 직전 push된 command의 endpoint (current point)
   let lastX = 0;

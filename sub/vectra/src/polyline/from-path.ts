@@ -12,6 +12,6 @@ import { fromPathInto } from './from-path-into';
  * @param commands flatten할 path command sequence
  * @param options flatten 옵션 (flatness, maxRecursion)
  */
-export function fromPath(commands: readonly PathCommand[], options?: PathFlattenOptions): XYObjectWritable[] {
+export function fromPath(commands: readonly PathCommand[], options?: Partial<PathFlattenOptions>): XYObjectWritable[] {
   return fromPathInto([], commands, options);
 }

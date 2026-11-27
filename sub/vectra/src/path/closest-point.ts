@@ -18,7 +18,7 @@ import { closestPointInto } from './closest-point-into';
 export function closestPoint(
   commands: readonly PathCommand[],
   point: Point,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): PointWritable | undefined {
   const out: PointWritable = { x: 0, y: 0 };
   return closestPointInto(out, commands, point, options) ? out : undefined;

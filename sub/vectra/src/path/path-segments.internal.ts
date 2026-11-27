@@ -1,3 +1,4 @@
+import type { CubicCurve, QuadraticCurve } from '../types/flat-shapes.internal';
 import type {
   ArcCommand,
   CloseCommand,
@@ -56,6 +57,36 @@ export type DrawSegment =
       subpathStartX: number;
       subpathStartY: number;
     };
+
+/** 이차 경로 명령에 시작점을 더해 평평한 이차 곡선을 만든다. */
+export function quadraticCurveFromSegment(seg: Extract<DrawSegment, { kind: 'quadratic' }>): QuadraticCurve {
+  const { command } = seg;
+  return {
+    kind: 'quadratic',
+    x0: seg.fromX,
+    y0: seg.fromY,
+    x1: command.x1,
+    y1: command.y1,
+    x2: command.x,
+    y2: command.y,
+  };
+}
+
+/** 삼차 경로 명령에 시작점을 더해 평평한 삼차 곡선을 만든다. */
+export function cubicCurveFromSegment(seg: Extract<DrawSegment, { kind: 'cubic' }>): CubicCurve {
+  const { command } = seg;
+  return {
+    kind: 'cubic',
+    x0: seg.fromX,
+    y0: seg.fromY,
+    x1: command.x1,
+    y1: command.y1,
+    x2: command.x2,
+    y2: command.y2,
+    x3: command.x,
+    y3: command.y,
+  };
+}
 
 /**
  * commands를 순회하며 drawing segment마다 visitor를 호출한다.

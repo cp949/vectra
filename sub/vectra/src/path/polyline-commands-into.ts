@@ -1,5 +1,6 @@
+import type { Polyline } from '../types/flat-shapes.internal';
 import { writePolylineCommandsInto } from '../internal/polyline-path';
-import type { PathCommand, PolylineLike } from '../types/index';
+import type { PathCommand } from '../types/index';
 
 /**
  * polyline을 move(첫 점) + line(나머지 점), 총 N command로 out에 기록하고 out을 반환한다.
@@ -10,9 +11,9 @@ import type { PathCommand, PolylineLike } from '../types/index';
  * `polyline.toPathInto`와 같은 internal writer를 공유한다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param polyline 기록할 polyline (`readonly XYInput[]` 또는 `{ points }` object)
+ * @param polyline 기록할 polyline (점 객체 배열)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function polylineCommandsInto(out: PathCommand[], polyline: PolylineLike): PathCommand[] {
+export function polylineCommandsInto(out: PathCommand[], polyline: Polyline): PathCommand[] {
   return writePolylineCommandsInto(out, polyline);
 }

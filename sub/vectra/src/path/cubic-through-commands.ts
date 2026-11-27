@@ -23,7 +23,7 @@ export function cubicThroughCommands(
   from: Point,
   through: Point,
   to: Point,
-  options?: Required<CubicThroughOptions>
+  options?: CubicThroughOptions
 ): PathCommand[] {
   return cubicThroughCommandsInto([], from, through, to, options);
 }

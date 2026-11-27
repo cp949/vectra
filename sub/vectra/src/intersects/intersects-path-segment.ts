@@ -19,7 +19,7 @@ import type { PathCommand, PathMeasurementOptions, SegmentLike } from '../types'
 export function intersectsPathSegment(
   commands: readonly PathCommand[],
   line: SegmentLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const a = readSegmentA(line);

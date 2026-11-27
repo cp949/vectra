@@ -4,7 +4,7 @@ import { cubicTAtLength } from '../curve/cubic-t-at-length';
 import { quadraticSplitInto } from '../curve/quadratic-split-into';
 import { quadraticTAtLength } from '../curve/quadratic-t-at-length';
 import type { CubicCommand, PathCommand, QuadraticCommand } from '../types/index';
-import type { DrawSegment } from './path-segments.internal';
+import { cubicCurveFromSegment, quadraticCurveFromSegment, type DrawSegment } from './path-segments.internal';
 
 /**
  * quadratic/cubic curve type의 split writer. arc-length 기준 t를 구한 뒤 curve domain의
@@ -17,17 +17,7 @@ export function writeQuadraticSplit(
   seg: DrawSegment & { kind: 'quadratic' },
   local: number
 ): void {
-  const cmd = seg.command;
-  // v2-migration: path의 곡선 변환을 한곳에서 관리할 때 합친다.
-  const curve = {
-    kind: 'quadratic',
-    x0: seg.fromX,
-    y0: seg.fromY,
-    x1: cmd.x1,
-    y1: cmd.y1,
-    x2: cmd.x,
-    y2: cmd.y,
-  } as const;
+  const curve = quadraticCurveFromSegment(seg);
   const t = quadraticTAtLength(curve, local);
   const left = createZeroQuadraticCurve();
   const right = createZeroQuadraticCurve();
@@ -57,19 +47,7 @@ export function writeCubicSplit(
   seg: DrawSegment & { kind: 'cubic' },
   local: number
 ): void {
-  const cmd = seg.command;
-  // v2-migration: path의 곡선 변환을 한곳에서 관리할 때 합친다.
-  const curve = {
-    kind: 'cubic',
-    x0: seg.fromX,
-    y0: seg.fromY,
-    x1: cmd.x1,
-    y1: cmd.y1,
-    x2: cmd.x2,
-    y2: cmd.y2,
-    x3: cmd.x,
-    y3: cmd.y,
-  } as const;
+  const curve = cubicCurveFromSegment(seg);
   const t = cubicTAtLength(curve, local);
   const left = createZeroCubicCurve();
   const right = createZeroCubicCurve();

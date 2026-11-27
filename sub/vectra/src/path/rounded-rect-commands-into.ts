@@ -1,5 +1,5 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { PathCommand, RectLike } from '../types/index';
+import type { Rect } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { KAPPA } from './path-ellipse-arc.internal';
 import { rectCommandsInto } from './rect-commands-into';
 
@@ -15,15 +15,15 @@ import { rectCommandsInto } from './rect-commands-into';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param rect 기록할 rect ({ x, y, width, height } object 또는 4-tuple)
+ * @param rect 기록할 rect ({ x, y, width, height } 객체)
  * @param radius corner radius. uniform. clamp 후 사용
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function roundedRectCommandsInto(out: PathCommand[], rect: RectLike, radius: number): PathCommand[] {
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+export function roundedRectCommandsInto(out: PathCommand[], rect: Rect, radius: number): PathCommand[] {
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
   // r === 0이면 rectCommandsInto와 결과가 같다. 음수 width/height는 width/2 또는 height/2가
   // 음수가 되어 Math.max(0, ...) 결과 0으로 떨어지므로 rectCommandsInto에 위임된다.

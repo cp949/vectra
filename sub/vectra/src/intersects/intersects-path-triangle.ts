@@ -25,7 +25,7 @@ import type { PathCommand, PathMeasurementOptions, TriangleLike } from '../types
 export function intersectsPathTriangle(
   commands: readonly PathCommand[],
   triangle: TriangleLike,
-  options?: PathMeasurementOptions
+  options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);

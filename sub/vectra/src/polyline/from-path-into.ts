@@ -22,7 +22,7 @@ import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types
 export function fromPathInto(
   outPoints: XYObjectWritable[],
   commands: readonly PathCommand[],
-  options?: PathFlattenOptions
+  options?: Partial<PathFlattenOptions>
 ): XYObjectWritable[] {
   return flattenPathInto(outPoints, commands, options);
 }

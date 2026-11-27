@@ -30,7 +30,7 @@ import { subpathBoundsInto } from './subpath-bounds-into';
 export function subpathBounds(
   commands: readonly PathCommand[],
   index: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): BoundsWritable {
   return subpathBoundsInto(createZeroBounds(), commands, index, options);
 }

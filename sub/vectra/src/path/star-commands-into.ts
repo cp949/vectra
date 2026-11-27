@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, StarOptions, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand, StarOptions } from '../types/index';
 
 /**
  * star polygon을 move + (2 * points - 1) line + close, 총 2 * points + 1 command로 out에 기록하고 out을 반환한다.
@@ -12,7 +12,7 @@ import type { PathCommand, StarOptions, XYInput } from '../types/index';
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param center star 중심점 (XYInput)
+ * @param center star 중심점 (Point)
  * @param innerRadius inner vertex가 위치한 원의 반지름
  * @param outerRadius outer vertex가 위치한 원의 반지름
  * @param points outer vertex 수 (별의 꼭짓점 수). 3 이상 정수가 아니면 out clear만 (non-integer/NaN/Infinity 포함)
@@ -21,11 +21,11 @@ import type { PathCommand, StarOptions, XYInput } from '../types/index';
  */
 export function starCommandsInto(
   out: PathCommand[],
-  center: XYInput,
+  center: Point,
   innerRadius: number,
   outerRadius: number,
   points: number,
-  options?: StarOptions
+  options?: Required<StarOptions>
 ): PathCommand[] {
   out.length = 0;
   if (!Number.isInteger(points) || points < 3) {
@@ -33,10 +33,10 @@ export function starCommandsInto(
     return out;
   }
 
-  const startAngle = options?.startAngle ?? -Math.PI / 2;
-  const clockwise = options?.clockwise ?? true;
-  const cx = readX(center);
-  const cy = readY(center);
+  const startAngle = options === undefined ? -Math.PI / 2 : options.startAngle;
+  const clockwise = options === undefined ? true : options.clockwise;
+  const cx = center.x;
+  const cy = center.y;
   const total = 2 * points;
   // 한 vertex 당 각도 step. clockwise(true)면 SVG y-down에서 각도 증가 = 시계 방향.
   const step = ((clockwise ? 1 : -1) * (2 * Math.PI)) / total;

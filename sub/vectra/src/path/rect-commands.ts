@@ -1,4 +1,5 @@
-import type { PathCommand, RectLike } from '../types/index';
+import type { Rect } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 import { rectCommandsInto } from './rect-commands-into';
 
 /**
@@ -12,6 +13,6 @@ import { rectCommandsInto } from './rect-commands-into';
  * @param rect 변환할 rect input
  * @returns 새로 만든 PathCommand 배열
  */
-export function rectCommands(rect: RectLike): PathCommand[] {
+export function rectCommands(rect: Rect): PathCommand[] {
   return rectCommandsInto([], rect);
 }

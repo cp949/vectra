@@ -22,7 +22,7 @@ import { pointAtLengthRatioInto } from './point-at-length-ratio-into';
 export function pointAtLengthRatio(
   commands: readonly PathCommand[],
   ratio: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): PointWritable | undefined {
   const out: PointWritable = { x: 0, y: 0 };
   return pointAtLengthRatioInto(out, commands, ratio, options) ? out : undefined;

@@ -27,7 +27,7 @@ export function pointAtLengthRatioInto(
   out: PointWritable,
   commands: readonly PathCommand[],
   ratio: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): boolean {
   const total = length(commands, options);
   return pointAtLengthInto(out, commands, ratio * total, options);

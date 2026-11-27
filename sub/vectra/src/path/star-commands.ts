@@ -1,4 +1,5 @@
-import type { PathCommand, StarOptions, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand, StarOptions } from '../types/index';
 import { starCommandsInto } from './star-commands-into';
 
 /**
@@ -17,11 +18,11 @@ import { starCommandsInto } from './star-commands-into';
  * @returns 새로 만든 PathCommand 배열
  */
 export function starCommands(
-  center: XYInput,
+  center: Point,
   innerRadius: number,
   outerRadius: number,
   points: number,
-  options?: StarOptions
+  options?: Required<StarOptions>
 ): PathCommand[] {
   return starCommandsInto([], center, innerRadius, outerRadius, points, options);
 }

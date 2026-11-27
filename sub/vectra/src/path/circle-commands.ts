@@ -15,6 +15,6 @@ import { circleCommandsInto, type EllipseArcOptions } from './circle-commands-in
  * @param options clockwise, startAngle 옵션
  * @returns 새로 만든 PathCommand 배열
  */
-export function circleCommands(circle: Circle, options?: Required<EllipseArcOptions>): PathCommand[] {
+export function circleCommands(circle: Circle, options?: EllipseArcOptions): PathCommand[] {
   return circleCommandsInto([], circle, options);
 }

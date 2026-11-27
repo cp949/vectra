@@ -28,7 +28,7 @@ import { normalAtLengthInto } from './normal-at-length-into';
 export function normalAtLength(
   commands: readonly PathCommand[],
   distance: number,
-  options?: Required<PathMeasurementOptions>
+  options?: PathMeasurementOptions
 ): PointWritable | undefined {
   const out: PointWritable = { x: 0, y: 0 };
   return normalAtLengthInto(out, commands, distance, options) ? out : undefined;

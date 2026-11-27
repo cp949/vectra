@@ -1,5 +1,5 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import type { MatrixLike, PathCommand } from '../types/index';
+import type { Matrix } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 
 /** transformCommandsInto 옵션. */
 export interface TransformCommandsOptions {
@@ -11,7 +11,7 @@ export interface TransformCommandsOptions {
    *
    * 기본값 `'keep'`.
    */
-  arcHandling?: 'keep' | 'error';
+  arcHandling: 'keep' | 'error';
 }
 
 /**
@@ -33,17 +33,17 @@ export interface TransformCommandsOptions {
  *
  * @param out 변환 결과를 기록할 mutable PathCommand 배열
  * @param commands 변환할 입력 command sequence (absolute 전제)
- * @param matrix 적용할 affine matrix. `{ a, b, c, d, tx, ty }` object 또는 6-tuple.
+ * @param matrix 적용할 affine matrix. `{ a, b, c, d, tx, ty }` 객체.
  * @param options arc 처리 방식 옵션. 생략 시 `arcHandling: 'keep'`.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function transformCommandsInto(
   out: PathCommand[],
   commands: readonly PathCommand[],
-  matrix: MatrixLike,
+  matrix: Matrix,
   options?: TransformCommandsOptions
 ): PathCommand[] {
-  const arcHandling = options?.arcHandling ?? 'keep';
+  const arcHandling = options === undefined ? 'keep' : options.arcHandling;
 
   // clear 전에 snapshot해 aliasing(out === commands)을 안전하게 처리
   const snapshot = commands === (out as readonly PathCommand[]) ? Array.from(commands) : commands;
@@ -54,12 +54,12 @@ export function transformCommandsInto(
     return out;
   }
 
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
 
   // transformPointInto와 동일한 affine 식: (x', y') = (a·x + c·y + tx, b·x + d·y + ty)
   const mapX = (x: number, y: number): number => a * x + c * y + tx;

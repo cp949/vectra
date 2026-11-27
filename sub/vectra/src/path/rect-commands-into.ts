@@ -1,5 +1,5 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { PathCommand, RectLike } from '../types/index';
+import type { Rect } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types/index';
 
 /**
  * rect를 move + 3 line + close, 총 5 command로 out에 기록하고 out을 반환한다.
@@ -9,14 +9,14 @@ import type { PathCommand, RectLike } from '../types/index';
  * 음수 width/height는 validation 없이 그대로 사용한다 (기존 path Invalid numeric field 정책).
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param rect 기록할 rect ({ x, y, width, height } object 또는 4-tuple)
+ * @param rect 기록할 rect ({ x, y, width, height } 객체)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
-export function rectCommandsInto(out: PathCommand[], rect: RectLike): PathCommand[] {
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const w = readRectWidth(rect);
-  const h = readRectHeight(rect);
+export function rectCommandsInto(out: PathCommand[], rect: Rect): PathCommand[] {
+  const x = rect.x;
+  const y = rect.y;
+  const w = rect.width;
+  const h = rect.height;
 
   out.length = 0;
   out.push({ kind: 'move', x, y });

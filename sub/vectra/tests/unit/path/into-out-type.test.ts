@@ -2,6 +2,7 @@
 import { expect, expectTypeOf, test } from 'vitest';
 import { arcByEndpointCommandsInto } from '../../../src/path/arc-by-endpoint-commands-into';
 import { boundsInto } from '../../../src/path/bounds-into';
+import { polygonCommandsInto } from '../../../src/path/polygon-commands-into';
 import { subpathBoundsInto } from '../../../src/path/subpath-bounds-into';
 import { arcThroughCommandsInto } from '../../../src/path/arc-through-commands-into';
 import { circleCommandsInto } from '../../../src/path/circle-commands-into';
@@ -11,8 +12,19 @@ import { lineCommandsInto } from '../../../src/path/line-commands-into';
 import { segmentCommandsInto } from '../../../src/path/segment-commands-into';
 import { cubicThroughCommandsInto } from '../../../src/path/cubic-through-commands-into';
 import { flattenInto } from '../../../src/path/flatten-into';
+import { polylineCommandsInto } from '../../../src/path/polyline-commands-into';
+import { quadraticThroughCommandsInto } from '../../../src/path/quadratic-through-commands-into';
+import { rectCommandsInto } from '../../../src/path/rect-commands-into';
+import { roundedRectCommandsInto } from '../../../src/path/rounded-rect-commands-into';
+import { regularPolygonCommandsInto } from '../../../src/path/regular-polygon-commands-into';
+import { starCommandsInto } from '../../../src/path/star-commands-into';
+import { transformCommandsInto } from '../../../src/path/transform-commands-into';
+import { partialInto } from '../../../src/path/partial-into';
+import { orientCommandsInto } from '../../../src/path/orient-commands-into';
+import { sanitizeCommandsInto } from '../../../src/path/sanitize-commands-into';
+import { removeCollinearCommandsInto } from '../../../src/path/remove-collinear-commands-into';
 import type { PathCommand } from '../../../src/types';
-import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
+import type { Point, PointWritable, Polygon } from '../../../src/types/flat-shapes.internal';
 
 test('시작점을 점 객체로 받는다', () => {
   expectTypeOf(arcByEndpointCommandsInto).parameter(1).toEqualTypeOf<Point>();
@@ -106,4 +118,95 @@ test('flattenInto은 고정 원소 타입으로 같은 출력 배열을 반환�
   const result = flattenInto(out, []);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('다각형 경로 생성은 교차 배치 좌표 배열을 받는다', () => {
+  expectTypeOf(polygonCommandsInto).parameter(1).toEqualTypeOf<Polygon>();
+});
+
+test('polygonCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = polygonCommandsInto(out, [0, 0, 1, 0, 1, 1]);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('polylineCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = polylineCommandsInto(out, [
+    { x: 0, y: 0 },
+    { x: 1, y: 1 },
+  ]);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('quadraticThroughCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = quadraticThroughCommandsInto(out, { x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 0 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('rectCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = rectCommandsInto(out, { x: 0, y: 0, width: 4, height: 4 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('roundedRectCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = roundedRectCommandsInto(out, { x: 0, y: 0, width: 4, height: 4 }, 1);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('regularPolygonCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = regularPolygonCommandsInto(out, { x: 0, y: 0 }, 2, 3);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('starCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = starCommandsInto(out, { x: 0, y: 0 }, 1, 2, 5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('transformCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = transformCommandsInto(out, [], { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('partialInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = partialInto(out, [], 0, 1);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('orientCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = orientCommandsInto(out, [], true);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('sanitizeCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = sanitizeCommandsInto(out, []);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
+});
+
+test('removeCollinearCommandsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PathCommand[] = [];
+  const result = removeCollinearCommandsInto(out, []);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PathCommand[]>();
 });

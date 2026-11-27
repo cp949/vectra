@@ -1,7 +1,9 @@
+/** 경로 함수의 좌표와 분기 동작을 검증한다. */
+import type { Matrix } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { equalizeSegmentsInto } from '../../../src/path/equalize-segments-into';
 import { transformCommandsInto } from '../../../src/path/transform-commands-into';
-import type { MatrixLike, PathCommand } from '../../../src/types/index';
+import type { PathCommand } from '../../../src/types/index';
 
 // 그리는 segment 수를 세는 테스트 보조. forEachDrawSegment와 동일 축을 직접 재현하지 않고
 // kind 기준으로 line/quadratic/cubic/arc/close 명령 개수를 센다.
@@ -19,7 +21,7 @@ function drawCount(commands: readonly PathCommand[]): number {
 // transformCommandsInto
 // ──────────────────────────────────────────────
 describe('transformCommandsInto', () => {
-  const identity: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+  const identity: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
 
   test('commands가 비어 있으면 out을 clear만 한다', () => {
     const out: PathCommand[] = [{ kind: 'close' }];
@@ -42,7 +44,7 @@ describe('transformCommandsInto', () => {
   });
 
   test('translation matrix는 모든 endpoint와 control point를 이동한다', () => {
-    const translate: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
+    const translate: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 5, y: 5 },
@@ -60,7 +62,7 @@ describe('transformCommandsInto', () => {
   });
 
   test('uniform scale matrix는 좌표를 비례 확대한다', () => {
-    const scale: MatrixLike = { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: 0 };
+    const scale: Matrix = { a: 2, b: 0, c: 0, d: 2, tx: 0, ty: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 1, y: 2 },
       { kind: 'line', x: 3, y: 4 },
@@ -73,16 +75,8 @@ describe('transformCommandsInto', () => {
     ]);
   });
 
-  test('MatrixTuple 형식도 동일하게 처리한다', () => {
-    const tuple: MatrixLike = [1, 0, 0, 1, 10, 20];
-    const cmds: PathCommand[] = [{ kind: 'move', x: 1, y: 1 }];
-    const out: PathCommand[] = [];
-    transformCommandsInto(out, cmds, tuple);
-    expect(out).toEqual([{ kind: 'move', x: 11, y: 21 }]);
-  });
-
   test('arcHandling 기본값(keep)은 endpoint만 변환하고 rx/ry/xRotation은 보존한다', () => {
-    const translate: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
+    const translate: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'arc', rx: 5, ry: 3, xRotation: 0.2, largeArc: true, sweep: false, x: 8, y: 9 },
@@ -120,7 +114,7 @@ describe('transformCommandsInto', () => {
       { kind: 'move', x: 1, y: 1 },
       { kind: 'line', x: 2, y: 2 },
     ];
-    const translate: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 1, ty: 1 };
+    const translate: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 1, ty: 1 };
     transformCommandsInto(arr, arr, translate);
     expect(arr).toEqual([
       { kind: 'move', x: 2, y: 2 },

@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { PathCommand, QuadraticThroughOptions, XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
+import type { PathCommand, QuadraticThroughOptions } from '../types/index';
 
 /**
  * from → to를 잇는 quadratic Bezier가 parameter `t`에서 through 점을 통과하도록 control point를
@@ -13,26 +13,26 @@ import type { PathCommand, QuadraticThroughOptions, XYInput } from '../types/ind
  * out을 clear(length = 0) 후 push 방식으로 채운다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param from 시작점 (XYInput)
- * @param through quadratic 위 parameter `t`에서 통과해야 할 점 (XYInput)
- * @param to 끝점 (XYInput)
+ * @param from 시작점 (Point)
+ * @param through quadratic 위 parameter `t`에서 통과해야 할 점 (Point)
+ * @param to 끝점 (Point)
  * @param options through 점의 parameter 위치 옵션 (기본 `t = 0.5`)
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function quadraticThroughCommandsInto(
   out: PathCommand[],
-  from: XYInput,
-  through: XYInput,
-  to: XYInput,
+  from: Point,
+  through: Point,
+  to: Point,
   options?: QuadraticThroughOptions
 ): PathCommand[] {
-  const t = options?.t ?? 0.5;
-  const fx = readX(from);
-  const fy = readY(from);
-  const tx = readX(to);
-  const ty = readY(to);
-  const thx = readX(through);
-  const thy = readY(through);
+  const t = options === undefined ? 0.5 : options.t;
+  const fx = from.x;
+  const fy = from.y;
+  const tx = to.x;
+  const ty = to.y;
+  const thx = through.x;
+  const thy = through.y;
 
   const u = 1 - t;
   const denom = 2 * t * u;

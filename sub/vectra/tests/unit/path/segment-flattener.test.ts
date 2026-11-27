@@ -79,19 +79,15 @@ describe('createSegmentFlattener 옵션 기본값', () => {
     expect(result.length).toBeGreaterThan(2);
   });
 
-  test('빈 객체를 주면 두 필드 모두 기본값을 쓴다', () => {
-    expect(snapshotOf(createSegmentFlattener({}).flatten(seg))).toEqual(expectedCubic(0.5, 32));
-  });
-
-  test('flatness만 지정하면 maxRecursion은 32를 쓴다', () => {
-    const result = snapshotOf(createSegmentFlattener({ flatness: 0.01 }).flatten(seg));
+  test('flatness를 줄이면 점이 늘어난다', () => {
+    const result = snapshotOf(createSegmentFlattener({ flatness: 0.01, maxRecursion: 32 }).flatten(seg));
 
     expect(result).toEqual(expectedCubic(0.01, 32));
     expect(result.length).toBeGreaterThan(expectedCubic(0.5, 32).length);
   });
 
-  test('maxRecursion만 지정하면 flatness는 0.5를 쓴다', () => {
-    const result = snapshotOf(createSegmentFlattener({ maxRecursion: 1 }).flatten(seg));
+  test('maxRecursion을 1로 제한하면 점이 줄어든다', () => {
+    const result = snapshotOf(createSegmentFlattener({ maxRecursion: 1, flatness: 0.5 }).flatten(seg));
 
     expect(result).toEqual(expectedCubic(0.5, 1));
     expect(result.length).toBeLessThan(expectedCubic(0.5, 32).length);
@@ -104,7 +100,7 @@ describe('createSegmentFlattener 옵션 기본값', () => {
   });
 
   test('0을 지정하면 기본값으로 바뀌지 않고 0 그대로 쓴다', () => {
-    const result = snapshotOf(createSegmentFlattener({ maxRecursion: 0 }).flatten(seg));
+    const result = snapshotOf(createSegmentFlattener({ maxRecursion: 0, flatness: 0.5 }).flatten(seg));
 
     expect(result).toEqual(expectedCubic(0.5, 0));
     expect(result).toEqual([
