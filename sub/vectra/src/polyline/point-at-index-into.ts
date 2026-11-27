@@ -1,6 +1,4 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { PolylineLike, XYWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 index번째 point를 out에 기록한다.
@@ -12,11 +10,13 @@ import type { PolylineLike, XYWritable } from '../types';
  * @param polyline point를 읽을 polyline
  * @param index 읽을 point index
  */
-export function pointAtIndexInto(out: XYWritable, polyline: PolylineLike, index: number): boolean {
-  const points = readPolylinePoints(polyline);
+export function pointAtIndexInto(out: PointWritable, polyline: Polyline, index: number): boolean {
+  const points = polyline;
   if (!Number.isInteger(index) || index < 0 || index >= points.length) {
     return false;
   }
-  writeXY(out, readX(points[index]), readY(points[index]));
+  const { x, y } = points[index];
+  out.x = x;
+  out.y = y;
   return true;
 }

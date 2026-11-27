@@ -1,6 +1,5 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, PolylineMonotonicAxis, PolylineMonotonicAxisOptions } from '../types';
+import type { PolylineMonotonicAxis, PolylineMonotonicAxisOptions } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 x 좌표열과 y 좌표열이 각각 단조인지 독립적으로 판정한다.
@@ -18,12 +17,12 @@ import type { PolylineLike, PolylineMonotonicAxis, PolylineMonotonicAxisOptions 
  * @param polyline 축별 단조 여부를 판정할 polyline
  * @param options 단조 판정 옵션. `strict` 기본값 `false`(non-strict)
  */
-export function monotonicAxis(polyline: PolylineLike, options?: PolylineMonotonicAxisOptions): PolylineMonotonicAxis {
-  const points = readPolylinePoints(polyline);
+export function monotonicAxis(polyline: Polyline, options?: PolylineMonotonicAxisOptions): PolylineMonotonicAxis {
+  const points = polyline;
   const n = points.length;
   if (n < 2) return 'both';
 
-  const strict = options?.strict ?? false;
+  const strict = options === undefined ? false : options.strict;
 
   // 각 축이 증가/감소 방향과 계속 일치하는지 추적한다. 두 플래그가 모두 false면 그 축은 탈락이다.
   let xInc = true;
@@ -31,12 +30,12 @@ export function monotonicAxis(polyline: PolylineLike, options?: PolylineMonotoni
   let yInc = true;
   let yDec = true;
 
-  let prevX = readX(points[0]);
-  let prevY = readY(points[0]);
+  let prevX = points[0].x;
+  let prevY = points[0].y;
 
   for (let i = 1; i < n; i++) {
-    const cx = readX(points[i]);
-    const cy = readY(points[i]);
+    const cx = points[i].x;
+    const cy = points[i].y;
     const dx = cx - prevX;
     const dy = cy - prevY;
     prevX = cx;

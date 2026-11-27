@@ -1,5 +1,5 @@
-import { createLegacyBounds } from '../internal/bounds';
-import type { BoundsWritable, PolylineLike } from '../types';
+import { createZeroBounds } from '../internal/bounds';
+import type { BoundsWritable, Polyline } from '../types/flat-shapes.internal';
 import { boundsInto } from './bounds-into';
 
 /**
@@ -7,7 +7,7 @@ import { boundsInto } from './bounds-into';
  *
  * empty polyline은 sentinel empty bounds인 min=(Infinity, Infinity), max=(-Infinity, -Infinity)를 반환한다.
  */
-export function bounds(polyline: PolylineLike): BoundsWritable {
-  const seed = createLegacyBounds();
+export function bounds(polyline: Polyline): BoundsWritable {
+  const seed = createZeroBounds();
   return boundsInto(seed, polyline);
 }

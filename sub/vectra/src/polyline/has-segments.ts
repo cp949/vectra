@@ -1,5 +1,4 @@
-import { readPolylinePoints } from '../internal/polyline';
-import type { PolylineLike } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polyline이 하나 이상의 segment를 갖는지 반환한다.
@@ -9,6 +8,6 @@ import type { PolylineLike } from '../types';
  *
  * @param polyline 확인할 polyline
  */
-export function hasSegments(polyline: PolylineLike): boolean {
-  return readPolylinePoints(polyline).length >= 2;
+export function hasSegments(polyline: Polyline): boolean {
+  return polyline.length >= 2;
 }

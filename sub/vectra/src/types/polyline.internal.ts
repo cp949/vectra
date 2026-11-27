@@ -61,5 +61,5 @@ export interface PolylineMonotonicAxisOptions {
    * delta `0`(repeated 좌표, signed-zero `-0` 포함)이 하나라도 있으면 해당 축은 탈락한다.
    * 기본값 `false`(non-strict): delta `0`을 허용한다.
    */
-  strict?: boolean;
+  strict: boolean;
 }

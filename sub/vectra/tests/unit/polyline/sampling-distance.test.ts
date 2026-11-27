@@ -1,3 +1,4 @@
+/** 점 배열의 길이 샘플, 최근접점, 거리와 인덱스 조회를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { bounds } from '../../../src/polyline/bounds';
 import { closestPoint } from '../../../src/polyline/closest-point';
@@ -11,48 +12,44 @@ import { pointAtLengthRatio } from '../../../src/polyline/point-at-length-ratio'
 import { pointAtLengthRatioInto } from '../../../src/polyline/point-at-length-ratio-into';
 import { segmentAt } from '../../../src/polyline/segment-at';
 import { segmentAtInto } from '../../../src/polyline/segment-at-into';
-import type { PolylineLike, SegmentWritable, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { XYObjectWritable, XYWritable } from '../../../src/types';
 
-const EMPTY: PolylineLike = { points: [] };
-const SINGLE: PolylineLike = { points: [{ x: 1, y: 2 }] };
+import type { Polyline, SegmentWritable } from '../../../src/types/flat-shapes.internal';
+
+const EMPTY: Polyline = [];
+const SINGLE: Polyline = [{ x: 1, y: 2 }];
 // 모든 segment가 zero-length인 polyline
-const REPEATED: PolylineLike = {
-  points: [
-    { x: 3, y: 5 },
-    { x: 3, y: 5 },
-    { x: 3, y: 5 },
-  ],
-};
+const REPEATED: Polyline = [
+  { x: 3, y: 5 },
+  { x: 3, y: 5 },
+  { x: 3, y: 5 },
+];
 // 단순 2점 polyline: (0,0)→(3,4), 길이=5
-const TWO_PT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-  ],
-};
+const TWO_PT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 4 },
+];
 // 3점 polyline: (0,0)→(3,4)→(6,8), 각 segment 길이=5, 전체=10
-const THREE_PT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-    { x: 6, y: 8 },
-  ],
-};
+const THREE_PT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 4 },
+  { x: 6, y: 8 },
+];
 // L자 polyline: (0,0)→(4,0)→(4,3), 길이=4+3=7
-const L_SHAPE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 3 },
-  ],
-};
+const L_SHAPE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 4, y: 0 },
+  { x: 4, y: 3 },
+];
 
+/** 쓰기 여부를 확인할 초기 좌표를 만든다. */
 function makeOut(): XYObjectWritable {
   return { x: 99, y: 99 };
 }
 
-function makeSegmentOut(): SegmentWritable<XYObjectWritable, XYObjectWritable> {
-  return { a: { x: 99, y: 99 }, b: { x: 88, y: 88 } };
+/** 실패 시 유지되어야 할 segment 초기값을 만든다. */
+function makeSegmentOut(): SegmentWritable {
+  return { x1: 99, y1: 99, x2: 88, y2: 88 };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -62,13 +59,15 @@ function makeSegmentOut(): SegmentWritable<XYObjectWritable, XYObjectWritable> {
 describe('polyline allocating companions', () => {
   test('bounds는 새 BoundsWritable을 반환한다', () => {
     expect(bounds(L_SHAPE)).toEqual({
-      min: { x: 0, y: 0 },
-      max: { x: 4, y: 3 },
+      minX: 0,
+      minY: 0,
+      maxX: 4,
+      maxY: 3,
     });
   });
 
   test('segmentAt은 성공 시 새 SegmentWritable을 반환하고 실패 시 undefined를 반환한다', () => {
-    expect(segmentAt(L_SHAPE, 1)).toEqual({ a: { x: 4, y: 0 }, b: { x: 4, y: 3 } });
+    expect(segmentAt(L_SHAPE, 1)).toEqual({ x1: 4, y1: 0, x2: 4, y2: 3 });
     expect(segmentAt(SINGLE, 0)).toBeUndefined();
   });
 
@@ -120,7 +119,7 @@ describe('polyline access - invalid index Into policy', () => {
     for (const index of [0.5, Number.NaN, Infinity]) {
       const out = makeSegmentOut();
       expect(segmentAtInto(out, L_SHAPE, index)).toBe(false);
-      expect(out).toEqual({ a: { x: 99, y: 99 }, b: { x: 88, y: 88 } });
+      expect(out).toEqual({ x1: 99, y1: 99, x2: 88, y2: 88 });
     }
   });
 
@@ -228,7 +227,7 @@ describe('polyline sampling - pointAtLengthRatioInto (normalized length ratio)',
   test('out이 polyline의 point와 alias되어도 올바르게 기록한다', () => {
     // out이 points[1]과 같은 object일 때 aliasing 안전성 검증
     const pt: XYWritable = { x: 3, y: 4 };
-    const poly: PolylineLike = { points: [{ x: 0, y: 0 }, pt] };
+    const poly: Polyline = [{ x: 0, y: 0 }, pt];
     // t=0.5 → target=2.5, localT=0.5 → (1.5, 2)
     expect(pointAtLengthRatioInto(pt, poly, 0.5)).toBe(true);
     expect(pt.x).toBeCloseTo(1.5, 10);
@@ -325,13 +324,11 @@ describe('polyline sampling - pointAtLengthInto (length offset)', () => {
 
   test('zero-length segment가 섞인 polyline에서 length 탐색이 올바르게 동작한다', () => {
     // [(0,0), (0,0), (3,4)]: 첫 segment zero-length, 두 번째 segment 길이=5
-    const poly: PolylineLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 3, y: 4 },
-      ],
-    };
+    const poly: Polyline = [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 3, y: 4 },
+    ];
     const out = makeOut();
     expect(pointAtLengthInto(out, poly, 2.5)).toBe(true);
     expect(out.x).toBeCloseTo(1.5, 10);
@@ -406,14 +403,12 @@ describe('polyline distance - closestPointInto', () => {
     // segment 1: (4,0)→(4,0): zero-length, closest=(4,0), distSq=4+4=8
     // segment 2: (4,0)→(4,4): t=(0+8)/16=0.5 → closest=(4,2), distSq=4
     // segment 0과 2가 동거리 → tie-break: 앞쪽(0) 우선 → closest=(2,0)
-    const poly: PolylineLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: 4, y: 0 },
-        { x: 4, y: 4 },
-      ],
-    };
+    const poly: Polyline = [
+      { x: 0, y: 0 },
+      { x: 4, y: 0 },
+      { x: 4, y: 0 },
+      { x: 4, y: 4 },
+    ];
     const out = makeOut();
     expect(closestPointInto(out, poly, { x: 2, y: 2 })).toBe(true);
     expect(out.x).toBeCloseTo(2, 10);
@@ -433,13 +428,11 @@ describe('polyline distance - closestPointInto', () => {
     // [(0,0), (0,0), (3,4)]: query (3,0)
     // segment 0: zero-length, closest=(0,0), distSq=9
     // segment 1: (0,0)→(3,4): t=(9+0)/25=0.36 → closest=(1.08,1.44), distSq≈5.76
-    const poly: PolylineLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 3, y: 4 },
-      ],
-    };
+    const poly: Polyline = [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 3, y: 4 },
+    ];
     const out = makeOut();
     expect(closestPointInto(out, poly, { x: 3, y: 0 })).toBe(true);
     expect(out.x).toBeCloseTo(1.08, 10);
@@ -506,14 +499,12 @@ describe('polyline distance - distanceToPoint', () => {
   test('closestPointInto 정책과 일치하는 거리를 반환한다', () => {
     // tie-break polyline: (0,0)→(4,0)→(4,0)→(4,4), query (2,2)
     // closestPointInto → (2,0), distanceToPoint → sqrt(4)=2
-    const poly: PolylineLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: 4, y: 0 },
-        { x: 4, y: 4 },
-      ],
-    };
+    const poly: Polyline = [
+      { x: 0, y: 0 },
+      { x: 4, y: 0 },
+      { x: 4, y: 0 },
+      { x: 4, y: 4 },
+    ];
     const closestOut: XYWritable = { x: 0, y: 0 };
     closestPointInto(closestOut, poly, { x: 2, y: 2 });
     const dx = closestOut.x - 2,
