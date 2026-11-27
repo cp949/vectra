@@ -1,6 +1,4 @@
-import { readPolygonPoints } from '../internal/polygon';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { PolygonLike, XYWritable } from '../types';
+import type { Polygon, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polygon의 index번째 vertex를 out에 기록하고 성공 여부를 반환한다.
@@ -9,15 +7,16 @@ import type { PolygonLike, XYWritable } from '../types';
  * valid index: 정수이고 0 <= index < 해석된 point list 길이.
  * invalid index(음수, 범위 초과, NaN, ±Infinity, 비정수 finite number): false 반환, out 미수정.
  *
- * @param out vertex를 기록할 writable output
+ * @param out vertex를 기록할 writable output (`x, y`)
  * @param polygon vertex를 읽을 polygon
  * @param index 읽을 vertex index
  */
-export function pointAtIndexInto(out: XYWritable, polygon: PolygonLike, index: number): boolean {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
+export function pointAtIndexInto(out: PointWritable, polygon: Polygon, index: number): boolean {
+  const n = polygon.length / 2;
   if (!(Number.isInteger(index) && index >= 0 && index < n)) return false;
-  const pt = pts[index];
-  writeXY(out, readX(pt), readY(pt));
+  const x = polygon[2 * index];
+  const y = polygon[2 * index + 1];
+  out.x = x;
+  out.y = y;
   return true;
 }

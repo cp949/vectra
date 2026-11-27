@@ -1,3 +1,5 @@
+/** 다각형 계산과 출력 계약을 검증한다. */
+import type { BoundsWritable, Polygon, PointWritable } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { area } from '../../../src/polygon/area';
 import { boundsInto } from '../../../src/polygon/bounds-into';
@@ -9,63 +11,32 @@ import { isEmpty } from '../../../src/polygon/is-empty';
 import { perimeter } from '../../../src/polygon/perimeter';
 import { pointCount } from '../../../src/polygon/point-count';
 import { signedArea } from '../../../src/polygon/signed-area';
-import type { BoundsWritable, PolygonLike, XYObjectWritable, XYWritable } from '../../../src/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공통 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolygonLike = { points: [] };
-const SINGLE: PolygonLike = { points: [{ x: 1, y: 2 }] };
-const TWO_PT: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-  ],
-};
+const EMPTY: Polygon = [];
+const SINGLE: Polygon = [1, 2];
+const TWO_PT: Polygon = [0, 0, 3, 4];
 
 // 수학적 y-up 좌표계 기준 counter-clockwise 삼각형 → signedArea > 0
-const CCW_TRI: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 0, y: 3 },
-  ],
-};
+const CCW_TRI: Polygon = [0, 0, 4, 0, 0, 3];
 
 // 수학적 y-up 좌표계 기준 clockwise 삼각형 → signedArea < 0
-const CW_TRI: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 0, y: 3 },
-    { x: 4, y: 0 },
-  ],
-};
+const CW_TRI: Polygon = [0, 0, 0, 3, 4, 0];
 
 // 단위 정사각형 (CCW, area = 1)
-const UNIT_SQUARE: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-  ],
-};
+const UNIT_SQUARE: Polygon = [0, 0, 1, 0, 1, 1, 0, 1];
 
 // collinear points — zero area, structural non-empty
-const COLLINEAR: PolygonLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 2, y: 0 },
-  ],
-};
+const COLLINEAR: Polygon = [0, 0, 1, 0, 2, 0];
 
 function makeBounds(): BoundsWritable {
-  return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }
 
-function makePoint(): XYObjectWritable {
+function makePoint(): PointWritable {
   return { x: 0, y: 0 };
 }
 
@@ -92,36 +63,6 @@ describe('polygon query - isEmpty', () => {
 
   test('collinear 3점 polygon은 structural empty가 아니므로 false를 반환한다', () => {
     expect(isEmpty(COLLINEAR)).toBe(false);
-  });
-
-  test('bare point array도 단일 닫힌 polygon ring으로 해석한다', () => {
-    const points = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 0, y: 3 },
-    ] as const;
-
-    expect(pointCount(points)).toBe(3);
-    expect(edgeCount(points)).toBe(3);
-    expect(isEmpty(points)).toBe(false);
-    expect(area(points)).toBe(6);
-  });
-
-  test('3점 미만 bare point array는 structural empty polygon으로 유지한다', () => {
-    expect(isEmpty([])).toBe(true);
-    expect(isEmpty([{ x: 1, y: 2 }])).toBe(true);
-    expect(
-      isEmpty([
-        { x: 1, y: 2 },
-        { x: 3, y: 4 },
-      ])
-    ).toBe(true);
-    expect(
-      area([
-        { x: 1, y: 2 },
-        { x: 3, y: 4 },
-      ])
-    ).toBe(0);
   });
 });
 
@@ -212,24 +153,6 @@ describe('polygon measurement - signedArea', () => {
   test('collinear polygon의 signedArea는 0이다', () => {
     expect(signedArea(COLLINEAR)).toBe(0);
   });
-
-  test('tuple point 입력을 지원한다', () => {
-    const poly: PolygonLike = {
-      points: [
-        [0, 0],
-        [4, 0],
-        [0, 3],
-      ],
-    };
-    expect(signedArea(poly)).toBeCloseTo(6, 10);
-  });
-
-  test('object/tuple mixed point 입력을 지원한다', () => {
-    const poly: PolygonLike = {
-      points: [{ x: 0, y: 0 }, [4, 0], { x: 0, y: 3 }],
-    };
-    expect(signedArea(poly)).toBeCloseTo(6, 10);
-  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -291,25 +214,8 @@ describe('polygon measurement - perimeter', () => {
 
   test('repeated point가 있으면 해당 edge 기여는 0이다', () => {
     // (0,0),(0,0),(1,0) → (0,0)→(0,0): 0, (0,0)→(1,0): 1, (1,0)→(0,0): 1 = 2
-    const poly: PolygonLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-      ],
-    };
+    const poly: Polygon = [0, 0, 0, 0, 1, 0];
     expect(perimeter(poly)).toBeCloseTo(2, 10);
-  });
-
-  test('tuple point 입력을 지원한다', () => {
-    const poly: PolygonLike = {
-      points: [
-        [0, 0],
-        [4, 0],
-        [0, 3],
-      ],
-    };
-    expect(perimeter(poly)).toBeCloseTo(12, 10);
   });
 });
 
@@ -361,68 +267,43 @@ describe('polygon output - boundsInto', () => {
   test('빈 polygon(0점)은 sentinel bounds를 기록한다', () => {
     const out = makeBounds();
     boundsInto(out, EMPTY);
-    expect(out.min).toEqual({ x: Infinity, y: Infinity });
-    expect(out.max).toEqual({ x: -Infinity, y: -Infinity });
+    expect(out.minX).toBe(Infinity);
+    expect(out.minY).toBe(Infinity);
+    expect(out.maxX).toBe(-Infinity);
+    expect(out.maxY).toBe(-Infinity);
   });
 
   test('단일 point polygon은 min === max인 bounds를 기록한다', () => {
     const out = makeBounds();
     boundsInto(out, SINGLE);
-    expect(out.min).toEqual({ x: 1, y: 2 });
-    expect(out.max).toEqual({ x: 1, y: 2 });
+    expect(out.minX).toBe(1);
+    expect(out.minY).toBe(2);
+    expect(out.maxX).toBe(1);
+    expect(out.maxY).toBe(2);
   });
 
   test('2점 polygon은 두 점의 bounds를 기록한다', () => {
     const out = makeBounds();
     boundsInto(out, TWO_PT);
-    expect(out.min).toEqual({ x: 0, y: 0 });
-    expect(out.max).toEqual({ x: 3, y: 4 });
+    expect(out.minX).toBe(0);
+    expect(out.minY).toBe(0);
+    expect(out.maxX).toBe(3);
+    expect(out.maxY).toBe(4);
   });
 
   test('삼각형 bounds를 올바르게 기록한다', () => {
     const out = makeBounds();
     boundsInto(out, CCW_TRI);
-    expect(out.min).toEqual({ x: 0, y: 0 });
-    expect(out.max).toEqual({ x: 4, y: 3 });
+    expect(out.minX).toBe(0);
+    expect(out.minY).toBe(0);
+    expect(out.maxX).toBe(4);
+    expect(out.maxY).toBe(3);
   });
 
   test('반환값이 out의 동일 참조이다', () => {
     const out = makeBounds();
     const result = boundsInto(out, CCW_TRI);
     expect(result).toBe(out);
-  });
-
-  test('out.min/out.max object reference를 mutation한다', () => {
-    const minPt: XYWritable = { x: 99, y: 99 };
-    const maxPt: XYWritable = { x: 99, y: 99 };
-    const out: BoundsWritable = { min: minPt, max: maxPt };
-    boundsInto(out, CCW_TRI);
-    expect(out.min).toBe(minPt);
-    expect(out.max).toBe(maxPt);
-    expect(minPt).toEqual({ x: 0, y: 0 });
-    expect(maxPt).toEqual({ x: 4, y: 3 });
-  });
-
-  test('tuple min/max out에 기록한다', () => {
-    const out = { min: [0, 0] as [number, number], max: [0, 0] as [number, number] };
-    boundsInto(out, CCW_TRI);
-    expect(out.min[0]).toBe(0);
-    expect(out.min[1]).toBe(0);
-    expect(out.max[0]).toBe(4);
-    expect(out.max[1]).toBe(3);
-  });
-
-  test('tuple point 입력을 지원한다', () => {
-    const out = makeBounds();
-    boundsInto(out, {
-      points: [
-        [1, 2],
-        [5, 6],
-        [3, 0],
-      ],
-    });
-    expect(out.min).toEqual({ x: 1, y: 0 });
-    expect(out.max).toEqual({ x: 5, y: 6 });
   });
 });
 
@@ -476,13 +357,6 @@ describe('polygon output - centroidInto', () => {
     expect(out.y).toBeCloseTo(0, 10);
   });
 
-  test('tuple out에 기록한다', () => {
-    const out: [number, number] = [0, 0];
-    expect(centroidInto(out, CCW_TRI)).toBe(true);
-    expect(out[0]).toBeCloseTo(4 / 3, 10);
-    expect(out[1]).toBeCloseTo(1, 10);
-  });
-
   test('외부 Point class에 기록한다', () => {
     class Point {
       constructor(
@@ -498,13 +372,7 @@ describe('polygon output - centroidInto', () => {
 
   test('repeated point polygon은 deterministic result를 반환한다', () => {
     // (0,0),(0,0),(1,0) — repeated first point
-    const poly: PolygonLike = {
-      points: [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-      ],
-    };
+    const poly: Polygon = [0, 0, 0, 0, 1, 0];
     const out = makePoint();
     // signedArea === 0 → arithmetic mean fallback: (0+0+1)/3=1/3, (0+0+0)/3=0
     expect(centroidInto(out, poly)).toBe(true);

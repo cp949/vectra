@@ -1,6 +1,4 @@
-import { readPolygonPoints } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -11,15 +9,14 @@ import { hypot2 } from '../internal/numeric';
  *
  * @param polygon 둘레를 계산할 polygon
  */
-export function perimeter(polygon: PolygonLike): number {
-  const pts = readPolygonPoints(polygon);
-  if (pts.length < 3) return 0;
+export function perimeter(polygon: Polygon): number {
+  if (polygon.length < 6) return 0;
   let total = 0;
-  const n = pts.length;
+  const n = polygon.length / 2;
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
-    const dx = readX(pts[j]) - readX(pts[i]);
-    const dy = readY(pts[j]) - readY(pts[i]);
+    const dx = polygon[2 * j] - polygon[2 * i];
+    const dy = polygon[2 * j + 1] - polygon[2 * i + 1];
     total += hypot2(dx, dy);
   }
   return total;

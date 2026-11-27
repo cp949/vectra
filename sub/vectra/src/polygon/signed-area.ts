@@ -1,5 +1,5 @@
-import { readPolygonPoints, shoelace2x } from '../internal/polygon';
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
+import { shoelace2x } from '../internal/polygon';
 
 /**
  * polygon의 signed area를 반환한다.
@@ -9,8 +9,7 @@ import type { PolygonLike } from '../types';
  *
  * @param polygon signed area를 계산할 polygon
  */
-export function signedArea(polygon: PolygonLike): number {
-  const pts = readPolygonPoints(polygon);
-  if (pts.length < 3) return 0;
-  return shoelace2x(pts) / 2;
+export function signedArea(polygon: Polygon): number {
+  if (polygon.length < 6) return 0;
+  return shoelace2x(polygon) / 2;
 }

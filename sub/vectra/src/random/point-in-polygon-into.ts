@@ -1,3 +1,5 @@
+import { createZeroBounds } from '../internal/bounds';
+import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { readPolygonPoints } from '../internal/polygon';
 import { readX, readY, writeXY } from '../internal/xy';
 import { boundsInto } from '../polygon/bounds-into';
@@ -49,18 +51,14 @@ export const pointInPolygonInto = <Out extends XYWritable>(
     }
   }
 
-  const area = signedArea(polygon);
+  // v2-migration: D-7에서 random 입력을 평평하게 바꿀 때 변환을 제거한다.
+  const flatPolygon = flatPolygonFromLegacyPoints(pts);
+  const area = signedArea(flatPolygon);
   if (!Number.isFinite(area) || area === 0) {
     return false;
   }
 
-  const bbox = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-  boundsInto(bbox, polygon);
-
-  const minX = bbox.min.x;
-  const minY = bbox.min.y;
-  const maxX = bbox.max.x;
-  const maxY = bbox.max.y;
+  const { minX, minY, maxX, maxY } = boundsInto(createZeroBounds(), flatPolygon);
 
   if (
     !Number.isFinite(minX) ||

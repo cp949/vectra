@@ -1,5 +1,5 @@
-import { readPolygonPoints, shoelace2x } from '../internal/polygon';
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
+import { shoelace2x } from '../internal/polygon';
 
 /**
  * polygon의 넓이를 반환한다.
@@ -9,8 +9,7 @@ import type { PolygonLike } from '../types';
  *
  * @param polygon 넓이를 계산할 polygon
  */
-export function area(polygon: PolygonLike): number {
-  const pts = readPolygonPoints(polygon);
-  if (pts.length < 3) return 0;
-  return Math.abs(shoelace2x(pts)) / 2;
+export function area(polygon: Polygon): number {
+  if (polygon.length < 6) return 0;
+  return Math.abs(shoelace2x(polygon)) / 2;
 }

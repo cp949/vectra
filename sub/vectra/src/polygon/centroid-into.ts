@@ -1,7 +1,4 @@
-import { readPolygonPoints } from '../internal/polygon';
-import { areaX, areaY } from '../internal/polygon-area-read.internal';
-import { writeXY } from '../internal/xy';
-import type { PolygonLike, XYWritable } from '../types';
+import type { Polygon, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polygon의 centroid를 out에 기록하고 성공 여부를 반환한다.
@@ -11,29 +8,29 @@ import type { PolygonLike, XYWritable } from '../types';
  * 일반 polygon: area-weighted centroid를 기록하고 true 반환.
  * zero-area degenerate polygon: arithmetic mean을 기록하고 true 반환.
  *
- * @param out centroid를 기록할 writable output
+ * @param out centroid를 기록할 writable output (`x, y`)
  * @param polygon centroid를 계산할 polygon
  */
-export function centroidInto(out: XYWritable, polygon: PolygonLike): boolean {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
+export function centroidInto(out: PointWritable, polygon: Polygon): boolean {
+  const n = polygon.length / 2;
 
   if (n === 0) return false;
 
   if (n === 1) {
-    writeXY(out, areaX(pts[0]), areaY(pts[0]));
+    out.x = polygon[0];
+    out.y = polygon[1];
     return true;
   }
 
   if (n === 2) {
-    writeXY(out, (areaX(pts[0]) + areaX(pts[1])) / 2, (areaY(pts[0]) + areaY(pts[1])) / 2);
+    out.x = (polygon[0] + polygon[2]) / 2;
+    out.y = (polygon[1] + polygon[3]) / 2;
     return true;
   }
 
   // n >= 3: 한 번 순회로 2배 signed area, area-weighted 합, 산술 평균 합을 함께 구한다.
-  const first = pts[0];
-  const x0 = areaX(first);
-  const y0 = areaY(first);
+  const x0 = polygon[0];
+  const y0 = polygon[1];
   let xi = x0;
   let yi = y0;
   let twoA = 0;
@@ -45,9 +42,8 @@ export function centroidInto(out: XYWritable, polygon: PolygonLike): boolean {
     let xj = x0;
     let yj = y0;
     if (i < n) {
-      const p = pts[i];
-      xj = areaX(p);
-      yj = areaY(p);
+      xj = polygon[2 * i];
+      yj = polygon[2 * i + 1];
     }
     const cross = xi * yj - xj * yi;
     twoA += cross;
@@ -60,10 +56,12 @@ export function centroidInto(out: XYWritable, polygon: PolygonLike): boolean {
   }
 
   if (twoA === 0) {
-    writeXY(out, sumX / n, sumY / n);
+    out.x = sumX / n;
+    out.y = sumY / n;
     return true;
   }
 
-  writeXY(out, cx / (3 * twoA), cy / (3 * twoA));
+  out.x = cx / (3 * twoA);
+  out.y = cy / (3 * twoA);
   return true;
 }

@@ -166,11 +166,12 @@ describe('polygon area 계열 — 이전 구현과 출력 동일성', () => {
     const rng = createRng('polygon-area-equivalence');
     let mismatch = '';
     for (let i = 0; i < 300_000 && mismatch === ''; i++) {
-      const polygon = makePolygon(rng);
-      if (!Object.is(area(polygon), referenceArea(polygon))) mismatch = `area #${i}`;
-      else if (!Object.is(signedArea(polygon), referenceSignedArea(polygon))) mismatch = `signedArea #${i}`;
-      else if (isClockwise(polygon) !== referenceIsClockwise(polygon)) mismatch = `isClockwise #${i}`;
-      else if (isCounterClockwise(polygon) !== referenceIsCounterClockwise(polygon)) mismatch = `isCCW #${i}`;
+      const legacy = makePolygon(rng);
+      const polygon = readPolygonPoints(legacy).flatMap((point) => [readX(point), readY(point)]);
+      if (!Object.is(area(polygon), referenceArea(legacy))) mismatch = `area #${i}`;
+      else if (!Object.is(signedArea(polygon), referenceSignedArea(legacy))) mismatch = `signedArea #${i}`;
+      else if (isClockwise(polygon) !== referenceIsClockwise(legacy)) mismatch = `isClockwise #${i}`;
+      else if (isCounterClockwise(polygon) !== referenceIsCounterClockwise(legacy)) mismatch = `isCCW #${i}`;
     }
 
     expect(mismatch).toBe('');
@@ -180,49 +181,18 @@ describe('polygon area 계열 — 이전 구현과 출력 동일성', () => {
     const rng = createRng('polygon-centroid-equivalence');
     let mismatch = '';
     for (let i = 0; i < 300_000 && mismatch === ''; i++) {
-      const polygon = makePolygon(rng);
+      const legacy = makePolygon(rng);
+      const polygon = readPolygonPoints(legacy).flatMap((point) => [readX(point), readY(point)]);
       const tuple = rng() < 0.5;
-      const actual = sentinelOut(tuple);
+      const actual = { x: SENTINEL, y: SENTINEL };
       const expected = sentinelOut(tuple);
       const okActual = centroidInto(actual, polygon);
-      const okExpected = referenceCentroidInto(expected, polygon);
+      const okExpected = referenceCentroidInto(expected, legacy);
       const [ax, ay] = outXY(actual);
       const [ex, ey] = outXY(expected);
       if (okActual !== okExpected || !Object.is(ax, ex) || !Object.is(ay, ey)) mismatch = `centroidInto #${i}`;
     }
 
     expect(mismatch).toBe('');
-  });
-
-  test('정사각형·삼각형 고정 입력은 객체·tuple·class instance에서 같은 값을 반환한다', () => {
-    const square = [
-      [0, 0],
-      [4, 0],
-      [4, 4],
-      [0, 4],
-    ] as const;
-    const forms = [
-      square.map(([x, y]) => ({ x, y })),
-      square.map(([x, y]) => [x, y] as [number, number]),
-      square.map(([x, y]) => new Point2(x, y)),
-      { points: square.map(([x, y]) => ({ x, y })) },
-    ];
-    for (const polygon of forms) {
-      const out = { x: 0, y: 0 };
-
-      expect(area(polygon)).toBe(16);
-      expect(signedArea(polygon)).toBe(16);
-      expect(isCounterClockwise(polygon)).toBe(true);
-      expect(centroidInto(out, polygon)).toBe(true);
-      expect(out).toEqual({ x: 2, y: 2 });
-    }
-  });
-
-  test('field를 가진 tuple은 이전 구현처럼 tuple로 읽는다', () => {
-    const tuple = Object.assign([1, 2] as [number, number], { x: 100, y: 200 });
-    const polygon: PolygonLike = [[0, 0], tuple, [3, 0]];
-
-    expect(Object.is(area(polygon), referenceArea(polygon))).toBe(true);
-    expect(area(polygon)).toBe(3);
   });
 });

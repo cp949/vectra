@@ -6,8 +6,46 @@ import { describe, expect, test } from 'vitest';
 import { closestPoint } from '../../../src/polygon/closest-point';
 import { closestPointInto } from '../../../src/polygon/closest-point-into';
 import { distanceToPoint } from '../../../src/polygon/distance-to-point';
-import type { PolygonLike, XYWritable } from '../../../src/types';
-import { CCW_TRI, EMPTY, makePoint, REPEATED_PT, SINGLE, TWO_PT, UNIT_SQUARE } from './_access-distance-test-helpers';
+import type { PolygonLike, XYObjectWritable, XYWritable } from '../../../src/types';
+
+const EMPTY: PolygonLike = { points: [] };
+const SINGLE: PolygonLike = { points: [{ x: 5, y: 7 }] };
+const TWO_PT: PolygonLike = {
+  points: [
+    { x: 0, y: 0 },
+    { x: 3, y: 4 },
+  ],
+};
+
+// 수학적 y-up 좌표계 기준 counter-clockwise 3-4-5 삼각형 -> signedArea > 0.
+const CCW_TRI: PolygonLike = {
+  points: [
+    { x: 0, y: 0 },
+    { x: 4, y: 0 },
+    { x: 0, y: 3 },
+  ],
+};
+
+const UNIT_SQUARE: PolygonLike = {
+  points: [
+    { x: 0, y: 0 },
+    { x: 1, y: 0 },
+    { x: 1, y: 1 },
+    { x: 0, y: 1 },
+  ],
+};
+
+const REPEATED_PT: PolygonLike = {
+  points: [
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+    { x: 1, y: 0 },
+  ],
+};
+
+function makePoint(): XYObjectWritable {
+  return { x: 0, y: 0 };
+}
 
 describe('polygon distance allocating companions', () => {
   test('closestPoint는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {

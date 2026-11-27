@@ -120,10 +120,13 @@ describe('레시피 3: polygon hit-test 후 snap 후보 계산', () => {
     expect(snap.y).toBeLessThanOrEqual(200);
 
     // bounds 계산
-    const polyBounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    boundsInto(polyBounds, poly);
-    expect(polyBounds.min.x).toBeCloseTo(50, 10);
-    expect(polyBounds.max.x).toBeCloseTo(250, 10);
+    const polyBounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+    boundsInto(
+      polyBounds,
+      poly.flatMap(({ x, y }) => [x, y])
+    );
+    expect(polyBounds.minX).toBeCloseTo(50, 10);
+    expect(polyBounds.maxX).toBeCloseTo(250, 10);
   });
 });
 

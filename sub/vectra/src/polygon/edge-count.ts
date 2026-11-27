@@ -1,5 +1,4 @@
-import { readPolygonPoints } from '../internal/polygon';
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 
 /**
  * polygon의 닫힌 edge 수를 반환한다.
@@ -9,7 +8,6 @@ import type { PolygonLike } from '../types';
  *
  * @param polygon edge 수를 반환할 polygon
  */
-export function edgeCount(polygon: PolygonLike): number {
-  const pts = readPolygonPoints(polygon);
-  return pts.length >= 2 ? pts.length : 0;
+export function edgeCount(polygon: Polygon): number {
+  return polygon.length >= 4 ? polygon.length / 2 : 0;
 }

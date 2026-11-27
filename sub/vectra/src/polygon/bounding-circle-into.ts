@@ -1,6 +1,4 @@
-import { readPolygonPoints } from '../internal/polygon';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { CircleWritable, PolygonLike, XYWritable } from '../types';
+import type { Polygon, CircleWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -8,29 +6,28 @@ import { hypot2 } from '../internal/numeric';
  *
  * Ritter algorithm 기반 근사 최소 외접원.
  * empty polygon(pointCount === 0): center = (0, 0), radius = 0을 기록한다.
- * out.center object reference를 mutation하고 out.radius를 기록한다.
  *
- * @param out circle을 기록할 writable output
+ * @param out circle을 기록할 writable output (`cx, cy, r`)
  * @param polygon 외접원을 계산할 polygon
  */
-export function boundingCircleInto<Out extends CircleWritable<XYWritable>>(out: Out, polygon: PolygonLike): Out {
-  const pts = readPolygonPoints(polygon);
-  const n = pts.length;
+export function boundingCircleInto<Out extends CircleWritable>(out: Out, polygon: Polygon): Out {
+  const n = polygon.length / 2;
 
   if (n === 0) {
-    writeXY(out.center, 0, 0);
-    out.radius = 0;
+    out.cx = 0;
+    out.cy = 0;
+    out.r = 0;
     return out;
   }
 
   // AABB center를 초기 center로 사용
-  let minX = readX(pts[0]);
-  let minY = readY(pts[0]);
+  let minX = polygon[0];
+  let minY = polygon[1];
   let maxX = minX;
   let maxY = minY;
   for (let i = 1; i < n; i++) {
-    const px = readX(pts[i]);
-    const py = readY(pts[i]);
+    const px = polygon[2 * i];
+    const py = polygon[2 * i + 1];
     if (px < minX) minX = px;
     if (py < minY) minY = py;
     if (px > maxX) maxX = px;
@@ -44,8 +41,8 @@ export function boundingCircleInto<Out extends CircleWritable<XYWritable>>(out: 
   let maxDistSq = 0;
   let farthestIdx = 0;
   for (let i = 0; i < n; i++) {
-    const dx = readX(pts[i]) - cx;
-    const dy = readY(pts[i]) - cy;
+    const dx = polygon[2 * i] - cx;
+    const dy = polygon[2 * i + 1] - cy;
     const distSq = dx * dx + dy * dy;
     if (distSq > maxDistSq) {
       maxDistSq = distSq;
@@ -54,14 +51,14 @@ export function boundingCircleInto<Out extends CircleWritable<XYWritable>>(out: 
   }
 
   // 가장 먼 점으로 center 이동, radius 설정
-  cx = readX(pts[farthestIdx]);
-  cy = readY(pts[farthestIdx]);
+  cx = polygon[2 * farthestIdx];
+  cy = polygon[2 * farthestIdx + 1];
   let r = 0;
 
   // 나머지 점들을 순회하며 원 밖의 점이 있으면 확장
   for (let i = 0; i < n; i++) {
-    const px = readX(pts[i]);
-    const py = readY(pts[i]);
+    const px = polygon[2 * i];
+    const py = polygon[2 * i + 1];
     const dx = px - cx;
     const dy = py - cy;
     const dist = hypot2(dx, dy);
@@ -75,7 +72,8 @@ export function boundingCircleInto<Out extends CircleWritable<XYWritable>>(out: 
     }
   }
 
-  writeXY(out.center, cx, cy);
-  out.radius = r;
+  out.cx = cx;
+  out.cy = cy;
+  out.r = r;
   return out;
 }

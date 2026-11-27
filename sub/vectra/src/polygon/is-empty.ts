@@ -1,5 +1,4 @@
-import { readPolygonPoints } from '../internal/polygon';
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 
 /**
  * polygon이 structural empty인지 반환한다.
@@ -8,6 +7,6 @@ import type { PolygonLike } from '../types';
  *
  * @param polygon empty 여부를 확인할 polygon
  */
-export function isEmpty(polygon: PolygonLike): boolean {
-  return readPolygonPoints(polygon).length < 3;
+export function isEmpty(polygon: Polygon): boolean {
+  return polygon.length < 6;
 }
