@@ -1,4 +1,5 @@
-import type { PolylineConcatOptions, PolylineLike, XYObjectWritable } from '../types';
+import type { PolylineConcatOptions } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { concatInto } from './concat-into';
 
 /**
@@ -17,6 +18,6 @@ import { concatInto } from './concat-into';
  * @param options `weldTolerance`(finite `>= 0`, 기본 `0`) 접합 endpoint dedupe 옵션
  * @throws {RangeError} `weldTolerance`가 finite `>= 0`이 아니면(음수, `NaN`, `±Infinity`) 던진다.
  */
-export function concat(polylines: readonly PolylineLike[], options?: PolylineConcatOptions): XYObjectWritable[] {
+export function concat(polylines: readonly Polyline[], options?: PolylineConcatOptions): PointWritable[] {
   return concatInto([], polylines, options);
 }

@@ -1,15 +1,14 @@
-import type { PolylineWritable } from '../types';
+import type { PolylineWritable } from '../types/flat-shapes.internal';
 
 export interface CreatePointListOptions {
-  readonly clonePoints?: boolean;
+  readonly clonePoints: boolean;
 }
 
 /**
- * 빈 point list를 가진 polyline writable을 새로 만든다.
+ * 빈 writable 점 배열을 반환한다.
  *
- * 인자를 받지 않는다. `PolylineLike` 또는 point 배열을 새 plain object로 복사하려면
- * `polylineFrom`을 사용한다.
+ * 기존 점 배열을 복사하려면 `polylineFrom`을 사용한다.
  */
 export function createPolyline(): PolylineWritable {
-  return { points: [] };
+  return [];
 }

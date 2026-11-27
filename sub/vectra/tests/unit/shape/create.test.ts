@@ -9,7 +9,7 @@ import { createPolyline } from '../../../src/polyline/create-polyline';
 import { polylineFrom } from '../../../src/polyline/polyline-from';
 import { createRect } from '../../../src/rect/create-rect';
 import { rectFrom } from '../../../src/rect/rect-from';
-import type { CircleWritable, RectWritable } from '../../../src/types/flat-shapes.internal';
+import type { CircleWritable, PolylineWritable, RectWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('shape create/xFrom factories', () => {
   test('createRect는 기본 사각형을 만들고 rectFrom은 새 객체에 필드를 복사한다', () => {
@@ -34,25 +34,24 @@ describe('shape create/xFrom factories', () => {
 
   // points factory 정책: 기본은 points 배열과 leaf 모두 deep clone 하여 source 변형이 전파되지 않는다.
   test('polylineFrom은 기본적으로 points 배열과 leaf를 복사한다', () => {
-    const points = [{ x: 1, y: 2 }, [3, 4] as const] as const;
+    const points = [
+      { x: 1, y: 2 },
+      { x: 3, y: 4 },
+    ];
     const result = polylineFrom(points);
-    expect(result).toEqual({
-      points: [
-        { x: 1, y: 2 },
-        { x: 3, y: 4 },
-      ],
-    });
-    expect(result.points).not.toBe(points);
-    expect(result.points[0]).not.toBe(points[0]);
+    expectTypeOf(result).toEqualTypeOf<PolylineWritable>();
+    expect(result).toEqual(points);
+    expect(result).not.toBe(points);
+    expect(result[0]).not.toBe(points[0]);
   });
 
-  // points factory 정책: clonePoints false이면 해석된 points 배열을 그대로 공유한다.
-  test('polylineFrom은 clonePoints false이면 해석된 points 배열을 공유한다', () => {
-    const points = [{ x: 1, y: 2 }, [3, 4] as const] as const;
-    const source = { points };
-    const result = polylineFrom(source, { clonePoints: false });
-    expect(result).toEqual({ points });
-    expect(result.points).toBe(points);
+  test('polylineFrom은 clonePoints가 false이면 입력 배열을 공유한다', () => {
+    const points = [
+      { x: 1, y: 2 },
+      { x: 3, y: 4 },
+    ];
+    const result = polylineFrom(points, { clonePoints: false });
+    expect(result).toBe(points);
   });
 
   test('createPolygon()는 빈 list seed를 만들고 polygonFrom은 source를 복사한다', () => {
@@ -77,6 +76,9 @@ describe('shape create/xFrom factories', () => {
   });
 
   test('createPolyline()는 빈 list seed를 만든다', () => {
-    expect(createPolyline()).toEqual({ points: [] });
+    const first = createPolyline();
+    const second = createPolyline();
+    expect(first).toEqual([]);
+    expect(first).not.toBe(second);
   });
 });

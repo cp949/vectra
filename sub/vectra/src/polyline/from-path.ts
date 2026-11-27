@@ -1,4 +1,5 @@
-import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { fromPathInto } from './from-path-into';
 
 /**
@@ -10,8 +11,8 @@ import { fromPathInto } from './from-path-into';
  * buffer 재사용이 필요하면 `fromPathInto`를 사용한다.
  *
  * @param commands flatten할 path command sequence
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
-export function fromPath(commands: readonly PathCommand[], options?: Partial<PathFlattenOptions>): XYObjectWritable[] {
+export function fromPath(commands: readonly PathCommand[], options?: PathFlattenOptions): PointWritable[] {
   return fromPathInto([], commands, options);
 }

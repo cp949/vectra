@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { closeInto } from './close-into';
 
 /**
@@ -12,6 +12,6 @@ import { closeInto } from './close-into';
  *
  * @param polyline point를 읽을 polyline
  */
-export function close(polyline: PolylineLike): XYObjectWritable[] {
+export function close(polyline: Polyline): PointWritable[] {
   return closeInto([], polyline);
 }

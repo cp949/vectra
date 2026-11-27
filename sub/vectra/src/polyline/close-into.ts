@@ -1,6 +1,4 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline을 닫힌 point list로 만들어 outPoints에 새 point object로 기록한다.
@@ -20,15 +18,15 @@ import type { PolylineLike, XYObjectWritable } from '../types';
  * @param outPoints 닫힌 point object를 기록할 writable output array
  * @param polyline point를 읽을 polyline
  */
-export function closeInto(outPoints: XYObjectWritable[], polyline: PolylineLike): XYObjectWritable[] {
-  const pts = readPolylinePoints(polyline);
+export function closeInto(outPoints: PointWritable[], polyline: Polyline): PointWritable[] {
+  const pts = polyline;
   const n = pts.length;
   // input/output array aliasing에 대비해 clear 전에 좌표를 snapshot한다.
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
+    xs[i] = pts[i].x;
+    ys[i] = pts[i].y;
   }
 
   outPoints.length = 0;

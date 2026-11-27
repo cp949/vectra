@@ -1,6 +1,4 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment (ax,ay)→(bx,by)에 대한 point (px,py)의 수직 거리 제곱을 반환한다.
@@ -39,16 +37,12 @@ function perpendicularDistSq(px: number, py: number, ax: number, ay: number, bx:
  * @param polyline 단순화할 polyline
  * @param tolerance 허용 최대 수직 거리 (기본값 1.0)
  */
-export function simplifyInto(
-  outPoints: XYObjectWritable[],
-  polyline: PolylineLike,
-  tolerance = 1.0
-): XYObjectWritable[] {
+export function simplifyInto(outPoints: PointWritable[], polyline: Polyline, tolerance = 1.0): PointWritable[] {
   if (tolerance < 0) {
     throw new RangeError('tolerance must be >= 0');
   }
 
-  const pts = readPolylinePoints(polyline);
+  const pts = polyline;
   const n = pts.length;
 
   if (n === 0) {
@@ -60,8 +54,8 @@ export function simplifyInto(
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
+    xs[i] = pts[i].x;
+    ys[i] = pts[i].y;
   }
 
   outPoints.length = 0;

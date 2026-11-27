@@ -1,4 +1,5 @@
-import type { PathCommand, PolylineLike } from '../types';
+import type { PathCommand } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 import { toPathInto } from './to-path-into';
 
 /**
@@ -11,6 +12,6 @@ import { toPathInto } from './to-path-into';
  *
  * @param polyline 변환할 polyline
  */
-export function toPath(polyline: PolylineLike): PathCommand[] {
+export function toPath(polyline: Polyline): PathCommand[] {
   return toPathInto([], polyline);
 }

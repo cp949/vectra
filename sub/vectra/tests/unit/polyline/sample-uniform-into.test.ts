@@ -186,7 +186,7 @@ describe('polyline sampling - sampleUniformInto outPoints clear', () => {
     expect(out[0]).toEqual({ x: 0, y: 0 });
   });
 
-  test('점 배열 자체를 PolylineLike로 사용할 수 있다', () => {
+  test('점 배열에서 결과를 계산한다', () => {
     const pts = [
       { x: 0, y: 0 },
       { x: 10, y: 0 },

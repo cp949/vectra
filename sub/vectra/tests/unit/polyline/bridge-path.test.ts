@@ -10,22 +10,19 @@ import { fromPath } from '../../../src/polyline/from-path';
 import { fromPathInto } from '../../../src/polyline/from-path-into';
 import { toPath } from '../../../src/polyline/to-path';
 import { toPathInto } from '../../../src/polyline/to-path-into';
-import type { PathCommand, PolylineLike } from '../../../src/types';
+import type { PathCommand } from '../../../src/types';
+import type { Polyline } from '../../../src/types/flat-shapes.internal';
 
-const EMPTY: PolylineLike = { points: [] };
-const TWO_PT: PolylineLike = {
-  points: [
-    { x: 1, y: 2 },
-    { x: 3, y: 4 },
-  ],
-};
-const THREE_PT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-    { x: 6, y: 8 },
-  ],
-};
+const EMPTY: Polyline = [];
+const TWO_PT: Polyline = [
+  { x: 1, y: 2 },
+  { x: 3, y: 4 },
+];
+const THREE_PT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 4 },
+  { x: 6, y: 8 },
+];
 
 describe('polyline bridge/collection - toPathInto', () => {
   test('받은 command array 자체를 반환한다', () => {
@@ -41,7 +38,7 @@ describe('polyline bridge/collection - toPathInto', () => {
 
   test('single-point polyline은 move command 하나를 기록한다', () => {
     const out: PathCommand[] = [];
-    toPathInto(out, { points: [{ x: 5, y: 7 }] });
+    toPathInto(out, [{ x: 5, y: 7 }]);
     expect(out).toEqual([{ kind: 'move', x: 5, y: 7 }]);
   });
 
@@ -61,20 +58,6 @@ describe('polyline bridge/collection - toPathInto', () => {
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 3, y: 4 },
       { kind: 'line', x: 6, y: 8 },
-    ]);
-  });
-
-  test('tuple point input을 처리한다', () => {
-    const out: PathCommand[] = [];
-    toPathInto(out, {
-      points: [
-        [1, 2],
-        [3, 4],
-      ],
-    });
-    expect(out).toEqual([
-      { kind: 'move', x: 1, y: 2 },
-      { kind: 'line', x: 3, y: 4 },
     ]);
   });
 
@@ -158,7 +141,7 @@ describe('polyline bridge/collection - fromPathInto', () => {
       { kind: 'quadratic', x1: 50, y1: 100, x: 100, y: 0 },
     ];
     const coarse = fromPathInto([], cmds);
-    const fine = fromPathInto([], cmds, { flatness: 0.01 });
+    const fine = fromPathInto([], cmds, { flatness: 0.01, maxRecursion: 32 });
     expect(fine.length).toBeGreaterThan(coarse.length);
     // 같은 옵션이면 flattenInto와 동일하다.
     expect(fine).toEqual(flattenInto([], cmds, { flatness: 0.01, maxRecursion: 32 }));
@@ -198,12 +181,13 @@ describe('polyline bridge/collection - fromPath', () => {
 describe('polyline bridge/collection - path non-finite 좌표 pass-through', () => {
   test('toPathInto는 NaN / Infinity / -Infinity 좌표를 그대로 전파한다', () => {
     // toEqual은 NaN을 NaN과 동등하게 비교한다.
-    const out = toPathInto([], {
-      points: [
+    const out = toPathInto(
+      [],
+      [
         { x: Number.NaN, y: Number.POSITIVE_INFINITY },
         { x: Number.NEGATIVE_INFINITY, y: 5 },
-      ],
-    });
+      ]
+    );
     expect(out).toEqual([
       { kind: 'move', x: Number.NaN, y: Number.POSITIVE_INFINITY },
       { kind: 'line', x: Number.NEGATIVE_INFINITY, y: 5 },

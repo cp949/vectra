@@ -6,50 +6,43 @@
 
 import { describe, expect, test } from 'vitest';
 import { simplifyInto } from '../../../src/polyline/simplify-into';
-import type { PolylineLike, XYObjectWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 공용 fixture
 // ─────────────────────────────────────────────────────────────────────────────
 
-const EMPTY: PolylineLike = { points: [] };
-const SINGLE: PolylineLike = { points: [{ x: 1, y: 2 }] };
-const TWO_PT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 10, y: 0 },
-  ],
-};
+const EMPTY: Polyline = [];
+const SINGLE: Polyline = [{ x: 1, y: 2 }];
+const TWO_PT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 10, y: 0 },
+];
 
 /** x축 위 직선 4점 — 중간 점들은 모두 tolerance 1.0 이내 */
-const COLLINEAR: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 0 },
-    { x: 7, y: 0 },
-    { x: 10, y: 0 },
-  ],
-};
+const COLLINEAR: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 0 },
+  { x: 7, y: 0 },
+  { x: 10, y: 0 },
+];
 
 /** 직각 꺾임: 제거되면 안 되는 vertex 포함 */
-const L_SHAPE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 5, y: 0 },
-    { x: 5, y: 5 },
-  ],
-};
+const L_SHAPE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 5, y: 0 },
+  { x: 5, y: 5 },
+];
 
 /** 직선 위 근사점 포함 (약간 벗어남) */
-const NEAR_LINE: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 5, y: 0.5 }, // 직선에서 0.5 벗어남
-    { x: 10, y: 0 },
-  ],
-};
+const NEAR_LINE: Polyline = [
+  { x: 0, y: 0 },
+  { x: 5, y: 0.5 }, // 직선에서 0.5 벗어남
+  { x: 10, y: 0 },
+];
 
-function makeOut(): XYObjectWritable[] {
+/** 쓰기 여부를 확인할 초기 점 배열을 만든다. */
+function makeOut(): PointWritable[] {
   return [];
 }
 
@@ -81,7 +74,7 @@ describe('polyline simplify - simplifyInto 입력 검증', () => {
 
 describe('polyline simplify - simplifyInto edge-case', () => {
   test('empty polyline은 outPoints를 비우고 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     const result = simplifyInto(out, EMPTY);
     expect(result).toBe(out);
     expect(out).toHaveLength(0);
@@ -166,7 +159,7 @@ describe('polyline simplify - simplifyInto tolerance', () => {
 
 describe('polyline simplify - simplifyInto outPoints clear', () => {
   test('기존 outPoints 내용이 clear된다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 99, y: 99 },
       { x: 88, y: 88 },
       { x: 77, y: 77 },
@@ -175,7 +168,7 @@ describe('polyline simplify - simplifyInto outPoints clear', () => {
     expect(out).toHaveLength(2);
   });
 
-  test('점 배열 자체를 PolylineLike로 사용할 수 있다', () => {
+  test('점 배열에서 결과를 계산한다', () => {
     const pts = [
       { x: 0, y: 0 },
       { x: 5, y: 0 },

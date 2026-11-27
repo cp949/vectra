@@ -1,13 +1,12 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineConcatOptions, PolylineLike, XYObjectWritable } from '../types';
+import type { PolylineConcatOptions } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
  * 여러 polyline을 순서대로 이어 붙인 point list를 outPoints에 새 point object로 기록한다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push되며, 같은 outPoints를 반환한다.
- * 어떤 source `polyline.points`와 outPoints가 같은 배열이어도 안전하다 (clear 전에 모든 source
+ * 어떤 source polyline와 outPoints가 같은 배열이어도 안전하다 (clear 전에 모든 source
  * 좌표를 snapshot한다).
  *
  * 기본 dedupe: `weldTolerance`가 `0`이면 인접 source polyline의 접합 endpoint를 exact equality로
@@ -29,11 +28,11 @@ import { hypot2 } from '../internal/numeric';
  * @throws {RangeError} `weldTolerance`가 finite `>= 0`이 아니면(음수, `NaN`, `±Infinity`) 던지며 outPoints를 수정하지 않는다.
  */
 export function concatInto(
-  outPoints: XYObjectWritable[],
-  polylines: readonly PolylineLike[],
+  outPoints: PointWritable[],
+  polylines: readonly Polyline[],
   options?: PolylineConcatOptions
-): XYObjectWritable[] {
-  const weldTolerance = options?.weldTolerance ?? 0;
+): PointWritable[] {
+  const weldTolerance = options === undefined ? 0 : options.weldTolerance;
   if (!Number.isFinite(weldTolerance) || weldTolerance < 0) {
     throw new RangeError('weldTolerance must be a finite number >= 0');
   }
@@ -41,13 +40,13 @@ export function concatInto(
   // input/output array aliasing에 대비해 clear 전에 모든 source 좌표를 snapshot한다.
   const sources: { xs: number[]; ys: number[] }[] = [];
   for (const polyline of polylines) {
-    const pts = readPolylinePoints(polyline);
+    const pts = polyline;
     const n = pts.length;
     const xs: number[] = new Array(n);
     const ys: number[] = new Array(n);
     for (let i = 0; i < n; i++) {
-      xs[i] = readX(pts[i]);
-      ys[i] = readY(pts[i]);
+      xs[i] = pts[i].x;
+      ys[i] = pts[i].y;
     }
     sources.push({ xs, ys });
   }

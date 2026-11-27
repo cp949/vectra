@@ -1,5 +1,5 @@
 import { writeReversedPolylinePointsInto } from '../internal/polyline-collection';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 point 순서를 뒤집어 outPoints에 새 point object로 기록한다.
@@ -14,6 +14,6 @@ import type { PolylineLike, XYObjectWritable } from '../types';
  * @param outPoints 뒤집힌 point object를 기록할 writable output array
  * @param polyline point를 읽을 polyline
  */
-export function reversedInto(outPoints: XYObjectWritable[], polyline: PolylineLike): XYObjectWritable[] {
+export function reversedInto(outPoints: PointWritable[], polyline: Polyline): PointWritable[] {
   return writeReversedPolylinePointsInto(outPoints, polyline);
 }

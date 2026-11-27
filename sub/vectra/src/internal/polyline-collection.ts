@@ -1,6 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
-import { readPolylinePoints } from './polyline';
-import { readX, readY } from './xy';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline point 순서를 뒤집어 outPoints에 새 point object로 기록하고 outPoints를 반환한다.
@@ -13,18 +11,15 @@ import { readX, readY } from './xy';
  * @param outPoints 뒤집힌 point object를 기록할 writable output array
  * @param polyline point를 읽을 polyline
  */
-export function writeReversedPolylinePointsInto(
-  outPoints: XYObjectWritable[],
-  polyline: PolylineLike
-): XYObjectWritable[] {
-  const pts = readPolylinePoints(polyline);
+export function writeReversedPolylinePointsInto(outPoints: PointWritable[], polyline: Polyline): PointWritable[] {
+  const pts = polyline;
   const n = pts.length;
   // input/output array aliasing에 대비해 clear 전에 좌표를 snapshot한다.
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
+    xs[i] = pts[i].x;
+    ys[i] = pts[i].y;
   }
   outPoints.length = 0;
   for (let i = n - 1; i >= 0; i--) {

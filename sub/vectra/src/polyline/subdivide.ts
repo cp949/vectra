@@ -1,4 +1,5 @@
-import type { PolylineLike, PolylineSubdivideOptions, XYObjectWritable } from '../types';
+import type { PolylineSubdivideOptions } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { subdivideInto } from './subdivide-into';
 
 /**
@@ -16,6 +17,6 @@ import { subdivideInto } from './subdivide-into';
  * @param options `segmentsPerSegment`(positive integer, 기본 `2`) 분할 옵션
  * @throws {RangeError} `segmentsPerSegment`가 positive integer가 아니면 던진다.
  */
-export function subdivide(polyline: PolylineLike, options?: PolylineSubdivideOptions): XYObjectWritable[] {
+export function subdivide(polyline: Polyline, options?: PolylineSubdivideOptions): PointWritable[] {
   return subdivideInto([], polyline, options);
 }

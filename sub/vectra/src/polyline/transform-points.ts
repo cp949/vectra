@@ -1,4 +1,4 @@
-import type { MatrixLike, PolylineLike, XYObjectWritable } from '../types';
+import type { Matrix, Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { transformPointsInto } from './transform-points-into';
 
 /**
@@ -9,6 +9,6 @@ import { transformPointsInto } from './transform-points-into';
  * @param polyline point를 읽을 polyline
  * @param matrix 각 point에 적용할 affine matrix
  */
-export function transformPoints(polyline: PolylineLike, matrix: MatrixLike): XYObjectWritable[] {
+export function transformPoints(polyline: Polyline, matrix: Matrix): PointWritable[] {
   return transformPointsInto([], polyline, matrix);
 }

@@ -1,6 +1,5 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, PolylineSubdivideOptions, XYObjectWritable } from '../types';
+import type { PolylineSubdivideOptions } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 각 segment를 같은 개수로 분할해 outPoints에 새 point object로 기록한다.
@@ -27,23 +26,23 @@ import type { PolylineLike, PolylineSubdivideOptions, XYObjectWritable } from '.
  * @throws {RangeError} `segmentsPerSegment`가 positive integer가 아니면 던진다.
  */
 export function subdivideInto(
-  outPoints: XYObjectWritable[],
-  polyline: PolylineLike,
+  outPoints: PointWritable[],
+  polyline: Polyline,
   options?: PolylineSubdivideOptions
-): XYObjectWritable[] {
-  const segmentsPerSegment = options?.segmentsPerSegment ?? 2;
+): PointWritable[] {
+  const segmentsPerSegment = options === undefined ? 2 : options.segmentsPerSegment;
   if (!Number.isInteger(segmentsPerSegment) || segmentsPerSegment < 1) {
     throw new RangeError('segmentsPerSegment must be a positive integer');
   }
 
-  const pts = readPolylinePoints(polyline);
+  const pts = polyline;
   const n = pts.length;
   // input/output array aliasing에 대비해 clear 전에 좌표를 snapshot한다.
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
+    xs[i] = pts[i].x;
+    ys[i] = pts[i].y;
   }
 
   outPoints.length = 0;

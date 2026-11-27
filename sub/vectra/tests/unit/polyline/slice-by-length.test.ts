@@ -2,7 +2,7 @@
  * polyline sliceByLength collection helper unit test.
  *
  * sliceByLengthInto/sliceByLength의 forward/reversed slice, clamp, interpolated endpoint,
- * 내부 vertex 포함, empty/single/repeated total length 0 fallback, tuple/object input,
+ * 내부 vertex 포함, empty/single/repeated total length 0 fallback,
  * aliasing, non-finite 좌표 전파 정책을 고정한다.
  */
 import { describe, expect, test } from 'vitest';
@@ -173,24 +173,6 @@ describe('polyline sliceByLength - sliceByLengthInto', () => {
     expect(points).toEqual([
       { x: 2, y: 0 },
       { x: 8, y: 0 },
-    ]);
-  });
-
-  test('tuple / object mixed point input을 새 object point로 출력한다', () => {
-    const out = sliceByLengthInto(
-      [],
-      [
-        { x: 0, y: 0 },
-        { x: 10, y: 0 },
-        { x: 10, y: 10 },
-      ],
-      5,
-      15
-    );
-    expect(out).toEqual([
-      { x: 5, y: 0 },
-      { x: 10, y: 0 },
-      { x: 10, y: 5 },
     ]);
   });
 

@@ -6,49 +6,43 @@
 import { describe, expect, test } from 'vitest';
 import { subdivide } from '../../../src/polyline/subdivide';
 import { subdivideInto } from '../../../src/polyline/subdivide-into';
-import type { PolylineLike, XYObjectWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
-const EMPTY: PolylineLike = { points: [] };
-const TWO_PT: PolylineLike = {
-  points: [
-    { x: 1, y: 2 },
-    { x: 3, y: 4 },
-  ],
-};
-const THREE_PT: PolylineLike = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 3, y: 4 },
-    { x: 6, y: 8 },
-  ],
-};
+const EMPTY: Polyline = [];
+const TWO_PT: Polyline = [
+  { x: 1, y: 2 },
+  { x: 3, y: 4 },
+];
+const THREE_PT: Polyline = [
+  { x: 0, y: 0 },
+  { x: 3, y: 4 },
+  { x: 6, y: 8 },
+];
 
 describe('polyline bridge/collection - subdivideInto', () => {
   test('받은 outPoints 자체를 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     expect(subdivideInto(out, TWO_PT)).toBe(out);
   });
 
   test('빈 polyline이면 out을 clear하고 빈 배열을 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
+    const out: PointWritable[] = [{ x: 9, y: 9 }];
     subdivideInto(out, EMPTY);
     expect(out).toHaveLength(0);
   });
 
   test('single-point polyline은 해당 point를 복제한다', () => {
-    const out: XYObjectWritable[] = [];
-    subdivideInto(out, { points: [{ x: 5, y: 7 }] });
+    const out: PointWritable[] = [];
+    subdivideInto(out, [{ x: 5, y: 7 }]);
     expect(out).toEqual([{ x: 5, y: 7 }]);
   });
 
   test('기본값 2는 각 segment에 midpoint를 추가한다', () => {
-    const out: XYObjectWritable[] = [];
-    subdivideInto(out, {
-      points: [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-      ],
-    });
+    const out: PointWritable[] = [];
+    subdivideInto(out, [
+      { x: 0, y: 0 },
+      { x: 4, y: 0 },
+    ]);
     expect(out).toEqual([
       { x: 0, y: 0 },
       { x: 2, y: 0 },
@@ -57,15 +51,13 @@ describe('polyline bridge/collection - subdivideInto', () => {
   });
 
   test('segmentsPerSegment 3은 1/3, 2/3 point를 추가한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     subdivideInto(
       out,
-      {
-        points: [
-          { x: 0, y: 0 },
-          { x: 3, y: 3 },
-        ],
-      },
+      [
+        { x: 0, y: 0 },
+        { x: 3, y: 3 },
+      ],
       { segmentsPerSegment: 3 }
     );
     expect(out).toEqual([
@@ -77,7 +69,7 @@ describe('polyline bridge/collection - subdivideInto', () => {
   });
 
   test('segmentsPerSegment 1은 원본 point 복제와 같다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     subdivideInto(out, THREE_PT, { segmentsPerSegment: 1 });
     expect(out).toEqual([
       { x: 0, y: 0 },
@@ -87,14 +79,12 @@ describe('polyline bridge/collection - subdivideInto', () => {
   });
 
   test('multi-segment polyline을 분할한다', () => {
-    const out: XYObjectWritable[] = [];
-    subdivideInto(out, {
-      points: [
-        { x: 0, y: 0 },
-        { x: 2, y: 0 },
-        { x: 2, y: 2 },
-      ],
-    });
+    const out: PointWritable[] = [];
+    subdivideInto(out, [
+      { x: 0, y: 0 },
+      { x: 2, y: 0 },
+      { x: 2, y: 2 },
+    ]);
     expect(out).toEqual([
       { x: 0, y: 0 },
       { x: 1, y: 0 },
@@ -105,41 +95,24 @@ describe('polyline bridge/collection - subdivideInto', () => {
   });
 
   test('zero-length segment도 중복 point를 생성한다', () => {
-    const out: XYObjectWritable[] = [];
-    subdivideInto(out, {
-      points: [
-        { x: 1, y: 1 },
-        { x: 1, y: 1 },
-      ],
-    });
-    expect(out).toEqual([
-      { x: 1, y: 1 },
+    const out: PointWritable[] = [];
+    subdivideInto(out, [
       { x: 1, y: 1 },
       { x: 1, y: 1 },
     ]);
-  });
-
-  test('tuple point input을 새 object point로 출력한다', () => {
-    const out: XYObjectWritable[] = [];
-    subdivideInto(out, {
-      points: [
-        [0, 0],
-        [4, 0],
-      ],
-    });
     expect(out).toEqual([
-      { x: 0, y: 0 },
-      { x: 2, y: 0 },
-      { x: 4, y: 0 },
+      { x: 1, y: 1 },
+      { x: 1, y: 1 },
+      { x: 1, y: 1 },
     ]);
   });
 
   test('input/output 배열 aliasing에서도 좌표가 유지된다', () => {
-    const sharedPoints: XYObjectWritable[] = [
+    const sharedPoints: PointWritable[] = [
       { x: 0, y: 0 },
       { x: 4, y: 0 },
     ];
-    subdivideInto(sharedPoints, { points: sharedPoints });
+    subdivideInto(sharedPoints, sharedPoints);
     expect(sharedPoints).toEqual([
       { x: 0, y: 0 },
       { x: 2, y: 0 },
@@ -158,12 +131,10 @@ describe('polyline bridge/collection - subdivideInto', () => {
 describe('polyline bridge/collection - subdivide', () => {
   test('새 배열을 반환한다', () => {
     expect(
-      subdivide({
-        points: [
-          { x: 0, y: 0 },
-          { x: 4, y: 0 },
-        ],
-      })
+      subdivide([
+        { x: 0, y: 0 },
+        { x: 4, y: 0 },
+      ])
     ).toEqual([
       { x: 0, y: 0 },
       { x: 2, y: 0 },
@@ -182,12 +153,13 @@ describe('polyline bridge/collection - subdivide', () => {
 
 describe('polyline bridge/collection - subdivide non-finite 좌표 pass-through', () => {
   test('subdivideInto는 NaN 좌표를 그대로 전파한다', () => {
-    const out = subdivideInto([], {
-      points: [
+    const out = subdivideInto(
+      [],
+      [
         { x: Number.NaN, y: 0 },
         { x: 2, y: 0 },
-      ],
-    });
+      ]
+    );
     // segment 시작점은 source의 NaN, midpoint는 NaN+유한 보간으로 NaN.
     expect(Number.isNaN(out[0].x)).toBe(true);
     expect(Number.isNaN(out[1].x)).toBe(true);
@@ -195,12 +167,13 @@ describe('polyline bridge/collection - subdivide non-finite 좌표 pass-through'
 
   test('subdivideInto는 source point를 보존하고 Infinity 내부 분할점을 생성한다', () => {
     // segment 시작점은 source point를 그대로 복제한다. midpoint는 보간으로 Infinity가 된다.
-    const out = subdivideInto([], {
-      points: [
+    const out = subdivideInto(
+      [],
+      [
         { x: 0, y: 0 },
         { x: Number.POSITIVE_INFINITY, y: 0 },
-      ],
-    });
+      ]
+    );
     expect(out).toHaveLength(3);
     expect(out[0].x).toBe(0);
     expect(out[1].x).toBe(Number.POSITIVE_INFINITY); // 0.5 * Infinity → Infinity
@@ -209,12 +182,13 @@ describe('polyline bridge/collection - subdivide non-finite 좌표 pass-through'
 
   test('subdivideInto의 시작점 Infinity는 source point로 보존된다', () => {
     // start 좌표가 Infinity면 dx = -Infinity. midpoint는 Infinity + (-Infinity)로 NaN.
-    const out = subdivideInto([], {
-      points: [
+    const out = subdivideInto(
+      [],
+      [
         { x: Number.POSITIVE_INFINITY, y: 0 },
         { x: 0, y: 0 },
-      ],
-    });
+      ]
+    );
     expect(out).toHaveLength(3);
     expect(out[0].x).toBe(Number.POSITIVE_INFINITY);
     expect(Number.isNaN(out[1].x)).toBe(true);
@@ -224,13 +198,11 @@ describe('polyline bridge/collection - subdivide non-finite 좌표 pass-through'
   test('subdivideInto segmentsPerSegment 1은 non-finite 좌표도 원본 point 복제와 같다', () => {
     const out = subdivideInto(
       [],
-      {
-        points: [
-          { x: 0, y: 0 },
-          { x: Number.POSITIVE_INFINITY, y: Number.NEGATIVE_INFINITY },
-          { x: Number.NaN, y: 3 },
-        ],
-      },
+      [
+        { x: 0, y: 0 },
+        { x: Number.POSITIVE_INFINITY, y: Number.NEGATIVE_INFINITY },
+        { x: Number.NaN, y: 3 },
+      ],
       { segmentsPerSegment: 1 }
     );
     expect(out).toEqual([

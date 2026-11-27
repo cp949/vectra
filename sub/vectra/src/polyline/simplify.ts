@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { simplifyInto } from './simplify-into';
 
 /**
@@ -14,6 +14,6 @@ import { simplifyInto } from './simplify-into';
  * @param polyline 단순화할 polyline
  * @param tolerance 허용 최대 수직 거리 (기본값 1.0)
  */
-export function simplify(polyline: PolylineLike, tolerance = 1.0): XYObjectWritable[] {
+export function simplify(polyline: Polyline, tolerance = 1.0): PointWritable[] {
   return simplifyInto([], polyline, tolerance);
 }

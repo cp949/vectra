@@ -1,6 +1,4 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, XYInput, XYObjectWritable } from '../types';
+import type { Polyline, Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline의 모든 point에 offset을 더해 outPoints에 새 point object로 기록한다.
@@ -12,21 +10,17 @@ import type { PolylineLike, XYInput, XYObjectWritable } from '../types';
  * @param polyline point를 읽을 polyline
  * @param offset 각 point에 더할 offset
  */
-export function translatePointsInto(
-  outPoints: XYObjectWritable[],
-  polyline: PolylineLike,
-  offset: XYInput
-): XYObjectWritable[] {
-  const pts = readPolylinePoints(polyline);
+export function translatePointsInto(outPoints: PointWritable[], polyline: Polyline, offset: Point): PointWritable[] {
+  const pts = polyline;
   const n = pts.length;
-  const dx = readX(offset);
-  const dy = readY(offset);
+  const dx = offset.x;
+  const dy = offset.y;
   // input/output array aliasing에 대비해 clear 전에 좌표를 snapshot한다.
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
   for (let i = 0; i < n; i++) {
-    xs[i] = readX(pts[i]);
-    ys[i] = readY(pts[i]);
+    xs[i] = pts[i].x;
+    ys[i] = pts[i].y;
   }
   outPoints.length = 0;
   for (let i = 0; i < n; i++) {

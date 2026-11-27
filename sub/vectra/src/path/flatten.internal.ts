@@ -3,7 +3,7 @@ import type { PathCommand, PathFlattenOptions } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
 
-// v2-migration: polyline과 intersects의 옵션을 전환할 때 지운다.
+// v2-migration: E단계에서 intersects의 옵션을 전환할 때 지운다.
 /** 필드가 빠질 수 있는 v1 flatten 옵션의 빈 필드를 기본값으로 채운다. */
 export function fillLegacyFlattenOptions(
   options: Partial<PathFlattenOptions> | undefined

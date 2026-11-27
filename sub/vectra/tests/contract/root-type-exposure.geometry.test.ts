@@ -120,7 +120,7 @@ describe('root geometry type exposure 계약', () => {
     expectAssignable<PolylineWritable>({ points: [{ x: 0, y: 0 }] });
     expectAssignable<PolylineSubdivideOptions>({ segmentsPerSegment: 2 });
     expectAssignable<PolylineConcatOptions>({ weldTolerance: 0.5 });
-    expectAssignable<PolylineConcatOptions>({});
+    expectAssignable<PolylineConcatOptions>({ weldTolerance: 0 });
   });
 
   test('root entry가 polygon type을 노출한다', () => {

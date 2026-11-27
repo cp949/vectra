@@ -35,7 +35,7 @@ export interface PolylineConcatOptions {
    * 기본값 `0`. `0`이면 exact equality로 비교하고, 양수이면 인접 endpoint 사이 Euclidean 거리가
    * 이 값 이하일 때 현재 source의 첫 point를 제거한다. 음수 / `NaN` / `±Infinity`는 `RangeError`다.
    */
-  weldTolerance?: number;
+  weldTolerance: number;
 }
 
 /** `subdivideInto` / `subdivide`의 segment 분할 옵션. */
@@ -44,7 +44,7 @@ export interface PolylineSubdivideOptions {
    * 각 source segment를 나눌 등분 개수. positive integer여야 한다.
    * 기본값 `2`. `1`이면 원본 point 복제와 같다.
    */
-  segmentsPerSegment?: number;
+  segmentsPerSegment: number;
 }
 
 /**

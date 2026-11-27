@@ -1,7 +1,6 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
 import { writePolylineCommandsInto } from '../internal/polyline-path';
-import type { PathCommand, PolylineLike } from '../types';
+import type { PathCommand } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polyline을 `move` + `line` command sequence로 outCommands에 기록한다.
@@ -19,8 +18,6 @@ import type { PathCommand, PolylineLike } from '../types';
  * @param outCommands command를 기록할 mutable PathCommand 배열
  * @param polyline 변환할 polyline
  */
-export function toPathInto(outCommands: PathCommand[], polyline: PolylineLike): PathCommand[] {
-  // v2-migration: polyline 전환 시 점 객체 배열을 그대로 넘긴다.
-  const points = readPolylinePoints(polyline).map((point) => ({ x: readX(point), y: readY(point) }));
-  return writePolylineCommandsInto(outCommands, points);
+export function toPathInto(outCommands: PathCommand[], polyline: Polyline): PathCommand[] {
+  return writePolylineCommandsInto(outCommands, polyline);
 }

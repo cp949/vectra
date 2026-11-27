@@ -1,5 +1,6 @@
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * path command sequence를 flatten해 open polyline point list로 outPoints에 기록한다.
@@ -17,12 +18,12 @@ import type { PathCommand, PathFlattenOptions, XYObjectWritable } from '../types
  *
  * @param outPoints 결과 object point를 기록할 mutable 배열
  * @param commands flatten할 path command sequence
- * @param options flatten 옵션 (flatness, maxRecursion)
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`를 쓴다.
  */
 export function fromPathInto(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   commands: readonly PathCommand[],
-  options?: Partial<PathFlattenOptions>
-): XYObjectWritable[] {
-  return flattenPathInto(outPoints, commands, fillLegacyFlattenOptions(options));
+  options?: PathFlattenOptions
+): PointWritable[] {
+  return flattenPathInto(outPoints, commands, options);
 }

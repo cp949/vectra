@@ -1,4 +1,4 @@
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { reversePointsInto } from './reverse-points-into';
 
 /**
@@ -9,6 +9,6 @@ import { reversePointsInto } from './reverse-points-into';
  *
  * @param polyline point를 읽을 polyline
  */
-export function reversePoints(polyline: PolylineLike): XYObjectWritable[] {
+export function reversePoints(polyline: Polyline): PointWritable[] {
   return reversePointsInto([], polyline);
 }

@@ -1,4 +1,4 @@
-import type { PolylineLike, XYInput, XYObjectWritable } from '../types';
+import type { Polyline, Point, PointWritable } from '../types/flat-shapes.internal';
 import { translatePointsInto } from './translate-points-into';
 
 /**
@@ -9,6 +9,6 @@ import { translatePointsInto } from './translate-points-into';
  * @param polyline point를 읽을 polyline
  * @param offset 각 point에 더할 offset
  */
-export function translatePoints(polyline: PolylineLike, offset: XYInput): XYObjectWritable[] {
+export function translatePoints(polyline: Polyline, offset: Point): PointWritable[] {
   return translatePointsInto([], polyline, offset);
 }

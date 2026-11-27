@@ -1,29 +1,16 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, PolylineWritable, XYInput } from '../types';
+import type { Polyline, PolylineWritable } from '../types/flat-shapes.internal';
 import type { CreatePointListOptions } from './create-polyline';
 
 /**
- * `PolylineLike` source의 point를 새 plain object로 복사해 반환한다.
+ * polyline의 점을 새 배열과 새 `{ x, y }` 객체에 복사한다.
  *
- * 기본값(`options.clonePoints !== false`)은 새 배열과 새 plain `{ x, y }` point들을 만든다.
- * `{ clonePoints: false }`를 넘기면 해석된 원본 point array 참조를 유지한다.
+ * `{ clonePoints: false }`를 넘기면 입력 배열 자체를 반환한다.
+ * 이때 반환값을 수정하려면 입력 배열과 점이 쓰기 가능해야 한다.
  *
- * @param polyline 복사할 source polyline 또는 point 배열
- * @param options point cloning 옵션
+ * @param polyline 복사할 점 배열
+ * @param options 점 복사 옵션. 생략하면 `{ clonePoints: true }`를 쓴다.
  */
-export function polylineFrom(
-  points: readonly XYInput[],
-  options: { readonly clonePoints: false }
-): PolylineWritable<XYInput>;
-export function polylineFrom(
-  polyline: PolylineLike,
-  options: { readonly clonePoints: false }
-): PolylineWritable<XYInput>;
-export function polylineFrom(points: readonly XYInput[], options?: CreatePointListOptions): PolylineWritable;
-export function polylineFrom(polyline: PolylineLike, options?: CreatePointListOptions): PolylineWritable;
-export function polylineFrom(polyline: PolylineLike, options: CreatePointListOptions = {}): PolylineWritable<XYInput> {
-  const points = readPolylinePoints(polyline);
-  if (options.clonePoints === false) return { points: points as XYInput[] };
-  return { points: points.map((point) => ({ x: readX(point), y: readY(point) })) };
+export function polylineFrom(polyline: Polyline, options?: CreatePointListOptions): PolylineWritable {
+  if (options !== undefined && options.clonePoints === false) return polyline as PolylineWritable;
+  return polyline.map(({ x, y }) => ({ x, y }));
 }
