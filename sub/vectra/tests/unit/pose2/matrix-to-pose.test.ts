@@ -156,6 +156,11 @@ describe('matrixToPoseInto - 입력 검증', () => {
       RangeError
     );
   });
+
+  test('epsilon이 빠진 옵션 객체는 기본값을 쓰지 않고 RangeError', () => {
+    // @ts-expect-error epsilon은 필수 필드다
+    expect(() => matrixToPoseInto(makePose(), rigidMatrix(0, 0, 0), {})).toThrow(RangeError);
+  });
 });
 
 // ─── companion ───────────────────────────────────────────────────────────

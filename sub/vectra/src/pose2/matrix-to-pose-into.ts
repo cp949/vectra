@@ -12,7 +12,7 @@ import { hypot2 } from '../internal/numeric';
  * 역으로 읽어 `out.px = tx, out.py = ty`, `out.angle = Math.atan2(b, a)`를 기록한다.
  * `poseToMatrixInto`의 역방향이며 rigid matrix에서 round-trip이 성립한다.
  *
- * rigid 판정은 `options.epsilon`(생략 시 `1e-9`) 허용 오차로 한다. column length
+ * rigid 판정은 `options.epsilon` 허용 오차로 한다. 옵션을 생략하면 `1e-9`다. column length
  * (`hypot(a, b)`, `hypot(c, d)`)가 `1`에, column dot product(`a·c + b·d`)가 `0`에,
  * determinant(`a·d − b·c`)가 `1`에 epsilon 이내여야 한다. scale/skew/shear 또는 determinant가
  * `-1`인 reflection matrix는 rigid가 아니므로 `false`를 반환하고 `out`을 수정하지 않는다.

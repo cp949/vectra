@@ -113,6 +113,13 @@ describe('poseDistance - 입력 검증', () => {
     expect(() => poseDistance(a, b, { angularWeight: Number.NEGATIVE_INFINITY })).toThrow(RangeError);
   });
 
+  test('angularWeight가 빠진 옵션 객체는 기본값을 쓰지 않고 RangeError', () => {
+    const a: Pose2 = { px: 0, py: 0, angle: 0 };
+    const b: Pose2 = { px: 1, py: 0, angle: 0.5 };
+    // @ts-expect-error angularWeight는 필수 필드다
+    expect(() => poseDistance(a, b, {})).toThrow(RangeError);
+  });
+
   test('weighted angle product가 overflow하면 RangeError', () => {
     // angularDistance ≈ π(float atan2 결과라 정확히 π는 아니다), angularWeight = MAX_VALUE
     // → angularDistance * MAX_VALUE = Infinity

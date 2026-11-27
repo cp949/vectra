@@ -69,9 +69,10 @@ export function validatePoseOperandFinite(x: number, y: number): void {
  *
  * `right`를 먼저 적용하고 `left`를 나중에 적용한다. 산식은
  * `angle = la + ra`, `position = (lx, ly) + R(la) * (rx, ry)`이다.
- * 모든 입력을 number 성분으로 받으므로 `out`이 입력 pose 중 하나여도 안전하다. caller가 finite 검증을 먼저 끝낸다고 가정한다.
+ * 모든 입력을 number 성분으로 받으므로 `out`이 입력 pose 중 하나여도 안전하다.
+ * caller가 finite 검증을 먼저 끝낸다고 가정한다.
  *
- * @param out 합성 결과를 기록할 writable pose output
+ * @param out 합성 결과를 기록할 pose 객체
  * @param lx left pose translation x 성분
  * @param ly left pose translation y 성분
  * @param la left pose 회전각. 단위는 radian.
@@ -99,11 +100,11 @@ export function writeComposedPose<Out extends Pose2Writable>(
 /**
  * rigid pose 성분의 inverse를 out에 기록하고 out을 반환한다.
  *
- * 산식은 `angle = -angle`, `position = R(-angle) * (-position)`이다. 모든 입력을 number
+ * 산식은 `angle = -angle`, `position = R(-angle) * (-(px, py))`이다. 모든 입력을 number
  * 성분으로 받으므로 `out`이 입력 pose와 같은 객체여도 안전하다.
  * caller가 finite 검증을 먼저 끝낸다고 가정한다.
  *
- * @param out inverse 결과를 기록할 writable pose output
+ * @param out 역변환을 기록할 pose 객체
  * @param px inverse 대상 pose translation x 성분
  * @param py inverse 대상 pose translation y 성분
  * @param angle inverse 대상 pose 회전각. 단위는 radian.

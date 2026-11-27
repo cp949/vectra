@@ -125,4 +125,12 @@ describe('poseApproxEquals - 입력 검증', () => {
       RangeError
     );
   });
+
+  test('허용 오차 필드가 빠진 옵션 객체는 기본값을 쓰지 않고 RangeError', () => {
+    const a: Pose2 = { px: 0, py: 0, angle: 0 };
+    // @ts-expect-error angleEpsilon은 필수 필드다
+    expect(() => poseApproxEquals(a, a, { positionEpsilon: 1e-9 })).toThrow(RangeError);
+    // @ts-expect-error positionEpsilon은 필수 필드다
+    expect(() => poseApproxEquals(a, a, { angleEpsilon: 1e-9 })).toThrow(RangeError);
+  });
 });

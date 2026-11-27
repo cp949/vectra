@@ -6,7 +6,7 @@ import { relativePoseInto } from './relative-pose-into';
  *
  * `{ px, py, angle }`를 반환한다. `relativePose(from, to) = invert(from) * to`다.
  * 결과를 `from`에 다시 합성하면 `to`가 된다. 산식은 `angle = to.angle - from.angle`,
- * `position = R(-from.angle) * ((to.px - from.px, to.py - from.py))`이다. angle 결과는 normalize하지
+ * `position = R(-from.angle) * (to.px - from.px, to.py - from.py)`이다. angle 결과는 normalize하지
  * 않는다. `from`이나 `to`의 translation/angle이라도 non-finite(`NaN`, `Infinity`, `-Infinity`)이면
  * `RangeError`다.
  *

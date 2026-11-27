@@ -18,6 +18,7 @@ import {
 } from '../../../src/pose2';
 import type { Pose2 } from '../../../src/types/flat-shapes.internal';
 
+/** pose 필드 외에 `tag`를 더 가진 외부 클래스. Into가 이 구체 타입을 그대로 반환하는지 본다. */
 class ExternalPose {
   px = 0;
   py = 0;
@@ -25,12 +26,14 @@ class ExternalPose {
   tag = 'pose';
 }
 
+/** 점 필드 외에 `tag`를 더 가진 외부 클래스. 점 출력 Into의 반환 타입 보존을 본다. */
 class ExternalPoint {
   x = 0;
   y = 0;
   tag = 'point';
 }
 
+/** 행렬 성분 외에 `tag`를 더 가진 외부 클래스. 행렬 입출력의 구체 타입 보존을 본다. */
 class ExternalMatrix {
   a = 1;
   b = 0;

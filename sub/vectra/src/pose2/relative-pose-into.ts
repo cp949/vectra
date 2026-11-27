@@ -7,7 +7,7 @@ import type { Pose2, Pose2Writable } from '../types/flat-shapes.internal';
  * `relativePose(from, to) = invert(from) * to`다. 결과를 `from`에 다시 합성하면 `to`가 된다:
  * `transformPointByPose(from, transformPointByPose(relativePose(from, to), local))`이
  * `transformPointByPose(to, local)`과 같다. 산식은 `angle = to.angle - from.angle`,
- * `position = R(-from.angle) * ((to.px - from.px, to.py - from.py))`이다. angle 결과는 normalize하지
+ * `position = R(-from.angle) * (to.px - from.px, to.py - from.py)`이다. angle 결과는 normalize하지
  * 않는다. `from`이나 `to`의 translation/angle이라도 non-finite(`NaN`, `Infinity`, `-Infinity`)이면
  * `RangeError`다. 두 pose 값을 먼저 모두 읽으므로 `out`이 `from` 또는 `to`와 같은 객체여도 안전하다.
  *
