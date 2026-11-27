@@ -51,16 +51,18 @@ describe('line-family crop core - circle', () => {
 
   test('ray가 disk 내부에서 시작하면 origin부터 forward exit까지 기록한다', () => {
     // ray origin (2,0) dir (1,0), 중심 (2,0) 반지름 1 → t∈[-1,1], ray clip [0,1]
-    const out = nestedSeg();
+    const out = flatSeg();
     const ok = cropLineFamilyByCircleInto(out, 2, 0, 1, 0, 'ray', 2, 0, 1);
     expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 2, y: 0 });
-    expect(out.b).toEqual({ x: 3, y: 0 });
+    expect(out.x1).toBe(2);
+    expect(out.y1).toBe(0);
+    expect(out.x2).toBe(3);
+    expect(out.y2).toBe(0);
   });
 
   test('ray hit가 backward에만 있으면 실패한다', () => {
     // ray origin (5,0) dir (1,0), 중심 (2,0) 반지름 1 → chord t∈[-4,-2], ray clip 없음
-    const out = nestedSeg();
+    const out = flatSeg();
     const ok = cropLineFamilyByCircleInto(out, 5, 0, 1, 0, 'ray', 2, 0, 1);
     expect(ok).toBe(false);
   });
@@ -146,15 +148,17 @@ describe('line-family crop core - rect', () => {
     expect(cropLineFamilyByRectInto(out, -1, 1, 1, 0, 'inf', 0, 0, Number.POSITIVE_INFINITY, 4)).toBe(false);
     expect(out.a).toEqual({ x: 0, y: 0 });
     expect(out.b).toEqual({ x: 0, y: 0 });
-    expect(cropLineFamilyByRectInto(nestedSeg(), 0, -1, 0, 1, 'ray', 0, 0, 4, Number.POSITIVE_INFINITY)).toBe(false);
+    expect(cropLineFamilyByRectInto(flatSeg(), 0, -1, 0, 1, 'ray', 0, 0, 4, Number.POSITIVE_INFINITY)).toBe(false);
     expect(cropLineFamilyByRectInto(flatSeg(), -1, 1, 1, 0, 'finite', 0, 0, Number.NaN, 4)).toBe(false);
   });
 
   test('finite extent라도 right/bottom edge가 overflow되면 실패하고 out을 수정하지 않는다', () => {
-    const out = nestedSeg();
+    const out = flatSeg();
     expect(cropLineFamilyByRectInto(out, 1e308, 1, 1, 0, 'ray', 1e308, 0, 1e308, 4)).toBe(false);
-    expect(out.a).toEqual({ x: 0, y: 0 });
-    expect(out.b).toEqual({ x: 0, y: 0 });
+    expect(out.x1).toBe(0);
+    expect(out.y1).toBe(0);
+    expect(out.x2).toBe(0);
+    expect(out.y2).toBe(0);
     expect(cropLineFamilyByRectInto(nestedSeg(), 1, 1e308, 0, 1, 'inf', 0, 1e308, 4, 1e308)).toBe(false);
   });
 });

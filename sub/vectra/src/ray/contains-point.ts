@@ -1,7 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { RayLike, XYInput } from '../types';
+import type { Ray, Point } from '../types/flat-shapes.internal';
 
 /**
  * `point`가 ray 위에 있으면 `true`를 반환한다.
@@ -13,14 +11,11 @@ import type { RayLike, XYInput } from '../types';
  * @param point containment를 검사할 point
  * @param epsilon 허용 거리 (기본값 `1e-9`)
  */
-export function containsPoint(ray: RayLike, point: XYInput, epsilon: number = DEFAULT_EPSILON): boolean {
-  const ox = readX(readRayOrigin(ray));
-  const oy = readY(readRayOrigin(ray));
-  const dx = readX(readRayDirection(ray));
-  const dy = readY(readRayDirection(ray));
+export function containsPoint(ray: Ray, point: Point, epsilon: number = DEFAULT_EPSILON): boolean {
+  const { ox, oy, dx, dy } = ray;
   const lenSq = dx * dx + dy * dy;
-  const px = readX(point) - ox;
-  const py = readY(point) - oy;
+  const px = point.x - ox;
+  const py = point.y - oy;
   if (lenSq === 0) {
     // degenerate: point containment으로 환원
     return px * px + py * py <= epsilon * epsilon;

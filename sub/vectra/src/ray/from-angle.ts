@@ -1,4 +1,4 @@
-import type { RayWritable, XYInput } from '../types';
+import type { RayWritable, Point } from '../types/flat-shapes.internal';
 import { fromAngleInto } from './from-angle-into';
 
 /**
@@ -6,6 +6,6 @@ import { fromAngleInto } from './from-angle-into';
  *
  * `fromAngleInto`에 위임하는 companion wrapper다.
  */
-export function fromAngle(origin: XYInput, angle: number): RayWritable {
-  return fromAngleInto({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } }, origin, angle);
+export function fromAngle(origin: Point, angle: number): RayWritable {
+  return fromAngleInto({ ox: 0, oy: 0, dx: 0, dy: 0 }, origin, angle);
 }

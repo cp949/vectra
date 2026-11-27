@@ -1,8 +1,5 @@
 import { cropLineFamilyByRectInto } from '../internal/line-family-crop';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { RayLike, RectLike, SegmentWritable, XYWritable } from '../types';
+import type { Ray, Rect, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray를 axis-aligned rect boundary로 crop한 bounded segment를 out에 기록하고 성공 여부를 반환한다.
@@ -14,23 +11,11 @@ import type { RayLike, RectLike, SegmentWritable, XYWritable } from '../types';
  * 실패 조건: zero-direction ray, empty rect(`width`/`height`가 `<= 0` 또는 ±Infinity·NaN),
  * forward range에서 rect와 만나지 않음, clip 길이 0. non-finite 좌표는 실패한다.
  *
- * @param out crop된 segment를 기록할 writable output
+ * @param out 결과를 기록할 선분 객체
  * @param ray crop할 ray
  * @param rect crop 경계 rect (axis-aligned)
  */
-export function cropByRectInto(out: SegmentWritable<XYWritable, XYWritable>, ray: RayLike, rect: RectLike): boolean {
-  const o = readRayOrigin(ray);
-  const d = readRayDirection(ray);
-  return cropLineFamilyByRectInto(
-    out,
-    readX(o),
-    readY(o),
-    readX(d),
-    readY(d),
-    'ray',
-    readRectX(rect),
-    readRectY(rect),
-    readRectWidth(rect),
-    readRectHeight(rect)
-  );
+export function cropByRectInto(out: SegmentWritable, ray: Ray, rect: Rect): boolean {
+  const { ox, oy, dx, dy } = ray;
+  return cropLineFamilyByRectInto(out, ox, oy, dx, dy, 'ray', rect.x, rect.y, rect.width, rect.height);
 }

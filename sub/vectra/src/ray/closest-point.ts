@@ -1,4 +1,4 @@
-import type { RayLike, XYInput, XYObjectWritable } from '../types';
+import type { Ray, Point, PointWritable } from '../types/flat-shapes.internal';
 import { closestPointInto } from './closest-point-into';
 
 /**
@@ -8,6 +8,6 @@ import { closestPointInto } from './closest-point-into';
  *
  * degenerate/empty 입력 처리 정책은 `closestPointInto`와 동일하다.
  */
-export function closestPoint(ray: RayLike, point: XYInput): XYObjectWritable {
+export function closestPoint(ray: Ray, point: Point): PointWritable {
   return closestPointInto({ x: 0, y: 0 }, ray, point);
 }

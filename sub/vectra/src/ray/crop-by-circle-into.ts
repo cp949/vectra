@@ -1,8 +1,5 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { cropLineFamilyByCircleInto } from '../internal/line-family-crop';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, RayLike, SegmentWritable, XYWritable } from '../types';
+import type { Circle, Ray, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray를 circle boundary로 crop한 bounded segment를 out에 기록하고 성공 여부를 반환한다.
@@ -14,27 +11,11 @@ import type { CircleLike, RayLike, SegmentWritable, XYWritable } from '../types'
  * 실패 조건: zero-direction ray, circle radius가 finite positive 아님, forward range에서 disk와
  * 만나지 않음, tangent(clip 길이 0). non-finite 좌표는 실패한다.
  *
- * @param out crop된 segment를 기록할 writable output
+ * @param out 결과를 기록할 선분 객체
  * @param ray crop할 ray
  * @param circle crop 경계 circle
  */
-export function cropByCircleInto(
-  out: SegmentWritable<XYWritable, XYWritable>,
-  ray: RayLike,
-  circle: CircleLike
-): boolean {
-  const o = readRayOrigin(ray);
-  const d = readRayDirection(ray);
-  const center = readCircleCenter(circle);
-  return cropLineFamilyByCircleInto(
-    out,
-    readX(o),
-    readY(o),
-    readX(d),
-    readY(d),
-    'ray',
-    readX(center),
-    readY(center),
-    readCircleRadius(circle)
-  );
+export function cropByCircleInto(out: SegmentWritable, ray: Ray, circle: Circle): boolean {
+  const { ox, oy, dx, dy } = ray;
+  return cropLineFamilyByCircleInto(out, ox, oy, dx, dy, 'ray', circle.cx, circle.cy, circle.r);
 }

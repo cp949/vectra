@@ -1,4 +1,5 @@
-import type { CircleLike, RayLike, SegmentWritable } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { Circle, Ray, SegmentWritable } from '../types/flat-shapes.internal';
 import { cropByCircleInto } from './crop-by-circle-into';
 
 /**
@@ -13,8 +14,8 @@ import { cropByCircleInto } from './crop-by-circle-into';
  * @param ray crop할 ray
  * @param circle crop 경계 circle
  */
-export function cropByCircle(ray: RayLike, circle: CircleLike): SegmentWritable | undefined {
-  const seed: SegmentWritable = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+export function cropByCircle(ray: Ray, circle: Circle): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (!cropByCircleInto(seed, ray, circle)) return undefined;
   return seed;
 }

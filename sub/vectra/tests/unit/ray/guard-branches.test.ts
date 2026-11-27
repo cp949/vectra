@@ -7,15 +7,14 @@
 
 import { describe, expect, test } from 'vitest';
 import { cropByCircle } from '../../../src/ray/crop-by-circle';
-import { rayFrom } from '../../../src/ray/ray-from';
 import { singleIntersectionInto } from '../../../src/ray/single-intersection-into';
 
 /** +x 방향 ray. origin은 `(0, 0)`이다. */
-const rayRight = rayFrom({ x: 0, y: 0 }, { x: 1, y: 0 });
+const rayRight = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
 
 /** 방향 벡터가 0인 degenerate ray. 점처럼 origin만 의미가 있다. */
 function point(x: number, y: number) {
-  return rayFrom({ x, y }, { x: 0, y: 0 });
+  return { origin: { x, y }, direction: { x: 0, y: 0 } };
 }
 
 describe('singleIntersectionInto — 양쪽 degenerate', () => {
@@ -58,15 +57,17 @@ describe('singleIntersectionInto — b만 degenerate', () => {
 
 describe('cropByCircle', () => {
   test('ray가 circle과 만나지 않으면 undefined를 돌려준다', () => {
-    const away = rayFrom({ x: 10, y: 0 }, { x: 1, y: 0 });
-    expect(cropByCircle(away, { center: { x: 0, y: 0 }, radius: 1 })).toBeUndefined();
+    const away = { ox: 10, oy: 0, dx: 1, dy: 0 };
+    expect(cropByCircle(away, { cx: 0, cy: 0, r: 1 })).toBeUndefined();
   });
 
   test('ray가 circle을 가로지르면 진입점과 탈출점을 잇는 segment를 돌려준다', () => {
-    const through = rayFrom({ x: -5, y: 0 }, { x: 1, y: 0 });
-    expect(cropByCircle(through, { center: { x: 0, y: 0 }, radius: 1 })).toEqual({
-      a: { x: -1, y: 0 },
-      b: { x: 1, y: 0 },
+    const through = { ox: -5, oy: 0, dx: 1, dy: 0 };
+    expect(cropByCircle(through, { cx: 0, cy: 0, r: 1 })).toEqual({
+      x1: -1,
+      y1: 0,
+      x2: 1,
+      y2: 0,
     });
   });
 });

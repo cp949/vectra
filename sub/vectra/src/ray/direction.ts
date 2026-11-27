@@ -1,4 +1,4 @@
-import type { RayLike, XYObjectWritable } from '../types';
+import type { Ray, PointWritable } from '../types/flat-shapes.internal';
 import { directionInto } from './direction-into';
 
 /**
@@ -6,6 +6,6 @@ import { directionInto } from './direction-into';
  *
  * `directionInto`에 위임하는 companion wrapper다.
  */
-export function direction(ray: RayLike): XYObjectWritable {
+export function direction(ray: Ray): PointWritable {
   return directionInto({ x: 0, y: 0 }, ray);
 }
