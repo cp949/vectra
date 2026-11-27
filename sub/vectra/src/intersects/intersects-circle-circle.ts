@@ -12,14 +12,14 @@ import type { CircleLike } from '../types';
  * @param b 두 번째 circle
  */
 export function intersectsCircleCircle(a: CircleLike, b: CircleLike): boolean {
-  if (readCircleRadius(a) <= 0 || readCircleRadius(b) <= 0) return false;
+  const ar = readCircleRadius(a);
+  const br = readCircleRadius(b);
+  if (ar <= 0 || br <= 0) return false;
 
-  const ax = readX(readCircleCenter(a));
-  const ay = readY(readCircleCenter(a));
-  const bx = readX(readCircleCenter(b));
-  const by = readY(readCircleCenter(b));
-  const dx = bx - ax;
-  const dy = by - ay;
-  const rSum = readCircleRadius(a) + readCircleRadius(b);
+  const ca = readCircleCenter(a);
+  const cb = readCircleCenter(b);
+  const dx = readX(cb) - readX(ca);
+  const dy = readY(cb) - readY(ca);
+  const rSum = ar + br;
   return dx * dx + dy * dy <= rSum * rSum;
 }
