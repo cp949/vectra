@@ -4,11 +4,12 @@
  * bezierScalar, quadraticBezier, cubicBezier, easeCss, easeInCss, easeOutCss, easeInOutCss
  */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 import { bezierScalar } from '../../../src/easing/bezier-scalar';
 import { easeCss, easeInCss, easeInOutCss, easeOutCss } from '../../../src/easing/css';
 import { cubicBezier } from '../../../src/easing/cubic-bezier';
 import { quadraticBezier } from '../../../src/easing/quadratic-bezier';
+import type { Point } from '../../../src/types/flat-shapes.internal';
 
 /** 비finite 입력 케이스 */
 const nonFiniteValues = [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -113,72 +114,62 @@ describe('easing - quadraticBezier', () => {
 // ─── cubicBezier ──────────────────────────────────────────────────────────────
 
 describe('easing - cubicBezier', () => {
-  test('endpoint t=0이면 정확히 0이다 (tuple input)', () => {
-    expect(cubicBezier(0, [0.25, 0.1], [0.25, 1])).toBe(0);
+  test('두 제어점은 Point를 받는다', () => {
+    expectTypeOf(cubicBezier).parameter(1).toEqualTypeOf<Point>();
+    expectTypeOf(cubicBezier).parameter(2).toEqualTypeOf<Point>();
   });
 
-  test('endpoint t=1이면 정확히 1이다 (tuple input)', () => {
-    expect(cubicBezier(1, [0.25, 0.1], [0.25, 1])).toBe(1);
-  });
-
-  test('endpoint t=0이면 정확히 0이다 (object input)', () => {
+  test('endpoint t=0이면 정확히 0이다', () => {
     expect(cubicBezier(0, { x: 0.25, y: 0.1 }, { x: 0.25, y: 1 })).toBe(0);
   });
 
-  test('endpoint t=1이면 정확히 1이다 (object input)', () => {
+  test('endpoint t=1이면 정확히 1이다', () => {
     expect(cubicBezier(1, { x: 0.25, y: 0.1 }, { x: 0.25, y: 1 })).toBe(1);
   });
 
-  test('linear controls ([0,0],[1,1])은 identity에 가깝다', () => {
-    const c1 = [0, 0] as const;
-    const c2 = [1, 1] as const;
+  test('linear controls은 identity에 가깝다', () => {
+    const c1 = { x: 0, y: 0 };
+    const c2 = { x: 1, y: 1 };
     // linear CSS cubic-bezier는 identity에 가까운 값
     expect(cubicBezier(0.25, c1, c2)).toBeCloseTo(0.25, 6);
     expect(cubicBezier(0.5, c1, c2)).toBeCloseTo(0.5, 6);
     expect(cubicBezier(0.75, c1, c2)).toBeCloseTo(0.75, 6);
   });
 
-  test('tuple input과 object input은 동일한 결과를 반환한다', () => {
-    const t = 0.5;
-    const resultTuple = cubicBezier(t, [0.42, 0], [0.58, 1]);
-    const resultObject = cubicBezier(t, { x: 0.42, y: 0 }, { x: 0.58, y: 1 });
-    expect(resultTuple).toBeCloseTo(resultObject, 10);
-  });
-
   test('x < 0이면 RangeError를 던진다', () => {
-    expect(() => cubicBezier(0.5, [-0.1, 0], [0.5, 1])).toThrow(RangeError);
-    expect(() => cubicBezier(0.5, [0.5, 0], [-0.1, 1])).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: -0.1, y: 0 }, { x: 0.5, y: 1 })).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: 0.5, y: 0 }, { x: -0.1, y: 1 })).toThrow(RangeError);
   });
 
   test('x > 1이면 RangeError를 던진다', () => {
-    expect(() => cubicBezier(0.5, [1.1, 0], [0.5, 1])).toThrow(RangeError);
-    expect(() => cubicBezier(0.5, [0.5, 0], [1.1, 1])).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: 1.1, y: 0 }, { x: 0.5, y: 1 })).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: 0.5, y: 0 }, { x: 1.1, y: 1 })).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('비finite x1 %s는 RangeError를 던진다', (value) => {
-    expect(() => cubicBezier(0.5, [value, 0], [0.5, 1])).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: value, y: 0 }, { x: 0.5, y: 1 })).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('비finite y1 %s는 RangeError를 던진다', (value) => {
-    expect(() => cubicBezier(0.5, [0.25, value], [0.25, 1])).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: 0.25, y: value }, { x: 0.25, y: 1 })).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('비finite x2 %s는 RangeError를 던진다', (value) => {
-    expect(() => cubicBezier(0.5, [0.25, 0.1], [value, 1])).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: 0.25, y: 0.1 }, { x: value, y: 1 })).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('비finite y2 %s는 RangeError를 던진다', (value) => {
-    expect(() => cubicBezier(0.5, [0.25, 0.1], [0.25, value])).toThrow(RangeError);
+    expect(() => cubicBezier(0.5, { x: 0.25, y: 0.1 }, { x: 0.25, y: value })).toThrow(RangeError);
   });
 
   test.each(nonFiniteValues)('비finite t %s는 RangeError를 던진다', (value) => {
-    expect(() => cubicBezier(value, [0.25, 0.1], [0.25, 1])).toThrow(RangeError);
+    expect(() => cubicBezier(value, { x: 0.25, y: 0.1 }, { x: 0.25, y: 1 })).toThrow(RangeError);
   });
 
-  test('ease CSS 대표값: t=0.5, cubicBezier([0.25,0.1],[0.25,1]) ≈ 알려진 값 범위', () => {
+  test('ease CSS 대표값: t=0.5, CSS ease 출력 범위', () => {
     // CSS ease preset: 0.25, 0.1, 0.25, 1
     // t=0.5일 때 y가 0보다 크고 1보다 작다
-    const v = cubicBezier(0.5, [0.25, 0.1], [0.25, 1]);
+    const v = cubicBezier(0.5, { x: 0.25, y: 0.1 }, { x: 0.25, y: 1 });
     expect(v).toBeGreaterThan(0);
     expect(v).toBeLessThan(1);
   });

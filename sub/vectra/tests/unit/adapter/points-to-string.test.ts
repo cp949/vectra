@@ -1,3 +1,5 @@
+/** 점 객체 배열 변환과 버퍼 처리 시험. */
+
 import { describe, expect, test } from 'vitest';
 import { parsePointArrayInto } from '../../../src/adapter/parse-point-array-into';
 import { parseSvgPointsInto } from '../../../src/adapter/parse-svg-points-into';
@@ -18,15 +20,6 @@ describe('pointsToString — 직렬화', () => {
       pointsToString([
         { x: 10, y: 20 },
         { x: 30, y: 40 },
-      ])
-    ).toBe('10 20 30 40');
-  });
-
-  test('tuple 좌표를 공백 구분 문자열로 직렬화한다', () => {
-    expect(
-      pointsToString([
-        [10, 20],
-        [30, 40],
       ])
     ).toBe('10 20 30 40');
   });

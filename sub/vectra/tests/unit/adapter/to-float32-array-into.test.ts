@@ -1,3 +1,5 @@
+/** 점 객체 배열 변환과 버퍼 처리 시험. */
+
 import { describe, expect, it } from 'vitest';
 import { toFloat32ArrayInto } from '../../../src/adapter/flat/to-float32-array-into';
 
@@ -10,7 +12,7 @@ describe('toFloat32ArrayInto', () => {
     });
   });
 
-  describe('XYLike 배열 입력', () => {
+  describe('점 객체 배열 입력', () => {
     it('두 포인트를 Float32Array에 기록한다', () => {
       const out = new Float32Array(4);
       toFloat32ArrayInto(out, [
@@ -21,20 +23,6 @@ describe('toFloat32ArrayInto', () => {
       expect(out[1]).toBe(2);
       expect(out[2]).toBe(3);
       expect(out[3]).toBe(4);
-    });
-  });
-
-  describe('XYTuple 배열 입력', () => {
-    it('tuple 형태의 포인트를 Float32Array에 기록한다', () => {
-      const out = new Float32Array(4);
-      toFloat32ArrayInto(out, [
-        [5, 6],
-        [7, 8],
-      ]);
-      expect(out[0]).toBe(5);
-      expect(out[1]).toBe(6);
-      expect(out[2]).toBe(7);
-      expect(out[3]).toBe(8);
     });
   });
 

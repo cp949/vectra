@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { parsePointArrayInto } from './parse-point-array-into';
 
 /**
@@ -14,7 +14,7 @@ import { parsePointArrayInto } from './parse-point-array-into';
  * @returns 파싱된 `{ x, y }` 배열
  */
 export function parsePointArray(input: string): { x: number; y: number }[] {
-  const out: XYObjectWritable[] = [];
+  const out: PointWritable[] = [];
   parsePointArrayInto(out, input);
   return out;
 }

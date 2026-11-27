@@ -1,3 +1,5 @@
+/** 점 객체 배열 변환과 버퍼 처리 시험. */
+
 import { describe, expect, it } from 'vitest';
 import { toFlatCoordsInto } from '../../../src/adapter/flat/to-flat-coords-into';
 
@@ -16,7 +18,7 @@ describe('toFlatCoordsInto', () => {
     });
   });
 
-  describe('XYLike 배열 입력', () => {
+  describe('점 객체 배열 입력', () => {
     it('단일 포인트를 flat 형태로 기록한다', () => {
       const out: number[] = new Array(2);
       toFlatCoordsInto(out, [{ x: 3, y: 7 }]);
@@ -41,25 +43,6 @@ describe('toFlatCoordsInto', () => {
         { x: 50, y: 60 },
       ]);
       expect(out).toEqual([10, 20, 30, 40, 50, 60]);
-    });
-  });
-
-  describe('XYTuple 배열 입력', () => {
-    it('tuple 형태의 포인트를 flat 형태로 기록한다', () => {
-      const out: number[] = new Array(4);
-      toFlatCoordsInto(out, [
-        [1, 2],
-        [3, 4],
-      ]);
-      expect(out).toEqual([1, 2, 3, 4]);
-    });
-  });
-
-  describe('XYLike와 XYTuple 혼합 입력', () => {
-    it('혼합 배열을 flat 형태로 기록한다', () => {
-      const out: number[] = new Array(4);
-      toFlatCoordsInto(out, [{ x: 1, y: 2 }, [3, 4]]);
-      expect(out).toEqual([1, 2, 3, 4]);
     });
   });
 

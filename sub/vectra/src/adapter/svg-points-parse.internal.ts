@@ -8,11 +8,8 @@
  *   수: 정수, 소수, 음수, 지수 표기 모두 허용 (-3.5e2)
  */
 
-import type { XYObjectWritable } from '../types/index';
-
 /**
- * SVG points attribute 문자열을 파싱하여 out 배열에 기록한다.
- * 호출 전 out.length = 0으로 초기화해야 한다.
+ * SVG points attribute 문자열을 파싱하고 좌표 쌍마다 emit을 호출한다.
  *
  * 파싱 실패 조건:
  * - 홀수 개 숫자 토큰 → Error
@@ -20,7 +17,7 @@ import type { XYObjectWritable } from '../types/index';
  *
  * 빈 문자열 또는 공백만 있는 입력은 빈 배열로 처리한다(정상).
  */
-export function parseSvgPointsKernel(out: XYObjectWritable[], input: string): void {
+export function parseSvgPointsKernel(input: string, emit: (x: number, y: number) => void): void {
   const tokens = input
     .trim()
     .split(/[\s,]+/)
@@ -44,6 +41,6 @@ export function parseSvgPointsKernel(out: XYObjectWritable[], input: string): vo
       throw new Error(`SVG points 파싱 실패: "${tokens[i + 1]}"를 숫자로 변환할 수 없습니다.`);
     }
 
-    out.push({ x, y });
+    emit(x, y);
   }
 }

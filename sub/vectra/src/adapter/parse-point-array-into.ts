@@ -1,8 +1,8 @@
 /**
- * generic point-array 문자열을 파싱하여 XYObjectWritable 배열에 기록한다.
+ * generic point-array 문자열을 파싱하여 PointWritable 배열에 기록한다.
  */
 
-import type { XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { parseSvgPointsKernel } from './svg-points-parse.internal';
 
 /**
@@ -15,12 +15,12 @@ import { parseSvgPointsKernel } from './svg-points-parse.internal';
  * - 파싱 실패 시 Error를 throw한다.
  * - 빈 문자열은 정상 처리(out.length = 0).
  *
- * @param out - 결과를 기록할 XYObjectWritable 배열
+ * @param out - 결과를 기록할 PointWritable 배열
  * @param input - point-array 문자열
  * @returns out (편의 반환)
  */
-export function parsePointArrayInto(out: XYObjectWritable[], input: string): XYObjectWritable[] {
+export function parsePointArrayInto(out: PointWritable[], input: string): PointWritable[] {
   out.length = 0;
-  parseSvgPointsKernel(out, input);
+  parseSvgPointsKernel(input, (x, y) => out.push({ x, y }));
   return out;
 }

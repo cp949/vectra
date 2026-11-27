@@ -227,8 +227,8 @@ describe('adapter·shape 배열 Into는 out을 반환한다', () => {
   const bounds = { min: [0, 0], max: [4, 2] } as const;
   const orientedRect = { center: [0, 0], size: [4, 2], angle: 0 } as const;
   const points = [
-    [0, 0],
-    [1, 2],
+    { x: 0, y: 0 },
+    { x: 1, y: 2 },
   ] as const;
   const matrix = { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 };
 

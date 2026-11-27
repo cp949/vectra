@@ -1,8 +1,8 @@
 /**
- * SVG `points` attribute 문자열을 파싱하여 XYObjectWritable 배열에 기록한다.
+ * SVG `points` attribute 문자열을 파싱하여 PointWritable 배열에 기록한다.
  */
 
-import type { XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { parseSvgPointsKernel } from './svg-points-parse.internal';
 
 /**
@@ -15,12 +15,12 @@ import { parseSvgPointsKernel } from './svg-points-parse.internal';
  * SVG grammar: 수를 공백과 콤마 혼합으로 구분한다.
  *   "10,20 30,40", "10 20 30 40", "10,20,30,40" 모두 유효.
  *
- * @param out - 결과를 기록할 XYObjectWritable 배열
+ * @param out - 결과를 기록할 PointWritable 배열
  * @param input - SVG `points` attribute 문자열
  * @returns out (편의 반환)
  */
-export function parseSvgPointsInto(out: XYObjectWritable[], input: string): XYObjectWritable[] {
+export function parseSvgPointsInto(out: PointWritable[], input: string): PointWritable[] {
   out.length = 0;
-  parseSvgPointsKernel(out, input);
+  parseSvgPointsKernel(input, (x, y) => out.push({ x, y }));
   return out;
 }

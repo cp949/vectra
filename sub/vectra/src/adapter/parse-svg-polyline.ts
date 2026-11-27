@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from '../types/index';
+import type { PolylineWritable } from '../types/flat-shapes.internal';
 import { parseSvgPolylineInto } from './parse-svg-polyline-into';
 
 /**
@@ -16,8 +16,8 @@ import { parseSvgPolylineInto } from './parse-svg-polyline-into';
  * @param input - SVG `<polyline>` points attribute 문자열
  * @returns 파싱된 `{ x, y }` 배열
  */
-export function parseSvgPolyline(input: string): { x: number; y: number }[] {
-  const out: XYObjectWritable[] = [];
+export function parseSvgPolyline(input: string): PolylineWritable {
+  const out: PolylineWritable = [];
   parseSvgPolylineInto(out, input);
   return out;
 }

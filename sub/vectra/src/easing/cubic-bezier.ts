@@ -1,15 +1,5 @@
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { assertFiniteT, cubicBezierRaw } from './easing.internal';
-
-/** XYInput에서 x 좌표를 읽는다. */
-function readX(input: XYInput): number {
-  return Array.isArray(input) ? input[0] : (input as { x: number }).x;
-}
-
-/** XYInput에서 y 좌표를 읽는다. */
-function readY(input: XYInput): number {
-  return Array.isArray(input) ? input[1] : (input as { y: number }).y;
-}
 
 /**
  * CSS cubic-bezier(x1, y1, x2, y2) mental model의 scalar easing 함수다.
@@ -26,13 +16,13 @@ function readY(input: XYInput): number {
  * @param control1 첫 번째 제어점 (x1, y1)
  * @param control2 두 번째 제어점 (x2, y2)
  */
-export function cubicBezier(t: number, control1: XYInput, control2: XYInput): number {
+export function cubicBezier(t: number, control1: Point, control2: Point): number {
   assertFiniteT(t);
 
-  const x1 = readX(control1);
-  const y1 = readY(control1);
-  const x2 = readX(control2);
-  const y2 = readY(control2);
+  const x1 = control1.x;
+  const y1 = control1.y;
+  const x2 = control2.x;
+  const y2 = control2.y;
 
   if (!Number.isFinite(x1) || x1 < 0 || x1 > 1) {
     throw new RangeError('cubicBezier control1.x must be a finite number in [0, 1]');

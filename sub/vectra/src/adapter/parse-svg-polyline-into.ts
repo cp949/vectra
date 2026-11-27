@@ -1,11 +1,11 @@
 /**
- * SVG `<polyline>` points attribute 문자열을 파싱하여 XYObjectWritable 배열에 기록한다.
+ * SVG `<polyline>` points attribute 문자열을 파싱하여 점 객체 배열에 기록한다.
  *
  * polygon과 polyline의 SVG points grammar은 동일하다.
  * closed/open 의미는 caller 책임이다.
  */
 
-import type { XYObjectWritable } from '../types/index';
+import type { PolylineWritable } from '../types/flat-shapes.internal';
 import { parseSvgPointsKernel } from './svg-points-parse.internal';
 
 /**
@@ -19,12 +19,12 @@ import { parseSvgPointsKernel } from './svg-points-parse.internal';
  * SVG grammar: 수를 공백과 콤마 혼합으로 구분한다.
  *   "10,20 30,40", "10 20 30 40", "10,20,30,40" 모두 유효.
  *
- * @param out - 결과를 기록할 XYObjectWritable 배열
+ * @param out - 결과를 기록할 점 객체 배열
  * @param input - SVG `<polyline>` points attribute 문자열
  * @returns out (편의 반환)
  */
-export function parseSvgPolylineInto(out: XYObjectWritable[], input: string): XYObjectWritable[] {
+export function parseSvgPolylineInto(out: PolylineWritable, input: string): PolylineWritable {
   out.length = 0;
-  parseSvgPointsKernel(out, input);
+  parseSvgPointsKernel(input, (x, y) => out.push({ x, y }));
   return out;
 }

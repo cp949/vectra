@@ -1,7 +1,7 @@
 /**
  * flat coordinate adapter 함수 barrel.
  *
- * XYInput 배열 ↔ flat number[]/Float32Array 변환 함수를 re-export한다.
+ * 점 객체 배열 ↔ flat number[]/Float32Array 변환 함수를 re-export한다.
  * zero-allocation buffer reuse와 렌더러 파이프라인 연동을 위한 함수군이다.
  */
 

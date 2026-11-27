@@ -2,6 +2,7 @@ import type { RandomSeed } from '../random/create-rng';
 import type { RandomSource } from '../random/random';
 import type { HaltonSequenceOptions, SobolSequenceOptions } from '../random/types';
 import type { WeightedProbabilitySample } from '../random/weighted-probability';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import type {
   BoundsLike,
   CircleLike,
@@ -11,8 +12,6 @@ import type {
   PolylineLike,
   RectLike,
   SegmentLike,
-  XYInput,
-  XYWritable,
 } from '../types';
 
 /**
@@ -33,36 +32,36 @@ export interface RandomState {
   sign(rng?: RandomSource): -1 | 1;
   angle(rng?: RandomSource): number;
 
-  directionInto<Out extends XYWritable>(out: Out, length?: number, rng?: RandomSource): Out;
-  direction(length?: number, rng?: RandomSource): { x: number; y: number };
-  pointOnSegmentInto<Out extends XYWritable>(out: Out, segment: SegmentLike, rng?: RandomSource): Out;
-  pointOnSegment(segment: SegmentLike, rng?: RandomSource): { x: number; y: number };
-  pointInRectInto<Out extends XYWritable>(out: Out, rect: RectLike, rng?: RandomSource): boolean;
-  pointInRect(rect: RectLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointInRectOutsideInto<Out extends XYWritable>(
+  directionInto<Out extends PointWritable>(out: Out, length?: number, rng?: RandomSource): Out;
+  direction(length?: number, rng?: RandomSource): PointWritable;
+  pointOnSegmentInto<Out extends PointWritable>(out: Out, segment: SegmentLike, rng?: RandomSource): Out;
+  pointOnSegment(segment: SegmentLike, rng?: RandomSource): PointWritable;
+  pointInRectInto<Out extends PointWritable>(out: Out, rect: RectLike, rng?: RandomSource): boolean;
+  pointInRect(rect: RectLike, rng?: RandomSource): PointWritable | undefined;
+  pointInRectOutsideInto<Out extends PointWritable>(
     out: Out,
     outer: RectLike,
     inner: RectLike,
     rng?: RandomSource
   ): boolean;
-  pointInRectOutside(outer: RectLike, inner: RectLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointInBoundsInto<Out extends XYWritable>(out: Out, bounds: BoundsLike, rng?: RandomSource): boolean;
-  pointInBounds(bounds: BoundsLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointInCircleInto<Out extends XYWritable>(out: Out, circle: CircleLike, rng?: RandomSource): boolean;
-  pointInCircle(circle: CircleLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointOnCircleInto<Out extends XYWritable>(out: Out, circle: CircleLike, rng?: RandomSource): boolean;
-  pointOnCircle(circle: CircleLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointInTriangleInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInput, c: XYInput, rng?: RandomSource): Out;
-  pointInTriangle(a: XYInput, b: XYInput, c: XYInput, rng?: RandomSource): { x: number; y: number };
-  pointInEllipseInto<Out extends XYWritable>(out: Out, ellipse: EllipseLike, rng?: RandomSource): boolean;
-  pointInEllipse(ellipse: EllipseLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointInPolygonInto<Out extends XYWritable>(out: Out, polygon: PolygonLike, rng?: RandomSource): boolean;
-  pointInPolygon(polygon: PolygonLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointOnPolylineInto<Out extends XYWritable>(out: Out, polyline: PolylineLike, rng?: RandomSource): boolean;
-  pointOnPolyline(polyline: PolylineLike, rng?: RandomSource): { x: number; y: number } | undefined;
-  pointOnPathInto<Out extends XYWritable>(out: Out, commands: readonly PathCommand[], rng?: RandomSource): boolean;
-  pointOnPath(commands: readonly PathCommand[], rng?: RandomSource): { x: number; y: number } | undefined;
-  weightedPointOnPolylineInto<Out extends XYWritable>(
+  pointInRectOutside(outer: RectLike, inner: RectLike, rng?: RandomSource): PointWritable | undefined;
+  pointInBoundsInto<Out extends PointWritable>(out: Out, bounds: BoundsLike, rng?: RandomSource): boolean;
+  pointInBounds(bounds: BoundsLike, rng?: RandomSource): PointWritable | undefined;
+  pointInCircleInto<Out extends PointWritable>(out: Out, circle: CircleLike, rng?: RandomSource): boolean;
+  pointInCircle(circle: CircleLike, rng?: RandomSource): PointWritable | undefined;
+  pointOnCircleInto<Out extends PointWritable>(out: Out, circle: CircleLike, rng?: RandomSource): boolean;
+  pointOnCircle(circle: CircleLike, rng?: RandomSource): PointWritable | undefined;
+  pointInTriangleInto<Out extends PointWritable>(out: Out, a: Point, b: Point, c: Point, rng?: RandomSource): Out;
+  pointInTriangle(a: Point, b: Point, c: Point, rng?: RandomSource): PointWritable;
+  pointInEllipseInto<Out extends PointWritable>(out: Out, ellipse: EllipseLike, rng?: RandomSource): boolean;
+  pointInEllipse(ellipse: EllipseLike, rng?: RandomSource): PointWritable | undefined;
+  pointInPolygonInto<Out extends PointWritable>(out: Out, polygon: PolygonLike, rng?: RandomSource): boolean;
+  pointInPolygon(polygon: PolygonLike, rng?: RandomSource): PointWritable | undefined;
+  pointOnPolylineInto<Out extends PointWritable>(out: Out, polyline: PolylineLike, rng?: RandomSource): boolean;
+  pointOnPolyline(polyline: PolylineLike, rng?: RandomSource): PointWritable | undefined;
+  pointOnPathInto<Out extends PointWritable>(out: Out, commands: readonly PathCommand[], rng?: RandomSource): boolean;
+  pointOnPath(commands: readonly PathCommand[], rng?: RandomSource): PointWritable | undefined;
+  weightedPointOnPolylineInto<Out extends PointWritable>(
     out: Out,
     polyline: PolylineLike,
     weights: readonly number[],
@@ -72,8 +71,8 @@ export interface RandomState {
     polyline: PolylineLike,
     weights: readonly number[],
     rng?: RandomSource
-  ): { x: number; y: number } | undefined;
-  weightedPointOnPathInto<Out extends XYWritable>(
+  ): PointWritable | undefined;
+  weightedPointOnPathInto<Out extends PointWritable>(
     out: Out,
     commands: readonly PathCommand[],
     weights: readonly number[],
@@ -83,7 +82,7 @@ export interface RandomState {
     commands: readonly PathCommand[],
     weights: readonly number[],
     rng?: RandomSource
-  ): { x: number; y: number } | undefined;
+  ): PointWritable | undefined;
   haltonSequence(count: number, dimension: number, options?: HaltonSequenceOptions): number[][];
   haltonSequenceInto(out: number[][], count: number, dimension: number, options?: HaltonSequenceOptions): number[][];
   sobolSequence(count: number, dimension: number, options?: SobolSequenceOptions): number[][];

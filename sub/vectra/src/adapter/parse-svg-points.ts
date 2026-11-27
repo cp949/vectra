@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from '../types/index';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { parseSvgPointsInto } from './parse-svg-points-into';
 
 /**
@@ -16,7 +16,7 @@ import { parseSvgPointsInto } from './parse-svg-points-into';
  * @returns 파싱된 `{ x, y }` 배열
  */
 export function parseSvgPoints(input: string): { x: number; y: number }[] {
-  const out: XYObjectWritable[] = [];
+  const out: PointWritable[] = [];
   parseSvgPointsInto(out, input);
   return out;
 }

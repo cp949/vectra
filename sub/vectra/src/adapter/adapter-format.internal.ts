@@ -3,7 +3,7 @@
  * svg-path domain helper에 의존하지 않는 adapter-local formatter다.
  */
 
-import type { XYInput } from '../types/index';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * precision이 유효한 정수인지 확인한다.
@@ -47,7 +47,7 @@ export interface AdapterStringifyOptions {
 }
 
 /**
- * XYInput 배열을 공백 구분 "x y x y ..." 문자열로 직렬화한다.
+ * 점 객체 배열을 공백 구분 "x y x y ..." 문자열로 직렬화한다.
  *
  * - 빈 배열은 빈 문자열을 반환한다.
  * - NaN 또는 Infinity 좌표는 `""` (빈 문자열)로 치환되어 연속 공백이 포함된 문자열이 생성될 수 있다.
@@ -55,17 +55,15 @@ export interface AdapterStringifyOptions {
  *
  * pointsToString의 공유 kernel이다.
  */
-export function formatPointList(points: readonly XYInput[], options?: AdapterStringifyOptions): string {
+export function formatPointList(points: readonly Point[], options?: AdapterStringifyOptions): string {
   if (points.length === 0) return '';
 
   const precision = options?.precision;
   const parts: string[] = [];
 
   for (const pt of points) {
-    const x = Array.isArray(pt) ? (pt as readonly [number, number])[0] : (pt as { x: number }).x;
-    const y = Array.isArray(pt) ? (pt as readonly [number, number])[1] : (pt as { y: number }).y;
-    parts.push(formatNumber(x, precision));
-    parts.push(formatNumber(y, precision));
+    parts.push(formatNumber(pt.x, precision));
+    parts.push(formatNumber(pt.y, precision));
   }
 
   return parts.join(' ');
