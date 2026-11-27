@@ -1,8 +1,5 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { cropLineFamilyByRectInto } from '../internal/line-family-crop';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, RectLike, SegmentWritable, XYWritable } from '../types';
+import type { InfiniteLine, Rect, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line이 axis-aligned rect 내부를 지나는 clipped segment를 out에 기록하고 성공 여부를 반환한다.
@@ -14,27 +11,11 @@ import type { InfiniteLineLike, RectLike, SegmentWritable, XYWritable } from '..
  * 실패 조건: zero-direction infinite-line, empty rect(`width`/`height`가 `<= 0` 또는 ±Infinity·NaN),
  * rect와 만나지 않음, clip 길이 0. non-finite 좌표는 실패한다.
  *
- * @param out clipped segment를 기록할 writable output
+ * @param out 결과를 기록할 선분 객체
  * @param line clipped segment를 구할 infinite-line
  * @param rect 경계 rect (axis-aligned)
  */
-export function segmentInsideRectInto(
-  out: SegmentWritable<XYWritable, XYWritable>,
-  line: InfiniteLineLike,
-  rect: RectLike
-): boolean {
-  const o = readInfiniteLineOrigin(line);
-  const d = readInfiniteLineDirection(line);
-  return cropLineFamilyByRectInto(
-    out,
-    readX(o),
-    readY(o),
-    readX(d),
-    readY(d),
-    'inf',
-    readRectX(rect),
-    readRectY(rect),
-    readRectWidth(rect),
-    readRectHeight(rect)
-  );
+export function segmentInsideRectInto(out: SegmentWritable, line: InfiniteLine, rect: Rect): boolean {
+  const { ox, oy, dx, dy } = line;
+  return cropLineFamilyByRectInto(out, ox, oy, dx, dy, 'inf', rect.x, rect.y, rect.width, rect.height);
 }

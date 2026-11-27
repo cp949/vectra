@@ -1,4 +1,5 @@
-import type { InfiniteLineLike, RectLike, SegmentWritable } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { InfiniteLine, Rect, SegmentWritable } from '../types/flat-shapes.internal';
 import { segmentInsideRectInto } from './segment-inside-rect-into';
 
 /**
@@ -12,8 +13,8 @@ import { segmentInsideRectInto } from './segment-inside-rect-into';
  * @param line clipped segment를 구할 infinite-line
  * @param rect 경계 rect (axis-aligned)
  */
-export function segmentInsideRect(line: InfiniteLineLike, rect: RectLike): SegmentWritable | undefined {
-  const seed: SegmentWritable = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+export function segmentInsideRect(line: InfiniteLine, rect: Rect): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (!segmentInsideRectInto(seed, line, rect)) return undefined;
   return seed;
 }

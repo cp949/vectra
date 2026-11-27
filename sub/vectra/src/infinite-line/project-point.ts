@@ -1,4 +1,4 @@
-import type { InfiniteLineLike, XYInput, XYObjectWritable } from '../types';
+import type { InfiniteLine, Point, PointWritable } from '../types/flat-shapes.internal';
 import { projectPointInto } from './project-point-into';
 
 /**
@@ -6,6 +6,6 @@ import { projectPointInto } from './project-point-into';
  *
  * degenerate infinite-line에서는 origin을 반환한다.
  */
-export function projectPoint(line: InfiniteLineLike, point: XYInput): XYObjectWritable {
+export function projectPoint(line: InfiniteLine, point: Point): PointWritable {
   return projectPointInto({ x: 0, y: 0 }, line, point);
 }

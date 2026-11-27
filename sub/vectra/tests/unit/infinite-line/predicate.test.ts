@@ -2,7 +2,7 @@
  * infinite-line predicate 단위 테스트.
  *
  * containsPoint, isDegenerate의 기본/명시 epsilon 경계 판정과 degenerate 입력
- * 처리, tuple input 지원을 함께 다룬다.
+ * 처리를 함께 다룬다.
  */
 import { describe, expect, test } from 'vitest';
 import { containsPoint } from '../../../src/infinite-line/contains-point';
@@ -64,46 +64,31 @@ describe('infinite-line containment - containsPoint', () => {
 
 describe('infinite-line - isDegenerate', () => {
   test('direction = (0, 0)이면 true이다', () => {
-    expect(isDegenerate({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } })).toBe(true);
+    expect(isDegenerate({ ox: 0, oy: 0, dx: 0, dy: 0 })).toBe(true);
   });
 
   test('non-zero direction은 false이다', () => {
-    expect(isDegenerate({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })).toBe(false);
+    expect(isDegenerate({ ox: 0, oy: 0, dx: 1, dy: 0 })).toBe(false);
   });
 
   test('기본 epsilon 안 length는 degenerate로 판정한다', () => {
     // length = 1e-10 < 1e-9 → degenerate
-    expect(isDegenerate({ origin: { x: 0, y: 0 }, direction: { x: 1e-10, y: 0 } })).toBe(true);
+    expect(isDegenerate({ ox: 0, oy: 0, dx: 1e-10, dy: 0 })).toBe(true);
   });
 
   test('기본 epsilon 경계(length = epsilon)에서 degenerate이다 (<=)', () => {
     // length = 1e-9 → degenerate (length² <= epsilon²)
-    expect(isDegenerate({ origin: { x: 0, y: 0 }, direction: { x: 1e-9, y: 0 } })).toBe(true);
+    expect(isDegenerate({ ox: 0, oy: 0, dx: 1e-9, dy: 0 })).toBe(true);
   });
 
   test('기본 epsilon 밖 length는 non-degenerate이다', () => {
-    expect(isDegenerate({ origin: { x: 0, y: 0 }, direction: { x: 2e-9, y: 0 } })).toBe(false);
+    expect(isDegenerate({ ox: 0, oy: 0, dx: 2e-9, dy: 0 })).toBe(false);
   });
 
   test('명시 epsilon으로 임계값을 조정한다', () => {
     // length = 0.5 → epsilon=0.5에서는 degenerate, epsilon=0.4에서는 non-degenerate
-    const line = { origin: { x: 0, y: 0 }, direction: { x: 0.5, y: 0 } };
+    const line = { ox: 0, oy: 0, dx: 0.5, dy: 0 };
     expect(isDegenerate(line, 0.5)).toBe(true);
     expect(isDegenerate(line, 0.4)).toBe(false);
-  });
-
-  test('tuple infinite-line input을 읽는다', () => {
-    expect(
-      isDegenerate([
-        [0, 0],
-        [0, 0],
-      ] as const)
-    ).toBe(true);
-    expect(
-      isDegenerate([
-        [0, 0],
-        [1, 0],
-      ] as const)
-    ).toBe(false);
   });
 });

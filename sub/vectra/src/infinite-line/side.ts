@@ -1,7 +1,5 @@
-import { readInfiniteLineDirection } from '../internal/infinite-line';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, XYInput } from '../types';
+import type { InfiniteLine, Point } from '../types/flat-shapes.internal';
 import { signedDistanceToPoint } from './signed-distance-to-point';
 
 /**
@@ -23,7 +21,7 @@ import { signedDistanceToPoint } from './signed-distance-to-point';
  * 반환에 NaN을 포함할 수 없다). 비유한 입력은 위치에 따라 동작이 갈린다:
  * - `point`에 ±Infinity가 있고 `signedDistanceToPoint`가 ±Infinity를 반환하면 그 부호로
  *   `1` / `-1`을 반환한다.
- * - `line.direction` / `line.origin`에 NaN 또는 Infinity가 포함되면
+ * - `line`의 방향 벡터 / `line`의 기준점에 NaN 또는 Infinity가 포함되면
  *   `signedDistanceToPoint` 결과가 NaN이 되어 `0`을 반환한다.
  *
  * degenerate 판정은 `direction = (0, 0)` 정확 비교이며 epsilon 기반 `isDegenerate`와
@@ -34,9 +32,8 @@ import { signedDistanceToPoint } from './signed-distance-to-point';
  * @param point 판정할 point
  * @param epsilon 허용 거리 임계값 (기본값 `1e-9`)
  */
-export function side(line: InfiniteLineLike, point: XYInput, epsilon: number = DEFAULT_EPSILON): -1 | 0 | 1 {
-  const dx = readX(readInfiniteLineDirection(line));
-  const dy = readY(readInfiniteLineDirection(line));
+export function side(line: InfiniteLine, point: Point, epsilon: number = DEFAULT_EPSILON): -1 | 0 | 1 {
+  const { dx, dy } = line;
   // degenerate: direction = (0,0) → signedDistanceToPoint가 unsigned 거리를 반환하므로
   // 판정 로직을 통과시키면 항상 1이 나올 수 있다. early-return으로 처리한다.
   if (dx * dx + dy * dy === 0) return 0;

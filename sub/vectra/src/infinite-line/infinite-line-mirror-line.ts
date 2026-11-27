@@ -1,17 +1,16 @@
-import type { InfiniteLineLike, InfiniteLineWritable } from '../types';
+import type { InfiniteLine, InfiniteLineWritable } from '../types/flat-shapes.internal';
 import { infiniteLineMirrorLineInto } from './infinite-line-mirror-line-into';
 
-// v2-migration: B-19 반전·반사 출력 전환 시 중첩 출력 생성을 제거한다.
 /**
  * `line`을 `mirror` line을 기준 축으로 반사한 결과를 새 plain object로 반환한다.
  *
- * `line.origin`은 `mirror` line에 대한 점 반사로, `line.direction`은 `mirror.direction` 축에 대한
- * vector 반사로 계산한다. `mirror.direction`은 normalize하지 않는다.
+ * `line`의 기준점은 `mirror` line에 대한 점 반사로, `line`의 방향 벡터은 `mirror`의 방향 벡터 축에 대한
+ * vector 반사로 계산한다. `mirror`의 방향 벡터은 normalize하지 않는다.
  *
  * degenerate 처리:
- *   - `mirror.direction = (0, 0)`이면 `mirror.origin` 기준 점 반사로 origin을, `-direction`으로
+ *   - `mirror.dx === 0 && mirror.dy === 0`이면 `mirror`의 기준점 기준 점 반사로 origin을, `-direction`으로
  *     direction을 계산한다. zero direction은 그대로 zero다.
- *   - `line.direction = (0, 0)`이면 결과 direction도 `(0, 0)`이다.
+ *   - `line.dx === 0 && line.dy === 0`이면 결과 direction도 `(0, 0)`이다.
  *
  * source `line`과 `mirror`를 mutate하지 않는다. non-finite coordinate/direction은 caller 책임이며
  * 산술 결과를 그대로 pass-through해 결과 좌표에 `NaN` 또는 `Infinity`를 담을 수 있다.
@@ -19,6 +18,6 @@ import { infiniteLineMirrorLineInto } from './infinite-line-mirror-line-into';
  * @param line 반사할 infinite-line
  * @param mirror 반사 축으로 쓸 infinite-line
  */
-export function infiniteLineMirrorLine(line: InfiniteLineLike, mirror: InfiniteLineLike): InfiniteLineWritable {
-  return infiniteLineMirrorLineInto({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } }, line, mirror);
+export function infiniteLineMirrorLine(line: InfiniteLine, mirror: InfiniteLine): InfiniteLineWritable {
+  return infiniteLineMirrorLineInto({ ox: 0, oy: 0, dx: 0, dy: 0 }, line, mirror);
 }

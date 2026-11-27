@@ -20,7 +20,8 @@ import { segmentSegmentDetail } from '../../../src/intersects/segment-segment-de
 import { isSimple } from '../../../src/polygon/is-simple';
 import { singleIntersectionInto as raySingleIntersectionInto } from '../../../src/ray/single-intersection-into';
 import { singleIntersectionInto as segmentSingleIntersectionInto } from '../../../src/segment/single-intersection-into';
-import type { InfiniteLineLike, RayLike } from '../../../src/types';
+import type { RayLike } from '../../../src/types';
+import type { InfiniteLine } from '../../../src/types/flat-shapes.internal';
 import { expectOverlapDetail, expectPointDetail } from './_helpers/segment-segment-detail';
 
 /** 좌표 scale 후보. 선분 길이가 거리 임계값(1e-9)보다 충분히 긴 범위만 쓴다. */
@@ -54,8 +55,8 @@ function scaledRay(s: number, m: number, ox: number, oy: number, dx: number, dy:
 /**
  * origin은 좌표 scale s로, direction은 길이 배율 m으로 키운 infinite-line을 만든다.
  */
-function scaledLine(s: number, m: number, ox: number, oy: number, dx: number, dy: number): InfiniteLineLike {
-  return { origin: { x: s * ox, y: s * oy }, direction: { x: m * dx, y: m * dy } };
+function scaledLine(s: number, m: number, ox: number, oy: number, dx: number, dy: number): InfiniteLine {
+  return { ox: s * ox, oy: s * oy, dx: m * dx, dy: m * dy };
 }
 
 /** 중첩 끝점 시험 데이터를 단일 교점 함수용 좌표로 옮긴다. */
@@ -254,7 +255,12 @@ describe('direction 길이는 판정 결과에 영향을 주지 않는다', () =
   });
 
   test.each(DIRECTION_SCALES)('direction 배율 %s: infinite-line과 segment가 수직으로 만나면 교차한다', (m) => {
-    expect(intersectsInfiniteLineSegment(scaledLine(1, m, -1, 0, 1, 0), scaledSegment(1, 0, -1, 0, 1))).toBe(true);
+    expect(
+      intersectsInfiniteLineSegment(
+        { origin: { x: -1, y: 0 }, direction: { x: m, y: 0 } },
+        scaledSegment(1, 0, -1, 0, 1)
+      )
+    ).toBe(true);
   });
 });
 
@@ -264,7 +270,12 @@ describe('작은 scale에서 intersects 공개 함수가 같은 결과를 낸다
   });
 
   test.each(COORD_SCALES)('scale %s: 작은 segment와 수직 infinite-line은 교차한다', (s) => {
-    expect(intersectsInfiniteLineSegment(scaledLine(s, s, -1, 0, 1, 0), scaledSegment(s, 0, -1, 0, 1))).toBe(true);
+    expect(
+      intersectsInfiniteLineSegment(
+        { origin: { x: -s, y: 0 }, direction: { x: s, y: 0 } },
+        scaledSegment(s, 0, -1, 0, 1)
+      )
+    ).toBe(true);
   });
 
   test.each(COORD_SCALES)('scale %s: 작은 bowtie polygon은 simple이 아니다', (s) => {

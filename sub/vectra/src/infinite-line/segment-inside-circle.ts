@@ -1,4 +1,5 @@
-import type { CircleLike, InfiniteLineLike, SegmentWritable } from '../types';
+import { createZeroSegment } from '../internal/segment';
+import type { Circle, InfiniteLine, SegmentWritable } from '../types/flat-shapes.internal';
 import { segmentInsideCircleInto } from './segment-inside-circle-into';
 
 /**
@@ -12,8 +13,8 @@ import { segmentInsideCircleInto } from './segment-inside-circle-into';
  * @param line chord를 구할 infinite-line
  * @param circle 경계 circle
  */
-export function segmentInsideCircle(line: InfiniteLineLike, circle: CircleLike): SegmentWritable | undefined {
-  const seed: SegmentWritable = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+export function segmentInsideCircle(line: InfiniteLine, circle: Circle): SegmentWritable | undefined {
+  const seed = createZeroSegment();
   if (!segmentInsideCircleInto(seed, line, circle)) return undefined;
   return seed;
 }

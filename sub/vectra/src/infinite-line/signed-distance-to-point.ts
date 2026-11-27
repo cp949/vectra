@@ -1,6 +1,4 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, XYInput } from '../types';
+import type { InfiniteLine, Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -16,13 +14,10 @@ import { hypot2 } from '../internal/numeric';
  * @param line 기준 infinite-line
  * @param point 거리를 측정할 point
  */
-export function signedDistanceToPoint(line: InfiniteLineLike, point: XYInput): number {
-  const ox = readX(readInfiniteLineOrigin(line));
-  const oy = readY(readInfiniteLineOrigin(line));
-  const dx = readX(readInfiniteLineDirection(line));
-  const dy = readY(readInfiniteLineDirection(line));
-  const px = readX(point) - ox;
-  const py = readY(point) - oy;
+export function signedDistanceToPoint(line: InfiniteLine, point: Point): number {
+  const { ox, oy, dx, dy } = line;
+  const px = point.x - ox;
+  const py = point.y - oy;
   const len = hypot2(dx, dy);
   if (len === 0) return hypot2(px, py); // degenerate: unsigned 거리
   const cross = dx * py - dy * px; // cross product (direction × relative-point)

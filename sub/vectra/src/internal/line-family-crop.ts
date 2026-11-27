@@ -8,11 +8,9 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { SegmentWritable as LegacySegmentWritable, XYWritable } from '../types';
 import type { SegmentWritable } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { getLineFamilyOwnRangeInterval } from './line-family-range.internal';
-import { writeXY } from './xy';
 
 /** origin/direction 좌표가 모두 finite이면 true. non-finite는 valid bounded segment를 만들 수 없다. */
 function isFiniteLine(ox: number, oy: number, dx: number, dy: number): boolean {
@@ -103,7 +101,7 @@ function rectCropInterval(
  * endpoint 순서는 source direction의 increasing t를 따른다.
  */
 function writeClippedCropInto(
-  out: SegmentWritable | LegacySegmentWritable<XYWritable, XYWritable>,
+  out: SegmentWritable,
   ox: number,
   oy: number,
   dx: number,
@@ -121,18 +119,10 @@ function writeClippedCropInto(
   const bx = ox + hi * dx;
   const by = oy + hi * dy;
   if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(bx) || !Number.isFinite(by)) return false;
-  if (kind !== 'inf') {
-    const flat = out as SegmentWritable;
-    flat.x1 = ax;
-    flat.y1 = ay;
-    flat.x2 = bx;
-    flat.y2 = by;
-  } else {
-    // v2-migration: infinite-line을 전환하면 이 분기와 중첩 출력 타입을 지운다.
-    const legacy = out as LegacySegmentWritable<XYWritable, XYWritable>;
-    writeXY(legacy.a, ax, ay);
-    writeXY(legacy.b, bx, by);
-  }
+  out.x1 = ax;
+  out.y1 = ay;
+  out.x2 = bx;
+  out.y2 = by;
   return true;
 }
 
@@ -143,7 +133,7 @@ function writeClippedCropInto(
  * tangent(single contact)나 disk와 만나지 않으면 false. 실패 시 out을 수정하지 않는다.
  * out과 source가 좌표를 공유해도 안전하다(caller가 좌표를 먼저 읽어 넘긴다).
  *
- * @param out 잘라낸 선분을 기록할 객체. segment와 ray는 평평한 선분, infinite-line은 중첩 끝점을 쓴다.
+ * @param out 잘라낸 선분을 기록할 객체
  * @param ox line-family origin x
  * @param oy line-family origin y
  * @param dx line-family direction x
@@ -154,7 +144,7 @@ function writeClippedCropInto(
  * @param r circle 반지름
  */
 export function cropLineFamilyByCircleInto(
-  out: SegmentWritable | LegacySegmentWritable<XYWritable, XYWritable>,
+  out: SegmentWritable,
   ox: number,
   oy: number,
   dx: number,
@@ -179,7 +169,7 @@ export function cropLineFamilyByCircleInto(
  * box와 만나지 않거나 clip 길이가 0이면 false. 실패 시 out을 수정하지 않는다.
  * out과 source가 좌표를 공유해도 안전하다(caller가 좌표를 먼저 읽어 넘긴다).
  *
- * @param out 잘라낸 선분을 기록할 객체. segment와 ray는 평평한 선분, infinite-line은 중첩 끝점을 쓴다.
+ * @param out 잘라낸 선분을 기록할 객체
  * @param ox line-family origin x
  * @param oy line-family origin y
  * @param dx line-family direction x
@@ -191,7 +181,7 @@ export function cropLineFamilyByCircleInto(
  * @param rh rect 높이
  */
 export function cropLineFamilyByRectInto(
-  out: SegmentWritable | LegacySegmentWritable<XYWritable, XYWritable>,
+  out: SegmentWritable,
   ox: number,
   oy: number,
   dx: number,

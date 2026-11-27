@@ -2,18 +2,11 @@
 
 import { describe, expect, test } from 'vitest';
 import { cropLineFamilyByCircleInto, cropLineFamilyByRectInto } from '../../../src/internal/line-family-crop';
-import type { SegmentWritable as LegacySegmentWritable, XYObjectWritable } from '../../../src/types';
 import type { SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
-/** 선분(`finite`)과 반직선(`ray`) 출력용 평평한 선분을 원점으로 초기화한다. */
+/** 출력용 선분을 원점으로 초기화한다. */
 function flatSeg(): SegmentWritable {
   return { x1: 0, y1: 0, x2: 0, y2: 0 };
-}
-
-// v2-migration: infinite-line을 전환하면 중첩 출력 도우미를 지운다.
-/** 무한 직선(`inf`) 출력용 중첩 끝점 선분을 원점으로 초기화한다. */
-function nestedSeg(): LegacySegmentWritable<XYObjectWritable, XYObjectWritable> {
-  return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,7 +31,7 @@ describe('line-family crop core - circle', () => {
 
   test('tangent(single contact)는 실패한다', () => {
     // x축 line y=0, 중심 (2,1) 반지름 1 → 접점 1개 (disc===0)
-    const out = nestedSeg();
+    const out = flatSeg();
     const ok = cropLineFamilyByCircleInto(out, 0, 0, 4, 0, 'inf', 2, 1, 1);
     expect(ok).toBe(false);
   });
@@ -129,11 +122,13 @@ describe('line-family crop core - rect', () => {
 
   test('infinite-line은 box를 가로지르는 clipped chord를 반환한다', () => {
     // line origin (0,2) dir (1,0), rect x:1 y:0 w:2 h:4 → x∈[1,3]
-    const out = nestedSeg();
+    const out = flatSeg();
     const ok = cropLineFamilyByRectInto(out, 0, 2, 1, 0, 'inf', 1, 0, 2, 4);
     expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 1, y: 2 });
-    expect(out.b).toEqual({ x: 3, y: 2 });
+    expect(out.x1).toBe(1);
+    expect(out.y1).toBe(2);
+    expect(out.x2).toBe(3);
+    expect(out.y2).toBe(2);
   });
 
   test('non-finite 좌표는 실패한다', () => {
@@ -144,10 +139,12 @@ describe('line-family crop core - rect', () => {
   test('non-finite extent(width/height ±Infinity·NaN)는 실패하고 out을 수정하지 않는다', () => {
     // ray/inf kind는 own range hi가 +Infinity라 Infinity extent가 통과하면 non-finite endpoint를
     // 기록한다. 가드가 rw/rh finite를 거르는지 회귀로 고정한다.
-    const out = nestedSeg();
+    const out = flatSeg();
     expect(cropLineFamilyByRectInto(out, -1, 1, 1, 0, 'inf', 0, 0, Number.POSITIVE_INFINITY, 4)).toBe(false);
-    expect(out.a).toEqual({ x: 0, y: 0 });
-    expect(out.b).toEqual({ x: 0, y: 0 });
+    expect(out.x1).toBe(0);
+    expect(out.y1).toBe(0);
+    expect(out.x2).toBe(0);
+    expect(out.y2).toBe(0);
     expect(cropLineFamilyByRectInto(flatSeg(), 0, -1, 0, 1, 'ray', 0, 0, 4, Number.POSITIVE_INFINITY)).toBe(false);
     expect(cropLineFamilyByRectInto(flatSeg(), -1, 1, 1, 0, 'finite', 0, 0, Number.NaN, 4)).toBe(false);
   });
@@ -159,6 +156,6 @@ describe('line-family crop core - rect', () => {
     expect(out.y1).toBe(0);
     expect(out.x2).toBe(0);
     expect(out.y2).toBe(0);
-    expect(cropLineFamilyByRectInto(nestedSeg(), 1, 1e308, 0, 1, 'inf', 0, 1e308, 4, 1e308)).toBe(false);
+    expect(cropLineFamilyByRectInto(flatSeg(), 1, 1e308, 0, 1, 'inf', 0, 1e308, 4, 1e308)).toBe(false);
   });
 });

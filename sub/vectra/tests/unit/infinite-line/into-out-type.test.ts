@@ -9,6 +9,11 @@ import {
   fromPointsInto,
   fromSegmentInto,
   fromSlopeInto,
+  infiniteLineMirrorLineInto,
+  originInto,
+  pointAtTInto,
+  projectPointInto,
+  reverseInto,
 } from '../../../src/infinite-line';
 
 /** 사용자 코드의 무한 직선 출력 클래스다. */
@@ -59,4 +64,29 @@ test('방향 Into는 외부 점 타입과 참조를 보존한다', () => {
   const result = directionInto(out, { ox: 1, oy: 2, dx: 3, dy: 4 });
   expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
   expect(result).toBe(out);
+});
+
+test('무한 직선 반전과 반사 Into는 외부 직선 타입과 참조를 보존한다', () => {
+  const out = new ExternalLine();
+  const line = { ox: 1, oy: 2, dx: 3, dy: 4 };
+  const reversed = reverseInto(out, line);
+  expectTypeOf(reversed).toEqualTypeOf<ExternalLine>();
+  expect(reversed).toBe(out);
+  const mirrored = infiniteLineMirrorLineInto(out, line, line);
+  expectTypeOf(mirrored).toEqualTypeOf<ExternalLine>();
+  expect(mirrored).toBe(out);
+});
+
+test('무한 직선 조회 Into는 외부 점 타입과 참조를 보존한다', () => {
+  const out = new ExternalPoint();
+  const line = { ox: 1, oy: 2, dx: 3, dy: 4 };
+  const origin = originInto(out, line);
+  expectTypeOf(origin).toEqualTypeOf<ExternalPoint>();
+  expect(origin).toBe(out);
+  const at = pointAtTInto(out, line, 2);
+  expectTypeOf(at).toEqualTypeOf<ExternalPoint>();
+  expect(at).toBe(out);
+  const projected = projectPointInto(out, line, { x: 1, y: 2 });
+  expectTypeOf(projected).toEqualTypeOf<ExternalPoint>();
+  expect(projected).toBe(out);
 });

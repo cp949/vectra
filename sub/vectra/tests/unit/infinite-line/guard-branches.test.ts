@@ -22,8 +22,8 @@ describe('infiniteLineAngleBetween', () => {
 describe('singleIntersectionInto — b만 degenerate', () => {
   test('b.origin이 a의 직선 밖이면 false를 돌려주고 out을 바꾸지 않는다', () => {
     const out = { x: 9, y: 9 };
-    const a = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
-    const b = { origin: { x: 2, y: 1 }, direction: { x: 0, y: 0 } };
+    const a = { ox: 0, oy: 0, dx: 1, dy: 0 };
+    const b = { ox: 2, oy: 1, dx: 0, dy: 0 };
     expect(singleIntersectionInto(out, a, b)).toBe(false);
     expect(out).toEqual({ x: 9, y: 9 });
   });
@@ -31,10 +31,7 @@ describe('singleIntersectionInto — b만 degenerate', () => {
 
 describe('segmentInsideCircle', () => {
   test('직선이 circle을 가로지르면 chord segment를 돌려준다', () => {
-    const line = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
-    expect(segmentInsideCircle(line, { center: { x: 2, y: 0 }, radius: 1 })).toEqual({
-      a: { x: 1, y: 0 },
-      b: { x: 3, y: 0 },
-    });
+    const line = { ox: 0, oy: 0, dx: 1, dy: 0 };
+    expect(segmentInsideCircle(line, { cx: 2, cy: 0, r: 1 })).toEqual({ x1: 1, y1: 0, x2: 3, y2: 0 });
   });
 });

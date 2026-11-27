@@ -151,17 +151,17 @@ describe('line-family 한쪽 퇴화', () => {
 
 describe('cropLineFamilyByCircleInto 표현 한계', () => {
   test('반지름 제곱이 overflow하는 원은 끝점을 표현할 수 없어 false다', () => {
-    const out = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
     expect(cropLineFamilyByCircleInto({ x1: 0, y1: 0, x2: 0, y2: 0 }, 0, 0, 1, 0, 'ray', 0, 0, 1e300)).toBe(false);
     expect(cropLineFamilyByCircleInto(out, 0, 0, 1, 0, 'inf', 0, 0, 1e300)).toBe(false);
-    expect(out).toEqual({ a: { x: 0, y: 0 }, b: { x: 0, y: 0 } });
+    expect(out).toEqual({ x1: 0, y1: 0, x2: 0, y2: 0 });
   });
 });
 
 describe('cropLineFamilyByRectInto 비교차', () => {
   test('직선이 직사각형을 비껴가면 false다', () => {
     // y = x + 5는 [0, 2] x [0, 2] 직사각형을 지나지 않는다. slab 구간이 겹치지 않는다.
-    const out = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
     expect(cropLineFamilyByRectInto(out, 0, 5, 1, 1, 'inf', 0, 0, 2, 2)).toBe(false);
   });
 });

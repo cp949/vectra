@@ -1,4 +1,4 @@
-import type { InfiniteLineLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 import { pointAtTInto } from './point-at-t-into';
 
 /**
@@ -6,6 +6,6 @@ import { pointAtTInto } from './point-at-t-into';
  *
  * `t`는 clamp하지 않는다. degenerate infinite-line에서는 origin을 반환한다.
  */
-export function pointAtT(line: InfiniteLineLike, t: number): XYObjectWritable {
+export function pointAtT(line: InfiniteLine, t: number): PointWritable {
   return pointAtTInto({ x: 0, y: 0 }, line, t);
 }

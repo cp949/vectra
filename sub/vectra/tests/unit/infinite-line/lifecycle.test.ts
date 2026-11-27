@@ -12,7 +12,6 @@ import { fromSegmentInto } from '../../../src/infinite-line/from-segment-into';
 import { infiniteLineFrom } from '../../../src/infinite-line/infinite-line-from';
 import { reverse } from '../../../src/infinite-line/reverse';
 import { reverseInto } from '../../../src/infinite-line/reverse-into';
-import type { InfiniteLineWritable as LegacyInfiniteLineWritable } from '../../../src/types';
 import type { InfiniteLineWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('infinite-line lifecycle - createInfiniteLine', () => {
@@ -49,30 +48,21 @@ describe('infinite-line lifecycle - copyInto', () => {
 
 describe('infinite-line lifecycle - reverseInto / reverse', () => {
   test('reverseInto는 origin을 유지하고 direction을 부호 반전한다', () => {
-    const out: LegacyInfiniteLineWritable = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } };
-    const result = reverseInto(out, { origin: { x: 1, y: 2 }, direction: { x: 3, y: 4 } });
+    const out: InfiniteLineWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
+    const result = reverseInto(out, { ox: 1, oy: 2, dx: 3, dy: 4 });
     expect(result).toBe(out);
-    expect(out).toEqual({ origin: { x: 1, y: 2 }, direction: { x: -3, y: -4 } });
+    expect(out).toEqual({ ox: 1, oy: 2, dx: -3, dy: -4 });
   });
 
   test('reverseInto는 in-place alias 호출에서도 안전하다', () => {
-    const line: LegacyInfiniteLineWritable = { origin: { x: 1, y: 2 }, direction: { x: 3, y: 4 } };
+    const line: InfiniteLineWritable = { ox: 1, oy: 2, dx: 3, dy: 4 };
     reverseInto(line, line);
-    expect(line).toEqual({ origin: { x: 1, y: 2 }, direction: { x: -3, y: -4 } });
-  });
-
-  test('reverseInto는 tuple input도 읽는다', () => {
-    const out: LegacyInfiniteLineWritable = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } };
-    reverseInto(out, [
-      [1, 2],
-      [3, 4],
-    ] as const);
-    expect(out).toEqual({ origin: { x: 1, y: 2 }, direction: { x: -3, y: -4 } });
+    expect(line).toEqual({ ox: 1, oy: 2, dx: -3, dy: -4 });
   });
 
   test('reverse companion이 새 plain object를 반환한다', () => {
-    const result = reverse({ origin: { x: 0, y: 0 }, direction: { x: 1, y: -1 } });
-    expect(result).toEqual({ origin: { x: 0, y: 0 }, direction: { x: -1, y: 1 } });
+    const result = reverse({ ox: 0, oy: 0, dx: 1, dy: -1 });
+    expect(result).toEqual({ ox: 0, oy: 0, dx: -1, dy: 1 });
   });
 });
 

@@ -1,4 +1,4 @@
-import type { InfiniteLineLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 import { singleIntersectionInto } from './single-intersection-into';
 
 /**
@@ -11,13 +11,10 @@ import { singleIntersectionInto } from './single-intersection-into';
  * degenerate/empty 입력 처리 정책은 `singleIntersectionInto`와 동일하다.
  * @param a 첫 번째 infinite-line
  * @param b 두 번째 infinite-line
- * @param epsilon cross product 절대값 및 거리 임계값 (기본값 `1e-9`)
+ * @param epsilon 거리 임계값 (기본값 `1e-9`). 생략 시 평행 판정은 `sin θ <= 1e-9`를 쓴다.
+ *   명시하면 평행 판정은 `|cross| <= epsilon`을 쓴다.
  */
-export function singleIntersection(
-  a: InfiniteLineLike,
-  b: InfiniteLineLike,
-  epsilon?: number
-): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+export function singleIntersection(a: InfiniteLine, b: InfiniteLine, epsilon?: number): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return singleIntersectionInto(out, a, b, epsilon) ? out : undefined;
 }

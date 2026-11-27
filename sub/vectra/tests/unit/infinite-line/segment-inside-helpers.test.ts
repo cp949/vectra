@@ -1,12 +1,14 @@
+/** 무한 직선을 원과 사각형으로 자르는 성공 조건과 실패 경계를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { segmentInsideCircle } from '../../../src/infinite-line/segment-inside-circle';
 import { segmentInsideCircleInto } from '../../../src/infinite-line/segment-inside-circle-into';
 import { segmentInsideRect } from '../../../src/infinite-line/segment-inside-rect';
 import { segmentInsideRectInto } from '../../../src/infinite-line/segment-inside-rect-into';
-import type { CircleLike, InfiniteLineLike, RectLike, SegmentWritable, XYObjectWritable } from '../../../src/types';
+import type { Circle, Rect, SegmentWritable } from '../../../src/types/flat-shapes.internal';
 
-function seg(): SegmentWritable<XYObjectWritable, XYObjectWritable> {
-  return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+/** 자르기 결과를 기록할 선분을 초기화한다. */
+function seg(): SegmentWritable {
+  return { x1: 0, y1: 0, x2: 0, y2: 0 };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -14,64 +16,39 @@ function seg(): SegmentWritable<XYObjectWritable, XYObjectWritable> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('infinite-line segmentInsideCircle', () => {
-  const circle: CircleLike = { center: { x: 2, y: 0 }, radius: 1 };
+  const circle: Circle = { cx: 2, cy: 0, r: 1 };
 
   test('two-hit line은 chord segment를 반환한다', () => {
     const out = seg();
-    const ok = segmentInsideCircleInto(out, { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }, circle);
+    const ok = segmentInsideCircleInto(out, { ox: 0, oy: 0, dx: 1, dy: 0 }, circle);
     expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 1, y: 0 });
-    expect(out.b).toEqual({ x: 3, y: 0 });
+    expect(out.x1).toBe(1);
+    expect(out.y1).toBe(0);
+    expect(out.x2).toBe(3);
+    expect(out.y2).toBe(0);
   });
 
   test('tangent line은 실패한다', () => {
     const out = seg();
-    expect(segmentInsideCircleInto(out, { origin: { x: 0, y: 1 }, direction: { x: 1, y: 0 } }, circle)).toBe(false);
-    expect(segmentInsideCircle({ origin: { x: 0, y: 1 }, direction: { x: 1, y: 0 } }, circle)).toBeUndefined();
+    expect(segmentInsideCircleInto(out, { ox: 0, oy: 1, dx: 1, dy: 0 }, circle)).toBe(false);
+    expect(segmentInsideCircle({ ox: 0, oy: 1, dx: 1, dy: 0 }, circle)).toBeUndefined();
   });
 
   test('disk와 만나지 않는 line은 실패한다', () => {
     const out = seg();
-    expect(segmentInsideCircleInto(out, { origin: { x: 0, y: 10 }, direction: { x: 1, y: 0 } }, circle)).toBe(false);
+    expect(segmentInsideCircleInto(out, { ox: 0, oy: 10, dx: 1, dy: 0 }, circle)).toBe(false);
   });
 
   test('zero-direction infinite-line은 실패한다', () => {
     const out = seg();
-    expect(segmentInsideCircleInto(out, { origin: { x: 2, y: 0 }, direction: { x: 0, y: 0 } }, circle)).toBe(false);
-  });
-
-  test('tuple infinite-line input과 object segment output을 함께 검증한다', () => {
-    const out = seg();
-    const tuple: InfiniteLineLike = [
-      [0, 0],
-      [1, 0],
-    ];
-    const ok = segmentInsideCircleInto(out, tuple, circle);
-    expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 1, y: 0 });
-    expect(out.b).toEqual({ x: 3, y: 0 });
+    expect(segmentInsideCircleInto(out, { ox: 2, oy: 0, dx: 0, dy: 0 }, circle)).toBe(false);
   });
 
   test('non-finite 좌표(NaN/±Infinity)는 실패한다', () => {
     const out = seg();
-    expect(segmentInsideCircleInto(out, { origin: { x: 0, y: Number.NaN }, direction: { x: 1, y: 0 } }, circle)).toBe(
-      false
-    );
-    expect(
-      segmentInsideCircleInto(out, { origin: { x: 0, y: Number.POSITIVE_INFINITY }, direction: { x: 1, y: 0 } }, circle)
-    ).toBe(false);
-    expect(
-      segmentInsideCircleInto(out, { origin: { x: 0, y: 0 }, direction: { x: 1, y: Number.NEGATIVE_INFINITY } }, circle)
-    ).toBe(false);
-  });
-
-  test('out과 input이 좌표를 공유해도(aliasing) 안전하다', () => {
-    const out: SegmentWritable<XYObjectWritable, XYObjectWritable> = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
-    const line: InfiniteLineLike = { origin: out.a, direction: { x: 1, y: 0 } };
-    const ok = segmentInsideCircleInto(out, line, circle);
-    expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 1, y: 0 });
-    expect(out.b).toEqual({ x: 3, y: 0 });
+    expect(segmentInsideCircleInto(out, { ox: 0, oy: Number.NaN, dx: 1, dy: 0 }, circle)).toBe(false);
+    expect(segmentInsideCircleInto(out, { ox: 0, oy: Number.POSITIVE_INFINITY, dx: 1, dy: 0 }, circle)).toBe(false);
+    expect(segmentInsideCircleInto(out, { ox: 0, oy: 0, dx: 1, dy: Number.NEGATIVE_INFINITY }, circle)).toBe(false);
   });
 });
 
@@ -80,75 +57,56 @@ describe('infinite-line segmentInsideCircle', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('infinite-line segmentInsideRect', () => {
-  const rect: RectLike = { x: 0, y: 0, width: 4, height: 4 };
+  const rect: Rect = { x: 0, y: 0, width: 4, height: 4 };
 
   test('crossing line은 clipped segment를 반환한다', () => {
     const out = seg();
-    const ok = segmentInsideRectInto(out, { origin: { x: -1, y: 2 }, direction: { x: 1, y: 0 } }, rect);
+    const ok = segmentInsideRectInto(out, { ox: -1, oy: 2, dx: 1, dy: 0 }, rect);
     expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 0, y: 2 });
-    expect(out.b).toEqual({ x: 4, y: 2 });
+    expect(out.x1).toBe(0);
+    expect(out.y1).toBe(2);
+    expect(out.x2).toBe(4);
+    expect(out.y2).toBe(2);
   });
 
   test('rect 바깥 line은 실패한다', () => {
     const out = seg();
-    expect(segmentInsideRectInto(out, { origin: { x: 0, y: 10 }, direction: { x: 1, y: 0 } }, rect)).toBe(false);
-    expect(segmentInsideRect({ origin: { x: 0, y: 10 }, direction: { x: 1, y: 0 } }, rect)).toBeUndefined();
+    expect(segmentInsideRectInto(out, { ox: 0, oy: 10, dx: 1, dy: 0 }, rect)).toBe(false);
+    expect(segmentInsideRect({ ox: 0, oy: 10, dx: 1, dy: 0 }, rect)).toBeUndefined();
   });
 
   test('empty rect는 실패한다', () => {
     const out = seg();
-    expect(
-      segmentInsideRectInto(
-        out,
-        { origin: { x: -1, y: 2 }, direction: { x: 1, y: 0 } },
-        { x: 0, y: 0, width: 4, height: 0 }
-      )
-    ).toBe(false);
+    expect(segmentInsideRectInto(out, { ox: -1, oy: 2, dx: 1, dy: 0 }, { x: 0, y: 0, width: 4, height: 0 })).toBe(
+      false
+    );
   });
 
   test('zero-direction infinite-line은 실패한다', () => {
     const out = seg();
-    expect(segmentInsideRectInto(out, { origin: { x: 2, y: 2 }, direction: { x: 0, y: 0 } }, rect)).toBe(false);
+    expect(segmentInsideRectInto(out, { ox: 2, oy: 2, dx: 0, dy: 0 }, rect)).toBe(false);
   });
 
   test('diagonal line을 box로 자른다', () => {
     const out = seg();
     // origin (-1,-1) dir (1,1) → x=y line, box [0,4]² → t∈[1,5] → seg(0,0)-(4,4)
-    const ok = segmentInsideRectInto(out, { origin: { x: -1, y: -1 }, direction: { x: 1, y: 1 } }, rect);
+    const ok = segmentInsideRectInto(out, { ox: -1, oy: -1, dx: 1, dy: 1 }, rect);
     expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 0, y: 0 });
-    expect(out.b).toEqual({ x: 4, y: 4 });
-  });
-
-  test('tuple infinite-line input과 object segment output을 함께 검증한다', () => {
-    const out = seg();
-    const ok = segmentInsideRectInto(
-      out,
-      [
-        [-1, 2],
-        [1, 0],
-      ],
-      [0, 0, 4, 4]
-    );
-    expect(ok).toBe(true);
-    expect(out.a).toEqual({ x: 0, y: 2 });
-    expect(out.b).toEqual({ x: 4, y: 2 });
+    expect(out.x1).toBe(0);
+    expect(out.y1).toBe(0);
+    expect(out.x2).toBe(4);
+    expect(out.y2).toBe(4);
   });
 
   test('companion은 새 segment object를 반환한다', () => {
-    const result = segmentInsideRect({ origin: { x: -1, y: 2 }, direction: { x: 1, y: 0 } }, rect);
-    expect(result).toEqual({ a: { x: 0, y: 2 }, b: { x: 4, y: 2 } });
+    const result = segmentInsideRect({ ox: -1, oy: 2, dx: 1, dy: 0 }, rect);
+    expect(result).toEqual({ x1: 0, y1: 2, x2: 4, y2: 2 });
   });
 
   test('non-finite 좌표(NaN/±Infinity)는 실패한다', () => {
     const out = seg();
-    expect(segmentInsideRectInto(out, { origin: { x: Number.NaN, y: 2 }, direction: { x: 1, y: 0 } }, rect)).toBe(
-      false
-    );
-    expect(
-      segmentInsideRectInto(out, { origin: { x: -1, y: 2 }, direction: { x: Number.POSITIVE_INFINITY, y: 0 } }, rect)
-    ).toBe(false);
+    expect(segmentInsideRectInto(out, { ox: Number.NaN, oy: 2, dx: 1, dy: 0 }, rect)).toBe(false);
+    expect(segmentInsideRectInto(out, { ox: -1, oy: 2, dx: Number.POSITIVE_INFINITY, dy: 0 }, rect)).toBe(false);
   });
 
   test('non-finite extent rect(width/height ±Infinity)는 실패한다', () => {
@@ -157,7 +115,7 @@ describe('infinite-line segmentInsideRect', () => {
     expect(
       segmentInsideRectInto(
         out,
-        { origin: { x: -1, y: 2 }, direction: { x: 1, y: 0 } },
+        { ox: -1, oy: 2, dx: 1, dy: 0 },
         {
           x: 0,
           y: 0,
@@ -166,11 +124,12 @@ describe('infinite-line segmentInsideRect', () => {
         }
       )
     ).toBe(false);
-    expect(out.a).toEqual({ x: 0, y: 0 });
+    expect(out.x1).toBe(0);
+    expect(out.y1).toBe(0);
     expect(
       segmentInsideRectInto(
         out,
-        { origin: { x: 2, y: -1 }, direction: { x: 0, y: 1 } },
+        { ox: 2, oy: -1, dx: 0, dy: 1 },
         {
           x: 0,
           y: 0,
@@ -184,12 +143,9 @@ describe('infinite-line segmentInsideRect', () => {
   test('finite rect라도 right/bottom edge가 overflow되면 실패한다', () => {
     const out = seg();
     expect(
-      segmentInsideRectInto(
-        out,
-        { origin: { x: 1e308, y: 2 }, direction: { x: 1, y: 0 } },
-        { x: 1e308, y: 0, width: 1e308, height: 4 }
-      )
+      segmentInsideRectInto(out, { ox: 1e308, oy: 2, dx: 1, dy: 0 }, { x: 1e308, y: 0, width: 1e308, height: 4 })
     ).toBe(false);
-    expect(out.a).toEqual({ x: 0, y: 0 });
+    expect(out.x1).toBe(0);
+    expect(out.y1).toBe(0);
   });
 });
