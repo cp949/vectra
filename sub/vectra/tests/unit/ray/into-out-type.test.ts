@@ -1,6 +1,16 @@
 /** 광선 Into 함수의 외부 출력 타입과 참조 보존을 검증한다. */
 import { expect, expectTypeOf, test } from 'vitest';
-import { closestPointInto, copyInto, directionInto, fromAngleInto, fromSegmentInto } from '../../../src/ray';
+import {
+  closestPointInto,
+  copyInto,
+  directionInto,
+  fromAngleInto,
+  fromSegmentInto,
+  originInto,
+  pointAtTInto,
+  projectPointInto,
+  reverseInto,
+} from '../../../src/ray';
 
 /** 사용자 코드의 광선 출력 클래스다. */
 class ExternalRay {
@@ -40,4 +50,25 @@ test('최근접점과 방향 Into는 외부 점 타입과 참조를 보존한다
   expectTypeOf(direction).toEqualTypeOf<ExternalPoint>();
   expect(closest).toBe(out);
   expect(direction).toBe(out);
+});
+
+test('시작점, 매개변수 위치, 투영 Into는 외부 점 타입과 참조를 보존한다', () => {
+  const out = new ExternalPoint();
+  const ray = { ox: 1, oy: 2, dx: 3, dy: 4 };
+  const origin = originInto(out, ray);
+  const at = pointAtTInto(out, ray, 2);
+  const projected = projectPointInto(out, ray, { x: 3, y: 2 });
+  expectTypeOf(origin).toEqualTypeOf<ExternalPoint>();
+  expectTypeOf(at).toEqualTypeOf<ExternalPoint>();
+  expectTypeOf(projected).toEqualTypeOf<ExternalPoint>();
+  expect(origin).toBe(out);
+  expect(at).toBe(out);
+  expect(projected).toBe(out);
+});
+
+test('광선 반전 Into는 외부 광선 타입과 참조를 보존한다', () => {
+  const out = new ExternalRay();
+  const reversed = reverseInto(out, { ox: 1, oy: 2, dx: 3, dy: 4 });
+  expectTypeOf(reversed).toEqualTypeOf<ExternalRay>();
+  expect(reversed).toBe(out);
 });

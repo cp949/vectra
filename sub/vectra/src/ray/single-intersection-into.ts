@@ -1,7 +1,5 @@
 import { crossWithin, DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { RayLike, XYObjectWritable } from '../types';
+import type { Ray, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * 두 ray가 단일 교점을 가지면 `out`에 기록하고 `true`를 반환한다.
@@ -10,22 +8,22 @@ import type { RayLike, XYObjectWritable } from '../types';
  * degenerate ray(방향 벡터 = 0)는 점으로 취급해 origin 기반 containment로 판정한다.
  * t < 0 또는 u < 0이면 ray의 forward 방향에 교점이 없으므로 `false`를 반환한다.
  *
- * @param out 교점 좌표를 기록할 writable object
+ * @param out 교점 좌표를 기록할 점 객체
  * @param a 첫 번째 ray
  * @param b 두 번째 ray
  * @param epsilon 거리 임계값 (기본값 `1e-9`). 생략하면 평행 판정은 `|cross| <= 1e-9·|da|·|db|`(sin θ 기준)로 scale 불변이다.
  *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
-export function singleIntersectionInto(out: XYObjectWritable, a: RayLike, b: RayLike, epsilon?: number): boolean {
+export function singleIntersectionInto(out: PointWritable, a: Ray, b: Ray, epsilon?: number): boolean {
   const distEpsilon = epsilon ?? DEFAULT_EPSILON;
-  const oax = readX(readRayOrigin(a));
-  const oay = readY(readRayOrigin(a));
-  const dax = readX(readRayDirection(a));
-  const day = readY(readRayDirection(a));
-  const obx = readX(readRayOrigin(b));
-  const oby = readY(readRayOrigin(b));
-  const dbx = readX(readRayDirection(b));
-  const dby = readY(readRayDirection(b));
+  const oax = a.ox;
+  const oay = a.oy;
+  const dax = a.dx;
+  const day = a.dy;
+  const obx = b.ox;
+  const oby = b.oy;
+  const dbx = b.dx;
+  const dby = b.dy;
 
   const aLenSq = dax * dax + day * day;
   const bLenSq = dbx * dbx + dby * dby;
@@ -37,7 +35,8 @@ export function singleIntersectionInto(out: XYObjectWritable, a: RayLike, b: Ray
       const dx = oax - obx;
       const dy = oay - oby;
       if (dx * dx + dy * dy <= distEpsilon * distEpsilon) {
-        writeXY(out, oax, oay);
+        out.x = oax;
+        out.y = oay;
         return true;
       }
       return false;
@@ -51,7 +50,8 @@ export function singleIntersectionInto(out: XYObjectWritable, a: RayLike, b: Ray
       const cx = t * dbx - px;
       const cy = t * dby - py;
       if (cx * cx + cy * cy <= distEpsilon * distEpsilon) {
-        writeXY(out, oax, oay);
+        out.x = oax;
+        out.y = oay;
         return true;
       }
       return false;
@@ -64,7 +64,8 @@ export function singleIntersectionInto(out: XYObjectWritable, a: RayLike, b: Ray
     const cx = t * dax - px;
     const cy = t * day - py;
     if (cx * cx + cy * cy <= distEpsilon * distEpsilon) {
-      writeXY(out, obx, oby);
+      out.x = obx;
+      out.y = oby;
       return true;
     }
     return false;
@@ -84,6 +85,7 @@ export function singleIntersectionInto(out: XYObjectWritable, a: RayLike, b: Ray
   // backward 방향이면 교점 없음
   if (t < 0 || u < 0) return false;
 
-  writeXY(out, oax + t * dax, oay + t * day);
+  out.x = oax + t * dax;
+  out.y = oay + t * day;
   return true;
 }

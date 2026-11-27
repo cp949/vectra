@@ -1,4 +1,4 @@
-import type { RayLike, XYObjectWritable } from '../types';
+import type { Ray, PointWritable } from '../types/flat-shapes.internal';
 import { singleIntersectionInto } from './single-intersection-into';
 
 /**
@@ -13,7 +13,7 @@ import { singleIntersectionInto } from './single-intersection-into';
  * @param b 두 번째 ray
  * @param epsilon cross product 절대값 및 거리 임계값 (기본값 `1e-9`)
  */
-export function singleIntersection(a: RayLike, b: RayLike, epsilon?: number): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+export function singleIntersection(a: Ray, b: Ray, epsilon?: number): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return singleIntersectionInto(out, a, b, epsilon) ? out : undefined;
 }

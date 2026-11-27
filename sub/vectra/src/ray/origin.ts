@@ -1,4 +1,4 @@
-import type { RayLike, XYObjectWritable } from '../types';
+import type { Ray, PointWritable } from '../types/flat-shapes.internal';
 import { originInto } from './origin-into';
 
 /**
@@ -6,6 +6,6 @@ import { originInto } from './origin-into';
  *
  * `originInto`에 위임하는 companion wrapper다.
  */
-export function origin(ray: RayLike): XYObjectWritable {
+export function origin(ray: Ray): PointWritable {
   return originInto({ x: 0, y: 0 }, ray);
 }

@@ -10,11 +10,11 @@ import { cropByCircle } from '../../../src/ray/crop-by-circle';
 import { singleIntersectionInto } from '../../../src/ray/single-intersection-into';
 
 /** +x 방향 ray. origin은 `(0, 0)`이다. */
-const rayRight = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
+const rayRight = { ox: 0, oy: 0, dx: 1, dy: 0 };
 
 /** 방향 벡터가 0인 degenerate ray. 점처럼 origin만 의미가 있다. */
 function point(x: number, y: number) {
-  return { origin: { x, y }, direction: { x: 0, y: 0 } };
+  return { ox: x, oy: y, dx: 0, dy: 0 };
 }
 
 describe('singleIntersectionInto — 양쪽 degenerate', () => {

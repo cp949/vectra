@@ -24,28 +24,7 @@ import { projectionT } from '../../../src/ray/projection-t';
 import { rayFrom } from '../../../src/ray/ray-from';
 import { reverse } from '../../../src/ray/reverse';
 import { reverseInto } from '../../../src/ray/reverse-into';
-import type { RayLike, RayWritable } from '../../../src/types';
-import type { Ray, RayWritable as FlatRayWritable } from '../../../src/types/flat-shapes.internal';
-
-describe('광선 시작점 읽기', () => {
-  test('object RayLike에서 origin을 읽는다', () => {
-    const ray: RayLike = { origin: { x: 1, y: 2 }, direction: { x: 3, y: 4 } };
-    const out = origin(ray);
-    expect(out).toEqual({ x: 1, y: 2 });
-  });
-
-  test('tuple RayLike에서 origin을 읽는다', () => {
-    const ray: RayLike = [1, 2, 3, 4];
-    const out = origin(ray);
-    expect(out).toEqual({ x: 1, y: 2 });
-  });
-
-  test('XYInput tuple origin을 읽는다', () => {
-    const ray: RayLike = { origin: [5, 6] as const, direction: [7, 8] as const };
-    const out = origin(ray);
-    expect(out).toEqual({ x: 5, y: 6 });
-  });
-});
+import type { Ray, RayWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('createRay', () => {
   test('인수 없이 호출하면 zero ray writable을 만든다', () => {
@@ -56,7 +35,7 @@ describe('createRay', () => {
 
 describe('copyInto', () => {
   test('object Ray를 out에 복사하고 out reference를 반환한다', () => {
-    const out: FlatRayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
+    const out: RayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
     const ray: Ray = { ox: 1, oy: 2, dx: 3, dy: 4 };
     const result = copyInto(out, ray);
     expect(result).toBe(out);
@@ -77,32 +56,30 @@ describe('rayFrom (companion)', () => {
 
 describe('reverseInto', () => {
   test('direction 부호를 반전하고 origin은 유지한다', () => {
-    const out: RayWritable = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } };
-    const ray: RayLike = { origin: { x: 1, y: 2 }, direction: { x: 3, y: 4 } };
+    const out: RayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
+    const ray: Ray = { ox: 1, oy: 2, dx: 3, dy: 4 };
     const result = reverseInto(out, ray);
     expect(result).toBe(out);
-    expect(out.origin).toEqual({ x: 1, y: 2 });
-    expect(out.direction).toEqual({ x: -3, y: -4 });
+    expect(out).toEqual({ ox: 1, oy: 2, dx: -3, dy: -4 });
   });
 
   test('alias-safe: out과 ray가 같아도 올바르게 반전한다', () => {
-    const out: RayWritable = { origin: { x: 1, y: 2 }, direction: { x: 3, y: 4 } };
+    const out: RayWritable = { ox: 1, oy: 2, dx: 3, dy: 4 };
     reverseInto(out, out);
-    expect(out.origin).toEqual({ x: 1, y: 2 });
-    expect(out.direction).toEqual({ x: -3, y: -4 });
+    expect(out).toEqual({ ox: 1, oy: 2, dx: -3, dy: -4 });
   });
 });
 
 describe('reverse (companion)', () => {
   test('plain object를 반환한다', () => {
-    const result = reverse({ origin: { x: 1, y: 2 }, direction: { x: 3, y: 4 } });
-    expect(result).toEqual({ origin: { x: 1, y: 2 }, direction: { x: -3, y: -4 } });
+    const result = reverse({ ox: 1, oy: 2, dx: 3, dy: 4 });
+    expect(result).toEqual({ ox: 1, oy: 2, dx: -3, dy: -4 });
   });
 });
 
 describe('fromSegmentInto', () => {
   test('segment object를 origin=a, direction=b-a로 변환한다', () => {
-    const out: FlatRayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
+    const out: RayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
     const result = fromSegmentInto(out, { x1: 1, y1: 2, x2: 4, y2: 6 });
     expect(result).toBe(out);
     expect(out.ox).toBe(1);
@@ -121,7 +98,7 @@ describe('fromSegment (companion)', () => {
 
 describe('fromAngleInto', () => {
   test('0 radian은 +x 방향이다', () => {
-    const out: FlatRayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
+    const out: RayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
     const result = fromAngleInto(out, { x: 1, y: 2 }, 0);
     expect(result).toBe(out);
     expect(out.ox).toBe(1);
@@ -131,7 +108,7 @@ describe('fromAngleInto', () => {
   });
 
   test('Math.PI / 2 radian은 +y 방향이다', () => {
-    const out: FlatRayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
+    const out: RayWritable = { ox: 0, oy: 0, dx: 0, dy: 0 };
     fromAngleInto(out, { x: 0, y: 0 }, Math.PI / 2);
     expect(out.dx).toBeCloseTo(0, 10);
     expect(out.dy).toBeCloseTo(1, 10);
@@ -151,13 +128,13 @@ describe('fromAngle (companion)', () => {
 describe('originInto / origin', () => {
   test('originInto가 out reference를 반환한다', () => {
     const out = { x: 0, y: 0 };
-    const result = originInto(out, { origin: { x: 3, y: 4 }, direction: { x: 1, y: 0 } });
+    const result = originInto(out, { ox: 3, oy: 4, dx: 1, dy: 0 });
     expect(result).toBe(out);
     expect(out).toEqual({ x: 3, y: 4 });
   });
 
   test('origin companion이 새 plain object를 반환한다', () => {
-    const result = origin([5, 6, 1, 0]);
+    const result = origin({ ox: 5, oy: 6, dx: 1, dy: 0 });
     expect(result).toEqual({ x: 5, y: 6 });
   });
 });
@@ -179,32 +156,32 @@ describe('directionInto / direction', () => {
 describe('pointAtTInto', () => {
   test('t=0이면 origin을 반환한다', () => {
     const out = { x: 0, y: 0 };
-    pointAtTInto(out, { origin: { x: 1, y: 2 }, direction: { x: 1, y: 0 } }, 0);
+    pointAtTInto(out, { ox: 1, oy: 2, dx: 1, dy: 0 }, 0);
     expect(out).toEqual({ x: 1, y: 2 });
   });
 
   test('t=2이면 origin + 2*direction 위치다', () => {
     const out = { x: 0, y: 0 };
-    pointAtTInto(out, { origin: { x: 0, y: 0 }, direction: { x: 1, y: 1 } }, 2);
+    pointAtTInto(out, { ox: 0, oy: 0, dx: 1, dy: 1 }, 2);
     expect(out).toEqual({ x: 2, y: 2 });
   });
 
   test('t=-1이면 backward supporting line 위치를 기록한다 (clamp 없음)', () => {
     const out = { x: 0, y: 0 };
-    pointAtTInto(out, { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }, -1);
+    pointAtTInto(out, { ox: 0, oy: 0, dx: 1, dy: 0 }, -1);
     expect(out).toEqual({ x: -1, y: 0 });
   });
 
   test('degenerate ray에서는 origin을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    pointAtTInto(out, { origin: { x: 3, y: 4 }, direction: { x: 0, y: 0 } }, 5);
+    pointAtTInto(out, { ox: 3, oy: 4, dx: 0, dy: 0 }, 5);
     expect(out).toEqual({ x: 3, y: 4 });
   });
 });
 
 describe('pointAtT (companion)', () => {
   test('새 plain object를 반환한다', () => {
-    const result = pointAtT({ origin: { x: 1, y: 2 }, direction: { x: 1, y: 0 } }, 3);
+    const result = pointAtT({ ox: 1, oy: 2, dx: 1, dy: 0 }, 3);
     expect(result).toEqual({ x: 4, y: 2 });
   });
 });
@@ -212,24 +189,23 @@ describe('pointAtT (companion)', () => {
 describe('projectionT', () => {
   test('supporting infinite-line 기준 unclamped t를 반환한다 (backward point)', () => {
     // origin=(0,0), direction=(1,0), point=(-3,0) → t=-3 (unclamped)
-    const ray: RayLike = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
+    const ray: Ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
     expect(projectionT(ray, { x: -3, y: 0 })).toBeCloseTo(-3, 10);
   });
 
   test('forward point t 계산', () => {
-    const ray: RayLike = [0, 0, 1, 0];
+    const ray: Ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
     expect(projectionT(ray, { x: 5, y: 0 })).toBeCloseTo(5, 10);
   });
 
   test('degenerate ray에서 0을 반환한다', () => {
-    const ray: RayLike = { origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } };
+    const ray: Ray = { ox: 1, oy: 2, dx: 0, dy: 0 };
     expect(projectionT(ray, { x: 3, y: 4 })).toBe(0);
   });
 
   test('non-unit direction에서도 올바른 t를 반환한다', () => {
-    // origin=(0,0), direction=(2,0), point=(4,0) → t=1 (dot/lenSq = 8/4 = 2, but t=dot/lenSq)
     // px=4, py=0, dot=(4*2+0*0)=8, lenSq=4, t=2
-    const ray: RayLike = { origin: { x: 0, y: 0 }, direction: { x: 2, y: 0 } };
+    const ray: Ray = { ox: 0, oy: 0, dx: 2, dy: 0 };
     expect(projectionT(ray, { x: 4, y: 0 })).toBeCloseTo(2, 10);
   });
 });
@@ -237,7 +213,7 @@ describe('projectionT', () => {
 describe('projectPointInto (unclamped)', () => {
   test('backward point도 supporting infinite-line 위 수선의 발을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    const ray: RayLike = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
+    const ray: Ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
     projectPointInto(out, ray, { x: -3, y: 2 });
     // supporting line 위 foot: (-3, 0)
     expect(out).toEqual({ x: -3, y: 0 });
@@ -245,14 +221,14 @@ describe('projectPointInto (unclamped)', () => {
 
   test('degenerate ray에서 origin을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    projectPointInto(out, { origin: { x: 5, y: 6 }, direction: { x: 0, y: 0 } }, { x: 10, y: 10 });
+    projectPointInto(out, { ox: 5, oy: 6, dx: 0, dy: 0 }, { x: 10, y: 10 });
     expect(out).toEqual({ x: 5, y: 6 });
   });
 });
 
 describe('projectPoint (companion)', () => {
   test('새 plain object를 반환한다', () => {
-    const result = projectPoint({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }, { x: 3, y: 4 });
+    const result = projectPoint({ ox: 0, oy: 0, dx: 1, dy: 0 }, { x: 3, y: 4 });
     expect(result).toEqual({ x: 3, y: 0 });
   });
 });
@@ -356,43 +332,34 @@ describe('containsPoint', () => {
 
 describe('isDegenerate', () => {
   test('direction이 (0, 0)이면 true', () => {
-    expect(isDegenerate({ origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } })).toBe(true);
+    expect(isDegenerate({ ox: 1, oy: 2, dx: 0, dy: 0 })).toBe(true);
   });
 
   test('direction이 있으면 false', () => {
-    expect(isDegenerate({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } })).toBe(false);
-  });
-
-  test('tuple ray: direction이 (0, 0)이면 true', () => {
-    expect(isDegenerate([0, 0, 0, 0])).toBe(true);
-  });
-
-  test('tuple ray: direction이 있으면 false', () => {
-    expect(isDegenerate([0, 0, 1, 0])).toBe(false);
+    expect(isDegenerate({ ox: 0, oy: 0, dx: 1, dy: 0 })).toBe(false);
   });
 
   test('epsilon보다 작은 direction은 degenerate', () => {
-    expect(isDegenerate({ origin: { x: 0, y: 0 }, direction: { x: 1e-10, y: 0 } })).toBe(true);
+    expect(isDegenerate({ ox: 0, oy: 0, dx: 1e-10, dy: 0 })).toBe(true);
   });
 });
 
 describe('degenerate ray 통합 동작', () => {
-  const legacyRay: RayLike = { origin: { x: 2, y: 3 }, direction: { x: 0, y: 0 } };
   const degRay: Ray = { ox: 2, oy: 3, dx: 0, dy: 0 };
 
   test('projectionT → 0', () => {
-    expect(projectionT(legacyRay, { x: 10, y: 20 })).toBe(0);
+    expect(projectionT(degRay, { x: 10, y: 20 })).toBe(0);
   });
 
   test('pointAtTInto → origin 기록', () => {
     const out = { x: 0, y: 0 };
-    pointAtTInto(out, legacyRay, 99);
+    pointAtTInto(out, degRay, 99);
     expect(out).toEqual({ x: 2, y: 3 });
   });
 
   test('projectPointInto → origin 기록', () => {
     const out = { x: 0, y: 0 };
-    projectPointInto(out, legacyRay, { x: 100, y: 200 });
+    projectPointInto(out, degRay, { x: 100, y: 200 });
     expect(out).toEqual({ x: 2, y: 3 });
   });
 

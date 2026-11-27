@@ -237,7 +237,7 @@ describe('direction 길이는 판정 결과에 영향을 주지 않는다', () =
   test.each(DIRECTION_SCALES)('direction 배율 %s: ray 단일 교점은 원점이다', (m) => {
     const out = { x: Number.NaN, y: Number.NaN };
 
-    expect(raySingleIntersectionInto(out, scaledRay(1, m, -1, 0, 1, 0), scaledRay(1, m, 0, -1, 0, 1))).toBe(true);
+    expect(raySingleIntersectionInto(out, { ox: -1, oy: 0, dx: m, dy: 0 }, { ox: 0, oy: -1, dx: 0, dy: m })).toBe(true);
     expect(out.x).toBeCloseTo(0, 9);
     expect(out.y).toBeCloseTo(0, 9);
   });
@@ -245,7 +245,7 @@ describe('direction 길이는 판정 결과에 영향을 주지 않는다', () =
   test.each(DIRECTION_SCALES)('direction 배율 %s: 평행한 ray는 단일 교점이 없다', (m) => {
     const out = { x: -7, y: -7 };
 
-    expect(raySingleIntersectionInto(out, scaledRay(1, m, 0, 0, 1, 0), scaledRay(1, m, 0, 1, 1, 0))).toBe(false);
+    expect(raySingleIntersectionInto(out, { ox: 0, oy: 0, dx: m, dy: 0 }, { ox: 0, oy: 1, dx: m, dy: 0 })).toBe(false);
     expect(out).toEqual({ x: -7, y: -7 });
   });
 

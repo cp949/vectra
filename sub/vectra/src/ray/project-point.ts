@@ -1,4 +1,4 @@
-import type { RayLike, XYInput, XYObjectWritable } from '../types';
+import type { Ray, Point, PointWritable } from '../types/flat-shapes.internal';
 import { projectPointInto } from './project-point-into';
 
 /**
@@ -8,6 +8,6 @@ import { projectPointInto } from './project-point-into';
  *
  * degenerate/empty 입력 처리 정책은 `projectPointInto`와 동일하다.
  */
-export function projectPoint(ray: RayLike, point: XYInput): XYObjectWritable {
+export function projectPoint(ray: Ray, point: Point): PointWritable {
   return projectPointInto({ x: 0, y: 0 }, ray, point);
 }
