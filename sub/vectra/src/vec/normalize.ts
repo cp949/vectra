@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { normalizeInto } from './normalize-into';
 
 /**
@@ -8,6 +8,6 @@ import { normalizeInto } from './normalize-into';
  *
  * @param input 정규화할 입력 벡터
  */
-export function normalize(input: XYInput): XYObjectWritable {
+export function normalize(input: Point): PointWritable {
   return normalizeInto({ x: 0, y: 0 }, input);
 }

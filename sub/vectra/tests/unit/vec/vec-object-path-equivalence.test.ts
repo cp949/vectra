@@ -249,14 +249,14 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       const outKind = Math.floor(rng() * 3);
       const s = coord(rng);
       const useScale = i % 2 === 0;
-      const expectedOut = makeOut(outKind, aSpec, aSpec);
-      const actualOut = makeOut(outKind, aSpec, aSpec);
+      const a = { x: aSpec.x, y: aSpec.y };
+      const expectedOut = useScale ? makeOut(outKind, aSpec, aSpec) : { x: 0, y: 0 };
+      const normalizedOut = outKind === 2 ? a : { x: 0, y: 0 };
+      const actualOut = useScale ? makeOut(outKind, aSpec, aSpec) : normalizedOut;
       const expectedResult = useScale
         ? ref.scaleInto(expectedOut, makeVec(aSpec), s)
-        : ref.normalizeInto(expectedOut, makeVec(aSpec));
-      const actualResult = useScale
-        ? scaleInto(actualOut, makeVec(aSpec), s)
-        : normalizeInto(actualOut, makeVec(aSpec));
+        : ref.normalizeInto(expectedOut, a);
+      const actualResult = useScale ? scaleInto(actualOut, makeVec(aSpec), s) : normalizeInto(normalizedOut, a);
       expect(actualResult).toBe(actualOut);
       const [ex, ey] = snapshot(expectedResult);
       const [ax, ay] = snapshot(actualResult);

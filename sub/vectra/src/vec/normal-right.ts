@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { normalRightInto } from './normal-right-into';
 
 /**
@@ -10,6 +10,6 @@ import { normalRightInto } from './normal-right-into';
  *
  * @param input CW normal을 구할 입력 벡터
  */
-export function normalRight(input: XYInput): XYObjectWritable {
+export function normalRight(input: Point): PointWritable {
   return normalRightInto({ x: 0, y: 0 }, input);
 }

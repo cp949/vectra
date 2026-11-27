@@ -20,6 +20,16 @@ import { fromPolarInto } from '../../../src/vec/from-polar-into';
 import { lerpInto } from '../../../src/vec/lerp-into';
 import { maxInto } from '../../../src/vec/max-into';
 import { midpointInto } from '../../../src/vec/midpoint-into';
+import { minInto } from '../../../src/vec/min-into';
+import { moduloInto } from '../../../src/vec/modulo-into';
+import { moveTowardInto } from '../../../src/vec/move-toward-into';
+import { multiplyInto } from '../../../src/vec/multiply-into';
+import { negateInto } from '../../../src/vec/negate-into';
+import { normalLeftInto } from '../../../src/vec/normal-left-into';
+import { normalRightInto } from '../../../src/vec/normal-right-into';
+import { normalizeInto } from '../../../src/vec/normalize-into';
+import { oneInto } from '../../../src/vec/one-into';
+import { perpendicularInto } from '../../../src/vec/perpendicular-into';
 
 /** 메서드를 가진 외부 점 클래스. Into 반환값으로 메서드를 이어 부를 수 있어야 한다. */
 class Sprite {
@@ -35,6 +45,11 @@ const a = { x: -1.5, y: 2 };
 const b = { x: 3, y: -4 };
 
 describe('vec Into 반환 타입', () => {
+  test('성분별 최솟값은 x/y 입력과 출력을 받는다', () => {
+    expectTypeOf(minInto).parameter(0).toEqualTypeOf<PointWritable>();
+    expectTypeOf(minInto).parameter(1).toEqualTypeOf<Point>();
+  });
+
   test('각도에서 벡터를 만들 때 x/y 출력을 받는다', () => {
     expectTypeOf(fromAngleInto).parameter(0).toEqualTypeOf<PointWritable>();
   });
@@ -62,6 +77,16 @@ describe('vec Into 반환 타입', () => {
       (out: Sprite) => lerpInto(out, a, b, 0.5),
       (out: Sprite) => maxInto(out, a, b),
       (out: Sprite) => midpointInto(out, a, b),
+      (out: Sprite) => minInto(out, a, b),
+      (out: Sprite) => moduloInto(out, a, b),
+      (out: Sprite) => moveTowardInto(out, a, b, 1),
+      (out: Sprite) => multiplyInto(out, a, b),
+      (out: Sprite) => negateInto(out, a),
+      (out: Sprite) => normalLeftInto(out, a),
+      (out: Sprite) => normalRightInto(out, a),
+      (out: Sprite) => normalizeInto(out, a),
+      (out: Sprite) => oneInto(out),
+      (out: Sprite) => perpendicularInto(out, a),
     ];
     for (const run of cases) {
       const sprite = new Sprite();
@@ -88,5 +113,15 @@ describe('vec Into 반환 타입', () => {
     expectTypeOf(lerpInto(sprite, a, b, 0.5)).toEqualTypeOf<Sprite>();
     expectTypeOf(maxInto(sprite, a, b)).toEqualTypeOf<Sprite>();
     expectTypeOf(midpointInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(minInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(moduloInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(moveTowardInto(sprite, a, b, 1)).toEqualTypeOf<Sprite>();
+    expectTypeOf(multiplyInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(negateInto(sprite, a)).toEqualTypeOf<Sprite>();
+    expectTypeOf(normalLeftInto(sprite, a)).toEqualTypeOf<Sprite>();
+    expectTypeOf(normalRightInto(sprite, a)).toEqualTypeOf<Sprite>();
+    expectTypeOf(normalizeInto(sprite, a)).toEqualTypeOf<Sprite>();
+    expectTypeOf(oneInto(sprite)).toEqualTypeOf<Sprite>();
+    expectTypeOf(perpendicularInto(sprite, a)).toEqualTypeOf<Sprite>();
   });
 });

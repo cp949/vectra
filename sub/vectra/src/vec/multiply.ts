@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { multiplyInto } from './multiply-into';
 
 /**
@@ -7,6 +7,6 @@ import { multiplyInto } from './multiply-into';
  * @param a 곱할 첫 번째 벡터
  * @param b 곱할 두 번째 벡터
  */
-export function multiply(a: XYInput, b: XYInput): XYObjectWritable {
+export function multiply(a: Point, b: Point): PointWritable {
   return multiplyInto({ x: 0, y: 0 }, a, b);
 }

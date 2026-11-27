@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { moduloInto } from './modulo-into';
 
 /**
@@ -11,6 +11,6 @@ import { moduloInto } from './modulo-into';
  * @param a 피제수 벡터
  * @param b 제수 벡터. 성분이 0이면 NaN이 나온다
  */
-export function modulo(a: XYInput, b: XYInput): XYObjectWritable {
+export function modulo(a: Point, b: Point): PointWritable {
   return moduloInto({ x: 0, y: 0 }, a, b);
 }

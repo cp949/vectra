@@ -20,7 +20,6 @@ import { zero } from '../../../src/vec/zero';
 import { zeroInto } from '../../../src/vec/zero-into';
 import {
   type ConstantCompanion,
-  type ConstantInto,
   expectNaNComponents,
   expectObjectOut,
   expectTupleOut,
@@ -30,9 +29,13 @@ import {
 } from './component-helper-test-utils';
 
 describe('vec constants - zero and one', () => {
+  test('zeroInto는 tuple out에 영 벡터를 기록하고 out을 반환한다', () => {
+    expectTupleOut(zeroInto, [0, 0]);
+  });
+
   const cases: ReadonlyArray<{
     name: string;
-    into: ConstantInto;
+    into: (out: XYObjectWritable) => XYObjectWritable;
     companion: ConstantCompanion;
     expected: readonly [number, number];
   }> = [
@@ -44,10 +47,6 @@ describe('vec constants - zero and one', () => {
     describe(helper.name, () => {
       test('out에 constant vector를 기록하고 out을 반환한다', () => {
         expectObjectOut((out) => helper.into(out), helper.expected, [99, 99]);
-      });
-
-      test('mutable tuple out에 constant vector를 기록하고 tuple reference를 반환한다', () => {
-        expectTupleOut((out) => helper.into(out), helper.expected);
       });
 
       test('companion은 constant vector 새 object를 반환한다', () => {

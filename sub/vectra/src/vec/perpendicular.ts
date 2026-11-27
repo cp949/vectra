@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { perpendicularInto } from './perpendicular-into';
 
 /**
@@ -8,6 +8,6 @@ import { perpendicularInto } from './perpendicular-into';
  *
  * @param input CCW 90도 회전할 입력 벡터
  */
-export function perpendicular(input: XYInput): XYObjectWritable {
+export function perpendicular(input: Point): PointWritable {
   return perpendicularInto({ x: 0, y: 0 }, input);
 }

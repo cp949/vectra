@@ -57,8 +57,6 @@ describe('vec component-wise - unary helpers', () => {
       ],
       aliasInput: { x: 4, y: -6 },
       aliasExpected: [-4, 6],
-      tupleInput: [1, -2],
-      tupleExpected: [-1, 2],
     },
     {
       name: 'abs',

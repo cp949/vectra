@@ -423,8 +423,8 @@ describe('README 빠른 시작 예제 검증', () => {
   it('Domain barrel import 예제 — normalizeInto와 nearEquals가 README대로 동작한다', () => {
     const unit = { x: 0, y: 0 };
 
-    // README 예제: vec.normalizeInto(unit, [3, 4]) → { x: 0.6, y: 0.8 }
-    vec.normalizeInto(unit, [3, 4]);
+    // README 예제: vec.normalizeInto(unit, { x: 3, y: 4 }) → { x: 0.6, y: 0.8 }
+    vec.normalizeInto(unit, { x: 3, y: 4 });
     expect(unit.x).toBeCloseTo(0.6, 5);
     expect(unit.y).toBeCloseTo(0.8, 5);
 

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -10,15 +9,22 @@ import { hypot2 } from '../internal/numeric';
  *
  * NaN / Infinity 입력은 JavaScript 산술 결과를 그대로 out에 기록한다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param input CW normal을 구할 입력 벡터
  */
-export function normalRightInto<Out extends XYWritable>(out: Out, input: XYInput): Out {
-  const x = readX(input);
-  const y = readY(input);
+export function normalRightInto<Out extends PointWritable>(out: Out, input: Point): Out {
+  const x = input.x;
+  const y = input.y;
   const nx = y;
   const ny = -x;
   const len = hypot2(nx, ny);
 
-  return len === 0 ? writeXY(out, 0, 0) : writeXY(out, nx / len, ny / len);
+  if (len === 0) {
+    out.x = 0;
+    out.y = 0;
+  } else {
+    out.x = nx / len;
+    out.y = ny / len;
+  }
+  return out;
 }

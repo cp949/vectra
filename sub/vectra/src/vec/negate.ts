@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { negateInto } from './negate-into';
 
 /**
@@ -6,6 +6,6 @@ import { negateInto } from './negate-into';
  *
  * @param input 부정할 입력 벡터
  */
-export function negate(input: XYInput): XYObjectWritable {
+export function negate(input: Point): PointWritable {
   return negateInto({ x: 0, y: 0 }, input);
 }

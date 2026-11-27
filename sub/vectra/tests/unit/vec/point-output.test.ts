@@ -26,11 +26,11 @@ describe('vec point-output - perpendicularInto', () => {
     expect(out).toEqual({ x: -4, y: 3 });
   });
 
-  test('tuple 입력에서 CCW 90도 수직 벡터를 out에 기록한다', () => {
+  test('양의 x축 입력에서 CCW 90도 수직 벡터를 out에 기록한다', () => {
     // [1, 0] → (-0, 1) 인데 -0과 +0은 수학적으로 동일하므로 toBeCloseTo로 검증한다
     const out: XYWritable = { x: 0, y: 0 };
 
-    const result = perpendicularInto(out, [1, 0]);
+    const result = perpendicularInto(out, { x: 1, y: 0 });
 
     expect(result).toBe(out);
     expect(out.x).toBeCloseTo(0, 10);
@@ -55,16 +55,6 @@ describe('vec point-output - perpendicularInto', () => {
     perpendicularInto(vec, vec);
 
     expect(vec).toEqual({ x: -4, y: 3 });
-  });
-
-  test('mutable tuple out에 수직 벡터를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = perpendicularInto(out, { x: 2, y: 5 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBe(-5);
-    expect(out[1]).toBe(2);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 });
 

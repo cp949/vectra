@@ -1,6 +1,5 @@
-import { readX, readY, writeXY } from '../internal/xy';
 import { moveTowardPointInto } from '../interpolation/move-toward-point-into';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * current 벡터를 target 방향으로 최대 maxDistance만큼 이동한 벡터를 out에 기록하고 out을 반환한다.
@@ -10,25 +9,16 @@ import type { XYInput, XYWritable } from '../types';
  * 모든 input의 x/y와 maxDistance는 finite number여야 한다.
  * out이 current 또는 target과 같은 object여도 안전하다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param current 이동 시작 벡터
  * @param target 이동 목표 벡터
  * @param maxDistance 최대 이동 거리. 0 이상의 finite number여야 한다.
  */
-export function moveTowardInto<Out extends XYWritable>(
+export function moveTowardInto<Out extends PointWritable>(
   out: Out,
-  current: XYInput,
-  target: XYInput,
+  current: Point,
+  target: Point,
   maxDistance: number
 ): Out {
-  // v2-migration: vec의 tuple 입력 계약을 유지한다.
-  const currentPoint = { x: readX(current), y: readY(current) };
-  const targetPoint = { x: readX(target), y: readY(target) };
-  if (Array.isArray(out)) {
-    const point = moveTowardPointInto({ x: 0, y: 0 }, currentPoint, targetPoint, maxDistance);
-    return writeXY(out, point.x, point.y);
-  }
-
-  moveTowardPointInto(out, currentPoint, targetPoint, maxDistance);
-  return out;
+  return moveTowardPointInto(out, current, target, maxDistance);
 }

@@ -82,24 +82,24 @@ describe('vec measurement - cross', () => {
 describe('vec measurement - orientation', () => {
   test('CCW 순서의 점은 양수를 반환한다', () => {
     // a=(0,0), b=(1,0), c=(0,1) → CCW
-    expect(orientation([0, 0], [1, 0], { x: 0, y: 1 })).toBeGreaterThan(0);
+    expect(orientation({ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 })).toBeGreaterThan(0);
   });
 
   test('CW 순서의 점은 음수를 반환한다', () => {
     // a=(0,0), b=(0,1), c=(1,0) → CW
-    expect(orientation({ x: 0, y: 0 }, [0, 1], [1, 0])).toBeLessThan(0);
+    expect(orientation({ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 })).toBeLessThan(0);
   });
 
   test('일직선의 점은 0을 반환한다', () => {
-    expect(orientation([0, 0], [1, 1], { x: 2, y: 2 })).toBe(0);
+    expect(orientation({ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 })).toBe(0);
   });
 
   test('세 점이 같으면 0을 반환한다', () => {
-    expect(orientation([1, 1], [1, 1], { x: 1, y: 1 })).toBe(0);
+    expect(orientation({ x: 1, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 1 })).toBe(0);
   });
 
-  test('object 입력과 tuple 입력 혼합을 처리한다', () => {
-    const result = orientation({ x: 0, y: 0 }, [2, 0], { x: 1, y: 1 });
+  test('떨어진 세 점의 외적을 계산한다', () => {
+    const result = orientation({ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 1, y: 1 });
 
     expect(result).toBeGreaterThan(0);
   });

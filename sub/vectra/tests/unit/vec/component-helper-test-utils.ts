@@ -1,11 +1,11 @@
 import { expect, expectTypeOf, test } from 'vitest';
 import type { XYInput, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 export type UnaryInto = <T extends XYWritable>(out: T, input: XYInput) => T;
 export type UnaryCompanion = (input: XYInput) => { x: number; y: number };
-export type BinaryInto = <T extends XYWritable>(out: T, a: XYInput, b: XYInput) => T;
-export type BinaryCompanion = (a: XYInput, b: XYInput) => { x: number; y: number };
-export type ConstantInto = <T extends XYWritable>(out: T) => T;
+type BinaryInto = (out: PointWritable, a: Point, b: Point) => PointWritable;
+type BinaryCompanion = (a: Point, b: Point) => PointWritable;
 export type ConstantCompanion = () => { x: number; y: number };
 
 export type UnaryBehaviorCase = {
@@ -24,8 +24,8 @@ export type BinaryBehaviorCase = {
   name: string;
   into: BinaryInto;
   companion: BinaryCompanion;
-  a: XYInput;
-  b: XYInput;
+  a: Point;
+  b: Point;
   expected: readonly [number, number];
   aliasExpected?: readonly [number, number];
 };
@@ -38,13 +38,6 @@ export function expectXY(actual: XYInput, expected: readonly [number, number]) {
   }
 
   expect(actual).toEqual({ x: expected[0], y: expected[1] });
-}
-
-export function toTuple(input: XYInput): [number, number] {
-  if ('x' in input) {
-    return [input.x, input.y];
-  }
-  return [input[0], input[1]];
 }
 
 export function expectTupleOut(run: (out: [number, number]) => [number, number], expected: readonly [number, number]) {
@@ -135,18 +128,6 @@ export function testBinaryBehavior(helper: BinaryBehaviorCase) {
     helper.into(b, { x: 3, y: 8 }, b);
 
     expectXY(b, aliasExpected);
-  });
-
-  test('tuple 입력과 object 입력을 혼합하여 처리한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const result = helper.into(out, toTuple(helper.a), helper.b);
-
-    expect(result).toBe(out);
-    expectXY(out, helper.expected);
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    expectTupleOut((out) => helper.into(out, helper.a, helper.b), helper.expected);
   });
 
   test('companion은 올바른 결과를 반환한다', () => {

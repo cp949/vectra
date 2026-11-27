@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 세 점 a, b, c의 방향을 부호 있는 면적으로 반환한다.
@@ -12,13 +11,13 @@ import type { XYInput } from '../types';
  * @param b 두 번째 점
  * @param c 세 번째 점
  */
-export function orientation(a: XYInput, b: XYInput, c: XYInput): number {
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
-  const cx = readX(c);
-  const cy = readY(c);
+export function orientation(a: Point, b: Point, c: Point): number {
+  const ax = a.x;
+  const ay = a.y;
+  const bx = b.x;
+  const by = b.y;
+  const cx = c.x;
+  const cy = c.y;
 
   return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
 }

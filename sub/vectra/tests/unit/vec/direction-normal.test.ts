@@ -4,7 +4,7 @@
  * directionToInto/normalLeftInto/normalRightInto 및 각 companion을 검증한다.
  */
 
-import { describe, expect, expectTypeOf, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import type { XYWritable } from '../../../src/types';
 import { directionTo } from '../../../src/vec/direction-to';
 import { directionToInto } from '../../../src/vec/direction-to-into';
@@ -135,15 +135,6 @@ describe('vec direction - normalLeftInto', () => {
     expect(out.y).toBeCloseTo(0.6, 10);
   });
 
-  test('tuple input: (3,4) CCW normal을 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-
-    normalLeftInto(out, [3, 4]);
-
-    expect(out.x).toBeCloseTo(-0.8, 10);
-    expect(out.y).toBeCloseTo(0.6, 10);
-  });
-
   test('zero vector 입력에서 (0, 0)을 기록하고 throw하지 않는다', () => {
     const out: XYWritable = { x: 99, y: 99 };
 
@@ -161,16 +152,6 @@ describe('vec direction - normalLeftInto', () => {
 
     expect(vec.x).toBeCloseTo(-0.8, 10);
     expect(vec.y).toBeCloseTo(0.6, 10);
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = normalLeftInto(out, { x: 3, y: 4 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(-0.8, 10);
-    expect(out[1]).toBeCloseTo(0.6, 10);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('NaN 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
@@ -204,8 +185,8 @@ describe('vec companion - normalLeft', () => {
 
   test('normalLeftInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    normalLeftInto(out, [5, 12]);
-    const result = normalLeft([5, 12]);
+    normalLeftInto(out, { x: 5, y: 12 });
+    const result = normalLeft({ x: 5, y: 12 });
 
     expect(result.x).toBeCloseTo(out.x, 10);
     expect(result.y).toBeCloseTo(out.y, 10);
@@ -240,15 +221,6 @@ describe('vec direction - normalRightInto', () => {
     expect(out.y).toBeCloseTo(-0.6, 10);
   });
 
-  test('tuple input: (3,4) CW normal을 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-
-    normalRightInto(out, [3, 4]);
-
-    expect(out.x).toBeCloseTo(0.8, 10);
-    expect(out.y).toBeCloseTo(-0.6, 10);
-  });
-
   test('zero vector 입력에서 (0, 0)을 기록하고 throw하지 않는다', () => {
     const out: XYWritable = { x: 99, y: 99 };
 
@@ -266,16 +238,6 @@ describe('vec direction - normalRightInto', () => {
 
     expect(vec.x).toBeCloseTo(0.8, 10);
     expect(vec.y).toBeCloseTo(-0.6, 10);
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = normalRightInto(out, { x: 3, y: 4 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(0.8, 10);
-    expect(out[1]).toBeCloseTo(-0.6, 10);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('NaN 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
@@ -309,8 +271,8 @@ describe('vec companion - normalRight', () => {
 
   test('normalRightInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    normalRightInto(out, [5, 12]);
-    const result = normalRight([5, 12]);
+    normalRightInto(out, { x: 5, y: 12 });
+    const result = normalRight({ x: 5, y: 12 });
 
     expect(result.x).toBeCloseTo(out.x, 10);
     expect(result.y).toBeCloseTo(out.y, 10);
