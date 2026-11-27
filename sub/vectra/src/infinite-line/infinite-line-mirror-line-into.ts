@@ -4,13 +4,13 @@ import type { InfiniteLine, InfiniteLineWritable } from '../types/flat-shapes.in
  * `line`을 `mirror` line을 기준 축으로 반사한 결과를 `out`에 기록하고 `out`을 반환한다.
  *
  * `line`의 기준점은 `mirror` line에 대한 점 반사(수선의 발 `F`에 대해 `2F - P`)로 `out`의 기준점에
- * 기록한다. `line`의 방향 벡터은 `mirror`의 방향 벡터 축에 대한 vector 반사(`2 proj_d(v) - v`)로
- * `out`의 방향 벡터에 기록한다. `mirror`의 방향 벡터은 normalize하지 않으며 unit vector 없이 계산한다.
+ * 기록한다. `line`의 방향 벡터는 `mirror`의 방향 벡터 축에 대한 vector 반사(`2 proj_d(v) - v`)로
+ * `out`의 방향 벡터에 기록한다. `mirror`의 방향 벡터는 normalize하지 않으며 unit vector 없이 계산한다.
  *
  * degenerate 처리:
- *   - `mirror.dx === 0 && mirror.dy === 0`이면 축이 없으므로 `mirror`의 기준점 기준 점 반사(`2M - P`)로 origin을,
- *     `-direction`으로 direction을 기록한다. zero direction은 그대로 zero다.
- *   - `line.dx === 0 && line.dy === 0`이면 output direction도 `(0, 0)`이다.
+ *   - `mirror.dx === 0 && mirror.dy === 0`이면 축이 없으므로 `(mirror.ox, mirror.oy)`에 대한 점 반사(`2M - P`)로
+ *     `(ox, oy)`를, 부호 반전으로 `(dx, dy)`를 기록한다. zero direction은 그대로 zero다.
+ *   - `line.dx === 0 && line.dy === 0`이면 출력의 `dx`, `dy`도 0이다.
  *
  * `out === line` 또는 `out === mirror` aliasing은 안전하다. 입력 좌표를 모두 local 변수로 먼저
  * 읽은 뒤 기록한다.

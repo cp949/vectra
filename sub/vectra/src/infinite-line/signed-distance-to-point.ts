@@ -8,7 +8,7 @@ import { hypot2 } from '../internal/numeric';
  * = `(dx * (py - oy) - dy * (px - ox)) / hypot(dx, dy)`
  *
  * 좌측 양수 (y-up 수학 관례). y-down 화면 좌표계에서는 우측이 양수로 읽힌다.
- * degenerate infinite-line (`direction = (0,0)`)에서는 unsigned 거리를 반환한다.
+ * degenerate infinite-line(`dx = dy = 0`)에서는 unsigned 거리를 반환한다.
  * NaN/Infinity 입력은 수식 결과를 그대로 pass-through한다.
  *
  * @param line 기준 infinite-line

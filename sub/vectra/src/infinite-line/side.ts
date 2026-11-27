@@ -24,7 +24,7 @@ import { signedDistanceToPoint } from './signed-distance-to-point';
  * - `line`의 방향 벡터 / `line`의 기준점에 NaN 또는 Infinity가 포함되면
  *   `signedDistanceToPoint` 결과가 NaN이 되어 `0`을 반환한다.
  *
- * degenerate 판정은 `direction = (0, 0)` 정확 비교이며 epsilon 기반 `isDegenerate`와
+ * degenerate 판정은 `dx = dy = 0` 정확 비교이며 epsilon 기반 `isDegenerate`와
  * 다르다. float64 underflow로 `dx*dx + dy*dy === 0`이 되는 극단 케이스도 degenerate로
  * 처리한다. degenerate line에서는 부호 정보가 없으므로 항상 `0`을 반환한다.
  *
@@ -34,7 +34,7 @@ import { signedDistanceToPoint } from './signed-distance-to-point';
  */
 export function side(line: InfiniteLine, point: Point, epsilon: number = DEFAULT_EPSILON): -1 | 0 | 1 {
   const { dx, dy } = line;
-  // degenerate: direction = (0,0) → signedDistanceToPoint가 unsigned 거리를 반환하므로
+  // degenerate: dx = dy = 0 → signedDistanceToPoint가 unsigned 거리를 반환하므로
   // 판정 로직을 통과시키면 항상 1이 나올 수 있다. early-return으로 처리한다.
   if (dx * dx + dy * dy === 0) return 0;
   const signedDist = signedDistanceToPoint(line, point);
