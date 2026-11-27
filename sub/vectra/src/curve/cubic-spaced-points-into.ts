@@ -1,5 +1,5 @@
-import { flatCubicFromLegacyPoints } from '../internal/legacy-curve.internal';
-import type { CurveSpacedPointsOptions, XYInput, XYObjectWritable } from '../types';
+import type { CurveSpacedPointsOptions } from '../types';
+import type { CubicCurve, PointWritable } from '../types/flat-shapes.internal';
 import { cubicLength } from './cubic-length';
 import { cubicPointAtTInto } from './cubic-point-at-t-into';
 import { cubicTAtLength } from './cubic-t-at-length';
@@ -16,40 +16,25 @@ import { cubicTAtLength } from './cubic-t-at-length';
  * 좌표는 검증 없이 사용하므로 NaN/Infinity는 결과 좌표로 pass-through된다.
  * count validation 실패 시 RangeError를 던지고 out은 그대로 유지된다(temp commit).
  *
- * @param out point를 push할 XYObjectWritable 배열. 성공 시 기존 내용은 clear된다.
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param out point를 push할 PointWritable 배열. 성공 시 기존 내용은 clear된다.
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param count output point 수. 2 이상 0xffffffff 이하의 safe integer. 범위 밖이면 RangeError.
  * @param options TAtLength 탐색 옵션(segments / tolerance / maxIterations).
  * @returns out
  */
 export function cubicSpacedPointsInto(
-  out: XYObjectWritable[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
+  out: PointWritable[],
+  curve: CubicCurve,
   count: number,
-  options?: CurveSpacedPointsOptions
-): XYObjectWritable[] {
+  options?: Required<CurveSpacedPointsOptions>
+): PointWritable[] {
   if (!Number.isSafeInteger(count) || count < 2 || count > 0xffffffff) {
     throw new RangeError(`count must be a safe integer in [2, 4294967295], got ${count}`);
   }
 
-  // v2-migration: 등간격 표본 API 전환 시 기존 옵션 보완을 지운다.
-  const lengthOptions =
-    options === undefined
-      ? undefined
-      : {
-          segments: options.segments ?? 12,
-          tolerance: options.tolerance ?? 1e-8,
-          maxIterations: options.maxIterations ?? 64,
-        };
-  const totalLength = cubicLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), lengthOptions);
+  const totalLength = cubicLength(curve, options);
   const last = count - 1;
-  const temp: XYObjectWritable[] = [];
+  const temp: PointWritable[] = [];
 
   for (let i = 0; i < count; i++) {
     let t: number;
@@ -60,10 +45,10 @@ export function cubicSpacedPointsInto(
       // 마지막 point는 distance === totalLength 경계의 drift 없이 정확한 end point가 되도록 t=1로 고정한다.
       t = 1;
     } else {
-      t = cubicTAtLength(flatCubicFromLegacyPoints(p0, p1, p2, p3), (totalLength * i) / last, lengthOptions);
+      t = cubicTAtLength(curve, (totalLength * i) / last, options);
     }
-    const pt: XYObjectWritable = { x: 0, y: 0 };
-    cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), t);
+    const pt: PointWritable = { x: 0, y: 0 };
+    cubicPointAtTInto(pt, curve, t);
     temp.push(pt);
   }
 

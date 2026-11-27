@@ -1,5 +1,5 @@
-import { flatQuadraticFromLegacyPoints } from '../internal/legacy-curve.internal';
-import type { CurveSampleOptions, XYInput, XYObjectWritable } from '../types';
+import type { CurveSampleOptions } from '../types';
+import type { QuadraticCurve, PointWritable } from '../types/flat-shapes.internal';
 import { quadraticPointAtTInto } from './quadratic-point-at-t-into';
 
 /**
@@ -9,29 +9,25 @@ import { quadraticPointAtTInto } from './quadratic-point-at-t-into';
  * 각 output point는 새 { x: 0, y: 0 } object를 생성해 push한다.
  * steps validation 실패 시 RangeError를 던지고 out은 그대로 유지된다.
  *
- * @param out point를 push할 XYObjectWritable 배열. 기존 내용은 clear된다.
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
- * @param stepsOrOptions 샘플 수 또는 CurveSampleOptions. 기본값 32.
+ * @param out point를 push할 PointWritable 배열. 기존 내용은 clear된다.
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
+ * @param options 샘플 수 옵션. 생략하면 32점을 기록한다.
  * @returns out
  */
 export function quadraticSampleInto(
-  out: XYObjectWritable[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  stepsOrOptions?: number | CurveSampleOptions
-): XYObjectWritable[] {
-  const rawSteps = typeof stepsOrOptions === 'number' ? stepsOrOptions : (stepsOrOptions?.steps ?? 32);
+  out: PointWritable[],
+  curve: QuadraticCurve,
+  options?: Required<CurveSampleOptions>
+): PointWritable[] {
+  const rawSteps = options === undefined ? 32 : options.steps;
   if (!Number.isSafeInteger(rawSteps) || rawSteps < 2 || rawSteps > 0xffffffff) {
     throw new RangeError(`steps must be a safe integer in [2, 4294967295], got ${rawSteps}`);
   }
   out.length = 0;
   for (let i = 0; i < rawSteps; i++) {
     const t = i / (rawSteps - 1);
-    const pt: XYObjectWritable = { x: 0, y: 0 };
-    quadraticPointAtTInto(pt, flatQuadraticFromLegacyPoints(p0, p1, p2), t);
+    const pt: PointWritable = { x: 0, y: 0 };
+    quadraticPointAtTInto(pt, curve, t);
     out.push(pt);
   }
   return out;

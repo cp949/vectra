@@ -1,4 +1,5 @@
-import type { CurveLookupEntry, XYInput } from '../types';
+import type { CurveLookupEntry } from '../types';
+import type { CubicCurve } from '../types/flat-shapes.internal';
 import { cubicLookupTableInto } from './cubic-lookup-table-into';
 
 /**
@@ -13,19 +14,10 @@ import { cubicLookupTableInto } from './cubic-lookup-table-into';
  * steps validation 실패 시 RangeError를 던진다.
  * 성능 최적화가 필요하면 `cubicLookupTableInto`를 사용한다.
  *
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param steps table entry 수. 2 이상 0xffffffff 이하의 safe integer. 범위 밖이면 RangeError.
  * @returns 새로 만든 CurveLookupEntry 배열
  */
-export function cubicLookupTable(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  steps: number
-): CurveLookupEntry[] {
-  return cubicLookupTableInto([], p0, p1, p2, p3, steps);
+export function cubicLookupTable(curve: CubicCurve, steps: number): CurveLookupEntry[] {
+  return cubicLookupTableInto([], curve, steps);
 }

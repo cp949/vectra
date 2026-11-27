@@ -74,35 +74,35 @@ describe('cubicHullInto', () => {
 
   it('t=0.5에서 10개 point를 생성한다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicHullInto(out, p0, p1, p2, p3, 0.5);
+    cubicHullInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(out.length).toBe(10);
   });
 
   it('out.length = 0 후 push한다 (기존 내용 clear)', () => {
     const sentinel = { x: 99, y: 99 };
     const out = [sentinel];
-    cubicHullInto(out, p0, p1, p2, p3, 0.5);
+    cubicHullInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(out.length).toBe(10);
     expect(out[0]).not.toBe(sentinel);
   });
 
   it('out[0]이 p0이다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicHullInto(out, p0, p1, p2, p3, 0);
+    cubicHullInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0);
     expect(out[0].x).toBe(0);
     expect(out[0].y).toBe(0);
   });
 
   it('out[3]이 p3이다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicHullInto(out, p0, p1, p2, p3, 0);
+    cubicHullInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0);
     expect(out[3].x).toBe(4);
     expect(out[3].y).toBe(0);
   });
 
   it('out[9](pointAt)이 cubicPointAtTInto(t) 값과 일치한다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicHullInto(out, p0, p1, p2, p3, 0.5);
+    cubicHullInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     const pt = { x: 0, y: 0 };
     cubicPointAtTInto(pt, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(relErr(out[9].x, pt.x)).toBeLessThan(1e-12);
@@ -111,7 +111,7 @@ describe('cubicHullInto', () => {
 
   it('out을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const ret = cubicHullInto(out, p0, p1, p2, p3, 0.5);
+    const ret = cubicHullInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
     expect(ret).toBe(out);
   });
 });

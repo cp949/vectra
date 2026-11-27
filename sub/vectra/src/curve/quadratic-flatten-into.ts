@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { FlattenOptions, XYInput, XYObjectWritable } from '../types';
+import type { FlattenOptions } from '../types';
+import type { QuadraticCurve, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -19,7 +19,7 @@ function measureFlatness(p0x: number, p0y: number, p1x: number, p1y: number, p2x
  * flat 판단 시 p0만 push하고, 마지막 p2는 최상위 호출자가 담당한다.
  */
 function flattenRecursive(
-  out: XYObjectWritable[],
+  out: PointWritable[],
   p0x: number,
   p0y: number,
   p1x: number,
@@ -54,30 +54,26 @@ function flattenRecursive(
  * out을 clear(length=0)한 뒤 근사 polyline의 점들을 순서대로 push한다.
  * 직선(flat) curve는 시작점과 끝점 두 개만 push한다.
  *
- * @param out polyline point를 push할 XYObjectWritable 배열. 기존 내용은 clear된다.
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param out polyline point를 push할 PointWritable 배열. 기존 내용은 clear된다.
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options flatten 옵션
  * @param options.flatness 선형 근사 허용 geometric error. 기본값: 0.5
  * @param options.maxRecursion subdivision 재귀 깊이 상한. 기본값: 32
  */
 export function quadraticFlattenInto(
-  out: XYObjectWritable[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  options?: FlattenOptions
-): XYObjectWritable[] {
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
+  out: PointWritable[],
+  curve: QuadraticCurve,
+  options?: Required<FlattenOptions>
+): PointWritable[] {
+  const flatness = options === undefined ? 0.5 : options.flatness;
+  const maxRecursion = options === undefined ? 32 : options.maxRecursion;
 
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   // 기존 내용 clear
   out.length = 0;

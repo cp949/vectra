@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput, XYObjectWritable } from '../types';
+import type { QuadraticCurve, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * quadratic Bezier curve의 파라미터 t 위치 de Casteljau hull point 배열을 out에 기록하고 out을 반환한다.
@@ -16,25 +15,17 @@ import type { XYInput, XYObjectWritable } from '../types';
  * 총 6개의 object를 push한다.
  * t는 clamp 없이 수식 그대로 계산한다.
  *
- * @param out hull point 배열을 기록할 XYObjectWritable 배열 output. 기존 내용은 덮어쓴다.
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param out hull point 배열을 기록할 PointWritable 배열 output. 기존 내용은 덮어쓴다.
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */
-export function quadraticHullInto(
-  out: XYObjectWritable[],
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  t: number
-): XYObjectWritable[] {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
+export function quadraticHullInto(out: PointWritable[], curve: QuadraticCurve, t: number): PointWritable[] {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
 
   // de Casteljau 1단계
   const lerpP01x = p0x + t * (p1x - p0x);
@@ -49,7 +40,7 @@ export function quadraticHullInto(
   // 기존 내용 clear
   out.length = 0;
 
-  // 순서대로 push: [p0, p1, p2, lerpP01, lerpP12, pointAt]
+  // 순서대로 push: [curve, lerpP01, lerpP12, pointAt]
   out.push({ x: p0x, y: p0y });
   out.push({ x: p1x, y: p1y });
   out.push({ x: p2x, y: p2y });

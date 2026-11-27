@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -32,7 +32,7 @@ function measureFlatness(
  * 마지막 끝점은 push하지 않는다 (최상위 호출자가 담당한다).
  */
 function pushFlatStarts(
-  out: XYObjectWritable[],
+  out: PointWritable[],
   p0x: number,
   p0y: number,
   p1x: number,
@@ -75,7 +75,7 @@ function pushFlatStarts(
  * chain flatten에서 직전 segment 끝점과 중복되는 연결점을 다시 push하지 않기 위해 쓴다.
  */
 function pushFlatStartsSkippingFirst(
-  out: XYObjectWritable[],
+  out: PointWritable[],
   p0x: number,
   p0y: number,
   p1x: number,
@@ -135,7 +135,7 @@ function pushFlatStartsSkippingFirst(
  * 좌표 값은 검증 없이 그대로 사용하므로 NaN/Infinity는 결과 좌표로 전파된다.
  */
 export function appendFlattenedCubic(
-  out: XYObjectWritable[],
+  out: PointWritable[],
   p0x: number,
   p0y: number,
   p1x: number,

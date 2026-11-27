@@ -15,7 +15,7 @@ describe('cubicFlattenInto', () => {
     const p2 = { x: 2, y: 0 };
     const p3 = { x: 3, y: 0 };
     const out: { x: number; y: number }[] = [];
-    cubicFlattenInto(out, p0, p1, p2, p3);
+    cubicFlattenInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3));
     expect(out.length).toBe(2);
     expect(out[0].x).toBe(0);
     expect(out[out.length - 1].x).toBe(3);
@@ -28,10 +28,10 @@ describe('cubicFlattenInto', () => {
     const p3 = { x: 4, y: 0 };
 
     const out1: { x: number; y: number }[] = [];
-    cubicFlattenInto(out1, p0, p1, p2, p3, { flatness: 1.0 });
+    cubicFlattenInto(out1, flatCubicFromLegacyPoints(p0, p1, p2, p3), { flatness: 1.0, maxRecursion: 32 });
 
     const out2: { x: number; y: number }[] = [];
-    cubicFlattenInto(out2, p0, p1, p2, p3, { flatness: 0.1 });
+    cubicFlattenInto(out2, flatCubicFromLegacyPoints(p0, p1, p2, p3), { flatness: 0.1, maxRecursion: 32 });
 
     expect(out2.length).toBeGreaterThanOrEqual(out1.length);
   });
@@ -42,20 +42,20 @@ describe('cubicFlattenInto', () => {
     const p2 = { x: 3, y: 100 };
     const p3 = { x: 4, y: 0 };
     const out: { x: number; y: number }[] = [];
-    cubicFlattenInto(out, p0, p1, p2, p3, { flatness: 0.001, maxRecursion: 2 });
+    cubicFlattenInto(out, flatCubicFromLegacyPoints(p0, p1, p2, p3), { flatness: 0.001, maxRecursion: 2 });
     expect(out.length).toBeLessThanOrEqual(9);
   });
 
   it('기존 내용을 clear 후 push한다', () => {
     const sentinel = { x: 99, y: 99 };
     const out = [sentinel];
-    cubicFlattenInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 });
+    cubicFlattenInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 });
     expect(out[0]).not.toBe(sentinel);
   });
 
   it('out을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const ret = cubicFlattenInto(out, { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 });
+    const ret = cubicFlattenInto(out, { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 });
     expect(ret).toBe(out);
   });
 });

@@ -1,3 +1,4 @@
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve domain collection companion unit test.
  *
@@ -140,25 +141,25 @@ const companionCases = [
   },
   {
     name: 'quadraticFlatten',
-    actual: () => quadraticFlatten(P0, P1, P2),
-    expected: () => quadraticFlattenInto([], P0, P1, P2),
+    actual: () => quadraticFlatten(flatQuadraticFromLegacyPoints(P0, P1, P2)),
+    expected: () => quadraticFlattenInto([], flatQuadraticFromLegacyPoints(P0, P1, P2)),
   },
   {
     name: 'quadraticSample',
-    actual: () => quadraticSample(P0, P1, P2, 8),
-    expected: () => quadraticSampleInto([], P0, P1, P2, 8),
-    rangeError: () => quadraticSample(P0, P1, P2, 1),
+    actual: () => quadraticSample(flatQuadraticFromLegacyPoints(P0, P1, P2), { steps: 8 }),
+    expected: () => quadraticSampleInto([], flatQuadraticFromLegacyPoints(P0, P1, P2), { steps: 8 }),
+    rangeError: () => quadraticSample(flatQuadraticFromLegacyPoints(P0, P1, P2), { steps: 1 }),
   },
   {
     name: 'quadraticHull',
-    actual: () => quadraticHull(P0, P1, P2, 0.5),
-    expected: () => quadraticHullInto([], P0, P1, P2, 0.5),
+    actual: () => quadraticHull(flatQuadraticFromLegacyPoints(P0, P1, P2), 0.5),
+    expected: () => quadraticHullInto([], flatQuadraticFromLegacyPoints(P0, P1, P2), 0.5),
     length: 6,
   },
   {
     name: 'cubicFlatten',
-    actual: () => cubicFlatten(P0, P1, P2, P3),
-    expected: () => cubicFlattenInto([], P0, P1, P2, P3),
+    actual: () => cubicFlatten(flatCubicFromLegacyPoints(P0, P1, P2, P3)),
+    expected: () => cubicFlattenInto([], flatCubicFromLegacyPoints(P0, P1, P2, P3)),
   },
   {
     name: 'cubicChainFlatten',
@@ -168,14 +169,14 @@ const companionCases = [
   },
   {
     name: 'cubicSample',
-    actual: () => cubicSample(P0, P1, P2, P3, 8),
-    expected: () => cubicSampleInto([], P0, P1, P2, P3, 8),
-    rangeError: () => cubicSample(P0, P1, P2, P3, 1),
+    actual: () => cubicSample(flatCubicFromLegacyPoints(P0, P1, P2, P3), { steps: 8 }),
+    expected: () => cubicSampleInto([], flatCubicFromLegacyPoints(P0, P1, P2, P3), { steps: 8 }),
+    rangeError: () => cubicSample(flatCubicFromLegacyPoints(P0, P1, P2, P3), { steps: 1 }),
   },
   {
     name: 'cubicHull',
-    actual: () => cubicHull(P0, P1, P2, P3, 0.5),
-    expected: () => cubicHullInto([], P0, P1, P2, P3, 0.5),
+    actual: () => cubicHull(flatCubicFromLegacyPoints(P0, P1, P2, P3), 0.5),
+    expected: () => cubicHullInto([], flatCubicFromLegacyPoints(P0, P1, P2, P3), 0.5),
     length: 10,
   },
   {
@@ -285,7 +286,7 @@ describe('cubicChainFlatten', () => {
   test('options를 cubicChainFlattenInto로 그대로 전달한다', () => {
     // 두 segment chain + 작은 flatness로 options 전달이 결과 point 수에 반영되는지 본다.
     const chain = [P0, P1, P2, P3, { x: 20, y: -5 }, { x: 25, y: 0 }, { x: 30, y: 5 }];
-    const options = { flatness: 0.05 };
+    const options = { flatness: 0.05, maxRecursion: 32 };
     expect(cubicChainFlatten(chain, options)).toEqual(cubicChainFlattenInto([], chain, options));
   });
 });

@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { FlattenOptions, XYInput, XYObjectWritable } from '../types';
+import type { FlattenOptions } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { appendFlattenedCubic } from './cubic-flatten.internal';
 
 /**
@@ -18,7 +18,7 @@ import { appendFlattenedCubic } from './cubic-flatten.internal';
  * `RangeError` 발생 시 out 보존(atomicity)은 보장하지 않는다.
  * 좌표 값은 검증 없이 사용하므로 NaN/Infinity는 결과 좌표로 그대로 전파된다.
  *
- * @param out polyline point를 push할 XYObjectWritable 배열. 기존 내용은 clear된다.
+ * @param out polyline point를 push할 PointWritable 배열. 기존 내용은 clear된다.
  * @param points cubic control point chain
  * @param options flatten 옵션
  * @param options.flatness 선형 근사 허용 geometric error. 기본값: 0.5
@@ -26,12 +26,12 @@ import { appendFlattenedCubic } from './cubic-flatten.internal';
  * @returns out
  */
 export function cubicChainFlattenInto(
-  out: XYObjectWritable[],
-  points: readonly XYInput[],
-  options?: FlattenOptions
-): XYObjectWritable[] {
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
+  out: PointWritable[],
+  points: readonly Point[],
+  options?: Required<FlattenOptions>
+): PointWritable[] {
+  const flatness = options === undefined ? 0.5 : options.flatness;
+  const maxRecursion = options === undefined ? 32 : options.maxRecursion;
   const n = points.length;
 
   out.length = 0;
@@ -50,20 +50,7 @@ export function cubicChainFlattenInto(
     const p2 = points[base + 2];
     const p3 = points[base + 3];
 
-    appendFlattenedCubic(
-      out,
-      readX(p0),
-      readY(p0),
-      readX(p1),
-      readY(p1),
-      readX(p2),
-      readY(p2),
-      readX(p3),
-      readY(p3),
-      flatness,
-      maxRecursion,
-      s === 0
-    );
+    appendFlattenedCubic(out, p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, flatness, maxRecursion, s === 0);
   }
 
   return out;

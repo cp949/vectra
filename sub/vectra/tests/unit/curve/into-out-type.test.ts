@@ -25,6 +25,17 @@ import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-i
 import { quadraticDerivativeAtInto } from '../../../src/curve/quadratic-derivative-at-into';
 import { quadraticNormalAtInto } from '../../../src/curve/quadratic-normal-at-into';
 import { quadraticTangentAtInto } from '../../../src/curve/quadratic-tangent-at-into';
+import { quadraticFlattenInto } from '../../../src/curve/quadratic-flatten-into';
+import { quadraticHullInto } from '../../../src/curve/quadratic-hull-into';
+import { quadraticSampleInto } from '../../../src/curve/quadratic-sample-into';
+import { quadraticSpacedPointsInto } from '../../../src/curve/quadratic-spaced-points-into';
+import { quadraticLookupTableInto } from '../../../src/curve/quadratic-lookup-table-into';
+import { cubicFlattenInto } from '../../../src/curve/cubic-flatten-into';
+import { cubicHullInto } from '../../../src/curve/cubic-hull-into';
+import { cubicSampleInto } from '../../../src/curve/cubic-sample-into';
+import { cubicSpacedPointsInto } from '../../../src/curve/cubic-spaced-points-into';
+import { cubicLookupTableInto } from '../../../src/curve/cubic-lookup-table-into';
+import { cubicChainFlattenInto } from '../../../src/curve/cubic-chain-flatten-into';
 import type {
   BoundsWritable,
   Point,
@@ -35,6 +46,7 @@ import type {
 } from '../../../src/types/flat-shapes.internal';
 
 import { stepPathInto } from '../../../src/curve/step-path-into';
+import type { CurveLookupEntry } from '../../../src/types';
 import { makeCenterArc } from './arc-test-helpers';
 
 const arc = makeCenterArc();
@@ -251,4 +263,85 @@ test('quadraticTangentAtInto은 외부 클래스 출력의 참조와 반환 타�
   const result = quadraticTangentAtInto(out, quadratic, 0.5);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PointOutput>();
+});
+
+test('삼차 베지어 표본은 평평한 곡선 객체를 받는다', () => {
+  expectTypeOf(cubicSampleInto).parameter(1).toEqualTypeOf<CubicCurve>();
+});
+
+test('quadraticFlattenInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = quadraticFlattenInto(out, quadratic);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('quadraticHullInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = quadraticHullInto(out, quadratic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('quadraticSampleInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = quadraticSampleInto(out, quadratic);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('quadraticSpacedPointsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = quadraticSpacedPointsInto(out, quadratic, 3);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('quadraticLookupTableInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: CurveLookupEntry[] = [];
+  const result = quadraticLookupTableInto(out, quadratic, 3);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<CurveLookupEntry[]>();
+});
+
+test('cubicFlattenInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = cubicFlattenInto(out, cubic);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('cubicHullInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = cubicHullInto(out, cubic, 0.5);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('cubicSampleInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = cubicSampleInto(out, cubic);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('cubicSpacedPointsInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = cubicSpacedPointsInto(out, cubic, 3);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
+});
+
+test('cubicLookupTableInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: CurveLookupEntry[] = [];
+  const result = cubicLookupTableInto(out, cubic, 3);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<CurveLookupEntry[]>();
+});
+
+test('cubicChainFlattenInto은 고정 원소 타입으로 같은 출력 배열을 반환한다', () => {
+  const out: PointWritable[] = [];
+  const result = cubicChainFlattenInto(out, [arcPoint, arcPoint, arcPoint, arcPoint]);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
 });

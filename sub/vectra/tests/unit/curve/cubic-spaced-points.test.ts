@@ -34,7 +34,7 @@ const ASYM_P3 = { x: 2, y: 8 };
 describe('cubicSpacedPointsInto', () => {
   it('count=2이면 start/end 두 점을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const result = cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 2);
+    const result = cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 2);
     expect(result).toBe(out);
     expect(out).toHaveLength(2);
     expect(out[0]).toMatchObject({ x: 0, y: 0 });
@@ -43,7 +43,7 @@ describe('cubicSpacedPointsInto', () => {
 
   it('등속 직선에서 arc-length 균등 좌표를 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 4);
+    cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 4);
     expect(out).toHaveLength(4);
     const expected = [0, 1, 2, 3];
     for (let i = 0; i < expected.length; i++) {
@@ -55,7 +55,7 @@ describe('cubicSpacedPointsInto', () => {
   it('굽은 곡선에서 중간 점이 cubicTAtLength mapping과 동치다', () => {
     const count = 6;
     const out: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(out, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, count);
+    cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3), count);
     const total = cubicLength(flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3));
     for (let i = 1; i < count - 1; i++) {
       const t = cubicTAtLength(
@@ -74,7 +74,7 @@ describe('cubicSpacedPointsInto', () => {
 
   it('굽은 곡선에서 첫 점은 start, 마지막 점은 end와 정확히 일치한다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(out, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, 7);
+    cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3), 7);
     expect(out[0]).toEqual({ x: 0, y: 0 });
     expect(out[6]).toEqual({ x: 4, y: 0 });
   });
@@ -82,7 +82,7 @@ describe('cubicSpacedPointsInto', () => {
   it('비대칭 곡선에서 spaced sampling은 uniform t sampling과 다르다', () => {
     // 대칭 arch fixture는 arc-length mid == t=0.5라 차이를 드러내지 못한다(함정 참고).
     const spaced: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(spaced, ASYM_P0, ASYM_P1, ASYM_P2, ASYM_P3, 5);
+    cubicSpacedPointsInto(spaced, flatCubicFromLegacyPoints(ASYM_P0, ASYM_P1, ASYM_P2, ASYM_P3), 5);
     const uniformMid = cubicPointAtTInto(
       { x: 0, y: 0 },
       flatCubicFromLegacyPoints(ASYM_P0, ASYM_P1, ASYM_P2, ASYM_P3),
@@ -96,7 +96,7 @@ describe('cubicSpacedPointsInto', () => {
   it('zero-length curve는 start point를 count개 반환한다', () => {
     const out: { x: number; y: number }[] = [];
     const p = { x: 3, y: 7 };
-    cubicSpacedPointsInto(out, p, p, p, p, 4);
+    cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(p, p, p, p), 4);
     expect(out).toHaveLength(4);
     for (const pt of out) {
       expect(pt).toEqual({ x: 3, y: 7 });
@@ -105,28 +105,38 @@ describe('cubicSpacedPointsInto', () => {
 
   it('count=1 (< 2)이면 RangeError를 던진다', () => {
     const out: { x: number; y: number }[] = [];
-    expect(() => cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 1)).toThrow(RangeError);
+    expect(() => cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 1)).toThrow(
+      RangeError
+    );
   });
 
   it('fractional count (1.5)이면 RangeError를 던진다', () => {
     const out: { x: number; y: number }[] = [];
-    expect(() => cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 1.5)).toThrow(RangeError);
+    expect(() =>
+      cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 1.5)
+    ).toThrow(RangeError);
   });
 
   it('NaN count이면 RangeError를 던진다', () => {
     const out: { x: number; y: number }[] = [];
-    expect(() => cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, Number.NaN)).toThrow(RangeError);
+    expect(() =>
+      cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), Number.NaN)
+    ).toThrow(RangeError);
   });
 
   it('count > 0xffffffff이면 RangeError를 던진다', () => {
     const out: { x: number; y: number }[] = [];
-    expect(() => cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 0x100000000)).toThrow(RangeError);
+    expect(() =>
+      cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 0x100000000)
+    ).toThrow(RangeError);
   });
 
   it('count validation 실패 시 기존 out 내용을 보존한다', () => {
     const existing = { x: 99, y: 99 };
     const out: { x: number; y: number }[] = [existing];
-    expect(() => cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 1)).toThrow(RangeError);
+    expect(() => cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 1)).toThrow(
+      RangeError
+    );
     expect(out).toHaveLength(1);
     expect(out[0]).toBe(existing);
   });
@@ -134,8 +144,8 @@ describe('cubicSpacedPointsInto', () => {
   it('tuple input과 object input이 동일한 결과를 반환한다', () => {
     const objOut: { x: number; y: number }[] = [];
     const tupOut: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(objOut, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, 5);
-    cubicSpacedPointsInto(tupOut, [0, 0], [0, 4], [4, 4], [4, 0], 5);
+    cubicSpacedPointsInto(objOut, flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3), 5);
+    cubicSpacedPointsInto(tupOut, { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 4, x2: 4, y2: 4, x3: 4, y3: 0 }, 5);
     expect(tupOut).toHaveLength(objOut.length);
     for (let i = 0; i < objOut.length; i++) {
       expect(tupOut[i].x).toBeCloseTo(objOut[i].x, 12);
@@ -145,7 +155,7 @@ describe('cubicSpacedPointsInto', () => {
 
   it('각 출력 point는 새로운 object이다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(out, LINE_P0, LINE_P1, LINE_P2, LINE_P3, 3);
+    cubicSpacedPointsInto(out, flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 3);
     expect(out[0]).not.toBe(LINE_P0);
     expect(out[2]).not.toBe(LINE_P3);
     expect(out[0]).not.toBe(out[1]);
@@ -153,7 +163,7 @@ describe('cubicSpacedPointsInto', () => {
 
   it('NaN 좌표는 결과로 pass-through된다', () => {
     const out: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(out, { x: Number.NaN, y: 0 }, LINE_P1, LINE_P2, LINE_P3, 3);
+    cubicSpacedPointsInto(out, flatCubicFromLegacyPoints({ x: Number.NaN, y: 0 }, LINE_P1, LINE_P2, LINE_P3), 3);
     expect(Number.isNaN(out[0].x)).toBe(true);
   });
 
@@ -161,10 +171,10 @@ describe('cubicSpacedPointsInto', () => {
     const out: { x: number; y: number }[] = [];
     cubicSpacedPointsInto(
       out,
-      { x: Number.POSITIVE_INFINITY, y: 0 },
-      LINE_P1,
-      LINE_P2,
-      { x: 3, y: Number.NEGATIVE_INFINITY },
+      flatCubicFromLegacyPoints({ x: Number.POSITIVE_INFINITY, y: 0 }, LINE_P1, LINE_P2, {
+        x: 3,
+        y: Number.NEGATIVE_INFINITY,
+      }),
       2
     );
     expect(out[0].x).toBe(Number.POSITIVE_INFINITY);
@@ -175,18 +185,20 @@ describe('cubicSpacedPointsInto', () => {
 describe('cubicSpacedPoints', () => {
   it('cubicSpacedPointsInto와 deep equal 결과를 반환한다', () => {
     const into: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(into, CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, 6);
-    const companion = cubicSpacedPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3, 6);
+    cubicSpacedPointsInto(into, flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3), 6);
+    const companion = cubicSpacedPoints(flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3), 6);
     expect(companion).toEqual(into);
   });
 
   it('호출마다 새 배열을 반환한다', () => {
-    const a = cubicSpacedPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3, 3);
-    const b = cubicSpacedPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3, 3);
+    const a = cubicSpacedPoints(flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 3);
+    const b = cubicSpacedPoints(flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 3);
     expect(a).not.toBe(b);
   });
 
   it('count validation 실패 시 RangeError를 던진다', () => {
-    expect(() => cubicSpacedPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3, 1)).toThrow(RangeError);
+    expect(() => cubicSpacedPoints(flatCubicFromLegacyPoints(LINE_P0, LINE_P1, LINE_P2, LINE_P3), 1)).toThrow(
+      RangeError
+    );
   });
 });

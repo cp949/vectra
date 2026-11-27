@@ -66,19 +66,24 @@ export function createSegmentFlattener(options?: PathMeasurementOptions): Segmen
       const cmd = seg.command;
       quadraticFlattenInto(
         segBuf,
-        { x: seg.fromX, y: seg.fromY },
-        { x: cmd.x1, y: cmd.y1 },
-        { x: cmd.x, y: cmd.y },
+        { kind: 'quadratic', x0: seg.fromX, y0: seg.fromY, x1: cmd.x1, y1: cmd.y1, x2: cmd.x, y2: cmd.y },
         flatOpts
       );
     } else if (seg.kind === 'cubic') {
       const cmd = seg.command;
       cubicFlattenInto(
         segBuf,
-        { x: seg.fromX, y: seg.fromY },
-        { x: cmd.x1, y: cmd.y1 },
-        { x: cmd.x2, y: cmd.y2 },
-        { x: cmd.x, y: cmd.y },
+        {
+          kind: 'cubic',
+          x0: seg.fromX,
+          y0: seg.fromY,
+          x1: cmd.x1,
+          y1: cmd.y1,
+          x2: cmd.x2,
+          y2: cmd.y2,
+          x3: cmd.x,
+          y3: cmd.y,
+        },
         flatOpts
       );
     } else {

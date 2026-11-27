@@ -1,8 +1,9 @@
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
  * curve.cubicChainFlattenInto — cubic control point chain을 연결 polyline point collection으로 flatten.
  *
  * 검증: 단일 segment가 cubicFlattenInto와 deep equal, 다중 segment 연결점 dedup,
- * short chain 빈 배열, invalid length RangeError, tuple/object 입력, flatness 단조성,
+ * short chain 빈 배열, invalid length RangeError, flatness 단조성,
  * out clear / return identity / result object 신규 생성, non-finite(NaN/Infinity/-Infinity) 및
  * degenerate 입력이 cubicFlattenInto 정책과 일치.
  */
@@ -31,7 +32,7 @@ describe('cubicChainFlattenInto', () => {
     cubicChainFlattenInto(out, SEG0);
 
     const expected: { x: number; y: number }[] = [];
-    cubicFlattenInto(expected, SEG0[0], SEG0[1], SEG0[2], SEG0[3]);
+    cubicFlattenInto(expected, flatCubicFromLegacyPoints(SEG0[0], SEG0[1], SEG0[2], SEG0[3]));
 
     expect(out).toEqual(expected);
   });
@@ -41,9 +42,9 @@ describe('cubicChainFlattenInto', () => {
     cubicChainFlattenInto(out, TWO_SEG_CHAIN);
 
     const seg0: { x: number; y: number }[] = [];
-    cubicFlattenInto(seg0, SEG0[0], SEG0[1], SEG0[2], SEG0[3]);
+    cubicFlattenInto(seg0, flatCubicFromLegacyPoints(SEG0[0], SEG0[1], SEG0[2], SEG0[3]));
     const seg1: { x: number; y: number }[] = [];
-    cubicFlattenInto(seg1, { x: 3, y: 0 }, SEG1_TAIL[0], SEG1_TAIL[1], SEG1_TAIL[2]);
+    cubicFlattenInto(seg1, flatCubicFromLegacyPoints({ x: 3, y: 0 }, SEG1_TAIL[0], SEG1_TAIL[1], SEG1_TAIL[2]));
 
     // 둘째 segment의 첫 point(연결점 = seg0 끝점)를 제거하고 이어붙인 것과 같다
     const expected = [...seg0, ...seg1.slice(1)];
@@ -58,11 +59,11 @@ describe('cubicChainFlattenInto', () => {
     cubicChainFlattenInto(out, threeSegChain);
 
     const seg0: { x: number; y: number }[] = [];
-    cubicFlattenInto(seg0, SEG0[0], SEG0[1], SEG0[2], SEG0[3]);
+    cubicFlattenInto(seg0, flatCubicFromLegacyPoints(SEG0[0], SEG0[1], SEG0[2], SEG0[3]));
     const seg1: { x: number; y: number }[] = [];
-    cubicFlattenInto(seg1, { x: 3, y: 0 }, SEG1_TAIL[0], SEG1_TAIL[1], SEG1_TAIL[2]);
+    cubicFlattenInto(seg1, flatCubicFromLegacyPoints({ x: 3, y: 0 }, SEG1_TAIL[0], SEG1_TAIL[1], SEG1_TAIL[2]));
     const seg2: { x: number; y: number }[] = [];
-    cubicFlattenInto(seg2, { x: 6, y: 0 }, { x: 7, y: 2 }, { x: 8, y: 2 }, { x: 9, y: 0 });
+    cubicFlattenInto(seg2, { kind: 'cubic', x0: 6, y0: 0, x1: 7, y1: 2, x2: 8, y2: 2, x3: 9, y3: 0 });
 
     const expected = [...seg0, ...seg1.slice(1), ...seg2.slice(1)];
     expect(out).toEqual(expected);
@@ -84,23 +85,12 @@ describe('cubicChainFlattenInto', () => {
     }
   });
 
-  it('tuple 입력과 object 입력이 같은 결과를 만든다', () => {
-    const tupleChain: [number, number][] = TWO_SEG_CHAIN.map((p) => [p.x, p.y]);
-    const outTuple: { x: number; y: number }[] = [];
-    cubicChainFlattenInto(outTuple, tupleChain);
-
-    const outObject: { x: number; y: number }[] = [];
-    cubicChainFlattenInto(outObject, TWO_SEG_CHAIN);
-
-    expect(outTuple).toEqual(outObject);
-  });
-
   it('flatness가 작을수록 point 수가 증가한다', () => {
     const outCoarse: { x: number; y: number }[] = [];
-    cubicChainFlattenInto(outCoarse, TWO_SEG_CHAIN, { flatness: 1.0 });
+    cubicChainFlattenInto(outCoarse, TWO_SEG_CHAIN, { flatness: 1.0, maxRecursion: 32 });
 
     const outFine: { x: number; y: number }[] = [];
-    cubicChainFlattenInto(outFine, TWO_SEG_CHAIN, { flatness: 0.05 });
+    cubicChainFlattenInto(outFine, TWO_SEG_CHAIN, { flatness: 0.05, maxRecursion: 32 });
 
     // 곡률이 있는 chain에서 flatness를 줄이면 subdivision이 늘어 point 수가 실제로 증가한다.
     expect(outFine.length).toBeGreaterThan(outCoarse.length);
@@ -145,10 +135,13 @@ describe('cubicChainFlattenInto', () => {
       { x: 3, y: 0 },
     ];
     const out: { x: number; y: number }[] = [];
-    cubicChainFlattenInto(out, chain, { maxRecursion: 4 });
+    cubicChainFlattenInto(out, chain, { maxRecursion: 4, flatness: 0.5 });
 
     const expected: { x: number; y: number }[] = [];
-    cubicFlattenInto(expected, chain[0], chain[1], chain[2], chain[3], { maxRecursion: 4 });
+    cubicFlattenInto(expected, flatCubicFromLegacyPoints(chain[0], chain[1], chain[2], chain[3]), {
+      maxRecursion: 4,
+      flatness: 0.5,
+    });
 
     expect(out).toEqual(expected);
     expect(out.some((p) => Number.isNaN(p.x))).toBe(true);
@@ -162,10 +155,13 @@ describe('cubicChainFlattenInto', () => {
       { x: 3, y: 0 },
     ];
     const out: { x: number; y: number }[] = [];
-    cubicChainFlattenInto(out, chain, { maxRecursion: 4 });
+    cubicChainFlattenInto(out, chain, { maxRecursion: 4, flatness: 0.5 });
 
     const expected: { x: number; y: number }[] = [];
-    cubicFlattenInto(expected, chain[0], chain[1], chain[2], chain[3], { maxRecursion: 4 });
+    cubicFlattenInto(expected, flatCubicFromLegacyPoints(chain[0], chain[1], chain[2], chain[3]), {
+      maxRecursion: 4,
+      flatness: 0.5,
+    });
 
     expect(out).toEqual(expected);
     expect(out.some((p) => !Number.isFinite(p.x) || !Number.isFinite(p.y))).toBe(true);

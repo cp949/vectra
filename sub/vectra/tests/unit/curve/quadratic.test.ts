@@ -213,13 +213,13 @@ describe('quadraticHullInto', () => {
 
   it('결과 배열 길이가 6이다', () => {
     const out: { x: number; y: number }[] = [];
-    quadraticHullInto(out, p0, p1, p2, 0.5);
+    quadraticHullInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(out.length).toBe(6);
   });
 
   it('[p0, p1, p2, lerpP01, lerpP12, pointAt] 순서이다', () => {
     const out: { x: number; y: number }[] = [];
-    quadraticHullInto(out, p0, p1, p2, 0.5);
+    quadraticHullInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     // index 0 = p0
     expect(out[0].x).toBe(0);
     expect(out[0].y).toBe(0);
@@ -243,7 +243,7 @@ describe('quadraticHullInto', () => {
   it('기존 내용을 clear 후 push한다 (out.length=0 정책)', () => {
     const sentinel = { x: 99, y: 99 };
     const out = [sentinel, sentinel];
-    quadraticHullInto(out, p0, p1, p2, 0.5);
+    quadraticHullInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(out.length).toBe(6);
     // sentinel이 남아 있지 않아야 한다
     expect(out[0]).not.toBe(sentinel);
@@ -251,7 +251,7 @@ describe('quadraticHullInto', () => {
 
   it('out을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const ret = quadraticHullInto(out, p0, p1, p2, 0.5);
+    const ret = quadraticHullInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
     expect(ret).toBe(out);
   });
 });
@@ -454,7 +454,7 @@ describe('quadraticFlattenInto', () => {
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
     const out: { x: number; y: number }[] = [];
-    quadraticFlattenInto(out, p0, p1, p2);
+    quadraticFlattenInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(out.length).toBe(2);
     expect(out[0].x).toBe(0);
     expect(out[out.length - 1].x).toBe(2);
@@ -466,10 +466,10 @@ describe('quadraticFlattenInto', () => {
     const p2 = { x: 2, y: 0 };
 
     const out1: { x: number; y: number }[] = [];
-    quadraticFlattenInto(out1, p0, p1, p2, { flatness: 1.0 });
+    quadraticFlattenInto(out1, flatQuadraticFromLegacyPoints(p0, p1, p2), { flatness: 1.0, maxRecursion: 32 });
 
     const out2: { x: number; y: number }[] = [];
-    quadraticFlattenInto(out2, p0, p1, p2, { flatness: 0.1 });
+    quadraticFlattenInto(out2, flatQuadraticFromLegacyPoints(p0, p1, p2), { flatness: 0.1, maxRecursion: 32 });
 
     expect(out2.length).toBeGreaterThanOrEqual(out1.length);
   });
@@ -480,7 +480,7 @@ describe('quadraticFlattenInto', () => {
     const p2 = { x: 2, y: 0 };
     const out: { x: number; y: number }[] = [];
     // maxRecursion=1: 최대 1 단계 subdivision
-    quadraticFlattenInto(out, p0, p1, p2, { flatness: 0.001, maxRecursion: 1 });
+    quadraticFlattenInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2), { flatness: 0.001, maxRecursion: 1 });
     // depth 1 → 최대 4점 (2^1 + 1 = 3점 근처)
     expect(out.length).toBeLessThanOrEqual(5);
   });
@@ -491,7 +491,7 @@ describe('quadraticFlattenInto', () => {
     const p0 = { x: 0, y: 0 };
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
-    quadraticFlattenInto(out, p0, p1, p2);
+    quadraticFlattenInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(out[0]).not.toBe(sentinel);
   });
 
@@ -500,7 +500,7 @@ describe('quadraticFlattenInto', () => {
     const p1 = { x: 1, y: 0 };
     const p2 = { x: 2, y: 0 };
     const out: { x: number; y: number }[] = [];
-    const ret = quadraticFlattenInto(out, p0, p1, p2);
+    const ret = quadraticFlattenInto(out, flatQuadraticFromLegacyPoints(p0, p1, p2));
     expect(ret).toBe(out);
   });
 });

@@ -56,10 +56,17 @@ describe('createSegmentFlattener 옵션 기본값', () => {
     const out: XYObjectWritable[] = [];
     cubicFlattenInto(
       out,
-      { x: seg.fromX, y: seg.fromY },
-      { x: cmd.x1, y: cmd.y1 },
-      { x: cmd.x2, y: cmd.y2 },
-      { x: cmd.x, y: cmd.y },
+      {
+        kind: 'cubic',
+        x0: seg.fromX,
+        y0: seg.fromY,
+        x1: cmd.x1,
+        y1: cmd.y1,
+        x2: cmd.x2,
+        y2: cmd.y2,
+        x3: cmd.x,
+        y3: cmd.y,
+      },
       { flatness, maxRecursion }
     );
     return snapshotOf(out);
@@ -157,9 +164,7 @@ describe('createSegmentFlattener segment 분기', () => {
     const expected: XYObjectWritable[] = [];
     quadraticFlattenInto(
       expected,
-      { x: 0, y: 0 },
-      { x: 50, y: 100 },
-      { x: 100, y: 0 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 50, y1: 100, x2: 100, y2: 0 },
       { flatness: 0.5, maxRecursion: 32 }
     );
 
@@ -174,10 +179,7 @@ describe('createSegmentFlattener segment 분기', () => {
     const expected: XYObjectWritable[] = [];
     cubicFlattenInto(
       expected,
-      { x: 0, y: 0 },
-      { x: 30, y: 120 },
-      { x: 70, y: -80 },
-      { x: 100, y: 20 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 30, y1: 120, x2: 70, y2: -80, x3: 100, y3: 20 },
       { flatness: 0.5, maxRecursion: 32 }
     );
 
