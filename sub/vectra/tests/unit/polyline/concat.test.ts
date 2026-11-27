@@ -7,6 +7,7 @@
 import { describe, expect, test } from 'vitest';
 import { concat } from '../../../src/polyline/concat';
 import { concatInto } from '../../../src/polyline/concat-into';
+import type { PolylineConcatOptions } from '../../../src/types';
 import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 const SEG_A: Polyline = [
@@ -197,6 +198,14 @@ describe('polyline concat - concatInto', () => {
     const out: PointWritable[] = [{ x: 7, y: 7 }];
     expect(() => concatInto(out, [SEG_A, SEG_B], { weldTolerance: tol })).toThrow(RangeError);
     // out은 수정되지 않는다.
+    expect(out).toEqual([{ x: 7, y: 7 }]);
+  });
+
+  test('weldTolerance가 빠진 옵션 객체는 RangeError를 던지고 out을 수정하지 않는다', () => {
+    const out: PointWritable[] = [{ x: 7, y: 7 }];
+    // 타입을 무시한 JS 호출자를 흉내 낸다. 빠진 필드에 기본값 0을 쓰지 않는다.
+    const missing = {} as PolylineConcatOptions;
+    expect(() => concatInto(out, [SEG_A, SEG_B], missing)).toThrow(RangeError);
     expect(out).toEqual([{ x: 7, y: 7 }]);
   });
 

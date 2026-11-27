@@ -3,7 +3,7 @@ import type { BoundsWritable, Polyline } from '../types/flat-shapes.internal';
 /**
  * polyline의 axis-aligned bounds를 out에 기록하고 같은 out을 반환한다.
  *
- * empty polyline은 sentinel empty bounds인 min=(Infinity, Infinity), max=(-Infinity, -Infinity)를 기록한다.
+ * empty polyline은 sentinel empty bounds(`minX = minY = Infinity`, `maxX = maxY = -Infinity`)를 기록한다.
  * @param out bounds를 기록할 writable output (`minX`, `minY`, `maxX`, `maxY`)
  * @param polyline bounds를 계산할 polyline
  */

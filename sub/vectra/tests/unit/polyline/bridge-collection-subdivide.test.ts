@@ -6,6 +6,7 @@
 import { describe, expect, test } from 'vitest';
 import { subdivide } from '../../../src/polyline/subdivide';
 import { subdivideInto } from '../../../src/polyline/subdivide-into';
+import type { PolylineSubdivideOptions } from '../../../src/types';
 import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 const EMPTY: Polyline = [];
@@ -126,6 +127,12 @@ describe('polyline bridge/collection - subdivideInto', () => {
       expect(() => subdivideInto([], TWO_PT, { segmentsPerSegment: value })).toThrow(RangeError);
     }
   );
+
+  test('segmentsPerSegment가 빠진 옵션 객체는 RangeError를 던진다', () => {
+    // 타입을 무시한 JS 호출자를 흉내 낸다. 빠진 필드에 기본값 2를 쓰지 않는다.
+    const missing = {} as PolylineSubdivideOptions;
+    expect(() => subdivideInto([], TWO_PT, missing)).toThrow(RangeError);
+  });
 });
 
 describe('polyline bridge/collection - subdivide', () => {

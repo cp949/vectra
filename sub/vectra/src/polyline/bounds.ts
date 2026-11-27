@@ -5,7 +5,7 @@ import { boundsInto } from './bounds-into';
 /**
  * boundsInto의 allocating companion.
  *
- * empty polyline은 sentinel empty bounds인 min=(Infinity, Infinity), max=(-Infinity, -Infinity)를 반환한다.
+ * empty polyline은 sentinel empty bounds(`minX = minY = Infinity`, `maxX = maxY = -Infinity`)를 반환한다.
  */
 export function bounds(polyline: Polyline): BoundsWritable {
   const seed = createZeroBounds();
