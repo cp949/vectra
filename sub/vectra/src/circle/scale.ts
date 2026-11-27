@@ -1,5 +1,5 @@
 import type { CircleLike, CircleWritable } from '../types';
-import { createCircle } from './create-circle';
+import { createLegacyCircle } from '../internal/circle';
 import { scaleInto } from './scale-into';
 
 /**
@@ -11,5 +11,5 @@ import { scaleInto } from './scale-into';
  * @param scalar center 좌표와 radius에 곱할 값
  */
 export function scale(circle: CircleLike, scalar: number): CircleWritable {
-  return scaleInto(createCircle(), circle, scalar);
+  return scaleInto(createLegacyCircle(), circle, scalar);
 }

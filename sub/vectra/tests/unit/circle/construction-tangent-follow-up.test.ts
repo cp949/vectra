@@ -14,46 +14,49 @@ import { fromThreePointsInto } from '../../../src/circle/from-three-points-into'
 import { internalTangents } from '../../../src/circle/internal-tangents';
 import { internalTangentsInto } from '../../../src/circle/internal-tangents-into';
 import type { SegmentWritable } from '../../../src/types';
+import type { SegmentWritable as FlatSegmentWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─── bounds ─────────────────────────────────────────────────────────────────
 
 describe('circle.bounds — boundsInto의 allocating companion', () => {
   test('boundsInto와 동일한 결과를 새 plain object로 반환한다', () => {
-    const circle = { center: { x: 3, y: 4 }, radius: 2 };
-    const ref = boundsInto({ min: { x: 0, y: 0 }, max: { x: 0, y: 0 } }, circle);
+    const circle = { cx: 3, cy: 4, r: 2 };
+    const ref = boundsInto({ minX: 0, minY: 0, maxX: 0, maxY: 0 }, circle);
     const result = bounds(circle);
     expect(result).toEqual(ref);
   });
 
   test('radius > 0인 circle의 bounds를 올바르게 반환한다', () => {
-    const circle = { center: { x: 1, y: 2 }, radius: 5 };
+    const circle = { cx: 1, cy: 2, r: 5 };
     const result = bounds(circle);
-    expect(result.min).toEqual({ x: -4, y: -3 });
-    expect(result.max).toEqual({ x: 6, y: 7 });
+    expect(result.minX).toBe(-4);
+    expect(result.minY).toBe(-3);
+    expect(result.maxX).toBe(6);
+    expect(result.maxY).toBe(7);
   });
 
   test('empty circle(radius <= 0)은 sentinel empty bounds를 반환한다', () => {
-    const result = bounds({ center: { x: 0, y: 0 }, radius: 0 });
-    expect(result.min.x).toBe(Infinity);
-    expect(result.min.y).toBe(Infinity);
-    expect(result.max.x).toBe(-Infinity);
-    expect(result.max.y).toBe(-Infinity);
+    const result = bounds({ cx: 0, cy: 0, r: 0 });
+    expect(result.minX).toBe(Infinity);
+    expect(result.minY).toBe(Infinity);
+    expect(result.maxX).toBe(-Infinity);
+    expect(result.maxY).toBe(-Infinity);
   });
 
   test('호출마다 새 object를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 1 };
+    const circle = { cx: 0, cy: 0, r: 1 };
     expect(bounds(circle)).not.toBe(bounds(circle));
   });
 
   test('NaN radius는 boundsInto와 동일한 산술 결과를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: Number.NaN };
-    const ref = boundsInto({ min: { x: 0, y: 0 }, max: { x: 0, y: 0 } }, circle);
+    const circle = { cx: 0, cy: 0, r: Number.NaN };
+    const ref = boundsInto({ minX: 0, minY: 0, maxX: 0, maxY: 0 }, circle);
     expect(bounds(circle)).toEqual(ref);
   });
 
   test('Infinity radius는 boundsInto와 동일한 산술 결과를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: Infinity };
-    const ref = boundsInto({ min: { x: 0, y: 0 }, max: { x: 0, y: 0 } }, circle);
+    const circle = { cx: 0, cy: 0, r: Infinity };
+    const ref = boundsInto({ minX: 0, minY: 0, maxX: 0, maxY: 0 }, circle);
     expect(bounds(circle)).toEqual(ref);
   });
 });
@@ -165,15 +168,15 @@ describe('circle.fromThreePoints — fromThreePointsInto의 allocating companion
  */
 function makeHorizontalPair() {
   return {
-    a: { center: { x: 0, y: 0 }, radius: 1 },
-    b: { center: { x: 5, y: 0 }, radius: 1 },
+    a: { cx: 0, cy: 0, r: 1 },
+    b: { cx: 5, cy: 0, r: 1 },
   };
 }
 
 describe('circle.externalTangentsInto — external tangent segment 계산', () => {
   test('분리된 두 원에서 2개 segment를 반환한다', () => {
     const { a, b } = makeHorizontalPair();
-    const out: SegmentWritable[] = [];
+    const out: FlatSegmentWritable[] = [];
     const result = externalTangentsInto(out, a, b);
     expect(result).toBe(out);
     expect(out).toHaveLength(2);
@@ -181,97 +184,97 @@ describe('circle.externalTangentsInto — external tangent segment 계산', () =
 
   test('같은 반지름의 horizontal 두 원은 tangent endpoint y가 ±radius인 선분을 만든다', () => {
     const { a, b } = makeHorizontalPair();
-    const out: SegmentWritable[] = [];
+    const out: FlatSegmentWritable[] = [];
     externalTangentsInto(out, a, b);
-    const ys = out.map((s) => s.a.y).sort((x, y) => x - y);
+    const ys = out.map((s) => s.y1).sort((x, y) => x - y);
     expect(ys[0]).toBeCloseTo(-1, 10);
     expect(ys[1]).toBeCloseTo(1, 10);
     for (const seg of out) {
-      expect(seg.a.y).toBeCloseTo(seg.b.y, 10);
+      expect(seg.y1).toBeCloseTo(seg.y2, 10);
     }
   });
 
-  test('각 segment의 a는 첫 번째 원 위, b는 두 번째 원 위의 점이다', () => {
+  test('각 선분의 시작점과 끝점은 각각 첫 번째 원과 두 번째 원 위에 있다', () => {
     const { a, b } = makeHorizontalPair();
-    const out: SegmentWritable[] = [];
+    const out: FlatSegmentWritable[] = [];
     externalTangentsInto(out, a, b);
     for (const seg of out) {
       // circle a 위: distance from (0,0) ≈ 1
-      const distA = Math.sqrt(seg.a.x ** 2 + seg.a.y ** 2);
+      const distA = Math.sqrt(seg.x1 ** 2 + seg.y1 ** 2);
       expect(distA).toBeCloseTo(1, 8);
       // circle b 위: distance from (5,0) ≈ 1
-      const distB = Math.sqrt((seg.b.x - 5) ** 2 + seg.b.y ** 2);
+      const distB = Math.sqrt((seg.x2 - 5) ** 2 + seg.y2 ** 2);
       expect(distB).toBeCloseTo(1, 8);
     }
   });
 
   test('한 원이 다른 원 내부에 있으면 빈 배열을 반환한다', () => {
-    const big = { center: { x: 0, y: 0 }, radius: 5 };
-    const small = { center: { x: 1, y: 0 }, radius: 1 };
-    const out: SegmentWritable[] = [{ a: { x: 0, y: 0 }, b: { x: 0, y: 0 } }];
+    const big = { cx: 0, cy: 0, r: 5 };
+    const small = { cx: 1, cy: 0, r: 1 };
+    const out: FlatSegmentWritable[] = [{ x1: 0, y1: 0, x2: 0, y2: 0 }];
     externalTangentsInto(out, big, small);
     expect(out).toHaveLength(0);
   });
 
   test('중심이 같으면 빈 배열을 반환한다', () => {
-    const c1 = { center: { x: 0, y: 0 }, radius: 1 };
-    const c2 = { center: { x: 0, y: 0 }, radius: 2 };
-    const out: SegmentWritable[] = [];
+    const c1 = { cx: 0, cy: 0, r: 1 };
+    const c2 = { cx: 0, cy: 0, r: 2 };
+    const out: FlatSegmentWritable[] = [];
     externalTangentsInto(out, c1, c2);
     expect(out).toHaveLength(0);
   });
 
   test('empty circle이 있으면 빈 배열을 반환한다', () => {
-    const empty = { center: { x: 0, y: 0 }, radius: 0 };
+    const empty = { cx: 0, cy: 0, r: 0 };
     const { b } = makeHorizontalPair();
-    const out: SegmentWritable[] = [];
+    const out: FlatSegmentWritable[] = [];
     externalTangentsInto(out, empty, b);
     expect(out).toHaveLength(0);
   });
 
   test('내접 collapse case에서 중복 없이 1개 segment를 반환한다', () => {
     // r1=5, r2=3, dist=2 → |rDiff|=dist → beta=0 → 1개 tangent
-    const c1 = { center: { x: 0, y: 0 }, radius: 5 };
-    const c2 = { center: { x: 2, y: 0 }, radius: 3 };
-    const out: SegmentWritable[] = [];
+    const c1 = { cx: 0, cy: 0, r: 5 };
+    const c2 = { cx: 2, cy: 0, r: 3 };
+    const out: FlatSegmentWritable[] = [];
     externalTangentsInto(out, c1, c2);
     expect(out).toHaveLength(1);
   });
 
   test('out.length = 0으로 기존 내용을 비운다', () => {
     const { a, b } = makeHorizontalPair();
-    const out: SegmentWritable[] = [
-      { a: { x: 999, y: 999 }, b: { x: 999, y: 999 } },
-      { a: { x: 999, y: 999 }, b: { x: 999, y: 999 } },
-      { a: { x: 999, y: 999 }, b: { x: 999, y: 999 } },
+    const out: FlatSegmentWritable[] = [
+      { x1: 999, y1: 999, x2: 999, y2: 999 },
+      { x1: 999, y1: 999, x2: 999, y2: 999 },
+      { x1: 999, y1: 999, x2: 999, y2: 999 },
     ];
     externalTangentsInto(out, a, b);
     expect(out).toHaveLength(2);
     const first = out[0];
     expect(first).not.toBeUndefined();
     if (first === undefined) throw new Error('externalTangentsInto returned no first segment');
-    expect(first.a.x).not.toBe(999);
+    expect(first.x1).not.toBe(999);
   });
 
   test('NaN center는 빈 배열이 아닌 NaN 성분 segment를 반환한다 (pass-through)', () => {
     // NaN center는 distSq===0과 containment guard를 통과해 NaN angles를 계산한다.
     // Math.cos(NaN) = NaN → segment 좌표가 NaN이 된다.
-    const c1 = { center: { x: Number.NaN, y: 0 }, radius: 1 };
+    const c1 = { cx: Number.NaN, cy: 0, r: 1 };
     const { b } = makeHorizontalPair();
-    const out: SegmentWritable[] = [];
+    const out: FlatSegmentWritable[] = [];
     externalTangentsInto(out, c1, b);
     expect(out.length).toBeGreaterThan(0);
     const first = out[0];
     expect(first).not.toBeUndefined();
     if (first === undefined) throw new Error('externalTangentsInto returned no first segment');
-    expect(Number.isNaN(first.a.x)).toBe(true);
+    expect(Number.isNaN(first.x1)).toBe(true);
   });
 
   test('Infinity radius는 containment guard를 통과해 빈 배열을 반환한다', () => {
     // |r1 - r2| = Infinity > any finite dist → 빈 배열
-    const c1 = { center: { x: 0, y: 0 }, radius: Infinity };
+    const c1 = { cx: 0, cy: 0, r: Infinity };
     const { b } = makeHorizontalPair();
-    const out: SegmentWritable[] = [];
+    const out: FlatSegmentWritable[] = [];
     externalTangentsInto(out, c1, b);
     expect(out).toHaveLength(0);
   });
@@ -280,7 +283,7 @@ describe('circle.externalTangentsInto — external tangent segment 계산', () =
 describe('circle.externalTangents — externalTangentsInto의 allocating companion', () => {
   test('Into와 동일한 결과를 새 배열로 반환한다', () => {
     const { a, b } = makeHorizontalPair();
-    const ref: SegmentWritable[] = [];
+    const ref: FlatSegmentWritable[] = [];
     externalTangentsInto(ref, a, b);
     expect(externalTangents(a, b)).toEqual(ref);
   });
@@ -291,7 +294,7 @@ describe('circle.externalTangents — externalTangentsInto의 allocating compani
   });
 
   test('tangent가 없으면 undefined가 아닌 빈 배열을 반환한다', () => {
-    const empty = { center: { x: 0, y: 0 }, radius: 0 };
+    const empty = { cx: 0, cy: 0, r: 0 };
     const { b } = makeHorizontalPair();
     const result = externalTangents(empty, b);
     expect(result).toEqual([]);
@@ -311,7 +314,7 @@ describe('circle.internalTangentsInto — internal tangent segment 계산', () =
     expect(out).toHaveLength(2);
   });
 
-  test('각 segment의 a는 첫 번째 원 위, b는 두 번째 원 위의 점이다', () => {
+  test('각 선분의 시작점과 끝점은 각각 첫 번째 원과 두 번째 원 위에 있다', () => {
     const c1 = { center: { x: 0, y: 0 }, radius: 1 };
     const c2 = { center: { x: 5, y: 0 }, radius: 1 };
     const out: SegmentWritable[] = [];

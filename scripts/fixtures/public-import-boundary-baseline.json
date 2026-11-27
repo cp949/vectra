@@ -106,36 +106,8 @@
       "to": "circle/copy-into.ts"
     },
     {
-      "from": "circle/circle-from.ts",
-      "to": "circle/create-circle.ts"
-    },
-    {
-      "from": "circle/expand-by.ts",
-      "to": "circle/create-circle.ts"
-    },
-    {
-      "from": "circle/from-bounds.ts",
-      "to": "circle/create-circle.ts"
-    },
-    {
-      "from": "circle/from-three-points.ts",
-      "to": "circle/create-circle.ts"
-    },
-    {
-      "from": "circle/scale.ts",
-      "to": "circle/create-circle.ts"
-    },
-    {
       "from": "circle/shrink-by-into.ts",
       "to": "circle/expand-by-into.ts"
-    },
-    {
-      "from": "circle/shrink-by.ts",
-      "to": "circle/create-circle.ts"
-    },
-    {
-      "from": "circle/translate.ts",
-      "to": "circle/create-circle.ts"
     },
     {
       "from": "curve/arc-closest-point-into.ts",

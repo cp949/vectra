@@ -1,4 +1,5 @@
-import type { CircleLike, CircleTuple, XYInput } from '../types';
+import type { CircleLike, CircleWritable as LegacyCircleWritable, CircleTuple, XYInput } from '../types';
+import type { CircleWritable } from '../types/flat-shapes.internal';
 
 function isCircleTuple(circle: CircleLike): circle is CircleTuple {
   return Array.isArray(circle);
@@ -12,4 +13,14 @@ export function readCircleCenter(circle: CircleLike): XYInput {
 /** circle input에서 반지름을 읽는다. */
 export function readCircleRadius(circle: CircleLike): number {
   return isCircleTuple(circle) ? circle[1] : circle.radius;
+}
+
+/** 중심과 반지름이 0인 원을 생성한다. */
+export function createZeroCircle(): CircleWritable {
+  return { cx: 0, cy: 0, r: 0 };
+}
+
+// v2-migration: 원의 생성·이동·크기 조정 companion 전환이 끝나면 제거한다.
+export function createLegacyCircle(): LegacyCircleWritable {
+  return { center: { x: 0, y: 0 }, radius: 0 };
 }

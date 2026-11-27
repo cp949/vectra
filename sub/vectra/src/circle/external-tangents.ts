@@ -1,10 +1,10 @@
-import type { CircleLike, SegmentWritable } from '../types';
+import type { Circle, SegmentWritable } from '../types/flat-shapes.internal';
 import { externalTangentsInto } from './external-tangents-into';
 
 /**
  * 두 원의 external tangent segment들을 새 배열로 반환한다.
  *
- * 각 segment의 a는 첫 번째 circle 위 tangent point, b는 두 번째 circle 위 tangent point다.
+ * 각 선분의 시작점은 첫 번째 원의 접점이고 끝점은 두 번째 원의 접점이다.
  * 둘 중 하나라도 empty circle(radius <= 0)이면 빈 배열을 반환한다.
  * 중심이 같으면 빈 배열을 반환한다.
  * 한 원이 다른 원 내부에 있어 external tangent가 없으면 빈 배열을 반환한다.
@@ -14,6 +14,6 @@ import { externalTangentsInto } from './external-tangents-into';
  * @param circleA 첫 번째 원
  * @param circleB 두 번째 원
  */
-export function externalTangents(circleA: CircleLike, circleB: CircleLike): SegmentWritable[] {
+export function externalTangents(circleA: Circle, circleB: Circle): SegmentWritable[] {
   return externalTangentsInto([], circleA, circleB);
 }

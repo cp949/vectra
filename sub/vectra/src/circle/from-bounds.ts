@@ -1,5 +1,5 @@
-import type { BoundsLike, CircleWritable } from '../types';
-import { createCircle } from './create-circle';
+import type { Bounds, CircleWritable } from '../types/flat-shapes.internal';
+import { createZeroCircle } from '../internal/circle';
 import { fromBoundsInto } from './from-bounds-into';
 
 /**
@@ -10,6 +10,6 @@ import { fromBoundsInto } from './from-bounds-into';
  *
  * @param bounds 내접 circle을 계산할 bounds
  */
-export function fromBounds(bounds: BoundsLike): CircleWritable {
-  return fromBoundsInto(createCircle(), bounds);
+export function fromBounds(bounds: Bounds): CircleWritable {
+  return fromBoundsInto(createZeroCircle(), bounds);
 }

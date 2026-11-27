@@ -1,5 +1,4 @@
-import { readCircleRadius } from '../internal/circle';
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 
 /**
  * circle의 면적을 반환한다.
@@ -8,8 +7,8 @@ import type { CircleLike } from '../types';
  *
  * @param circle 면적을 계산할 circle
  */
-export function area(circle: CircleLike): number {
-  const r = readCircleRadius(circle);
+export function area(circle: Circle): number {
+  const r = circle.r;
   if (r <= 0) return 0;
   return Math.PI * r * r;
 }

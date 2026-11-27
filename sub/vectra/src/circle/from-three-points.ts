@@ -1,5 +1,5 @@
 import type { CircleWritable, XYInput } from '../types';
-import { createCircle } from './create-circle';
+import { createLegacyCircle } from '../internal/circle';
 import { fromThreePointsInto } from './from-three-points-into';
 
 /**
@@ -14,6 +14,6 @@ import { fromThreePointsInto } from './from-three-points-into';
  * @param c 세 번째 점
  */
 export function fromThreePoints(a: XYInput, b: XYInput, c: XYInput): CircleWritable | undefined {
-  const out = createCircle();
+  const out = createLegacyCircle();
   return fromThreePointsInto(out, a, b, c) ? out : undefined;
 }

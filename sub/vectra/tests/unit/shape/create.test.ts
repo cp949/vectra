@@ -1,6 +1,7 @@
 /** 각 도형의 생성 함수와 반환 타입을 시험한다. */
 
 import { describe, expect, expectTypeOf, test } from 'vitest';
+import { circleFrom } from '../../../src/circle/circle-from';
 import { createCircle } from '../../../src/circle/create-circle';
 import { createPolygon } from '../../../src/polygon/create-polygon';
 import { polygonFrom } from '../../../src/polygon/polygon-from';
@@ -8,7 +9,7 @@ import { createPolyline } from '../../../src/polyline/create-polyline';
 import { polylineFrom } from '../../../src/polyline/polyline-from';
 import { createRect } from '../../../src/rect/create-rect';
 import { rectFrom } from '../../../src/rect/rect-from';
-import type { RectWritable } from '../../../src/types/flat-shapes.internal';
+import type { CircleWritable, RectWritable } from '../../../src/types/flat-shapes.internal';
 
 describe('shape create/xFrom factories', () => {
   test('createRect는 기본 사각형을 만들고 rectFrom은 새 객체에 필드를 복사한다', () => {
@@ -21,8 +22,14 @@ describe('shape create/xFrom factories', () => {
     expect(result).not.toBe(source);
   });
 
-  test('createCircle()는 zero seed를 만들고 circleFrom은 source/component를 복사한다', () => {
-    expect(createCircle()).toEqual({ center: { x: 0, y: 0 }, radius: 0 });
+  test('createCircle은 빈 원을 만들고 circleFrom은 새 객체에 필드를 복사한다', () => {
+    const source = { cx: 1, cy: 2, r: 3 };
+    const result = circleFrom(source);
+    expectTypeOf(createCircle()).toEqualTypeOf<CircleWritable>();
+    expectTypeOf(result).toEqualTypeOf<CircleWritable>();
+    expect(createCircle()).toEqual({ cx: 0, cy: 0, r: 0 });
+    expect(result).toEqual(source);
+    expect(result).not.toBe(source);
   });
 
   // points factory 정책: 기본은 points 배열과 leaf 모두 deep clone 하여 source 변형이 전파되지 않는다.

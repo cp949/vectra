@@ -31,7 +31,7 @@ describe('Euclidean hypot regression', () => {
   test('circle closest point does not treat underflowed distance square as center hit', () => {
     const out = { x: 0, y: 0 };
 
-    circleClosestPointInto(out, { center: { x: 0, y: 0 }, radius: 1 }, { x: 1e-200, y: 1e-200 });
+    circleClosestPointInto(out, { cx: 0, cy: 0, r: 1 }, { x: 1e-200, y: 1e-200 });
 
     expect(out.x).toBeCloseTo(Math.SQRT1_2, 12);
     expect(out.y).toBeCloseTo(Math.SQRT1_2, 12);

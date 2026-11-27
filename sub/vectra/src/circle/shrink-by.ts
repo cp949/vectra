@@ -1,5 +1,5 @@
-import type { CircleLike, CircleWritable } from '../types';
-import { createCircle } from './create-circle';
+import type { Circle, CircleWritable } from '../types/flat-shapes.internal';
+import { createZeroCircle } from '../internal/circle';
 import { shrinkByInto } from './shrink-by-into';
 
 /**
@@ -14,6 +14,6 @@ import { shrinkByInto } from './shrink-by-into';
  * @param circle 기준 circle
  * @param amount radius에서 뺄 값 (음수 허용)
  */
-export function shrinkBy(circle: CircleLike, amount: number): CircleWritable {
-  return shrinkByInto(createCircle(), circle, amount);
+export function shrinkBy(circle: Circle, amount: number): CircleWritable {
+  return shrinkByInto(createZeroCircle(), circle, amount);
 }

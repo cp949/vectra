@@ -1,6 +1,4 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -14,14 +12,14 @@ import { hypot2 } from '../internal/numeric';
  * @param a 거리 계산에 사용할 첫 번째 circle
  * @param b 거리 계산에 사용할 두 번째 circle
  */
-export function distanceToCircle(a: CircleLike, b: CircleLike): number {
-  const ra = Math.max(readCircleRadius(a), 0);
-  const rb = Math.max(readCircleRadius(b), 0);
+export function distanceToCircle(a: Circle, b: Circle): number {
+  const ra = Math.max(a.r, 0);
+  const rb = Math.max(b.r, 0);
 
-  const ax = readX(readCircleCenter(a));
-  const ay = readY(readCircleCenter(a));
-  const bx = readX(readCircleCenter(b));
-  const by = readY(readCircleCenter(b));
+  const ax = a.cx;
+  const ay = a.cy;
+  const bx = b.cx;
+  const by = b.cy;
 
   const dx = bx - ax;
   const dy = by - ay;

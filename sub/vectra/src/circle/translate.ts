@@ -1,5 +1,5 @@
 import type { CircleLike, CircleWritable, XYInput } from '../types';
-import { createCircle } from './create-circle';
+import { createLegacyCircle } from '../internal/circle';
 import { translateInto } from './translate-into';
 
 /**
@@ -11,5 +11,5 @@ import { translateInto } from './translate-into';
  * @param offset center에 더할 이동 벡터
  */
 export function translate(circle: CircleLike, offset: XYInput): CircleWritable {
-  return translateInto(createCircle(), circle, offset);
+  return translateInto(createLegacyCircle(), circle, offset);
 }

@@ -1,4 +1,5 @@
-import type { BoundsWritable, CircleLike } from '../types';
+import { createZeroBounds } from '../internal/bounds';
+import type { BoundsWritable, Circle } from '../types/flat-shapes.internal';
 import { boundsInto } from './bounds-into';
 
 /**
@@ -9,6 +10,6 @@ import { boundsInto } from './bounds-into';
  *
  * @param circle bounds로 변환할 circle
  */
-export function bounds(circle: CircleLike): BoundsWritable {
-  return boundsInto({ min: { x: 0, y: 0 }, max: { x: 0, y: 0 } }, circle);
+export function bounds(circle: Circle): BoundsWritable {
+  return boundsInto(createZeroBounds(), circle);
 }

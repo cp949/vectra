@@ -1,8 +1,8 @@
 /**
  * 바깥 반지름 outerRadius와 안쪽 반지름 innerRadius로 정의되는 환형(annulus) 넓이를 반환한다.
  *
- * 공식: π * (outerRadius² - innerRadius²). 두 radius를 받는 raw scalar helper이며 CircleLike를
- * 받지 않는다. `outerRadius >= innerRadius >= 0` contract를 강제한다.
+ * 공식: π * (outerRadius² - innerRadius²). 두 반지름을 받는 스칼라 함수다.
+ * `outerRadius >= innerRadius >= 0` contract를 강제한다.
  *
  * 두 radius 중 하나라도 non-finite(`NaN`, `Infinity`, `-Infinity`)이거나, `innerRadius < 0`이거나,
  * `outerRadius < innerRadius`이면 `RangeError`다. 큰 radius 곱이 overflow해 결과가 non-finite가

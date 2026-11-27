@@ -1,3 +1,5 @@
+/** 원의 최근접점, 각도별 점, 경계 상자 및 변환 결과를 검증한다. */
+
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { boundsInto } from '../../../src/circle/bounds-into';
 import { closestPointInto } from '../../../src/circle/closest-point-into';
@@ -5,140 +7,100 @@ import { pointAtAngleInto } from '../../../src/circle/point-at-angle-into';
 import { pointAtTurnInto } from '../../../src/circle/point-at-turn-into';
 import { scaleInto } from '../../../src/circle/scale-into';
 import { translateInto } from '../../../src/circle/translate-into';
-import type { BoundsWritable, CircleWritable, XYTupleWritable, XYWritable } from '../../../src/types';
+import type { CircleWritable, XYTupleWritable, XYWritable } from '../../../src/types';
 
+/** 최근접점과 경계 상자에 사용할 평평한 원을 만든다. */
+function makeFlatCircle(cx: number, cy: number, r: number) {
+  return { cx, cy, r };
+}
+
+/** 아직 전환 중인 각도와 변환 API를 검증할 원을 만든다. */
 function makeCircle(cx = 0, cy = 0, r = 5): CircleWritable {
   return { center: { x: cx, y: cy }, radius: r };
 }
 
-function makeBounds(): BoundsWritable {
-  return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+/** 경계 상자 출력을 초기화한다. */
+function makeBounds() {
+  return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }
 
 // ─── closestPointInto ────────────────────────────────────────────────────────
 
 describe('closestPointInto - 외부 점', () => {
   test('circle 외부 점에서 가장 가까운 표면 위 점을 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const circle = makeCircle(0, 0, 5);
+    const out = { x: 0, y: 0 };
+    const circle = makeFlatCircle(0, 0, 5);
     // point (10, 0): direction (1, 0), closest = (5, 0)
     const result = closestPointInto(out, circle, { x: 10, y: 0 });
     expect(result).toBe(out);
-    expect((out as { x: number; y: number }).x).toBeCloseTo(5, 10);
-    expect((out as { x: number; y: number }).y).toBeCloseTo(0, 10);
-  });
-
-  test('tuple shorthand CircleLike에서 closest point를 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const circle = [[0, 0], 5] as const;
-    const result = closestPointInto(out, circle, { x: 10, y: 0 });
-    expect(result).toBe(out);
-    expect((out as { x: number; y: number }).x).toBeCloseTo(5, 10);
-    expect((out as { x: number; y: number }).y).toBeCloseTo(0, 10);
+    expect(out.x).toBeCloseTo(5, 10);
+    expect(out.y).toBeCloseTo(0, 10);
   });
 
   test('대각선 방향 외부 점에서 closest point를 계산한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const circle = makeCircle(0, 0, 5);
+    const out = { x: 0, y: 0 };
+    const circle = makeFlatCircle(0, 0, 5);
     // point (3, 4): distance = 5 = radius → 표면 위 점 = (3, 4)
     closestPointInto(out, circle, { x: 3, y: 4 });
-    expect((out as { x: number; y: number }).x).toBeCloseTo(3, 10);
-    expect((out as { x: number; y: number }).y).toBeCloseTo(4, 10);
+    expect(out.x).toBeCloseTo(3, 10);
+    expect(out.y).toBeCloseTo(4, 10);
   });
 
   test('offset center를 가진 circle에서 closest point를 계산한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const circle = makeCircle(2, 3, 5);
+    const out = { x: 0, y: 0 };
+    const circle = makeFlatCircle(2, 3, 5);
     // point (2, 13): direction from center (0, 1), closest = (2, 8)
     closestPointInto(out, circle, { x: 2, y: 13 });
-    expect((out as { x: number; y: number }).x).toBeCloseTo(2, 10);
-    expect((out as { x: number; y: number }).y).toBeCloseTo(8, 10);
+    expect(out.x).toBeCloseTo(2, 10);
+    expect(out.y).toBeCloseTo(8, 10);
   });
 });
 
 describe('closestPointInto - 내부 점', () => {
   test('circle 내부 점에서도 표면 위 가장 가까운 점을 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const circle = makeCircle(0, 0, 5);
+    const out = { x: 0, y: 0 };
+    const circle = makeFlatCircle(0, 0, 5);
     // point (1, 0): direction (1, 0), closest = (5, 0)
     closestPointInto(out, circle, { x: 1, y: 0 });
-    expect((out as { x: number; y: number }).x).toBeCloseTo(5, 10);
-    expect((out as { x: number; y: number }).y).toBeCloseTo(0, 10);
+    expect(out.x).toBeCloseTo(5, 10);
+    expect(out.y).toBeCloseTo(0, 10);
   });
 });
 
 describe('closestPointInto - center 일치', () => {
   test('point가 center와 같으면 (cx+r, cy) 를 기록한다 (angle 0 fallback)', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const circle = makeCircle(2, 3, 5);
+    const out = { x: 0, y: 0 };
+    const circle = makeFlatCircle(2, 3, 5);
     closestPointInto(out, circle, { x: 2, y: 3 });
-    expect((out as { x: number; y: number }).x).toBeCloseTo(7, 10); // cx + r = 2 + 5
-    expect((out as { x: number; y: number }).y).toBeCloseTo(3, 10);
+    expect(out.x).toBeCloseTo(7, 10); // cx + r = 2 + 5
+    expect(out.y).toBeCloseTo(3, 10);
   });
 });
 
 describe('closestPointInto - empty circle', () => {
   test('radius = 0이면 center 좌표를 기록한다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
-    const circle = makeCircle(2, 3, 0);
+    const out = { x: 99, y: 99 };
+    const circle = makeFlatCircle(2, 3, 0);
     closestPointInto(out, circle, { x: 10, y: 10 });
-    expect((out as { x: number; y: number }).x).toBe(2);
-    expect((out as { x: number; y: number }).y).toBe(3);
+    expect(out.x).toBe(2);
+    expect(out.y).toBe(3);
   });
 
   test('radius < 0이면 center 좌표를 기록한다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
-    const circle = makeCircle(2, 3, -1);
+    const out = { x: 99, y: 99 };
+    const circle = makeFlatCircle(2, 3, -1);
     closestPointInto(out, circle, { x: 10, y: 10 });
-    expect((out as { x: number; y: number }).x).toBe(2);
-    expect((out as { x: number; y: number }).y).toBe(3);
+    expect(out.x).toBe(2);
+    expect(out.y).toBe(3);
   });
 });
 
 describe('closestPointInto - aliasing', () => {
-  test('out === circle.center aliasing에서도 정의대로 동작한다', () => {
-    const center: XYWritable = { x: 0, y: 0 };
-    const circle: CircleWritable = { center, radius: 5 };
-    // out과 circle.center가 같은 reference
-    const result = closestPointInto(center, circle, { x: 10, y: 0 });
-    expect(result).toBe(center);
-    expect((center as { x: number; y: number }).x).toBeCloseTo(5, 10);
-    expect((center as { x: number; y: number }).y).toBeCloseTo(0, 10);
-  });
-});
-
-// ─── closestPointInto - generic return type-level ────────────────────────────
-
-describe('closestPointInto - generic return type', () => {
-  test('mutable tuple out에 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const circle = makeCircle(0, 0, 5);
-    const result = closestPointInto(out, circle, { x: 10, y: 0 });
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(5, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
-  });
-
-  test('외부 Point class instance에 기록하고 method chaining 타입을 보존한다', () => {
-    class Point {
-      constructor(
-        public x: number,
-        public y: number
-      ) {}
-      translateX(dx: number): this {
-        this.x += dx;
-        return this;
-      }
-    }
-    const p = new Point(0, 0);
-    const circle = makeCircle(0, 0, 5);
-    const result = closestPointInto(p, circle, { x: 10, y: 0 });
-    expect(result).toBe(p);
-    expectTypeOf(result).toEqualTypeOf<Point>();
-    // method chaining 타입 체크
-    const chained = result.translateX(1);
-    expectTypeOf(chained).toEqualTypeOf<Point>();
+  test('출력과 입력 점이 같은 객체여도 올바른 점을 기록한다', () => {
+    const point = { x: 10, y: 0 };
+    const circle = { cx: 0, cy: 0, r: 5 };
+    expect(closestPointInto(point, circle, point)).toBe(point);
+    expect(point).toEqual({ x: 5, y: 0 });
   });
 });
 
@@ -297,80 +259,43 @@ describe('pointAtTurnInto', () => {
 describe('boundsInto', () => {
   test('정상 circle의 bounding box를 기록한다', () => {
     const out = makeBounds();
-    const circle = makeCircle(2, 3, 5);
+    const circle = makeFlatCircle(2, 3, 5);
     const result = boundsInto(out, circle);
     expect(result).toBe(out);
-    expect((out.min as { x: number; y: number }).x).toBeCloseTo(-3, 10); // cx - r
-    expect((out.min as { x: number; y: number }).y).toBeCloseTo(-2, 10); // cy - r
-    expect((out.max as { x: number; y: number }).x).toBeCloseTo(7, 10); // cx + r
-    expect((out.max as { x: number; y: number }).y).toBeCloseTo(8, 10); // cy + r
+    expect(out.minX).toBeCloseTo(-3, 10); // cx - r
+    expect(out.minY).toBeCloseTo(-2, 10); // cy - r
+    expect(out.maxX).toBeCloseTo(7, 10); // cx + r
+    expect(out.maxY).toBeCloseTo(8, 10); // cy + r
   });
 
   test('origin centered circle의 bounds를 기록한다', () => {
     const out = makeBounds();
-    const circle = makeCircle(0, 0, 5);
+    const circle = makeFlatCircle(0, 0, 5);
     boundsInto(out, circle);
-    expect((out.min as { x: number; y: number }).x).toBeCloseTo(-5, 10);
-    expect((out.min as { x: number; y: number }).y).toBeCloseTo(-5, 10);
-    expect((out.max as { x: number; y: number }).x).toBeCloseTo(5, 10);
-    expect((out.max as { x: number; y: number }).y).toBeCloseTo(5, 10);
+    expect(out.minX).toBeCloseTo(-5, 10);
+    expect(out.minY).toBeCloseTo(-5, 10);
+    expect(out.maxX).toBeCloseTo(5, 10);
+    expect(out.maxY).toBeCloseTo(5, 10);
   });
 
   test('empty circle (radius=0)에서 sentinel empty bounds를 기록한다', () => {
     const out = makeBounds();
-    const circle = makeCircle(0, 0, 0);
+    const circle = makeFlatCircle(0, 0, 0);
     boundsInto(out, circle);
-    expect((out.min as { x: number; y: number }).x).toBe(Infinity);
-    expect((out.min as { x: number; y: number }).y).toBe(Infinity);
-    expect((out.max as { x: number; y: number }).x).toBe(-Infinity);
-    expect((out.max as { x: number; y: number }).y).toBe(-Infinity);
+    expect(out.minX).toBe(Infinity);
+    expect(out.minY).toBe(Infinity);
+    expect(out.maxX).toBe(-Infinity);
+    expect(out.maxY).toBe(-Infinity);
   });
 
   test('empty circle (radius<0)에서 sentinel empty bounds를 기록한다', () => {
     const out = makeBounds();
-    const circle = makeCircle(2, 3, -1);
+    const circle = makeFlatCircle(2, 3, -1);
     boundsInto(out, circle);
-    expect((out.min as { x: number; y: number }).x).toBe(Infinity);
-    expect((out.min as { x: number; y: number }).y).toBe(Infinity);
-    expect((out.max as { x: number; y: number }).x).toBe(-Infinity);
-    expect((out.max as { x: number; y: number }).y).toBe(-Infinity);
-  });
-
-  test('mutable tuple min/max storage에 기록한다', () => {
-    const min: [number, number] = [0, 0];
-    const max: [number, number] = [0, 0];
-    const out: BoundsWritable<XYTupleWritable, XYTupleWritable> = { min, max };
-    const circle = makeCircle(0, 0, 5);
-    const result = boundsInto(out, circle);
-    expect(result).toBe(out);
-    expect(min).toEqual([-5, -5]);
-    expect(max).toEqual([5, 5]);
-  });
-
-  test('out.min === circle.center aliasing에서도 정의대로 동작한다', () => {
-    const center: { x: number; y: number } = { x: 2, y: 3 };
-    const circle: CircleWritable = { center, radius: 5 };
-    const out: BoundsWritable = { min: center, max: { x: 0, y: 0 } };
-    boundsInto(out, circle);
-    // center(=out.min)에 덮어쓰기가 발생해도 cx/cy는 미리 읽혔으므로 결과가 정확해야 한다
-    expect((out.min as { x: number; y: number }).x).toBeCloseTo(-3, 10); // cx - r
-    expect((out.min as { x: number; y: number }).y).toBeCloseTo(-2, 10);
-    expect((out.max as { x: number; y: number }).x).toBeCloseTo(7, 10);
-    expect((out.max as { x: number; y: number }).y).toBeCloseTo(8, 10);
-  });
-});
-
-describe('boundsInto - generic return type', () => {
-  test('BoundsWritable subtype의 return type을 보존한다', () => {
-    interface TaggedBounds {
-      min: { x: number; y: number };
-      max: { x: number; y: number };
-      tag: string;
-    }
-    const out: TaggedBounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 }, tag: 'test' };
-    const circle = makeCircle(0, 0, 5);
-    const result = boundsInto(out, circle);
-    expectTypeOf(result).toEqualTypeOf<TaggedBounds>();
+    expect(out.minX).toBe(Infinity);
+    expect(out.minY).toBe(Infinity);
+    expect(out.maxX).toBe(-Infinity);
+    expect(out.maxY).toBe(-Infinity);
   });
 });
 

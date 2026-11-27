@@ -1,6 +1,4 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, SegmentWritable } from '../types';
+import type { Circle, SegmentWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 const ANGLE_EPSILON = 1e-12;
@@ -9,7 +7,7 @@ const TWO_PI = Math.PI * 2;
 /**
  * 두 원의 external tangent segment들을 out에 기록하고 out을 반환한다.
  *
- * out은 호출 시작 시 비운다. 각 segment의 a는 첫 번째 circle 위 tangent point, b는 두 번째 circle 위 tangent point다.
+ * out은 호출 시작 시 비운다. 각 선분의 시작점은 첫 번째 원의 접점이고 끝점은 두 번째 원의 접점이다.
  * 둘 중 하나라도 empty circle(radius <= 0)이면 빈 out을 반환한다.
  * 중심이 같으면 빈 out을 반환한다.
  * 한 원이 다른 원 내부에 있어 external tangent가 없으면 빈 out을 반환한다.
@@ -20,20 +18,16 @@ const TWO_PI = Math.PI * 2;
  * @param circleA 첫 번째 원
  * @param circleB 두 번째 원
  */
-export function externalTangentsInto(
-  out: SegmentWritable[],
-  circleA: CircleLike,
-  circleB: CircleLike
-): SegmentWritable[] {
+export function externalTangentsInto(out: SegmentWritable[], circleA: Circle, circleB: Circle): SegmentWritable[] {
   out.length = 0;
 
-  const cx1 = readX(readCircleCenter(circleA));
-  const cy1 = readY(readCircleCenter(circleA));
-  const r1 = readCircleRadius(circleA);
+  const cx1 = circleA.cx;
+  const cy1 = circleA.cy;
+  const r1 = circleA.r;
 
-  const cx2 = readX(readCircleCenter(circleB));
-  const cy2 = readY(readCircleCenter(circleB));
-  const r2 = readCircleRadius(circleB);
+  const cx2 = circleB.cx;
+  const cy2 = circleB.cy;
+  const r2 = circleB.r;
 
   if (r1 <= 0 || r2 <= 0) return out;
 
@@ -58,8 +52,10 @@ export function externalTangentsInto(
     const cosA = Math.cos(α);
     const sinA = Math.sin(α);
     out.push({
-      a: { x: cx1 + r1 * cosA, y: cy1 + r1 * sinA },
-      b: { x: cx2 + r2 * cosA, y: cy2 + r2 * sinA },
+      x1: cx1 + r1 * cosA,
+      y1: cy1 + r1 * sinA,
+      x2: cx2 + r2 * cosA,
+      y2: cy2 + r2 * sinA,
     });
   }
 

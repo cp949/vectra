@@ -1,5 +1,4 @@
-import { readCircleRadius } from '../internal/circle';
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 
 /**
  * circle에서 중심각 centralAngle에 대응하는 현의 길이를 반환한다.
@@ -10,8 +9,8 @@ import type { CircleLike } from '../types';
  * @param circle 현의 길이를 계산할 circle
  * @param centralAngle 현에 대응하는 중심각 (radian, 부호 무시)
  */
-export function chordLength(circle: CircleLike, centralAngle: number): number {
-  const r = readCircleRadius(circle);
+export function chordLength(circle: Circle, centralAngle: number): number {
+  const r = circle.r;
   if (r <= 0) return 0;
   return 2 * r * Math.sin(Math.abs(centralAngle) / 2);
 }

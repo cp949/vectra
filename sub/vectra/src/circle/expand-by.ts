@@ -1,5 +1,5 @@
-import type { CircleLike, CircleWritable } from '../types';
-import { createCircle } from './create-circle';
+import type { Circle, CircleWritable } from '../types/flat-shapes.internal';
+import { createZeroCircle } from '../internal/circle';
 import { expandByInto } from './expand-by-into';
 
 /**
@@ -10,6 +10,6 @@ import { expandByInto } from './expand-by-into';
  * @param circle 기준 circle
  * @param amount radius에 더할 값 (음수 허용)
  */
-export function expandBy(circle: CircleLike, amount: number): CircleWritable {
-  return expandByInto(createCircle(), circle, amount);
+export function expandBy(circle: Circle, amount: number): CircleWritable {
+  return expandByInto(createZeroCircle(), circle, amount);
 }
