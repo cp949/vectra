@@ -8,7 +8,7 @@ import type { Point, PointWritable } from '../types/flat-shapes.internal';
  * a, b의 x/y는 finite number여야 한다.
  * out이 a 또는 b와 같은 object여도 안전하다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param a 중점을 구할 첫 번째 벡터
  * @param b 중점을 구할 두 번째 벡터
  */

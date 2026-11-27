@@ -5,7 +5,7 @@ import type { PointWritable } from '../types/flat-shapes.internal';
  *
  * x = r * cos(theta), y = r * sin(theta).
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param r 반지름 (벡터의 길이)
  * @param theta 각도 (라디안, x축으로부터 반시계 방향)
  */
