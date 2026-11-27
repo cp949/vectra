@@ -1,7 +1,7 @@
 /**
  * vec component-wise unary/binary helper 단위 테스트.
  *
- * unary, binary, addScaled helper의 out 반환, aliasing, tuple 입력, companion 동작을 검증한다.
+ * unary, binary, addScaled helper의 out 반환, aliasing, companion 동작을 검증한다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -25,7 +25,6 @@ import {
   expectCompanionMatchesInto,
   expectNaNComponents,
   expectObjectOut,
-  expectTupleOut,
   expectXY,
   testBinaryBehavior,
   testUnaryBehavior,
