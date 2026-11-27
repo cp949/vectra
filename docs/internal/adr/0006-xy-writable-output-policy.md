@@ -1,6 +1,6 @@
 # ADR 0006: Writable Output and Into Return Policy
 
-상태: 승인
+상태: [ADR 0010](0010-flat-shape-input.md)으로 대체됨
 
 ## 배경
 
