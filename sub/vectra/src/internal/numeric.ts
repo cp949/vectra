@@ -2,6 +2,34 @@
 export const DEFAULT_EPSILON = 1e-9;
 
 /**
+ * `hypot2`가 `Math.sqrt`를 쓰는 `x * x + y * y`의 하한.
+ *
+ * 이 값보다 크면 큰 쪽 제곱이 normal 범위라 상대 정밀도를 잃지 않는다.
+ * 작은 쪽 제곱이 subnormal로 떨어져도 합에 비해 무시할 크기다.
+ */
+const HYPOT_SQRT_MIN = 1e-290;
+
+/**
+ * `Math.hypot(x, y)`와 같은 Euclidean 길이를 반환한다.
+ *
+ * 제곱합이 overflow·underflow하지 않으면 `Math.sqrt(x * x + y * y)`를 쓴다.
+ * - V8의 `Math.hypot`은 이 경로보다 약 10배 느리다.
+ * - 참값 대비 오차는 최대 약 1.2 ulp다. V8 `Math.hypot`은 최대 약 2 ulp다.
+ * - 그래서 `Math.hypot`과 결과가 최대 2 ulp 다를 수 있다.
+ *
+ * 제곱합이 overflow(`Infinity`), underflow, 0, NaN이면 `Math.hypot`을 쓴다.
+ * 큰 finite 좌표, subnormal 좌표, `Infinity`와 NaN의 조합은 `Math.hypot`과 같은 값이다.
+ *
+ * @param x 첫 성분
+ * @param y 둘째 성분
+ */
+export function hypot2(x: number, y: number): number {
+  const s = x * x + y * y;
+  if (s > HYPOT_SQRT_MIN && s < Infinity) return Math.sqrt(s);
+  return Math.hypot(x, y);
+}
+
+/**
  * 두 number의 절대 차이가 epsilon 이하이면 true를 반환한다.
  *
  * finite 검증이나 상대 오차 보정은 하지 않는다.

@@ -1,5 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * cubic Bezier 제어점이 chord 수직으로 flatness 이내인지 확인한다.
@@ -26,12 +27,12 @@ export function cubicIsFlatEnough(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYI
 
   const chordX = p3x - p0x;
   const chordY = p3y - p0y;
-  const chordLen = Math.hypot(chordX, chordY);
+  const chordLen = hypot2(chordX, chordY);
 
   // degenerate: p0 == p3인 경우 p1, p2도 같은 점이면 true
   if (chordLen < flatness) {
-    const d1 = Math.hypot(p1x - p0x, p1y - p0y);
-    const d2 = Math.hypot(p2x - p0x, p2y - p0y);
+    const d1 = hypot2(p1x - p0x, p1y - p0y);
+    const d2 = hypot2(p2x - p0x, p2y - p0y);
     return d1 <= flatness && d2 <= flatness;
   }
 

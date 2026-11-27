@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /** open/closed curve에서 index i의 x 좌표를 반환한다. 범위 밖 index는 phantom/wrap 처리. */
 function resolveX(points: readonly XYInput[], i: number, n: number, closed: boolean): number {
@@ -98,7 +99,7 @@ export function catmullRomKnotsFromPoints(points: readonly XYInput[], alpha: num
     const by = resolveY(points, 0, n, closed);
     const dx = bx - ax;
     const dy = by - ay;
-    const dist = Math.hypot(dx, dy);
+    const dist = hypot2(dx, dy);
     const clampedDist = Math.max(dist, 1e-10);
     const interval = clampedDist ** alpha;
     knots[0] = knots[1] - interval; // t_{-1} = -interval
@@ -112,7 +113,7 @@ export function catmullRomKnotsFromPoints(points: readonly XYInput[], alpha: num
     const by = resolveY(points, k + 1, n, closed);
     const dx = bx - ax;
     const dy = by - ay;
-    const dist = Math.hypot(dx, dy);
+    const dist = hypot2(dx, dy);
     const clampedDist = Math.max(dist, 1e-10);
     const interval = clampedDist ** alpha;
     knots[k + 2] = knots[k + 1] + interval;

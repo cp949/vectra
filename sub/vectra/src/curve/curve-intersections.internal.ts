@@ -1,5 +1,5 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
-import { DEFAULT_EPSILON } from '../internal/numeric';
+import { DEFAULT_EPSILON, hypot2 } from '../internal/numeric';
 import { readX, readY, writeXY } from '../internal/xy';
 import type {
   CurveIntersectionOptions,
@@ -166,7 +166,7 @@ function fatLineSeparates(base: readonly number[], other: readonly number[], eps
   const y0 = base[1];
   const dx = base[last] - x0;
   const dy = base[last + 1] - y0;
-  const length = Math.hypot(dx, dy);
+  const length = hypot2(dx, dy);
   if (!(length > epsilon)) return false;
   const nx = -dy / length;
   const ny = dx / length;
@@ -290,8 +290,8 @@ export function classifyIntersectionKind(
   epsilon: number
 ): IntersectionKind {
   const crossZ = taxDx * tbxDy - taxDy * tbxDx;
-  const lenA = Math.hypot(taxDx, taxDy);
-  const lenB = Math.hypot(tbxDx, tbxDy);
+  const lenA = hypot2(taxDx, taxDy);
+  const lenB = hypot2(tbxDx, tbxDy);
   // 두 tangent 중 하나가 zero-length이면 'cross'로 보수적으로 처리한다
   const zeroEpsilon = Math.min(epsilon, DEFAULT_EPSILON);
   if (lenA < zeroEpsilon || lenB < zeroEpsilon) return 'cross';
@@ -390,7 +390,7 @@ export function refineIntersectionParams(
 
   for (let i = 0; i < NEWTON_MAX_ITERATIONS; i++) {
     const det = b[2] * a[3] - a[2] * b[3];
-    const scale = Math.hypot(a[2], a[3]) * Math.hypot(b[2], b[3]);
+    const scale = hypot2(a[2], a[3]) * hypot2(b[2], b[3]);
     // NaN이면 비교가 false라 아래 조건을 통과하지 못한다
     if (!(Math.abs(det) > NEWTON_SINGULAR_FACTOR * scale)) break;
 

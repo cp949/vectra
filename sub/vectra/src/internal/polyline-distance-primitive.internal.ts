@@ -1,7 +1,9 @@
+import { hypot2 } from './numeric';
+
 /**
  * 두 좌표 사이 유클리드 거리를 반환한다.
  *
- * internal 전용 helper이며 finite 검증 없이 Math.hypot을 그대로 사용한다.
+ * internal 전용 helper이며 finite 검증 없이 `hypot2`를 그대로 사용한다.
  *
  * @param ax 시작 x 좌표
  * @param ay 시작 y 좌표
@@ -9,7 +11,7 @@
  * @param by 끝 y 좌표
  */
 export function pointDist(ax: number, ay: number, bx: number, by: number): number {
-  return Math.hypot(bx - ax, by - ay);
+  return hypot2(bx - ax, by - ay);
 }
 
 /**

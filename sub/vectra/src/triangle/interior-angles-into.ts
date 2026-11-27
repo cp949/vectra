@@ -1,10 +1,11 @@
 import { readTriangleRawCoords } from '../internal/triangle';
 import type { TriangleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /** 두 벡터 사이의 각도(radian)를 반환한다. 영벡터 방향이면 0을 반환한다. */
 function angleBetween(dx1: number, dy1: number, dx2: number, dy2: number): number {
-  const len1 = Math.hypot(dx1, dy1);
-  const len2 = Math.hypot(dx2, dy2);
+  const len1 = hypot2(dx1, dy1);
+  const len2 = hypot2(dx2, dy2);
   if (len1 === 0 || len2 === 0) return 0;
   const cos = Math.max(-1, Math.min(1, (dx1 * dx2 + dy1 * dy2) / (len1 * len2)));
   return Math.acos(cos);

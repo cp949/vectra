@@ -1,5 +1,5 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { DEFAULT_EPSILON } from '../internal/numeric';
+import { DEFAULT_EPSILON, hypot2 } from '../internal/numeric';
 import { readX, readY } from '../internal/xy';
 import type { AreaOverlapDetail, CircleLike } from '../types';
 
@@ -55,7 +55,7 @@ export function circleCircleAreaOverlapDetail(
 
   const dx = nbx - nax;
   const dy = nby - nay;
-  const d = Math.hypot(dx, dy);
+  const d = hypot2(dx, dy);
   const sum = nra + nrb;
   const diff = Math.abs(nra - nrb);
 

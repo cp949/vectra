@@ -1,4 +1,5 @@
 import type { PathCommand } from '../types/index';
+import { hypot2 } from '../internal/numeric';
 
 /** circle/ellipse cubic Bezier 근사 공통 옵션. */
 export interface EllipseArcOptions {
@@ -29,7 +30,7 @@ export const KAPPA = 0.5522847498;
 export function ellipseArcCurvature(rx: number, ry: number, theta: number): number {
   const sinT = Math.sin(theta);
   const cosT = Math.cos(theta);
-  const denom = Math.hypot(rx * sinT, ry * cosT);
+  const denom = hypot2(rx * sinT, ry * cosT);
   return (rx * ry) / (denom * denom * denom);
 }
 

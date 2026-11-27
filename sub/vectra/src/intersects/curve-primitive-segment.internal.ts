@@ -12,6 +12,7 @@
 import { evaluatePolynomial, minOnClosedUnit, realRootsInClosedUnit } from '../internal/polynomial';
 import type { InfiniteLineLike, IntersectionHit } from '../types';
 import type { CurveLineProbe } from './curve-primitive-probe.internal';
+import { hypot2 } from '../internal/numeric';
 
 /** curve가 segment A→B와 segment range 안에서 만나면 true를 반환한다. */
 export function curveCrossesSegment(
@@ -47,7 +48,7 @@ export function curveOverlapsSegment(
 ): boolean {
   const dx = bx - ax;
   const dy = by - ay;
-  const length = Math.hypot(dx, dy);
+  const length = hypot2(dx, dy);
   if (length <= epsilon) return curveContainsPoint(xCoef, yCoef, ax, ay, epsilon);
   const dd = dx * dx + dy * dy;
 

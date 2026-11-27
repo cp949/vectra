@@ -7,6 +7,7 @@ import {
   requireNonNegative,
   signedIntervalDistance,
 } from './primitive.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * axis-aligned rect와 point 사이의 signed distance를 반환한다.
@@ -33,7 +34,7 @@ export function sdfRect(rect: RectLike, point: XYInput): number {
 
   const dx = signedIntervalDistance(rx, width, px);
   const dy = signedIntervalDistance(ry, height, py);
-  if (dx > 0 || dy > 0) return Math.hypot(Math.max(dx, 0), Math.max(dy, 0));
+  if (dx > 0 || dy > 0) return hypot2(Math.max(dx, 0), Math.max(dy, 0));
 
   return Math.max(dx, dy);
 }

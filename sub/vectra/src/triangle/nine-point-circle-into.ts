@@ -2,6 +2,7 @@ import { readTriangleRawCoords } from '../internal/triangle';
 import { solveTriangleCircumcenter } from '../internal/triangle-circumcenter';
 import { writeXY } from '../internal/xy';
 import type { CircleWritable, TriangleLike, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 const center = { x: 0, y: 0 };
 
@@ -29,6 +30,6 @@ export function ninePointCircleInto<Out extends CircleWritable<XYWritable>>(
   // orthocenter = (ax+bx+cx − 2ux, ay+by+cy − 2uy)이므로 중점은 ((ax+bx+cx−ux)/2, (ay+by+cy−uy)/2).
   writeXY(out.center, (ax + bx + cx - ux) / 2, (ay + by + cy - uy) / 2);
   // radius = circumradius 절반. ax/ux는 local이라 out.center aliasing 후에도 안전하다.
-  out.radius = Math.hypot(ax - ux, ay - uy) / 2;
+  out.radius = hypot2(ax - ux, ay - uy) / 2;
   return out;
 }

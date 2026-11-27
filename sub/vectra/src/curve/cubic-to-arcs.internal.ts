@@ -1,6 +1,7 @@
 import { readX, readY } from '../internal/xy';
 import type { CenterArcWritable, XYInput, XYLike } from '../types';
 import { cubicPointAtTInto } from './cubic-point-at-t-into';
+import { hypot2 } from '../internal/numeric';
 
 interface ValidatedCubicToArcsInputs {
   p0: XYLike;
@@ -91,7 +92,7 @@ function circumcircle(
   const cy = (s0 * (x2 - x1) + s1 * (x0 - x2) + s2 * (x1 - x0)) / D;
   const dx = x0 - cx;
   const dy = y0 - cy;
-  const r = Math.hypot(dx, dy);
+  const r = hypot2(dx, dy);
   if (!Number.isFinite(cx) || !Number.isFinite(cy) || !Number.isFinite(r) || !(r > 0)) {
     return null;
   }
@@ -122,8 +123,8 @@ function centerFormEndpointError(
 ): number {
   const { cx, cy, r, startAngle } = circle;
   const endAngle = startAngle + circle.span;
-  const startError = Math.hypot(cx + r * Math.cos(startAngle) - sx, cy + r * Math.sin(startAngle) - sy);
-  const endError = Math.hypot(cx + r * Math.cos(endAngle) - ex, cy + r * Math.sin(endAngle) - ey);
+  const startError = hypot2(cx + r * Math.cos(startAngle) - sx, cy + r * Math.sin(startAngle) - sy);
+  const endError = hypot2(cx + r * Math.cos(endAngle) - ex, cy + r * Math.sin(endAngle) - ey);
   return startError > endError ? startError : endError;
 }
 
@@ -152,8 +153,8 @@ function tryEmitArcFromSegment(
   const dq1y = q1y - cy;
   const dq3x = q3x - cx;
   const dq3y = q3y - cy;
-  const err1 = Math.abs(Math.hypot(dq1x, dq1y) - r);
-  const err3 = Math.abs(Math.hypot(dq3x, dq3y) - r);
+  const err1 = Math.abs(hypot2(dq1x, dq1y) - r);
+  const err3 = Math.abs(hypot2(dq3x, dq3y) - r);
   let err = err1 > err3 ? err1 : err3;
   if (endpointError > err) {
     err = endpointError;

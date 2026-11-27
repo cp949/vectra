@@ -12,7 +12,7 @@
 import type { IntersectionKind, LinePolygonIntersectionHit, PolygonLike, XYObjectWritable, XYWritable } from '../types';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';
-import { DEFAULT_EPSILON } from './numeric';
+import { DEFAULT_EPSILON, hypot2 } from './numeric';
 import {
   edgeParam,
   type LineFamilyPolygonEdgeScanRecorder,
@@ -97,7 +97,7 @@ export function lineFamilyPolygonIntersectionHits(
       // edge-local tolerance: epsilon(거리 스케일)을 edge 길이로 나눠 normalized [0, 1] 축으로 환산한다.
       // 그러지 않으면 긴 edge에서 tolerance가 거리로 부풀어 polygon 밖 점을 touch로 잡거나
       // 내부 transversal 교점을 touch로 오분류한다.
-      const edgeLen = Math.hypot(ex, ey);
+      const edgeLen = hypot2(ex, ey);
       // edgeLen === 0이면 cross = 0이고 분자도 0이라 tLine이 NaN이 되어 위에서 이미 걸러진다. edgeLen > 0이다.
       const edgeTol = epsilon / edgeLen;
       if (tEdge < -edgeTol || tEdge > 1 + edgeTol) return;
@@ -216,7 +216,7 @@ export function recordToHit(record: LinePolygonHitRecord): LinePolygonIntersecti
 /** 두 line parameter 사이 실제 좌표계 길이를 계산한다. */
 function lineParamSpanLength(lo: number, hi: number, dx: number, dy: number): number {
   const dt = hi - lo;
-  return Math.hypot(dt * dx, dt * dy);
+  return hypot2(dt * dx, dt * dy);
 }
 
 /**

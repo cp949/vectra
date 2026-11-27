@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 unit vector a, b 사이를 구면 보간(slerp)한 결과를 out에 기록하고 out을 반환한다.
@@ -30,7 +31,7 @@ export function slerpInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInp
     throw new RangeError('slerp: zero-vector는 방향이 없으므로 보간할 수 없다');
   }
 
-  const dot = (ax * bx + ay * by) / (Math.hypot(ax, ay) * Math.hypot(bx, by));
+  const dot = (ax * bx + ay * by) / (hypot2(ax, ay) * hypot2(bx, by));
   // 수치 오차로 [-1, 1] 범위를 벗어나는 경우를 clamp한다
   const clampedDot = Math.max(-1, Math.min(1, dot));
   const omega = Math.acos(clampedDot);

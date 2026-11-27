@@ -2,6 +2,7 @@ import { readX, readY } from '../internal/xy';
 import type { CenterArcLike, XYInput } from '../types';
 import { isDegenerateRadii } from './arc.internal';
 import { GL5_NODES, GL5_WEIGHTS } from './speed-length.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 곡선의 매개변수 구간 [from, to]와 그 위의 구간 적분기.
@@ -70,7 +71,7 @@ export function cubicSpeed(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput): 
           const dx = 3 * (mt2 * (x1 - x0) + twoMtT * (x2 - x1) + t2 * (x3 - x2));
           const dy = 3 * (mt2 * (y1 - y0) + twoMtT * (y2 - y1) + t2 * (y3 - y2));
 
-          sum += GL5_WEIGHTS[i] * Math.hypot(dx, dy);
+          sum += GL5_WEIGHTS[i] * hypot2(dx, dy);
         }
 
         total += halfLen * sum;
@@ -126,7 +127,7 @@ export function quadraticSpeed(p0: XYInput, p1: XYInput, p2: XYInput): CurveSpee
           const dx = twoMt * (x1 - x0) + twoT * (x2 - x1);
           const dy = twoMt * (y1 - y0) + twoT * (y2 - y1);
 
-          sum += GL5_WEIGHTS[i] * Math.hypot(dx, dy);
+          sum += GL5_WEIGHTS[i] * hypot2(dx, dy);
         }
 
         total += halfLen * sum;
@@ -174,7 +175,7 @@ export function centerArcSpeed(centerArc: CenterArcLike): CurveSpeed {
 
         for (let i = 0; i < GL5_NODES.length; i++) {
           const theta = halfLen * GL5_NODES[i] + mid;
-          sum += GL5_WEIGHTS[i] * Math.hypot(radiusX * Math.sin(theta), radiusY * Math.cos(theta));
+          sum += GL5_WEIGHTS[i] * hypot2(radiusX * Math.sin(theta), radiusY * Math.cos(theta));
         }
 
         total += halfLen * sum;

@@ -1,5 +1,6 @@
 import { isXYObject, isXYObjectWritable } from '../internal/xy-object.internal';
 import type { XYInput, XYLike, XYObjectWritable, XYTuple, XYTupleWritable, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * input 벡터를 정규화하여 out에 기록하고 out을 반환한다.
@@ -15,7 +16,7 @@ export function normalizeInto<Out extends XYWritable>(out: Out, input: XYInput):
   if (isXYObjectWritable(out) && isXYObject(input)) {
     const ix = input.x;
     const iy = input.y;
-    const len = Math.hypot(ix, iy);
+    const len = hypot2(ix, iy);
     if (len === 0) {
       out.x = 0;
       out.y = 0;
@@ -33,7 +34,7 @@ export function normalizeInto<Out extends XYWritable>(out: Out, input: XYInput):
 function normalizeIntoShared<Out extends XYWritable>(out: Out, input: XYInput): Out {
   const x = Array.isArray(input) ? (input as XYTuple)[0] : (input as XYLike).x;
   const y = Array.isArray(input) ? (input as XYTuple)[1] : (input as XYLike).y;
-  const len = Math.hypot(x, y);
+  const len = hypot2(x, y);
   if (Array.isArray(out)) {
     (out as XYTupleWritable)[0] = len === 0 ? 0 : x / len;
     (out as XYTupleWritable)[1] = len === 0 ? 0 : y / len;

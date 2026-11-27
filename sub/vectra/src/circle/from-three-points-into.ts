@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { CircleWritable, XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 세 점을 지나는 circumscribed circle을 out에 기록하고 out을 반환한다.
@@ -47,6 +48,6 @@ export function fromThreePointsInto<Out extends CircleWritable<XYWritable>>(
   const uy = (a2 * (cx - bx) + b2 * (ax - cx) + c2 * (bx - ax)) / D;
 
   writeXY(out.center, ux, uy);
-  out.radius = Math.hypot(ax - ux, ay - uy);
+  out.radius = hypot2(ax - ux, ay - uy);
   return out;
 }

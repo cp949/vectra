@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY } from '../internal/xy';
 import type { CircleLike, XYInput, XYObjectWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 외부 점에서 원까지의 접선점 2개를 out에 기록한다.
@@ -31,7 +32,7 @@ export function tangentPointsFromExternalInto(
 
   const dx = px - cx;
   const dy = py - cy;
-  const dist = Math.hypot(dx, dy);
+  const dist = hypot2(dx, dy);
   const distSq = dx * dx + dy * dy;
   const rSq = r * r;
 

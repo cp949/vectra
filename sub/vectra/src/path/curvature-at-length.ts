@@ -5,6 +5,7 @@ import { ellipseArcCurvature } from './path-ellipse-arc.internal';
 import type { DrawSegment } from './path-segments.internal';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * segment kind에 따라 segment-local arc-length parameter `localT ∈ [0, 1]` 위치의 signed
@@ -47,7 +48,7 @@ function quadraticSegmentCurvatureAt(seg: Extract<DrawSegment, { kind: 'quadrati
   const d1y = twoMt * (cmd.y1 - seg.fromY) + twoT * (cmd.y - cmd.y1);
   const d2x = 2 * (cmd.x - 2 * cmd.x1 + seg.fromX);
   const d2y = 2 * (cmd.y - 2 * cmd.y1 + seg.fromY);
-  const d1Len = Math.hypot(d1x, d1y);
+  const d1Len = hypot2(d1x, d1y);
   const d1Cubed = d1Len * d1Len * d1Len;
   if (d1Cubed === 0) return Number.NaN;
   return (d1x * d2y - d1y * d2x) / d1Cubed;
@@ -68,7 +69,7 @@ function cubicSegmentCurvatureAt(seg: Extract<DrawSegment, { kind: 'cubic' }>, t
   const d1y = 3 * (mt2 * (cmd.y1 - seg.fromY) + twoMtT * (cmd.y2 - cmd.y1) + t2 * (cmd.y - cmd.y2));
   const d2x = 6 * (mt * (cmd.x2 - 2 * cmd.x1 + seg.fromX) + t * (cmd.x - 2 * cmd.x2 + cmd.x1));
   const d2y = 6 * (mt * (cmd.y2 - 2 * cmd.y1 + seg.fromY) + t * (cmd.y - 2 * cmd.y2 + cmd.y1));
-  const d1Len = Math.hypot(d1x, d1y);
+  const d1Len = hypot2(d1x, d1y);
   const d1Cubed = d1Len * d1Len * d1Len;
   if (d1Cubed === 0) return Number.NaN;
   return (d1x * d2y - d1y * d2x) / d1Cubed;

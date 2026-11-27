@@ -1,5 +1,6 @@
 import { readTriangleRawCoords } from '../internal/triangle';
 import type { TriangleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * triangle의 세 변 길이 차이가 모두 epsilon 이하이면 true를 반환한다.
@@ -12,9 +13,9 @@ import type { TriangleLike } from '../types';
  */
 export function isEquilateral(triangle: TriangleLike, epsilon = 0): boolean {
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-  const ab = Math.hypot(bx - ax, by - ay);
-  const bc = Math.hypot(cx - bx, cy - by);
-  const ca = Math.hypot(ax - cx, ay - cy);
+  const ab = hypot2(bx - ax, by - ay);
+  const bc = hypot2(cx - bx, cy - by);
+  const ca = hypot2(ax - cx, ay - cy);
 
   return Math.abs(ab - bc) <= epsilon && Math.abs(bc - ca) <= epsilon && Math.abs(ca - ab) <= epsilon;
 }

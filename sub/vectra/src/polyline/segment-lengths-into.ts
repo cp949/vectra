@@ -9,7 +9,7 @@ import type { PolylineLike } from '../types';
  * 결과 개수는 segment 수(`Math.max(0, points.length - 1)`)와 같다. empty / single-point
  * polyline은 outLengths를 clear하고 빈 배열을 반환한다. repeated-point segment는 `0`을 기록한다.
  *
- * 길이는 `Math.hypot` 기반으로 계산한다. 기존 polyline domain과 맞춰 non-finite 좌표 validation은
+ * 길이는 overflow·underflow를 피하는 Euclidean 거리로 계산한다. 기존 polyline domain과 맞춰 non-finite 좌표 validation은
  * 수행하지 않는다. NaN / Infinity 좌표는 JS 산술 결과를 그대로 전파한다.
  *
  * @param outLengths segment 길이를 기록할 writable number 배열

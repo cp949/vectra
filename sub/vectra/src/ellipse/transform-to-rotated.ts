@@ -10,7 +10,7 @@ import { transformToRotatedInto } from './transform-to-rotated-into';
  *
  * 성공 시:
  * - rotation = atan2(b, a) (image x-axis = column1 방향).
- * - radiusX = rx * Math.hypot(a, b), radiusY = ry * Math.hypot(c, d). column length는 비음수이므로
+ * - radiusX = rx * hypot(a, b), radiusY = ry * hypot(c, d). column length는 비음수이므로
  *   reflection이어도 radii 부호는 입력 rx/ry 부호를 따른다. `Math.abs` 적용 없음.
  * - center = (a*cx + c*cy + tx, b*cx + d*cy + ty).
  *

@@ -2,6 +2,7 @@ import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../in
 import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { EllipseLike, MatrixLike, RotatedEllipseWritable, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 function directionDot(a: number, b: number, c: number, d: number): number {
   const column1Scale = Math.max(Math.abs(a), Math.abs(b));
@@ -20,7 +21,7 @@ function directionDot(a: number, b: number, c: number, d: number): number {
  *
  * 성공 시:
  * - rotation = atan2(b, a) (image x-axis = column1 방향).
- * - radiusX = rx * Math.hypot(a, b), radiusY = ry * Math.hypot(c, d). column length는 비음수이므로
+ * - radiusX = rx * hypot(a, b), radiusY = ry * hypot(c, d). column length는 비음수이므로
  *   reflection이어도 radii 부호는 입력 rx/ry 부호를 따른다. `Math.abs` 적용 없음.
  * - center = (a*cx + c*cy + tx, b*cx + d*cy + ty).
  *
@@ -54,8 +55,8 @@ export function transformToRotatedInto<Out extends RotatedEllipseWritable<XYWrit
   const cy = readY(center);
   const rx = readEllipseRadiusX(ellipse);
   const ry = readEllipseRadiusY(ellipse);
-  const column1Length = Math.hypot(a, b);
-  const column2Length = Math.hypot(c, d);
+  const column1Length = hypot2(a, b);
+  const column2Length = hypot2(c, d);
   const hasZeroColumn = column1Length === 0 || column2Length === 0;
 
   if (rx > 0 && ry > 0 && hasZeroColumn) return false;

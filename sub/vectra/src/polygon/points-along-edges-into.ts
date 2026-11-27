@@ -1,6 +1,7 @@
 import { readPolygonPoints } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
 import type { PolygonLike, XYObjectWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * polygon boundary를 implicit closed ring으로 보고 arc-length 균등 간격으로 샘플링해 outPoints에 기록한다.
@@ -57,7 +58,7 @@ export function pointsAlongEdgesInto(
     const j = (i + 1) % n;
     const dx = xs[j] - xs[i];
     const dy = ys[j] - ys[i];
-    const len = Math.hypot(dx, dy);
+    const len = hypot2(dx, dy);
     segLens[i] = len;
     totalLen += len;
   }

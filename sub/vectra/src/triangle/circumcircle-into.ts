@@ -2,6 +2,7 @@ import { readTriangleRawCoords } from '../internal/triangle';
 import { solveTriangleCircumcenter } from '../internal/triangle-circumcenter';
 import { writeXY } from '../internal/xy';
 import type { CircleWritable, TriangleLike, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 const center = { x: 0, y: 0 };
 
@@ -23,6 +24,6 @@ export function circumcircleInto<Out extends CircleWritable<XYWritable>>(
   // out.center가 vertex와 alias일 수 있으므로 기록 전에 vertex A를 읽어 둔다.
   const { ax, ay } = readTriangleRawCoords(triangle);
   writeXY(out.center, center.x, center.y);
-  out.radius = Math.hypot(ax - center.x, ay - center.y);
+  out.radius = hypot2(ax - center.x, ay - center.y);
   return out;
 }

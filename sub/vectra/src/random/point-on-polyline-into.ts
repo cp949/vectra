@@ -13,7 +13,7 @@ import { random } from './random';
  * degenerate 처리: `totalLength <= 0` 또는 `!Number.isFinite(totalLength)`이면
  * false를 반환하고 out을 수정하지 않는다.
  * — pts.length < 2는 totalLength=0으로 환원되어 같은 분기에서 처리된다.
- * — NaN vertex는 `length`에서 Math.hypot를 통해 NaN이 전파되어 false를 반환한다.
+ * — NaN vertex는 `length`의 Euclidean 거리를 통해 NaN이 전파되어 false를 반환한다.
  * — Infinity vertex는 totalLength가 Infinity가 되어 false를 반환한다.
  *
  * RNG sequence는 same-version 한정 stable이며 알고리즘 변경 시 회귀가 아니다.

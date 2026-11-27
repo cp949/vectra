@@ -1,6 +1,7 @@
 import { readTriangleRawCoords } from '../internal/triangle';
 import { writeXY } from '../internal/xy';
 import type { TriangleLike, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * triangle의 내심(incenter)을 계산해 out에 기록하고 out을 반환한다.
@@ -16,9 +17,9 @@ import type { TriangleLike, XYWritable } from '../types';
 export function incenterInto<Out extends XYWritable>(out: Out, triangle: TriangleLike): Out | false {
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
   // a = 변 BC (vertex A 맞은편), b = 변 CA (vertex B 맞은편), c = 변 AB (vertex C 맞은편)
-  const a = Math.hypot(cx - bx, cy - by);
-  const b = Math.hypot(ax - cx, ay - cy);
-  const c = Math.hypot(bx - ax, by - ay);
+  const a = hypot2(cx - bx, cy - by);
+  const b = hypot2(ax - cx, ay - cy);
+  const c = hypot2(bx - ax, by - ay);
   const perimeter = a + b + c;
   if (perimeter === 0) return false;
   writeXY(out, (a * ax + b * bx + c * cx) / perimeter, (a * ay + b * by + c * cy) / perimeter);

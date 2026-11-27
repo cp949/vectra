@@ -12,7 +12,7 @@
 
 import type { LinePolygonOverlapIntervalDetail, PolygonLike, XYObjectWritable } from '../types';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
-import { DEFAULT_EPSILON } from './numeric';
+import { DEFAULT_EPSILON, hypot2 } from './numeric';
 import {
   edgeParam,
   type LineFamilyPolygonEdgeScanRecorder,
@@ -105,7 +105,7 @@ export function lineFamilyPolygonOverlapIntervals(
       const endX = ox + hi * dx;
       const endY = oy + hi * dy;
       // 빈 구간 또는 한 점 수렴은 interval이 아니다. 길이는 line parameter가 아니라 좌표계 거리 기준이다.
-      if (Math.hypot(endX - startX, endY - startY) <= epsilon) return;
+      if (hypot2(endX - startX, endY - startY) <= epsilon) return;
       outIntervals.push({
         startX,
         startY,

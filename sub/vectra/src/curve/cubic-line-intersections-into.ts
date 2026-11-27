@@ -2,6 +2,7 @@ import { readX, readY } from '../internal/xy';
 import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput, XYObjectWritable } from '../types';
 import { solveCubicInClosedUnit } from './cubic-solve.internal';
 import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-intersections.internal';
+import { hypot2 } from '../internal/numeric';
 
 /** 다항식 계수 noise 바닥의 상대 계수. `|n|·(좌표 크기)`에 곱한다. double 상쇄 오차보다 충분히 크다. */
 const COEFFICIENT_REL_EPS = 1e-12;
@@ -74,7 +75,7 @@ export function cubicLineIntersectionsInto(
     Math.abs(ox),
     Math.abs(oy)
   );
-  const normalLength = Math.hypot(nx, ny);
+  const normalLength = hypot2(nx, ny);
   const coefficientNoise = COEFFICIENT_REL_EPS * normalLength * coordinateScale;
 
   const makePoint = (): XYObjectWritable => ({ x: 0, y: 0 });

@@ -2,6 +2,7 @@ import { readCapsuleA, readCapsuleB, readCapsuleRadius, validateCapsuleRadius } 
 import { segmentClosestPointXY } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { CapsuleLike, XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * capsule closed region에서 point에 가장 가까운 점을 out에 기록하고 out을 반환한다.
@@ -28,7 +29,7 @@ export function closestPointInto<Out extends XYWritable>(out: Out, capsule: Caps
   const q = segmentClosestPointXY(ax, ay, bx, by, px, py);
   const dx = px - q.x;
   const dy = py - q.y;
-  const dist = Math.hypot(dx, dy);
+  const dist = hypot2(dx, dy);
 
   // 내부/boundary point는 region 안에 있으므로 point 자체가 closest point다.
   // dist <= r이면 외부가 아니다. 외부면 dist > r >= 0이라 dist > 0이고 division이 안전하다.

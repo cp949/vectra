@@ -8,6 +8,7 @@ import {
   requireNonNegative,
   signedInsetIntervalDistance,
 } from './primitive.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * uniform corner radius rounded rect와 point 사이의 signed distance를 반환한다.
@@ -42,7 +43,7 @@ export function sdfRoundedRect(rect: RectLike, radius: number, point: XYInput): 
   const dx = signedInsetIntervalDistance(rx, width, effectiveRadius, px);
   const dy = signedInsetIntervalDistance(ry, height, effectiveRadius, py);
   if (dx > 0 || dy > 0) {
-    return canonicalizeZero(Math.hypot(Math.max(dx, 0), Math.max(dy, 0)) - effectiveRadius);
+    return canonicalizeZero(hypot2(Math.max(dx, 0), Math.max(dy, 0)) - effectiveRadius);
   }
 
   return canonicalizeZero(Math.max(dx, dy) - effectiveRadius);

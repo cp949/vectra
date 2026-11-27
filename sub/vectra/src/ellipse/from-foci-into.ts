@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { EllipseWritable, XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 초점과 초점까지의 거리 합으로 x축 정렬 ellipse를 계산하여 out에 기록하고 out을 반환한다.
@@ -47,7 +48,7 @@ export function fromFociInto<Center extends XYWritable>(
 
   const dx = bx - ax;
   const dy = by - ay;
-  const dist = Math.hypot(dx, dy);
+  const dist = hypot2(dx, dy);
 
   // 삼각형 부등식: sumOfDistances >= dist (두 초점 사이 거리 이상이어야 한다)
   if (sumOfDistances < dist) {

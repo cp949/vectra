@@ -31,7 +31,7 @@ export interface PolylineFrameWritable<Point extends XYWritable = XYObjectWritab
 export interface PolylineConcatOptions {
   /**
    * 인접 source polyline의 접합 endpoint를 dedupe할 거리 임계값. `>= 0`인 finite number여야 한다.
-   * 기본값 `0`. `0`이면 exact equality로 비교하고, 양수이면 인접 endpoint 사이 `Math.hypot` 거리가
+   * 기본값 `0`. `0`이면 exact equality로 비교하고, 양수이면 인접 endpoint 사이 Euclidean 거리가
    * 이 값 이하일 때 현재 source의 첫 point를 제거한다. 음수 / `NaN` / `±Infinity`는 `RangeError`다.
    */
   weldTolerance?: number;

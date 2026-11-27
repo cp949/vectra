@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY } from '../internal/xy';
 import type { CircleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * outer circle이 inner circle을 포함하면 true를 반환한다.
@@ -29,7 +30,7 @@ export function containsCircle(outer: CircleLike, inner: CircleLike): boolean {
 
   const dx = ix - ox;
   const dy = iy - oy;
-  const centerDist = Math.hypot(dx, dy);
+  const centerDist = hypot2(dx, dy);
 
   // closed boundary: outer.radius - inner.radius >= centerDist
   return ro - ri >= centerDist;

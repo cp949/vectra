@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * from에서 to 방향 단위 벡터를 out에 기록하고 out을 반환한다.
@@ -16,7 +17,7 @@ import type { XYInput, XYWritable } from '../types';
 export function directionToInto<Out extends XYWritable>(out: Out, from: XYInput, to: XYInput): Out {
   const dx = readX(to) - readX(from);
   const dy = readY(to) - readY(from);
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   return len === 0 ? writeXY(out, 0, 0) : writeXY(out, dx / len, dy / len);
 }

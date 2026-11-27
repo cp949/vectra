@@ -1,5 +1,6 @@
 import type { CapsuleLike, CapsuleTuple, XYInput } from '../types';
 import { segmentClosestPointXY } from './segment';
+import { hypot2 } from './numeric';
 
 function isCapsuleTuple(capsule: CapsuleLike): capsule is CapsuleTuple {
   return Array.isArray(capsule);
@@ -66,7 +67,7 @@ export function capsuleAxisDistanceSqXY(
 /**
  * point에서 capsule axis segment까지의 distance를 반환한다.
  *
- * `Math.hypot`으로 거리를 계산해 finite 좌표 차이의 제곱 overflow를 피한다. zero-axis(`a === b`)는
+ * overflow·underflow를 피하는 Euclidean 거리로 계산해 finite 좌표 차이의 제곱 overflow를 피한다. zero-axis(`a === b`)는
  * endpoint까지의 거리다.
  *
  * @param ax axis 시작점 x
@@ -78,5 +79,5 @@ export function capsuleAxisDistanceSqXY(
  */
 export function capsuleAxisDistanceXY(ax: number, ay: number, bx: number, by: number, px: number, py: number): number {
   const q = segmentClosestPointXY(ax, ay, bx, by, px, py);
-  return Math.hypot(px - q.x, py - q.y);
+  return hypot2(px - q.x, py - q.y);
 }

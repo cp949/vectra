@@ -1,6 +1,7 @@
 import type { XYInput, XYWritable } from '../types';
 import { pointDist } from './polyline-distance-primitive.internal';
 import { readX, readY, writeXY } from './xy';
+import { hypot2 } from './numeric';
 
 /**
  * 누적 길이 표의 개수가 polyline vertex 개수와 같은지 확인한다.
@@ -112,7 +113,7 @@ export function polylineSegmentTangentAtLengthByTableInto(
   const i = findSegmentIndexByLength(cumulativeLengths, target > 0 ? target : Number.MIN_VALUE);
   const dx = readX(points[i]) - readX(points[i - 1]);
   const dy = readY(points[i]) - readY(points[i - 1]);
-  const segLen = Math.hypot(dx, dy);
+  const segLen = hypot2(dx, dy);
   writeXY(out, dx / segLen, dy / segLen);
   return true;
 }

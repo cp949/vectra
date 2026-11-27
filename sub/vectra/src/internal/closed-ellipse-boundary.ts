@@ -10,6 +10,7 @@
 
 import type { XYObjectWritable } from '../types';
 import { lineFamilyEllipseIntersectionPoints } from './line-family-ellipse';
+import { hypot2 } from './numeric';
 
 /** boundary edge 한 변의 양 끝점 좌표. */
 export interface BoundaryEdge {
@@ -115,7 +116,7 @@ function isPointOnEllipseBoundary(
 ): boolean {
   const ux = (px - cx) / rx;
   const uy = (py - cy) / ry;
-  return Math.abs(Math.hypot(ux, uy) - 1) * Math.max(rx, ry) <= epsilon;
+  return Math.abs(hypot2(ux, uy) - 1) * Math.max(rx, ry) <= epsilon;
 }
 
 /** ellipse local 좌표 angle을 normalized turn `[0, 1)`로 반환한다. */

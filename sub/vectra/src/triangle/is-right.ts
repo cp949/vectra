@@ -1,8 +1,9 @@
 import { readTriangleRawCoords } from '../internal/triangle';
 import type { TriangleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 function scaledRightThreshold(epsilon: number, dx1: number, dy1: number, dx2: number, dy2: number): number {
-  return epsilon * Math.hypot(dx1, dy1) * Math.hypot(dx2, dy2);
+  return epsilon * hypot2(dx1, dy1) * hypot2(dx2, dy2);
 }
 
 /**

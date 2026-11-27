@@ -1,6 +1,7 @@
 import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { readX, readY } from '../internal/xy';
 import type { RayLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * ray와 `point` 사이 최단 거리를 반환한다.
@@ -16,10 +17,10 @@ export function distanceToPoint(ray: RayLike, point: XYInput): number {
   const lenSq = dx * dx + dy * dy;
   const px = readX(point) - ox;
   const py = readY(point) - oy;
-  if (lenSq === 0) return Math.hypot(px, py);
+  if (lenSq === 0) return hypot2(px, py);
   // t를 [0, Infinity)로 clamp
   const t = Math.max(0, (px * dx + py * dy) / lenSq);
   const cx = ox + t * dx - readX(point);
   const cy = oy + t * dy - readY(point);
-  return Math.hypot(cx, cy);
+  return hypot2(cx, cy);
 }

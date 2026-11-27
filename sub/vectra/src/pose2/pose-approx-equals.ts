@@ -7,11 +7,12 @@ import {
 } from '../internal/pose2';
 import { readX, readY } from '../internal/xy';
 import type { Pose2Like, PoseApproxEqualsOptions } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 rigid pose가 position/angle 허용 오차 안에서 같은지 boolean으로 반환한다.
  *
- * position과 angle을 분리해 비교한다. position은 `Math.hypot(ax - bx, ay - by) <=
+ * position과 angle을 분리해 비교한다. position은 `hypot(ax - bx, ay - by) <=
  * positionEpsilon`, angle은 shortest angular difference의 absolute value가 `<= angleEpsilon`이면
  * 같다고 본다. 둘 다 만족해야 `true`다. `poseDistance` 같은 결합 scalar metric이 아니다.
  *
@@ -44,7 +45,7 @@ export function poseApproxEquals(a: Pose2Like, b: Pose2Like, options?: PoseAppro
   const angleEpsilon = options?.angleEpsilon ?? 1e-9;
   validatePoseEpsilon(angleEpsilon, 'angleEpsilon');
 
-  const positionEqual = Math.hypot(ax - bx, ay - by) <= positionEpsilon;
+  const positionEqual = hypot2(ax - bx, ay - by) <= positionEpsilon;
   const angleEqual = shortestAngleDifferenceAbs(aAngle, bAngle) <= angleEpsilon;
   return positionEqual && angleEqual;
 }

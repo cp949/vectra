@@ -3,6 +3,7 @@ import { readX, readY } from '../internal/xy';
 import type { PathCommand, PathMeasurementOptions, XYInput, XYObjectWritable } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
+import { hypot2 } from '../internal/numeric';
 
 interface DistanceSearchState {
   hasCandidate: boolean;
@@ -88,7 +89,7 @@ export function distanceToPoint(
     const first = commands[0];
     const fallbackX = first.kind === 'move' ? first.x : 0;
     const fallbackY = first.kind === 'move' ? first.y : 0;
-    return Math.hypot(fallbackX - qx, fallbackY - qy);
+    return hypot2(fallbackX - qx, fallbackY - qy);
   }
 
   return Math.sqrt(state.minDistSq);

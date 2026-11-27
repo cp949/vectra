@@ -7,12 +7,13 @@ import {
 } from '../internal/pose2';
 import { readX, readY } from '../internal/xy';
 import type { Pose2Like, PoseDistanceOptions } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 rigid pose 사이 거리를 translation/angular 결합 scalar로 반환한다.
  *
- * position distance는 `Math.hypot(ax - bx, ay - by)`, angular distance는 shortest angular
- * difference의 absolute value다. 둘을 `Math.hypot(positionDistance, angularDistance *
+ * position distance는 `hypot(ax - bx, ay - by)`, angular distance는 shortest angular
+ * difference의 absolute value다. 둘을 `hypot(positionDistance, angularDistance *
  * angularWeight)`로 결합한다. `angularWeight`가 radian angle 값을 position 거리 단위로 환산한다.
  * `poseApproxEquals` 같은 분리 boolean 비교가 아니라 단일 결합 metric이다.
  *
@@ -45,9 +46,9 @@ export function poseDistance(a: Pose2Like, b: Pose2Like, options?: PoseDistanceO
   const angularWeight = options?.angularWeight ?? 1;
   validatePoseEpsilon(angularWeight, 'angularWeight');
 
-  const positionDistance = Math.hypot(ax - bx, ay - by);
+  const positionDistance = hypot2(ax - bx, ay - by);
   const angularDistance = shortestAngleDifferenceAbs(aAngle, bAngle);
-  const distance = Math.hypot(positionDistance, angularDistance * angularWeight);
+  const distance = hypot2(positionDistance, angularDistance * angularWeight);
   if (!Number.isFinite(distance)) {
     throw new RangeError(
       `poseDistance result must be finite, got ${String(distance)} (positionDistance ${String(positionDistance)}, angularDistance ${String(angularDistance)}, angularWeight ${String(angularWeight)})`

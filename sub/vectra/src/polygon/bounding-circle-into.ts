@@ -1,6 +1,7 @@
 import { readPolygonPoints } from '../internal/polygon';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { CircleWritable, PolygonLike, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * polygon을 감싸는 approximate enclosing circle을 out에 기록하고 out을 반환한다.
@@ -63,7 +64,7 @@ export function boundingCircleInto<Out extends CircleWritable<XYWritable>>(out: 
     const py = readY(pts[i]);
     const dx = px - cx;
     const dy = py - cy;
-    const dist = Math.hypot(dx, dy);
+    const dist = hypot2(dx, dy);
     if (dist > r) {
       // center를 점 방향으로 이동하고 radius 확장
       const newR = (r + dist) / 2;

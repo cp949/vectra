@@ -1,5 +1,6 @@
 import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
 import type { TriangleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 triangle이 닮음(similar)인지 boolean으로 반환한다.
@@ -43,9 +44,9 @@ export function similarTo(
 
   const ca = readTriangleRawCoords(a);
   const cb = readTriangleRawCoords(b);
-  const rAB = Math.hypot(cb.bx - cb.ax, cb.by - cb.ay) / Math.hypot(ca.bx - ca.ax, ca.by - ca.ay);
-  const rBC = Math.hypot(cb.cx - cb.bx, cb.cy - cb.by) / Math.hypot(ca.cx - ca.bx, ca.cy - ca.by);
-  const rCA = Math.hypot(cb.ax - cb.cx, cb.ay - cb.cy) / Math.hypot(ca.ax - ca.cx, ca.ay - ca.cy);
+  const rAB = hypot2(cb.bx - cb.ax, cb.by - cb.ay) / hypot2(ca.bx - ca.ax, ca.by - ca.ay);
+  const rBC = hypot2(cb.cx - cb.bx, cb.cy - cb.by) / hypot2(ca.cx - ca.bx, ca.cy - ca.by);
+  const rCA = hypot2(cb.ax - cb.cx, cb.ay - cb.cy) / hypot2(ca.ax - ca.cx, ca.ay - ca.cy);
 
   // pairwise 비교(세 조건 모두 유지). 절대 허용오차이므로 |rCA - rAB|는 앞 두 조건에서 <= 2·epsilon만
   // 보장돼 transitive하지 않다. 세 번째 조건을 지우면 허용오차가 느슨해지므로 제거하지 않는다.

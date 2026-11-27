@@ -1,6 +1,7 @@
 import type { XYInput, XYWritable } from '../types';
 import { pointDist } from './polyline-distance-primitive.internal';
 import { readX, readY, writeXY } from './xy';
+import { hypot2 } from './numeric';
 
 /**
  * polyline points의 모든 인접 segment 길이 합을 반환한다.
@@ -65,7 +66,7 @@ export function polylineVertexTangentInto(out: XYWritable, points: readonly XYIn
   }
 
   // 유효한 인접 edge가 없으면 실패
-  const mag = Math.hypot(tx, ty);
+  const mag = hypot2(tx, ty);
   if (mag === 0) return false;
 
   writeXY(out, tx / mag, ty / mag);
@@ -118,7 +119,7 @@ export function polylineSegmentTangentAtLengthInto(
     const by = readY(points[i]);
     const dx = bx - ax;
     const dy = by - ay;
-    const segLen = Math.hypot(dx, dy);
+    const segLen = hypot2(dx, dy);
 
     if (segLen === 0) continue;
 

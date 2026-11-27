@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY } from '../internal/xy';
 import type { CircleLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * circle과 point 사이의 부호 없는 최단 거리를 반환한다.
@@ -18,7 +19,7 @@ export function distanceToPoint(circle: CircleLike, point: XYInput): number {
   const py = readY(point);
   const dx = px - cx;
   const dy = py - cy;
-  const distFromCenter = Math.hypot(dx, dy);
+  const distFromCenter = hypot2(dx, dy);
 
   // empty circle: center까지의 거리를 반환한다
   if (readCircleRadius(circle) <= 0) return distFromCenter;

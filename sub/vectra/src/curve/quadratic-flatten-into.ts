@@ -1,5 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import type { FlattenOptions, XYInput, XYObjectWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * flatness 기준 측정 helper.
@@ -10,7 +11,7 @@ import type { FlattenOptions, XYInput, XYObjectWritable } from '../types';
 function measureFlatness(p0x: number, p0y: number, p1x: number, p1y: number, p2x: number, p2y: number): number {
   const midX = (p0x + p2x) * 0.5;
   const midY = (p0y + p2y) * 0.5;
-  return Math.hypot(p1x - midX, p1y - midY);
+  return hypot2(p1x - midX, p1y - midY);
 }
 
 /**

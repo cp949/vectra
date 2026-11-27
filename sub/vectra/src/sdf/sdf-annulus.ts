@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import type { CircleLike, XYInput } from '../types';
 import { canonicalizeZero, requireFiniteX, requireFiniteY, requireNonNegative } from './primitive.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * annulus(ring)와 point 사이의 signed distance를 반환한다.
@@ -31,7 +32,7 @@ export function sdfAnnulus(circle: CircleLike, innerRadius: number, point: XYInp
   const px = requireFiniteX(point, 'point');
   const py = requireFiniteY(point, 'point');
 
-  const distance = Math.hypot(px - cx, py - cy);
+  const distance = hypot2(px - cx, py - cy);
 
   // innerRadius 0은 hole이 없는 filled disk다. degenerate inner boundary를 만들지 않는다.
   if (inner === 0) return canonicalizeZero(distance - outerRadius);

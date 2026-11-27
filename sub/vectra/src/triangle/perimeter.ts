@@ -1,5 +1,6 @@
 import { readTriangleRawCoords } from '../internal/triangle';
 import type { TriangleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * triangle 세 변의 길이 합을 반환한다.
@@ -11,5 +12,5 @@ import type { TriangleLike } from '../types';
  */
 export function perimeter(triangle: TriangleLike): number {
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-  return Math.hypot(bx - ax, by - ay) + Math.hypot(cx - bx, cy - by) + Math.hypot(ax - cx, ay - cy);
+  return hypot2(bx - ax, by - ay) + hypot2(cx - bx, cy - by) + hypot2(ax - cx, ay - cy);
 }

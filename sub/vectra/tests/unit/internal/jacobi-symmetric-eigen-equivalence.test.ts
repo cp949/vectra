@@ -5,12 +5,14 @@
  * 중복 eigenvalue matrix, 영 matrix, 여러 tolerance와 작은 maxIterations(수렴 실패)에서 `values`와
  * `vectors`가 이전 구현과 `Object.is` 수준으로 같다. 수렴 실패는 둘 다 `undefined`다.
  * `tolerance: 0`의 새 동작은 `tests/unit/linalg/eig-zero-tolerance.test.ts`가 고정한다.
+ * 이전 구현도 Euclidean 길이를 `hypot2`로 구한다. `hypot2` 자체의 정밀도는 `tests/unit/internal/hypot2.test.ts`가 고정한다.
  */
 import { describe, expect, test } from 'vitest';
 import {
   type JacobiSymmetricEigenRawOptions,
   jacobiSymmetricEigenRaw,
 } from '../../../src/internal/jacobi-symmetric-eigen';
+import { hypot2 } from '../../../src/internal/numeric';
 import { createRng } from '../../../src/random/create-rng';
 
 // 이전 구현. `theta` 또는 분모가 overflow하면 던진다. 새 구현의 비교 기준으로만 쓴다.
@@ -111,13 +113,13 @@ function computeJacobiRotation(
   if (!Number.isFinite(theta)) {
     throw new RangeError(`${errorPrefix} produced non-finite theta at (${p}, ${q}), got ${String(theta)}`);
   }
-  const denomMag = Math.abs(theta) + Math.hypot(theta, 1);
+  const denomMag = Math.abs(theta) + hypot2(theta, 1);
   // denomMag >= 1이라 0이 될 수 없다. overflow만 확인한다.
   if (!Number.isFinite(denomMag)) {
     throw new RangeError(`${errorPrefix} produced non-finite denominator at (${p}, ${q}), got ${String(denomMag)}`);
   }
   const t = theta >= 0 ? 1 / denomMag : -1 / denomMag;
-  const c = 1 / Math.hypot(t, 1);
+  const c = 1 / hypot2(t, 1);
   const s = t * c;
   return { c, s };
 }

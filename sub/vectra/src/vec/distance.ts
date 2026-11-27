@@ -1,5 +1,6 @@
 import { isXYObject } from '../internal/xy-object.internal';
 import type { XYInput, XYLike, XYTuple } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * a와 b 사이 Euclidean 거리를 반환한다.
@@ -10,7 +11,7 @@ import type { XYInput, XYLike, XYTuple } from '../types';
 export function distance(a: XYInput, b: XYInput): number {
   // object 입력만 받았으면 field를 이 함수에서 직접 읽는다
   if (isXYObject(a) && isXYObject(b)) {
-    return Math.hypot(b.x - a.x, b.y - a.y);
+    return hypot2(b.x - a.x, b.y - a.y);
   }
 
   return distanceShared(a, b);
@@ -18,7 +19,7 @@ export function distance(a: XYInput, b: XYInput): number {
 
 /** 배열 입력이 있을 때 쓰는 경로. 판별을 이 함수 안에서 직접 해 inlining 비용을 줄인다. */
 function distanceShared(a: XYInput, b: XYInput): number {
-  return Math.hypot(
+  return hypot2(
     (Array.isArray(b) ? (b as XYTuple)[0] : (b as XYLike).x) - (Array.isArray(a) ? (a as XYTuple)[0] : (a as XYLike).x),
     (Array.isArray(b) ? (b as XYTuple)[1] : (b as XYLike).y) - (Array.isArray(a) ? (a as XYTuple)[1] : (a as XYLike).y)
   );

@@ -34,7 +34,7 @@ return cross / denom;
 
 ```ts
 // 올바른 형태
-const speed = Math.hypot(dx, dy);
+const speed = hypot2(dx, dy);
 if (speed === 0) return Number.NaN;
 const denom = speed * speed * speed;
 return (dx * ddy - dy * ddx) / denom;

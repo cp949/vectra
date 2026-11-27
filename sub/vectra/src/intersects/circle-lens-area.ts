@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY } from '../internal/xy';
 import type { CircleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 disk(채워진 원)의 lens 중첩 면적을 scalar로 반환한다.
@@ -14,7 +15,7 @@ import type { CircleLike } from '../types';
  * - coincident equal circles(`d === 0`, 같은 반지름): full circle area.
  * - proper lens: 두 원호 조각(segment) 면적의 합.
  *
- * center distance는 `Math.hypot`로 계산한다. disjoint/containment 경계는 exact 비교로 판정하며
+ * center distance는 overflow·underflow를 피하는 Euclidean 거리로 계산한다. disjoint/containment 경계는 exact 비교로 판정하며
  * near-equality tolerance를 추가하지 않는다. proper lens의 중심각은 `atan2`로 구해 내접 경계 근처에서도
  * 정밀도를 잃지 않고 `NaN`이 나오지 않는다. detail helper와 달리 면적 값을 직접 반환하고
  * `Into`/companion이 없다.
@@ -35,7 +36,7 @@ export function circleLensArea(a: CircleLike, b: CircleLike): number {
   if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(bx) || !Number.isFinite(by)) return 0;
   if (!Number.isFinite(ra) || !Number.isFinite(rb) || ra <= 0 || rb <= 0) return 0;
 
-  const d = Math.hypot(bx - ax, by - ay);
+  const d = hypot2(bx - ax, by - ay);
   const sum = ra + rb;
   const diff = Math.abs(ra - rb);
 

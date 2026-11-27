@@ -2,12 +2,13 @@ import { pointDist, polylineTotalLength } from '../internal/polyline';
 import type { PathCommand, PathMeasurementOptions, PathPropertiesResult, XYObjectWritable } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
+import { hypot2 } from '../internal/numeric';
 
 /** segment polyline의 두 점을 잇는 edge 방향을 단위 벡터로 result에 기록한다. */
 function writeTangent(result: PathPropertiesResult, ax: number, ay: number, bx: number, by: number): void {
   const dx = bx - ax;
   const dy = by - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
   if (len === 0) {
     // zero-length edge: tangent 정의 불가. zero vector를 기록한다. caller 책임.
     result.tangentX = 0;

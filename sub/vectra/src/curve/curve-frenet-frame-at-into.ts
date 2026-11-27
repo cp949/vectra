@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { CurveFrenetFrameWritable, CurveLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * `CurveLike` 위의 파라미터 t에서 point / unit tangent / unit normal / signed curvature를
@@ -93,7 +94,7 @@ export function curveFrenetFrameAtInto<Out extends CurveFrenetFrameWritable>(
   // unit tangent / normal: derivative가 정확히 zero vector이면 둘 다 zero vector.
   // normal은 tangent의 좌측 90도 회전 (-ty, tx). len === 0 분기를 leaf와 동일하게 두어
   // degenerate에서 signed -0이 새지 않도록 한다.
-  const len = Math.hypot(d1x, d1y);
+  const len = hypot2(d1x, d1y);
   let tx = 0;
   let ty = 0;
   let nx = 0;

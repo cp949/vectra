@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * quadratic Bezier curve의 파라미터 t 위치 unit normal vector를 out에 기록하고 out을 반환한다.
@@ -35,7 +36,7 @@ export function quadraticNormalAtInto<Out extends XYWritable>(
   const dx = twoMt * (p1x - p0x) + twoT * (p2x - p1x);
   const dy = twoMt * (p1y - p0y) + twoT * (p2y - p1y);
 
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   if (len === 0) {
     return writeXY(out, 0, 0);

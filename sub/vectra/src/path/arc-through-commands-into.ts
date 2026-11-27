@@ -1,6 +1,7 @@
 import { readX, readY } from '../internal/xy';
 import type { PathCommand, XYInput } from '../types/index';
 import { lineCommandsInto } from './line-commands-into';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * from → through → to 3점을 지나는 외접원 호를 move + cubic × N command로 out에 기록하고 out을 반환한다.
@@ -65,7 +66,7 @@ export function arcThroughCommandsInto(
   const d = 2 * cross;
   const ux = (aSq * (by - cy) + bSq * (cy - ay) + cSq * (ay - by)) / d;
   const uy = (aSq * (cx - bx) + bSq * (ax - cx) + cSq * (bx - ax)) / d;
-  const r = Math.hypot(ax - ux, ay - uy);
+  const r = hypot2(ax - ux, ay - uy);
 
   // 외접원 위에서 각 점의 각도.
   const angleFrom = Math.atan2(ay - uy, ax - ux);

@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * vector 길이를 [minLength, maxLength] 범위로 clamp한 벡터를 out에 기록하고 out을 반환한다.
@@ -23,7 +24,7 @@ export function clampLengthInto<Out extends XYWritable>(
 ): Out {
   const vx = readX(vector);
   const vy = readY(vector);
-  const len = Math.hypot(vx, vy);
+  const len = hypot2(vx, vy);
 
   if (len === 0) return writeXY(out, 0, 0);
 

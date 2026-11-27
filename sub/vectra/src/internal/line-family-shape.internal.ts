@@ -5,6 +5,7 @@ import { segmentToLineFamilyParam } from './line-family-param-builders.internal'
 import { lineFamilyRangeContains } from './line-family-range.internal';
 import { findSingleLineFamilySideIntersectionPoint } from './line-family-side.internal';
 import { writeXY } from './xy';
+import { hypot2 } from './numeric';
 
 /**
  * line-family와 box (x0, y0, x1, y1)가 교점을 가지면 true를 반환한다.
@@ -118,7 +119,7 @@ export function lineFamilyCircleIntersectionPoint(
 
   if (lenSq === 0) {
     // degenerate: origin이 circle 경계 위인지 확인
-    if (Math.abs(Math.hypot(qx, qy) - r) <= epsilon) {
+    if (Math.abs(hypot2(qx, qy) - r) <= epsilon) {
       writeXY(out, line.ox, line.oy);
       return true;
     }

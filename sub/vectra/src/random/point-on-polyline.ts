@@ -12,7 +12,7 @@ import type { RandomSource } from './random';
  * degenerate 처리: `totalLength <= 0` 또는 `!Number.isFinite(totalLength)`이면
  * undefined를 반환한다.
  * — pts.length < 2는 totalLength=0으로 환원되어 같은 분기에서 처리된다.
- * — NaN vertex는 `length`에서 Math.hypot를 통해 NaN이 전파되어 undefined를 반환한다.
+ * — NaN vertex는 `length`의 Euclidean 거리를 통해 NaN이 전파되어 undefined를 반환한다.
  * — Infinity vertex는 totalLength가 Infinity가 되어 undefined를 반환한다.
  *
  * caller 책임: polyline vertex에 NaN/Infinity가 있으면 undefined를 반환한다.

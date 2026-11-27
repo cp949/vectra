@@ -1,6 +1,7 @@
 import { readPolygonPoints } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
 import type { PolygonLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * polygon의 둘레를 반환한다.
@@ -19,7 +20,7 @@ export function perimeter(polygon: PolygonLike): number {
     const j = (i + 1) % n;
     const dx = readX(pts[j]) - readX(pts[i]);
     const dy = readY(pts[j]) - readY(pts[i]);
-    total += Math.hypot(dx, dy);
+    total += hypot2(dx, dy);
   }
   return total;
 }

@@ -1,5 +1,6 @@
 import { readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
 import type { TriangleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * triangle 내접원(incircle)의 반지름을 반환한다.
@@ -15,9 +16,9 @@ import type { TriangleLike } from '../types';
  */
 export function inradius(triangle: TriangleLike): number | undefined {
   const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-  const a = Math.hypot(cx - bx, cy - by);
-  const b = Math.hypot(ax - cx, ay - cy);
-  const c = Math.hypot(bx - ax, by - ay);
+  const a = hypot2(cx - bx, cy - by);
+  const b = hypot2(ax - cx, ay - cy);
+  const c = hypot2(bx - ax, by - ay);
   const perimeter = a + b + c;
   if (perimeter === 0) return undefined;
   return Math.abs(triangleSignedArea2x(triangle)) / perimeter;

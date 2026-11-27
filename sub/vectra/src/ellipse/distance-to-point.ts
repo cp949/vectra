@@ -2,6 +2,7 @@ import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../in
 import { readX, readY } from '../internal/xy';
 import type { EllipseLike, XYInput } from '../types';
 import { ellipseClosestPointAngle } from './ellipse-closest-point.internal';
+import { hypot2 } from '../internal/numeric';
 
 /** Newton-Raphson 수렴 판정 기본 epsilon */
 const DEFAULT_EPSILON = 1e-10;
@@ -32,7 +33,7 @@ export function distanceToPoint(ellipse: EllipseLike, point: XYInput, epsilon = 
   if (rx <= 0 || ry <= 0) {
     const ddx = px - cx;
     const ddy = py - cy;
-    return Math.hypot(ddx, ddy);
+    return hypot2(ddx, ddy);
   }
 
   const dx = px - cx;
@@ -50,5 +51,5 @@ export function distanceToPoint(ellipse: EllipseLike, point: XYInput, epsilon = 
 
   const edx = px - bx;
   const edy = py - by;
-  return Math.hypot(edx, edy);
+  return hypot2(edx, edy);
 }

@@ -40,7 +40,7 @@ export interface PoseDistanceOptions {
   /**
    * angular distance를 position 단위와 결합할 때 곱하는 가중치.
    *
-   * `Math.hypot(positionDistance, angularDistance * angularWeight)`로 결합한다. radian angle 값을
+   * `hypot(positionDistance, angularDistance * angularWeight)`로 결합한다. radian angle 값을
    * position 거리 단위로 환산하는 scale이다. `0`이면 translation-only distance가 된다.
    *
    * 생략 시 `1`. finite이고 `>= 0`이어야 하며 위반 시 `RangeError`.
@@ -51,7 +51,7 @@ export interface PoseDistanceOptions {
 /** `poseApproxEquals`의 position/angle 분리 비교 옵션. */
 export interface PoseApproxEqualsOptions {
   /**
-   * position 비교 허용 오차. `Math.hypot(dx, dy) <= positionEpsilon`이면 position이 같다고 본다.
+   * position 비교 허용 오차. `hypot(dx, dy) <= positionEpsilon`이면 position이 같다고 본다.
    *
    * 생략 시 `1e-9`. finite이고 `>= 0`이어야 하며 위반 시 `RangeError`.
    */

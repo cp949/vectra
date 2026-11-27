@@ -1,3 +1,5 @@
+import { hypot2 } from './numeric';
+
 /** raw symmetric Jacobi eigen helper option. caller가 matrix 검증과 결과 cleanup 정책을 소유한다. */
 export interface JacobiSymmetricEigenRawOptions {
   readonly maxIterations: number;
@@ -132,12 +134,12 @@ function computeJacobiRotation(
     }
     throw new RangeError(`${errorPrefix} produced non-finite theta at (${p}, ${q}), got ${String(theta)}`);
   }
-  const denomMag = Math.abs(theta) + Math.hypot(theta, 1);
+  const denomMag = Math.abs(theta) + hypot2(theta, 1);
   if (!Number.isFinite(denomMag)) {
     return { c: 1, s: apq / diff };
   }
   const t = theta >= 0 ? 1 / denomMag : -1 / denomMag;
-  const c = 1 / Math.hypot(t, 1);
+  const c = 1 / hypot2(t, 1);
   const s = t * c;
   return { c, s };
 }

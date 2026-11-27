@@ -1,6 +1,7 @@
 import { readPolylinePoints, segDistSq } from '../internal/polyline';
 import { readX, readY } from '../internal/xy';
 import type { PolylineLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * polyline과 point 사이의 최단 거리를 반환한다.
@@ -22,7 +23,7 @@ export function distanceToPoint(polyline: PolylineLike, point: XYInput): number 
   if (points.length === 1) {
     const dx = readX(points[0]) - qx;
     const dy = readY(points[0]) - qy;
-    return Math.hypot(dx, dy);
+    return hypot2(dx, dy);
   }
 
   let bestDistSq = Infinity;

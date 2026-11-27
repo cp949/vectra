@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * cubic Bezier curve의 파라미터 t 위치 unit normal vector를 out에 기록하고 out을 반환한다.
@@ -41,7 +42,7 @@ export function cubicNormalAtInto<Out extends XYWritable>(
   const dx = 3 * (mt2 * (p1x - p0x) + twoMtT * (p2x - p1x) + t2 * (p3x - p2x));
   const dy = 3 * (mt2 * (p1y - p0y) + twoMtT * (p2y - p1y) + t2 * (p3y - p2y));
 
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   if (len === 0) {
     return writeXY(out, 0, 0);

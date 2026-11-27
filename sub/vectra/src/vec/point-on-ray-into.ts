@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * origin에서 normalize(direction) * distance 위치의 점을 out에 기록하고 out을 반환한다.
@@ -19,7 +20,7 @@ export function pointOnRayInto<Out extends XYWritable>(
 ): Out | false {
   const dx = readX(direction);
   const dy = readY(direction);
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   if (len === 0) return false;
 

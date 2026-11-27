@@ -95,6 +95,32 @@ linalg의 finite entry 검증은 `typeof value === 'number' && value - value ===
 `Number.isFinite`를 쓰면 같은 검사가 몇 배 느리고 값을 boxing한다(Node.js 24.21, 120 x 120 matrix 두 개에서
 약 0.24ms 대 0.05ms). `typeof` 확인이 없으면 `'1'`, `null`, `true`가 통과하므로 빼지 않는다.
 
+## Euclidean 길이
+
+2D Euclidean 길이와 거리는 `src/internal/numeric.ts`의 `hypot2(x, y)`로 계산한다.
+
+- 제곱합 `s = x * x + y * y`가 `1e-290`보다 크고 finite이면 `Math.sqrt(s)`를 반환한다.
+- 그 밖(overflow, underflow, 0, NaN)은 `Math.hypot(x, y)`를 반환한다. 특수값 결과는 `Math.hypot`과 같다.
+- 이유: V8의 `Math.hypot`은 `Math.sqrt` 경로보다 약 10–14배 느리다(Node.js 24.21, 200만 회).
+
+정밀도:
+
+| 계산 | 참값 대비 최대 오차 |
+|---|---|
+| `hypot2` | 약 1.21 ulp |
+| V8 `Math.hypot` | 약 1.97 ulp |
+
+- 측정은 무작위 30만 쌍이다. 크기는 `±100`, `10^±20`, `2^±500` 범위다.
+- `hypot2`와 `Math.hypot`의 결과는 최대 2 ulp 다르다. 무작위 `±100` 입력의 약 38%가 마지막 비트에서 다르다.
+- `tests/unit/internal/hypot2.test.ts`가 참값 대비 1.25 ulp, `Math.hypot` 대비 2 ulp 상한을 고정한다.
+
+비트 동일성:
+
+- 1.3.0 다음 배포부터 Euclidean 길이를 쓰는 결과는 1.3.0과 마지막 몇 비트가 다를 수 있다.
+- 길이를 나누거나 비교하는 결과(normalize, closest point, epsilon 판정)도 같은 크기로 달라진다.
+- 속도 개선의 "비트 단위로 같다" 약속은 같은 `hypot2`를 쓰는 이전 구현과 비교한 것이다.
+- 3D 이상 길이는 `Math.hypot`을 그대로 쓴다. `hypot2`는 2D 전용이다.
+
 ## Topology Predicate 정책
 
 ### epsilon은 topology sign 판단 근거로 부적합하다

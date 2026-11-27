@@ -7,7 +7,7 @@ import { matrixToPoseInto } from './matrix-to-pose-into';
  *
  * `{ position: { x: tx, y: ty }, angle: Math.atan2(b, a) }`를 반환한다. `poseToMatrix`의 역방향이며
  * rigid matrix에서 round-trip이 성립한다. rigid 판정은 `options.epsilon`(생략 시 `1e-9`) 허용 오차로
- * 한다. column length(`Math.hypot(a, b)`, `Math.hypot(c, d)`)가 `1`에, column dot product
+ * 한다. column length(`hypot(a, b)`, `hypot(c, d)`)가 `1`에, column dot product
  * (`a·c + b·d`)가 `0`에, determinant(`a·d − b·c`)가 `1`에 epsilon 이내여야 한다. scale/skew/shear
  * 또는 determinant가 `-1`인 reflection matrix는 rigid가 아니므로 `undefined`다.
  *

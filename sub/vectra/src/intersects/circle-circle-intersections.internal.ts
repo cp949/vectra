@@ -1,4 +1,5 @@
 import type { CircleCircleDetail, PointRelationDetail } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 const TWO_PI = Math.PI * 2;
 
@@ -92,7 +93,7 @@ export function circleCircleDetailXY(
   const dx = nbx - nax;
   const dy = nby - nay;
   // 정규화 좌표는 모두 [-1, 1] 안이라 d는 2√2 이하로 finite다.
-  const d = Math.hypot(dx, dy);
+  const d = hypot2(dx, dy);
 
   const rSum = nrA + nrB;
   const rDiff = Math.abs(nrA - nrB);

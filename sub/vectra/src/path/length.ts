@@ -2,6 +2,7 @@ import { polylineTotalLength } from '../internal/polyline';
 import type { PathCommand, PathMeasurementOptions } from '../types/index';
 import { forEachDrawSegment } from './path-segments.internal';
 import { createSegmentFlattener } from './segment-flattener.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * path commands의 총 arc-length를 반환한다.
@@ -22,10 +23,10 @@ export function length(commands: readonly PathCommand[], options?: PathMeasureme
   forEachDrawSegment(commands, (seg) => {
     if (seg.kind === 'line') {
       // line segment: 두 endpoint 사이 유클리드 거리
-      total += Math.hypot(seg.command.x - seg.fromX, seg.command.y - seg.fromY);
+      total += hypot2(seg.command.x - seg.fromX, seg.command.y - seg.fromY);
     } else if (seg.kind === 'close') {
       // close segment: current → subpath start 사이 유클리드 거리
-      total += Math.hypot(seg.subpathStartX - seg.fromX, seg.subpathStartY - seg.fromY);
+      total += hypot2(seg.subpathStartX - seg.fromX, seg.subpathStartY - seg.fromY);
     } else {
       // 곡선: flatten한 polyline의 길이
       total += polylineTotalLength(flattener.flatten(seg));

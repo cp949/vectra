@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * input 벡터의 CCW 수직 방향 단위 벡터 (-y, x) 방향을 normalize해서 out에 기록하고 out을 반환한다.
@@ -17,7 +18,7 @@ export function normalLeftInto<Out extends XYWritable>(out: Out, input: XYInput)
   const y = readY(input);
   const nx = -y;
   const ny = x;
-  const len = Math.hypot(nx, ny);
+  const len = hypot2(nx, ny);
 
   return len === 0 ? writeXY(out, 0, 0) : writeXY(out, nx / len, ny / len);
 }

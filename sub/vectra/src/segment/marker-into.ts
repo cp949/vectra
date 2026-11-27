@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { SegmentLike, SegmentMarkerOptions, XYObjectWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 const DEFAULT_LENGTH = 10;
 const DEFAULT_WIDTH = 8;
@@ -101,7 +102,7 @@ export function markerInto(
   const by = readY(b);
   const dx = bx - ax;
   const dy = by - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   outPoints.length = 0;
   // zero-length segment는 방향이 없고, non-finite 좌표(NaN/±Infinity)는 valid 방향을 만들 수

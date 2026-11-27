@@ -1,6 +1,7 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * infinite-line과 `point` 사이의 부호 있는 거리를 반환한다.
@@ -22,8 +23,8 @@ export function signedDistanceToPoint(line: InfiniteLineLike, point: XYInput): n
   const dy = readY(readInfiniteLineDirection(line));
   const px = readX(point) - ox;
   const py = readY(point) - oy;
-  const len = Math.hypot(dx, dy);
-  if (len === 0) return Math.hypot(px, py); // degenerate: unsigned 거리
+  const len = hypot2(dx, dy);
+  if (len === 0) return hypot2(px, py); // degenerate: unsigned 거리
   const cross = dx * py - dy * px; // cross product (direction × relative-point)
   return cross / len;
 }

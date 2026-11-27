@@ -1,6 +1,7 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
 import { assertFinite5 } from './interpolation.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * current를 target 방향으로 최대 maxDistance만큼 이동한 좌표를 out에 기록하고 out을 반환한다.
@@ -37,7 +38,7 @@ export function moveTowardPointInto<Out extends XYWritable>(
   const dy = ty - cy;
 
   // sqrt로 비교: distSq × maxDistance² 비교는 두 값이 모두 Infinity로 overflow하면 틀린 결론을 낸다
-  const dist = Math.hypot(dx, dy);
+  const dist = hypot2(dx, dy);
 
   // distance가 maxDistance 이하이면 target에 도달한다 (distance === 0 포함)
   if (dist <= maxDistance) {

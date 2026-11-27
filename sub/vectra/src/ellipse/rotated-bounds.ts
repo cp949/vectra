@@ -9,7 +9,7 @@ import { rotatedBoundsInto } from './rotated-bounds-into';
  *   Δx = sqrt(radiusX²·cos²φ + radiusY²·sin²φ)
  *   Δy = sqrt(radiusX²·sin²φ + radiusY²·cos²φ)
  *   min = (cx - Δx, cy - Δy), max = (cx + Δx, cy + Δy)
- * half-extent는 `Math.hypot`으로 계산해 finite 큰 radius overflow와 subnormal underflow를 줄인다.
+ * half-extent는 overflow·underflow를 피하는 Euclidean 길이로 계산해 finite 큰 radius overflow와 subnormal underflow를 줄인다.
  * radiusX <= 0 또는 radiusY <= 0인 empty ellipse는 sentinel empty bounds
  * (min = (+Inf, +Inf), max = (-Inf, -Inf))를 반환한다.
  *

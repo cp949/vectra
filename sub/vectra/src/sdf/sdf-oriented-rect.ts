@@ -8,6 +8,7 @@ import {
   requireFiniteY,
   requireNonNegative,
 } from './primitive.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * oriented rect(OBB)와 point 사이의 signed distance를 반환한다.
@@ -47,7 +48,7 @@ export function sdfOrientedRect(rect: OrientedRectLike, point: XYInput): number 
   // half-extent box signed distance (Quilez 2D box SDF)
   const qx = Math.abs(localX) - width / 2;
   const qy = Math.abs(localY) - height / 2;
-  const outside = Math.hypot(Math.max(qx, 0), Math.max(qy, 0));
+  const outside = hypot2(Math.max(qx, 0), Math.max(qy, 0));
   const inside = Math.min(Math.max(qx, qy), 0);
 
   return canonicalizeZero(outside + inside);

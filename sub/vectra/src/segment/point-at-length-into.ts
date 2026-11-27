@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { PointAtLengthOptions, SegmentLike, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * segment 위 `distance` 길이 위치를 out에 기록하고 out을 반환한다.
@@ -31,7 +32,7 @@ export function pointAtLengthInto<Out extends XYWritable>(
   const ay = readY(a);
   const dx = readX(b) - ax;
   const dy = readY(b) - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   if (len === 0) return writeXY(out, ax, ay);
 

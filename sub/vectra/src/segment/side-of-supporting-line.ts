@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { SegmentLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * point가 segment의 supporting infinite line 어느 쪽에 있는지 반환한다.
@@ -23,7 +24,7 @@ export function sideOfSupportingLine(line: SegmentLike, point: XYInput, epsilon 
   const ay = readY(a);
   const dx = readX(b) - ax;
   const dy = readY(b) - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
   if (len === 0) return 0;
   const px = readX(point) - ax;
   const py = readY(point) - ay;

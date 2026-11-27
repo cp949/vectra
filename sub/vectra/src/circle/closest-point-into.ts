@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { CircleLike, XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * circle 표면에서 point에 가장 가까운 점을 out에 기록하고 out을 반환한다.
@@ -24,7 +25,7 @@ export function closestPointInto<Out extends XYWritable>(out: Out, circle: Circl
 
   const dx = px - cx;
   const dy = py - cy;
-  const dist = Math.hypot(dx, dy);
+  const dist = hypot2(dx, dy);
 
   // dist === 0이면 angle 0 위치 (cx+r, cy)를 fallback으로 기록한다
   if (dist === 0) return writeXY(out, cx + r, cy);

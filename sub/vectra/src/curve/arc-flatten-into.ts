@@ -1,5 +1,6 @@
 import type { CenterArcLike, FlattenOptions, XYObjectWritable } from '../types';
 import { ellipsePoint, isDegenerateRadii } from './arc.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * arc subsegment의 chord-error(현 길이 대비 mid-arc 점과 chord의 거리)를 측정한다.
@@ -10,9 +11,9 @@ import { ellipsePoint, isDegenerateRadii } from './arc.internal';
 function chordErrorFromMid(p0x: number, p0y: number, p1x: number, p1y: number, pmx: number, pmy: number): number {
   const dx = p1x - p0x;
   const dy = p1y - p0y;
-  const chordLen = Math.hypot(dx, dy);
+  const chordLen = hypot2(dx, dy);
   if (chordLen === 0) {
-    return Math.hypot(pmx - p0x, pmy - p0y);
+    return hypot2(pmx - p0x, pmy - p0y);
   }
   // (pm - p0) cross (p1 - p0) / |p1 - p0|
   const cross = (pmx - p0x) * dy - (pmy - p0y) * dx;

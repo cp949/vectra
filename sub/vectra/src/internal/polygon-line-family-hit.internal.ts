@@ -10,7 +10,7 @@ import type { PolygonLike, XYInput } from '../types';
 import { lineFamilyIntersects } from './line-family-core.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
 import { lineHitX, lineHitY } from './line-hit-read.internal';
-import { DEFAULT_EPSILON } from './numeric';
+import { DEFAULT_EPSILON, hypot2 } from './numeric';
 
 /** edge마다 새 record를 만들지 않으려고 재사용하는 segment param이다. `lineFamilyIntersects`는 param을 보관하지 않는다. */
 const edgeParam: LineFamilyParam = { ox: 0, oy: 0, dx: 0, dy: 0, kind: 'finite' };
@@ -71,7 +71,7 @@ export function lineFamilyPolygonIntersects(
  * edge 거리 식은 `polygon-boundary-closest.internal`의 `polygonBoundaryClosestDistance`와 같은 순서·같은 연산이다.
  * 최소 거리를 구하지 않고 `epsilon` 이내인 edge를 찾으면 바로 true를 반환한다.
  * edge의 bounding box에서 `epsilon`의 2배와 좌표 크기의 1e-12배보다 멀리 떨어진 점은 거리 계산을 건너뛴다.
- * 이 여유는 closest 좌표 보간과 `Math.hypot`의 반올림 오차보다 충분히 크다.
+ * 이 여유는 closest 좌표 보간과 Euclidean 거리의 반올림 오차보다 충분히 크다.
  * NaN 거리인 edge는 최소 거리 계산이 무시하므로 여기서도 무시한다.
  */
 function boundaryWithin(pts: readonly XYInput[], n: number, px: number, py: number, epsilon: number): boolean {
@@ -120,7 +120,7 @@ function boundaryWithin(pts: readonly XYInput[], n: number, px: number, py: numb
       cx = ax * (1 - t) + bx * t;
       cy = ay * (1 - t) + by * t;
     }
-    if (Math.hypot(cx - px, cy - py) <= epsilon) return true;
+    if (hypot2(cx - px, cy - py) <= epsilon) return true;
     ax = bx;
     ay = by;
   }

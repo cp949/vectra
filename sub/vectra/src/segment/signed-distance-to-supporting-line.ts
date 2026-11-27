@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { SegmentLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * point에서 segment의 supporting infinite line까지 부호 있는 거리를 반환한다.
@@ -21,7 +22,7 @@ export function signedDistanceToSupportingLine(line: SegmentLike, point: XYInput
   const ay = readY(a);
   const dx = readX(b) - ax;
   const dy = readY(b) - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
   if (len === 0) return 0;
   const px = readX(point) - ax;
   const py = readY(point) - ay;

@@ -1,5 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 벡터 a와 b 사이의 각도를 radian으로 반환한다. 범위는 [0, π].
@@ -16,8 +17,8 @@ export function angleBetween(a: XYInput, b: XYInput): number {
   const bx = readX(b);
   const by = readY(b);
 
-  const lenA = Math.hypot(ax, ay);
-  const lenB = Math.hypot(bx, by);
+  const lenA = hypot2(ax, ay);
+  const lenB = hypot2(bx, by);
 
   // zero vector는 방향이 없으므로 각도 0으로 환원한다.
   if (lenA === 0 || lenB === 0) {

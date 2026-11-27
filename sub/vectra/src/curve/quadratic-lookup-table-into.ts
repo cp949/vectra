@@ -1,5 +1,6 @@
 import type { CurveLookupEntry, XYInput } from '../types';
 import { quadraticPointAtTInto } from './quadratic-point-at-t-into';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * quadratic Bezier curve를 uniform t로 sampling한 cumulative chord-length lookup table을 out에 push하고 out을 반환한다.
@@ -43,7 +44,7 @@ export function quadraticLookupTableInto(
     const x = scratch.x;
     const y = scratch.y;
     if (i > 0) {
-      acc += Math.hypot(x - prevX, y - prevY);
+      acc += hypot2(x - prevX, y - prevY);
     }
     temp.push({ t, length: acc });
     prevX = x;

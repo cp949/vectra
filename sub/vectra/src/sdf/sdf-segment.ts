@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB, segmentClosestPointXY } from '../internal/segment';
 import type { SegmentLike, XYInput } from '../types';
 import { requireFiniteX, requireFiniteY } from './primitive.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * segment와 point 사이의 signed distance를 반환한다.
@@ -26,5 +27,5 @@ export function sdfSegment(segment: SegmentLike, point: XYInput): number {
   const py = requireFiniteY(point, 'point');
 
   const closest = segmentClosestPointXY(ax, ay, bx, by, px, py);
-  return Math.hypot(px - closest.x, py - closest.y);
+  return hypot2(px - closest.x, py - closest.y);
 }

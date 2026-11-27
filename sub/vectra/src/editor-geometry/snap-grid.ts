@@ -2,6 +2,7 @@ import { readX, readY } from '../internal/xy';
 import { snapScalar } from '../math/snap.internal';
 import type { XYInput } from '../types';
 import type { SnapResult } from './types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * point를 grid에 snap한 SnapResult를 반환한다.
@@ -39,7 +40,7 @@ export function snapPointToGrid(
     snapped: true,
     x: snapX,
     y: snapY,
-    distance: Math.hypot(dx, dy),
+    distance: hypot2(dx, dy),
     source: 'grid',
   };
 }

@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY } from '../internal/xy';
 import type { CircleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 closed disk 간 부호 없는 최단 거리를 반환한다. overlap 시 0을 반환한다.
@@ -24,7 +25,7 @@ export function distanceToCircle(a: CircleLike, b: CircleLike): number {
 
   const dx = bx - ax;
   const dy = by - ay;
-  const centerDist = Math.hypot(dx, dy);
+  const centerDist = hypot2(dx, dy);
 
   // overlap이면 0, 분리되면 양수 거리
   const d = centerDist - ra - rb;

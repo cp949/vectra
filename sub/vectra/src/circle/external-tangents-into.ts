@@ -1,6 +1,7 @@
 import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { readX, readY } from '../internal/xy';
 import type { CircleLike, SegmentWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 const ANGLE_EPSILON = 1e-12;
 const TWO_PI = Math.PI * 2;
@@ -38,7 +39,7 @@ export function externalTangentsInto(
 
   const dx = cx2 - cx1;
   const dy = cy2 - cy1;
-  const dist = Math.hypot(dx, dy);
+  const dist = hypot2(dx, dy);
   if (dist === 0) return out;
 
   const rDiff = r1 - r2;

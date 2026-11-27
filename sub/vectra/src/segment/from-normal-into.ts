@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { SegmentLike, SegmentWritable, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * segment 위 t 위치에서 left normal 방향으로 length만큼 연장한 segment를 out에 기록하고 out을 반환한다.
@@ -35,7 +36,7 @@ export function fromNormalInto<Out extends SegmentWritable<XYWritable, XYWritabl
   // a = pointAtT(segment, t) — unclamped
   const px = ax + t * dx;
   const py = ay + t * dy;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
   if (len === 0) {
     // zero-length segment: normal 미정, a = b = pointAtT
     writeXY(out.a, px, py);

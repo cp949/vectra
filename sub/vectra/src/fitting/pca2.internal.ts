@@ -9,6 +9,7 @@
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
 import type { FitOptions } from './types';
+import { hypot2 } from '../internal/numeric';
 
 /** rank/degenerate 판정의 default tolerance. */
 export const DEFAULT_FIT_EPSILON = 1e-9;
@@ -163,7 +164,7 @@ export function computePrincipalAxes(
   }
 
   // symmetric 2x2 closed-form eigen. s = sqrt((sxx - syy)^2 + (2 sxy)^2), λ1 = (sxx + syy + s) / 2.
-  const s = Math.hypot(sxx - syy, 2 * sxy);
+  const s = hypot2(sxx - syy, 2 * sxy);
   const lambda1 = (sxx + syy + s) / 2;
 
   let primaryX: number;
@@ -183,7 +184,7 @@ export function computePrincipalAxes(
     }
   }
 
-  const length = Math.hypot(primaryX, primaryY);
+  const length = hypot2(primaryX, primaryY);
   if (!Number.isFinite(length) || length === 0) {
     return undefined;
   }

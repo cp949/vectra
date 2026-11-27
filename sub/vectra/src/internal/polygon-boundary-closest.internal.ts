@@ -1,5 +1,6 @@
 import type { XYInput } from '../types';
 import { readX, readY } from './xy';
+import { hypot2 } from './numeric';
 
 /**
  * polygon closest point 계산 helper가 closest 좌표를 기록할 mutable scratch.
@@ -50,7 +51,7 @@ function polygonBoundaryClosestDistance(
       cx = ax * (1 - t) + bx * t;
       cy = ay * (1 - t) + by * t;
     }
-    const distance = Math.hypot(cx - px, cy - py);
+    const distance = hypot2(cx - px, cy - py);
     if (distance < bestDistance) {
       bestDistance = distance;
       bestX = cx;

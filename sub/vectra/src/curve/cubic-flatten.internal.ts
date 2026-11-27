@@ -1,4 +1,5 @@
 import type { XYObjectWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * cubic flatness 기준 측정 helper.
@@ -21,8 +22,8 @@ function measureFlatness(
   const d1y = 3 * p1y - 2 * p0y - p3y;
   const d2x = 3 * p2x - p0x - 2 * p3x;
   const d2y = 3 * p2y - p0y - 2 * p3y;
-  const d1 = Math.hypot(d1x, d1y);
-  const d2 = Math.hypot(d2x, d2y);
+  const d1 = hypot2(d1x, d1y);
+  const d2 = hypot2(d2x, d2y);
   return Math.max(d1, d2);
 }
 

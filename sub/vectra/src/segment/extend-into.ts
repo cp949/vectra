@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { SegmentLike, SegmentWritable, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * segment를 단위 방향벡터 기준으로 before/after만큼 연장한 결과를 out에 기록하고 out을 반환한다.
@@ -25,7 +26,7 @@ export function extendInto<Out extends SegmentWritable<XYWritable, XYWritable>>(
   const by = readY(readSegmentB(line));
   const dx = bx - ax;
   const dy = by - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
   if (len === 0) {
     writeXY(out.a, ax, ay);
     writeXY(out.b, bx, by);

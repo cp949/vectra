@@ -2,6 +2,7 @@ import { polygonBoundaryDistance, polygonContainsPoint, readPolygonPoints } from
 import { readX, readY } from '../internal/xy';
 import type { PolygonLike, XYInput } from '../types';
 import { canonicalizeZero, requireFinitePoints, requireFiniteX, requireFiniteY } from './primitive.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * polygon과 point 사이의 signed distance를 반환한다.
@@ -31,7 +32,7 @@ export function sdfPolygon(polygon: PolygonLike, point: XYInput): number {
   const py = requireFiniteY(point, 'point');
 
   if (n === 1) {
-    return canonicalizeZero(Math.hypot(readX(pts[0]) - px, readY(pts[0]) - py));
+    return canonicalizeZero(hypot2(readX(pts[0]) - px, readY(pts[0]) - py));
   }
 
   const boundary = polygonBoundaryDistance(pts, px, py, null);

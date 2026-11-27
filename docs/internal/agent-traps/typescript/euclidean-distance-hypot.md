@@ -1,6 +1,6 @@
-# Euclidean 거리/길이는 `Math.sqrt(dx * dx + dy * dy)` 대신 `Math.hypot(dx, dy)`를 쓴다
+# Euclidean 거리/길이는 `Math.sqrt(dx * dx + dy * dy)` 대신 `hypot2(dx, dy)`를 쓴다
 
-태그: `float64`, `overflow`, `underflow`, `distance`, `Math.hypot`
+태그: `float64`, `overflow`, `underflow`, `distance`, `Math.hypot`, `hypot2`
 
 ## 함정
 
@@ -30,11 +30,15 @@ Math.hypot(1e-200, 1e-200);                   // 1.414213562373095e-200
 
 ## 방지
 
-2D Euclidean 거리/길이는 기본적으로 `Math.hypot(dx, dy)`를 사용한다.
+2D Euclidean 거리/길이는 `src/internal/numeric.ts`의 `hypot2(dx, dy)`를 사용한다.
 
 ```ts
-const distance = Math.hypot(dx, dy);
+const distance = hypot2(dx, dy);
 ```
+
+`hypot2`는 제곱합이 안전하면 `Math.sqrt`를 쓰고, overflow·underflow·0·NaN이면 `Math.hypot`으로 넘긴다.
+특수값 결과는 `Math.hypot`과 같다. 2D 길이에 `Math.hypot`을 직접 쓰지 않는다.
+V8의 `Math.hypot`은 약 10배 느리다. 근거는 `docs/internal/precision.md`의 `Euclidean 길이` 절이다.
 
 3D 이상도 제곱합을 직접 만들지 말고 `Math.hypot(dx, dy, dz)`를 우선한다.
 

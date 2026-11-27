@@ -1,5 +1,6 @@
 import { readPolylinePoints } from '../internal/polyline';
 import type { PolylineLike, XYLike, XYObjectWritable, XYTuple } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * polyline에서 arc-length 기준 균등하게 count개 point를 샘플링해 outPoints에 기록한다.
@@ -40,7 +41,7 @@ export function sampleFixedCountInto(
   // 입력 판별은 본문에서 직접 한다. 공유 readX/readY의 인라인 캐시는 라이브러리 전체의 입력 모양을 본다.
   const xs: number[] = new Array(n);
   const ys: number[] = new Array(n);
-  // cum[i]는 vertex i까지의 누적 길이다. `polylineTotalLength`와 같은 순서로 더한다(Math.hypot은 pointDist와 같다).
+  // cum[i]는 vertex i까지의 누적 길이다. `polylineTotalLength`와 같은 순서로 더한다(`hypot2`는 pointDist와 같다).
   const cum: number[] = new Array(n);
   let acc = 0;
   cum[0] = 0;
@@ -51,7 +52,7 @@ export function sampleFixedCountInto(
     xs[i] = x;
     ys[i] = y;
     if (i > 0) {
-      acc += Math.hypot(x - xs[i - 1], y - ys[i - 1]);
+      acc += hypot2(x - xs[i - 1], y - ys[i - 1]);
       cum[i] = acc;
     }
   }
@@ -102,7 +103,7 @@ export function sampleFixedCountInto(
       ay = ys[seg - 1];
       dx = xs[seg] - ax;
       dy = ys[seg] - ay;
-      segLen = Math.hypot(dx, dy);
+      segLen = hypot2(dx, dy);
     }
     if (segLen === 0) {
       outPoints.push({ x: ax, y: ay });

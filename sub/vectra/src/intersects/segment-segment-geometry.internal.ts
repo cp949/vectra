@@ -1,3 +1,5 @@
+import { hypot2 } from '../internal/numeric';
+
 export function allFinite(...values: readonly number[]): boolean {
   return values.every(Number.isFinite);
 }
@@ -5,11 +7,11 @@ export function allFinite(...values: readonly number[]): boolean {
 export function pointPointDist(ax: number, ay: number, bx: number, by: number): number {
   // 직접 차분은 같은 크기 좌표에서 exact(Sterbenz)라 epsilon 경계에서 boolean과 같은 거리다.
   // 차분/거리가 overflow로 non-finite가 될 때만 scale 정규화 fallback을 쓴다.
-  const direct = Math.hypot(ax - bx, ay - by);
+  const direct = hypot2(ax - bx, ay - by);
   if (Number.isFinite(direct)) return direct;
   // 입력은 detail 진입부에서 finite가 보장된다. 직접 거리가 overflow했다면 scale > 0이다.
   const scale = Math.max(Math.abs(ax), Math.abs(ay), Math.abs(bx), Math.abs(by));
-  return scale * Math.hypot(ax / scale - bx / scale, ay / scale - by / scale);
+  return scale * hypot2(ax / scale - bx / scale, ay / scale - by / scale);
 }
 
 export function pointLineDist(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
@@ -24,7 +26,7 @@ export function pointLineDist(px: number, py: number, ax: number, ay: number, bx
     const nqy = qy / scale;
     const ndx = dx / scale;
     const ndy = dy / scale;
-    const len = Math.hypot(ndx, ndy);
+    const len = hypot2(ndx, ndy);
     if (len === 0) return pointPointDist(px, py, ax, ay);
     const scaledDist = (scale * Math.abs(cross2(nqx, nqy, ndx, ndy))) / len;
     const axisDist = axisProjectedLineDist(qx, qy, dx, dy);
@@ -41,7 +43,7 @@ export function pointLineDist(px: number, py: number, ax: number, ay: number, bx
   const nby = by / scale;
   const ndx = nbx - nax;
   const ndy = nby - nay;
-  const len = Math.hypot(ndx, ndy);
+  const len = hypot2(ndx, ndy);
   if (len === 0) return pointPointDist(px, py, ax, ay);
   const scaledDist = (scale * Math.abs(cross2(npx - nax, npy - nay, ndx, ndy))) / len;
   const axisDist = axisProjectedLineDist(npx - nax, npy - nay, ndx, ndy);
@@ -49,7 +51,7 @@ export function pointLineDist(px: number, py: number, ax: number, ay: number, bx
 }
 
 export function axisProjectedLineDist(qx: number, qy: number, dx: number, dy: number): number | undefined {
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
   if (!Number.isFinite(len) || len === 0) return undefined;
   // len !== 0이므로 dominant 축 성분은 0이 아니다(반대였다면 len === 0).
   if (Math.abs(dx) >= Math.abs(dy)) {

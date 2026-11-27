@@ -1,6 +1,7 @@
 import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 점 `(px, py)`에서 origin `(ox, oy)`, direction `(dx, dy)`, `lenSq = dx² + dy²`인 직선까지의
@@ -20,7 +21,7 @@ function distancePointToLine(
   const t = (rx * dx + ry * dy) / lenSq;
   const cx = t * dx - rx;
   const cy = t * dy - ry;
-  return Math.hypot(cx, cy);
+  return hypot2(cx, cy);
 }
 
 /**
@@ -60,7 +61,7 @@ export function infiniteLineParallelDistance(a: InfiniteLineLike, b: InfiniteLin
 
   // 양쪽 degenerate: origin 간 거리
   if (aLenSq === 0 && bLenSq === 0) {
-    return Math.hypot(oax - obx, oay - oby);
+    return hypot2(oax - obx, oay - oby);
   }
   // b만 degenerate: b.origin과 a line 사이 거리
   if (bLenSq === 0) {

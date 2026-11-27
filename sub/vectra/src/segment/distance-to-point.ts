@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY } from '../internal/xy';
 import type { SegmentLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * point와 line 사이 최단 거리를 반환한다.
@@ -16,9 +17,9 @@ export function distanceToPoint(line: SegmentLike, point: XYInput): number {
   const lenSq = dx * dx + dy * dy;
   const px = readX(point) - ax;
   const py = readY(point) - ay;
-  if (lenSq === 0) return Math.hypot(px, py);
+  if (lenSq === 0) return hypot2(px, py);
   const t = Math.max(0, Math.min(1, (px * dx + py * dy) / lenSq));
   const cx = t * dx - px;
   const cy = t * dy - py;
-  return Math.hypot(cx, cy);
+  return hypot2(cx, cy);
 }

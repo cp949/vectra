@@ -2,6 +2,7 @@ import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readM
 import { validatePoseEpsilon } from '../internal/pose2';
 import { writeXY } from '../internal/xy';
 import type { MatrixLike, MatrixToPoseOptions, Pose2Writable, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * rigid affine matrix를 rigid pose로 복원해 out에 기록하고, rigid가 아니면 `false`를 반환한다.
@@ -11,7 +12,7 @@ import type { MatrixLike, MatrixToPoseOptions, Pose2Writable, XYWritable } from 
  * `poseToMatrixInto`의 역방향이며 rigid matrix에서 round-trip이 성립한다.
  *
  * rigid 판정은 `options.epsilon`(생략 시 `1e-9`) 허용 오차로 한다. column length
- * (`Math.hypot(a, b)`, `Math.hypot(c, d)`)가 `1`에, column dot product(`a·c + b·d`)가 `0`에,
+ * (`hypot(a, b)`, `hypot(c, d)`)가 `1`에, column dot product(`a·c + b·d`)가 `0`에,
  * determinant(`a·d − b·c`)가 `1`에 epsilon 이내여야 한다. scale/skew/shear 또는 determinant가
  * `-1`인 reflection matrix는 rigid가 아니므로 `false`를 반환하고 `out`을 수정하지 않는다.
  *
@@ -54,8 +55,8 @@ export function matrixToPoseInto<Out extends Pose2Writable<XYWritable>>(
   validatePoseEpsilon(epsilon, 'epsilon');
 
   // rigid 판정: column length 1, column dot product 0, determinant 1. reflection(det -1)은 실패.
-  const col1Length = Math.hypot(a, b);
-  const col2Length = Math.hypot(c, d);
+  const col1Length = hypot2(a, b);
+  const col2Length = hypot2(c, d);
   const dot = a * c + b * d;
   const determinant = a * d - b * c;
   if (

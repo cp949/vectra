@@ -1,6 +1,7 @@
 import { readPolylinePoints } from '../internal/polyline';
 import { readX, readY } from '../internal/xy';
 import type { PolylineConcatOptions, PolylineLike, XYObjectWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 여러 polyline을 순서대로 이어 붙인 point list를 outPoints에 새 point object로 기록한다.
@@ -10,7 +11,7 @@ import type { PolylineConcatOptions, PolylineLike, XYObjectWritable } from '../t
  * 좌표를 snapshot한다).
  *
  * 기본 dedupe: `weldTolerance`가 `0`이면 인접 source polyline의 접합 endpoint를 exact equality로
- * 비교한다. `weldTolerance`가 양수이면 endpoint 사이 `Math.hypot` 거리가 `weldTolerance` 이하일
+ * 비교한다. `weldTolerance`가 양수이면 endpoint 사이 Euclidean 거리가 `weldTolerance` 이하일
  * 때 현재 source의 첫 point를 제거한다. dedupe는 인접 source polyline 사이에만 적용한다. 같은
  * source 내부 repeated point는 유지한다.
  *
@@ -63,7 +64,7 @@ export function concatInto(
       if (i === 0 && outPoints.length > 0) {
         const last = outPoints[outPoints.length - 1];
         const shouldDedupe =
-          weldTolerance === 0 ? last.x === x && last.y === y : Math.hypot(last.x - x, last.y - y) <= weldTolerance;
+          weldTolerance === 0 ? last.x === x && last.y === y : hypot2(last.x - x, last.y - y) <= weldTolerance;
         if (shouldDedupe) {
           continue;
         }

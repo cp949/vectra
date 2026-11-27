@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * corner a -> b -> c에서 vertex b의 내각 이등분 단위 벡터를 out에 기록하고 out을 반환한다.
@@ -25,17 +26,17 @@ export function cornerBisectorInto<Out extends XYWritable>(out: Out, a: XYInput,
   const by = readY(b);
   const e1x = readX(a) - bx;
   const e1y = readY(a) - by;
-  const len1 = Math.hypot(e1x, e1y);
+  const len1 = hypot2(e1x, e1y);
   if (len1 === 0) return false;
 
   const e2x = readX(c) - bx;
   const e2y = readY(c) - by;
-  const len2 = Math.hypot(e2x, e2y);
+  const len2 = hypot2(e2x, e2y);
   if (len2 === 0) return false;
 
   const sx = e1x / len1 + e2x / len2;
   const sy = e1y / len1 + e2y / len2;
-  const sl = Math.hypot(sx, sy);
+  const sl = hypot2(sx, sy);
   if (sl === 0) return false;
 
   return writeXY(out, sx / sl, sy / sl);

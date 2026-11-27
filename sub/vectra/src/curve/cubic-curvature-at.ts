@@ -1,5 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * cubic Bezier curve의 파라미터 t 위치에서 signed curvature scalar를 반환한다.
@@ -45,7 +46,7 @@ export function cubicCurvatureAt(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYIn
   const d2y = 6 * (mt * (p2y - 2 * p1y + p0y) + t * (p3y - 2 * p2y + p1y));
 
   // |d1|^3 계산
-  const d1Len = Math.hypot(d1x, d1y);
+  const d1Len = hypot2(d1x, d1y);
   const d1Cubed = d1Len * d1Len * d1Len;
 
   if (d1Cubed < 1e-10) {

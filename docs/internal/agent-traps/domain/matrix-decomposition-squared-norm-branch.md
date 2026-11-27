@@ -31,7 +31,7 @@ decomposeInto(out, { a: 0, b: 0, c: Number.MIN_VALUE, d: 0, tx: 0, ty: 0 });
 ## 방지
 
 - decomposition 분기 조건은 contract와 같은 `a*a + b*b > 0`, `c*c + d*d > 0`을 사용한다.
-- branch 내부 magnitude 계산은 `Math.hypot`을 유지한다.
+- branch 내부 magnitude 계산은 `hypot2`를 유지한다.
 - x-basis/y-basis subnormal underflow regression test를 모두 둔다.
 
 ```ts

@@ -6,6 +6,8 @@
  * import하지 않고 domain-local로 둔다. `fitMinimumAreaRect*`가 공유한다.
  */
 
+import { hypot2 } from '../internal/numeric';
+
 /** `computeMinimumAreaRect`의 결과. oriented rect center/size/angle을 담는다. */
 export interface MinimumAreaRect {
   /** oriented rect center x. `-0`은 `0`으로 canonicalize. */
@@ -164,7 +166,7 @@ export function computeMinimumAreaRect(
     const b = hull[(i + 1) % hullLength];
     const ex = sx[b] - sx[a];
     const ey = sy[b] - sy[a];
-    const edgeLength = Math.hypot(ex, ey);
+    const edgeLength = hypot2(ex, ey);
     if (!(edgeLength > epsilon)) {
       continue;
     }

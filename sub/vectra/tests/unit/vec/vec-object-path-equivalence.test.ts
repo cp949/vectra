@@ -7,6 +7,7 @@
  * 검증: 객체·tuple·class instance·x/y field를 가진 tuple 입력, 객체·tuple output, out과 입력의 aliasing,
  * 정수·실수·큰 값·±0·NaN·±Infinity·zero vector 좌표에서 결과가 이전 구현과 `Object.is` 수준으로 같다.
  * 이전 구현은 공유 readX/readY/writeXY로 읽고 쓴다.
+ * 이전 구현도 Euclidean 길이를 `hypot2`로 구한다. `hypot2` 자체의 정밀도는 `tests/unit/internal/hypot2.test.ts`가 고정한다.
  */
 import { describe, expect, test } from 'vitest';
 import { add } from '../../../src/vec/add';
@@ -28,6 +29,7 @@ import { sub } from '../../../src/vec/sub';
 import { subInto } from '../../../src/vec/sub-into';
 import { subtractScaled } from '../../../src/vec/subtract-scaled';
 import { subtractScaledInto } from '../../../src/vec/subtract-scaled-into';
+import { hypot2 } from '../../../src/internal/numeric';
 import { readX, readY, writeXY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
 import type { XYInput, XYObjectWritable, XYWritable } from '../../../src/types';
@@ -55,7 +57,7 @@ const ref = {
   normalizeInto: (out: XYWritable, input: XYInput) => {
     const x = readX(input);
     const y = readY(input);
-    const len = Math.hypot(x, y);
+    const len = hypot2(x, y);
     return len === 0 ? writeXY(out, 0, 0) : writeXY(out, x / len, y / len);
   },
   reflectInto: (out: XYWritable, vector: XYInput, normal: XYInput) => {
@@ -78,13 +80,13 @@ const ref = {
   },
   dot: (a: XYInput, b: XYInput) => readX(a) * readX(b) + readY(a) * readY(b),
   cross: (a: XYInput, b: XYInput) => readX(a) * readY(b) - readY(a) * readX(b),
-  length: (a: XYInput) => Math.hypot(readX(a), readY(a)),
+  length: (a: XYInput) => hypot2(readX(a), readY(a)),
   lengthSq: (a: XYInput) => {
     const x = readX(a);
     const y = readY(a);
     return x * x + y * y;
   },
-  distance: (a: XYInput, b: XYInput) => Math.hypot(readX(b) - readX(a), readY(b) - readY(a)),
+  distance: (a: XYInput, b: XYInput) => hypot2(readX(b) - readX(a), readY(b) - readY(a)),
   distanceSq: (a: XYInput, b: XYInput) => {
     const dx = readX(b) - readX(a);
     const dy = readY(b) - readY(a);

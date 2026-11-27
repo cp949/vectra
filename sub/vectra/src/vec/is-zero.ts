@@ -1,5 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 벡터의 길이가 epsilon 이하이면 true를 반환한다.
@@ -11,5 +12,5 @@ import type { XYInput } from '../types';
  * @param epsilon 허용할 절대 오차
  */
 export function isZero(input: XYInput, epsilon = 1e-9): boolean {
-  return Math.hypot(readX(input), readY(input)) <= epsilon;
+  return hypot2(readX(input), readY(input)) <= epsilon;
 }

@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { SegmentLike, TriangleWritable, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * base segment와 height로 isosceles triangle을 만들어 out에 기록하고 out을 반환한다.
@@ -42,7 +43,7 @@ export function fromSegmentHeightInto<Out extends TriangleWritable<XYWritable, X
 
   const dx = bx - ax;
   const dy = by - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   // base length가 0이거나 non-finite면 normal을 정의할 수 없다
   if (!Number.isFinite(len) || len === 0) {

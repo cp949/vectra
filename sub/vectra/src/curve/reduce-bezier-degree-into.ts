@@ -1,5 +1,6 @@
 import { readX, readY, writeXY } from '../internal/xy';
 import type { BezierDegreeReductionOptions, QuadraticCurveWritable, XYInput, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * cubic Bezier curve를 quadratic Bezier curve로 근사 축소하여 성공 시 out에 기록하고 `true`를 반환한다.
@@ -68,10 +69,10 @@ export function reduceBezierDegreeInto<Out extends QuadraticCurveWritable>(
 
   // 원본 cubic control point와의 최대 편차
   const maxError = Math.max(
-    Math.hypot(c0x - p0x, c0y - p0y),
-    Math.hypot(c1x - p1x, c1y - p1y),
-    Math.hypot(c2x - p2x, c2y - p2y),
-    Math.hypot(c3x - p3x, c3y - p3y)
+    hypot2(c0x - p0x, c0y - p0y),
+    hypot2(c1x - p1x, c1y - p1y),
+    hypot2(c2x - p2x, c2y - p2y),
+    hypot2(c3x - p3x, c3y - p3y)
   );
 
   // non-finite maxError는 `maxError <= tolerance`가 false가 되어 실패한다

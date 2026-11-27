@@ -1,5 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * cubic Bezier 제어점이 정확히 linear (1/3, 2/3 위치) 배열인지 확인한다.
@@ -30,9 +31,9 @@ export function cubicIsLinear(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput
 
   // degenerate: p0 == p3인 경우 모든 점이 같은 점이면 true
   if (chordLen2 < epsilon * epsilon) {
-    const d1 = Math.hypot(p1x - p0x, p1y - p0y);
-    const d2 = Math.hypot(p2x - p0x, p2y - p0y);
-    const d3 = Math.hypot(p3x - p0x, p3y - p0y);
+    const d1 = hypot2(p1x - p0x, p1y - p0y);
+    const d2 = hypot2(p2x - p0x, p2y - p0y);
+    const d3 = hypot2(p3x - p0x, p3y - p0y);
     return d1 < epsilon && d2 < epsilon && d3 < epsilon;
   }
 
@@ -44,7 +45,7 @@ export function cubicIsLinear(p0: XYInput, p1: XYInput, p2: XYInput, p3: XYInput
   const cross1 = chordX * v1y - chordY * v1x;
   const dot1 = chordX * v1x + chordY * v1y;
 
-  const chordLen = Math.hypot(chordX, chordY);
+  const chordLen = hypot2(chordX, chordY);
   if (Math.abs(cross1) > epsilon * chordLen) return false;
   if (Math.abs(dot1 / chordLen2 - 1 / 3) > epsilon) return false;
 

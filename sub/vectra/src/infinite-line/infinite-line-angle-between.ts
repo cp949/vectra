@@ -1,6 +1,7 @@
 import { readInfiniteLineDirection } from '../internal/infinite-line';
 import { readX, readY } from '../internal/xy';
 import type { InfiniteLineLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * 두 infinite-line의 direction 사이 최소 각을 `[0, π/2]` 범위로 반환한다.
@@ -22,7 +23,7 @@ export function infiniteLineAngleBetween(a: InfiniteLineLike, b: InfiniteLineLik
   const dby = readY(readInfiniteLineDirection(b));
 
   const dot = dax * dbx + day * dby;
-  const denom = Math.hypot(dax, day) * Math.hypot(dbx, dby);
+  const denom = hypot2(dax, day) * hypot2(dbx, dby);
   // zero direction → denom 0 → NaN (0/0 또는 v/0)
   const cos = Math.abs(dot) / denom;
   // cos는 절댓값을 양수 denom으로 나눈 값이라 0 이상이거나 NaN이다.

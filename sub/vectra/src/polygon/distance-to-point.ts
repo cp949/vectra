@@ -1,6 +1,7 @@
 import { polygonBoundaryDistance, readPolygonPoints } from '../internal/polygon';
 import { readX, readY } from '../internal/xy';
 import type { PolygonLike, XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * polygon boundary와 point 사이의 최단 거리를 반환한다.
@@ -24,7 +25,7 @@ export function distanceToPoint(polygon: PolygonLike, point: XYInput): number {
   if (n === 1) {
     const dx = readX(pts[0]) - px;
     const dy = readY(pts[0]) - py;
-    return Math.hypot(dx, dy);
+    return hypot2(dx, dy);
   }
 
   return polygonBoundaryDistance(pts, px, py, null);

@@ -1,5 +1,6 @@
 import { readX, readY } from '../internal/xy';
 import type { XYInput } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /** r/theta field에 극좌표를 기록할 수 있는 polar output. */
 export interface PolarWritable {
@@ -24,7 +25,7 @@ export function toPolarInto<Out extends PolarWritable>(out: Out, v: XYInput): Ou
   const x = readX(v);
   const y = readY(v);
   const theta = Math.atan2(y, x);
-  out.r = Math.hypot(x, y);
+  out.r = hypot2(x, y);
   out.theta = theta === -Math.PI ? Math.PI : theta;
   return out;
 }

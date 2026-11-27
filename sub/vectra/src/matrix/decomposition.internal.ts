@@ -1,5 +1,6 @@
 import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
 import type { MatrixLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * matrix decomposition core helper 결과 shape.
@@ -60,8 +61,8 @@ export function decomposeMatrixCore(matrix: MatrixLike): MatrixDecompositionScal
   const tx = readMatrixTx(matrix);
   const ty = readMatrixTy(matrix);
 
-  const r = Math.hypot(a, b);
-  const s = Math.hypot(c, d);
+  const r = hypot2(a, b);
+  const s = hypot2(c, d);
   const r2 = a * a + b * b;
   const s2 = c * c + d * d;
 

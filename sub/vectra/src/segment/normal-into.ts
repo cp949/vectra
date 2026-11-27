@@ -1,6 +1,7 @@
 import { readSegmentA, readSegmentB } from '../internal/segment';
 import { readX, readY, writeXY } from '../internal/xy';
 import type { SegmentLike, XYWritable } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * segment의 단위 법선벡터를 out에 기록하고 out을 반환한다. zero-length에서는 (0, 0)을 기록한다.
@@ -16,7 +17,7 @@ export function normalInto<Out extends XYWritable>(out: Out, line: SegmentLike, 
   const by = readY(readSegmentB(line));
   const dx = bx - ax;
   const dy = by - ay;
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
 
   // zero-length 가드: 정규화 불가 시 영벡터 기록
   if (len === 0) {

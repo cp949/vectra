@@ -1,6 +1,7 @@
 import { readTriangleRawCoords } from '../internal/triangle';
 import { solveTriangleCircumcenter } from '../internal/triangle-circumcenter';
 import type { TriangleLike } from '../types';
+import { hypot2 } from '../internal/numeric';
 
 const center = { x: 0, y: 0 };
 
@@ -18,5 +19,5 @@ const center = { x: 0, y: 0 };
 export function circumradius(triangle: TriangleLike): number | undefined {
   if (!solveTriangleCircumcenter(center, triangle)) return undefined;
   const { ax, ay } = readTriangleRawCoords(triangle);
-  return Math.hypot(ax - center.x, ay - center.y);
+  return hypot2(ax - center.x, ay - center.y);
 }

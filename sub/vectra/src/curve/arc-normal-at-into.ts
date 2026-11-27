@@ -1,6 +1,7 @@
 import { writeXY } from '../internal/xy';
 import type { CenterArcLike, XYWritable } from '../types';
 import { angleAtT, ellipseDerivative, isDegenerateRadii } from './arc.internal';
+import { hypot2 } from '../internal/numeric';
 
 /**
  * center form arc 위의 파라미터 t 위치 unit normal vector를 out에 기록하고 out을 반환한다.
@@ -29,7 +30,7 @@ export function arcNormalAtInto<Out extends XYWritable>(out: Out, centerArc: Cen
   const dx = deriv[0] * sweepSign;
   const dy = deriv[1] * sweepSign;
 
-  const len = Math.hypot(dx, dy);
+  const len = hypot2(dx, dy);
   if (len === 0) {
     return writeXY(out, 0, 0);
   }
