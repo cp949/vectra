@@ -2,7 +2,7 @@
  * grid line traversal(gridLineInto / gridLine) 계약 테스트.
  *
  * same cell single output, horizontal/vertical/45도 diagonal/steep/shallow slope의 deterministic
- * Bresenham order, negative direction의 start → end order, tuple/object cell input, invalid col/row
+ * Bresenham order, negative direction의 start → end order, invalid col/row
  * (NaN/Infinity/-Infinity/non-integer)·unsafe integer·line length overflow RangeError, Into 같은
  * array ref 반환과 성공 시 content 교체, validation 실패 시 out 미수정, companion 새 plain array
  * 반환을 검증한다.
@@ -114,26 +114,6 @@ describe('gridLineInto - start cell에서 end cell까지 Bresenham traversal', (
       { col: 2, row: 2 },
       { col: 1, row: 1 },
       { col: 0, row: 0 },
-    ]);
-  });
-
-  test('tuple cell input을 object cell과 동일하게 처리한다', () => {
-    const out: GridCellWritable[] = [];
-    gridLineInto(out, [0, 0], [2, 0]);
-    expect(out).toEqual([
-      { col: 0, row: 0 },
-      { col: 1, row: 0 },
-      { col: 2, row: 0 },
-    ]);
-  });
-
-  test('start는 tuple, end는 object인 혼합 입력도 처리한다', () => {
-    const out: GridCellWritable[] = [];
-    gridLineInto(out, [0, 0], { col: 2, row: 0 });
-    expect(out).toEqual([
-      { col: 0, row: 0 },
-      { col: 1, row: 0 },
-      { col: 2, row: 0 },
     ]);
   });
 

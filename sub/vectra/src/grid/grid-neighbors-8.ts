@@ -1,4 +1,4 @@
-import type { GridCellLike, GridCellWritable } from '../types';
+import type { GridCell, GridCellWritable } from '../types/flat-shapes.internal';
 import { gridNeighbors8Into } from './grid-neighbors-8-into';
 
 /**
@@ -10,6 +10,6 @@ import { gridNeighbors8Into } from './grid-neighbors-8-into';
  *
  * @param cell neighbor를 구할 center cell
  */
-export function gridNeighbors8(cell: GridCellLike): GridCellWritable[] {
+export function gridNeighbors8(cell: GridCell): GridCellWritable[] {
   return gridNeighbors8Into([], cell);
 }

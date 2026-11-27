@@ -1,4 +1,3 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import {
   commitGridRectGrid,
   validateGridBoundsFinite,
@@ -6,8 +5,7 @@ import {
   validateGridComputedFinite,
   validateGridSplitCount,
 } from '../internal/grid';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, RectWritable } from '../types';
+import type { Bounds, RectWritable } from '../types/flat-shapes.internal';
 
 /**
  * 한 축을 `count`개로 균등 분할한 cell 경계 배열을 만든다.
@@ -46,18 +44,8 @@ function buildUniformEdges(min: number, max: number, count: number): number[] {
  * @param rows 세로로 나눌 row 개수. positive safe integer.
  * @param cols 가로로 나눌 column 개수. positive safe integer.
  */
-export function boundsSplitGridInto(
-  out: RectWritable[],
-  bounds: BoundsLike,
-  rows: number,
-  cols: number
-): RectWritable[] {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const minX = readX(min);
-  const minY = readY(min);
-  const maxX = readX(max);
-  const maxY = readY(max);
+export function boundsSplitGridInto(out: RectWritable[], bounds: Bounds, rows: number, cols: number): RectWritable[] {
+  const { minX, minY, maxX, maxY } = bounds;
 
   validateGridBoundsFinite(minX, minY, maxX, maxY);
   validateGridSplitCount(rows, 'rows');

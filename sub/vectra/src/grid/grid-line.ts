@@ -1,4 +1,4 @@
-import type { GridCellLike, GridCellWritable } from '../types';
+import type { GridCell, GridCellWritable } from '../types/flat-shapes.internal';
 import { gridLineInto } from './grid-line-into';
 
 /**
@@ -14,6 +14,6 @@ import { gridLineInto } from './grid-line-into';
  * @param start traversal 시작 cell
  * @param end traversal 끝 cell
  */
-export function gridLine(start: GridCellLike, end: GridCellLike): GridCellWritable[] {
+export function gridLine(start: GridCell, end: GridCell): GridCellWritable[] {
   return gridLineInto([], start, end);
 }

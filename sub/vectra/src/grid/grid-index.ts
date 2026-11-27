@@ -1,11 +1,5 @@
-import {
-  readGridCellCol,
-  readGridCellRow,
-  validateGridColumnCount,
-  validateGridColumnRange,
-  validateGridNonNegativeIndex,
-} from '../internal/grid';
-import type { GridCellLike } from '../types';
+import { validateGridColumnCount, validateGridColumnRange, validateGridNonNegativeIndex } from '../internal/grid';
+import type { GridCell } from '../types/flat-shapes.internal';
 
 /**
  * row-major grid에서 cell coordinate를 flat index로 변환해 반환한다.
@@ -18,9 +12,9 @@ import type { GridCellLike } from '../types';
  * @param cell flat index로 변환할 integer cell coordinate
  * @param columnCount grid 한 row의 column 개수
  */
-export function gridIndex(cell: GridCellLike, columnCount: number): number {
-  const col = readGridCellCol(cell);
-  const row = readGridCellRow(cell);
+export function gridIndex(cell: GridCell, columnCount: number): number {
+  const col = cell.col;
+  const row = cell.row;
 
   validateGridNonNegativeIndex(col, 'cell col');
   validateGridNonNegativeIndex(row, 'cell row');

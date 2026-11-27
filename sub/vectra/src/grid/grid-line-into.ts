@@ -1,10 +1,5 @@
-import {
-  readGridCellCol,
-  readGridCellRow,
-  validateGridCellSafeInteger,
-  validateGridCollectionCount,
-} from '../internal/grid';
-import type { GridCellLike, GridCellWritable } from '../types';
+import { validateGridCellSafeInteger, validateGridCollectionCount } from '../internal/grid';
+import type { GridCell, GridCellWritable } from '../types/flat-shapes.internal';
 
 /**
  * start cell에서 end cell까지 inclusive Bresenham integer cell traversal을 start → end order로 out에 기록하고 out을 반환한다.
@@ -21,11 +16,11 @@ import type { GridCellLike, GridCellWritable } from '../types';
  * @param start traversal 시작 cell
  * @param end traversal 끝 cell
  */
-export function gridLineInto(out: GridCellWritable[], start: GridCellLike, end: GridCellLike): GridCellWritable[] {
-  const startCol = readGridCellCol(start);
-  const startRow = readGridCellRow(start);
-  const endCol = readGridCellCol(end);
-  const endRow = readGridCellRow(end);
+export function gridLineInto(out: GridCellWritable[], start: GridCell, end: GridCell): GridCellWritable[] {
+  const startCol = start.col;
+  const startRow = start.row;
+  const endCol = end.col;
+  const endRow = end.row;
 
   validateGridCellSafeInteger(startCol, startRow);
   validateGridCellSafeInteger(endCol, endRow);

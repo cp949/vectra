@@ -1,7 +1,7 @@
 /**
  * grid index/coordinates(gridIndex / gridCoordinates*) 계약 테스트.
  *
- * row-major flat index 변환, tuple cell input, index→col/row 역변환, out subtype 반환 보존,
+ * row-major flat index 변환, index→col/row 역변환, out subtype 반환 보존,
  * col/row/index non-negative safe integer guard, columnCount positive integer guard, safe integer
  * overflow RangeError, 실패 시 out 미수정 atomicity, companion plain object 반환을 검증한다.
  */
@@ -20,10 +20,6 @@ function makeCell(): GridCellWritable {
 describe('gridIndex - col/row를 flat index로 변환', () => {
   test('cell { col: 2, row: 3 }, columnCount 10은 index 32다', () => {
     expect(gridIndex({ col: 2, row: 3 }, 10)).toBe(32);
-  });
-
-  test('tuple cell input을 object cell과 동일하게 처리한다', () => {
-    expect(gridIndex([2, 3], 10)).toBe(32);
   });
 
   test('첫 cell { col: 0, row: 0 }은 index 0이다', () => {

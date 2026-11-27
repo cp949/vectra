@@ -1,5 +1,5 @@
-import { commitGridNeighbors, readGridCellCol, readGridCellRow, validateGridCellSafeInteger } from '../internal/grid';
-import type { GridCellLike, GridCellWritable } from '../types';
+import { commitGridNeighbors, validateGridCellSafeInteger } from '../internal/grid';
+import type { GridCell, GridCellWritable } from '../types/flat-shapes.internal';
 
 // north, east, south, west. row 증가는 아래 방향이라 north는 row - 1이다.
 const NEIGHBORS_4_OFFSETS = [
@@ -21,9 +21,9 @@ const NEIGHBORS_4_OFFSETS = [
  * @param out neighbor collection을 기록할 writable array. 성공 시 비우고 새 object를 push한다.
  * @param cell neighbor를 구할 center cell
  */
-export function gridNeighbors4Into(out: GridCellWritable[], cell: GridCellLike): GridCellWritable[] {
-  const col = readGridCellCol(cell);
-  const row = readGridCellRow(cell);
+export function gridNeighbors4Into(out: GridCellWritable[], cell: GridCell): GridCellWritable[] {
+  const col = cell.col;
+  const row = cell.row;
   validateGridCellSafeInteger(col, row);
   return commitGridNeighbors(out, col, row, NEIGHBORS_4_OFFSETS);
 }

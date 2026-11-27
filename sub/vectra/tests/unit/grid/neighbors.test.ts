@@ -3,7 +3,7 @@
  * 계약 테스트.
  *
  * gridNeighbors4의 N/E/S/W order, gridNeighbors8의 N/NE/E/SE/S/SW/W/NW order, center cell 미포함,
- * tuple/object cell input, negative cell offset, invalid col/row(NaN/Infinity/-Infinity/non-integer)·
+ * negative cell offset, invalid col/row(NaN/Infinity/-Infinity/non-integer)·
  * unsafe neighbor result RangeError, Into 같은 array ref 반환과 성공 시 content 교체, validation
  * 실패 시 out 미수정, companion 새 plain array 반환을 검증한다.
  */
@@ -20,17 +20,6 @@ describe('gridNeighbors4Into - cardinal neighbor collection', () => {
     const out: GridCellWritable[] = [];
     const result = gridNeighbors4Into(out, { col: 10, row: 20 });
     expect(result).toBe(out);
-    expect(out).toEqual([
-      { col: 10, row: 19 },
-      { col: 11, row: 20 },
-      { col: 10, row: 21 },
-      { col: 9, row: 20 },
-    ]);
-  });
-
-  test('tuple cell input을 object cell과 동일하게 처리한다', () => {
-    const out: GridCellWritable[] = [];
-    gridNeighbors4Into(out, [10, 20]);
     expect(out).toEqual([
       { col: 10, row: 19 },
       { col: 11, row: 20 },
@@ -145,21 +134,6 @@ describe('gridNeighbors8Into - cardinal + diagonal neighbor collection', () => {
     const out = gridNeighbors8Into([], { col: 10, row: 20 });
     expect(out).not.toContainEqual({ col: 10, row: 20 });
     expect(out).toHaveLength(8);
-  });
-
-  test('tuple cell input을 처리한다', () => {
-    const out: GridCellWritable[] = [];
-    gridNeighbors8Into(out, [0, 0]);
-    expect(out).toEqual([
-      { col: 0, row: -1 },
-      { col: 1, row: -1 },
-      { col: 1, row: 0 },
-      { col: 1, row: 1 },
-      { col: 0, row: 1 },
-      { col: -1, row: 1 },
-      { col: -1, row: 0 },
-      { col: -1, row: -1 },
-    ]);
   });
 
   test.each([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, 1.5])(

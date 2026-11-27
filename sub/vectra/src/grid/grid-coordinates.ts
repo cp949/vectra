@@ -1,4 +1,4 @@
-import type { GridCellWritable } from '../types';
+import type { GridCellWritable } from '../types/flat-shapes.internal';
 import { gridCoordinatesInto } from './grid-coordinates-into';
 
 /**

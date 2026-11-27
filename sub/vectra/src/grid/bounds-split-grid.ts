@@ -1,4 +1,4 @@
-import type { BoundsLike, RectWritable } from '../types';
+import type { Bounds, RectWritable } from '../types/flat-shapes.internal';
 import { boundsSplitGridInto } from './bounds-split-grid-into';
 
 /**
@@ -17,6 +17,6 @@ import { boundsSplitGridInto } from './bounds-split-grid-into';
  * @param rows 세로로 나눌 row 개수. positive safe integer.
  * @param cols 가로로 나눌 column 개수. positive safe integer.
  */
-export function boundsSplitGrid(bounds: BoundsLike, rows: number, cols: number): RectWritable[] {
+export function boundsSplitGrid(bounds: Bounds, rows: number, cols: number): RectWritable[] {
   return boundsSplitGridInto([], bounds, rows, cols);
 }
