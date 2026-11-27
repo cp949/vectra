@@ -14,7 +14,7 @@ describe('vec measurement - componentMin', () => {
   });
 
   test('y가 작으면 y를 반환한다', () => {
-    expect(componentMin([3, -2])).toBe(-2);
+    expect(componentMin({ x: 3, y: -2 })).toBe(-2);
   });
 
   test('같으면 그 값을 반환한다', () => {
@@ -22,11 +22,7 @@ describe('vec measurement - componentMin', () => {
   });
 
   test('음수 좌표를 올바르게 처리한다', () => {
-    expect(componentMin([-3, -1])).toBe(-3);
-  });
-
-  test('tuple 입력과 object 입력이 동일한 결과를 반환한다', () => {
-    expect(componentMin([2, 7])).toBe(componentMin({ x: 2, y: 7 }));
+    expect(componentMin({ x: -3, y: -1 })).toBe(-3);
   });
 });
 

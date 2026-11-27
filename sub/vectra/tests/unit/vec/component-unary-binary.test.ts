@@ -116,16 +116,6 @@ describe('vec component-wise - binary helpers', () => {
       aliasExpected: [15, 16],
     },
     {
-      name: 'divide',
-      into: divideInto,
-      companion: divide,
-      exampleTitle: 'a의 각 성분을 b의 각 성분으로 나눈 벡터를 out에 기록한다',
-      a: { x: 6, y: -20 },
-      b: { x: 2, y: -5 },
-      expected: [3, 4],
-      aliasExpected: [0.6, 4],
-    },
-    {
       name: 'min',
       into: minInto,
       companion: min,
@@ -154,6 +144,23 @@ describe('vec component-wise - binary helpers', () => {
       testBinaryBehavior(helper);
     });
   }
+
+  test('divide와 divideInto는 같은 성분별 나눗셈 결과를 반환한다', () => {
+    const a = { x: 6, y: -20 };
+    const b = { x: 2, y: -5 };
+    expectObjectOut((out) => divideInto(out, a, b), [3, 4]);
+    expectXY(divide(a, b), [3, 4]);
+  });
+
+  test('divideInto는 입력과 out을 공유해도 올바른 값을 기록한다', () => {
+    const a = { x: 3, y: 8 };
+    const b = { x: 5, y: 2 };
+    expect(divideInto(a, a, b)).toBe(a);
+    expectXY(a, [0.6, 4]);
+
+    expect(divideInto(b, { x: 3, y: 8 }, b)).toBe(b);
+    expectXY(b, [0.6, 4]);
+  });
 
   test('divideInto는 b.x가 0이면 x 성분에 Infinity를 기록한다', () => {
     const out: XYWritable = { x: 0, y: 0 };

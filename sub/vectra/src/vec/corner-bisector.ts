@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { cornerBisectorInto } from './corner-bisector-into';
 
 /**
@@ -18,7 +18,7 @@ import { cornerBisectorInto } from './corner-bisector-into';
  * @param c corner 다른쪽 끝점
  * @returns 단위 벡터 object 또는 undefined(degenerate)
  */
-export function cornerBisector(a: XYInput, b: XYInput, c: XYInput): XYObjectWritable | undefined {
+export function cornerBisector(a: Point, b: Point, c: Point): PointWritable | undefined {
   const result = cornerBisectorInto({ x: 0, y: 0 }, a, b, c);
   return result === false ? undefined : result;
 }

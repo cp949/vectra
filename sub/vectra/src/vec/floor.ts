@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { floorInto } from './floor-into';
 
 /**
@@ -8,6 +8,6 @@ import { floorInto } from './floor-into';
  *
  * @param input 내림할 입력 벡터
  */
-export function floor(input: XYInput): XYObjectWritable {
+export function floor(input: Point): PointWritable {
   return floorInto({ x: 0, y: 0 }, input);
 }

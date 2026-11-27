@@ -27,15 +27,6 @@ describe('vec direction - directionToInto', () => {
     expect(out.y).toBeCloseTo(0.8, 10);
   });
 
-  test('tuple input: (0,0)→(3,4) 방향 단위 벡터를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-
-    directionToInto(out, [0, 0], [3, 4]);
-
-    expect(out.x).toBeCloseTo(0.6, 10);
-    expect(out.y).toBeCloseTo(0.8, 10);
-  });
-
   test('같은 점 (from === to 값)에서 (0, 0)을 기록하고 throw하지 않는다', () => {
     const out: XYWritable = { x: 99, y: 99 };
 
@@ -64,16 +55,6 @@ describe('vec direction - directionToInto', () => {
 
     expect(vec.x).toBeCloseTo(0.6, 10);
     expect(vec.y).toBeCloseTo(0.8, 10);
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = directionToInto(out, { x: 0, y: 0 }, [3, 4]);
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(0.6, 10);
-    expect(out[1]).toBeCloseTo(0.8, 10);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('NaN 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
@@ -115,8 +96,8 @@ describe('vec companion - directionTo', () => {
 
   test('directionToInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    directionToInto(out, [1, 2], [4, 6]);
-    const result = directionTo([1, 2], [4, 6]);
+    directionToInto(out, { x: 1, y: 2 }, { x: 4, y: 6 });
+    const result = directionTo({ x: 1, y: 2 }, { x: 4, y: 6 });
 
     expect(result.x).toBeCloseTo(out.x, 10);
     expect(result.y).toBeCloseTo(out.y, 10);

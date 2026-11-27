@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -15,22 +14,22 @@ import { hypot2 } from '../internal/numeric';
  * storage여도 안전하고, 실패 시 out 미수정이 보장된다.
  * non-finite(NaN, Infinity, -Infinity) 입력 검증은 caller 책임이며, 검증 없이 JS 산술 결과를 그대로 기록한다.
  *
- * @param out 결과 단위 벡터를 기록할 writable output
+ * @param out 결과 단위 벡터를 기록할 점 객체
  * @param a corner 한쪽 끝점
  * @param b corner vertex
  * @param c corner 다른쪽 끝점
  * @returns out 또는 false(degenerate)
  */
-export function cornerBisectorInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInput, c: XYInput): Out | false {
-  const bx = readX(b);
-  const by = readY(b);
-  const e1x = readX(a) - bx;
-  const e1y = readY(a) - by;
+export function cornerBisectorInto<Out extends PointWritable>(out: Out, a: Point, b: Point, c: Point): Out | false {
+  const bx = b.x;
+  const by = b.y;
+  const e1x = a.x - bx;
+  const e1y = a.y - by;
   const len1 = hypot2(e1x, e1y);
   if (len1 === 0) return false;
 
-  const e2x = readX(c) - bx;
-  const e2y = readY(c) - by;
+  const e2x = c.x - bx;
+  const e2y = c.y - by;
   const len2 = hypot2(e2x, e2y);
   if (len2 === 0) return false;
 
@@ -39,5 +38,9 @@ export function cornerBisectorInto<Out extends XYWritable>(out: Out, a: XYInput,
   const sl = hypot2(sx, sy);
   if (sl === 0) return false;
 
-  return writeXY(out, sx / sl, sy / sl);
+  const x = sx / sl;
+  const y = sy / sl;
+  out.x = x;
+  out.y = y;
+  return out;
 }

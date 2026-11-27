@@ -299,13 +299,15 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
     for (let i = 0; i < N; i++) {
       const aSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
       const bSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
+      const a = { x: aSpec.x, y: aSpec.y };
+      const b = { x: bSpec.x, y: bSpec.y };
       const cases: Array<[string, number, number]> = [
-        ['dot', dot(makeVec(aSpec), makeVec(bSpec)), ref.dot(makeVec(aSpec), makeVec(bSpec))],
-        ['cross', cross(makeVec(aSpec), makeVec(bSpec)), ref.cross(makeVec(aSpec), makeVec(bSpec))],
+        ['dot', dot(a, b), ref.dot(a, b)],
+        ['cross', cross(a, b), ref.cross(a, b)],
         ['length', length(makeVec(aSpec)), ref.length(makeVec(aSpec))],
         ['lengthSq', lengthSq(makeVec(aSpec)), ref.lengthSq(makeVec(aSpec))],
-        ['distance', distance(makeVec(aSpec), makeVec(bSpec)), ref.distance(makeVec(aSpec), makeVec(bSpec))],
-        ['distanceSq', distanceSq(makeVec(aSpec), makeVec(bSpec)), ref.distanceSq(makeVec(aSpec), makeVec(bSpec))],
+        ['distance', distance(a, b), ref.distance(a, b)],
+        ['distanceSq', distanceSq(a, b), ref.distanceSq(a, b)],
       ];
       for (const [name, actual, expected] of cases) {
         if (!same(expected, actual)) {

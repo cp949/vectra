@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * a에서 b로의 방향각을 radian으로 반환한다. 범위는 (-π, π]이다.
@@ -10,11 +9,11 @@ import type { XYInput } from '../types';
  * @param a 시작 방향 벡터
  * @param b 끝 방향 벡터
  */
-export function directedAngle(a: XYInput, b: XYInput): number {
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
+export function directedAngle(a: Point, b: Point): number {
+  const ax = a.x;
+  const ay = a.y;
+  const bx = b.x;
+  const by = b.y;
 
   // zero vector는 방향이 없으므로 회전각 0으로 환원한다.
   if ((ax === 0 && ay === 0) || (bx === 0 && by === 0)) {

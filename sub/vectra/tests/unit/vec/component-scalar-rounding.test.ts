@@ -69,12 +69,10 @@ describe('vec scalar helpers', () => {
     ['componentSum은 양수 성분 벡터의 x + y를 반환한다', componentSum, { x: 3, y: 5 }, 8],
     ['componentSum은 음수 성분 벡터의 x + y를 반환한다', componentSum, { x: -3, y: -5 }, -8],
     ['componentSum은 혼합 부호 벡터의 x + y를 반환한다', componentSum, { x: 10, y: -3 }, 7],
-    ['componentSum은 tuple 입력을 처리한다', componentSum, [4, 6] as const, 10],
     ['componentSum은 영 벡터에서 0을 반환한다', componentSum, { x: 0, y: 0 }, 0],
     ['componentProduct는 양수 성분 벡터의 x * y를 반환한다', componentProduct, { x: 3, y: 5 }, 15],
     ['componentProduct는 부호가 다른 두 성분의 x * y를 음수로 반환한다', componentProduct, { x: 3, y: -5 }, -15],
     ['componentProduct는 둘 다 음수인 성분의 x * y를 양수로 반환한다', componentProduct, { x: -3, y: -5 }, 15],
-    ['componentProduct는 tuple 입력을 처리한다', componentProduct, [4, 6] as const, 24],
     ['componentProduct는 성분 중 하나가 0이면 0을 반환한다', componentProduct, { x: 0, y: 100 }, 0],
   ])('%s', (_title, fn, input, expected) => {
     expect(fn(input)).toBe(expected);
@@ -121,8 +119,6 @@ describe('vec component-wise - rounding helpers', () => {
       integerExpected: [3, -5],
       aliasInput: { x: 2.9, y: -1.1 },
       aliasExpected: [2, -2],
-      tupleInput: [1.5, -0.5],
-      tupleExpected: [1, -1],
     },
     {
       name: 'ceil',

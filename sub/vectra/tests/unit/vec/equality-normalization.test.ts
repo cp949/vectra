@@ -1,11 +1,12 @@
+/** 벡터의 좌표 비교와 정규화를 검증한다. */
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { equals } from '../../../src/vec/equals';
 import { nearEquals } from '../../../src/vec/near-equals';
 import { normalizeInto } from '../../../src/vec/normalize-into';
 
 describe('vec equality - equals', () => {
-  test('object와 tuple이 같은 좌표이면 true를 반환한다', () => {
-    expect(equals({ x: 1, y: 2 }, [1, 2])).toBe(true);
+  test('서로 다른 객체의 좌표가 같으면 true를 반환한다', () => {
+    expect(equals({ x: 1, y: 2 }, { x: 1, y: 2 })).toBe(true);
   });
 
   test('1 ULP 차이는 false를 반환한다', () => {
@@ -25,21 +26,17 @@ describe('vec equality - equals', () => {
   });
 
   test('y만 다르면 false를 반환한다', () => {
-    expect(equals([1, 2], [1, 3])).toBe(false);
-  });
-
-  test('tuple과 object 혼합에서 좌표가 같으면 true를 반환한다', () => {
-    expect(equals([0, 0], { x: 0, y: 0 })).toBe(true);
+    expect(equals({ x: 1, y: 2 }, { x: 1, y: 3 })).toBe(false);
   });
 
   test('input을 mutate하지 않는다', () => {
     const a = { x: 1, y: 2 };
-    const b: [number, number] = [1, 2];
+    const b = { x: 1, y: 2 };
 
     equals(a, b);
 
     expect(a).toEqual({ x: 1, y: 2 });
-    expect(b).toEqual([1, 2]);
+    expect(b).toEqual({ x: 1, y: 2 });
   });
 });
 

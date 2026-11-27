@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -10,14 +9,16 @@ import { hypot2 } from '../internal/numeric';
  *
  * NaN / Infinity 입력은 JavaScript 산술 결과를 그대로 out에 기록한다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param from 방향 벡터 시작점
  * @param to 방향 벡터 끝점
  */
-export function directionToInto<Out extends XYWritable>(out: Out, from: XYInput, to: XYInput): Out {
-  const dx = readX(to) - readX(from);
-  const dy = readY(to) - readY(from);
+export function directionToInto<Out extends PointWritable>(out: Out, from: Point, to: Point): Out {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
   const len = hypot2(dx, dy);
 
-  return len === 0 ? writeXY(out, 0, 0) : writeXY(out, dx / len, dy / len);
+  out.x = len === 0 ? 0 : dx / len;
+  out.y = len === 0 ? 0 : dy / len;
+  return out;
 }

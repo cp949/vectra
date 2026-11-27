@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 더 작은 성분의 인덱스를 반환한다.
@@ -11,8 +10,8 @@ import type { XYInput } from '../types';
  *
  * @param input 검사할 좌표
  */
-export function componentMinIndex(input: XYInput): 0 | 1 {
-  const x = readX(input);
-  const y = readY(input);
+export function componentMinIndex(input: Point): 0 | 1 {
+  const x = input.x;
+  const y = input.y;
   return Object.is(Math.min(x, y), x) ? 0 : 1;
 }

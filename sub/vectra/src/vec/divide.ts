@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { divideInto } from './divide-into';
 
 /**
@@ -9,6 +9,6 @@ import { divideInto } from './divide-into';
  * @param a 피제수 벡터
  * @param b 제수 벡터. 성분이 0이면 Infinity 또는 NaN이 나올 수 있다
  */
-export function divide(a: XYInput, b: XYInput): XYObjectWritable {
+export function divide(a: Point, b: Point): PointWritable {
   return divideInto({ x: 0, y: 0 }, a, b);
 }

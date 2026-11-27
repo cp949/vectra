@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { directionToInto } from './direction-to-into';
 
 /**
@@ -11,6 +11,6 @@ import { directionToInto } from './direction-to-into';
  * @param from 방향 벡터 시작점
  * @param to 방향 벡터 끝점
  */
-export function directionTo(from: XYInput, to: XYInput): XYObjectWritable {
+export function directionTo(from: Point, to: Point): PointWritable {
   return directionToInto({ x: 0, y: 0 }, from, to);
 }

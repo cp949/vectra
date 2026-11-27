@@ -109,15 +109,13 @@ allocating companion은 새 object를 만든다.
 
 ## Input
 
-점 보간과 전환된 벡터 함수는 `{ x, y }` object를 받는다.
-아래 `distance`는 readonly tuple도 받는다.
+점 보간과 거리 계산은 `{ x, y }` object를 받는다.
 
 ```ts
-import type { XYInput } from '@cp949/vectra/types';
 import * as Vecx from '@cp949/vectra/vec';
 
-const a: XYInput = { x: 1, y: 2 };
-const b: XYInput = [3, 4];
+const a = { x: 1, y: 2 };
+const b = { x: 3, y: 4 };
 
 console.log(Vecx.distance(a, b));
 ```

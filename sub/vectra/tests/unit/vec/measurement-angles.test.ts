@@ -68,34 +68,34 @@ describe('vec measurement - angleBetween', () => {
 
 describe('vec measurement - directedAngle', () => {
   test('같은 방향이면 0을 반환한다', () => {
-    expect(directedAngle([1, 0], { x: 2, y: 0 })).toBeCloseTo(0);
+    expect(directedAngle({ x: 1, y: 0 }, { x: 2, y: 0 })).toBeCloseTo(0);
   });
 
   test('CCW 90도 회전은 양수 π/2를 반환한다', () => {
-    expect(directedAngle([1, 0], [0, 1])).toBeCloseTo(Math.PI / 2);
+    expect(directedAngle({ x: 1, y: 0 }, { x: 0, y: 1 })).toBeCloseTo(Math.PI / 2);
   });
 
   test('CW 90도 회전은 음수 -π/2를 반환한다', () => {
-    expect(directedAngle([1, 0], { x: 0, y: -1 })).toBeCloseTo(-Math.PI / 2);
+    expect(directedAngle({ x: 1, y: 0 }, { x: 0, y: -1 })).toBeCloseTo(-Math.PI / 2);
   });
 
   test('반대 방향은 ±π를 반환한다', () => {
-    const result = directedAngle([1, 0], [-1, 0]);
+    const result = directedAngle({ x: 1, y: 0 }, { x: -1, y: 0 });
 
     expect(Math.abs(result)).toBeCloseTo(Math.PI);
   });
 
   test('zero vector a는 0을 반환한다', () => {
-    expect(directedAngle([0, 0], [1, 0])).toBe(0);
+    expect(directedAngle({ x: 0, y: 0 }, { x: 1, y: 0 })).toBe(0);
   });
 
   test('zero vector b는 0을 반환한다', () => {
-    expect(directedAngle({ x: 1, y: 0 }, [0, 0])).toBe(0);
+    expect(directedAngle({ x: 1, y: 0 }, { x: 0, y: 0 })).toBe(0);
   });
 
   test('부호가 방향에 따라 반전된다', () => {
-    const ab = directedAngle([1, 0], [1, 1]);
-    const ba = directedAngle([1, 1], [1, 0]);
+    const ab = directedAngle({ x: 1, y: 0 }, { x: 1, y: 1 });
+    const ba = directedAngle({ x: 1, y: 1 }, { x: 1, y: 0 });
 
     expect(ab).toBeCloseTo(-ba);
   });

@@ -210,7 +210,7 @@ describe('레시피 4: { x, y } structural object를 XYInput으로 사용', () =
     const out = { x: 0, y: 0 };
     expect(addInto(out, { x: 2, y: 3 }, { x: 4, y: 5 })).toBe(out);
     expect(out).toEqual({ x: 6, y: 8 });
-    expect(distance(out, [6, 4])).toBeCloseTo(4, 10);
+    expect(distance(out, { x: 6, y: 4 })).toBeCloseTo(4, 10);
   });
 });
 
@@ -416,8 +416,8 @@ describe('README 빠른 시작 예제 검증', () => {
     expect(out.x).toBeCloseTo(6, 10);
     expect(out.y).toBeCloseTo(8, 10);
 
-    // README 예제: distance(out, [6, 4]) → 4
-    expect(distance(out, [6, 4])).toBeCloseTo(4, 10);
+    // README 예제: distance(out, { x: 6, y: 4 }) → 4
+    expect(distance(out, { x: 6, y: 4 })).toBeCloseTo(4, 10);
   });
 
   it('Domain barrel import 예제 — normalizeInto와 nearEquals가 README대로 동작한다', () => {

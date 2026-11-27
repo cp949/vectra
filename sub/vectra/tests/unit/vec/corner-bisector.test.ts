@@ -30,24 +30,6 @@ describe('cornerBisectorInto — 내각 이등분 단위 벡터', () => {
     expect(Math.hypot(out.x, out.y)).toBeCloseTo(1);
   });
 
-  test('tuple 입력을 처리하고 out을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const result = cornerBisectorInto(out, [1, 0], [0, 0], [0, 1]);
-
-    expect(result).toBe(out);
-    expect(out.x).toBeCloseTo(SQRT1_2);
-    expect(out.y).toBeCloseTo(SQRT1_2);
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = cornerBisectorInto(out, { x: 1, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 1 });
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(SQRT1_2);
-    expect(out[1]).toBeCloseTo(SQRT1_2);
-  });
-
   test('out === b self-aliasing에서도 정확한 결과를 반환한다', () => {
     const b: XYWritable = { x: 0, y: 0 };
     const result = cornerBisectorInto(b, { x: 1, y: 0 }, b, { x: 0, y: 1 });
