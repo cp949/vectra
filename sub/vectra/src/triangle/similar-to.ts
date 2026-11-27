@@ -10,7 +10,7 @@ import { hypot2 } from '../internal/numeric';
  * 대응 변 ratio가 어긋나 false가 될 수 있다.
  *
  * 판정: 세 대응 변 ratio(`|A'B'|/|AB|`, `|B'C'|/|BC|`, `|C'A'|/|CA|`)가 서로 epsilon 이내로
- * 같으면 닮음이다. epsilon은 ratio 차이의 절대 허용오차이며 기본값은 1e-9다.
+ * 같으면 닮음이다. epsilon은 ratio 차이의 절대 허용오차다.
  *
  * orientation: 기본 reflection 불허. 두 triangle의 signedArea 부호가 다르면 false.
  * allowReflection이 true면 부호 차이를 무시한다.
@@ -20,8 +20,9 @@ import { hypot2 } from '../internal/numeric';
  *
  * @param a 비교할 첫 번째 triangle
  * @param b 비교할 두 번째 triangle
- * @param options.epsilon ratio 차이 절대 허용오차 (기본값 1e-9, 음수이면 RangeError)
- * @param options.allowReflection true면 orientation 부호 차이를 허용한다 (기본값 false)
+ * @param options 비교 옵션. 생략하면 `{ epsilon: 1e-9, allowReflection: false }`를 쓴다.
+ * @param options.epsilon ratio 차이 절대 허용오차. 음수이면 RangeError다.
+ * @param options.allowReflection true면 orientation 부호 차이를 허용한다.
  */
 export function similarTo(a: Triangle, b: Triangle, options?: { epsilon: number; allowReflection: boolean }): boolean {
   const epsilon = options === undefined ? 1e-9 : options.epsilon;

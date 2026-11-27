@@ -11,7 +11,7 @@ export type TriangleVertexKey = 'a' | 'b' | 'c';
  * - 'b': vertex B에서 midpoint(CA)로 향하는 segment
  * - 'c': vertex C에서 midpoint(AB)로 향하는 segment
  *
- * (out.x1, out.y1)는 source vertex, (out.x2, out.y2)는 opposite side midpoint다.
+ * (out.x1, out.y1)은 source vertex, (out.x2, out.y2)는 opposite side midpoint다.
  *
  * runtime invalid vertex key는 false를 반환하고 out을 수정하지 않는다.
  * degenerate triangle(collinear, all-same vertex)도 midpoint 산식을 그대로 적용해 segment를

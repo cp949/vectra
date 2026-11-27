@@ -23,12 +23,6 @@ describe('fromSegmentApexInto / fromSegmentApex', () => {
     expect(out).toEqual(expected);
   });
 
-  test('출력 객체를 밑변으로 넘겨도 두 끝점과 꼭짓점을 기록한다', () => {
-    const out = { x1: 0, y1: 1, x2: 9, y2: 8, x3: 0, y3: 0 };
-    expect(fromSegmentApexInto(out, out, { x: 5, y: 5 })).toBe(out);
-    expect(out).toEqual({ x1: 0, y1: 1, x2: 9, y2: 8, x3: 5, y3: 5 });
-  });
-
   test('non-finite 좌표는 그대로 기록된다', () => {
     const out = createTriangle();
     fromSegmentApexInto(out, { x1: 0, y1: 0, x2: 4, y2: 0 }, { x: Number.NaN, y: 0 });

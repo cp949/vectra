@@ -13,9 +13,9 @@ describe('medialTriangleInto', () => {
     const out = { x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
     const result = medialTriangleInto(out, triangle);
     expect(result).toBe(out);
-    // out.a = midpoint(a, b) = (2, 0)
-    // out.b = midpoint(b, c) = (2, 2)
-    // out.c = midpoint(c, a) = (0, 2)
+    // (x1, y1) = midpoint(a, b) = (2, 0)
+    // (x2, y2) = midpoint(b, c) = (2, 2)
+    // (x3, y3) = midpoint(c, a) = (0, 2)
     expect(out).toEqual({ x1: 2, y1: 0, x2: 2, y2: 2, x3: 0, y3: 2 });
   });
 

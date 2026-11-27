@@ -1,7 +1,7 @@
 /**
  * triangle Euler line 단위 테스트.
  *
- * eulerLineInto / eulerLine의 endpoint(out.a=centroid, out.b=orthocenter),
+ * eulerLineInto / eulerLine의 endpoint((x1, y1)=centroid, (x2, y2)=orthocenter),
  * 정삼각형 zero-length segment, degenerate/non-finite 실패 정책, output 계약,
  * 같은 객체를 입력과 출력으로 쓰는 경우를 다룬다.
  */
@@ -41,7 +41,7 @@ describe('eulerLineInto', () => {
     expect(out.y2).toBeCloseTo(1, 10);
   });
 
-  test('직각삼각형: out.a는 centroid(4/3, 1), out.b는 orthocenter(0, 0)다', () => {
+  test('직각삼각형: 시작점은 centroid(4/3, 1), 끝점은 orthocenter(0, 0)다', () => {
     const out = seg();
     const result = eulerLineInto(out, right);
     expect(result).toBe(out);
@@ -51,7 +51,7 @@ describe('eulerLineInto', () => {
     expect(out.y2).toBeCloseTo(0, 10);
   });
 
-  test('예각삼각형: out.a/out.b는 centroid/orthocenter companion과 일치한다', () => {
+  test('예각삼각형: 시작점과 끝점은 centroid/orthocenter companion과 일치한다', () => {
     const g = centroid(acute);
     const h = orthocenter(acute);
     expect(h).not.toBeUndefined();

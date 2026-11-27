@@ -13,12 +13,9 @@ import { fromSegmentHeightInto } from './from-segment-height-into';
  * 통과하면 apex 좌표에 그대로 전파된다 (예: `midpoint + 1 * Infinity = Infinity`,
  * `midpoint + 0 * Infinity = NaN`).
  *
- * aliasing: base 좌표를 모두 local에 먼저 읽으므로 base endpoint가 결과 triangle vertex
- * storage와 같은 object여도 안전하다(companion은 자체 storage를 새로 만든다).
- *
  * @param base 첫 두 vertex로 쓸 segment input. length가 finite positive여야 한다.
  * @param height base midpoint에서 normal 방향으로 이동할 거리. 음수면 반대쪽 apex.
- * @param options `{ side: 'left' | 'right' }`. 기본 `side = 'left'`.
+ * @param options `{ side: 'left' | 'right' }`. 옵션 객체를 생략하면 `side = 'left'`다.
  */
 export function fromSegmentHeight(
   base: Segment,

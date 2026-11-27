@@ -16,7 +16,7 @@ import type { TriangleWritable, Point } from '../types/flat-shapes.internal';
  *
  * 입력 좌표를 먼저 읽은 뒤 결과를 기록한다.
  *
- * @param out 정삼각형 vertex를 기록할 triangle 객체
+ * @param out 정삼각형 vertex를 기록할 삼각형 객체
  * @param origin 첫 vertex가 될 기준점
  * @param sideLength 변의 길이. clamp하지 않는다.
  * @param angle origin→b 방향의 radian. 기본값 0.

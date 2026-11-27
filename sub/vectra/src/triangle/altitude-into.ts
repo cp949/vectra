@@ -9,7 +9,7 @@ import type { SegmentWritable, Triangle } from '../types/flat-shapes.internal';
  * - index 1 → vertex B에서 side CA(c→a)로 내린 수선
  * - index 2 → vertex C에서 side AB(a→b)로 내린 수선
  *
- * (out.x1, out.y1)는 source vertex, (out.x2, out.y2)는 foot(수선의 발)이다.
+ * (out.x1, out.y1)은 source vertex, (out.x2, out.y2)는 foot(수선의 발)이다.
  *
  * 다음 경우 false를 반환하고 out을 수정하지 않는다:
  * - invalid index (음수, 3 이상, NaN)
@@ -18,7 +18,7 @@ import type { SegmentWritable, Triangle } from '../types/flat-shapes.internal';
  *
  * 입력 좌표를 먼저 읽은 뒤 결과를 기록한다.
  *
- * @param out 수선을 기록할 segment 객체 ((out.x1, out.y1): source vertex, (out.x2, out.y2): foot)
+ * @param out 수선을 기록할 선분 객체 ((out.x1, out.y1): source vertex, (out.x2, out.y2): foot)
  * @param triangle 수선을 계산할 triangle
  * @param index 수선을 내릴 vertex index (0=A, 1=B, 2=C)
  * @returns out 또는 false(실패)

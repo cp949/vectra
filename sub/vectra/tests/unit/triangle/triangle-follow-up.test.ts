@@ -188,7 +188,7 @@ describe('altitudeInto', () => {
     // BC direction = (2,0), lenSq = 4
     // t = ((0-2)*2 + (0-0)*0) / 4 = -4/4 = -1
     // foot = (2 + (-1)*2, 0) = (0, 0) = A 자신
-    // out.a == out.b → height 0
+    // 시작점과 끝점이 같음 → height 0
     const out = seg();
     const result = altitudeInto(out, collinear, 0);
     expect(result).toBe(out);

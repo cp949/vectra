@@ -11,7 +11,7 @@ import type { Triangle, TriangleWritable } from '../types/flat-shapes.internal';
  * degenerate triangle(collinear)에서도 각 side의 midpoint를 계산한다.
  * non-finite vertex는 IEEE 754 연산 결과를 그대로 반환한다.
  *
- * @param out 세 변의 중점을 기록할 triangle 객체
+ * @param out 세 변의 중점을 기록할 삼각형 객체
  * @param triangle 세 변의 중점을 구할 triangle
  */
 export function medialTriangleInto<Out extends TriangleWritable>(out: Out, triangle: Triangle): Out {

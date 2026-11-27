@@ -249,9 +249,9 @@ describe('mediansInto', () => {
   test('NaN vertex도 throw하지 않고 JS 산술 결과를 기록한다', () => {
     const out = seedMedians();
     expect(() => mediansInto(out, { x1: Number.NaN, y1: 0, x2: 4, y2: 0, x3: 0, y3: 3 })).not.toThrow();
-    // median a: out.a.a = (NaN, 0)
+    // median a 시작점 = (NaN, 0)
     expect(Number.isNaN(out.a.x1)).toBe(true);
-    // median b: out.b.a = B=(4,0), out.b.b = midpoint(CA) = ((0+NaN)/2, 1.5).
+    // median b 시작점 = B(4, 0), 끝점 = midpoint(CA) = ((0+NaN)/2, 1.5).
     expectXY({ x: out.b.x1, y: out.b.y1 }, 4, 0);
     expect(Number.isNaN(out.b.x2)).toBe(true);
     expect(out.b.y2).toBeCloseTo(1.5, 12);

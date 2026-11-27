@@ -3,7 +3,7 @@ import { incenterInto } from './incenter-into';
 
 /**
  * incenterInto의 allocating companion.
- * triangle의 내심을 XYObjectWritable로 반환한다.
+ * triangle의 내심을 점 객체로 반환한다.
  * perimeter가 0이면 undefined를 반환한다.
  *
  *

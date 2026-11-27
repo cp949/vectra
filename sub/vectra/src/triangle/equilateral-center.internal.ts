@@ -17,7 +17,7 @@ const FOUR_PI_OVER_3 = (4 * Math.PI) / 3;
  *
  * domain-local helper다. public으로 export하지 않는다.
  *
- * @param out 정삼각형 vertex를 기록할 triangle 객체
+ * @param out 정삼각형 vertex를 기록할 삼각형 객체
  * @param cx centroid x
  * @param cy centroid y
  * @param radius centroid-to-vertex 거리. clamp하지 않는다.

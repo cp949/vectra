@@ -2,7 +2,7 @@ import type { Triangle, Point, PointWritable } from '../types/flat-shapes.intern
 import { closestPointInto } from './closest-point-into';
 
 /**
- * closestPointInto의 allocating companion. triangle 위의 closest point를 새 XYObjectWritable로 반환한다.
+ * closestPointInto의 allocating companion. triangle 위의 closest point를 새 점 객체로 반환한다.
  *
  * non-degenerate triangle 내부 또는 boundary point는 input point 좌표를 그대로 반환한다.
  * 외부 point는 세 edge segment AB, BC, CA의 clamped closest point 중 거리 제곱이 가장 작은

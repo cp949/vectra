@@ -1,3 +1,8 @@
+/**
+ * 삼각형 풀이(solveSss* / solveAsa*)와 점 위치 분류(classifyPoint)를 검증한다.
+ * 유효 입력의 각도·변 길이, 실패 입력, companion 반환값, inside/on-edge/outside 판정을 다룬다.
+ */
+
 import { describe, expect, test } from 'vitest';
 import { classifyPoint } from '../../../src/triangle/classify-point';
 import { solveAsa } from '../../../src/triangle/solve-asa';

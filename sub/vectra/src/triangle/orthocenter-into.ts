@@ -7,7 +7,6 @@ const center = { x: 0, y: 0 };
  * triangle의 수심(orthocenter)을 계산해 out에 기록하고 out을 반환한다.
  *
  * degenerate triangle(collinear 또는 non-finite vertex)이면 out을 수정하지 않고 false를 반환한다.
- * input과 output이 같은 object여도 안전하다(aliasing 허용).
  *
  * @param out 수심 좌표를 기록할 점 객체
  * @param triangle 수심을 계산할 triangle

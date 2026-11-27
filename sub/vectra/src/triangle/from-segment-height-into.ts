@@ -19,12 +19,11 @@ import { hypot2 } from '../internal/numeric';
  * `midpoint + 0 * Infinity = NaN`).
  *
  * 입력 좌표를 먼저 읽은 뒤 결과를 기록한다.
- * 같은 object여도 안전하다.
  *
- * @param out 삼각형 vertex를 기록할 triangle 객체
+ * @param out 삼각형 vertex를 기록할 삼각형 객체
  * @param base 첫 두 vertex로 쓸 segment input. length가 finite positive여야 한다.
  * @param height base midpoint에서 normal 방향으로 이동할 거리. 음수면 반대쪽 apex.
- * @param options `{ side: 'left' | 'right' }`. 기본 `side = 'left'`.
+ * @param options `{ side: 'left' | 'right' }`. 옵션 객체를 생략하면 `side = 'left'`다.
  */
 export function fromSegmentHeightInto<Out extends TriangleWritable>(
   out: Out,

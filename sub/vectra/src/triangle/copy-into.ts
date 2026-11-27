@@ -3,7 +3,7 @@ import type { Triangle, TriangleWritable } from '../types/flat-shapes.internal';
 /**
  * triangle의 꼭짓점 좌표를 out에 복사하고 out을 반환한다.
  *
- * @param out 복사한 좌표를 기록할 triangle 객체
+ * @param out 복사한 좌표를 기록할 삼각형 객체
  * @param triangle 복사할 triangle
  */
 export function copyInto<Out extends TriangleWritable>(out: Out, triangle: Triangle): Out {

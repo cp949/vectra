@@ -2,7 +2,7 @@
  * triangle barycentric 좌표 변환 단위 테스트.
  *
  * barycentricInto / barycentric의 vertex/centroid/내부/외부 점 분류, sum=1 invariant,
- * degenerate triangle 실패 정책를 다룬다.
+ * degenerate triangle 실패 정책을 다룬다.
  * pointFromBarycentricInto / pointFromBarycentric의 affine combination, degenerate triangle 성공,
  * non-normalized/negative weight pass-through, non-finite pass-through, aliasing, round-trip을 함께 다룬다.
  */

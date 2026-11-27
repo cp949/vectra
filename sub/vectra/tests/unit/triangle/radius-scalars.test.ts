@@ -42,7 +42,7 @@ describe('inradius', () => {
     expect(inradius(point)).toBeUndefined();
   });
 
-  test('incircle(triangle)?.r와 같은 값을 반환한다', () => {
+  test('incircle(triangle)?.r과 같은 값을 반환한다', () => {
     expect(inradius(right345)).toBe(incircle(right345)?.r);
     expect(inradius(equilateral)).toBe(incircle(equilateral)?.r);
     expect(inradius(collinear)).toBe(incircle(collinear)?.r);
@@ -81,7 +81,7 @@ describe('circumradius', () => {
     expect(circumradius(point)).toBeUndefined();
   });
 
-  test('circumcircle(triangle)?.r와 같은 값을 반환한다', () => {
+  test('circumcircle(triangle)?.r과 같은 값을 반환한다', () => {
     expect(circumradius(right345)).toBe(circumcircle(right345)?.r);
     expect(circumradius(equilateral)).toBe(circumcircle(equilateral)?.r);
     // degenerate: circumcircle은 undefined, ?.r도 undefined로 동등하다.

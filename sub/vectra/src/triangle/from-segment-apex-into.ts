@@ -8,13 +8,12 @@ import type { Segment, TriangleWritable, Point } from '../types/flat-shapes.inte
  * - (x2, y2) = 둘째 끝점
  * - (x3, y3) = apex
  *
- * zero-length base(`두 끝점이 일치할 때`)도 별도 처리 없이 degenerate triangle로 기록한다.
+ * zero-length base(두 끝점이 일치)도 별도 처리 없이 degenerate triangle로 기록한다.
  * NaN/Infinity 좌표는 validation 없이 그대로 기록한다.
  *
  * 입력 좌표를 먼저 읽은 뒤 결과를 기록한다.
- * 하나와 같은 object여도 안전하다.
  *
- * @param out 삼각형 vertex를 기록할 triangle 객체
+ * @param out 삼각형 vertex를 기록할 삼각형 객체
  * @param base 첫 두 vertex로 쓸 segment input
  * @param apex 세 번째 vertex point
  */

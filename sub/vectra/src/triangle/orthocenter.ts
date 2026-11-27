@@ -3,7 +3,7 @@ import { orthocenterInto } from './orthocenter-into';
 
 /**
  * orthocenterInto의 allocating companion.
- * triangle의 수심을 XYObjectWritable로 반환한다.
+ * triangle의 수심을 점 객체로 반환한다.
  * degenerate triangle이면 undefined를 반환한다.
  *
  *

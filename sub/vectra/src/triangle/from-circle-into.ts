@@ -4,7 +4,7 @@ import { writeEquilateralFromCenter } from './equilateral-center.internal';
 /**
  * circle에 내접하는 정삼각형 vertex를 out에 기록하고 out을 반환한다.
  *
- * `circle.r`를 centroid-to-vertex 거리로 사용한다.
+ * `circle.r`을 centroid-to-vertex 거리로 사용한다.
  *
  * 좌표 정의:
  * - (x1, y1) = center + radius * (cos(rotation), sin(rotation))
@@ -19,8 +19,8 @@ import { writeEquilateralFromCenter } from './equilateral-center.internal';
  *
  * 입력 좌표를 먼저 읽은 뒤 결과를 기록한다.
  *
- * @param out 정삼각형 vertex를 기록할 triangle 객체
- * @param circle 내접 정삼각형의 외접원 객체.
+ * @param out 정삼각형 vertex를 기록할 삼각형 객체
+ * @param circle 내접 정삼각형의 외접원 객체
  * @param rotation 첫 vertex angle의 radian. 기본값 -PI/2.
  */
 export function fromCircleInto<Out extends TriangleWritable>(

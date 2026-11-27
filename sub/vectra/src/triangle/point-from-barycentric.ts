@@ -4,7 +4,7 @@ import { pointFromBarycentricInto } from './point-from-barycentric-into';
 
 /**
  * pointFromBarycentricInto의 allocating companion.
- * barycentric 좌표를 Cartesian point로 변환해 새 XYObjectWritable로 반환한다.
+ * barycentric 좌표를 Cartesian point로 변환해 새 점 객체로 반환한다.
  *
  * u = barycentric.x (vertex A 가중치), v = barycentric.y (vertex B 가중치), w = barycentric.w (vertex C 가중치).
  * x = u*ax + v*bx + w*cx, y = u*ay + v*by + w*cy.

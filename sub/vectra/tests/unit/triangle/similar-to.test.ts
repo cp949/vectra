@@ -3,7 +3,7 @@
  *
  * fixed vertex correspondence(A↔A', B↔B', C↔C') 기준의 side-length ratio 비교,
  * 기본 reflection 불허(orientation 부호), allowReflection option, epsilon 경계,
- * degenerate/non-finite 처리을 다룬다.
+ * epsilon이 빠진 옵션 객체, degenerate/non-finite 처리를 다룬다.
  */
 import { describe, expect, test } from 'vitest';
 import { similarTo } from '../../../src/triangle/similar-to';
@@ -72,6 +72,12 @@ describe('similarTo', () => {
 
   test('NaN epsilon: 비교가 모두 false가 되어 false를 반환한다', () => {
     expect(similarTo(right345, right345, { epsilon: NaN, allowReflection: false })).toBe(false);
+  });
+
+  test('epsilon이 빠진 옵션 객체는 기본값을 쓰지 않고 false를 반환한다', () => {
+    const options = { allowReflection: true };
+    // @ts-expect-error similarTo 옵션의 epsilon은 필수다.
+    expect(similarTo(right345, right345, options)).toBe(false);
   });
 
   test('첫 번째 triangle이 collinear(degenerate): false를 반환한다', () => {

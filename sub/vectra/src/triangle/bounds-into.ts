@@ -7,7 +7,7 @@ import type { BoundsWritable, Triangle } from '../types/flat-shapes.internal';
  * degenerate triangle(collinear, 점 하나로 수렴)도 inverted bounds가 아닌 실제 extent를 기록한다.
  * non-finite vertex는 IEEE 754 전파 규칙을 따른다.
  *
- * @param out 최솟값과 최댓값을 기록할 bounds 객체
+ * @param out 최솟값과 최댓값을 기록할 경계 상자 객체
  * @param triangle bounds를 계산할 triangle
  * @returns out
  */

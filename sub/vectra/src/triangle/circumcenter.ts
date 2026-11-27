@@ -3,7 +3,7 @@ import { circumcenterInto } from './circumcenter-into';
 
 /**
  * circumcenterInto의 allocating companion.
- * triangle의 외심을 XYObjectWritable로 반환한다.
+ * triangle의 외심을 점 객체로 반환한다.
  * degenerate triangle이면 undefined를 반환한다.
  *
  *

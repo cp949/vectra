@@ -15,10 +15,9 @@ import type { Rect, TriangleWritable } from '../types/flat-shapes.internal';
  * NaN/Infinity component는 validation 없이 JS 산술 결과를 그대로 기록한다.
  *
  * 입력 좌표를 먼저 읽은 뒤 결과를 기록한다.
- * 같은 object여도 안전하다.
  *
- * @param out 직각삼각형 vertex를 기록할 triangle 객체
- * @param rect 세 corner를 읽을 rect 객체.
+ * @param out 직각삼각형 vertex를 기록할 삼각형 객체
+ * @param rect 세 corner를 읽을 사각형 객체
  */
 export function fromRectInto<Out extends TriangleWritable>(out: Out, rect: Rect): Out {
   // aliasing 안전을 위해 rect component를 모두 local에 먼저 읽는다

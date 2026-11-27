@@ -75,42 +75,42 @@ class ExternalBarycentric {
   tag = 'keep';
 }
 
-test('centroidInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('centroidInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalPoint();
   const result = centroidInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
 });
 
-test('boundsInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('boundsInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalBounds();
   const result = boundsInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalBounds>();
 });
 
-test('closestPointInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('closestPointInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalPoint();
   const result = closestPointInto(out, triangle, point);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
 });
 
-test('closestPointOnEdgeInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('closestPointOnEdgeInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalPoint();
   const result = closestPointOnEdgeInto(out, triangle, point);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
 });
 
-test('barycentricInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('barycentricInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalBarycentric();
   const result = barycentricInto(out, triangle, point);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalBarycentric | false>();
 });
 
-test('pointFromBarycentricInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('pointFromBarycentricInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalPoint();
   const result = pointFromBarycentricInto(out, triangle, { x: 1, y: 0, w: 0 });
   expect(result).toBe(out);
@@ -132,56 +132,56 @@ class ExternalTriangle {
   tag = 'keep';
 }
 
-test('copyInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('copyInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = copyInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('buildEquilateralInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('buildEquilateralInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = buildEquilateralInto(out, point, 2);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('buildRightInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('buildRightInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = buildRightInto(out, point, 2, 3);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('fromCenterInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('fromCenterInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = fromCenterInto(out, point, 2);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('fromCircleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('fromCircleInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = fromCircleInto(out, { cx: 0, cy: 0, r: 1 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('fromRectInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('fromRectInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = fromRectInto(out, { x: 0, y: 0, width: 2, height: 3 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('fromSegmentApexInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('fromSegmentApexInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = fromSegmentApexInto(out, { x1: 0, y1: 0, x2: 4, y2: 0 }, point);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('fromSegmentHeightInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('fromSegmentHeightInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = fromSegmentHeightInto(out, { x1: 0, y1: 0, x2: 4, y2: 0 }, 3);
   expect(result).toBe(out);
@@ -209,70 +209,70 @@ class ExternalCircle {
   tag = 'keep';
 }
 
-test('altitudeInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('altitudeInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalSegment();
   const result = altitudeInto(out, triangle, 0);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalSegment | false>();
 });
 
-test('eulerLineInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('eulerLineInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalSegment();
   const result = eulerLineInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalSegment | false>();
 });
 
-test('circumcenterInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('circumcenterInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalPoint();
   const result = circumcenterInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalPoint | false>();
 });
 
-test('incenterInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('incenterInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalPoint();
   const result = incenterInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalPoint | false>();
 });
 
-test('orthocenterInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('orthocenterInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalPoint();
   const result = orthocenterInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalPoint | false>();
 });
 
-test('circumcircleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('circumcircleInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalCircle();
   const result = circumcircleInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
 });
 
-test('incircleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('incircleInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalCircle();
   const result = incircleInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
 });
 
-test('ninePointCircleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('ninePointCircleInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalCircle();
   const result = ninePointCircleInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalCircle | false>();
 });
 
-test('excentersInto은 같은 출력 배열을 반환한다', () => {
+test('excentersInto는 같은 출력 배열을 반환한다', () => {
   const out: PointWritable[] = [];
   const result = excentersInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
 });
 
-test('excirclesInto은 같은 출력 배열을 반환한다', () => {
+test('excirclesInto는 같은 출력 배열을 반환한다', () => {
   const out: CircleWritable[] = [];
   const result = excirclesInto(out, triangle);
   expect(result).toBe(out);
@@ -291,28 +291,28 @@ class ExternalMedians {
   tag = 'keep';
 }
 
-test('medialTriangleInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('medialTriangleInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalTriangle();
   const result = medialTriangleInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalTriangle>();
 });
 
-test('medianInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('medianInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalSegment();
   const result = medianInto(out, triangle, 'a');
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalSegment | false>();
 });
 
-test('mediansInto은 외부 클래스의 참조와 반환 타입을 보존한다', () => {
+test('mediansInto는 외부 클래스의 참조와 반환 타입을 보존한다', () => {
   const out = new ExternalMedians();
   const result = mediansInto(out, triangle);
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalMedians>();
 });
 
-test('interiorAnglesInto은 같은 출력 배열을 반환한다', () => {
+test('interiorAnglesInto는 같은 출력 배열을 반환한다', () => {
   const out: number[] = [];
   const result = interiorAnglesInto(out, triangle);
   expect(result).toBe(out);

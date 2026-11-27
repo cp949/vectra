@@ -3,7 +3,7 @@ import { closestPointOnEdgeInto } from './closest-point-on-edge-into';
 
 /**
  * closestPointOnEdgeInto의 allocating companion. triangle 세 edge 위의 closest point를 새
- * XYObjectWritable로 반환한다.
+ * 점 객체로 반환한다.
  *
  * `closestPoint`와 달리 내부/boundary 여부를 보지 않는다. 내부 point도 input 좌표를 그대로
  * 두지 않고 세 edge segment AB, BC, CA의 clamped closest point 중 거리 제곱이 가장 작은 점으로
