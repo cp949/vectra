@@ -1,4 +1,4 @@
-import type { Point, Rect } from '../types/flat-shapes.internal';
+import type { Point, Rect, RectWritable } from '../types/flat-shapes.internal';
 import { quadrantsInto } from './quadrants-into';
 
 /**
@@ -26,10 +26,10 @@ export function quadrants(
   rect: Rect,
   center?: Point
 ): {
-  nw: { x: number; y: number; width: number; height: number };
-  ne: { x: number; y: number; width: number; height: number };
-  se: { x: number; y: number; width: number; height: number };
-  sw: { x: number; y: number; width: number; height: number };
+  nw: RectWritable;
+  ne: RectWritable;
+  se: RectWritable;
+  sw: RectWritable;
 } {
   return quadrantsInto(
     {

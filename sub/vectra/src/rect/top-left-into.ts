@@ -5,7 +5,7 @@ import type { PointWritable, Rect } from '../types/flat-shapes.internal';
  *
  * out과 rect가 같은 storage를 공유해도 안전하다.
  *
- * @param out 결과를 기록할 점 객체
+ * @param out top-left 좌표를 기록할 점 객체
  * @param rect top-left 좌표를 읽을 rect
  */
 export function topLeftInto<Out extends PointWritable>(out: Out, rect: Rect): Out {

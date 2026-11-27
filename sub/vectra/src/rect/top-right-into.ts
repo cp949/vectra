@@ -6,7 +6,7 @@ import type { PointWritable, Rect } from '../types/flat-shapes.internal';
  * width를 정규화하지 않고 `x + width`, `y`를 그대로 기록한다.
  * out과 rect가 같은 storage를 공유해도 안전하다.
  *
- * @param out 결과를 기록할 점 객체
+ * @param out top-right 좌표를 기록할 점 객체
  * @param rect top-right 좌표를 읽을 rect
  */
 export function topRightInto<Out extends PointWritable>(out: Out, rect: Rect): Out {
