@@ -28,7 +28,7 @@ class OutputBounds {
   label = 'bounds';
 }
 
-/** 두 점 좌표와 호출자 상태를 담는 출력 객체다. */
+/** 점 좌표와 호출자 상태를 담는 출력 객체다. */
 class OutputPoint {
   x = 0;
   y = 0;

@@ -1,3 +1,5 @@
+/** 경계 상자의 점·상자 포함과 교집합 시험을 relation-expansion.test.ts에 제공한다. */
+
 import { describe, expect, test } from 'vitest';
 import { containsBounds } from '../../../src/bounds/contains-bounds';
 import { containsPoint } from '../../../src/bounds/contains-point';

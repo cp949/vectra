@@ -1,3 +1,5 @@
+/** 두 경계 상자의 닫힌 경계 교차 판정과 빈 상자 처리를 시험한다. */
+
 import { describe, expect, test } from 'vitest';
 import { intersectsBoundsBounds } from '../../../src/intersects/intersects-bounds-bounds';
 

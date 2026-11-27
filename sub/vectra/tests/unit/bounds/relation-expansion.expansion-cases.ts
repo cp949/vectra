@@ -1,3 +1,5 @@
+/** 경계 상자의 합집합, 확장, 이동 시험을 relation-expansion.test.ts에 제공한다. */
+
 import { describe, expect, test } from 'vitest';
 import { createBounds } from '../../../src/bounds/create-bounds';
 import { expandByInto } from '../../../src/bounds/expand-by-into';
