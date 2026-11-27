@@ -1,4 +1,5 @@
-import type { CenterArcLike, ClosestPointOptions, XYInput, XYObjectWritable } from '../types';
+import type { ClosestPointOptions } from '../types';
+import type { CenterArc, Point, PointWritable } from '../types/flat-shapes.internal';
 import { arcClosestPointInto } from './arc-closest-point-into';
 
 /**
@@ -14,9 +15,9 @@ import { arcClosestPointInto } from './arc-closest-point-into';
  * @param options 수치 최적화 옵션
  */
 export function arcClosestPoint(
-  centerArc: CenterArcLike,
-  point: XYInput,
-  options?: ClosestPointOptions
-): XYObjectWritable {
+  centerArc: CenterArc,
+  point: Point,
+  options?: Required<ClosestPointOptions>
+): PointWritable {
   return arcClosestPointInto({ x: 0, y: 0 }, centerArc, point, options);
 }

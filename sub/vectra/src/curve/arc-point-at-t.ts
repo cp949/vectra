@@ -1,4 +1,4 @@
-import type { CenterArcLike, XYObjectWritable } from '../types';
+import type { CenterArc, PointWritable } from '../types/flat-shapes.internal';
 import { arcPointAtTInto } from './arc-point-at-t-into';
 
 /**
@@ -13,6 +13,6 @@ import { arcPointAtTInto } from './arc-point-at-t-into';
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  * @returns 새 plain `{ x, y }` object
  */
-export function arcPointAtT(centerArc: CenterArcLike, t: number): XYObjectWritable {
+export function arcPointAtT(centerArc: CenterArc, t: number): PointWritable {
   return arcPointAtTInto({ x: 0, y: 0 }, centerArc, t);
 }

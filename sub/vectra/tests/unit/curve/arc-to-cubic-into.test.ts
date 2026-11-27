@@ -75,8 +75,8 @@ describe('arcToCubicInto', () => {
     arcToCubicInto(out, quarterCircle);
     const arcStart = { x: 0, y: 0 };
     arcPointAtTInto(arcStart, quarterCircle, 0);
-    expect(relErr(out[0].p0.x, arcStart.x)).toBeLessThan(1e-12);
-    expect(Math.abs(out[0].p0.y - arcStart.y)).toBeLessThan(1e-12);
+    expect(relErr(out[0].x0, arcStart.x)).toBeLessThan(1e-12);
+    expect(Math.abs(out[0].y0 - arcStart.y)).toBeLessThan(1e-12);
   });
 
   it('생성된 cubic의 끝점이 arc 끝점과 일치한다', () => {
@@ -84,23 +84,29 @@ describe('arcToCubicInto', () => {
     arcToCubicInto(out, quarterCircle);
     const arcEnd = { x: 0, y: 0 };
     arcPointAtTInto(arcEnd, quarterCircle, 1);
-    expect(Math.abs(out[0].p3.x - arcEnd.x)).toBeLessThan(1e-12);
-    expect(relErr(out[0].p3.y, arcEnd.y)).toBeLessThan(1e-12);
+    expect(Math.abs(out[0].x3 - arcEnd.x)).toBeLessThan(1e-12);
+    expect(relErr(out[0].y3, arcEnd.y)).toBeLessThan(1e-12);
   });
 
   it('연속된 cubic에서 각 segment의 끝점과 다음 시작점이 일치한다 (반원)', () => {
     const out: ReturnType<typeof arcToCubicInto> = [];
     arcToCubicInto(out, halfCircle);
     expect(out.length).toBe(2);
-    expect(Math.abs(out[0].p3.x - out[1].p0.x)).toBeLessThan(1e-12);
-    expect(Math.abs(out[0].p3.y - out[1].p0.y)).toBeLessThan(1e-12);
+    expect(Math.abs(out[0].x3 - out[1].x0)).toBeLessThan(1e-12);
+    expect(Math.abs(out[0].y3 - out[1].y0)).toBeLessThan(1e-12);
   });
 
   it('quarter arc cubic의 중간점(t=0.5) 근사 오차가 1e-3 이하이다', () => {
     const out: ReturnType<typeof arcToCubicInto> = [];
     arcToCubicInto(out, quarterCircle);
     const seg = out[0];
-    const approx = cubicPointAt(seg.p0, seg.p1, seg.p2, seg.p3, 0.5);
+    const approx = cubicPointAt(
+      { x: seg.x0, y: seg.y0 },
+      { x: seg.x1, y: seg.y1 },
+      { x: seg.x2, y: seg.y2 },
+      { x: seg.x3, y: seg.y3 },
+      0.5
+    );
     const arcMid = { x: 0, y: 0 };
     arcPointAtTInto(arcMid, quarterCircle, 0.5);
     const err = Math.hypot(approx.x - arcMid.x, approx.y - arcMid.y);
@@ -140,7 +146,17 @@ describe('arcToCubicInto', () => {
   });
 
   it('out 기존 내용이 삭제된다', () => {
-    const sentinel = { p0: { x: 99, y: 99 }, p1: { x: 99, y: 99 }, p2: { x: 99, y: 99 }, p3: { x: 99, y: 99 } };
+    const sentinel: ReturnType<typeof arcToCubicInto>[number] = {
+      kind: 'cubic',
+      x0: 99,
+      y0: 99,
+      x1: 99,
+      y1: 99,
+      x2: 99,
+      y2: 99,
+      x3: 99,
+      y3: 99,
+    };
     const out = [sentinel];
     arcToCubicInto(out, quarterCircle);
     expect(out.length).toBe(1);
@@ -177,9 +193,9 @@ describe('arcToCubicInto', () => {
     arcToCubicInto(out, ellipseArc);
     expect(out.length).toBe(1);
     // 시작점: (2, 0), 끝점: (0, 1)
-    expect(relErr(out[0].p0.x, 2)).toBeLessThan(1e-12);
-    expect(Math.abs(out[0].p0.y)).toBeLessThan(1e-12);
-    expect(Math.abs(out[0].p3.x)).toBeLessThan(1e-12);
-    expect(relErr(out[0].p3.y, 1)).toBeLessThan(1e-12);
+    expect(relErr(out[0].x0, 2)).toBeLessThan(1e-12);
+    expect(Math.abs(out[0].y0)).toBeLessThan(1e-12);
+    expect(Math.abs(out[0].x3)).toBeLessThan(1e-12);
+    expect(relErr(out[0].y3, 1)).toBeLessThan(1e-12);
   });
 });

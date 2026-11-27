@@ -1,5 +1,4 @@
-import { writeXY } from '../internal/xy';
-import type { BoundsWritable, CenterArcLike } from '../types';
+import type { BoundsWritable, CenterArc } from '../types/flat-shapes.internal';
 import { ellipsePoint, isDegenerateRadii } from './arc.internal';
 
 /**
@@ -45,11 +44,11 @@ function angleInSweep(theta: number, start: number, end: number): boolean {
  * 각 방정식은 (θ, θ + π) 두 해를 제공한다.
  * degenerate(rx==0 또는 ry==0) arc는 (cx, cy)에 위치한 점 bounds를 반환한다.
  *
- * @param out bounds를 기록할 BoundsWritable output
+ * @param out 결과를 기록할 경계 상자 객체
  * @param centerArc center form arc input
  * @returns out
  */
-export function arcBoundsInto<Out extends BoundsWritable>(out: Out, centerArc: CenterArcLike): Out {
+export function arcBoundsInto<Out extends BoundsWritable>(out: Out, centerArc: CenterArc): Out {
   const { cx, cy, rx, ry, xRotation, startAngle, endAngle } = centerArc;
 
   let minX: number;
@@ -100,8 +99,10 @@ export function arcBoundsInto<Out extends BoundsWritable>(out: Out, centerArc: C
     }
   }
 
-  writeXY(out.min, minX, minY);
-  writeXY(out.max, maxX, maxY);
+  out.minX = minX;
+  out.minY = minY;
+  out.maxX = maxX;
+  out.maxY = maxY;
 
   return out;
 }

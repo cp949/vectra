@@ -1,4 +1,4 @@
-import type { CenterArcLike, CenterArcWritable } from '../types';
+import type { CenterArc, CenterArcWritable } from '../types/flat-shapes.internal';
 import { arcSplitAtInto } from './arc-split-at-into';
 
 /**
@@ -19,6 +19,6 @@ import { arcSplitAtInto } from './arc-split-at-into';
  * @param t 분할 위치 ([0, 1]로 clamp, NaN은 분할 angle을 NaN으로 보존)
  * @returns 새로 만든 길이 2 CenterArcWritable 배열
  */
-export function arcSplitAt(centerArc: CenterArcLike, t: number): CenterArcWritable[] {
+export function arcSplitAt(centerArc: CenterArc, t: number): CenterArcWritable[] {
   return arcSplitAtInto([], centerArc, t);
 }

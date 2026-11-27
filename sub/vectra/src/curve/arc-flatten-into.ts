@@ -1,4 +1,5 @@
-import type { CenterArcLike, FlattenOptions, XYObjectWritable } from '../types';
+import type { FlattenOptions } from '../types';
+import type { CenterArc, PointWritable } from '../types/flat-shapes.internal';
 import { ellipsePoint, isDegenerateRadii } from './arc.internal';
 import { hypot2 } from '../internal/numeric';
 
@@ -27,7 +28,7 @@ function chordErrorFromMid(p0x: number, p0y: number, p1x: number, p1y: number, p
  * flat 판정 시 시작점 p0만 push하고, 마지막 끝점은 최상위 호출자가 담당한다.
  */
 function flattenRecursive(
-  out: XYObjectWritable[],
+  out: PointWritable[],
   cx: number,
   cy: number,
   rx: number,
@@ -71,7 +72,7 @@ function flattenRecursive(
  * degenerate(rx<=0 또는 ry<=0)이면 center 좌표를 시작점과 끝점에 둔 polyline을 반환한다.
  * zero-sweep(startAngle === endAngle)이면 시작 각도의 ellipse 점을 두 번 push한 polyline을 반환한다.
  *
- * @param out polyline point를 push할 XYObjectWritable 배열. 기존 내용은 clear된다.
+ * @param out polyline point를 push할 PointWritable 배열. 기존 내용은 clear된다.
  * @param centerArc center form arc input
  * @param options flatten 옵션
  * @param options.flatness chord-error 허용 한계. 기본값: 0.5
@@ -79,12 +80,12 @@ function flattenRecursive(
  * @returns out
  */
 export function arcFlattenInto(
-  out: XYObjectWritable[],
-  centerArc: CenterArcLike,
-  options?: FlattenOptions
-): XYObjectWritable[] {
-  const flatness = options?.flatness ?? 0.5;
-  const maxRecursion = options?.maxRecursion ?? 32;
+  out: PointWritable[],
+  centerArc: CenterArc,
+  options?: Required<FlattenOptions>
+): PointWritable[] {
+  const flatness = options === undefined ? 0.5 : options.flatness;
+  const maxRecursion = options === undefined ? 32 : options.maxRecursion;
 
   const { cx, cy, rx, ry, xRotation, startAngle, endAngle } = centerArc;
 

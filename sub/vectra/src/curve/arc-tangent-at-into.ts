@@ -1,5 +1,4 @@
-import { writeXY } from '../internal/xy';
-import type { CenterArcLike, XYWritable } from '../types';
+import type { CenterArc, PointWritable } from '../types/flat-shapes.internal';
 import { angleAtT, ellipseDerivative, isDegenerateRadii } from './arc.internal';
 import { hypot2 } from '../internal/numeric';
 
@@ -19,11 +18,13 @@ import { hypot2 } from '../internal/numeric';
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  * @returns out
  */
-export function arcTangentAtInto<Out extends XYWritable>(out: Out, centerArc: CenterArcLike, t: number): Out {
+export function arcTangentAtInto<Out extends PointWritable>(out: Out, centerArc: CenterArc, t: number): Out {
   const { rx, ry, xRotation, startAngle, endAngle } = centerArc;
 
   if (isDegenerateRadii(rx, ry)) {
-    return writeXY(out, 0, 0);
+    out.x = 0;
+    out.y = 0;
+    return out;
   }
 
   const theta = angleAtT(startAngle, endAngle, t);
@@ -38,8 +39,12 @@ export function arcTangentAtInto<Out extends XYWritable>(out: Out, centerArc: Ce
 
   const len = hypot2(dx, dy);
   if (len === 0) {
-    return writeXY(out, 0, 0);
+    out.x = 0;
+    out.y = 0;
+    return out;
   }
 
-  return writeXY(out, dx / len, dy / len);
+  out.x = dx / len;
+  out.y = dy / len;
+  return out;
 }

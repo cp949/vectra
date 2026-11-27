@@ -199,15 +199,26 @@ describe('arcClosestPointInto', () => {
     };
 
     it('sampleCount: 1 → 예외 없이 기본값 11 사용', () => {
-      expect(() => arcClosestPointInto({ x: 0, y: 0 }, arc, { x: 1, y: 1 }, { sampleCount: 1 })).not.toThrow();
+      expect(() =>
+        arcClosestPointInto({ x: 0, y: 0 }, arc, { x: 1, y: 1 }, { sampleCount: 1, tolerance: 1e-8, maxIterations: 20 })
+      ).not.toThrow();
     });
 
     it('tolerance: 0 → 예외 없이 기본값 1e-8 사용', () => {
-      expect(() => arcClosestPointInto({ x: 0, y: 0 }, arc, { x: 1, y: 1 }, { tolerance: 0 })).not.toThrow();
+      expect(() =>
+        arcClosestPointInto({ x: 0, y: 0 }, arc, { x: 1, y: 1 }, { sampleCount: 11, tolerance: 0, maxIterations: 20 })
+      ).not.toThrow();
     });
 
     it('maxIterations: -1 → 예외 없이 기본값 20 사용', () => {
-      expect(() => arcClosestPointInto({ x: 0, y: 0 }, arc, { x: 1, y: 1 }, { maxIterations: -1 })).not.toThrow();
+      expect(() =>
+        arcClosestPointInto(
+          { x: 0, y: 0 },
+          arc,
+          { x: 1, y: 1 },
+          { sampleCount: 11, tolerance: 1e-8, maxIterations: -1 }
+        )
+      ).not.toThrow();
     });
 
     it('invalid options에서도 합리적인 결과 반환', () => {

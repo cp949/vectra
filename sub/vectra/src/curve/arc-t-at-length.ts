@@ -1,4 +1,5 @@
-import type { CenterArcLike, TAtLengthOptions } from '../types';
+import type { TAtLengthOptions } from '../types';
+import type { CenterArc } from '../types/flat-shapes.internal';
 import { centerArcSpeed } from './curve-speed.internal';
 import { speedTAtLength } from './speed-length.internal';
 
@@ -16,6 +17,6 @@ import { speedTAtLength } from './speed-length.internal';
  * @param options.tolerance 이진 탐색 수렴 threshold. 기본값: 1e-8
  * @param options.maxIterations 이진 탐색 최대 반복 횟수. 기본값: 64
  */
-export function arcTAtLength(centerArc: CenterArcLike, distance: number, options?: TAtLengthOptions): number {
+export function arcTAtLength(centerArc: CenterArc, distance: number, options?: Required<TAtLengthOptions>): number {
   return speedTAtLength(centerArcSpeed(centerArc), distance, options);
 }

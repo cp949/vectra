@@ -7,7 +7,6 @@
  * - distance=π/4 (절반)은 (cos(π/4), sin(π/4))를 반환한다.
  * - negative distance는 start point를 반환한다.
  * - degenerate arc (rx=0)는 center 좌표를 반환한다.
- * - tuple out: arcPointAtLengthInto([0, 0], arc, 0) → [1, 0]
  * - object out: arcPointAtLengthInto({ x, y }, arc, 0) → { x: 1, y: 0 }
  * - arcPointAtLength는 새 object를 반환하며 Into와 같은 좌표다.
  */
@@ -70,12 +69,6 @@ describe('arcPointAtLengthInto', () => {
     const out = arcPointAtLengthInto({ x: 0, y: 0 }, degenerate, 0.5);
     expect(out.x).toBeCloseTo(3, 10);
     expect(out.y).toBeCloseTo(4, 10);
-  });
-
-  it('tuple out: [0, 0]에 결과를 기록하고 반환한다', () => {
-    const out = arcPointAtLengthInto([0, 0] as [number, number], quarterCircle, 0);
-    expect(out[0]).toBeCloseTo(1, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
   });
 
   it('object out: { x, y }에 결과를 기록하고 반환한다', () => {

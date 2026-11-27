@@ -36,17 +36,17 @@ function arc(overrides: Partial<CenterArcLike> = {}): CenterArcLike {
 
 describe('arcBoundsInto', () => {
   test('끝점보다 바깥인 x 최솟값 극점을 sweep 안에서 찾는다', () => {
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
     arcBoundsInto(out, arc({ startAngle: 0, endAngle: 2 * PI }));
-    expect(out.min.x).toBeCloseTo(-2, 12);
-    expect(out.max.x).toBeCloseTo(2, 12);
+    expect(out.minX).toBeCloseTo(-2, 12);
+    expect(out.maxX).toBeCloseTo(2, 12);
   });
 
   test('끝점보다 바깥인 x 최댓값 극점을 sweep 안에서 찾는다', () => {
-    const out = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
     arcBoundsInto(out, arc({ startAngle: -PI / 2, endAngle: PI / 2 }));
-    expect(out.max.x).toBeCloseTo(2, 12);
-    expect(out.min.x).toBeCloseTo(0, 12);
+    expect(out.maxX).toBeCloseTo(2, 12);
+    expect(out.minX).toBeCloseTo(0, 12);
   });
 });
 
@@ -69,17 +69,17 @@ describe('arcClosestPointInto 옵션', () => {
   });
 
   test('유효한 maxIterations: 0은 정제 없이 가장 가까운 sample을 쓴다', () => {
-    expect(closestAngleDeg({ maxIterations: 0 })).toBeCloseTo(36, 10);
+    expect(closestAngleDeg({ maxIterations: 0, tolerance: 1e-8, sampleCount: 11 })).toBeCloseTo(36, 10);
   });
 
   test('유효한 tolerance가 크면 Newton을 한 번만 돌고 멈춘다', () => {
-    const angle = closestAngleDeg({ tolerance: 1e9 });
+    const angle = closestAngleDeg({ tolerance: 1e9, maxIterations: 20, sampleCount: 11 });
     expect(angle).not.toBeCloseTo(30, 6);
     expect(angle).toBeCloseTo(30, 1);
   });
 
   test('유효한 sampleCount: 2는 양 끝 sample만 비교한다', () => {
-    expect(closestAngleDeg({ sampleCount: 2, maxIterations: 0 })).toBeCloseTo(0, 10);
+    expect(closestAngleDeg({ sampleCount: 2, maxIterations: 0, tolerance: 1e-8 })).toBeCloseTo(0, 10);
   });
 });
 

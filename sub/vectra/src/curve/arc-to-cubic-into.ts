@@ -1,4 +1,5 @@
-import type { ArcToCubicOptions, CenterArcLike, CubicCurveWritable } from '../types';
+import type { ArcToCubicOptions } from '../types';
+import type { CenterArc, CubicCurveWritable } from '../types/flat-shapes.internal';
 import { ellipseDerivative, ellipsePoint, isDegenerateRadii } from './arc.internal';
 
 /**
@@ -20,8 +21,8 @@ import { ellipseDerivative, ellipsePoint, isDegenerateRadii } from './arc.intern
  */
 export function arcToCubicInto(
   out: CubicCurveWritable[],
-  centerArc: CenterArcLike,
-  options?: ArcToCubicOptions
+  centerArc: CenterArc,
+  options?: Required<ArcToCubicOptions>
 ): CubicCurveWritable[] {
   out.length = 0;
 
@@ -30,7 +31,7 @@ export function arcToCubicInto(
   if (isDegenerateRadii(rx, ry)) return out;
   if (startAngle === endAngle) return out;
 
-  const optionMaxAngle = options?.maxAngle ?? Math.PI / 2;
+  const optionMaxAngle = options === undefined ? Math.PI / 2 : options.maxAngle;
   const maxAngle = Number.isFinite(optionMaxAngle) && optionMaxAngle > 0 ? optionMaxAngle : Math.PI / 2;
   const totalSweep = endAngle - startAngle;
   const absSweep = Math.abs(totalSweep);
@@ -68,10 +69,15 @@ export function arcToCubicInto(
     const s2y = s3y - alpha * deriv[1];
 
     out.push({
-      p0: { x: s0x, y: s0y },
-      p1: { x: s1x, y: s1y },
-      p2: { x: s2x, y: s2y },
-      p3: { x: s3x, y: s3y },
+      kind: 'cubic',
+      x0: s0x,
+      y0: s0y,
+      x1: s1x,
+      y1: s1y,
+      x2: s2x,
+      y2: s2y,
+      x3: s3x,
+      y3: s3y,
     });
   }
 

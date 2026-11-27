@@ -134,9 +134,9 @@ const companionCases = [
   },
   {
     name: 'arcSample',
-    actual: () => arcSample(CENTER_ARC, 8),
-    expected: () => arcSampleInto([], CENTER_ARC, 8),
-    rangeError: () => arcSample(CENTER_ARC, 1),
+    actual: () => arcSample(CENTER_ARC, { steps: 8 }),
+    expected: () => arcSampleInto([], CENTER_ARC, { steps: 8 }),
+    rangeError: () => arcSample(CENTER_ARC, { steps: 1 }),
   },
   {
     name: 'quadraticFlatten',

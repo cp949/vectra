@@ -1,4 +1,4 @@
-import type { CenterArcLike, XYObjectWritable } from '../types';
+import type { CenterArc, PointWritable } from '../types/flat-shapes.internal';
 import { arcNormalAtInto } from './arc-normal-at-into';
 
 /**
@@ -11,6 +11,6 @@ import { arcNormalAtInto } from './arc-normal-at-into';
  * @param centerArc center form arc input
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */
-export function arcNormalAt(centerArc: CenterArcLike, t: number): XYObjectWritable {
+export function arcNormalAt(centerArc: CenterArc, t: number): PointWritable {
   return arcNormalAtInto({ x: 0, y: 0 }, centerArc, t);
 }

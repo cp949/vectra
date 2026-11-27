@@ -1,8 +1,9 @@
-import type { CenterArcLike, FlattenOptions, XYObjectWritable } from '../types';
+import type { FlattenOptions } from '../types';
+import type { CenterArc, PointWritable } from '../types/flat-shapes.internal';
 import { arcFlattenInto } from './arc-flatten-into';
 
 /**
- * center form arc를 adaptive subdivision으로 polyline에 근사한 새 XYObjectWritable[] 배열을 반환한다.
+ * center form arc를 adaptive subdivision으로 polyline에 근사한 새 PointWritable[] 배열을 반환한다.
  *
  * degenerate(rx<=0 또는 ry<=0)이면 center 좌표를 시작점과 끝점에 둔 polyline을 반환한다.
  * zero-sweep(startAngle === endAngle)이면 시작 각도의 ellipse 점을 두 번 push한 polyline을 반환한다.
@@ -10,8 +11,8 @@ import { arcFlattenInto } from './arc-flatten-into';
  *
  * @param centerArc center form arc input
  * @param options flatten 옵션 (flatness 기본값 0.5, maxRecursion 기본값 32)
- * @returns 새로 만든 XYObjectWritable point 배열
+ * @returns 새로 만든 PointWritable point 배열
  */
-export function arcFlatten(centerArc: CenterArcLike, options?: FlattenOptions): XYObjectWritable[] {
+export function arcFlatten(centerArc: CenterArc, options?: Required<FlattenOptions>): PointWritable[] {
   return arcFlattenInto([], centerArc, options);
 }

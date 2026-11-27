@@ -1,4 +1,5 @@
-import type { ArcToCubicOptions, CenterArcLike, CubicCurveWritable } from '../types';
+import type { ArcToCubicOptions } from '../types';
+import type { CenterArc, CubicCurveWritable } from '../types/flat-shapes.internal';
 import { arcToCubicInto } from './arc-to-cubic-into';
 
 /**
@@ -13,6 +14,6 @@ import { arcToCubicInto } from './arc-to-cubic-into';
  * @param options 분할 옵션 (maxAngle 기본값 Math.PI / 2)
  * @returns 새로 만든 CubicCurveWritable 배열
  */
-export function arcToCubic(centerArc: CenterArcLike, options?: ArcToCubicOptions): CubicCurveWritable[] {
+export function arcToCubic(centerArc: CenterArc, options?: Required<ArcToCubicOptions>): CubicCurveWritable[] {
   return arcToCubicInto([], centerArc, options);
 }

@@ -5,7 +5,7 @@ export const EPS = 1e-12;
 export const LOOSE_EPS = 1e-9;
 
 export type PointOut = { x: number; y: number };
-export type BoundsOut = { min: PointOut; max: PointOut };
+export type BoundsOut = { minX: number; minY: number; maxX: number; maxY: number };
 
 export function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
@@ -26,8 +26,10 @@ export function expectPointNear(point: PointOut, expected: PointOut, epsilon = E
 }
 
 export function expectBoundsNear(bounds: BoundsOut, min: PointOut, max: PointOut, epsilon = EPS): void {
-  expectPointNear(bounds.min, min, epsilon);
-  expectPointNear(bounds.max, max, epsilon);
+  expectNear(bounds.minX, min.x, epsilon);
+  expectNear(bounds.minY, min.y, epsilon);
+  expectNear(bounds.maxX, max.x, epsilon);
+  expectNear(bounds.maxY, max.y, epsilon);
 }
 
 export function makeArc(overrides: Partial<ArcCommand> = {}): ArcCommand {
@@ -71,7 +73,7 @@ export function makePointOut(): PointOut {
 }
 
 export function makeBoundsOut(): BoundsOut {
-  return { min: makePointOut(), max: makePointOut() };
+  return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }
 
 export function polylineLength(points: PointOut[]): number {

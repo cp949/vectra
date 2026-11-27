@@ -1,5 +1,5 @@
-import { readX, readY } from '../internal/xy';
-import type { CenterArcLike, ClosestPointOptions, XYInput, XYWritable } from '../types';
+import type { ClosestPointOptions } from '../types';
+import type { CenterArc, Point, PointWritable } from '../types/flat-shapes.internal';
 import { angleAtT, ellipseDerivative, ellipsePoint, isDegenerateRadii } from './arc.internal';
 import { arcPointAtTInto } from './arc-point-at-t-into';
 
@@ -13,17 +13,17 @@ import { arcPointAtTInto } from './arc-point-at-t-into';
  * degenerate (rx<=0 || ry<=0) 또는 zero-sweep (startAngle===endAngle)이면
  * `arcPointAtTInto(out, centerArc, 0)`을 반환한다.
  *
- * @param out point를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param centerArc center form arc input
  * @param point 투영 기준 점
  * @param options 수치 최적화 옵션 (tolerance, maxIterations, sampleCount)
  * @returns out
  */
-export function arcClosestPointInto<Out extends XYWritable>(
+export function arcClosestPointInto<Out extends PointWritable>(
   out: Out,
-  centerArc: CenterArcLike,
-  point: XYInput,
-  options?: ClosestPointOptions
+  centerArc: CenterArc,
+  point: Point,
+  options?: Required<ClosestPointOptions>
 ): Out {
   const { cx, cy, rx, ry, xRotation, startAngle, endAngle } = centerArc;
 
@@ -32,20 +32,18 @@ export function arcClosestPointInto<Out extends XYWritable>(
   }
 
   const tolerance =
-    options?.tolerance !== undefined && Number.isFinite(options.tolerance) && options.tolerance > 0
-      ? options.tolerance
-      : 1e-8;
+    options !== undefined && Number.isFinite(options.tolerance) && options.tolerance > 0 ? options.tolerance : 1e-8;
   const maxIterations =
-    options?.maxIterations !== undefined && Number.isSafeInteger(options.maxIterations) && options.maxIterations >= 0
+    options !== undefined && Number.isSafeInteger(options.maxIterations) && options.maxIterations >= 0
       ? options.maxIterations
       : 20;
   const sampleCount =
-    options?.sampleCount !== undefined && Number.isSafeInteger(options.sampleCount) && options.sampleCount >= 2
+    options !== undefined && Number.isSafeInteger(options.sampleCount) && options.sampleCount >= 2
       ? options.sampleCount
       : 11;
 
-  const qx = readX(point);
-  const qy = readY(point);
+  const qx = point.x;
+  const qy = point.y;
   const dAngle = endAngle - startAngle;
 
   const pxy: [number, number] = [0, 0];

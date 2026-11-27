@@ -1,4 +1,5 @@
-import type { CenterArcLike, LengthOptions } from '../types';
+import type { LengthOptions } from '../types';
+import type { CenterArc } from '../types/flat-shapes.internal';
 import { centerArcSpeed } from './curve-speed.internal';
 import { speedLengthAtT } from './speed-length.internal';
 
@@ -14,6 +15,6 @@ import { speedLengthAtT } from './speed-length.internal';
  * @param options 적분 옵션
  * @param options.segments θ 구간 분할 수. 기본값: 12
  */
-export function arcLengthAtT(centerArc: CenterArcLike, t: number, options?: LengthOptions): number {
+export function arcLengthAtT(centerArc: CenterArc, t: number, options?: Required<LengthOptions>): number {
   return speedLengthAtT(centerArcSpeed(centerArc), t, options);
 }

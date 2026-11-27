@@ -2,6 +2,7 @@ import { arcBoundsInto } from '../curve/arc-bounds-into';
 import { cubicBoundsInto } from '../curve/cubic-bounds-into';
 import { endpointArcToCenterInto } from '../curve/endpoint-arc-to-center-into';
 import { quadraticBoundsInto } from '../curve/quadratic-bounds-into';
+import { createZeroBounds } from '../internal/bounds';
 import { readX, readY, writeXY } from '../internal/xy';
 import type {
   BoundsWritable,
@@ -57,6 +58,8 @@ export function boundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
 
   // curve segment 계산에 쓸 함수 로컬 scratch 객체
   const scratchBounds: BoundsWritable = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  // v2-migration: path 경계 상자 전환 시 곡선의 평평한 임시 객체를 공유한다.
+  const scratchArcBounds = createZeroBounds();
   const centerArcBuf: CenterArcWritable = {
     cx: 0,
     cy: 0,
@@ -92,8 +95,9 @@ export function boundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
     } else {
       // arc: endpoint form → center form 변환 후 extrema 계산
       endpointArcToCenterInto(centerArcBuf, [fromX, fromY], seg.command);
-      arcBoundsInto(scratchBounds, centerArcBuf);
-      includeBounds(outObj, scratchBounds);
+      arcBoundsInto(scratchArcBounds, centerArcBuf);
+      includePoint(outObj, scratchArcBounds.minX, scratchArcBounds.minY);
+      includePoint(outObj, scratchArcBounds.maxX, scratchArcBounds.maxY);
     }
   });
 

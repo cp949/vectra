@@ -1,4 +1,5 @@
-import type { CenterArcLike, TAtLengthOptions, XYObjectWritable } from '../types';
+import type { TAtLengthOptions } from '../types';
+import type { CenterArc, PointWritable } from '../types/flat-shapes.internal';
 import { arcPointAtLengthInto } from './arc-point-at-length-into';
 
 /**
@@ -13,9 +14,9 @@ import { arcPointAtLengthInto } from './arc-point-at-length-into';
  * @param options TAtLength 탐색 옵션
  */
 export function arcPointAtLength(
-  centerArc: CenterArcLike,
+  centerArc: CenterArc,
   distance: number,
-  options?: TAtLengthOptions
-): XYObjectWritable {
+  options?: Required<TAtLengthOptions>
+): PointWritable {
   return arcPointAtLengthInto({ x: 0, y: 0 }, centerArc, distance, options);
 }

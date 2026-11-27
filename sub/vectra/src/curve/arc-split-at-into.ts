@@ -1,4 +1,4 @@
-import type { CenterArcLike, CenterArcWritable } from '../types';
+import type { CenterArc, CenterArcWritable } from '../types/flat-shapes.internal';
 import { angleAtT } from './arc.internal';
 
 /**
@@ -21,7 +21,7 @@ import { angleAtT } from './arc.internal';
  * @param t 분할 위치 ([0, 1]로 clamp, NaN은 분할 angle을 NaN으로 보존)
  * @returns out
  */
-export function arcSplitAtInto(out: CenterArcWritable[], centerArc: CenterArcLike, t: number): CenterArcWritable[] {
+export function arcSplitAtInto(out: CenterArcWritable[], centerArc: CenterArc, t: number): CenterArcWritable[] {
   out.length = 0;
 
   const { cx, cy, rx, ry, xRotation, startAngle, endAngle, sweep } = centerArc;

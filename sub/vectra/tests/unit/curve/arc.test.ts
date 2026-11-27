@@ -313,13 +313,10 @@ describe('arcBounds', () => {
     expectBoundsNear(result, { x: 3, y: 4 }, { x: 3, y: 4 });
   });
 
-  it('fresh top-level bounds와 fresh min/max point object를 반환한다', () => {
+  it('호출마다 새 경계 상자 객체를 반환한다', () => {
     const a = arcBounds(makeCenterArc());
     const b = arcBounds(makeCenterArc());
     expect(a).not.toBe(b);
-    expect(a.min).not.toBe(a.max);
-    expect(a.min).not.toBe(b.min);
-    expect(a.max).not.toBe(b.max);
   });
 });
 
@@ -336,15 +333,15 @@ describe('arcFlattenInto', () => {
     const arc = makeCenterArc({ rx: 10, ry: 10, endAngle: Math.PI });
     const coarse: PointOut[] = [];
     const fine: PointOut[] = [];
-    arcFlattenInto(coarse, arc, { flatness: 2.0 });
-    arcFlattenInto(fine, arc, { flatness: 0.1 });
+    arcFlattenInto(coarse, arc, { flatness: 2.0, maxRecursion: 32 });
+    arcFlattenInto(fine, arc, { flatness: 0.1, maxRecursion: 32 });
     expect(fine.length).toBeGreaterThanOrEqual(coarse.length);
   });
 
   it('polyline 길이가 실제 arc 길이에 수렴한다', () => {
     const arc = makeCenterArc({ rx: 5, ry: 5 });
     const out: PointOut[] = [];
-    arcFlattenInto(out, arc, { flatness: 0.01 });
+    arcFlattenInto(out, arc, { flatness: 0.01, maxRecursion: 32 });
     const expected = (Math.PI * 5) / 2;
     expect(Math.abs(polylineLength(out) - expected) / expected).toBeLessThan(1e-3);
   });
