@@ -1,7 +1,5 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, XYInput } from '../types';
+import type { InfiniteLine, Point } from '../types/flat-shapes.internal';
 
 /**
  * `point`가 infinite-line 위에 있으면 `true`를 반환한다.
@@ -13,14 +11,11 @@ import type { InfiniteLineLike, XYInput } from '../types';
  * @param point containment를 검사할 point
  * @param epsilon 허용 거리 (기본값 `1e-9`)
  */
-export function containsPoint(line: InfiniteLineLike, point: XYInput, epsilon: number = DEFAULT_EPSILON): boolean {
-  const ox = readX(readInfiniteLineOrigin(line));
-  const oy = readY(readInfiniteLineOrigin(line));
-  const dx = readX(readInfiniteLineDirection(line));
-  const dy = readY(readInfiniteLineDirection(line));
+export function containsPoint(line: InfiniteLine, point: Point, epsilon: number = DEFAULT_EPSILON): boolean {
+  const { ox, oy, dx, dy } = line;
   const lenSq = dx * dx + dy * dy;
-  const px = readX(point) - ox;
-  const py = readY(point) - oy;
+  const px = point.x - ox;
+  const py = point.y - oy;
   let distSq: number;
   if (lenSq === 0) {
     // degenerate: point containment으로 환원

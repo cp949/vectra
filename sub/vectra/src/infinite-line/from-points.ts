@@ -1,4 +1,4 @@
-import type { InfiniteLineWritable, XYInput } from '../types';
+import type { InfiniteLineWritable, Point } from '../types/flat-shapes.internal';
 import { createInfiniteLine } from './create-infinite-line';
 import { fromPointsInto } from './from-points-into';
 
@@ -13,6 +13,6 @@ import { fromPointsInto } from './from-points-into';
  * @param a 직선이 지나는 첫 point. `origin`으로 복사된다
  * @param b 직선이 지나는 둘째 point. `direction = b - a`로 사용된다
  */
-export function fromPoints(a: XYInput, b: XYInput): InfiniteLineWritable {
+export function fromPoints(a: Point, b: Point): InfiniteLineWritable {
   return fromPointsInto(createInfiniteLine(), a, b);
 }

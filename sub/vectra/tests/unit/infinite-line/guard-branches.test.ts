@@ -14,7 +14,7 @@ import { singleIntersectionInto } from '../../../src/infinite-line/single-inters
 describe('infiniteLineAngleBetween', () => {
   test('같은 방향이면 반올림으로 cos가 1을 넘어도 0을 돌려준다', () => {
     // (-12, -3)과 (-12, -3): |dot| / (|da| |db|) = 1.0000000000000002
-    const line = { origin: { x: 0, y: 0 }, direction: { x: -12, y: -3 } };
+    const line = { ox: 0, oy: 0, dx: -12, dy: -3 };
     expect(infiniteLineAngleBetween(line, line)).toBe(0);
   });
 });

@@ -1,4 +1,4 @@
-import type { InfiniteLineWritable, XYInput } from '../types';
+import type { InfiniteLineWritable, Point } from '../types/flat-shapes.internal';
 import { createInfiniteLine } from './create-infinite-line';
 import { fromAngleInto } from './from-angle-into';
 
@@ -13,6 +13,6 @@ import { fromAngleInto } from './from-angle-into';
  * @param origin infinite-line 기준점으로 복사할 좌표
  * @param angle direction 단위 벡터의 radian angle
  */
-export function fromAngle(origin: XYInput, angle: number): InfiniteLineWritable {
+export function fromAngle(origin: Point, angle: number): InfiniteLineWritable {
   return fromAngleInto(createInfiniteLine(), origin, angle);
 }

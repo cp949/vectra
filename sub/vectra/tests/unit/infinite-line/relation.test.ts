@@ -1,6 +1,5 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { infiniteLineAngleBetween } from '../../../src/infinite-line/infinite-line-angle-between';
-import { infiniteLineFrom } from '../../../src/infinite-line/infinite-line-from';
 import { infiniteLineParallelDistance } from '../../../src/infinite-line/infinite-line-parallel-distance';
 import { isCollinear } from '../../../src/infinite-line/is-collinear';
 import { isParallel } from '../../../src/infinite-line/is-parallel';
@@ -10,17 +9,17 @@ import { singleIntersectionInto } from '../../../src/infinite-line/single-inters
 import type { XYObjectWritable } from '../../../src/types';
 
 // 테스트 편의 헬퍼: 수평선 y=0 (origin 다름)
-const horizA = infiniteLineFrom({ x: 0, y: 0 }, { x: 1, y: 0 });
+const horizA = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
 // 수평선 y=1 (평행 disjoint)
-const horizB = infiniteLineFrom({ x: 0, y: 1 }, { x: 1, y: 0 });
+const horizB = { origin: { x: 0, y: 1 }, direction: { x: 1, y: 0 } };
 // 수직선 x=0
-const vertA = infiniteLineFrom({ x: 0, y: 0 }, { x: 0, y: 1 });
+const vertA = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 1 } };
 // collinear (같은 직선, origin만 다름)
-const horizC = infiniteLineFrom({ x: 5, y: 0 }, { x: 1, y: 0 });
+const horizC = { origin: { x: 5, y: 0 }, direction: { x: 1, y: 0 } };
 // degenerate (방향 벡터 = 0)
-const degA = infiniteLineFrom({ x: 1, y: 2 }, { x: 0, y: 0 });
-const degB = infiniteLineFrom({ x: 1, y: 2 }, { x: 0, y: 0 });
-const degC = infiniteLineFrom({ x: 3, y: 4 }, { x: 0, y: 0 });
+const degA = { origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } };
+const degB = { origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } };
+const degC = { origin: { x: 3, y: 4 }, direction: { x: 0, y: 0 } };
 
 // ─────────────────────────────────────────────
 // isParallel
@@ -39,7 +38,7 @@ describe('isParallel', () => {
   });
 
   test('반대 방향 벡터도 평행 → true', () => {
-    const rev = infiniteLineFrom({ x: 0, y: 0 }, { x: -1, y: 0 });
+    const rev = { origin: { x: 0, y: 0 }, direction: { x: -1, y: 0 } };
     expect(isParallel(horizA, rev)).toBe(true);
   });
 
@@ -51,14 +50,14 @@ describe('isParallel', () => {
 
   test('epsilon 경계: cross가 딱 epsilon이면 true', () => {
     // da=(1,0), db=(0,epsilon): cross = 1*epsilon - 0*0 = epsilon
-    const lA = infiniteLineFrom({ x: 0, y: 0 }, { x: 1, y: 0 });
-    const lB = infiniteLineFrom({ x: 0, y: 0 }, { x: 0, y: 1e-9 });
+    const lA = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
+    const lB = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 1e-9 } };
     expect(isParallel(lA, lB, 1e-9)).toBe(true);
   });
 
   test('epsilon 경계: cross가 epsilon을 초과하면 false', () => {
-    const lA = infiniteLineFrom({ x: 0, y: 0 }, { x: 1, y: 0 });
-    const lB = infiniteLineFrom({ x: 0, y: 0 }, { x: 0, y: 2e-9 });
+    const lA = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
+    const lB = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 2e-9 } };
     expect(isParallel(lA, lB, 1e-9)).toBe(false);
   });
 });
@@ -83,7 +82,7 @@ describe('isCollinear', () => {
     // degA origin=(1,2), horizA는 y=0 직선 → origin이 직선 밖
     expect(isCollinear(degA, horizA)).toBe(false);
     // a.origin이 b 직선(y=0) 위에 있는 경우
-    const degOnHoriz = infiniteLineFrom({ x: 3, y: 0 }, { x: 0, y: 0 });
+    const degOnHoriz = { origin: { x: 3, y: 0 }, direction: { x: 0, y: 0 } };
     expect(isCollinear(degOnHoriz, horizA)).toBe(true);
   });
 
@@ -92,7 +91,7 @@ describe('isCollinear', () => {
   });
 
   test('degenerate b, b.origin이 a 위 → true', () => {
-    const degOnHoriz = infiniteLineFrom({ x: 7, y: 0 }, { x: 0, y: 0 });
+    const degOnHoriz = { origin: { x: 7, y: 0 }, direction: { x: 0, y: 0 } };
     expect(isCollinear(horizA, degOnHoriz)).toBe(true);
   });
 
@@ -105,9 +104,9 @@ describe('isCollinear', () => {
   });
 
   test('epsilon 적용: origin이 epsilon 거리 이내이면 true', () => {
-    const lA = infiniteLineFrom({ x: 0, y: 0 }, { x: 1, y: 0 });
+    const lA = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
     // b.origin이 y=5e-10으로 아주 가깝게 평행
-    const lB = infiniteLineFrom({ x: 0, y: 5e-10 }, { x: 1, y: 0 });
+    const lB = { origin: { x: 0, y: 5e-10 }, direction: { x: 1, y: 0 } };
     expect(isCollinear(lA, lB, 1e-9)).toBe(true);
     expect(isCollinear(lA, lB, 1e-12)).toBe(false);
   });
@@ -128,8 +127,8 @@ describe('singleIntersectionInto', () => {
   });
 
   test('일반 교차: (0,2)+(1,0) vs (2,0)+(0,1) → 교점 (2,2)', () => {
-    const a = infiniteLineFrom({ x: 0, y: 2 }, { x: 1, y: 0 });
-    const b = infiniteLineFrom({ x: 2, y: 0 }, { x: 0, y: 1 });
+    const a = { origin: { x: 0, y: 2 }, direction: { x: 1, y: 0 } };
+    const b = { origin: { x: 2, y: 0 }, direction: { x: 0, y: 1 } };
     const out: XYObjectWritable = { x: 0, y: 0 };
     expect(singleIntersectionInto(out, a, b)).toBe(true);
     expect(out.x).toBeCloseTo(2);
@@ -151,7 +150,7 @@ describe('singleIntersectionInto', () => {
   });
 
   test('degenerate a, a.origin이 b 위 → true, a.origin 기록', () => {
-    const degOnHoriz = infiniteLineFrom({ x: 3, y: 0 }, { x: 0, y: 0 });
+    const degOnHoriz = { origin: { x: 3, y: 0 }, direction: { x: 0, y: 0 } };
     const out: XYObjectWritable = { x: 0, y: 0 };
     expect(singleIntersectionInto(out, degOnHoriz, horizA)).toBe(true);
     expect(out.x).toBeCloseTo(3);
@@ -165,7 +164,7 @@ describe('singleIntersectionInto', () => {
   });
 
   test('degenerate b, b.origin이 a 위 → true, b.origin 기록', () => {
-    const degOnHoriz = infiniteLineFrom({ x: 5, y: 0 }, { x: 0, y: 0 });
+    const degOnHoriz = { origin: { x: 5, y: 0 }, direction: { x: 0, y: 0 } };
     const out: XYObjectWritable = { x: 0, y: 0 };
     expect(singleIntersectionInto(out, horizA, degOnHoriz)).toBe(true);
     expect(out.x).toBeCloseTo(5);
@@ -274,42 +273,46 @@ describe('principalAngle', () => {
 // infiniteLineAngleBetween
 // ─────────────────────────────────────────────
 describe('infiniteLineAngleBetween', () => {
+  const horizontal = { ox: 0, oy: 0, dx: 1, dy: 0 };
+  const vertical = { ox: 0, oy: 0, dx: 0, dy: 1 };
+  const degenerate = { ox: 1, oy: 2, dx: 0, dy: 0 };
+
   test('수평 vs 수평 → 0', () => {
-    expect(infiniteLineAngleBetween(horizA, horizB)).toBe(0);
+    expect(infiniteLineAngleBetween(horizontal, { ox: 0, oy: 1, dx: 1, dy: 0 })).toBe(0);
   });
 
   test('수평 vs 반대 방향 수평 → 0 (방향 부호 무시)', () => {
-    const rev = infiniteLineFrom({ x: 0, y: 0 }, { x: -1, y: 0 });
-    expect(infiniteLineAngleBetween(horizA, rev)).toBe(0);
+    const rev = { ox: 0, oy: 0, dx: -1, dy: 0 };
+    expect(infiniteLineAngleBetween(horizontal, rev)).toBe(0);
   });
 
   test('수평 vs 수직 → π/2', () => {
-    expect(infiniteLineAngleBetween(horizA, vertA)).toBeCloseTo(Math.PI / 2, 12);
+    expect(infiniteLineAngleBetween(horizontal, vertical)).toBeCloseTo(Math.PI / 2, 12);
   });
 
   test('45도 대각 vs 수평 → π/4', () => {
-    const diag = infiniteLineFrom({ x: 0, y: 0 }, { x: 1, y: 1 });
-    expect(infiniteLineAngleBetween(diag, horizA)).toBeCloseTo(Math.PI / 4, 12);
+    const diag = { ox: 0, oy: 0, dx: 1, dy: 1 };
+    expect(infiniteLineAngleBetween(diag, horizontal)).toBeCloseTo(Math.PI / 4, 12);
   });
 
   test('non-normalized direction도 정확하다', () => {
-    const longHoriz = infiniteLineFrom({ x: 0, y: 0 }, { x: 7, y: 0 });
-    const longVert = infiniteLineFrom({ x: 0, y: 0 }, { x: 0, y: 4 });
+    const longHoriz = { ox: 0, oy: 0, dx: 7, dy: 0 };
+    const longVert = { ox: 0, oy: 0, dx: 0, dy: 4 };
     expect(infiniteLineAngleBetween(longHoriz, longVert)).toBeCloseTo(Math.PI / 2, 12);
   });
 
   test('zero direction → NaN', () => {
-    expect(infiniteLineAngleBetween(degA, horizA)).toBeNaN();
+    expect(infiniteLineAngleBetween(degenerate, horizontal)).toBeNaN();
   });
 
   test('non-finite direction → NaN', () => {
-    const nan = infiniteLineFrom({ x: 0, y: 0 }, { x: Infinity, y: 0 });
-    expect(infiniteLineAngleBetween(nan, horizA)).toBeNaN();
+    const nan = { ox: 0, oy: 0, dx: Infinity, dy: 0 };
+    expect(infiniteLineAngleBetween(nan, horizontal)).toBeNaN();
   });
 
   test('b 위치 non-finite direction → NaN', () => {
-    const nan = infiniteLineFrom({ x: 0, y: 0 }, { x: 0, y: Infinity });
-    expect(infiniteLineAngleBetween(horizA, nan)).toBeNaN();
+    const nan = { ox: 0, oy: 0, dx: 0, dy: Infinity };
+    expect(infiniteLineAngleBetween(horizontal, nan)).toBeNaN();
   });
 });
 
@@ -318,7 +321,7 @@ describe('infiniteLineAngleBetween', () => {
 // ─────────────────────────────────────────────
 describe('infiniteLineParallelDistance', () => {
   test('y=0 vs y=3 평행선 → 3', () => {
-    const y3 = infiniteLineFrom({ x: 0, y: 3 }, { x: 1, y: 0 });
+    const y3 = { origin: { x: 0, y: 3 }, direction: { x: 1, y: 0 } };
     expect(infiniteLineParallelDistance(horizA, y3)).toBe(3);
   });
 
@@ -332,12 +335,12 @@ describe('infiniteLineParallelDistance', () => {
 
   test('a만 degenerate → a.origin과 b line 사이 거리', () => {
     // a degenerate origin (1,2), b 수평선 y=0 → 거리 2
-    const a = infiniteLineFrom({ x: 1, y: 2 }, { x: 0, y: 0 });
+    const a = { origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } };
     expect(infiniteLineParallelDistance(a, horizA)).toBe(2);
   });
 
   test('b만 degenerate → b.origin과 a line 사이 거리', () => {
-    const b = infiniteLineFrom({ x: 1, y: 2 }, { x: 0, y: 0 });
+    const b = { origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } };
     expect(infiniteLineParallelDistance(horizA, b)).toBe(2);
   });
 
@@ -347,22 +350,22 @@ describe('infiniteLineParallelDistance', () => {
   });
 
   test('non-finite origin → NaN', () => {
-    const bad = infiniteLineFrom({ x: Infinity, y: 0 }, { x: 1, y: 0 });
+    const bad = { origin: { x: Infinity, y: 0 }, direction: { x: 1, y: 0 } };
     expect(Number.isNaN(infiniteLineParallelDistance(bad, horizA))).toBe(true);
   });
 
   test('non-finite direction → NaN', () => {
-    const bad = infiniteLineFrom({ x: 0, y: 5 }, { x: Infinity, y: 0 });
+    const bad = { origin: { x: 0, y: 5 }, direction: { x: Infinity, y: 0 } };
     expect(Number.isNaN(infiniteLineParallelDistance(bad, horizA))).toBe(true);
   });
 
   test('b 위치 non-finite origin → NaN', () => {
-    const bad = infiniteLineFrom({ x: -Infinity, y: 0 }, { x: 1, y: 0 });
+    const bad = { origin: { x: -Infinity, y: 0 }, direction: { x: 1, y: 0 } };
     expect(Number.isNaN(infiniteLineParallelDistance(horizA, bad))).toBe(true);
   });
 
   test('b 위치 non-finite direction → NaN', () => {
-    const bad = infiniteLineFrom({ x: 0, y: 5 }, { x: 0, y: Infinity });
+    const bad = { origin: { x: 0, y: 5 }, direction: { x: 0, y: Infinity } };
     expect(Number.isNaN(infiniteLineParallelDistance(horizA, bad))).toBe(true);
   });
 });

@@ -1,5 +1,4 @@
 import type { InfiniteLineLike, InfiniteLineWritable } from '../types';
-import { createInfiniteLine } from './create-infinite-line';
 import { infiniteLineMirrorLineInto } from './infinite-line-mirror-line-into';
 
 /**
@@ -19,6 +18,7 @@ import { infiniteLineMirrorLineInto } from './infinite-line-mirror-line-into';
  * @param line 반사할 infinite-line
  * @param mirror 반사 축으로 쓸 infinite-line
  */
+// v2-migration: B-19 반전·반사 출력 전환 시 중첩 출력 생성을 제거한다.
 export function infiniteLineMirrorLine(line: InfiniteLineLike, mirror: InfiniteLineLike): InfiniteLineWritable {
-  return infiniteLineMirrorLineInto(createInfiniteLine(), line, mirror);
+  return infiniteLineMirrorLineInto({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } }, line, mirror);
 }

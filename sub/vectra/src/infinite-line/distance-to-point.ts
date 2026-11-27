@@ -1,6 +1,4 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, XYInput } from '../types';
+import type { InfiniteLine, Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -8,14 +6,11 @@ import { hypot2 } from '../internal/numeric';
  *
  * degenerate infinite-line(`directionLengthSq === 0`)에서는 origin-point 거리를 반환한다.
  */
-export function distanceToPoint(line: InfiniteLineLike, point: XYInput): number {
-  const ox = readX(readInfiniteLineOrigin(line));
-  const oy = readY(readInfiniteLineOrigin(line));
-  const dx = readX(readInfiniteLineDirection(line));
-  const dy = readY(readInfiniteLineDirection(line));
+export function distanceToPoint(line: InfiniteLine, point: Point): number {
+  const { ox, oy, dx, dy } = line;
   const lenSq = dx * dx + dy * dy;
-  const px = readX(point) - ox;
-  const py = readY(point) - oy;
+  const px = point.x - ox;
+  const py = point.y - oy;
   if (lenSq === 0) return hypot2(px, py);
   const t = (px * dx + py * dy) / lenSq;
   const cx = t * dx - px;

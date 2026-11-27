@@ -1,4 +1,4 @@
-import type { InfiniteLineWritable, SegmentLike } from '../types';
+import type { InfiniteLineWritable, Segment } from '../types/flat-shapes.internal';
 import { createInfiniteLine } from './create-infinite-line';
 import { fromSegmentInto } from './from-segment-into';
 
@@ -8,6 +8,6 @@ import { fromSegmentInto } from './from-segment-into';
  * finite/non-finite 입력과 결과 처리 정책은 `fromSegmentInto`와 동일하다.
  * degenerate/empty 입력 처리 정책은 `fromSegmentInto`와 동일하다.
  */
-export function fromSegment(line: SegmentLike): InfiniteLineWritable {
+export function fromSegment(line: Segment): InfiniteLineWritable {
   return fromSegmentInto(createInfiniteLine(), line);
 }

@@ -1,17 +1,17 @@
-import type { InfiniteLineWritable } from '../types';
+import type { InfiniteLineWritable } from '../types/flat-shapes.internal';
 import { createInfiniteLine } from './create-infinite-line';
 import { fromCoefficientsInto } from './from-coefficients-into';
 
 /**
  * implicit equation `a * x + b * y + c = 0`을 infinite-line으로 변환해 새 plain object로 반환한다.
  *
- * `direction = { x: -b, y: a }`로 기록한다.
+ * `{ dx: -b, dy: a }`로 기록한다.
  * 기준점은 division overflow를 줄이기 위해 큰 coefficient 축을 피해 선택한다.
- * - `Math.abs(a) >= Math.abs(b)`이면 `origin = { x: -c / a, y: 0 }`.
- * - 그 외(`Math.abs(b) > Math.abs(a)`)이면 `origin = { x: 0, y: -c / b }`.
+ * - `Math.abs(a) >= Math.abs(b)`이면 `{ ox: -c / a, oy: 0 }`.
+ * - 그 외에는 `{ ox: 0, oy: -c / b }`.
  *
  * `a === 0 && b === 0`은 equation이 직선을 정의하지 않는 degenerate fallback이다.
- * 이 경우 `origin = { x: 0, y: 0 }`, `direction = { x: 0, y: 0 }`을 기록한다.
+ * 이 경우 `{ ox: 0, oy: 0 }`, `{ dx: 0, dy: 0 }`을 기록한다.
  *
  * non-finite coefficient(`NaN | Infinity | -Infinity`)는 검증하지 않는다.
  * `Math.abs` 비교와 JS 산술 결과(예: `NaN` 비교는 false)를 그대로 따른다.

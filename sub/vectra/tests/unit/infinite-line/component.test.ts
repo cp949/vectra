@@ -48,23 +48,14 @@ describe('infinite-line component - origin / originInto', () => {
 
 describe('infinite-line component - direction / directionInto', () => {
   test('directionInto가 out에 direction을 기록하고 out을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const result = directionInto(out, { origin: { x: 0, y: 0 }, direction: { x: 3, y: 4 } });
+    const out = { x: 0, y: 0 };
+    const result = directionInto(out, { ox: 0, oy: 0, dx: 3, dy: 4 });
     expect(result).toBe(out);
     expect(out).toEqual({ x: 3, y: 4 });
   });
 
-  test('directionInto가 tuple infinite-line input을 읽는다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    directionInto(out, [
-      [0, 0],
-      [3, 4],
-    ] as const);
-    expect(out).toEqual({ x: 3, y: 4 });
-  });
-
   test('direction companion이 새 plain object를 반환한다', () => {
-    const d = direction({ origin: { x: 0, y: 0 }, direction: { x: 3, y: 4 } });
+    const d = direction({ ox: 0, oy: 0, dx: 3, dy: 4 });
     expect(d).toEqual({ x: 3, y: 4 });
   });
 });

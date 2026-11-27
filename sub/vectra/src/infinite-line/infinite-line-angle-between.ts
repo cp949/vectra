@@ -1,6 +1,4 @@
-import { readInfiniteLineDirection } from '../internal/infinite-line';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike } from '../types';
+import type { InfiniteLine } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -16,11 +14,11 @@ import { hypot2 } from '../internal/numeric';
  * @param a 첫 infinite-line
  * @param b 둘째 infinite-line
  */
-export function infiniteLineAngleBetween(a: InfiniteLineLike, b: InfiniteLineLike): number {
-  const dax = readX(readInfiniteLineDirection(a));
-  const day = readY(readInfiniteLineDirection(a));
-  const dbx = readX(readInfiniteLineDirection(b));
-  const dby = readY(readInfiniteLineDirection(b));
+export function infiniteLineAngleBetween(a: InfiniteLine, b: InfiniteLine): number {
+  const dax = a.dx;
+  const day = a.dy;
+  const dbx = b.dx;
+  const dby = b.dy;
 
   const dot = dax * dbx + day * dby;
   const denom = hypot2(dax, day) * hypot2(dbx, dby);

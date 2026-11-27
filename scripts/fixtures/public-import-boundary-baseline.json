@@ -218,14 +218,6 @@
       "to": "infinite-line/create-infinite-line.ts"
     },
     {
-      "from": "infinite-line/infinite-line-mirror-line.ts",
-      "to": "infinite-line/create-infinite-line.ts"
-    },
-    {
-      "from": "infinite-line/reverse.ts",
-      "to": "infinite-line/create-infinite-line.ts"
-    },
-    {
       "from": "infinite-line/side.ts",
       "to": "infinite-line/signed-distance-to-point.ts"
     },
