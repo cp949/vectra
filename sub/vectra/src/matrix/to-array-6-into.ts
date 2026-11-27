@@ -1,10 +1,9 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 
 /**
  * matrix의 6개 component를 mutable 6-element tuple out에 기록하고 out을 반환한다.
  *
- * 기록 순서: `[a, b, c, d, tx, ty]`. MatrixTuple과 동일한 순서이다.
+ * 기록 순서: `[a, b, c, d, tx, ty]`.
  * NaN/Infinity component는 검증 없이 pass through한다.
  *
  * @param out matrix component를 기록할 mutable 6-element tuple
@@ -12,13 +11,13 @@ import type { MatrixLike } from '../types';
  */
 export function toArray6Into(
   out: [number, number, number, number, number, number],
-  matrix: MatrixLike
+  matrix: Matrix
 ): [number, number, number, number, number, number] {
-  out[0] = readMatrixA(matrix);
-  out[1] = readMatrixB(matrix);
-  out[2] = readMatrixC(matrix);
-  out[3] = readMatrixD(matrix);
-  out[4] = readMatrixTx(matrix);
-  out[5] = readMatrixTy(matrix);
+  out[0] = matrix.a;
+  out[1] = matrix.b;
+  out[2] = matrix.c;
+  out[3] = matrix.d;
+  out[4] = matrix.tx;
+  out[5] = matrix.ty;
   return out;
 }

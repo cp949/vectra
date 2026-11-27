@@ -1,7 +1,10 @@
+/**
+ * 점 목록 변환과 출력 버퍼, 별칭, 비유한 좌표 처리를 검증한다.
+ */
 import { describe, expect, test } from 'vitest';
 import { transformPoints } from '../../../src/matrix/transform-points';
 import { transformPointsInto } from '../../../src/matrix/transform-points-into';
-import type { MatrixLike, XYInput, XYTupleWritable, XYWritable } from '../../../src/types';
+import type { Matrix, Point, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -15,13 +18,13 @@ function makeBuffer(n: number): { x: number; y: number }[] {
   return buf;
 }
 
-const identity: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+const identity: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
 
 // ─── transformPointsInto ─────────────────────────────────────────────────────
 
 describe('transformPointsInto - 기본 변환', () => {
   test('identity matrix는 모든 point를 그대로 기록한다', () => {
-    const points: XYInput[] = [
+    const points: Point[] = [
       { x: 1, y: 2 },
       { x: 3, y: 4 },
       { x: 5, y: 6 },
@@ -35,8 +38,8 @@ describe('transformPointsInto - 기본 변환', () => {
   });
 
   test('translation matrix가 모든 point에 tx/ty를 더한다', () => {
-    const m: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
-    const points: XYInput[] = [
+    const m: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
+    const points: Point[] = [
       { x: 1, y: 2 },
       { x: -3, y: -4 },
     ];
@@ -47,8 +50,8 @@ describe('transformPointsInto - 기본 변환', () => {
   });
 
   test('scale matrix가 모든 point를 변환한다', () => {
-    const m: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 0, ty: 0 };
-    const points: XYInput[] = [
+    const m: Matrix = { a: 2, b: 0, c: 0, d: 3, tx: 0, ty: 0 };
+    const points: Point[] = [
       { x: 1, y: 1 },
       { x: 4, y: 5 },
     ];
@@ -60,8 +63,8 @@ describe('transformPointsInto - 기본 변환', () => {
 
   test('rotation matrix(π/2)가 모든 point를 변환한다', () => {
     // R(π/2): a=0, b=1, c=-1, d=0
-    const m: MatrixLike = { a: 0, b: 1, c: -1, d: 0, tx: 0, ty: 0 };
-    const points: XYInput[] = [
+    const m: Matrix = { a: 0, b: 1, c: -1, d: 0, tx: 0, ty: 0 };
+    const points: Point[] = [
       { x: 1, y: 0 },
       { x: 0, y: 1 },
     ];
@@ -72,41 +75,11 @@ describe('transformPointsInto - 기본 변환', () => {
     expect(out[1].x).toBeCloseTo(-1, 12);
     expect(out[1].y).toBeCloseTo(0, 12);
   });
-
-  test('tuple matrix input으로 변환한다', () => {
-    const m: MatrixLike = [2, 0, 0, 3, 1, 2];
-    const points: XYInput[] = [{ x: 1, y: 1 }];
-    const out = makeBuffer(1);
-    transformPointsInto(out, m, points);
-    expect(out[0]).toEqual({ x: 3, y: 5 });
-  });
-});
-
-describe('transformPointsInto - object/tuple input 혼합', () => {
-  test('tuple과 object input을 같은 array에서 처리한다', () => {
-    const m: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
-    const points: XYInput[] = [{ x: 1, y: 2 }, [3, 4]];
-    const out = makeBuffer(2);
-    transformPointsInto(out, m, points);
-    expect(out[0]).toEqual({ x: 11, y: 22 });
-    expect(out[1]).toEqual({ x: 13, y: 24 });
-  });
-
-  test('tuple output과 object output을 같은 array에서 처리한다', () => {
-    const m: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: 6 };
-    const tupleOut: XYTupleWritable = [0, 0];
-    const objectOut = makePt();
-    const out: XYWritable[] = [tupleOut, objectOut];
-    transformPointsInto(out, m, [[1, 2], { x: 3, y: 4 }]);
-    expect(tupleOut[0]).toBe(6);
-    expect(tupleOut[1]).toBe(8);
-    expect(objectOut).toEqual({ x: 8, y: 10 });
-  });
 });
 
 describe('transformPointsInto - aliasing', () => {
   test('out[i] === points[i] self-aliasing이 안전하다', () => {
-    const m: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
+    const m: Matrix = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
     const p0 = { x: 4, y: 5 };
     const p1 = { x: 6, y: 7 };
     const points = [p0, p1];
@@ -119,7 +92,7 @@ describe('transformPointsInto - aliasing', () => {
   });
 
   test('out === points 같은 array self-aliasing이 안전하다', () => {
-    const m: MatrixLike = { a: 2, b: 1, c: 3, d: 4, tx: 5, ty: 6 };
+    const m: Matrix = { a: 2, b: 1, c: 3, d: 4, tx: 5, ty: 6 };
     const buffer = [
       { x: 1, y: 1 },
       { x: 2, y: 3 },
@@ -131,28 +104,18 @@ describe('transformPointsInto - aliasing', () => {
     expect(buffer[0]).toEqual({ x: 10, y: 11 });
     expect(buffer[1]).toEqual({ x: 18, y: 20 });
   });
-
-  test('tuple point self-aliasing이 안전하다', () => {
-    const m: MatrixLike = { a: 2, b: 1, c: 3, d: 4, tx: 5, ty: 6 };
-    const p0: XYTupleWritable = [1, 1];
-    const p1: XYTupleWritable = [2, 3];
-    const buffer = [p0, p1];
-    transformPointsInto(buffer, m, buffer);
-    expect(p0).toEqual([10, 11]);
-    expect(p1).toEqual([18, 20]);
-  });
 });
 
 describe('transformPointsInto - empty / 초과 / 부족 buffer', () => {
   test('empty input은 empty output 그대로 반환한다', () => {
-    const out: XYWritable[] = [];
+    const out: PointWritable[] = [];
     const result = transformPointsInto(out, identity, []);
     expect(result).toBe(out);
     expect(out.length).toBe(0);
   });
 
   test('extra output slot은 수정하지 않는다', () => {
-    const m: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
+    const m: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
     const extra = { x: 999, y: 888 };
     const out = [makePt(), extra];
     transformPointsInto(out, m, [{ x: 1, y: 2 }]);
@@ -181,7 +144,7 @@ describe('transformPointsInto - empty / 초과 / 부족 buffer', () => {
 
 describe('transformPointsInto - non-finite pass-through', () => {
   test('NaN matrix component는 pass through한다', () => {
-    const m: MatrixLike = { a: Number.NaN, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    const m: Matrix = { a: Number.NaN, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     const out = makeBuffer(1);
     transformPointsInto(out, m, [{ x: 1, y: 2 }]);
     expect(Number.isNaN(out[0].x)).toBe(true);
@@ -189,7 +152,7 @@ describe('transformPointsInto - non-finite pass-through', () => {
   });
 
   test('Infinity matrix component는 pass through한다', () => {
-    const m: MatrixLike = { a: Number.POSITIVE_INFINITY, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    const m: Matrix = { a: Number.POSITIVE_INFINITY, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
     const out = makeBuffer(1);
     transformPointsInto(out, m, [{ x: 1, y: 2 }]);
     expect(out[0].x).toBe(Number.POSITIVE_INFINITY);
@@ -197,7 +160,7 @@ describe('transformPointsInto - non-finite pass-through', () => {
   });
 
   test('-Infinity matrix component는 pass through한다', () => {
-    const m: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: Number.NEGATIVE_INFINITY, ty: 0 };
+    const m: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: Number.NEGATIVE_INFINITY, ty: 0 };
     const out = makeBuffer(1);
     transformPointsInto(out, m, [{ x: 1, y: 2 }]);
     expect(out[0].x).toBe(Number.NEGATIVE_INFINITY);
@@ -226,7 +189,7 @@ describe('transformPointsInto - non-finite pass-through', () => {
   });
 
   test('pure-translation matrix에서 Infinity point는 finite component를 보존한다', () => {
-    const m: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
+    const m: Matrix = { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 };
     const out = makeBuffer(2);
     // tx/ty는 + 연산만 받으므로 cross-product NaN이 생기지 않는다
     transformPointsInto(out, m, [
@@ -241,43 +204,12 @@ describe('transformPointsInto - non-finite pass-through', () => {
   });
 });
 
-describe('transformPointsInto - generic return type 보존', () => {
-  test('tuple-of-tuples output에서 generic Out이 보존된다', () => {
-    const out: XYTupleWritable[] = [
-      [0, 0],
-      [0, 0],
-    ];
-    const result = transformPointsInto(out, identity, [
-      { x: 1, y: 2 },
-      { x: 3, y: 4 },
-    ]);
-    expect(result).toBe(out);
-    expect(Array.isArray(result[0])).toBe(true);
-    expect(result[0][0]).toBe(1);
-    expect(result[0][1]).toBe(2);
-  });
-
-  test('custom object output에서 generic Out이 보존된다', () => {
-    const tagged = [
-      { x: 0, y: 0, tag: 'p0' },
-      { x: 0, y: 0, tag: 'p1' },
-    ];
-    const result = transformPointsInto(tagged, identity, [
-      { x: 1, y: 2 },
-      { x: 3, y: 4 },
-    ]);
-    expect(result).toBe(tagged);
-    expect(result[0].tag).toBe('p0');
-    expect(result[1].tag).toBe('p1');
-  });
-});
-
 // ─── transformPoints companion ───────────────────────────────────────────────
 
 describe('transformPoints - companion', () => {
   test('plain point array를 새로 만들어 반환한다', () => {
-    const m: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
-    const points: XYInput[] = [
+    const m: Matrix = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
+    const points: Point[] = [
       { x: 1, y: 1 },
       { x: 2, y: 2 },
     ];
@@ -299,22 +231,5 @@ describe('transformPoints - companion', () => {
   test('empty input은 empty array를 반환한다', () => {
     const result = transformPoints(identity, []);
     expect(result).toEqual([]);
-  });
-
-  test('tuple input을 받아 object output을 반환한다', () => {
-    const m: MatrixLike = { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: 6 };
-    const result = transformPoints(m, [
-      [1, 2],
-      [3, 4],
-    ]);
-    expect(result).toEqual([
-      { x: 6, y: 8 },
-      { x: 8, y: 10 },
-    ]);
-  });
-
-  test('tuple matrix input으로 변환한다', () => {
-    const result = transformPoints([1, 0, 0, 1, 10, 20], [{ x: 1, y: 2 }]);
-    expect(result).toEqual([{ x: 11, y: 22 }]);
   });
 });

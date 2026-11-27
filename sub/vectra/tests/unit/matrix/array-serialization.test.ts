@@ -137,17 +137,6 @@ describe('matrix serialization - toArray6Into', () => {
     expect(toArray6Into(out, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 })).toBe(out);
   });
 
-  test('tuple MatrixLike input을 처리한다', () => {
-    const out: [number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0];
-    toArray6Into(out, [2, 3, 4, 5, 6, 7]);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
-    expect(out[2]).toBe(4);
-    expect(out[3]).toBe(5);
-    expect(out[4]).toBe(6);
-    expect(out[5]).toBe(7);
-  });
-
   test('zero matrix를 그대로 기록한다', () => {
     const out: [number, number, number, number, number, number] = [9, 9, 9, 9, 9, 9];
     toArray6Into(out, { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 });
@@ -323,17 +312,6 @@ describe('matrix serialization - toArray9Into', () => {
   test('out을 반환한다', () => {
     const out: [number, number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     expect(toArray9Into(out, { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 })).toBe(out);
-  });
-
-  test('tuple MatrixLike input을 처리한다', () => {
-    const out: [number, number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    toArray9Into(out, [2, 3, 4, 5, 6, 7]);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
-    expect(out[3]).toBe(4);
-    expect(out[4]).toBe(5);
-    expect(out[6]).toBe(6);
-    expect(out[7]).toBe(7);
   });
 
   test('zero matrix를 column-major zero+last row로 기록한다', () => {

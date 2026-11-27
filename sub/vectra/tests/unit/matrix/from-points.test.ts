@@ -2,12 +2,12 @@
  * 세 점 쌍의 아핀 행렬과 퇴화 입력을 검증한다.
  */
 import { describe, expect, test } from 'vitest';
-import { readX, readY } from '../../../src/internal/xy';
 import { fromPoints } from '../../../src/matrix/from-points';
 import { fromPointsInto } from '../../../src/matrix/from-points-into';
 import { transformPointInto } from '../../../src/matrix/transform-point-into';
-import type { MatrixWritable, XYInput } from '../../../src/types';
+import type { MatrixWritable, Point } from '../../../src/types/flat-shapes.internal';
 
+/** 시험용 행렬 출력을 만든다. */
 function makeMatrix(): MatrixWritable {
   return { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 };
 }
@@ -15,15 +15,15 @@ function makeMatrix(): MatrixWritable {
 /** matrix가 from[i]를 to[i]로 보내는지 transformPointInto로 검증한다. */
 function expectMapsPoints(
   matrix: MatrixWritable,
-  from: readonly [XYInput, XYInput, XYInput],
-  to: readonly [XYInput, XYInput, XYInput]
+  from: readonly [Point, Point, Point],
+  to: readonly [Point, Point, Point]
 ): void {
   for (let i = 0; i < 3; i++) {
     const out = { x: 0, y: 0 };
     transformPointInto(out, matrix, from[i]);
     const target = to[i];
-    expect(out.x).toBeCloseTo(readX(target), 10);
-    expect(out.y).toBeCloseTo(readY(target), 10);
+    expect(out.x).toBeCloseTo(target.x, 10);
+    expect(out.y).toBeCloseTo(target.y, 10);
   }
 }
 

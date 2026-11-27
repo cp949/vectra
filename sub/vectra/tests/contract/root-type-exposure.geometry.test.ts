@@ -269,11 +269,5 @@ describe('root geometry type exposure 계약', () => {
       bottomRight: { x: 1, y: 1 },
       bottomLeft: { x: 0, y: 1 },
     });
-    expectAssignable<OrientedBoundsWritable<[number, number]>>({
-      topLeft: [0, 0],
-      topRight: [1, 0],
-      bottomRight: [1, 1],
-      bottomLeft: [0, 1],
-    });
   });
 });

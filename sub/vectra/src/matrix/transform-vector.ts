@@ -1,4 +1,4 @@
-import type { MatrixLike, XYInput, XYObjectWritable } from '../types';
+import type { Matrix, Point, PointWritable } from '../types/flat-shapes.internal';
 import { transformVectorInto } from './transform-vector-into';
 
 /**
@@ -9,6 +9,6 @@ import { transformVectorInto } from './transform-vector-into';
  * @param matrix vector에 적용할 matrix
  * @param vector 변환할 free vector
  */
-export function transformVector(matrix: MatrixLike, vector: XYInput): XYObjectWritable {
+export function transformVector(matrix: Matrix, vector: Point): PointWritable {
   return transformVectorInto({ x: 0, y: 0 }, matrix, vector);
 }

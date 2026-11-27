@@ -1,5 +1,5 @@
 import { createRect } from '../rect/create-rect';
-import type { MatrixLike, RectLike, RectWritable } from '../types';
+import type { Matrix, Rect, RectWritable } from '../types/flat-shapes.internal';
 import { transformRectInto } from './transform-rect-into';
 
 /**
@@ -10,6 +10,6 @@ import { transformRectInto } from './transform-rect-into';
  * @param matrix rect corner에 적용할 matrix
  * @param rect 변환할 rect
  */
-export function transformRect(matrix: MatrixLike, rect: RectLike): RectWritable {
+export function transformRect(matrix: Matrix, rect: Rect): RectWritable {
   return transformRectInto(createRect(), matrix, rect);
 }

@@ -1,7 +1,5 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { writeXY } from '../internal/xy';
-import type { MatrixLike, OrientedBoundsWritable, RectLike, XYWritable } from '../types';
+import type { Matrix, Rect } from '../types/flat-shapes.internal';
+import type { OrientedBoundsWritable } from '../types';
 
 /**
  * rect의 네 corner를 matrix로 변환한 oriented outline을 out에 기록하고 out을 반환한다.
@@ -16,30 +14,34 @@ import type { MatrixLike, OrientedBoundsWritable, RectLike, XYWritable } from '.
  *
  * nested corner storage가 input rect와 같은 object여도 안전하다(좌표를 모두 먼저 읽은 뒤 기록한다).
  *
- * @param out oriented outline corner를 기록할 writable output
+ * @param out oriented outline corner를 기록할 객체
  * @param matrix rect corner에 적용할 matrix
  * @param rect 변환할 rect
  */
-export function orientedTransformRectInto<Out extends OrientedBoundsWritable<XYWritable>>(
+export function orientedTransformRectInto<Out extends OrientedBoundsWritable>(
   out: Out,
-  matrix: MatrixLike,
-  rect: RectLike
+  matrix: Matrix,
+  rect: Rect
 ): Out {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
   // aliasing 안전: rect 좌표를 모두 local로 먼저 읽는다
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const x2 = x + readRectWidth(rect);
-  const y2 = y + readRectHeight(rect);
+  const x = rect.x;
+  const y = rect.y;
+  const x2 = x + rect.width;
+  const y2 = y + rect.height;
 
-  writeXY(out.topLeft, a * x + c * y + tx, b * x + d * y + ty);
-  writeXY(out.topRight, a * x2 + c * y + tx, b * x2 + d * y + ty);
-  writeXY(out.bottomRight, a * x2 + c * y2 + tx, b * x2 + d * y2 + ty);
-  writeXY(out.bottomLeft, a * x + c * y2 + tx, b * x + d * y2 + ty);
+  out.topLeft.x = a * x + c * y + tx;
+  out.topLeft.y = b * x + d * y + ty;
+  out.topRight.x = a * x2 + c * y + tx;
+  out.topRight.y = b * x2 + d * y + ty;
+  out.bottomRight.x = a * x2 + c * y2 + tx;
+  out.bottomRight.y = b * x2 + d * y2 + ty;
+  out.bottomLeft.x = a * x + c * y2 + tx;
+  out.bottomLeft.y = b * x + d * y2 + ty;
   return out;
 }

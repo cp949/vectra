@@ -1,4 +1,4 @@
-import type { MatrixLike, XYInput, XYObjectWritable } from '../types';
+import type { Matrix, Point, PointWritable } from '../types/flat-shapes.internal';
 import { transformPointsInto } from './transform-points-into';
 
 /**
@@ -13,8 +13,8 @@ import { transformPointsInto } from './transform-points-into';
  * @param matrix point에 적용할 matrix
  * @param points 변환할 point input array
  */
-export function transformPoints(matrix: MatrixLike, points: readonly XYInput[]): XYObjectWritable[] {
-  const out: XYObjectWritable[] = new Array(points.length);
+export function transformPoints(matrix: Matrix, points: readonly Point[]): PointWritable[] {
+  const out: PointWritable[] = new Array(points.length);
   for (let i = 0; i < out.length; i += 1) {
     out[i] = { x: 0, y: 0 };
   }

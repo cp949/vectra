@@ -1,5 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 
 /**
  * matrix의 6개 component를 column-major mutable 9-element tuple out에 기록하고 out을 반환한다.
@@ -13,16 +12,16 @@ import type { MatrixLike } from '../types';
  */
 export function toArray9Into(
   out: [number, number, number, number, number, number, number, number, number],
-  matrix: MatrixLike
+  matrix: Matrix
 ): [number, number, number, number, number, number, number, number, number] {
-  out[0] = readMatrixA(matrix);
-  out[1] = readMatrixB(matrix);
+  out[0] = matrix.a;
+  out[1] = matrix.b;
   out[2] = 0;
-  out[3] = readMatrixC(matrix);
-  out[4] = readMatrixD(matrix);
+  out[3] = matrix.c;
+  out[4] = matrix.d;
   out[5] = 0;
-  out[6] = readMatrixTx(matrix);
-  out[7] = readMatrixTy(matrix);
+  out[6] = matrix.tx;
+  out[7] = matrix.ty;
   out[8] = 1;
   return out;
 }

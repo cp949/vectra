@@ -1,4 +1,5 @@
-import type { MatrixLike, OrientedBoundsWritable, RectLike } from '../types';
+import type { Matrix, Rect } from '../types/flat-shapes.internal';
+import type { OrientedBoundsWritable } from '../types';
 import { orientedTransformRectInto } from './oriented-transform-rect-into';
 
 /**
@@ -14,7 +15,7 @@ import { orientedTransformRectInto } from './oriented-transform-rect-into';
  * @param matrix rect corner에 적용할 matrix
  * @param rect 변환할 rect
  */
-export function orientedTransformRect(matrix: MatrixLike, rect: RectLike): OrientedBoundsWritable {
+export function orientedTransformRect(matrix: Matrix, rect: Rect): OrientedBoundsWritable {
   return orientedTransformRectInto(
     {
       topLeft: { x: 0, y: 0 },

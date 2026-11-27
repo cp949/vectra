@@ -15,7 +15,14 @@ import { fitRectInto } from '../../../src/matrix/fit-rect-into';
 import { translationMatrixInto } from '../../../src/matrix/translation-matrix-into';
 import { rotationAroundPointInto } from '../../../src/matrix/rotation-around-point-into';
 import { scaleAroundPointInto } from '../../../src/matrix/scale-around-point-into';
-import type { BoundsPadding, Matrix } from '../../../src/types/flat-shapes.internal';
+import { transformPointInto } from '../../../src/matrix/transform-point-into';
+import { transformVectorInto } from '../../../src/matrix/transform-vector-into';
+import { transformPointsInto } from '../../../src/matrix/transform-points-into';
+import { transformBoundsInto } from '../../../src/matrix/transform-bounds-into';
+import { transformRectInto } from '../../../src/matrix/transform-rect-into';
+import { orientedTransformBoundsInto } from '../../../src/matrix/oriented-transform-bounds-into';
+import { orientedTransformRectInto } from '../../../src/matrix/oriented-transform-rect-into';
+import type { BoundsPadding, Matrix, Point } from '../../../src/types/flat-shapes.internal';
 
 /** 추가 필드를 가진 외부 행렬 출력. */
 class ExternalMatrix {
@@ -131,4 +138,84 @@ test('scaleAroundPointInto은 외부 클래스 출력의 참조와 반환 타입
   const result = scaleAroundPointInto(out, { x: 3, y: 5 }, { x: 2, y: 3 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalMatrix>();
+});
+
+test('transformPointInto는 평평한 행렬과 점을 받는다', () => {
+  expectTypeOf(transformPointInto).parameter(1).toEqualTypeOf<Matrix>();
+  expectTypeOf(transformPointInto).parameter(2).toEqualTypeOf<Point>();
+});
+
+/** 추가 필드를 가진 외부 점 출력. */
+class ExternalPoint {
+  x = 0;
+  y = 0;
+  tag = 'point';
+}
+
+/** 기존 점을 담는 외부 배열 출력. */
+class ExternalPoints extends Array<ExternalPoint> {
+  tag = 'points';
+}
+
+/** 추가 필드를 가진 외부 사각형 출력. */
+class ExternalRect extends ExternalPoint {
+  width = 10;
+  height = 10;
+}
+
+/** 네 점을 재사용하는 외부 외곽 출력. */
+class ExternalOutline {
+  topLeft = new ExternalPoint();
+  topRight = new ExternalPoint();
+  bottomRight = new ExternalPoint();
+  bottomLeft = new ExternalPoint();
+}
+
+test('transformPointInto는 외부 점을 그대로 반환한다', () => {
+  const out = new ExternalPoint();
+  const result = transformPointInto(out, new ExternalMatrix(), { x: 2, y: 3 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('transformVectorInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = transformVectorInto(out, new ExternalMatrix(), { x: 2, y: 3 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('transformPointsInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalPoints();
+  const result = transformPointsInto(out, new ExternalMatrix(), []);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoints>();
+});
+
+test('transformBoundsInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalBounds();
+  const result = transformBoundsInto(out, new ExternalMatrix(), new ExternalBounds());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalBounds>();
+});
+
+test('transformRectInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalRect();
+  const result = transformRectInto(out, new ExternalMatrix(), new ExternalRect());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalRect>();
+});
+
+test('orientedTransformBoundsInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalOutline();
+  const result = orientedTransformBoundsInto(out, new ExternalMatrix(), new ExternalBounds());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalOutline>();
+});
+
+test('orientedTransformRectInto은 외부 클래스 출력의 참조와 반환 타입을 보존한다', () => {
+  const out = new ExternalOutline();
+  const result = orientedTransformRectInto(out, new ExternalMatrix(), new ExternalRect());
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalOutline>();
 });

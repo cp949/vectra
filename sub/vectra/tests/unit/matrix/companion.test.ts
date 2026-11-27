@@ -165,9 +165,11 @@ describe('matrix allocating companions', () => {
 
   test('transformBounds는 transformed corner AABB plain bounds를 반환한다', () => {
     const matrix: MatrixLike = { a: 2, b: 0, c: 0, d: 3, tx: 1, ty: 2 };
-    expect(transformBounds(matrix, { min: { x: 1, y: 2 }, max: { x: 4, y: 6 } })).toEqual({
-      min: { x: 3, y: 8 },
-      max: { x: 9, y: 20 },
+    expect(transformBounds(matrix, { minX: 1, minY: 2, maxX: 4, maxY: 6 })).toEqual({
+      minX: 3,
+      minY: 8,
+      maxX: 9,
+      maxY: 20,
     });
   });
 

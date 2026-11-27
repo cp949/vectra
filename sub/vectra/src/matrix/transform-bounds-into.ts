@@ -1,7 +1,4 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BoundsLike, BoundsWritable, MatrixLike, XYWritable } from '../types';
+import type { Bounds, BoundsWritable, Matrix } from '../types/flat-shapes.internal';
 
 /**
  * bounds의 네 corner를 matrix로 변환한 AABB를 out에 기록하고 out을 반환한다.
@@ -9,31 +6,29 @@ import type { BoundsLike, BoundsWritable, MatrixLike, XYWritable } from '../type
  * empty bounds는 sentinel empty bounds를 기록한다. oriented bounds가 아니라 axis-aligned bounds로
  * 감싼다. input과 out이 같은 object여도 안전하다.
  *
- * @param out 변환된 AABB bounds를 기록할 writable output
+ * @param out 변환된 AABB bounds를 기록할 객체
  * @param matrix bounds corner에 적용할 matrix
  * @param bounds 변환할 bounds
  */
-export function transformBoundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
-  out: Out,
-  matrix: MatrixLike,
-  bounds: BoundsLike
-): Out {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+export function transformBoundsInto<Out extends BoundsWritable>(out: Out, matrix: Matrix, bounds: Bounds): Out {
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
   // aliasing 안전: bounds의 모든 값을 local 변수로 먼저 읽는다
-  const minX = readX(readBoundsMin(bounds));
-  const minY = readY(readBoundsMin(bounds));
-  const maxX = readX(readBoundsMax(bounds));
-  const maxY = readY(readBoundsMax(bounds));
+  const minX = bounds.minX;
+  const minY = bounds.minY;
+  const maxX = bounds.maxX;
+  const maxY = bounds.maxY;
 
   // empty sentinel pass-through: isEmpty 조건에서 empty sentinel을 그대로 기록한다
   if (maxX < minX || maxY < minY) {
-    writeXY(out.min, Infinity, Infinity);
-    writeXY(out.max, -Infinity, -Infinity);
+    out.minX = Infinity;
+    out.minY = Infinity;
+    out.maxX = -Infinity;
+    out.maxY = -Infinity;
     return out;
   }
 
@@ -47,8 +42,10 @@ export function transformBoundsInto<Out extends BoundsWritable<XYWritable, XYWri
   const x3t = a * maxX + c * maxY + tx;
   const y3t = b * maxX + d * maxY + ty;
 
-  writeXY(out.min, Math.min(x0t, x1t, x2t, x3t), Math.min(y0t, y1t, y2t, y3t));
-  writeXY(out.max, Math.max(x0t, x1t, x2t, x3t), Math.max(y0t, y1t, y2t, y3t));
+  out.minX = Math.min(x0t, x1t, x2t, x3t);
+  out.minY = Math.min(y0t, y1t, y2t, y3t);
+  out.maxX = Math.max(x0t, x1t, x2t, x3t);
+  out.maxY = Math.max(y0t, y1t, y2t, y3t);
 
   return out;
 }

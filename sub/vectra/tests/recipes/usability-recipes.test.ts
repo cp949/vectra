@@ -232,17 +232,17 @@ describe('레시피 5: transform matrix 조합으로 point와 bounds 변환', ()
     const { transformBoundsInto } = await import('../../src/matrix/transform-bounds-into');
 
     const m = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
-    // translationMatrixInto는 XYInput offset을 받는다
+    // translationMatrixInto는 점 객체를 이동량으로 받는다
     translationMatrixInto(m, { x: 10, y: 20 });
 
-    const srcBounds = { min: { x: 0, y: 0 }, max: { x: 100, y: 50 } };
-    const outBounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+    const srcBounds = { minX: 0, minY: 0, maxX: 100, maxY: 50 };
+    const outBounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
     transformBoundsInto(outBounds, m, srcBounds);
 
-    expect(outBounds.min.x).toBeCloseTo(10, 10);
-    expect(outBounds.min.y).toBeCloseTo(20, 10);
-    expect(outBounds.max.x).toBeCloseTo(110, 10);
-    expect(outBounds.max.y).toBeCloseTo(70, 10);
+    expect(outBounds.minX).toBeCloseTo(10, 10);
+    expect(outBounds.minY).toBeCloseTo(20, 10);
+    expect(outBounds.maxX).toBeCloseTo(110, 10);
+    expect(outBounds.maxY).toBeCloseTo(70, 10);
   });
 });
 

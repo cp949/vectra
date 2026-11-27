@@ -1,4 +1,5 @@
-import type { BoundsLike, MatrixLike, OrientedBoundsWritable } from '../types';
+import type { Bounds, Matrix } from '../types/flat-shapes.internal';
+import type { OrientedBoundsWritable } from '../types';
 import { orientedTransformBoundsInto } from './oriented-transform-bounds-into';
 
 /**
@@ -15,7 +16,7 @@ import { orientedTransformBoundsInto } from './oriented-transform-bounds-into';
  * @param matrix bounds corner에 적용할 matrix
  * @param bounds 변환할 bounds
  */
-export function orientedTransformBounds(matrix: MatrixLike, bounds: BoundsLike): OrientedBoundsWritable {
+export function orientedTransformBounds(matrix: Matrix, bounds: Bounds): OrientedBoundsWritable {
   return orientedTransformBoundsInto(
     {
       topLeft: { x: 0, y: 0 },

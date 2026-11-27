@@ -1,6 +1,4 @@
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { MatrixLike, RectLike, RectWritable } from '../types';
+import type { Matrix, Rect, RectWritable } from '../types/flat-shapes.internal';
 
 /**
  * rect의 네 corner를 matrix로 변환한 AABB rect를 out에 기록하고 out을 반환한다.
@@ -8,22 +6,22 @@ import type { MatrixLike, RectLike, RectWritable } from '../types';
  * empty/degenerate rect도 특별 처리 없이 네 corner를 변환해 axis-aligned rect로 감싼다.
  * input과 out이 같은 object여도 안전하다.
  *
- * @param out 변환된 AABB rect를 기록할 writable output
+ * @param out 변환된 AABB rect를 기록할 객체
  * @param matrix rect corner에 적용할 matrix
  * @param rect 변환할 rect
  */
-export function transformRectInto<Out extends RectWritable>(out: Out, matrix: MatrixLike, rect: RectLike): Out {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+export function transformRectInto<Out extends RectWritable>(out: Out, matrix: Matrix, rect: Rect): Out {
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
   // aliasing 안전: rect의 모든 값을 local 변수로 먼저 읽는다
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const x2 = x + readRectWidth(rect);
-  const y2 = y + readRectHeight(rect);
+  const x = rect.x;
+  const y = rect.y;
+  const x2 = x + rect.width;
+  const y2 = y + rect.height;
 
   // 네 corner를 local scalar로 변환한다
   const x0t = a * x + c * y + tx;

@@ -1,4 +1,4 @@
-import type { MatrixLike } from '../types';
+import type { Matrix } from '../types/flat-shapes.internal';
 import { toArray9Into } from './to-array-9-into';
 
 /**
@@ -10,6 +10,6 @@ import { toArray9Into } from './to-array-9-into';
  *
  * @param matrix 읽을 matrix
  */
-export function toArray9(matrix: MatrixLike): [number, number, number, number, number, number, number, number, number] {
+export function toArray9(matrix: Matrix): [number, number, number, number, number, number, number, number, number] {
   return toArray9Into([0, 0, 0, 0, 0, 0, 0, 0, 0], matrix);
 }

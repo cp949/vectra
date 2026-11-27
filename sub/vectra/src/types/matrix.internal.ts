@@ -1,3 +1,4 @@
+import type { PointWritable } from './flat-shapes.internal';
 import type { XYObjectWritable, XYWritable } from './xy.internal';
 
 /** tuple 형태의 2D affine transform matrix input. */
@@ -57,18 +58,18 @@ export interface MatrixWritable {
  *
  * corner 순서는 `rect.cornersInto`와 같다: `topLeft` → `topRight` → `bottomRight` → `bottomLeft`.
  */
-export interface OrientedBoundsWritable<Corner extends XYWritable = XYObjectWritable> {
+export interface OrientedBoundsWritable {
   /** 기록 가능한 source 좌상단 corner */
-  topLeft: Corner;
+  topLeft: PointWritable;
 
   /** 기록 가능한 source 우상단 corner */
-  topRight: Corner;
+  topRight: PointWritable;
 
   /** 기록 가능한 source 우하단 corner */
-  bottomRight: Corner;
+  bottomRight: PointWritable;
 
   /** 기록 가능한 source 좌하단 corner */
-  bottomLeft: Corner;
+  bottomLeft: PointWritable;
 }
 
 /**

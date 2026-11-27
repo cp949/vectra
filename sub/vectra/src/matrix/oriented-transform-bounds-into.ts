@@ -1,7 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BoundsLike, MatrixLike, OrientedBoundsWritable, XYWritable } from '../types';
+import type { Bounds, Matrix } from '../types/flat-shapes.internal';
+import type { OrientedBoundsWritable } from '../types';
 
 /**
  * bounds의 네 corner를 matrix로 변환한 oriented outline을 out에 기록하고 out을 반환한다.
@@ -18,26 +16,26 @@ import type { BoundsLike, MatrixLike, OrientedBoundsWritable, XYWritable } from 
  * non-finite matrix/bounds component는 검증하지 않고 산술 결과를 그대로 기록한다 (caller 책임). nested
  * corner storage가 input bounds와 같은 object여도 안전하다(좌표를 모두 먼저 읽은 뒤 기록한다).
  *
- * @param out oriented outline corner를 기록할 writable output
+ * @param out oriented outline corner를 기록할 객체
  * @param matrix bounds corner에 적용할 matrix
  * @param bounds 변환할 bounds
  */
-export function orientedTransformBoundsInto<Out extends OrientedBoundsWritable<XYWritable>>(
+export function orientedTransformBoundsInto<Out extends OrientedBoundsWritable>(
   out: Out,
-  matrix: MatrixLike,
-  bounds: BoundsLike
+  matrix: Matrix,
+  bounds: Bounds
 ): Out {
-  const a = readMatrixA(matrix);
-  const b = readMatrixB(matrix);
-  const c = readMatrixC(matrix);
-  const d = readMatrixD(matrix);
-  const tx = readMatrixTx(matrix);
-  const ty = readMatrixTy(matrix);
+  const a = matrix.a;
+  const b = matrix.b;
+  const c = matrix.c;
+  const d = matrix.d;
+  const tx = matrix.tx;
+  const ty = matrix.ty;
   // aliasing 안전: bounds 좌표를 모두 local로 먼저 읽는다
-  const minX = readX(readBoundsMin(bounds));
-  const minY = readY(readBoundsMin(bounds));
-  const maxX = readX(readBoundsMax(bounds));
-  const maxY = readY(readBoundsMax(bounds));
+  const minX = bounds.minX;
+  const minY = bounds.minY;
+  const maxX = bounds.maxX;
+  const maxY = bounds.maxY;
 
   // empty sentinel: finite inverted bounds는 min corner, canonical sentinel은 origin으로 축퇴한다
   if (maxX < minX || maxY < minY) {
@@ -46,16 +44,24 @@ export function orientedTransformBoundsInto<Out extends OrientedBoundsWritable<X
     const emptyY = useOrigin ? 0 : minY;
     const px = a * emptyX + c * emptyY + tx;
     const py = b * emptyX + d * emptyY + ty;
-    writeXY(out.topLeft, px, py);
-    writeXY(out.topRight, px, py);
-    writeXY(out.bottomRight, px, py);
-    writeXY(out.bottomLeft, px, py);
+    out.topLeft.x = px;
+    out.topLeft.y = py;
+    out.topRight.x = px;
+    out.topRight.y = py;
+    out.bottomRight.x = px;
+    out.bottomRight.y = py;
+    out.bottomLeft.x = px;
+    out.bottomLeft.y = py;
     return out;
   }
 
-  writeXY(out.topLeft, a * minX + c * minY + tx, b * minX + d * minY + ty);
-  writeXY(out.topRight, a * maxX + c * minY + tx, b * maxX + d * minY + ty);
-  writeXY(out.bottomRight, a * maxX + c * maxY + tx, b * maxX + d * maxY + ty);
-  writeXY(out.bottomLeft, a * minX + c * maxY + tx, b * minX + d * maxY + ty);
+  out.topLeft.x = a * minX + c * minY + tx;
+  out.topLeft.y = b * minX + d * minY + ty;
+  out.topRight.x = a * maxX + c * minY + tx;
+  out.topRight.y = b * maxX + d * minY + ty;
+  out.bottomRight.x = a * maxX + c * maxY + tx;
+  out.bottomRight.y = b * maxX + d * maxY + ty;
+  out.bottomLeft.x = a * minX + c * maxY + tx;
+  out.bottomLeft.y = b * minX + d * maxY + ty;
   return out;
 }
