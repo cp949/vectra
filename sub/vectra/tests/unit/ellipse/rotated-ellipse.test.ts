@@ -321,7 +321,7 @@ describe('transformToRotatedInto / transformToRotated', () => {
 
   it('non-empty ellipse에서 zero column matrix는 degenerate line segment라 reject한다', () => {
     const out: RotatedEllipseWritable = { cx: 99, cy: 99, rx: 77, ry: 88, rotation: 7 };
-    // column2 = (c, d) = (0, 0). affine image는 line segment지만 RotatedEllipseLike radius 0은 empty다.
+    // column2 = (c, d) = (0, 0). affine image는 line segment지만 회전 타원의 radius 0은 empty다.
     const result = transformToRotatedInto(
       out,
       { cx: 1, cy: 2, rx: 3, ry: 4 },
