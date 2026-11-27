@@ -36,7 +36,7 @@ describe('vec measurement - componentMax', () => {
   });
 
   test('y가 크면 y를 반환한다', () => {
-    expect(componentMax([-2, 3])).toBe(3);
+    expect(componentMax({ x: -2, y: 3 })).toBe(3);
   });
 
   test('같으면 그 값을 반환한다', () => {
@@ -44,11 +44,7 @@ describe('vec measurement - componentMax', () => {
   });
 
   test('음수 좌표를 올바르게 처리한다', () => {
-    expect(componentMax([-3, -1])).toBe(-1);
-  });
-
-  test('tuple 입력과 object 입력이 동일한 결과를 반환한다', () => {
-    expect(componentMax([2, 7])).toBe(componentMax({ x: 2, y: 7 }));
+    expect(componentMax({ x: -3, y: -1 })).toBe(-1);
   });
 });
 

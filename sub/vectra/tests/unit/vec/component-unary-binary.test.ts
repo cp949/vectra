@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYInput, XYWritable } from '../../../src/types';
+import type { XYObjectWritable, XYWritable } from '../../../src/types';
 import { abs } from '../../../src/vec/abs';
 import { absInto } from '../../../src/vec/abs-into';
 import { addScaled } from '../../../src/vec/add-scaled';
@@ -36,7 +36,7 @@ describe('vec component-wise - unary helpers', () => {
   const cases: ReadonlyArray<
     UnaryBehaviorCase & {
       name: string;
-      examples: ReadonlyArray<{ title: string; input: XYInput; expected: readonly [number, number] }>;
+      examples: ReadonlyArray<{ title: string; input: XYObjectWritable; expected: readonly [number, number] }>;
     }
   > = [
     {
@@ -75,8 +75,6 @@ describe('vec component-wise - unary helpers', () => {
       ],
       aliasInput: { x: -3, y: -5 },
       aliasExpected: [3, 5],
-      tupleInput: [-3, -5],
-      tupleExpected: [3, 5],
     },
   ];
 
@@ -240,18 +238,14 @@ describe('vec component-wise - addScaled', () => {
     expectXY(ab, [6, 9]);
   });
 
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    expectTupleOut((out) => addScaledInto(out, { x: 1, y: 2 }, { x: 3, y: 4 }, 2), [7, 10]);
-  });
-
   test('companion은 새 object를 반환한다', () => {
     expectXY(addScaled({ x: 1, y: 2 }, { x: 3, y: 4 }, 2), [7, 10]);
   });
 
   test('companion은 Into와 동일한 결과를 반환한다', () => {
     expectCompanionMatchesInto(
-      (out) => addScaledInto(out, [1, 2], { x: 3, y: 4 }, 2),
-      () => addScaled([1, 2], { x: 3, y: 4 }, 2)
+      (out) => addScaledInto(out, { x: 1, y: 2 }, { x: 3, y: 4 }, 2),
+      () => addScaled({ x: 1, y: 2 }, { x: 3, y: 4 }, 2)
     );
   });
 });

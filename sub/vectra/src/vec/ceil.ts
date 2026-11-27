@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { ceilInto } from './ceil-into';
 
 /**
@@ -8,6 +8,6 @@ import { ceilInto } from './ceil-into';
  *
  * @param input 올림할 입력 벡터
  */
-export function ceil(input: XYInput): XYObjectWritable {
+export function ceil(input: Point): PointWritable {
   return ceilInto({ x: 0, y: 0 }, input);
 }

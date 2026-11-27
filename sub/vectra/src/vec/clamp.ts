@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { clampInto } from './clamp-into';
 
 /**
@@ -12,6 +12,6 @@ import { clampInto } from './clamp-into';
  * @param min 각 성분의 하한 벡터
  * @param max 각 성분의 상한 벡터
  */
-export function clamp(input: XYInput, min: XYInput, max: XYInput): XYObjectWritable {
+export function clamp(input: Point, min: Point, max: Point): PointWritable {
   return clampInto({ x: 0, y: 0 }, input, min, max);
 }

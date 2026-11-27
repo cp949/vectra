@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYInput, XYWritable } from '../../../src/types';
+import type { XYObjectWritable, XYWritable } from '../../../src/types';
 import { ceil } from '../../../src/vec/ceil';
 import { ceilInto } from '../../../src/vec/ceil-into';
 import { chebyshevDistance } from '../../../src/vec/chebyshev-distance';
@@ -76,15 +76,19 @@ describe('vec scalar helpers', () => {
     ['componentProduct는 둘 다 음수인 성분의 x * y를 양수로 반환한다', componentProduct, { x: -3, y: -5 }, 15],
     ['componentProduct는 tuple 입력을 처리한다', componentProduct, [4, 6] as const, 24],
     ['componentProduct는 성분 중 하나가 0이면 0을 반환한다', componentProduct, { x: 0, y: 100 }, 0],
-    ['chebyshevLength는 x > |y|일 때 |x|를 반환한다', chebyshevLength, { x: 5, y: 3 }, 5],
-    ['chebyshevLength는 |y| > |x|일 때 |y|를 반환한다', chebyshevLength, { x: 2, y: 7 }, 7],
-    ['chebyshevLength는 |x| === |y|일 때 그 값을 반환한다', chebyshevLength, { x: 4, y: 4 }, 4],
-    ['chebyshevLength는 음수 x 성분의 절댓값을 기준으로 계산한다', chebyshevLength, { x: -6, y: 3 }, 6],
-    ['chebyshevLength는 음수 y 성분의 절댓값을 기준으로 계산한다', chebyshevLength, { x: 2, y: -8 }, 8],
-    ['chebyshevLength는 영 벡터에서 0을 반환한다', chebyshevLength, { x: 0, y: 0 }, 0],
-    ['chebyshevLength는 tuple 입력을 처리한다', chebyshevLength, [3, 5] as const, 5],
   ])('%s', (_title, fn, input, expected) => {
     expect(fn(input)).toBe(expected);
+  });
+
+  test.each([
+    ['chebyshevLength는 x > |y|일 때 |x|를 반환한다', { x: 5, y: 3 }, 5],
+    ['chebyshevLength는 |y| > |x|일 때 |y|를 반환한다', { x: 2, y: 7 }, 7],
+    ['chebyshevLength는 |x| === |y|일 때 그 값을 반환한다', { x: 4, y: 4 }, 4],
+    ['chebyshevLength는 음수 x 성분의 절댓값을 기준으로 계산한다', { x: -6, y: 3 }, 6],
+    ['chebyshevLength는 음수 y 성분의 절댓값을 기준으로 계산한다', { x: 2, y: -8 }, 8],
+    ['chebyshevLength는 영 벡터에서 0을 반환한다', { x: 0, y: 0 }, 0],
+  ])('%s', (_title, input, expected) => {
+    expect(chebyshevLength(input)).toBe(expected);
   });
 
   test.each([
@@ -92,7 +96,6 @@ describe('vec scalar helpers', () => {
     ['x 방향 차이가 더 클 때 x 차이를 반환한다', { x: 0, y: 0 }, { x: 10, y: 1 }, 10],
     ['같은 점 사이의 Chebyshev 거리는 0이다', { x: 3, y: 4 }, { x: 3, y: 4 }, 0],
     ['음수 좌표 차이의 절댓값을 기준으로 계산한다', { x: 3, y: 4 }, { x: -2, y: -1 }, 5],
-    ['tuple 입력을 처리한다', [0, 0] as const, [3, 4] as const, 4],
   ])('%s', (_title, a, b, expected) => {
     expect(chebyshevDistance(a, b)).toBe(expected);
   });
@@ -103,7 +106,7 @@ describe('vec component-wise - rounding helpers', () => {
     UnaryBehaviorCase & {
       name: string;
       exampleTitle: string;
-      input: XYInput;
+      input: XYObjectWritable;
       expected: readonly [number, number];
       integerExpected: readonly [number, number];
     }
@@ -131,8 +134,6 @@ describe('vec component-wise - rounding helpers', () => {
       integerExpected: [3, -5],
       aliasInput: { x: 1.1, y: -2.9 },
       aliasExpected: [2, -2],
-      tupleInput: [1.5, -1.5],
-      tupleExpected: [2, -1],
     },
     {
       name: 'round',

@@ -37,7 +37,7 @@ import * as Vecx from '@cp949/vectra/vec';
 import * as Segmentx from '@cp949/vectra/segment';
 
 const a = { x: 0, y: 0 };
-const b = [3, 4] as const;
+const b = { x: 3, y: 4 };
 
 const sum = Vecx.add(a, b);
 const length = Segmentx.length([a, b]);
@@ -94,10 +94,10 @@ object 결과는 allocating companion 또는 `*Into`로 얻는다.
 ```ts
 import * as Vecx from '@cp949/vectra/vec';
 
-const allocated = Vecx.add({ x: 1, y: 2 }, [3, 4]);
+const allocated = Vecx.add({ x: 1, y: 2 }, { x: 3, y: 4 });
 
 const out = { x: 0, y: 0 };
-const returned = Vecx.addInto(out, { x: 1, y: 2 }, [3, 4]);
+const returned = Vecx.addInto(out, { x: 1, y: 2 }, { x: 3, y: 4 });
 
 console.log(allocated); // { x: 4, y: 6 }
 console.log(out); // { x: 4, y: 6 }
@@ -109,7 +109,8 @@ allocating companion은 새 object를 만든다.
 
 ## Input
 
-좌표 입력은 `{ x, y }` object와 readonly tuple을 모두 받는다.
+점 보간과 전환된 벡터 함수는 `{ x, y }` object를 받는다.
+아래 `distance`는 readonly tuple도 받는다.
 
 ```ts
 import type { XYInput } from '@cp949/vectra/types';

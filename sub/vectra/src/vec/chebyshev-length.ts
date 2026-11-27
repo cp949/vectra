@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * input의 Chebyshev 길이(L∞ norm)를 반환한다.
@@ -8,6 +7,6 @@ import type { XYInput } from '../types';
  *
  * @param input Chebyshev 길이를 구할 입력 벡터
  */
-export function chebyshevLength(input: XYInput): number {
-  return Math.max(Math.abs(readX(input)), Math.abs(readY(input)));
+export function chebyshevLength(input: Point): number {
+  return Math.max(Math.abs(input.x), Math.abs(input.y));
 }

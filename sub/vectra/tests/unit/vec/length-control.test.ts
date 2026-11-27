@@ -68,26 +68,11 @@ describe('clampLengthInto — 벡터 길이 clamp (Into 버전)', () => {
     expect(v.y).toBeCloseTo(0);
   });
 
-  test('mutable tuple out 타입 유지 — tuple을 out으로 받는다', () => {
-    const out: [number, number] = [0, 0];
-    const result = clampLengthInto(out, { x: 1, y: 0 }, 3, 5);
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(3);
-    expect(out[1]).toBeCloseTo(0);
-  });
-
   test('object input — x/y field로 읽는다', () => {
     const out = { x: 0, y: 0 };
     clampLengthInto(out, { x: 0, y: 10 }, 2, 4);
     expect(out.x).toBeCloseTo(0);
     expect(out.y).toBeCloseTo(4);
-  });
-
-  test('tuple input — [x, y] 형태로 읽는다', () => {
-    const out = { x: 0, y: 0 };
-    clampLengthInto(out, [0, 0.5] as const, 2, 8);
-    expect(out.x).toBeCloseTo(0);
-    expect(out.y).toBeCloseTo(2);
   });
 
   test('NaN 입력은 NaN을 그대로 흘린다', () => {

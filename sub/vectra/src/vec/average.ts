@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { averageInto } from './average-into';
 
 /**
@@ -10,7 +10,7 @@ import { averageInto } from './average-into';
  *
  * @param inputs 평균을 구할 입력 벡터 배열
  */
-export function average(inputs: readonly XYInput[]): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+export function average(inputs: readonly Point[]): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return averageInto(out, inputs) ? out : undefined;
 }

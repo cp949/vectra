@@ -1,6 +1,4 @@
-import { isXYObject } from '../internal/xy-object.internal';
-import type { XYInput, XYObjectWritable } from '../types';
-import { addInto } from './add-into';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * a와 b를 더한 벡터를 새 object로 반환한다.
@@ -8,7 +6,6 @@ import { addInto } from './add-into';
  * @param a 더할 첫 번째 벡터
  * @param b 더할 두 번째 벡터
  */
-export function add(a: XYInput, b: XYInput): XYObjectWritable {
-  if (isXYObject(a) && isXYObject(b)) return { x: a.x + b.x, y: a.y + b.y };
-  return addInto({ x: 0, y: 0 }, a, b);
+export function add(a: Point, b: Point): PointWritable {
+  return { x: a.x + b.x, y: a.y + b.y };
 }

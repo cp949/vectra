@@ -1,10 +1,11 @@
 /**
- * vec 산술 함수 — object 전용 경로와 배열 경로가 이전 구현과 비트 단위로 같은지 고정한다.
+ * vec 산술 함수의 좌표 계산을 이전 구현과 비트 단위로 비교한다.
  *
  * 대상: addInto/add, subInto/sub, scaleInto/scale, addScaledInto/addScaled, subtractScaledInto/subtractScaled,
  * dot, cross, length, lengthSq, distance, distanceSq, normalizeInto, reflectInto, reflectAcrossNormalInto.
  *
- * 검증: 객체·tuple·class instance·x/y field를 가진 tuple 입력, 객체·tuple output, out과 입력의 aliasing,
+ * 점 객체 덧셈은 별도로 검증한다. 나머지 함수는 객체·tuple·외부 클래스와 out aliasing을 함께 검증한다.
+ *
  * 정수·실수·큰 값·±0·NaN·±Infinity·zero vector 좌표에서 결과가 이전 구현과 `Object.is` 수준으로 같다.
  * 이전 구현은 공유 readX/readY/writeXY로 읽고 쓴다.
  * 이전 구현도 Euclidean 길이를 `hypot2`로 구한다. `hypot2` 자체의 정밀도는 `tests/unit/internal/hypot2.test.ts`가 고정한다.
@@ -167,6 +168,39 @@ function same(a: number, b: number): boolean {
 const N = 120_000;
 
 describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () => {
+  test(`무작위 ${N}건: 점 객체 덧셈 Into와 companion이 이전 구현과 같다`, () => {
+    const rng = createRng(20260105);
+    for (let i = 0; i < N; i++) {
+      const a = { x: coord(rng), y: coord(rng) };
+      const b = { x: coord(rng), y: coord(rng) };
+      const scalar = coord(rng);
+      const expected = ref.addInto({ x: 0, y: 0 }, a, b);
+      const expectedScaled = ref.addScaledInto({ x: 0, y: 0 }, a, b, scalar);
+      const out = i % 2 === 0 ? { ...a } : { ...b };
+      const inputA = i % 2 === 0 ? out : a;
+      const inputB = i % 2 === 0 ? b : out;
+      const actual = add(a, b);
+      const actualScaled = addScaled(a, b, scalar);
+      const useScaled = i % 3 !== 0;
+      const result = useScaled ? addScaledInto(out, inputA, inputB, scalar) : addInto(out, inputA, inputB);
+      const expectedOut = useScaled ? expectedScaled : expected;
+      const [expectedX, expectedY] = snapshot(expected);
+      const [expectedScaledX, expectedScaledY] = snapshot(expectedScaled);
+      const [expectedOutX, expectedOutY] = snapshot(expectedOut);
+      if (
+        !same(actual.x, expectedX) ||
+        !same(actual.y, expectedY) ||
+        !same(actualScaled.x, expectedScaledX) ||
+        !same(actualScaled.y, expectedScaledY) ||
+        result !== out ||
+        !same(out.x, expectedOutX) ||
+        !same(out.y, expectedOutY)
+      ) {
+        throw new Error(`점 객체 덧셈 불일치: 반복 ${i}`);
+      }
+    }
+  });
+
   test(`무작위 ${N}건: 두 벡터를 받는 Into 함수가 이전 구현과 같다`, () => {
     const rng = createRng(20260101);
     const fns: Array<
@@ -176,9 +210,7 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
         (out: XYWritable, a: XYInput, b: XYInput, s: number) => XYWritable,
       ]
     > = [
-      ['addInto', (o, a, b) => addInto(o, a, b), (o, a, b) => ref.addInto(o, a, b)],
       ['subInto', (o, a, b) => subInto(o, a, b), (o, a, b) => ref.subInto(o, a, b)],
-      ['addScaledInto', addScaledInto, ref.addScaledInto],
       ['subtractScaledInto', subtractScaledInto, ref.subtractScaledInto],
       ['reflectInto', (o, a, b) => reflectInto(o, a, b), (o, a, b) => ref.reflectInto(o, a, b)],
       [
@@ -243,14 +275,8 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       const bSpec = makeSpec(rng, i % 3 === 0 ? 1 : 0.3);
       const s = coord(rng);
       const cases: Array<[string, XYObjectWritable, XYWritable]> = [
-        ['add', add(makeVec(aSpec), makeVec(bSpec)), ref.addInto({ x: 0, y: 0 }, makeVec(aSpec), makeVec(bSpec))],
         ['sub', sub(makeVec(aSpec), makeVec(bSpec)), ref.subInto({ x: 0, y: 0 }, makeVec(aSpec), makeVec(bSpec))],
         ['scale', scale(makeVec(aSpec), s), ref.scaleInto({ x: 0, y: 0 }, makeVec(aSpec), s)],
-        [
-          'addScaled',
-          addScaled(makeVec(aSpec), makeVec(bSpec), s),
-          ref.addScaledInto({ x: 0, y: 0 }, makeVec(aSpec), makeVec(bSpec), s),
-        ],
         [
           'subtractScaled',
           subtractScaled(makeVec(aSpec), makeVec(bSpec), s),
@@ -291,11 +317,8 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
     }
   });
 
-  test('x/y field를 가진 tuple은 tuple로 읽고 out이 tuple이면 tuple에 쓴다', () => {
+  test('lengthSq는 x/y 필드를 가진 tuple에서도 배열 성분을 읽는다', () => {
     const tuple = makeVec({ form: 3, x: 1, y: 2 });
-    const object = { x: 10, y: 20 };
-    expect(addInto({ x: 0, y: 0 }, tuple, object)).toEqual({ x: 11, y: 22 });
-    expect(addInto([0, 0], object, tuple)).toEqual([11, 22]);
     expect(lengthSq(tuple)).toBe(5);
   });
 

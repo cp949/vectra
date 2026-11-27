@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 벡터의 방향각을 radian으로 반환한다. 범위는 (-π, π]이다.
@@ -8,6 +7,6 @@ import type { XYInput } from '../types';
  *
  * @param input 방향각을 측정할 벡터
  */
-export function angle(input: XYInput): number {
-  return Math.atan2(readY(input), readX(input));
+export function angle(input: Point): number {
+  return Math.atan2(input.y, input.x);
 }

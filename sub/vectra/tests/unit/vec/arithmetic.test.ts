@@ -5,6 +5,7 @@
  */
 
 import { describe, expect, expectTypeOf, test } from 'vitest';
+import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
 import type { XYWritable } from '../../../src/types';
 import { add } from '../../../src/vec/add';
 import { addInto } from '../../../src/vec/add-into';
@@ -15,38 +16,27 @@ import { sub } from '../../../src/vec/sub';
 import { subInto } from '../../../src/vec/sub-into';
 import { vecFrom } from '../../../src/vec/vec-from';
 
+test('addInto는 x/y 벡터를 받아 구체 타입의 out을 그대로 반환한다', () => {
+  expectTypeOf(addInto).parameter(0).toEqualTypeOf<PointWritable>();
+  expectTypeOf(addInto).parameter(1).toEqualTypeOf<Point>();
+  const out = { x: 2, y: 3, label: '합' };
+  const result = addInto(out, out, { x: 4, y: 5 });
+  expectTypeOf(result).toEqualTypeOf<typeof out>();
+  expect(result).toBe(out);
+  expect(out).toEqual({ x: 6, y: 8, label: '합' });
+});
+
 describe('vec arithmetic - addInto', () => {
-  test('object 입력과 tuple 입력을 더해 out에 기록한다', () => {
-    // a는 object, b는 tuple로 혼합 입력을 검증한다
-    const out: XYWritable = { x: 0, y: 0 };
-
-    const result = addInto(out, { x: 1, y: 2 }, [3, 4]);
-
-    expect(result).toBe(out);
-    expect(out).toEqual({ x: 4, y: 6 });
-  });
-
   test('caller가 제공한 out 객체를 재사용하고 같은 객체를 반환한다', () => {
     // 동일 out에 두 번 기록하더라도 동일 reference를 반환해야 한다
     const out: XYWritable = { x: 99, y: 99 };
 
-    const first = addInto(out, [10, 20], [1, 2]);
+    const first = addInto(out, { x: 10, y: 20 }, { x: 1, y: 2 });
     const second = addInto(out, { x: 5, y: -5 }, { x: 5, y: 5 });
 
     expect(first).toBe(out);
     expect(second).toBe(out);
     expect(out).toEqual({ x: 10, y: 0 });
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    // generic return으로 [number, number]가 보존되는지 확인한다
-    const out: [number, number] = [0, 0];
-    const result = addInto(out, { x: 1, y: 2 }, [3, 4]);
-
-    expect(result).toBe(out);
-    expect(out[0]).toBe(4);
-    expect(out[1]).toBe(6);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
   });
 
   test('사용자 정의 class instance out 반환 타입이 보존되어 method chaining이 가능하다', () => {
@@ -63,7 +53,7 @@ describe('vec arithmetic - addInto', () => {
       }
     }
 
-    const result = addInto(new Point(0, 0), { x: 1, y: 2 }, [3, 4]).translateX(10);
+    const result = addInto(new Point(0, 0), { x: 1, y: 2 }, { x: 3, y: 4 }).translateX(10);
 
     expect(result).toBeInstanceOf(Point);
     expect(result.x).toBe(14);
@@ -184,8 +174,8 @@ describe('vec companion - add', () => {
 
   test('addInto와 동일한 결과를 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };
-    addInto(out, [10, -3], { x: 2, y: 5 });
-    const result = add([10, -3], { x: 2, y: 5 });
+    addInto(out, { x: 10, y: -3 }, { x: 2, y: 5 });
+    const result = add({ x: 10, y: -3 }, { x: 2, y: 5 });
 
     expect(result.x).toBe(out.x);
     expect(result.y).toBe(out.y);

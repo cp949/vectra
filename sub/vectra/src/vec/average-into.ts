@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * inputs 배열에 있는 모든 벡터의 성분별 평균을 out에 기록하고 true를 반환한다.
@@ -8,10 +7,10 @@ import type { XYInput, XYWritable } from '../types';
  * NaN, Infinity, -Infinity 입력은 그대로 합산에 반영된다(pass-through).
  * 합산 결과가 Infinity/-Infinity인 경우에도 그대로 기록된다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param inputs 평균을 구할 입력 벡터 배열
  */
-export function averageInto(out: XYWritable, inputs: readonly XYInput[]): boolean {
+export function averageInto(out: PointWritable, inputs: readonly Point[]): boolean {
   const count = inputs.length;
 
   if (count === 0) {
@@ -22,10 +21,11 @@ export function averageInto(out: XYWritable, inputs: readonly XYInput[]): boolea
   let sumY = 0;
 
   for (let i = 0; i < count; i++) {
-    sumX += readX(inputs[i]);
-    sumY += readY(inputs[i]);
+    sumX += inputs[i].x;
+    sumY += inputs[i].y;
   }
 
-  writeXY(out, sumX / count, sumY / count);
+  out.x = sumX / count;
+  out.y = sumY / count;
   return true;
 }

@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYInput, XYWritable } from '../../../src/types';
+import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
 import { average } from '../../../src/vec/average';
 import { averageInto } from '../../../src/vec/average-into';
 import { clamp } from '../../../src/vec/clamp';
@@ -12,12 +12,12 @@ import {
   expectCompanionMatchesInto,
   expectNaNComponents,
   expectObjectOut,
-  expectTupleOut,
   expectXY,
 } from './component-helper-test-utils';
 
-function expectAverageOut(inputs: ReadonlyArray<XYInput>, expected: readonly [number, number]) {
-  const out: XYWritable = { x: 0, y: 0 };
+/** 평균을 기록한 out과 성공 플래그를 확인한다. */
+function expectAverageOut(inputs: ReadonlyArray<Point>, expected: readonly [number, number]) {
+  const out: PointWritable = { x: 0, y: 0 };
   const result = averageInto(out, inputs);
 
   expect(result).toBe(true);
@@ -42,22 +42,14 @@ describe('vec component-wise - clamp', () => {
   });
 
   test('out === input self-aliasing에서도 올바른 결과를 반환한다', () => {
-    const vec: XYWritable = { x: 15, y: -5 };
+    const vec: PointWritable = { x: 15, y: -5 };
     clampInto(vec, vec, { x: 0, y: 0 }, { x: 10, y: 10 });
 
     expectXY(vec, [10, 0]);
   });
 
-  test('tuple 입력을 처리하고 out을 반환한다', () => {
-    expectObjectOut((out) => clampInto(out, [5, 5], [0, 0], [10, 10]), [5, 5]);
-  });
-
-  test('mutable tuple out에 결과를 기록하고 tuple reference를 반환한다', () => {
-    expectTupleOut((out) => clampInto(out, { x: 15, y: -3 }, { x: 0, y: 0 }, { x: 10, y: 10 }), [10, 0]);
-  });
-
   test('NaN 입력은 Math.min/Math.max 정책을 따른다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     clampInto(out, { x: NaN, y: 1 }, { x: 0, y: 0 }, { x: 10, y: 10 });
 
     expect(Number.isNaN(out.x)).toBe(true);
@@ -65,7 +57,7 @@ describe('vec component-wise - clamp', () => {
   });
 
   test('Infinity/-Infinity 입력은 상한/하한으로 clamp된다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     clampInto(out, { x: Infinity, y: -Infinity }, { x: 0, y: 0 }, { x: 10, y: 10 });
 
     expect(out.x).toBe(10);
@@ -78,8 +70,8 @@ describe('vec component-wise - clamp', () => {
 
   test('companion은 Into와 동일한 결과를 반환한다', () => {
     expectCompanionMatchesInto(
-      (out) => clampInto(out, [5, -2], [0, 0], [10, 10]),
-      () => clamp([5, -2], [0, 0], [10, 10])
+      (out) => clampInto(out, { x: 5, y: -2 }, { x: 0, y: 0 }, { x: 10, y: 10 }),
+      () => clamp({ x: 5, y: -2 }, { x: 0, y: 0 }, { x: 10, y: 10 })
     );
   });
 });
@@ -96,13 +88,12 @@ describe('vec component-wise - average', () => {
       ],
       [4, 3] as const,
     ],
-    ['tuple 입력과 object 입력을 혼합하여 처리한다', [[0, 0] as const, { x: 4, y: 6 }], [2, 3] as const],
   ])('%s', (_title, inputs, expected) => {
     expectAverageOut(inputs, expected);
   });
 
   test('빈 배열이면 false를 반환하고 out을 수정하지 않는다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     const result = averageInto(out, []);
 
     expect(result).toBe(false);
@@ -110,7 +101,7 @@ describe('vec component-wise - average', () => {
   });
 
   test('NaN 입력은 NaN으로 통과된다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     averageInto(out, [
       { x: NaN, y: 1 },
       { x: 2, y: NaN },
@@ -120,7 +111,7 @@ describe('vec component-wise - average', () => {
   });
 
   test('Infinity/-Infinity 입력은 그대로 반영된다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     averageInto(out, [
       { x: Infinity, y: -Infinity },
       { x: 4, y: 6 },
@@ -131,7 +122,7 @@ describe('vec component-wise - average', () => {
   });
 
   test('합산 overflow가 발생하면 Infinity가 기록된다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const big = Number.MAX_VALUE;
     averageInto(out, [
       { x: big, y: -big },

@@ -13,7 +13,7 @@ describe('vec measurement - angle', () => {
   });
 
   test('양의 y축 방향은 π/2를 반환한다', () => {
-    expect(angle([0, 1])).toBeCloseTo(Math.PI / 2);
+    expect(angle({ x: 0, y: 1 })).toBeCloseTo(Math.PI / 2);
   });
 
   test('음의 x축 방향은 π를 반환한다', () => {
@@ -21,7 +21,7 @@ describe('vec measurement - angle', () => {
   });
 
   test('음의 y축 방향은 -π/2를 반환한다', () => {
-    expect(angle([0, -1])).toBeCloseTo(-Math.PI / 2);
+    expect(angle({ x: 0, y: -1 })).toBeCloseTo(-Math.PI / 2);
   });
 
   test('대각선 방향은 π/4를 반환한다', () => {
@@ -29,42 +29,38 @@ describe('vec measurement - angle', () => {
   });
 
   test('zero vector는 0을 반환한다', () => {
-    expect(angle([0, 0])).toBe(0);
-  });
-
-  test('tuple 입력과 object 입력이 동일한 결과를 반환한다', () => {
-    expect(angle([3, 4])).toBe(angle({ x: 3, y: 4 }));
+    expect(angle({ x: 0, y: 0 })).toBe(0);
   });
 });
 
 describe('vec measurement - angleBetween', () => {
   test('같은 방향 벡터의 사잇각은 0이다', () => {
-    expect(angleBetween([1, 0], { x: 2, y: 0 })).toBeCloseTo(0);
+    expect(angleBetween({ x: 1, y: 0 }, { x: 2, y: 0 })).toBeCloseTo(0);
   });
 
   test('수직 벡터의 사잇각은 π/2이다', () => {
-    expect(angleBetween([1, 0], [0, 1])).toBeCloseTo(Math.PI / 2);
+    expect(angleBetween({ x: 1, y: 0 }, { x: 0, y: 1 })).toBeCloseTo(Math.PI / 2);
   });
 
   test('반대 방향 벡터의 사잇각은 π이다', () => {
-    expect(angleBetween([1, 0], { x: -1, y: 0 })).toBeCloseTo(Math.PI);
+    expect(angleBetween({ x: 1, y: 0 }, { x: -1, y: 0 })).toBeCloseTo(Math.PI);
   });
 
   test('대각선 벡터의 사잇각은 π/4이다', () => {
-    expect(angleBetween([1, 0], [1, 1])).toBeCloseTo(Math.PI / 4);
+    expect(angleBetween({ x: 1, y: 0 }, { x: 1, y: 1 })).toBeCloseTo(Math.PI / 4);
   });
 
   test('zero vector a는 0을 반환한다', () => {
-    expect(angleBetween([0, 0], [1, 0])).toBe(0);
+    expect(angleBetween({ x: 0, y: 0 }, { x: 1, y: 0 })).toBe(0);
   });
 
   test('zero vector b는 0을 반환한다', () => {
-    expect(angleBetween({ x: 1, y: 0 }, [0, 0])).toBe(0);
+    expect(angleBetween({ x: 1, y: 0 }, { x: 0, y: 0 })).toBe(0);
   });
 
   test('사잇각은 순서에 무관하다', () => {
-    const ab = angleBetween([1, 2], { x: 3, y: 4 });
-    const ba = angleBetween({ x: 3, y: 4 }, [1, 2]);
+    const ab = angleBetween({ x: 1, y: 2 }, { x: 3, y: 4 });
+    const ba = angleBetween({ x: 3, y: 4 }, { x: 1, y: 2 });
 
     expect(ab).toBeCloseTo(ba);
   });

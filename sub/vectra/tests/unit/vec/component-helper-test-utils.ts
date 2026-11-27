@@ -1,5 +1,5 @@
 import { expect, expectTypeOf, test } from 'vitest';
-import type { XYInput, XYWritable } from '../../../src/types';
+import type { XYInput, XYObjectWritable, XYWritable } from '../../../src/types';
 
 export type UnaryInto = <T extends XYWritable>(out: T, input: XYInput) => T;
 export type UnaryCompanion = (input: XYInput) => { x: number; y: number };
@@ -9,13 +9,17 @@ export type ConstantInto = <T extends XYWritable>(out: T) => T;
 export type ConstantCompanion = () => { x: number; y: number };
 
 export type UnaryBehaviorCase = {
-  into: UnaryInto;
-  companion: UnaryCompanion;
-  aliasInput: XYWritable;
+  aliasInput: XYObjectWritable;
   aliasExpected: readonly [number, number];
-  tupleInput: XYInput;
-  tupleExpected: readonly [number, number];
-};
+} & (
+  | { into: UnaryInto; companion: UnaryCompanion; tupleInput: XYInput; tupleExpected: readonly [number, number] }
+  | {
+      into: (out: XYObjectWritable, input: Readonly<XYObjectWritable>) => XYObjectWritable;
+      companion: (input: Readonly<XYObjectWritable>) => XYObjectWritable;
+      tupleInput?: never;
+      tupleExpected?: never;
+    }
+);
 export type BinaryBehaviorCase = {
   name: string;
   into: BinaryInto;
@@ -54,7 +58,7 @@ export function expectTupleOut(run: (out: [number, number]) => [number, number],
 }
 
 export function expectObjectOut(
-  run: (out: XYWritable) => unknown,
+  run: (out: XYObjectWritable) => unknown,
   expected: readonly [number, number],
   initial: readonly [number, number] = [0, 0]
 ) {
@@ -66,7 +70,7 @@ export function expectObjectOut(
 }
 
 export function expectCompanionMatchesInto(
-  writeInto: (out: XYWritable) => unknown,
+  writeInto: (out: XYObjectWritable) => unknown,
   runCompanion: () => { x: number; y: number }
 ) {
   const out: XYWritable = { x: 0, y: 0 };
@@ -91,6 +95,13 @@ export function testUnaryBehavior(helper: UnaryBehaviorCase) {
 
     expectXY(input, helper.aliasExpected);
   });
+
+  if (helper.tupleInput === undefined) {
+    test('companion은 각 성분을 계산한 점을 반환한다', () => {
+      expectXY(helper.companion(helper.aliasInput), helper.aliasExpected);
+    });
+    return;
+  }
 
   test('tuple 입력을 처리하고 out을 반환한다', () => {
     const out: XYWritable = { x: 0, y: 0 };

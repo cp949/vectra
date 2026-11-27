@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -11,11 +10,11 @@ import { hypot2 } from '../internal/numeric';
  * @param a 각도를 측정할 첫 번째 벡터
  * @param b 각도를 측정할 두 번째 벡터
  */
-export function angleBetween(a: XYInput, b: XYInput): number {
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
+export function angleBetween(a: Point, b: Point): number {
+  const ax = a.x;
+  const ay = a.y;
+  const bx = b.x;
+  const by = b.y;
 
   const lenA = hypot2(ax, ay);
   const lenB = hypot2(bx, by);

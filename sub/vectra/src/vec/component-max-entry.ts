@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 더 큰 성분의 key를 반환한다.
@@ -11,8 +10,8 @@ import type { XYInput } from '../types';
  *
  * @param input 검사할 좌표
  */
-export function componentMaxEntry(input: XYInput): 'x' | 'y' {
-  const x = readX(input);
-  const y = readY(input);
+export function componentMaxEntry(input: Point): 'x' | 'y' {
+  const x = input.x;
+  const y = input.y;
   return Object.is(Math.max(x, y), x) ? 'x' : 'y';
 }

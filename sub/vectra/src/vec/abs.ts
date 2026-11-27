@@ -1,4 +1,4 @@
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { absInto } from './abs-into';
 
 /**
@@ -6,6 +6,6 @@ import { absInto } from './abs-into';
  *
  * @param input 절댓값을 취할 입력 벡터
  */
-export function abs(input: XYInput): XYObjectWritable {
+export function abs(input: Point): PointWritable {
   return absInto({ x: 0, y: 0 }, input);
 }

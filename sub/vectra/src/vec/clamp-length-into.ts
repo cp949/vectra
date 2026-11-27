@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -11,32 +10,42 @@ import { hypot2 } from '../internal/numeric';
  * input과 out이 같은 object여도 안전하다.
  * non-finite 입력은 검증 없이 JavaScript 연산 결과 그대로 흐른다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param vector 길이를 clamp할 벡터
  * @param minLength 최소 길이 (0 이상, maxLength 이하, finite 전제)
  * @param maxLength 최대 길이 (minLength 이상, finite 전제)
  */
-export function clampLengthInto<Out extends XYWritable>(
+export function clampLengthInto<Out extends PointWritable>(
   out: Out,
-  vector: XYInput,
+  vector: Point,
   minLength: number,
   maxLength: number
 ): Out {
-  const vx = readX(vector);
-  const vy = readY(vector);
+  const vx = vector.x;
+  const vy = vector.y;
   const len = hypot2(vx, vy);
 
-  if (len === 0) return writeXY(out, 0, 0);
+  if (len === 0) {
+    out.x = 0;
+    out.y = 0;
+    return out;
+  }
 
   if (len < minLength) {
     const s = minLength / len;
-    return writeXY(out, vx * s, vy * s);
+    out.x = vx * s;
+    out.y = vy * s;
+    return out;
   }
 
   if (len > maxLength) {
     const s = maxLength / len;
-    return writeXY(out, vx * s, vy * s);
+    out.x = vx * s;
+    out.y = vy * s;
+    return out;
   }
 
-  return writeXY(out, vx, vy);
+  out.x = vx;
+  out.y = vy;
+  return out;
 }

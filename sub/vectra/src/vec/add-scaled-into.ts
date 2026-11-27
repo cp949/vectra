@@ -1,5 +1,4 @@
-import { isXYObject, isXYObjectWritable } from '../internal/xy-object.internal';
-import type { XYInput, XYLike, XYObjectWritable, XYTuple, XYTupleWritable, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * a에 b * scalar를 더한 벡터를 out에 기록하고 out을 반환한다.
@@ -7,37 +6,15 @@ import type { XYInput, XYLike, XYObjectWritable, XYTuple, XYTupleWritable, XYWri
  * b를 먼저 scalar로 곱한 뒤 a에 더한다.
  * out이 a 또는 b와 같은 object여도 안전하다.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param a 기준 벡터
  * @param b scalar를 곱할 벡터
  * @param scalar b에 곱할 스칼라값
  */
-export function addScaledInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInput, scalar: number): Out {
-  // object 입력만 받았으면 field를 이 함수에서 직접 읽는다
-  if (isXYObjectWritable(out) && isXYObject(a) && isXYObject(b)) {
-    const x = a.x + b.x * scalar;
-    const y = a.y + b.y * scalar;
-    out.x = x;
-    out.y = y;
-    return out;
-  }
-
-  return addScaledIntoShared(out, a, b, scalar);
-}
-
-/** 배열 입력이 있을 때 쓰는 경로. 판별을 이 함수 안에서 직접 해 inlining 비용을 줄인다. */
-function addScaledIntoShared<Out extends XYWritable>(out: Out, a: XYInput, b: XYInput, scalar: number): Out {
-  // aliasing에 안전하도록 a와 b의 성분을 모두 먼저 읽는다
-  const ax = Array.isArray(a) ? (a as XYTuple)[0] : (a as XYLike).x;
-  const ay = Array.isArray(a) ? (a as XYTuple)[1] : (a as XYLike).y;
-  const bx = Array.isArray(b) ? (b as XYTuple)[0] : (b as XYLike).x;
-  const by = Array.isArray(b) ? (b as XYTuple)[1] : (b as XYLike).y;
-  if (Array.isArray(out)) {
-    (out as XYTupleWritable)[0] = ax + bx * scalar;
-    (out as XYTupleWritable)[1] = ay + by * scalar;
-  } else {
-    (out as XYObjectWritable).x = ax + bx * scalar;
-    (out as XYObjectWritable).y = ay + by * scalar;
-  }
+export function addScaledInto<Out extends PointWritable>(out: Out, a: Point, b: Point, scalar: number): Out {
+  const x = a.x + b.x * scalar;
+  const y = a.y + b.y * scalar;
+  out.x = x;
+  out.y = y;
   return out;
 }

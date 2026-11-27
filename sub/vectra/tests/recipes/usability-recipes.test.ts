@@ -203,26 +203,14 @@ describe('레시피 4: { x, y } structural object를 XYInput으로 사용', () =
     expect(diff.y).toBeCloseTo(20, 10);
   });
 
-  it('tuple [x, y]를 XYInput으로 사용하고 tuple output을 재사용할 수 있다', async () => {
+  it('점 합을 out에 기록하고 distance에 전달할 수 있다', async () => {
     const { addInto } = await import('../../src/vec/add-into');
     const { distance } = await import('../../src/vec/distance');
 
-    const a: [number, number] = [2, 3];
-    const b: [number, number] = [4, 5];
-
-    // README 예제와 동일한 코드
     const out = { x: 0, y: 0 };
-    addInto(out, a, b);
-
-    expect(out.x).toBeCloseTo(6, 10);
-    expect(out.y).toBeCloseTo(8, 10);
+    expect(addInto(out, { x: 2, y: 3 }, { x: 4, y: 5 })).toBe(out);
+    expect(out).toEqual({ x: 6, y: 8 });
     expect(distance(out, [6, 4])).toBeCloseTo(4, 10);
-
-    // tuple out에도 기록 가능
-    const tupleOut: [number, number] = [0, 0];
-    addInto(tupleOut, a, b);
-    expect(tupleOut[0]).toBeCloseTo(6, 10);
-    expect(tupleOut[1]).toBeCloseTo(8, 10);
   });
 });
 
@@ -423,8 +411,8 @@ describe('README 빠른 시작 예제 검증', () => {
 
     const out = { x: 0, y: 0 };
 
-    // README 예제: addInto(out, { x: 2, y: 3 }, [4, 5]) → { x: 6, y: 8 }
-    addInto(out, { x: 2, y: 3 }, [4, 5]);
+    // README 예제: addInto(out, { x: 2, y: 3 }, { x: 4, y: 5 }) → { x: 6, y: 8 }
+    addInto(out, { x: 2, y: 3 }, { x: 4, y: 5 });
     expect(out.x).toBeCloseTo(6, 10);
     expect(out.y).toBeCloseTo(8, 10);
 
