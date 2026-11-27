@@ -243,14 +243,14 @@ describe('shapeToPathCommandsInto', () => {
   });
 
   describe('polygon', () => {
-    test('점 0개는 빈 out을 반환한다 (close 없음)', () => {
+    test('좌표 쌍 0개는 close 없이 빈 out을 반환한다', () => {
       const shape: SvgPolygonShapeLike = { kind: 'polygon', points: [] };
       const out: PathCommand[] = [];
       shapeToPathCommandsInto(out, shape);
       expect(out).toEqual([]);
     });
 
-    test('점 1개는 move + close를 기록한다', () => {
+    test('좌표 쌍 1개는 move와 close를 기록한다', () => {
       const shape: SvgPolygonShapeLike = { kind: 'polygon', points: [1, 2] };
       const out: PathCommand[] = [];
       shapeToPathCommandsInto(out, shape);

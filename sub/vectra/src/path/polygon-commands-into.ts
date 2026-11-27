@@ -1,3 +1,4 @@
+import { writePolygonCommandsInto } from '../internal/polyline-path';
 import type { Polygon } from '../types/flat-shapes.internal';
 import type { PathCommand } from '../types/index';
 
@@ -13,16 +14,5 @@ import type { PathCommand } from '../types/index';
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function polygonCommandsInto(out: PathCommand[], polygon: Polygon): PathCommand[] {
-  out.length = 0;
-
-  if (polygon.length === 0) {
-    return out;
-  }
-
-  out.push({ kind: 'move', x: polygon[0], y: polygon[1] });
-  for (let i = 2; i < polygon.length; i += 2) {
-    out.push({ kind: 'line', x: polygon[i], y: polygon[i + 1] });
-  }
-  out.push({ kind: 'close' });
-  return out;
+  return writePolygonCommandsInto(out, polygon);
 }

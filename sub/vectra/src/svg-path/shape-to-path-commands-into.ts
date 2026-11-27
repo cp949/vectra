@@ -4,7 +4,7 @@
  * domain barrel(./index)을 import하지 않는다.
  */
 
-import { writePolylineCommandsInto } from '../internal/polyline-path';
+import { writePolygonCommandsInto, writePolylineCommandsInto } from '../internal/polyline-path';
 import { ellipseArcInto, KAPPA } from '../path/path-ellipse-arc.internal';
 import type {
   PathCommand,
@@ -36,7 +36,7 @@ import type {
  * - `circle`: `move(cx + r, cy) + cubic × 4 + close` 6 command. clockwise (SVG y-down).
  * - `ellipse`: `move(cx + rx, cy) + cubic × 4 + close` 6 command. clockwise.
  * - `polyline`: 점 0개 → 빈 out. 점 1개 → `move`만. 점 N개 → `move + line × (N - 1)`.
- * - `polygon`: 점 0개 → 빈 out. 점 1개 이상 → `move + line × (N - 1) + close`.
+ * - `polygon`: 좌표 쌍 N개(`points.length / 2`)를 기록한다. 0개 → 빈 out. 1개 이상 → `move + line × (N - 1) + close`.
  *
  * invalid numeric(NaN, Infinity, ±0 degenerate)은 throw 없이 그대로 전파한다.
  *
@@ -218,16 +218,5 @@ function writePolyline(out: PathCommand[], shape: SvgPolylineShapeLike): PathCom
 
 /** polygon shape를 move + line × (N - 1) + close command로 기록한다. */
 function writePolygon(out: PathCommand[], shape: SvgPolygonShapeLike): PathCommand[] {
-  const points = shape.points;
-  out.length = 0;
-  if (points.length === 0) {
-    return out;
-  }
-
-  out.push({ kind: 'move', x: points[0], y: points[1] });
-  for (let i = 2; i < points.length; i += 2) {
-    out.push({ kind: 'line', x: points[i], y: points[i + 1] });
-  }
-  out.push({ kind: 'close' });
-  return out;
+  return writePolygonCommandsInto(out, shape.points);
 }
