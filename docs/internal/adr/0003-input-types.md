@@ -29,6 +29,7 @@ export type XYInput = XYLike | XYTuple;
 ```
 
 숫자 나열 overload는 public input shape에 포함하지 않는다.
+hot path용 별도 `*XY` 함수는 예외다. [ADR 0009](./0009-xy-scalar-hot-path-functions.md)를 따른다.
 
 ## 결과
 

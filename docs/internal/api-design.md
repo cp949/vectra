@@ -17,7 +17,7 @@
 | API-006 | Output 타입 다형성이 없으면 `Into` 없이 직접 반환한다. |
 | API-007 | `Into`가 단일 caller-side object를 기록하면 allocating companion `xxx`를 함께 제공한다. |
 | API-008 | Collection / multi-output도 `xxxInto`와 `xxx`를 함께 제공한다. |
-| API-009 | 좌표 입력은 `XYInput`을 사용한다. 숫자 나열 overload는 public input에 포함하지 않는다. |
+| API-009 | 좌표 입력은 `XYInput`을 사용한다. 숫자 나열 overload는 public input에 포함하지 않는다. 예외는 API-018이다. |
 | API-010 | Shape 입력은 `XxxLike`, output은 `XxxWritable`을 사용한다. |
 | API-011 | Public 함수끼리 직접 import하지 않는다. Companion `xxx` → `xxxInto` leaf import는 예외. |
 | API-012 | Catalog 기본값은 "제공한다". 제외에는 명시적인 이유가 필요하다. |
@@ -26,6 +26,7 @@
 | API-015 | Random 함수는 `rng?: () => number`를 받고 object 결과는 `Into`로 기록한다. |
 | API-016 | 입력 전체 스캔이 호출 비용을 지배하는 조회는 사전 계산 입력을 받는 별도 함수로 제공한다. |
 | API-017 | ray 교점 거리 조회는 `t`를 직접 반환하고, 교점이 없으면 `Infinity`를 반환한다. |
+| API-018 | hot path 계산은 좌표를 숫자로 받는 별도 `*XY` 함수를 둘 수 있다. |
 
 ## API-001: 기본 방향
 
@@ -273,6 +274,8 @@ public input:   { x, y }  /  [x, y]
 not public:     addInto(out, ax, ay, bx, by)
 ```
 
+기존 함수에 숫자 나열 overload를 더하지 않는다. 별도 이름의 `*XY` 함수는 API-018을 따른다.
+
 ## API-010: Shape 입력 (`XxxLike` / `XxxWritable`)
 
 Shape 입력은 `XxxLike`, output은 `XxxWritable`을 사용한다.
@@ -515,3 +518,20 @@ generator boundary    = createRng(seed), rng state export/import 후보
 - `tMin = 0`일 때 `origin + t * direction`은 기존 점 반환 함수의 첫 교점과 같아야 한다. `±1e-9` 안이며 시험이 난수 입력으로 고정한다.
 - 여러 물체 중 가장 가까운 것을 고르는 일은 호출자가 한다. 물체 순회와 순위 매기기는 제품 범위 밖이다. [제품 범위](./product-scope.md)의 "Spatial and query"를 따른다.
 - 구현은 객체를 만들지 않는다. tuple ray에서도 배열을 만들지 않으려고 `src/internal/ray-scalar.internal.ts`의 scalar reader를 쓴다.
+
+## API-018: hot path `*XY` 스칼라 함수
+
+매 프레임 수천 번 부르는 계산은 좌표를 숫자로 받는 별도 함수를 둘 수 있다.
+결정 이유는 [ADR 0009](./adr/0009-xy-scalar-hot-path-functions.md)다.
+
+- 이름은 대응 함수 이름 뒤에 `XY`를 붙인다. 예: `intersectsCircleCircleXY`, `segment/distanceToPointXY`.
+- 위치는 대응 함수와 같은 domain이다.
+- 대응 함수에 overload를 더하지 않는다. API-009는 그대로다.
+- 결과는 같은 입력의 대응 함수와 `Object.is`로 같다.
+  - 시험이 난수 입력과 non-finite 입력으로 동일성을 고정한다.
+  - 본문이 크면 대응 함수와 internal 계산을 공유한다. 몇 줄이면 `*XY` 함수에 직접 둔다.
+  - 직접 두는 이유: 번들하지 않은 ESM에서 `dist` chunk 경계를 넘는 호출 한 겹이 비용을 키운다. 수치는 ADR 0009에 있다.
+- 검증, 기본값, 경계 정책은 대응 함수와 같다. 검증을 생략하는 함수가 아니다. API-016의 `unchecked` 금지와 충돌하지 않는다.
+- 인자는 대응 함수의 입력을 순서대로 펼친다. point는 `x, y`, circle은 `cx, cy, radius`, segment는 `ax, ay, bx, by`, ray는 `ox, oy, dx, dy`다.
+- scalar·boolean 결과만 둔다. 점을 기록하는 `*XYInto`는 두지 않는다.
+- 소비자의 hot path 측정이 있을 때만 추가한다. 측정 장면은 `sub/vectra/scripts/bench/physics-kernels.mjs`에 더한다.

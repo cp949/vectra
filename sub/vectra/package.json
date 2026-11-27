@@ -29,6 +29,7 @@
   "scripts": {
     "build": "tsdown && node ./scripts/generate-llm-txt.mjs",
     "build:watch": "tsdown --watch",
+    "bench": "node ./scripts/bench/physics-kernels.mjs",
     "prepublishOnly": "pnpm build",
     "clean": "rimraf dist coverage llm.txt",
     "lint": "oxlint -c ../../.oxlintrc.json --deny-warnings . && oxfmt --check .",

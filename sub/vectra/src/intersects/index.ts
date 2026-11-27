@@ -94,6 +94,7 @@ export { intersectsCapsulePoint } from './intersects-capsule-point';
 export { intersectsCapsuleSegment } from './intersects-capsule-segment';
 export { intersectsCircleBounds } from './intersects-circle-bounds';
 export { intersectsCircleCircle } from './intersects-circle-circle';
+export { intersectsCircleCircleXY } from './intersects-circle-circle-xy';
 export { intersectsCircleInfiniteLine } from './intersects-circle-infinite-line';
 export { intersectsCircleRay } from './intersects-circle-ray';
 export { intersectsCircleRect } from './intersects-circle-rect';
@@ -179,6 +180,7 @@ export { rayBoundsHitT } from './ray-bounds-hit-t';
 export { rayBoundsIntersections } from './ray-bounds-intersections';
 export { rayBoundsIntersectionsInto } from './ray-bounds-intersections-into';
 export { rayCircleHitT } from './ray-circle-hit-t';
+export { rayCircleHitTXY } from './ray-circle-hit-t-xy';
 export { rayCircleIntersections } from './ray-circle-intersections';
 export { rayCircleIntersectionsInto } from './ray-circle-intersections-into';
 export { rayCubicIntersections } from './ray-cubic-intersections';
@@ -201,6 +203,7 @@ export { rayRectIntersections } from './ray-rect-intersections';
 export { rayRectIntersectionsInto } from './ray-rect-intersections-into';
 // ray × shape 첫 hit의 ray parameter
 export { raySegmentHitT } from './ray-segment-hit-t';
+export { raySegmentHitTXY } from './ray-segment-hit-t-xy';
 // visibility / ray casting
 export { raysFromPointToPolygon } from './rays-from-point-to-polygon';
 export { raysFromPointToPolygonInto } from './rays-from-point-to-polygon-into';
