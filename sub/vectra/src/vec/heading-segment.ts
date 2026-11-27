@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 두 점 a에서 b 방향의 각도(radian)를 반환한다.
@@ -10,9 +9,9 @@ import type { XYInput } from '../types';
  * @param a 시작 점
  * @param b 끝 점
  */
-export function headingSegment(a: XYInput, b: XYInput): number {
-  const dx = readX(b) - readX(a);
-  const dy = readY(b) - readY(a);
+export function headingSegment(a: Point, b: Point): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
 
   if (dx === 0 && dy === 0) return 0;
 

@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * a와 b의 각 성분 중 더 큰 값으로 구성된 벡터를 out에 기록하고 out을 반환한다.
@@ -11,10 +10,12 @@ import type { XYInput, XYWritable } from '../types';
  * @param a 첫 번째 입력 벡터
  * @param b 두 번째 입력 벡터
  */
-export function maxInto<Out extends XYWritable>(out: Out, a: XYInput, b: XYInput): Out {
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
-  return writeXY(out, Math.max(ax, bx), Math.max(ay, by));
+export function maxInto<Out extends PointWritable>(out: Out, a: Point, b: Point): Out {
+  const ax = a.x;
+  const ay = a.y;
+  const bx = b.x;
+  const by = b.y;
+  out.x = Math.max(ax, bx);
+  out.y = Math.max(ay, by);
+  return out;
 }

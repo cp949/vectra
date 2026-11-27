@@ -1,6 +1,5 @@
-import { readX, readY } from '../internal/xy';
 import { lerpPoint } from '../interpolation/lerp-point';
-import type { XYInput } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * a와 b 사이의 선형 보간 벡터를 새 object로 반환한다.
@@ -13,9 +12,6 @@ import type { XYInput } from '../types';
  * @param b 보간 끝 벡터
  * @param t 보간 비율. clamp 없음, extrapolation 허용
  */
-export function lerp(a: XYInput, b: XYInput, t: number): { x: number; y: number } {
-  // v2-migration: vec의 tuple 입력 계약을 유지한다.
-  const aPoint = { x: readX(a), y: readY(a) };
-  const bPoint = { x: readX(b), y: readY(b) };
-  return lerpPoint(aPoint, bPoint, t);
+export function lerp(a: Point, b: Point, t: number): PointWritable {
+  return lerpPoint(a, b, t);
 }

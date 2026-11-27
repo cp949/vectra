@@ -215,11 +215,6 @@ describe('vec predicate - isOrthogonal', () => {
     expect(isOrthogonal(a, b, 0)).toBe(false);
     expect(isOrthogonal(a, b, 1e-6)).toBe(true);
   });
-
-  test('tuple 입력을 처리한다', () => {
-    expect(isOrthogonal([1, 0], [0, 1])).toBe(true);
-    expect(isOrthogonal([1, 0], [1, 0])).toBe(false);
-  });
 });
 
 // ─────────────────────────────────────────────
@@ -426,13 +421,6 @@ describe('vec conversion - fromPolarInto', () => {
     fromPolarInto(out, 0, Math.PI / 4);
     expect((out as { x: number }).x).toBeCloseTo(0, 10);
     expect((out as { y: number }).y).toBeCloseTo(0, 10);
-  });
-
-  test('tuple out에도 올바르게 기록한다', () => {
-    const out: XYWritable = [0, 0];
-    fromPolarInto(out, 1, 0);
-    expect((out as number[])[0]).toBeCloseTo(1, 10);
-    expect((out as number[])[1]).toBeCloseTo(0, 10);
   });
 });
 

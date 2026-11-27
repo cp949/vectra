@@ -49,12 +49,12 @@ describe('vec measurement - manhattanLength', () => {
     expect(manhattanLength({ x: 3, y: 4 })).toBe(7);
   });
 
-  test('tuple 입력의 맨해튼 길이를 반환한다', () => {
-    expect(manhattanLength([-3, 4])).toBe(7);
+  test('음수 성분에도 절댓값을 적용한다', () => {
+    expect(manhattanLength({ x: -3, y: 4 })).toBe(7);
   });
 
   test('zero vector의 맨해튼 길이는 0이다', () => {
-    expect(manhattanLength([0, 0])).toBe(0);
+    expect(manhattanLength({ x: 0, y: 0 })).toBe(0);
   });
 
   test('음수 좌표의 절댓값 합을 반환한다', () => {
@@ -62,41 +62,41 @@ describe('vec measurement - manhattanLength', () => {
   });
 
   test('소수 좌표를 올바르게 처리한다', () => {
-    expect(manhattanLength([0.5, 1.5])).toBeCloseTo(2);
+    expect(manhattanLength({ x: 0.5, y: 1.5 })).toBeCloseTo(2);
   });
 });
 
 describe('vec measurement - manhattanDistance', () => {
   test('두 점 사이의 맨해튼 거리를 반환한다', () => {
-    expect(manhattanDistance({ x: 0, y: 0 }, [3, 4])).toBe(7);
+    expect(manhattanDistance({ x: 0, y: 0 }, { x: 3, y: 4 })).toBe(7);
   });
 
-  test('tuple 입력과 object 입력 혼합을 처리한다', () => {
-    expect(manhattanDistance([1, 2], { x: 4, y: 6 })).toBe(7);
+  test('원점 밖에 있는 두 점의 거리를 계산한다', () => {
+    expect(manhattanDistance({ x: 1, y: 2 }, { x: 4, y: 6 })).toBe(7);
   });
 
   test('같은 점의 맨해튼 거리는 0이다', () => {
-    expect(manhattanDistance([3, 3], { x: 3, y: 3 })).toBe(0);
+    expect(manhattanDistance({ x: 3, y: 3 }, { x: 3, y: 3 })).toBe(0);
   });
 
   test('거리는 순서에 무관하다', () => {
-    const ab = manhattanDistance({ x: 1, y: 2 }, [4, 6]);
-    const ba = manhattanDistance([4, 6], { x: 1, y: 2 });
+    const ab = manhattanDistance({ x: 1, y: 2 }, { x: 4, y: 6 });
+    const ba = manhattanDistance({ x: 4, y: 6 }, { x: 1, y: 2 });
 
     expect(ab).toBe(ba);
   });
 
   test('음수 좌표 사이의 거리를 올바르게 계산한다', () => {
-    expect(manhattanDistance({ x: -3, y: -4 }, [0, 0])).toBe(7);
+    expect(manhattanDistance({ x: -3, y: -4 }, { x: 0, y: 0 })).toBe(7);
   });
 
   test('input object를 mutate하지 않는다', () => {
     const a = { x: 1, y: 2 };
-    const b: [number, number] = [4, 6];
+    const b = { x: 4, y: 6 };
 
     manhattanDistance(a, b);
 
     expect(a).toEqual({ x: 1, y: 2 });
-    expect(b).toEqual([4, 6]);
+    expect(b).toEqual({ x: 4, y: 6 });
   });
 });

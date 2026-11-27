@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { fromAngleInto } from './from-angle-into';
 
 /**
@@ -6,6 +6,6 @@ import { fromAngleInto } from './from-angle-into';
  *
  * @param angle unit vector 방향각(라디안)
  */
-export function fromAngle(angle: number): XYObjectWritable {
+export function fromAngle(angle: number): PointWritable {
   return fromAngleInto({ x: 0, y: 0 }, angle);
 }

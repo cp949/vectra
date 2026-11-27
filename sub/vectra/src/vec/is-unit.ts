@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -11,6 +10,6 @@ import { hypot2 } from '../internal/numeric';
  * @param input unit length 여부를 검사할 벡터
  * @param epsilon 허용할 절대 오차
  */
-export function isUnit(input: XYInput, epsilon = 1e-9): boolean {
-  return Math.abs(hypot2(readX(input), readY(input)) - 1) <= epsilon;
+export function isUnit(input: Point, epsilon = 1e-9): boolean {
+  return Math.abs(hypot2(input.x, input.y) - 1) <= epsilon;
 }

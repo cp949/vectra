@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * x, y 모두 유한한 값이면 true를 반환한다.
@@ -9,6 +8,6 @@ import type { XYInput } from '../types';
  * @param input 유한성을 검사할 벡터
  */
 // public API name mirrors Number.isFinite semantics for vectors.
-export function isFinite(input: XYInput): boolean {
-  return Number.isFinite(readX(input)) && Number.isFinite(readY(input));
+export function isFinite(input: Point): boolean {
+  return Number.isFinite(input.x) && Number.isFinite(input.y);
 }

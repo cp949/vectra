@@ -96,16 +96,6 @@ describe('vec point-output - fromAngleInto', () => {
     expect(out.x).toBeCloseTo(-1, 10);
     expect(out.y).toBeCloseTo(0, 10);
   });
-
-  test('mutable tuple out에 unit vector를 기록하고 tuple reference를 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = fromAngleInto(out, 0);
-
-    expect(result).toBe(out);
-    expect(out[0]).toBeCloseTo(1, 10);
-    expect(out[1]).toBeCloseTo(0, 10);
-    expectTypeOf(result).toEqualTypeOf<[number, number]>();
-  });
 });
 
 describe('vec point-output - rotateInto', () => {

@@ -15,6 +15,11 @@ import { cornerBisectorInto } from '../../../src/vec/corner-bisector-into';
 import { directionToInto } from '../../../src/vec/direction-to-into';
 import { divideInto } from '../../../src/vec/divide-into';
 import { floorInto } from '../../../src/vec/floor-into';
+import { fromAngleInto } from '../../../src/vec/from-angle-into';
+import { fromPolarInto } from '../../../src/vec/from-polar-into';
+import { lerpInto } from '../../../src/vec/lerp-into';
+import { maxInto } from '../../../src/vec/max-into';
+import { midpointInto } from '../../../src/vec/midpoint-into';
 
 /** 메서드를 가진 외부 점 클래스. Into 반환값으로 메서드를 이어 부를 수 있어야 한다. */
 class Sprite {
@@ -30,6 +35,10 @@ const a = { x: -1.5, y: 2 };
 const b = { x: 3, y: -4 };
 
 describe('vec Into 반환 타입', () => {
+  test('각도에서 벡터를 만들 때 x/y 출력을 받는다', () => {
+    expectTypeOf(fromAngleInto).parameter(0).toEqualTypeOf<PointWritable>();
+  });
+
   test('복사는 x/y 입력과 출력을 받는다', () => {
     expectTypeOf(copyInto).parameter(0).toEqualTypeOf<PointWritable>();
     expectTypeOf(copyInto).parameter(1).toEqualTypeOf<Point>();
@@ -48,6 +57,11 @@ describe('vec Into 반환 타입', () => {
       (out: Sprite) => directionToInto(out, a, b),
       (out: Sprite) => divideInto(out, a, b),
       (out: Sprite) => floorInto(out, a),
+      (out: Sprite) => fromAngleInto(out, 1),
+      (out: Sprite) => fromPolarInto(out, 2, 1),
+      (out: Sprite) => lerpInto(out, a, b, 0.5),
+      (out: Sprite) => maxInto(out, a, b),
+      (out: Sprite) => midpointInto(out, a, b),
     ];
     for (const run of cases) {
       const sprite = new Sprite();
@@ -69,5 +83,10 @@ describe('vec Into 반환 타입', () => {
     expectTypeOf(directionToInto(sprite, a, b)).toEqualTypeOf<Sprite>();
     expectTypeOf(divideInto(sprite, a, b)).toEqualTypeOf<Sprite>();
     expectTypeOf(floorInto(sprite, a)).toEqualTypeOf<Sprite>();
+    expectTypeOf(fromAngleInto(sprite, 1)).toEqualTypeOf<Sprite>();
+    expectTypeOf(fromPolarInto(sprite, 2, 1)).toEqualTypeOf<Sprite>();
+    expectTypeOf(lerpInto(sprite, a, b, 0.5)).toEqualTypeOf<Sprite>();
+    expectTypeOf(maxInto(sprite, a, b)).toEqualTypeOf<Sprite>();
+    expectTypeOf(midpointInto(sprite, a, b)).toEqualTypeOf<Sprite>();
   });
 });

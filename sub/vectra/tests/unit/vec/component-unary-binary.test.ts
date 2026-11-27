@@ -124,15 +124,6 @@ describe('vec component-wise - binary helpers', () => {
       b: { x: 5, y: 2 },
       expected: [3, 2],
     },
-    {
-      name: 'max',
-      into: maxInto,
-      companion: max,
-      exampleTitle: 'a와 b의 각 성분 중 큰 값으로 구성된 벡터를 out에 기록한다',
-      a: { x: 3, y: 8 },
-      b: { x: 5, y: 2 },
-      expected: [5, 8],
-    },
   ];
 
   for (const helper of cases) {
@@ -144,6 +135,15 @@ describe('vec component-wise - binary helpers', () => {
       testBinaryBehavior(helper);
     });
   }
+
+  test('a와 b의 각 성분 중 큰 값으로 구성된 벡터를 out에 기록한다', () => {
+    const a = { x: 3, y: 8 };
+    const b = { x: 5, y: 2 };
+    expectObjectOut((out) => maxInto(out, a, b), [5, 8]);
+    expectXY(max(a, b), [5, 8]);
+    expectXY(maxInto(a, a, b), [5, 8]);
+    expectXY(maxInto(b, { x: 3, y: 8 }, b), [5, 8]);
+  });
 
   test('divide와 divideInto는 같은 성분별 나눗셈 결과를 반환한다', () => {
     const a = { x: 6, y: -20 };

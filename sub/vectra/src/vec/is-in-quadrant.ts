@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 좌표가 지정한 사분면에 속하는지 판정한다.
@@ -11,9 +10,9 @@ import type { XYInput } from '../types';
  * @param input 검사할 좌표
  * @param quadrant 비교할 사분면 번호
  */
-export function isInQuadrant(input: XYInput, quadrant: 0 | 1 | 2 | 3 | 4): boolean {
-  const x = readX(input);
-  const y = readY(input);
+export function isInQuadrant(input: Point, quadrant: 0 | 1 | 2 | 3 | 4): boolean {
+  const x = input.x;
+  const y = input.y;
 
   let actual: 0 | 1 | 2 | 3 | 4;
   if (x === 0 || y === 0) actual = 0;

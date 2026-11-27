@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { fromPolarInto } from './from-polar-into';
 
 /**
@@ -9,6 +9,6 @@ import { fromPolarInto } from './from-polar-into';
  * @param r 반지름 (벡터의 길이)
  * @param theta 각도 (라디안, x축으로부터 반시계 방향)
  */
-export function fromPolar(r: number, theta: number): XYObjectWritable {
+export function fromPolar(r: number, theta: number): PointWritable {
   return fromPolarInto({ x: 0, y: 0 }, r, theta);
 }

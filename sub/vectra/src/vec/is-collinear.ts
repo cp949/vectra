@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 세 점 a, b, c가 일직선인지 확인한다.
@@ -13,13 +12,13 @@ import type { XYInput } from '../types';
  * @param c 세 번째 점
  * @param epsilon cross product 절대값 기준 허용 오차. 입력 벡터 크기에 비례하므로 단위 벡터에 적합하다. 기본값: 0
  */
-export function isCollinear(a: XYInput, b: XYInput, c: XYInput, epsilon = 0): boolean {
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
-  const cx = readX(c);
-  const cy = readY(c);
+export function isCollinear(a: Point, b: Point, c: Point, epsilon = 0): boolean {
+  const ax = a.x;
+  const ay = a.y;
+  const bx = b.x;
+  const by = b.y;
+  const cx = c.x;
+  const cy = c.y;
 
   const cross = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   return Math.abs(cross) <= epsilon;

@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * 두 벡터 a, b가 직교하는지 확인한다 (dot product = 0).
@@ -11,11 +10,11 @@ import type { XYInput } from '../types';
  * @param b 두 번째 벡터
  * @param epsilon dot product 절대값 기준 허용 오차. 입력 벡터 크기에 비례하므로 단위 벡터에 적합하다. 기본값: 0
  */
-export function isOrthogonal(a: XYInput, b: XYInput, epsilon = 0): boolean {
-  const ax = readX(a);
-  const ay = readY(a);
-  const bx = readX(b);
-  const by = readY(b);
+export function isOrthogonal(a: Point, b: Point, epsilon = 0): boolean {
+  const ax = a.x;
+  const ay = a.y;
+  const bx = b.x;
+  const by = b.y;
 
   // 영벡터는 방향이 없으므로 직교 관계가 성립하지 않는다
   const aLenSq = ax * ax + ay * ay;

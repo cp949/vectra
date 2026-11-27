@@ -19,10 +19,6 @@ describe('heading — point의 각도 계산', () => {
     expect(heading({ x: -1, y: 0 })).toBeCloseTo(Math.PI);
   });
 
-  test('tuple input을 받는다', () => {
-    expect(heading([1, 0])).toBeCloseTo(0);
-  });
-
   test('range가 (-π, π]이다', () => {
     const angle = heading({ x: -1, y: -0.0001 });
     expect(angle).toBeGreaterThan(-Math.PI);
@@ -41,10 +37,6 @@ describe('headingSegment — segment 방향 각도 계산', () => {
 
   test('zero-length segment는 0을 반환한다', () => {
     expect(headingSegment({ x: 2, y: 3 }, { x: 2, y: 3 })).toBe(0);
-  });
-
-  test('tuple input을 받는다', () => {
-    expect(headingSegment([0, 0], [1, 0])).toBeCloseTo(0);
   });
 });
 

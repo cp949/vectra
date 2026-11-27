@@ -304,8 +304,8 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       const cases: Array<[string, number, number]> = [
         ['dot', dot(a, b), ref.dot(a, b)],
         ['cross', cross(a, b), ref.cross(a, b)],
-        ['length', length(makeVec(aSpec)), ref.length(makeVec(aSpec))],
-        ['lengthSq', lengthSq(makeVec(aSpec)), ref.lengthSq(makeVec(aSpec))],
+        ['length', length(a), ref.length(a)],
+        ['lengthSq', lengthSq(a), ref.lengthSq(a)],
         ['distance', distance(a, b), ref.distance(a, b)],
         ['distanceSq', distanceSq(a, b), ref.distanceSq(a, b)],
       ];
@@ -317,11 +317,6 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
         }
       }
     }
-  });
-
-  test('lengthSq는 x/y 필드를 가진 tuple에서도 배열 성분을 읽는다', () => {
-    const tuple = makeVec({ form: 3, x: 1, y: 2 });
-    expect(lengthSq(tuple)).toBe(5);
   });
 
   test('out이 입력과 같은 object여도 결과가 같다', () => {

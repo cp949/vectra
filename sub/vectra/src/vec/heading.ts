@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 
 /**
  * point의 각도(radian)를 반환한다.
@@ -9,6 +8,6 @@ import type { XYInput } from '../types';
  *
  * @param point 각도를 구할 2D 좌표
  */
-export function heading(point: XYInput): number {
-  return Math.atan2(readY(point), readX(point));
+export function heading(point: Point): number {
+  return Math.atan2(point.y, point.x);
 }
