@@ -1,9 +1,17 @@
+/**
+ * cubicSplitInto의 좌우 곡선이 끝점을 공유하고 분할점이 cubicPointAtTInto와 같은지 검증한다.
+ * cubicHullInto가 de Casteljau 점 10개를 기록하고 out을 비운 뒤 채우는지 확인한다.
+ */
 import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicHullInto } from '../../../src/curve/cubic-hull-into';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
 import { cubicSplitInto } from '../../../src/curve/cubic-split-into';
 
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
@@ -15,6 +23,9 @@ describe('cubicSplitInto', () => {
   const p2 = { x: 3, y: 3 };
   const p3 = { x: 4, y: 0 };
 
+  /**
+   * cubicSplitInto의 left, right out으로 넘길 0 초기값 평평한 cubic을 만든다.
+   */
   function makeOut() {
     return { kind: 'cubic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
   }

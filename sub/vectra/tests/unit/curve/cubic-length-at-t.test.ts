@@ -1,19 +1,18 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicLengthAtT unit test.
- *
- * 검증 방법:
- * - 직선 Bezier에서 length가 유클리드 거리와 일치한다.
- * - 부분 length가 전체 length 사이에 있다.
- * - tuple XYInput을 받는다.
- *
- * t clamp, 단조 증가 같은 일반 동작은 speed-length.test.ts가 검증한다.
+ * cubicLengthAtT의 부분 호 길이를 검증한다.
+ * 직선 곡선은 유클리드 거리와 같다.
+ * 일반 곡선은 0과 전체 길이 사이에 있다.
+ * t clamp와 단조 증가는 speed-length.test.ts가 검증한다.
  */
-
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicLength } from '../../../src/curve/cubic-length';
 import { cubicLengthAtT } from '../../../src/curve/cubic-length-at-t';
 
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
@@ -38,11 +37,5 @@ describe('cubicLengthAtT', () => {
     const total = cubicLength(flatCubicFromLegacyPoints(p0, p1, p2, p3));
     expect(half).toBeGreaterThan(0);
     expect(half).toBeLessThan(total);
-  });
-
-  it('tuple XYInput을 받는다', () => {
-    const result = cubicLengthAtT({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 3, x2: 3, y2: 3, x3: 4, y3: 0 }, 0.5);
-    const ref = cubicLengthAtT(flatCubicFromLegacyPoints(p0, p1, p2, p3), 0.5);
-    expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
 });

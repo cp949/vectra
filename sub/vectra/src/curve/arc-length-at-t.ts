@@ -12,8 +12,8 @@ import { speedLengthAtT } from './speed-length.internal';
  *
  * @param centerArc center form arc input
  * @param t 파라미터 (clamp됨)
- * @param options 적분 옵션
- * @param options.segments θ 구간 분할 수. 기본값: 12
+ * @param options 적분 옵션. 생략하면 `{ segments: 12 }`를 쓴다.
+ * @param options.segments θ 구간 분할 수
  */
 export function arcLengthAtT(centerArc: CenterArc, t: number, options?: Required<LengthOptions>): number {
   return speedLengthAtT(centerArcSpeed(centerArc), t, options);

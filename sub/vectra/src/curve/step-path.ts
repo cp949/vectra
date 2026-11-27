@@ -14,7 +14,7 @@ import { stepPathInto } from './step-path-into';
  * 성능 최적화가 필요하면 `stepPathInto`를 사용한다.
  *
  * @param points step path가 통과할 입력 point 배열
- * @param options step elbow mode 옵션. mode 기본값 'middle'.
+ * @param options step elbow mode 옵션. 생략하면 `{ mode: 'middle' }`를 쓴다.
  * @returns 새로 만든 PathCommand 배열
  */
 export function stepPath(points: readonly Point[], options?: Required<StepCurveOptions>): PathCommand[] {

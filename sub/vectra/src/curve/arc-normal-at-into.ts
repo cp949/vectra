@@ -8,7 +8,7 @@ import { hypot2 } from '../internal/numeric';
  * unit tangent를 좌측 90° 회전한 벡터 (-ty, tx)를 반환한다.
  * degenerate arc 또는 zero-sweep arc에서 tangent가 zero vector이면 zero vector를 기록한다.
  *
- * @param out unit normal vector를 기록할 writable output
+ * @param out 단위 법선 벡터를 기록할 점 객체
  * @param centerArc center form arc input
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  * @returns out

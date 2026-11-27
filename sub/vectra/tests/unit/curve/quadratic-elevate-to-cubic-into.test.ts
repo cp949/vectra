@@ -1,24 +1,27 @@
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * quadraticElevateToCubicInto / quadraticElevateToCubic unit test.
- *
- * 검증 방법:
- * - 변환 후 cubic이 원본 quadratic과 모든 t에서 같은 pointAt 값을 반환한다.
- * - degree elevation 수식 정확값 직접 비교.
+ * quadraticElevateToCubicInto의 차수 올림 제어점을 수식 정확값과 비교한다.
+ * 변환한 cubic이 여러 t에서 원본 quadratic과 같은 점을 내는지 확인한다.
+ * quadraticElevateToCubic은 Into와 같은 값을 돌려준다.
  */
-
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
 import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to-cubic';
 import { quadraticElevateToCubicInto } from '../../../src/curve/quadratic-elevate-to-cubic-into';
 import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';
 
-// 상대 오차 비교 helper
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
 }
 
+/**
+ * out 인자로 넘길 0 초기값 평평한 cubic 객체를 만든다.
+ */
 function makeOut() {
   return { kind: 'cubic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
 }

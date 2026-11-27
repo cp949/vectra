@@ -1,13 +1,8 @@
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * quadraticBounds allocating companion unit test.
- *
- * 검증 방법:
- * - quadraticBoundsInto와 동등한 결과를 새 object로 반환한다.
- * - degenerate case(collinear 3점)에서 extrema가 endpoints에 갇힌다.
- * - 호출 시마다 새 reference를 반환하고 min/max도 별도 object다.
+ * quadraticBounds가 quadraticBoundsInto와 같은 경계 상자를 새 객체로 돌려주는지 검증한다.
+ * 같은 직선 위 세 점이면 끝점이 곧 경계다.
  */
-
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticBounds } from '../../../src/curve/quadratic-bounds';
 import { quadraticBoundsInto } from '../../../src/curve/quadratic-bounds-into';

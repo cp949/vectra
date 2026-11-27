@@ -15,8 +15,8 @@ import type { QuadraticCurveWritable, QuadraticCurve } from '../types/flat-shape
  * t는 clamp 없이 수식 그대로 계산한다.
  * outLeft.p2와 outRight.p0은 같은 point 값을 가진다(연속성 보장).
  *
- * @param outLeft 분할 후 좌측 sub-curve를 기록할 writable output
- * @param outRight 분할 후 우측 sub-curve를 기록할 writable output
+ * @param outLeft 분할 후 왼쪽 부분 곡선을 기록할 이차 베지어 객체
+ * @param outRight 분할 후 오른쪽 부분 곡선을 기록할 이차 베지어 객체
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 분할 파라미터 (일반적으로 [0, 1], clamp 없음)
  */

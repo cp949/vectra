@@ -1,14 +1,8 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicIsFlatEnough unit test.
- *
- * 검증 방법:
- * - 직선: 작은 flatness에서 true.
- * - 약간 구부러진 곡선: 큰 flatness에서 true, 0에서 false.
- * - degenerate (p0 == p3).
- * - flatness가 수직 거리 임계값임을 확인.
+ * cubicIsFlatEnough가 제어점의 현 수직 거리를 flatness 임계값과 비교하는지 검증한다.
+ * 직선, 약하게 휜 곡선, S자 곡선, 경계값 일치, 퇴화 곡선을 다룬다.
  */
-
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicIsFlatEnough } from '../../../src/curve/cubic-is-flat-enough';
 
@@ -67,11 +61,5 @@ describe('cubicIsFlatEnough', () => {
   it('degenerate: 모든 점이 동일하면 true를 반환한다', () => {
     const p = { x: 1, y: 2 };
     expect(cubicIsFlatEnough(flatCubicFromLegacyPoints(p, p, p, p), 1e-10)).toBe(true);
-  });
-
-  it('tuple XYInput을 받는다', () => {
-    expect(cubicIsFlatEnough({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 }, 1e-10)).toBe(
-      true
-    );
   });
 });

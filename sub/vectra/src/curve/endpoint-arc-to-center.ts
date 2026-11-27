@@ -5,7 +5,7 @@ import { endpointArcToCenterInto } from './endpoint-arc-to-center-into';
 /**
  * SVG 명세 F.6.5에 따라 endpoint arc를 center form으로 변환한 새 object를 반환한다.
  *
- * `endpointArcToCenterInto`의 allocating companion. 결과는 새 plain `CenterArcWritable`이다.
+ * `endpointArcToCenterInto`의 allocating companion. 결과는 새 중심 원호 객체다.
  *
  * - from == arc.endpoint 이면 zero-length(sweep 0) arc로 처리한다.
  *   `startAngle = endAngle = 0`, `cx/cy = from`, `rx/ry = arc.rx/arc.ry`를 기록한다.
@@ -21,7 +21,7 @@ import { endpointArcToCenterInto } from './endpoint-arc-to-center-into';
  * caller-responsibility 가정은 `endpointArcToCenterInto`와 동일하다.
  * @param from arc 시작점 (current point)
  * @param arc endpoint 형식의 ArcCommand
- * @returns 새 `CenterArcWritable` plain object
+ * @returns 새 중심 원호 객체
  */
 export function endpointArcToCenter(from: Point, arc: ArcCommand): CenterArcWritable {
   return endpointArcToCenterInto(

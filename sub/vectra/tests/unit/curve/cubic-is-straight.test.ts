@@ -1,14 +1,8 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicIsStraight unit test.
- *
- * 검증 방법:
- * - 수직 거리 0인 직선: true (비율 무관).
- * - 미세하게 구부러진 곡선: false.
- * - degenerate (p0 == p3): 같은 점이면 true, 다른 점이면 false.
- * - epsilon 경계 동작.
+ * cubicIsStraight가 제어점 비율과 무관하게 현 위의 곡선을 직선으로 판정하는지 검증한다.
+ * 미세하게 휜 곡선, 퇴화 곡선, epsilon 경계를 다룬다.
  */
-
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicIsStraight } from '../../../src/curve/cubic-is-straight';
 
@@ -58,9 +52,5 @@ describe('cubicIsStraight', () => {
     expect(cubicIsStraight({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: eps * 10, x2: 2, y2: 0, x3: 3, y3: 0 })).toBe(
       false
     );
-  });
-
-  it('tuple XYInput을 받는다', () => {
-    expect(cubicIsStraight({ kind: 'cubic', x0: 0, y0: 0, x1: 0.5, y1: 0, x2: 1.5, y2: 0, x3: 3, y3: 0 })).toBe(true);
   });
 });

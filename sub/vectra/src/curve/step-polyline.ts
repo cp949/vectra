@@ -3,7 +3,7 @@ import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { stepPolylineInto } from './step-polyline-into';
 
 /**
- * point list를 orthogonal step polyline으로 변환한 새 PointWritable[] 배열을 반환한다.
+ * point list를 orthogonal step polyline으로 변환한 새 점 배열을 반환한다.
  *
  * 기본 mode는 'middle'. segment p0→p1에서 'middle'은 midX=(x0+x1)/2의 (midX,y0),(midX,y1),
  * 'before'는 (x1,y0), 'after'는 (x0,y1) elbow를 거쳐 끝점에 도달한다.
@@ -14,7 +14,7 @@ import { stepPolylineInto } from './step-polyline-into';
  *
  * @param points step polyline이 통과할 입력 point 배열
  * @param options step elbow mode 옵션. mode 기본값 'middle'.
- * @returns 새로 만든 PointWritable point 배열
+ * @returns 새로 만든 점 배열
  */
 export function stepPolyline(points: readonly Point[], options?: Required<StepCurveOptions>): PointWritable[] {
   const out: PointWritable[] = [];

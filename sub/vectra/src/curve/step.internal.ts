@@ -53,7 +53,7 @@ function forEachStepVertex(points: readonly Point[], mode: StepCurveMode, visit:
  *
  * points.length < 2이면 out.length를 0으로 두고 반환한다.
  *
- * @param out vertex를 기록할 writable point 배열. 기존 내용은 덮어쓴다.
+ * @param out vertex를 기록할 점 배열. 기존 내용은 덮어쓴다.
  * @param points step polyline이 통과할 입력 point 배열
  * @param mode 정규화된 step elbow mode
  * @returns out

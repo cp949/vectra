@@ -1,3 +1,8 @@
+/**
+ * cubic 곡선의 점, 1차 도함수, 2차 도함수를 끝점과 중간 t의 정확값과 비교한다.
+ * 단위 접선과 단위 법선의 길이, 직교성, 퇴화 곡선의 0 벡터를 검증한다.
+ * cubicPointAtT가 clamp 없이 외삽한 값을 새 객체로 돌려주는지도 다룬다.
+ */
 import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicDerivativeAtInto } from '../../../src/curve/cubic-derivative-at-into';
@@ -7,6 +12,10 @@ import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
 import { cubicSecondDerivativeAtInto } from '../../../src/curve/cubic-second-derivative-at-into';
 import { cubicTangentAtInto } from '../../../src/curve/cubic-tangent-at-into';
 
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);

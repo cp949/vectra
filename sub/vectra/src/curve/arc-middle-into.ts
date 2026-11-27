@@ -4,7 +4,7 @@ import { angleAtT, ellipsePoint, isDegenerateRadii } from './arc.internal';
 /**
  * center form arc의 중점(t=0.5) 좌표를 out에 기록하고 out을 반환한다.
  *
- * @param out 중점을 기록할 writable output
+ * @param out 중점을 기록할 점 객체
  * @param centerArc center form arc input
  * @returns out
  */

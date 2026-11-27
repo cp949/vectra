@@ -23,7 +23,7 @@ import { hypot2 } from '../internal/numeric';
  *
  * aliasing 안전: 입력을 모두 읽고 성공 판정 후 output을 기록한다.
  *
- * @param out 결과 quadratic curve를 기록할 writable output
+ * @param out 결과를 기록할 이차 베지어 객체
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options 축소 tolerance 옵션. `tolerance`가 finite number가 아니거나 음수이면 RangeError.
  */

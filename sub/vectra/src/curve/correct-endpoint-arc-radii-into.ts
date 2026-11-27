@@ -11,7 +11,7 @@ import type { Point } from '../types/flat-shapes.internal';
  * 거리는 `arc.xRotation` 회전 좌표계에서 측정한다 (F.6.5 midpoint 변환). 따라서
  * `xRotation`이 NaN/Infinity이면 cosPhi/sinPhi 경로로 NaN이 전파된다.
  *
- * @param out 보정된 rx/ry를 기록할 writable output
+ * @param out 보정된 rx/ry를 기록할 객체
  * @param from arc 시작점 (current point)
  * @param arc endpoint 형식의 ArcCommand
  * @returns out

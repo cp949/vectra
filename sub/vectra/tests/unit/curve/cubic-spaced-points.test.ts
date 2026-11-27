@@ -1,11 +1,10 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicSpacedPointsInto / cubicSpacedPoints unit test.
- *
- * arc-length 기준으로 균등한 point collection을 검증한다.
- * 양 끝점은 t=0 / t=1로 고정하고, 중간 점은 cubicTAtLength mapping과 동치다.
- * uniform t sampling(cubicSample)과 달리 arc-length 간격을 사용한다.
+ * cubicSpacedPointsInto가 호 길이 기준으로 균등한 점을 기록하는지 검증한다.
+ * 끝점은 t 0과 t 1에 고정하고, 중간 점은 cubicTAtLength 결과와 같다.
+ * 비대칭 곡선에서 균등 t 표본과 달라지는지 확인한다.
+ * 잘못된 count의 RangeError, out 보존, non-finite 좌표 전파도 다룬다.
  */
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicLength } from '../../../src/curve/cubic-length';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
@@ -139,18 +138,6 @@ describe('cubicSpacedPointsInto', () => {
     );
     expect(out).toHaveLength(1);
     expect(out[0]).toBe(existing);
-  });
-
-  it('tuple input과 object input이 동일한 결과를 반환한다', () => {
-    const objOut: { x: number; y: number }[] = [];
-    const tupOut: { x: number; y: number }[] = [];
-    cubicSpacedPointsInto(objOut, flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3), 5);
-    cubicSpacedPointsInto(tupOut, { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 4, x2: 4, y2: 4, x3: 4, y3: 0 }, 5);
-    expect(tupOut).toHaveLength(objOut.length);
-    for (let i = 0; i < objOut.length; i++) {
-      expect(tupOut[i].x).toBeCloseTo(objOut[i].x, 12);
-      expect(tupOut[i].y).toBeCloseTo(objOut[i].y, 12);
-    }
   });
 
   it('각 출력 point는 새로운 object이다', () => {

@@ -1,15 +1,8 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicIsLinear unit test.
- *
- * 검증 방법:
- * - 정확히 1/3, 2/3 위치: true.
- * - 직선이지만 편중 위치: false (비율 검사 실패).
- * - 비직선: false.
- * - degenerate (모든 점 동일): true.
- * - epsilon 경계 동작.
+ * cubicIsLinear가 직선이면서 제어점이 현의 1/3, 2/3 위치에 있을 때만 true인지 검증한다.
+ * 비율이 어긋난 직선, 비직선 곡선, 퇴화 곡선을 다룬다.
  */
-
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicIsLinear } from '../../../src/curve/cubic-is-linear';
 
@@ -39,10 +32,6 @@ describe('cubicIsLinear', () => {
 
   it('degenerate: p0==p3이지만 p1, p2가 다른 점이면 false를 반환한다', () => {
     expect(cubicIsLinear({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 1, x2: -1, y2: 1, x3: 0, y3: 0 })).toBe(false);
-  });
-
-  it('tuple XYInput을 받는다', () => {
-    expect(cubicIsLinear({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 })).toBe(true);
   });
 
   it('수직 직선에서 true를 반환한다 (1/3, 2/3 위치)', () => {

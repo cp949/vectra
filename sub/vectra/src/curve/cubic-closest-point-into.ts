@@ -14,7 +14,7 @@ import { findCubicClosestLocation } from './bezier-closest-location.internal';
  * oversized finite 좌표로 내부 `distanceSquared`가 `Infinity`가 되어도 `bx(t)`/`by(t)`는
  * finite 좌표를 그대로 기록한다 (out에는 finite 점이 들어간다).
  *
- * @param out 결과 point를 기록할 writable output
+ * @param out 결과를 기록할 점 객체
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param point 투영 기준 점
  * @param options 수치 최적화 옵션

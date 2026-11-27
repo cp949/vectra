@@ -2,7 +2,7 @@
  * curve step helper unit test.
  *
  * 검증:
- * - stepPolylineInto: middle/before/after elbow, empty/single-point, tuple/object 입력,
+ * - stepPolylineInto: middle/before/after elbow, empty/single-point,
  *   duplicate point 보존, non-finite pass-through, invalid mode RangeError.
  * - stepPathInto: move/line command 순서와 mode별 elbow.
  * - stepBeforePathInto / stepAfterPathInto: fixed mode가 stepPathInto({ mode }) 결과와 일치.

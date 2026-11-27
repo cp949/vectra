@@ -9,8 +9,8 @@ import { speedLength } from './speed-length.internal';
  * t ∈ [0, 1] 구간을 segments로 분할하여 각 구간에서 5점 GL 적분을 수행한다.
  *
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
- * @param options 적분 옵션
- * @param options.segments 구간 분할 수. 기본값: 12
+ * @param options 적분 옵션. 생략하면 `{ segments: 12 }`를 쓴다.
+ * @param options.segments 구간 분할 수
  */
 export function quadraticLength(curve: QuadraticCurve, options?: Required<LengthOptions>): number {
   return speedLength(quadraticSpeed(curve), options);

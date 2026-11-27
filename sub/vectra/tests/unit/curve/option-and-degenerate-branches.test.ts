@@ -2,10 +2,9 @@
  * curve의 옵션 필드 해석과 퇴화 입력 분기 테스트.
  *
  * 검증 항목:
- *  1. 옵션 객체에서 필드를 지정하거나 생략하면 각각 지정값과 기본값을 쓴다.
- *  2. 반지름이 0이거나 sweep이 0인 arc는 퇴화 결과를 돌려준다.
- *
- * 설계 메모:
+ *  1. 옵션 필드를 지정하면 지정값을 쓰고, 옵션 객체를 생략하면 기본값을 쓴다.
+ *  2. 필드가 빠진 옵션 객체에는 기본값을 쓰지 않는다.
+ *  3. 반지름이 0이거나 sweep이 0인 arc는 퇴화 결과를 돌려준다.
  */
 import { describe, expect, test } from 'vitest';
 import { arcBoundsInto } from '../../../src/curve/arc-bounds-into';
@@ -17,9 +16,10 @@ import { arcTangentAtInto } from '../../../src/curve/arc-tangent-at-into';
 import { cardinalPolylineInto } from '../../../src/curve/cardinal-polyline-into';
 import { catmullRomPolylineInto } from '../../../src/curve/catmull-rom-polyline-into';
 import { cubicBoundsInto } from '../../../src/curve/cubic-bounds-into';
+import { cubicSampleInto } from '../../../src/curve/cubic-sample-into';
 import { monotoneYPolylineInto } from '../../../src/curve/monotone-y-polyline-into';
 import { quadraticBoundsInto } from '../../../src/curve/quadratic-bounds-into';
-import type { CenterArcLike, XYObjectWritable } from '../../../src/types';
+import type { CenterArc, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 const PI = Math.PI;
 
@@ -27,7 +27,7 @@ const PI = Math.PI;
  * 테스트용 center arc를 만든다.
  * 필요한 필드만 덮어써서 쓴다.
  */
-function arc(overrides: Partial<CenterArcLike> = {}): CenterArcLike {
+function arc(overrides: Partial<CenterArc> = {}): CenterArc {
   return { cx: 0, cy: 0, rx: 2, ry: 1, xRotation: 0, startAngle: 0, endAngle: PI / 2, sweep: true, ...overrides };
 }
 
@@ -169,7 +169,7 @@ describe('spline polyline 옵션 객체', () => {
 
   test('monotoneYPolylineInto는 두 점이면 직선 위의 점을 만든다', () => {
     // 접선이 0으로 잘못 잡히면 t=1/3 표본이 직선에서 벗어난다.
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     monotoneYPolylineInto(
       out,
       [
@@ -190,6 +190,25 @@ describe('spline polyline 옵션 객체', () => {
     ];
     expect(monotoneYPolylineInto([], ys, { steps: 16 })).toEqual(monotoneYPolylineInto([], ys));
     expect(monotoneYPolylineInto([], ys, { steps: 16 })).toHaveLength(16);
+  });
+});
+
+describe('필드가 빠진 옵션 객체', () => {
+  test('cubicSampleInto는 steps가 빠진 옵션 객체에 기본값을 쓰지 않고 RangeError를 던진다', () => {
+    const curve = { kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 3, y2: 2, x3: 4, y3: 0 } as const;
+    const options = {};
+    // @ts-expect-error cubicSampleInto 옵션의 steps는 필수다.
+    expect(() => cubicSampleInto([], curve, options)).toThrow(RangeError);
+  });
+
+  test('monotoneYPolylineInto는 steps가 빠진 옵션 객체에 기본값을 쓰지 않고 RangeError를 던진다', () => {
+    const ys = [
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+    ];
+    const options = {};
+    // @ts-expect-error monotoneYPolylineInto 옵션의 steps는 필수다.
+    expect(() => monotoneYPolylineInto([], ys, options)).toThrow(RangeError);
   });
 });
 

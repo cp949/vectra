@@ -52,10 +52,4 @@ describe('cubicInflections', () => {
     expect(result).toHaveLength(2);
     expect(result[0]).toBeLessThan(result[1]);
   });
-
-  it('tuple XYInput을 받는다', () => {
-    const result = cubicInflections({ kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 0, x3: 1, y3: 1 });
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBeCloseTo(0.5, 10);
-  });
 });

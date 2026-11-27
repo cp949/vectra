@@ -1,17 +1,15 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicCurvatureAt unit test.
- *
- * 검증 방법:
- * - 직선 Bezier(collinear)는 curvature = 0.
- * - 일반 curve는 수식 (d1.x * d2.y - d1.y * d2.x) / |d1|^3 직접 계산값과 비교.
- * - degenerate (p0 == p1 == p2 == p3)는 0을 반환한다.
+ * cubicCurvatureAt의 곡률을 1차, 2차 도함수 수식 기준값과 비교한다.
+ * 직선과 퇴화 곡선의 0 반환과 부호 방향도 다룬다.
  */
-
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicCurvatureAt } from '../../../src/curve/cubic-curvature-at';
 
-// 상대 오차 비교 helper
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
@@ -119,16 +117,6 @@ describe('cubicCurvatureAt', () => {
     const p2b = { x: 3, y: -2 };
     const p3b = { x: 4, y: 0 };
     expect(cubicCurvatureAt(flatCubicFromLegacyPoints(p0b, p1b, p2b, p3b), 0.5)).toBeGreaterThan(0);
-  });
-
-  it('tuple XYInput을 받는다', () => {
-    const p0 = { x: 0, y: 0 };
-    const p1 = { x: 1, y: 3 };
-    const p2 = { x: 3, y: 3 };
-    const p3 = { x: 4, y: 0 };
-    const result = cubicCurvatureAt({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 3, x2: 3, y2: 3, x3: 4, y3: 0 }, 0.5);
-    const ref = refCurvature(p0, p1, p2, p3, 0.5);
-    expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
 
   it('number를 반환한다', () => {

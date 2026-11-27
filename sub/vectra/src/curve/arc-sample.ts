@@ -3,7 +3,7 @@ import type { CenterArc, PointWritable } from '../types/flat-shapes.internal';
 import { arcSampleInto } from './arc-sample-into';
 
 /**
- * center form arc를 균등 steps로 샘플링한 새 PointWritable[] 배열을 반환한다.
+ * center form arc를 균등 steps로 샘플링한 새 점 배열을 반환한다.
  *
  * sampling 위치: t = i / (steps - 1), i = 0..steps-1 (endpoint 포함).
  * steps validation 실패 시 RangeError를 던진다.
@@ -12,7 +12,7 @@ import { arcSampleInto } from './arc-sample-into';
  *
  * @param centerArc center form arc input
  * @param options 샘플 수 옵션. 생략하면 32점을 기록한다.
- * @returns 새로 만든 PointWritable point 배열
+ * @returns 새로 만든 점 배열
  */
 export function arcSample(centerArc: CenterArc, options?: Required<CurveSampleOptions>): PointWritable[] {
   return arcSampleInto([], centerArc, options);

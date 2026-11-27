@@ -18,11 +18,11 @@ import { appendFlattenedCubic } from './cubic-flatten.internal';
  * `RangeError` 발생 시 out 보존(atomicity)은 보장하지 않는다.
  * 좌표 값은 검증 없이 사용하므로 NaN/Infinity는 결과 좌표로 그대로 전파된다.
  *
- * @param out polyline point를 push할 PointWritable 배열. 기존 내용은 clear된다.
+ * @param out polyline 점을 push할 점 배열. 기존 내용은 clear된다.
  * @param points cubic control point chain
- * @param options flatten 옵션
- * @param options.flatness 선형 근사 허용 geometric error. 기본값: 0.5
- * @param options.maxRecursion subdivision 재귀 깊이 상한. 기본값: 32
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`을 쓴다.
+ * @param options.flatness 선형 근사 허용 geometric error
+ * @param options.maxRecursion subdivision 재귀 깊이 상한
  * @returns out
  */
 export function cubicChainFlattenInto(

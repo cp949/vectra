@@ -7,7 +7,7 @@ import type { QuadraticCurveWritable, QuadraticCurve } from '../types/flat-shape
  * `Q(u) = B(fromT + (toT - fromT)u)`의 quadratic control point를 직접 계산한다.
  * `fromT`/`toT`는 clamp하지 않으며, `fromT > toT`이면 역방향 subcurve를 반환한다.
  *
- * @param out sub-curve를 기록할 writable output
+ * @param out 부분 곡선을 기록할 이차 베지어 객체
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param fromT 구간 시작 파라미터
  * @param toT 구간 끝 파라미터

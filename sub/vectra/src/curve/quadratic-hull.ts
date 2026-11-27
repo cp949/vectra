@@ -2,7 +2,7 @@ import type { QuadraticCurve, PointWritable } from '../types/flat-shapes.interna
 import { quadraticHullInto } from './quadratic-hull-into';
 
 /**
- * quadratic Bezier curve의 파라미터 t 위치 de Casteljau hull point 배열을 새 PointWritable[] 배열로 반환한다.
+ * quadratic Bezier curve의 파라미터 t 위치 de Casteljau hull point 배열을 새 점 배열로 반환한다.
  *
  * 반환 순서:
  * ```

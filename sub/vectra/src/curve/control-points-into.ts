@@ -16,7 +16,7 @@ import type { Point } from '../types/flat-shapes.internal';
  * 좌표는 검증 없이 복사하므로 NaN/Infinity/-Infinity/-0는 그대로 pass through한다.
  * out과 input nested point가 같은 object여도 안전하다. 기록 전에 네 좌표쌍을 local로 읽는다.
  *
- * @param out 4-point neighborhood를 기록할 writable output. previous/current/next/nextNext field를 가진다.
+ * @param out 4-point neighborhood를 기록할 객체. previous/current/next/nextNext field를 가진다.
  * @param points neighborhood를 읽을 point list. 읽기 전용.
  * @param index current point index. 정수이며 [0, points.length) 범위여야 한다.
  * @param options closed 여부. closed면 modulo wrapping, 아니면 open edge clamp.

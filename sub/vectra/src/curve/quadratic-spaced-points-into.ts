@@ -16,7 +16,7 @@ import { quadraticTAtLength } from './quadratic-t-at-length';
  * 좌표는 검증 없이 사용하므로 NaN/Infinity는 결과 좌표로 pass-through된다.
  * count validation 실패 시 RangeError를 던지고 out은 그대로 유지된다(temp commit).
  *
- * @param out point를 push할 PointWritable 배열. 성공 시 기존 내용은 clear된다.
+ * @param out 점을 push할 점 배열. 성공 시 기존 내용은 clear된다.
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param count output point 수. 2 이상 0xffffffff 이하의 safe integer. 범위 밖이면 RangeError.
  * @param options TAtLength 탐색 옵션(segments / tolerance / maxIterations).

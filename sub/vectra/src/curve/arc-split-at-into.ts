@@ -16,7 +16,7 @@ import { angleAtT } from './arc.internal';
  * 반환 segment object는 새 plain object로 push한다. 입력 centerArc object를 재사용하지 않는다.
  * out에 기존 object가 있어도 재사용하지 않는다.
  *
- * @param out 분할 segment 두 개를 기록할 writable array
+ * @param out 분할된 원호 두 개를 기록할 중심 원호 배열
  * @param centerArc center form arc input
  * @param t 분할 위치 ([0, 1]로 clamp, NaN은 분할 angle을 NaN으로 보존)
  * @returns out

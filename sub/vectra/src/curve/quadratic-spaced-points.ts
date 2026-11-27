@@ -3,7 +3,7 @@ import type { QuadraticCurve, PointWritable } from '../types/flat-shapes.interna
 import { quadraticSpacedPointsInto } from './quadratic-spaced-points-into';
 
 /**
- * quadratic Bezier curve를 arc-length 기준으로 균등 분포한 새 PointWritable[] 배열을 반환한다.
+ * quadratic Bezier curve를 arc-length 기준으로 균등 분포한 새 점 배열을 반환한다.
  *
  * sampling 위치: distance = totalLength * i / (count - 1), i = 0..count-1 (양 끝점 포함).
  * 양 끝점은 t=0 / t=1로 고정해 정확한 start/end point가 된다.
@@ -16,7 +16,7 @@ import { quadraticSpacedPointsInto } from './quadratic-spaced-points-into';
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param count output point 수. 2 이상 0xffffffff 이하의 safe integer. 범위 밖이면 RangeError.
  * @param options TAtLength 탐색 옵션(segments / tolerance / maxIterations).
- * @returns 새로 만든 PointWritable point 배열
+ * @returns 새로 만든 점 배열
  */
 export function quadraticSpacedPoints(
   curve: QuadraticCurve,

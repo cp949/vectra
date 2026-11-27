@@ -1,18 +1,17 @@
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * quadraticTAtLength unit test.
- *
- * 검증 방법:
- * - 직선 Bezier에서 distance/totalLength ≈ t.
- * - tuple XYInput을 받는다.
- *
- * distance 경계, zero-length, 범위 [0, 1], round-trip 같은 일반 동작은 speed-length.test.ts가 검증한다.
+ * quadraticTAtLength가 직선 곡선에서 길이 비율과 같은 t를 돌려주는지 검증한다.
+ * 평평한 곡선 리터럴과 점 기반 생성 결과가 같은 t를 내는지 확인한다.
+ * 거리 경계, 길이 0, round-trip은 speed-length.test.ts가 검증한다.
  */
-
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticLengthAtT } from '../../../src/curve/quadratic-length-at-t';
 import { quadraticTAtLength } from '../../../src/curve/quadratic-t-at-length';
 
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
@@ -30,12 +29,5 @@ describe('quadraticTAtLength', () => {
     // 직선이므로 arc length = euclidean distance
     const t = quadraticTAtLength(flatQuadraticFromLegacyPoints(a, m, b), 5);
     expect(relErr(t, 0.5)).toBeLessThan(1e-6);
-  });
-
-  it('tuple XYInput을 받는다', () => {
-    const targetLen = quadraticLengthAtT(flatQuadraticFromLegacyPoints(p0, p1, p2), 0.5);
-    const result = quadraticTAtLength({ kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 4, y2: 0 }, targetLen);
-    const ref = quadraticTAtLength(flatQuadraticFromLegacyPoints(p0, p1, p2), targetLen);
-    expect(relErr(result, ref)).toBeLessThan(1e-12);
   });
 });

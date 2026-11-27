@@ -17,7 +17,7 @@ import { hypot2 } from '../internal/numeric';
  * 좌표/`t`가 non-finite이면 각 leaf와 동일하게 산술 결과를 pass-through한다.
  * aliasing 안전: 입력을 모두 먼저 읽은 후 output을 기록한다.
  *
- * @param out frame 결과를 기록할 writable output
+ * @param out 결과를 기록할 Frenet frame 객체
  * @param curve quadratic 또는 cubic Bezier curve 입력
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */

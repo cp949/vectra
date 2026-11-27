@@ -1,9 +1,18 @@
+/**
+ * cubicExtrema가 구간 (0,1) 안의 극값 t를 오름차순으로 돌려주는지 검증한다.
+ * cubicBoundsInto와 cubicBounds가 내부 극값으로 경계 상자를 넓히는지 확인한다.
+ * 좌표 scale이 1e-8에서 1e8까지 바뀌어도 결과가 비례하는지 다룬다.
+ */
 import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicBounds } from '../../../src/curve/cubic-bounds';
 import { cubicBoundsInto } from '../../../src/curve/cubic-bounds-into';
 import { cubicExtrema } from '../../../src/curve/cubic-extrema';
 
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);

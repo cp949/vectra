@@ -1,4 +1,5 @@
-import type { ArcCommandWritable, CenterArcLike } from '../types';
+import type { ArcCommandWritable } from '../types';
+import type { CenterArc } from '../types/flat-shapes.internal';
 import { ellipsePoint, isDegenerateRadii } from './arc.internal';
 
 /**
@@ -9,11 +10,11 @@ import { ellipsePoint, isDegenerateRadii } from './arc.internal';
  * `sweep`은 center arc의 sweep flag를 그대로 옮긴다.
  * degenerate (rx <= 0 또는 ry <= 0)이면 endpoint는 center 좌표가 된다.
  *
- * @param out endpoint form을 기록할 writable output (kind='arc' fixed)
+ * @param out endpoint form을 기록할 arc command 객체. `kind`는 `'arc'`로 기록한다.
  * @param centerArc center form arc input
  * @returns out
  */
-export function centerArcToEndpointInto<Out extends ArcCommandWritable>(out: Out, centerArc: CenterArcLike): Out {
+export function centerArcToEndpointInto<Out extends ArcCommandWritable>(out: Out, centerArc: CenterArc): Out {
   const { cx, cy, rx, ry, xRotation, startAngle, endAngle, sweep } = centerArc;
 
   out.kind = 'arc';

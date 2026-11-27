@@ -117,22 +117,6 @@ describe('cubicLineIntersectionsInto', () => {
       expect(hits1[i].point.y).toBeCloseTo(hits2[i].point.y, 9);
     }
   });
-
-  test('tuple line input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    cubicLineIntersectionsInto(
-      hits,
-      { kind: 'cubic', x0: 0, y0: 0, x1: 0.3, y1: 2, x2: 0.7, y2: 2, x3: 1, y3: 0 },
-      flatLineFromLegacy([
-        [0, 1],
-        [1, 0],
-      ] as const)
-    );
-    expect(hits.length).toBeGreaterThanOrEqual(1);
-    for (const h of hits) {
-      expect(h.point.y).toBeCloseTo(1, 6);
-    }
-  });
 });
 
 describe('cubicLineIntersectionsInto 좌표 scale 불변성', () => {

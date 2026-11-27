@@ -2,7 +2,7 @@ import type { CenterArc, CenterArcWritable } from '../types/flat-shapes.internal
 import { arcSplitAtInto } from './arc-split-at-into';
 
 /**
- * center form arc를 normalized t 위치에서 분할한 새 CenterArcWritable[] 배열(길이 2)을 반환한다.
+ * center form arc를 normalized t 위치에서 분할한 새 중심 원호 배열(길이 2)을 반환한다.
  *
  * 두 segment는 원본 centerArc의 cx, cy, rx, ry, xRotation, sweep을 그대로 보존하고
  * startAngle/endAngle만 분할 angle로 갱신한다.
@@ -17,7 +17,7 @@ import { arcSplitAtInto } from './arc-split-at-into';
  *
  * @param centerArc center form arc input
  * @param t 분할 위치 ([0, 1]로 clamp, NaN은 분할 angle을 NaN으로 보존)
- * @returns 새로 만든 길이 2 CenterArcWritable 배열
+ * @returns 새로 만든 길이 2 중심 원호 배열
  */
 export function arcSplitAt(centerArc: CenterArc, t: number): CenterArcWritable[] {
   return arcSplitAtInto([], centerArc, t);

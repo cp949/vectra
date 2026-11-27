@@ -1,10 +1,9 @@
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * quadraticSampleInto unit test.
- *
- * quadratic Bezier curve를 균등 steps로 샘플링해 XYObjectWritable[] 배열에 push한다.
- * sampling 위치: t = i / (steps - 1), i = 0..steps-1 (endpoint 포함).
+ * quadraticSampleInto가 t = i / (steps - 1) 위치의 점을 끝점 포함으로 기록하는지 검증한다.
+ * 기본 steps 32, 잘못된 steps의 RangeError, 오류 시 out 보존을 다룬다.
+ * 출력 점이 매번 새 객체인지도 확인한다.
  */
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticSampleInto } from '../../../src/curve/quadratic-sample-into';
 

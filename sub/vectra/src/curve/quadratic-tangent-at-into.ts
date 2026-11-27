@@ -9,7 +9,7 @@ import { hypot2 } from '../internal/numeric';
  * caller가 zero vector를 처리할 책임이 있다. vectra는 임의 방향을 주입하지 않는다.
  * t는 clamp 없이 수식 그대로 계산한다.
  *
- * @param out unit tangent vector를 기록할 writable output
+ * @param out 단위 접선 벡터를 기록할 점 객체
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */

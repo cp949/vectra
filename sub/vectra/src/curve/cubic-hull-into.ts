@@ -19,7 +19,7 @@ import type { CubicCurve, PointWritable } from '../types/flat-shapes.internal';
  * 총 10개의 object를 push한다.
  * t는 clamp 없이 수식 그대로 계산한다.
  *
- * @param out hull point 배열을 기록할 PointWritable 배열 output. 기존 내용은 clear된다.
+ * @param out hull 점을 기록할 점 배열. 기존 내용은 clear된다.
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  * @returns out

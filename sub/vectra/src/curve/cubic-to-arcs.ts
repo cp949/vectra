@@ -3,7 +3,7 @@ import type { CenterArcWritable, CubicCurve } from '../types/flat-shapes.interna
 import { cubicToArcsInto } from './cubic-to-arcs-into';
 
 /**
- * cubic Bezier를 circular center-form arc collection으로 근사한 새 CenterArcWritable[] 배열을 반환한다.
+ * cubic Bezier를 circular center-form arc collection으로 근사한 새 중심 원호 배열을 반환한다.
  *
  * zero-length degenerate cubic(네 control point가 모두 동일한 좌표)은 빈 배열을 반환한다.
  * 입력 좌표 또는 내부 산술 결과가 non-finite이면 RangeError로 실패한다.
@@ -20,7 +20,7 @@ import { cubicToArcsInto } from './cubic-to-arcs-into';
  * caller-responsibility 가정은 `cubicToArcsInto`와 동일하다.
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options 근사 옵션 (errorTolerance, maxSegments, minSegmentT)
- * @returns 새로 만든 CenterArcWritable 배열
+ * @returns 새로 만든 중심 원호 배열
  */
 export function cubicToArcs(curve: CubicCurve, options?: Required<CubicToArcsOptions>): CenterArcWritable[] {
   return cubicToArcsInto([], curve, options);

@@ -10,8 +10,8 @@ import { speedLength } from './speed-length.internal';
  * global cache 없음. 호출마다 deterministic하게 계산한다.
  *
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
- * @param options 적분 옵션
- * @param options.segments 구간 분할 수. 기본값: 12
+ * @param options 적분 옵션. 생략하면 `{ segments: 12 }`를 쓴다.
+ * @param options.segments 구간 분할 수
  * @returns arc length
  */
 export function cubicLength(curve: CubicCurve, options?: Required<LengthOptions>): number {

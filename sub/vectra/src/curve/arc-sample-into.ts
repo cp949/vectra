@@ -10,7 +10,7 @@ import { arcPointAtTInto } from './arc-point-at-t-into';
  * steps validation 실패 시 RangeError를 던지고 out은 그대로 유지된다.
  * rx <= 0 또는 ry <= 0인 degenerate arc는 center 좌표를 반환한다.
  *
- * @param out point를 push할 PointWritable 배열. 기존 내용은 clear된다.
+ * @param out 점을 push할 점 배열. 기존 내용은 clear된다.
  * @param centerArc center form arc input
  * @param options 샘플 수 옵션. 생략하면 32점을 기록한다.
  * @returns out

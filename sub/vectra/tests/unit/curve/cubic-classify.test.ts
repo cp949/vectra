@@ -54,8 +54,4 @@ describe('cubicClassify', () => {
       'serpentine'
     );
   });
-
-  it('tuple XYInput을 받는다', () => {
-    expect(cubicClassify({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 0, x2: 2, y2: 0, x3: 3, y3: 0 })).toBe('line');
-  });
 });

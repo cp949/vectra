@@ -1,12 +1,9 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * curve.cubicChainFlattenInto — cubic control point chain을 연결 polyline point collection으로 flatten.
- *
- * 검증: 단일 segment가 cubicFlattenInto와 deep equal, 다중 segment 연결점 dedup,
- * short chain 빈 배열, invalid length RangeError, flatness 단조성,
- * out clear / return identity / result object 신규 생성, non-finite(NaN/Infinity/-Infinity) 및
- * degenerate 입력이 cubicFlattenInto 정책과 일치.
+ * cubicChainFlattenInto가 cubic 제어점 체인을 하나의 꺾은선으로 평탄화하는지 검증한다.
+ * 단일 segment는 cubicFlattenInto와 같고, 연결점은 한 번만 기록한다.
+ * 짧은 체인, 잘못된 길이의 RangeError, out 규약, non-finite 입력도 다룬다.
  */
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicChainFlattenInto } from '../../../src/curve/cubic-chain-flatten-into';
 import { cubicFlattenInto } from '../../../src/curve/cubic-flatten-into';

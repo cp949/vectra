@@ -13,10 +13,10 @@ import { ellipseDerivative, ellipsePoint, isDegenerateRadii } from './arc.intern
  * out.length = 0 후 push하므로 기존 내용은 삭제된다.
  * options.maxAngle이 finite positive가 아니면 기본값 Math.PI / 2를 사용한다.
  *
- * @param out cubic Bezier curve 목록을 기록할 writable array
+ * @param out 근사 결과를 기록할 삼차 베지어 배열
  * @param centerArc center form arc input
- * @param options 분할 옵션
- * @param options.maxAngle 분할 최대 각도 (radian). 기본값: Math.PI / 2
+ * @param options 분할 옵션. 생략하면 `{ maxAngle: Math.PI / 2 }`를 쓴다.
+ * @param options.maxAngle 분할 최대 각도 (radian)
  * @returns out
  */
 export function arcToCubicInto(

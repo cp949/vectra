@@ -8,11 +8,11 @@ import { appendFlattenedCubic } from './cubic-flatten.internal';
  * out을 clear(length=0)한 뒤 근사 polyline의 점들을 순서대로 push한다.
  * 직선(flat) curve는 시작점과 끝점 두 개만 push한다.
  *
- * @param out polyline point를 push할 PointWritable 배열. 기존 내용은 clear된다.
+ * @param out polyline 점을 push할 점 배열. 기존 내용은 clear된다.
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
- * @param options flatten 옵션
- * @param options.flatness 선형 근사 허용 geometric error. 기본값: 0.5
- * @param options.maxRecursion subdivision 재귀 깊이 상한. 기본값: 32
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`을 쓴다.
+ * @param options.flatness 선형 근사 허용 geometric error
+ * @param options.maxRecursion subdivision 재귀 깊이 상한
  * @returns out
  */
 export function cubicFlattenInto(

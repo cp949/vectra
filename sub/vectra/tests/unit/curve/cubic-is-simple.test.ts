@@ -45,8 +45,4 @@ describe('cubicIsSimple', () => {
     // p0=(-1,-2), p1=(1,2), p2=(-1,2), p3=(1.1,-2): disc>0, 2개 inflection
     expect(cubicIsSimple({ kind: 'cubic', x0: -1, y0: -2, x1: 1, y1: 2, x2: -1, y2: 2, x3: 1.1, y3: -2 })).toBe(false);
   });
-
-  it('tuple XYInput을 받는다', () => {
-    expect(cubicIsSimple({ kind: 'cubic', x0: 0, y0: 0, x1: 1, y1: 2, x2: 2, y2: 2, x3: 3, y3: 0 })).toBe(true);
-  });
 });

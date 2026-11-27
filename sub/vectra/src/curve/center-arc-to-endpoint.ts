@@ -1,4 +1,5 @@
-import type { ArcCommandWritable, CenterArcLike } from '../types';
+import type { ArcCommandWritable } from '../types';
+import type { CenterArc } from '../types/flat-shapes.internal';
 import { centerArcToEndpointInto } from './center-arc-to-endpoint-into';
 
 /**
@@ -16,7 +17,7 @@ import { centerArcToEndpointInto } from './center-arc-to-endpoint-into';
  * @param centerArc center form arc input
  * @returns 새 plain `ArcCommandWritable` object
  */
-export function centerArcToEndpoint(centerArc: CenterArcLike): ArcCommandWritable {
+export function centerArcToEndpoint(centerArc: CenterArc): ArcCommandWritable {
   return centerArcToEndpointInto(
     {
       kind: 'arc',

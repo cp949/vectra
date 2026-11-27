@@ -18,7 +18,7 @@ import {
  *
  * @param out 결과를 기록할 점 배열
  * @param points 곡선이 통과할 보간 점 배열
- * @param options tension(0=기본), closed 옵션
+ * @param options tension, closed 옵션. 생략하면 `{ tension: 0, closed: false }`를 쓴다.
  * @returns out
  */
 export function cardinalPathInto(

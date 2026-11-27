@@ -1,13 +1,8 @@
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * quadraticPointAtT allocating companion unit test.
- *
- * 검증 방법:
- * - quadraticPointAtTInto와 동등한 결과를 새 object로 반환한다.
- * - t=0이면 p0, t=1이면 p2를 반환한다 (endpoint identity).
- * - 호출 시마다 새 reference를 반환한다.
+ * quadraticPointAtT가 quadraticPointAtTInto와 같은 점을 새 객체로 돌려주는지 검증한다.
+ * t 0과 t 1의 끝점, 구간 밖 t의 외삽을 다룬다.
  */
-
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticPointAtT } from '../../../src/curve/quadratic-point-at-t';
 import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';

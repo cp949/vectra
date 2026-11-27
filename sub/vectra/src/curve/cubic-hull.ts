@@ -2,7 +2,7 @@ import type { CubicCurve, PointWritable } from '../types/flat-shapes.internal';
 import { cubicHullInto } from './cubic-hull-into';
 
 /**
- * cubic Bezier curve의 파라미터 t 위치 de Casteljau hull point 배열을 새 PointWritable[] 배열로 반환한다.
+ * cubic Bezier curve의 파라미터 t 위치 de Casteljau hull point 배열을 새 점 배열로 반환한다.
  *
  * 반환 순서:
  * ```

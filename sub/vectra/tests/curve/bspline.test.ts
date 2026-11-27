@@ -267,13 +267,13 @@ describe('bsplinePolylineInto — 기본 동작', () => {
     expect(out.length).toBe(32);
   });
 
-  it('steps 옵션: steps=8 → out.length === 8', () => {
+  it('steps가 8이면 점 8개를 기록한다', () => {
     const out: { x: number; y: number }[] = [];
     bsplinePolylineInto(out, points, { steps: 8, closed: false });
     expect(out.length).toBe(8);
   });
 
-  it('steps 옵션: steps=16 → out.length === 16', () => {
+  it('steps가 16이면 점 16개를 기록한다', () => {
     const out: { x: number; y: number }[] = [];
     bsplinePolylineInto(out, points, { steps: 16, closed: false });
     expect(out.length).toBe(16);

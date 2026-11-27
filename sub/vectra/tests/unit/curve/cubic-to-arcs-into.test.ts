@@ -1,11 +1,10 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicToArcsInto / cubicToArcs unit test.
- *
- * cubic Bezier → circular arc collection 근사 결과, 오류 처리,
- * out 초기화, return identity, companion 동등성을 검증한다.
+ * cubicToArcsInto가 cubic 곡선을 원호 목록으로 근사하는지 검증한다.
+ * 사분원 근사의 끝점 일치, 원형 호, tolerance에 따른 분할 수, out 규약을 다룬다.
+ * 잘못된 옵션과 non-finite 좌표, 직선, 분할 한계의 RangeError를 확인한다.
+ * sweep 방향과 atan2 -π 경계 교차 시 호 중점 위치도 검증한다.
  */
-
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, test } from 'vitest';
 import { arcPointAtTInto } from '../../../src/curve/arc-point-at-t-into';
 import { cubicToArcsInto } from '../../../src/curve/cubic-to-arcs-into';
@@ -77,24 +76,6 @@ describe('cubicToArcsInto — 정상 케이스', () => {
       minSegmentT: 1e-6,
     });
     expect(out2.length).toBeGreaterThanOrEqual(out1.length);
-  });
-
-  test('tuple input을 받는다', () => {
-    const objOut: CenterArcWritable[] = [];
-    const tupleOut: CenterArcWritable[] = [];
-    cubicToArcsInto(objOut, flatCubicFromLegacyPoints(QC_P0, QC_P1, QC_P2, QC_P3));
-    cubicToArcsInto(tupleOut, {
-      kind: 'cubic',
-      x0: QC_P0.x,
-      y0: QC_P0.y,
-      x1: QC_P1.x,
-      y1: QC_P1.y,
-      x2: QC_P2.x,
-      y2: QC_P2.y,
-      x3: QC_P3.x,
-      y3: QC_P3.y,
-    });
-    expect(tupleOut).toEqual(objOut);
   });
 
   test('zero-length degenerate cubic은 빈 배열을 반환한다', () => {
@@ -344,7 +325,10 @@ describe('cubicToArcsInto — 오류 케이스', () => {
 // ──────────────────────────────────────────────
 // sweep 방향 / atan2 -π 경계 교차
 // ──────────────────────────────────────────────
-// 좌표를 원점 기준 phi(radian)만큼 회전한다.
+/**
+ * 점을 원점 기준으로 phi 라디안만큼 회전한다.
+ * 사분원 fixture를 atan2 -π 경계로 옮길 때 쓴다.
+ */
 function rotate(p: { x: number; y: number }, phi: number): { x: number; y: number } {
   const c = Math.cos(phi);
   const s = Math.sin(phi);

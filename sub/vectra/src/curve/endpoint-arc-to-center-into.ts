@@ -15,7 +15,7 @@ import type { CenterArcWritable, Point } from '../types/flat-shapes.internal';
  *
  * 이 시점의 angle convention은 endAngle - startAngle의 부호 = (sweep ? +1 : -1) 이다.
  *
- * @param out center form을 기록할 writable output
+ * @param out center form을 기록할 중심 원호 객체
  * @param from arc 시작점 (current point)
  * @param arc endpoint 형식의 ArcCommand
  * @returns out

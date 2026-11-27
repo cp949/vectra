@@ -10,8 +10,8 @@ import { speedLength } from './speed-length.internal';
  * degenerate(rx <= 0 또는 ry <= 0) 또는 zero-sweep arc는 0을 반환한다.
  *
  * @param centerArc center form arc input
- * @param options 적분 옵션
- * @param options.segments θ 구간 분할 수. 기본값: 12
+ * @param options 적분 옵션. 생략하면 `{ segments: 12 }`를 쓴다.
+ * @param options.segments θ 구간 분할 수
  * @returns arc length
  */
 export function arcLength(centerArc: CenterArc, options?: Required<LengthOptions>): number {

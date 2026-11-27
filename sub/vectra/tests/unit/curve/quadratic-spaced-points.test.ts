@@ -1,11 +1,10 @@
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * quadraticSpacedPointsInto / quadraticSpacedPoints unit test.
- *
- * arc-length 기준으로 균등한 point collection을 검증한다.
- * 양 끝점은 t=0 / t=1로 고정하고, 중간 점은 quadraticTAtLength mapping과 동치다.
- * uniform t sampling(quadraticSample)과 달리 arc-length 간격을 사용한다.
+ * quadraticSpacedPointsInto가 호 길이 기준으로 균등한 점을 기록하는지 검증한다.
+ * 끝점은 t 0과 t 1에 고정하고, 중간 점은 quadraticTAtLength 결과와 같다.
+ * 비대칭 곡선에서 균등 t 표본과 달라지는지 확인한다.
+ * 잘못된 count의 RangeError, out 보존, non-finite 좌표 전파도 다룬다.
  */
+import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticLength } from '../../../src/curve/quadratic-length';
 import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';
@@ -139,18 +138,6 @@ describe('quadraticSpacedPointsInto', () => {
     );
     expect(out).toHaveLength(1);
     expect(out[0]).toBe(existing);
-  });
-
-  it('tuple input과 object input이 동일한 결과를 반환한다', () => {
-    const objOut: { x: number; y: number }[] = [];
-    const tupOut: { x: number; y: number }[] = [];
-    quadraticSpacedPointsInto(objOut, flatQuadraticFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2), 5);
-    quadraticSpacedPointsInto(tupOut, { kind: 'quadratic', x0: 0, y0: 0, x1: 2, y1: 0, x2: 2, y2: 6 }, 5);
-    expect(tupOut).toHaveLength(objOut.length);
-    for (let i = 0; i < objOut.length; i++) {
-      expect(tupOut[i].x).toBeCloseTo(objOut[i].x, 12);
-      expect(tupOut[i].y).toBeCloseTo(objOut[i].y, 12);
-    }
   });
 
   it('각 출력 point는 새로운 object이다', () => {

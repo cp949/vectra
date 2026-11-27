@@ -3,7 +3,7 @@ import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { naturalSplinePolylineInto } from './natural-spline-polyline-into';
 
 /**
- * point list를 통과하는 natural cubic spline을 segment당 균등 샘플링한 새 PointWritable[] 배열을 반환한다.
+ * point list를 통과하는 natural cubic spline을 segment당 균등 샘플링한 새 점 배열을 반환한다.
  *
  * x/y를 각각 index parameter 기준으로 natural spline 처리한다. x monotonic은 요구하지 않는다.
  * endpoint second derivative는 0이다. 첫 segment만 시작점을 포함하고 후속 segment는 연결점 중복을 피한다.
@@ -14,7 +14,7 @@ import { naturalSplinePolylineInto } from './natural-spline-polyline-into';
  *
  * @param points natural spline이 통과할 입력 point 배열
  * @param options 구간별 표본 수 옵션. 생략하면 16점을 기록한다.
- * @returns 새로 만든 PointWritable point 배열
+ * @returns 새로 만든 점 배열
  */
 export function naturalSplinePolyline(
   points: readonly Point[],

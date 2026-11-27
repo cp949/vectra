@@ -14,7 +14,7 @@ const DEFAULT_STEPS = 16;
  * 좌표가 non-finite면 RangeError로 실패한다.
  * steps가 safe integer가 아니거나 1 미만이면 RangeError로 실패한다.
  *
- * @param out point를 기록할 writable point 배열. 기존 내용은 덮어쓴다.
+ * @param out 점을 기록할 점 배열. 기존 내용은 덮어쓴다.
  * @param points natural spline이 통과할 입력 point 배열
  * @param options 구간별 표본 수 옵션. 생략하면 16점을 기록한다.
  * @returns out

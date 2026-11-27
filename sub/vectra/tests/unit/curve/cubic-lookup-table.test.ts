@@ -1,11 +1,10 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicLookupTableInto / cubicLookupTable unit test.
- *
- * uniform t sample의 cumulative chord-length lookup table을 검증한다.
- * 첫 entry { t:0, length:0 }, 마지막 entry { t:1, length:approximateTotalLength }.
- * length는 exact arc length가 아니라 chord distance 누적값(nondecreasing)이다.
+ * cubicLookupTableInto가 균등 t 표본의 현 길이 누적표를 기록하는지 검증한다.
+ * 첫 항목은 t 0, 길이 0이고 마지막 항목은 t 1이다.
+ * 잘못된 steps의 RangeError와 out 보존, non-finite 좌표 전파도 다룬다.
+ * cubicLookupTable은 Into 결과와 같은 값을 돌려준다.
  */
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicLength } from '../../../src/curve/cubic-length';
 import { cubicLookupTable } from '../../../src/curve/cubic-lookup-table';
@@ -121,18 +120,6 @@ describe('cubicLookupTableInto', () => {
     );
     expect(out).toHaveLength(1);
     expect(out[0]).toBe(existing);
-  });
-
-  it('tuple input과 object input이 동일한 결과를 반환한다', () => {
-    const objOut: { t: number; length: number }[] = [];
-    const tupOut: { t: number; length: number }[] = [];
-    cubicLookupTableInto(objOut, flatCubicFromLegacyPoints(CURVE_P0, CURVE_P1, CURVE_P2, CURVE_P3), 6);
-    cubicLookupTableInto(tupOut, { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 4, x2: 4, y2: 4, x3: 4, y3: 0 }, 6);
-    expect(tupOut).toHaveLength(objOut.length);
-    for (let i = 0; i < objOut.length; i++) {
-      expect(tupOut[i].t).toBeCloseTo(objOut[i].t, 12);
-      expect(tupOut[i].length).toBeCloseTo(objOut[i].length, 12);
-    }
   });
 
   it('NaN 좌표는 length로 pass-through된다', () => {

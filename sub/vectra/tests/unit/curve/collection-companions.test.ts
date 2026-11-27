@@ -1,9 +1,9 @@
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * curve domain collection companion unit test.
- *
- * 각 companion이 대응 *-into 함수와 동등한 결과를 반환하는지 검증한다.
+ * curve 도메인 컬렉션 companion이 대응 *Into 함수와 같은 결과를 내는지 검증한다.
+ * 짧은 입력의 빈 배열, 잘못된 옵션의 RangeError, 항목 수도 다룬다.
+ * split, controlPoints companion이 매번 새 객체를 돌려주는지도 확인한다.
  */
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, test } from 'vitest';
 import { arcFlatten } from '../../../src/curve/arc-flatten';
 import { arcFlattenInto } from '../../../src/curve/arc-flatten-into';
@@ -94,12 +94,20 @@ type CompanionCase = {
   length?: number;
 };
 
+/**
+ * void를 돌려주는 *PolylineInto 함수의 출력을 새 배열로 모은다.
+ * companion 기대값을 out 배열 형태로 맞출 때 쓴다.
+ */
 function collect(fill: (out: any[]) => void): any[] {
   const out: any[] = [];
   fill(out);
   return out;
 }
 
+/**
+ * companion 사례 하나로 describe 블록을 만든다.
+ * 사례에 있는 필드에 따라 동등성, 빈 배열, RangeError, 길이 시험을 등록한다.
+ */
 function defineCompanionCase(companionCase: CompanionCase): void {
   describe(companionCase.name, () => {
     test(`${companionCase.name}Into 결과와 deep equal이다`, () => {

@@ -16,7 +16,7 @@ import { subdivideCubicToTolerance, validateCubicToArcsInputs } from './cubic-to
  * 결과 arc는 center-form 규약을 따른다. (endAngle - startAngle)의 부호와 크기가 진행 방향과 각폭을 담으며 sweep === (endAngle >= startAngle)이다. atan2 -π 경계를 교차하는 arc도 올바른 방향으로 기록한다.
  * 각 결과 arc는 새 plain object로 push한다. 입력 point나 기존 out element를 재사용하지 않는다.
  *
- * @param out arc를 기록할 writable array
+ * @param out 근사 원호를 기록할 중심 원호 배열
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param options 근사 옵션 (errorTolerance, maxSegments, minSegmentT)
  * @returns out

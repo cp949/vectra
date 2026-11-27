@@ -17,7 +17,7 @@ export const GL5_WEIGHTS = [
  * 적분 합의 부호는 (to - from)의 부호를 따른다. 길이는 양수가 정의이므로 절댓값을 취한다.
  *
  * @param curve 곡선 적분기
- * @param options 적분 옵션. segments 기본값: 12
+ * @param options 적분 옵션. 생략하면 `{ segments: 12 }`를 쓴다.
  */
 export function speedLength(curve: CurveSpeed, options?: Required<LengthOptions>): number {
   if (curve.from === curve.to) return 0;
@@ -32,7 +32,7 @@ export function speedLength(curve: CurveSpeed, options?: Required<LengthOptions>
  *
  * @param curve 곡선 적분기
  * @param t 정규화 파라미터
- * @param options 적분 옵션. segments 기본값: 12
+ * @param options 적분 옵션. 생략하면 `{ segments: 12 }`를 쓴다.
  */
 export function speedLengthAtT(curve: CurveSpeed, t: number, options?: Required<LengthOptions>): number {
   if (t <= 0) return 0;
@@ -51,7 +51,7 @@ export function speedLengthAtT(curve: CurveSpeed, t: number, options?: Required<
  *
  * @param curve 곡선 적분기
  * @param distance 목표 arc length
- * @param options 탐색 옵션. tolerance 기본값: 1e-8, maxIterations 기본값: 64, segments 기본값: 12
+ * @param options 탐색 옵션. 생략하면 `{ segments: 12, tolerance: 1e-8, maxIterations: 64 }`를 쓴다.
  */
 export function speedTAtLength(curve: CurveSpeed, distance: number, options?: Required<TAtLengthOptions>): number {
   const tolerance = options === undefined ? 1e-8 : options.tolerance;

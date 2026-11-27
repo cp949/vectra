@@ -6,7 +6,7 @@ import type { CubicCurve, PointWritable } from '../types/flat-shapes.internal';
  * 수식: B''(t) = 6[(1-t)·(p2-2p1+p0) + t·(p3-2p2+p1)]
  * t는 clamp 없이 수식 그대로 계산한다.
  *
- * @param out 2차 도함수 vector를 기록할 writable output
+ * @param out 2차 도함수 벡터를 기록할 점 객체
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  */

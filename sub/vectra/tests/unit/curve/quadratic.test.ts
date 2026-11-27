@@ -1,3 +1,8 @@
+/**
+ * quadratic 곡선의 점, 도함수, 단위 접선, 단위 법선을 정확값과 비교한다.
+ * 분할, hull 점 순서, 극값 t 정렬, 경계 상자를 검증한다.
+ * 평탄화의 flatness 단조성과 길이 근사도 다룬다.
+ */
 import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticBoundsInto } from '../../../src/curve/quadratic-bounds-into';
@@ -11,7 +16,10 @@ import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-i
 import { quadraticSplitInto } from '../../../src/curve/quadratic-split-into';
 import { quadraticTangentAtInto } from '../../../src/curve/quadratic-tangent-at-into';
 
-// 상대 오차 비교 helper
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
@@ -156,6 +164,9 @@ describe('quadraticSplitInto', () => {
   const p1 = { x: 1, y: 2 };
   const p2 = { x: 4, y: 0 };
 
+  /**
+   * quadraticSplitInto의 left, right out으로 넘길 0 초기값 평평한 quadratic을 만든다.
+   */
   function makeOut() {
     return { kind: 'quadratic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0 };
   }

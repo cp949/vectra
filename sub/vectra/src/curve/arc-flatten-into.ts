@@ -72,11 +72,11 @@ function flattenRecursive(
  * degenerate(rx<=0 또는 ry<=0)이면 center 좌표를 시작점과 끝점에 둔 polyline을 반환한다.
  * zero-sweep(startAngle === endAngle)이면 시작 각도의 ellipse 점을 두 번 push한 polyline을 반환한다.
  *
- * @param out polyline point를 push할 PointWritable 배열. 기존 내용은 clear된다.
+ * @param out polyline 점을 push할 점 배열. 기존 내용은 clear된다.
  * @param centerArc center form arc input
- * @param options flatten 옵션
- * @param options.flatness chord-error 허용 한계. 기본값: 0.5
- * @param options.maxRecursion subdivision 재귀 깊이 상한. 기본값: 32
+ * @param options flatten 옵션. 생략하면 `{ flatness: 0.5, maxRecursion: 32 }`을 쓴다.
+ * @param options.flatness chord-error 허용 한계
+ * @param options.maxRecursion subdivision 재귀 깊이 상한
  * @returns out
  */
 export function arcFlattenInto(

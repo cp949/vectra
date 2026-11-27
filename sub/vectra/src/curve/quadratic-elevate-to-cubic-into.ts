@@ -14,7 +14,7 @@ import type { CubicCurveWritable, QuadraticCurve } from '../types/flat-shapes.in
  * aliasing 안전: 입력을 모두 읽은 후 출력에 기록한다.
  * 변환 후 cubic curve는 원본 quadratic curve와 모든 파라미터 t에서 동일한 point를 반환한다.
  *
- * @param out 결과를 기록할 cubic curve writable output
+ * @param out 결과를 기록할 삼차 베지어 객체
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  */
 export function quadraticElevateToCubicInto<Out extends CubicCurveWritable>(out: Out, curve: QuadraticCurve): Out {

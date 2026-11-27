@@ -13,7 +13,7 @@ import { hypot2 } from '../internal/numeric';
  * 반환한다. 이는 의도된 spec이다. zero-length curve의 tangent는 정의할 수 없으므로
  * zero vector를 반환하고, caller가 필요에 따라 fallback 방향을 결정해야 한다.
  *
- * @param out unit tangent vector를 기록할 writable output
+ * @param out 단위 접선 벡터를 기록할 점 객체
  * @param centerArc center form arc input
  * @param t 파라미터 (일반적으로 [0, 1], clamp 없음)
  * @returns out

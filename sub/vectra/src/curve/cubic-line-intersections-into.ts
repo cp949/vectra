@@ -1,8 +1,8 @@
 import type { CurveIntersectionOptions, IntersectionHit } from '../types';
 import type { InfiniteLine, PointWritable, CubicCurve } from '../types/flat-shapes.internal';
 import { solveCubicInClosedUnit } from './cubic-solve.internal';
-import { computeTA, pushHitIfNew, resolveOptions, setupLine } from './curve-intersections.internal';
-import { hypot2 } from '../internal/numeric';
+import { DEFAULT_EPSILON_T, computeTA, pushHitIfNew, setupLine } from './curve-intersections.internal';
+import { DEFAULT_EPSILON, hypot2 } from '../internal/numeric';
 
 /** 다항식 계수 noise 바닥의 상대 계수. `|n|·(좌표 크기)`에 곱한다. double 상쇄 오차보다 충분히 크다. */
 const COEFFICIENT_REL_EPS = 1e-12;
@@ -17,7 +17,7 @@ const COEFFICIENT_REL_EPS = 1e-12;
  * @param outHits 결과 배열 (호출 전 비워야 한다)
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param line infinite-line (origin + direction)
- * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @param options epsilon, epsilonT 제어 옵션. maxDepth는 쓰지 않는다. 생략하면 `{ epsilon: 1e-9, epsilonT: 1e-10 }`를 쓴다.
  * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function cubicLineIntersectionsInto(
@@ -31,7 +31,9 @@ export function cubicLineIntersectionsInto(
   const setup = setupLine(line);
   if (!setup) return outHits;
 
-  const { ox, oy, nx, ny, nDotO, epsilon, epsilonT } = { ...setup, ...resolveOptions(options) };
+  const { ox, oy, nx, ny, nDotO } = setup;
+  const epsilon = options === undefined ? DEFAULT_EPSILON : options.epsilon;
+  const epsilonT = options === undefined ? DEFAULT_EPSILON_T : options.epsilonT;
 
   const p0x = curve.x0;
   const p0y = curve.y0;

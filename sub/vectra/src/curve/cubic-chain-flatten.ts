@@ -3,7 +3,7 @@ import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { cubicChainFlattenInto } from './cubic-chain-flatten-into';
 
 /**
- * 연결된 cubic Bezier control point chain을 polyline에 근사한 새 PointWritable[] 배열을 반환한다.
+ * 연결된 cubic Bezier control point chain을 polyline에 근사한 새 점 배열을 반환한다.
  *
  * `points`는 `[p0, c1, c2, p1, c1, c2, p2, ...]` 형식이다. 첫 4개가 첫 segment를 이루고,
  * 이후 3개마다 직전 segment 끝점을 시작점으로 공유하는 segment가 이어진다.
@@ -22,7 +22,7 @@ import { cubicChainFlattenInto } from './cubic-chain-flatten-into';
  * caller-responsibility 가정은 `cubicChainFlattenInto`와 동일하다.
  * @param points cubic control point chain
  * @param options flatten 옵션 (flatness 기본값 0.5, maxRecursion 기본값 32)
- * @returns 새로 만든 PointWritable point 배열
+ * @returns 새로 만든 점 배열
  */
 export function cubicChainFlatten(points: readonly Point[], options?: Required<FlattenOptions>): PointWritable[] {
   return cubicChainFlattenInto([], points, options);

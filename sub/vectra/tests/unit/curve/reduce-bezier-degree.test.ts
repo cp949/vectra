@@ -1,18 +1,19 @@
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * reduceBezierDegreeInto / reduceBezierDegree unit test.
- *
- * 검증 방법:
- * - 정확히 elevated된 cubic은 원본 quadratic control point로 복원된다.
- * - 일반 cubic은 기본 tolerance에서 실패하고 out이 미수정이다.
- * - 허용 오차, RangeError, 새 결과 반환을 검증한다.
+ * reduceBezierDegreeInto가 차수 올림으로 만든 cubic을 원본 quadratic으로 되돌리는지 검증한다.
+ * 일반 cubic은 기본 tolerance에서 실패하고 out을 바꾸지 않는다.
+ * tolerance 조정, 잘못된 tolerance의 RangeError, non-finite 좌표의 false 반환을 다룬다.
+ * reduceBezierDegree는 성공하면 새 객체, 실패하면 undefined를 돌려준다.
  */
-
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to-cubic';
 import { reduceBezierDegree } from '../../../src/curve/reduce-bezier-degree';
 import { reduceBezierDegreeInto } from '../../../src/curve/reduce-bezier-degree-into';
 
+/**
+ * out 인자로 넘길 0 초기값 평평한 quadratic 객체를 만든다.
+ * 실패 시 out 불변을 보는 시험은 0이 아닌 값을 따로 쓴다.
+ */
 function makeQuadOut() {
   return { kind: 'quadratic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0 };
 }

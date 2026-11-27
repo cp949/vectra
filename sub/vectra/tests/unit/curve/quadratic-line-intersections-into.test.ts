@@ -53,21 +53,6 @@ describe('quadraticLineIntersectionsInto', () => {
     expect(hits).toHaveLength(0);
   });
 
-  test('tuple 형식의 line input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    quadraticLineIntersectionsInto(
-      hits,
-      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 },
-      flatLineFromLegacy([
-        [0, 0.5],
-        [1, 0],
-      ] as const)
-    );
-    expect(hits).toHaveLength(2);
-    expect(hits[0].point.y).toBeCloseTo(0.5, 9);
-    expect(hits[1].point.y).toBeCloseTo(0.5, 9);
-  });
-
   test('curve endpoint (tB=0)이 line 위에 놓이면 touch hit를 반환한다', () => {
     // p0=(0,0)이 y=0 line 위에 있다
     const hits: IntersectionHit[] = [];

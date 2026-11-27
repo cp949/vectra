@@ -11,8 +11,8 @@ import { speedLengthAtT } from './speed-length.internal';
  *
  * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param t 파라미터 (clamp됨)
- * @param options 적분 옵션
- * @param options.segments 구간 분할 수. 기본값: 12
+ * @param options 적분 옵션. 생략하면 `{ segments: 12 }`를 쓴다.
+ * @param options.segments 구간 분할 수
  */
 export function cubicLengthAtT(curve: CubicCurve, t: number, options?: Required<LengthOptions>): number {
   return speedLengthAtT(cubicSpeed(curve), t, options);

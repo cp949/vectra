@@ -1,3 +1,7 @@
+/**
+ * 끝점 형식과 중심 형식 arc의 상호 변환과 반지름 보정을 검증한다.
+ * 점, 접선, 경계 상자, 평탄화, 길이 계산과 out 반환 규약도 다룬다.
+ */
 import { describe, expect, it } from 'vitest';
 import { arcBounds } from '../../../src/curve/arc-bounds';
 import { arcBoundsInto } from '../../../src/curve/arc-bounds-into';

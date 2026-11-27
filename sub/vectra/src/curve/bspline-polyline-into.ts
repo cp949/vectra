@@ -13,7 +13,7 @@ import { bsplinePointAtTInto } from './bspline-point-at-t-into';
  * - closed curve에서 n < 1: out.length = 0 반환
  * - steps ≤ 0: out.length = 0 반환
  *
- * @param out 결과를 기록할 점 배열 (호출 전 내용은 덮어쓴다). 루프마다 신규 object를 push하므로 out 요소와 points 간 aliasing 없음
+ * @param out 결과를 기록할 점 배열 (호출 전 내용은 덮어쓴다). 루프마다 새 객체를 push하므로 out 요소와 points는 같은 객체가 되지 않는다.
  * @param points control point 배열
  * @param options 샘플링 옵션. 생략하면 32점을 기록한다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)

@@ -56,7 +56,7 @@ export function cubicSegmentsToPathInto(
  * steps === 1이면 각 segment 끝점만 기록하고 첫 segment에 시작점을 함께 포함한다.
  * steps가 safe integer가 아니거나 1 미만이면 RangeError로 실패하고 out은 그대로 유지된다.
  *
- * @param out point를 기록할 writable point 배열. 기존 내용은 덮어쓴다.
+ * @param out 점을 기록할 점 배열. 기존 내용은 덮어쓴다.
  * @param segments cubic segment flat 배열
  * @param segCount segment 수
  * @param steps segment당 sample 수

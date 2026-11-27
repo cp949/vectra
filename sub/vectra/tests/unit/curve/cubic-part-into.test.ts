@@ -1,24 +1,28 @@
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 /**
- * cubicPartInto / cubicPart unit test.
- *
- * 기준값: cubicSplitInto 두 번 적용 결과와 비교.
- * - fromT에서 split하여 right를 얻고, 그 right에서 t2에서 left를 얻는다.
- * - 역방향 구간은 cubicPointAtTInto(fromT)에서 시작해 cubicPointAtTInto(toT)에서 끝난다.
+ * cubicPartInto의 [fromT, toT] 부분 곡선을 cubicSplitInto 두 번 적용한 기준값과 비교한다.
+ * 끝점 일치, fromT와 toT가 같은 경우, 역방향 구간, out 반환을 다룬다.
+ * cubicPart는 Into와 같은 값을 새 객체로 돌려준다.
  */
-
+import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
 import { describe, expect, it } from 'vitest';
 import { cubicPart } from '../../../src/curve/cubic-part';
 import { cubicPartInto } from '../../../src/curve/cubic-part-into';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
 import { cubicSplitInto } from '../../../src/curve/cubic-split-into';
 
-// 상대 오차 비교 helper
+/**
+ * 기대값 대비 상대 오차를 구한다.
+ * 기대값이 0이면 절대 오차를 돌려준다.
+ */
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
 }
 
+/**
+ * out 인자로 넘길 0 초기값 평평한 cubic 객체를 만든다.
+ * 기준값 계산의 cubicSplitInto 출력에도 쓴다.
+ */
 function makeOut() {
   return { kind: 'cubic' as const, x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
 }

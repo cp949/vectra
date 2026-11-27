@@ -11,9 +11,9 @@ import { resolveStepMode, writeStepPolyline } from './step.internal';
  * consecutive duplicate point는 제거하지 않는다. non-finite 좌표는 산술 결과 그대로 pass-through한다.
  * invalid mode는 RangeError로 실패한다.
  *
- * @param out vertex를 기록할 writable point 배열. 기존 내용은 덮어쓴다.
+ * @param out vertex를 기록할 점 배열. 기존 내용은 덮어쓴다.
  * @param points step polyline이 통과할 입력 point 배열
- * @param options step elbow mode 옵션. mode 기본값 'middle'.
+ * @param options step elbow mode 옵션. 생략하면 `{ mode: 'middle' }`를 쓴다.
  * @returns out
  */
 export function stepPolylineInto(
