@@ -1,4 +1,4 @@
-/** 점 객체 배열 변환과 버퍼 처리 시험. */
+/** toFloat32Array가 점 객체 배열을 새 Float32Array로 바꾸는지 시험한다. */
 
 import { describe, expect, it } from 'vitest';
 import { toFloat32Array } from '../../../src/adapter/flat/to-float32-array';

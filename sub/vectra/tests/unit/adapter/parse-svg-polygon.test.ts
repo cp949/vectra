@@ -1,4 +1,4 @@
-/** SVG polygon의 교차 배치 좌표와 문자열 변환을 시험한다. */
+/** parseSvgPolygon이 SVG points 문자열을 교차 배치 좌표의 새 배열로 파싱하는지 시험한다. */
 
 import { describe, expect, test } from 'vitest';
 import { parseSvgPolygon } from '../../../src/adapter/parse-svg-polygon';

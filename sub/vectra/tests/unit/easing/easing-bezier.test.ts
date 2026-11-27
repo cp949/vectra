@@ -127,7 +127,7 @@ describe('easing - cubicBezier', () => {
     expect(cubicBezier(1, { x: 0.25, y: 0.1 }, { x: 0.25, y: 1 })).toBe(1);
   });
 
-  test('linear controls은 identity에 가깝다', () => {
+  test('선형 제어점은 identity에 가깝다', () => {
     const c1 = { x: 0, y: 0 };
     const c2 = { x: 1, y: 1 };
     // linear CSS cubic-bezier는 identity에 가까운 값

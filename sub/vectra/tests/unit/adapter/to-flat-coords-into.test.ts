@@ -1,4 +1,4 @@
-/** 점 객체 배열 변환과 버퍼 처리 시험. */
+/** toFlatCoordsInto가 점 객체 배열을 교차 배치 좌표로 out에 기록하는지 시험한다. */
 
 import { describe, expect, it } from 'vitest';
 import { toFlatCoordsInto } from '../../../src/adapter/flat/to-flat-coords-into';

@@ -1,4 +1,4 @@
-/** 점 객체 배열 변환과 버퍼 처리 시험. */
+/** pointsToString 직렬화와 점 목록 파싱 결과의 왕복을 시험한다. */
 
 import { describe, expect, test } from 'vitest';
 import { parsePointArrayInto } from '../../../src/adapter/parse-point-array-into';
