@@ -1,4 +1,4 @@
-import type { XYInput } from './xy.internal';
+import type { Polygon, Polyline } from './flat-shapes.internal';
 
 /**
  * `pathDataToString` 직렬화 옵션.
@@ -115,8 +115,8 @@ export interface SvgPolylineShapeLike {
   /** discriminant */
   readonly kind: 'polyline';
 
-  /** polyline vertex 목록 */
-  readonly points: readonly XYInput[];
+  /** 폴리라인을 이루는 점 객체 배열 */
+  readonly points: Polyline;
 }
 
 /** SVG `<polygon>` element attribute에 대응하는 structural shape input. */
@@ -124,8 +124,8 @@ export interface SvgPolygonShapeLike {
   /** discriminant */
   readonly kind: 'polygon';
 
-  /** polygon vertex 목록 */
-  readonly points: readonly XYInput[];
+  /** 다각형 좌표 배열 (`[x0, y0, x1, y1, …]`, 길이는 짝수) */
+  readonly points: Polygon;
 }
 
 /**

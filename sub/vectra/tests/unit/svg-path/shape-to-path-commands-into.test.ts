@@ -1,3 +1,7 @@
+/**
+ * SVG 도형별 명령 순서, 좌표 전파, 출력 배열 재사용을 검증한다.
+ */
+
 import { describe, expect, test } from 'vitest';
 import { KAPPA } from '../../../src/path/path-ellipse-arc.internal';
 import { shapeToPathCommands } from '../../../src/svg-path/shape-to-path-commands';
@@ -11,12 +15,6 @@ import type {
   SvgPolylineShapeLike,
   SvgRectShapeLike,
 } from '../../../src/types/index';
-
-// ──────────────────────────────────────────────
-// shapeToPathCommandsInto
-// structural SVG shape attribute object → canonical absolute PathCommand[].
-// out은 매 호출마다 clear 후 push한다. DOM/element/renderer는 다루지 않는다.
-// ──────────────────────────────────────────────
 
 describe('shapeToPathCommandsInto', () => {
   describe('line', () => {
@@ -225,10 +223,14 @@ describe('shapeToPathCommandsInto', () => {
       expect(out).toEqual([{ kind: 'move', x: 1, y: 2 }]);
     });
 
-    test('점 N개는 move + line N-1을 기록한다. object와 tuple을 혼합 허용', () => {
+    test('점 N개는 move와 line N-1개를 기록한다', () => {
       const shape: SvgPolylineShapeLike = {
         kind: 'polyline',
-        points: [{ x: 0, y: 0 }, [1, 2], { x: 3, y: 4 }],
+        points: [
+          { x: 0, y: 0 },
+          { x: 1, y: 2 },
+          { x: 3, y: 4 },
+        ],
       };
       const out: PathCommand[] = [];
       shapeToPathCommandsInto(out, shape);
@@ -249,16 +251,16 @@ describe('shapeToPathCommandsInto', () => {
     });
 
     test('점 1개는 move + close를 기록한다', () => {
-      const shape: SvgPolygonShapeLike = { kind: 'polygon', points: [{ x: 1, y: 2 }] };
+      const shape: SvgPolygonShapeLike = { kind: 'polygon', points: [1, 2] };
       const out: PathCommand[] = [];
       shapeToPathCommandsInto(out, shape);
       expect(out).toEqual([{ kind: 'move', x: 1, y: 2 }, { kind: 'close' }]);
     });
 
-    test('점 N개는 move + line N-1 + close. object와 tuple을 혼합 허용', () => {
+    test('좌표 쌍 N개는 move와 line N-1개 및 close를 기록한다', () => {
       const shape: SvgPolygonShapeLike = {
         kind: 'polygon',
-        points: [{ x: 0, y: 0 }, [10, 0], { x: 10, y: 10 }],
+        points: [0, 0, 10, 0, 10, 10],
       };
       const out: PathCommand[] = [];
       shapeToPathCommandsInto(out, shape);
@@ -427,7 +429,11 @@ describe('shapeToPathCommands', () => {
   test('새 PathCommand[]를 반환하고 Into 결과와 일치한다', () => {
     const shape: SvgPolylineShapeLike = {
       kind: 'polyline',
-      points: [{ x: 0, y: 0 }, [1, 2], { x: 3, y: 4 }],
+      points: [
+        { x: 0, y: 0 },
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+      ],
     };
     const intoOut: PathCommand[] = [];
 

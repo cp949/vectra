@@ -4,7 +4,7 @@
  * domain barrel(./index)을 import하지 않는다.
  */
 
-import { readX, readY } from '../internal/xy';
+import { writePolylineCommandsInto } from '../internal/polyline-path';
 import { ellipseArcInto, KAPPA } from '../path/path-ellipse-arc.internal';
 import type {
   PathCommand,
@@ -15,7 +15,6 @@ import type {
   SvgPolylineShapeLike,
   SvgRectShapeLike,
   SvgShapeLike,
-  XYInput,
 } from '../types/index';
 
 /**
@@ -52,14 +51,12 @@ import type {
  *   망가진다 (caller 책임).
  *
  * input `shape`와 `shape.points`(polyline/polygon)는 함수가 mutate하지 않는다.
- * polyline/polygon의 점이 invalid `XYInput`(예: `as any`로 우회한 `null`)이면 internal
- * `readX`/`readY` 동작에 위임된다.
  *
  * `SvgShapeLike`는 닫힌 union이라 default fallback이 없다. 미정의 kind를 type 단언으로 우회해
  * 호출하면 runtime exception이 난다.
  *
  * @param out command를 기록할 mutable PathCommand 배열
- * @param shape 변환할 structural SVG shape input
+ * @param shape 변환할 SVG 도형. polyline은 점 객체 배열, polygon은 x와 y를 교차 배치한 좌표 배열을 받는다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function shapeToPathCommandsInto(out: PathCommand[], shape: SvgShapeLike): PathCommand[] {
@@ -216,30 +213,21 @@ function writeEllipse(out: PathCommand[], shape: SvgEllipseShapeLike): PathComma
 
 /** polyline shape를 move + line × (N - 1) command로 기록한다. */
 function writePolyline(out: PathCommand[], shape: SvgPolylineShapeLike): PathCommand[] {
-  return writePolylinePoints(out, shape.points, false);
+  return writePolylineCommandsInto(out, shape.points);
 }
 
 /** polygon shape를 move + line × (N - 1) + close command로 기록한다. */
 function writePolygon(out: PathCommand[], shape: SvgPolygonShapeLike): PathCommand[] {
-  return writePolylinePoints(out, shape.points, true);
-}
-
-/**
- * point 배열을 move + line N-1로 기록한다. `close` 인자가 true이고 point가 1개 이상이면 끝에 close.
- *
- * 점 0개는 빈 out으로 둔다 (close 추가 없음).
- */
-function writePolylinePoints(out: PathCommand[], points: readonly XYInput[], close: boolean): PathCommand[] {
+  const points = shape.points;
   out.length = 0;
   if (points.length === 0) {
     return out;
   }
-  out.push({ kind: 'move', x: readX(points[0]), y: readY(points[0]) });
-  for (let i = 1; i < points.length; i++) {
-    out.push({ kind: 'line', x: readX(points[i]), y: readY(points[i]) });
+
+  out.push({ kind: 'move', x: points[0], y: points[1] });
+  for (let i = 2; i < points.length; i += 2) {
+    out.push({ kind: 'line', x: points[i], y: points[i + 1] });
   }
-  if (close) {
-    out.push({ kind: 'close' });
-  }
+  out.push({ kind: 'close' });
   return out;
 }

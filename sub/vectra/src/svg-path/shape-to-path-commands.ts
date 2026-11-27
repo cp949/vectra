@@ -24,13 +24,11 @@ import { shapeToPathCommandsInto } from './shape-to-path-commands-into';
  * - 음수 `width`/`height`는 validation 없이 그대로 사용한다.
  *
  * input `shape`와 `shape.points`(polyline/polygon)는 함수가 mutate하지 않는다.
- * polyline/polygon의 점이 invalid `XYInput`(예: `as any`로 우회한 `null`)이면 internal
- * `readX`/`readY` 동작에 위임된다.
  *
  * `SvgShapeLike`는 닫힌 union이라 default fallback이 없다. 미정의 kind를 type 단언으로 우회해
  * 호출하면 runtime exception이 난다.
  *
- * @param shape 변환할 structural SVG shape input
+ * @param shape 변환할 SVG 도형. polyline은 점 객체 배열, polygon은 x와 y를 교차 배치한 좌표 배열을 받는다.
  * @returns 새로 만든 canonical absolute PathCommand 배열
  */
 export function shapeToPathCommands(shape: SvgShapeLike): PathCommand[] {
