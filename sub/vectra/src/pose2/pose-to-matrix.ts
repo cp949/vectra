@@ -1,4 +1,5 @@
-import type { MatrixWritable, Pose2Like } from '../types';
+import type { MatrixWritable } from '../types';
+import type { Pose2 } from '../types/flat-shapes.internal';
 import { poseToMatrixInto } from './pose-to-matrix-into';
 
 /**
@@ -10,6 +11,6 @@ import { poseToMatrixInto } from './pose-to-matrix-into';
  *
  * @param pose matrix로 변환할 rigid pose
  */
-export function poseToMatrix(pose: Pose2Like): MatrixWritable {
+export function poseToMatrix(pose: Pose2): MatrixWritable {
   return poseToMatrixInto({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }, pose);
 }

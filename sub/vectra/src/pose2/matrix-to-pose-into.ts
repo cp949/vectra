@@ -1,14 +1,15 @@
 import { readMatrixA, readMatrixB, readMatrixC, readMatrixD, readMatrixTx, readMatrixTy } from '../internal/matrix';
 import { validatePoseEpsilon } from '../internal/pose2';
-import { writeXY } from '../internal/xy';
-import type { MatrixLike, MatrixToPoseOptions, Pose2Writable, XYWritable } from '../types';
+import type { MatrixLike, MatrixToPoseOptions } from '../types';
+import type { Pose2Writable } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
+// v2-migration: matrix 전환 묶음에서 MatrixLike 입력을 Matrix로 바꾼다.
 /**
  * rigid affine matrix를 rigid pose로 복원해 out에 기록하고, rigid가 아니면 `false`를 반환한다.
  *
  * `matrix` domain의 component convention(`{ a: cos, b: sin, c: -sin, d: cos, tx, ty }`)을
- * 역으로 읽어 `out.position = { tx, ty }`, `out.angle = Math.atan2(b, a)`를 기록한다.
+ * 역으로 읽어 `out.px = tx, out.py = ty`, `out.angle = Math.atan2(b, a)`를 기록한다.
  * `poseToMatrixInto`의 역방향이며 rigid matrix에서 round-trip이 성립한다.
  *
  * rigid 판정은 `options.epsilon`(생략 시 `1e-9`) 허용 오차로 한다. column length
@@ -20,13 +21,13 @@ import { hypot2 } from '../internal/numeric';
  * `-Infinity`)이면 rigid 판정 이전에 `RangeError`다. `epsilon`이 non-finite이거나 음수이면
  * `RangeError`다. angle 결과는 normalize하지 않되, `atan2`가 signed zero 경계에서 반환하는 `-π`만
  * 문서화한 `(-π, π]` 범위를 지키도록 `π`로 맞춘다. matrix component를 먼저 모두 읽으므로
- * `out.position`이 matrix object와 같은 storage여도 안전하다.
+ * `out`과 matrix가 같은 객체여도 안전하다.
  *
- * @param out pose를 기록할 writable output
+ * @param out 결과를 기록할 pose 객체
  * @param matrix pose로 복원할 rigid affine matrix
- * @param options rigid 판정 옵션. `epsilon` 생략 시 `1e-9`. non-finite/음수 epsilon은 `RangeError`.
+ * @param options rigid 판정 옵션.
  */
-export function matrixToPoseInto<Out extends Pose2Writable<XYWritable>>(
+export function matrixToPoseInto<Out extends Pose2Writable>(
   out: Out,
   matrix: MatrixLike,
   options?: MatrixToPoseOptions
@@ -51,7 +52,7 @@ export function matrixToPoseInto<Out extends Pose2Writable<XYWritable>>(
     );
   }
 
-  const epsilon = options?.epsilon ?? 1e-9;
+  const epsilon = options === undefined ? 1e-9 : options.epsilon;
   validatePoseEpsilon(epsilon, 'epsilon');
 
   // rigid 판정: column length 1, column dot product 0, determinant 1. reflection(det -1)은 실패.
@@ -74,7 +75,8 @@ export function matrixToPoseInto<Out extends Pose2Writable<XYWritable>>(
     angle = Math.PI;
   }
 
-  writeXY(out.position, tx, ty);
+  out.px = tx;
+  out.py = ty;
   out.angle = angle;
   return out;
 }

@@ -1,4 +1,4 @@
-import type { Pose2Like, XYInput, XYObjectWritable } from '../types';
+import type { Pose2, Point, PointWritable } from '../types/flat-shapes.internal';
 import { transformPointByPoseInto } from './transform-point-by-pose-into';
 
 /**
@@ -11,6 +11,6 @@ import { transformPointByPoseInto } from './transform-point-by-pose-into';
  * @param pose point에 적용할 rigid pose
  * @param point 변환할 point
  */
-export function transformPointByPose(pose: Pose2Like, point: XYInput): XYObjectWritable {
+export function transformPointByPose(pose: Pose2, point: Point): PointWritable {
   return transformPointByPoseInto({ x: 0, y: 0 }, pose, point);
 }

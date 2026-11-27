@@ -1,32 +1,4 @@
-import type { Pose2Like, Pose2Tuple, Pose2Writable, XYInput, XYWritable } from '../types';
-import { writeXY } from './xy';
-
-/** input이 tuple pose이면 true를 반환한다. */
-function isPose2Tuple(pose: Pose2Like): pose is Pose2Tuple {
-  return Array.isArray(pose);
-}
-
-/**
- * Pose2Like input에서 translation 위치를 읽는다.
- *
- * tuple input은 index 0을, object input은 position field를 읽는다.
- *
- * @param pose translation 위치를 읽을 structural pose
- */
-export function readPosePosition(pose: Pose2Like): XYInput {
-  return isPose2Tuple(pose) ? pose[0] : pose.position;
-}
-
-/**
- * Pose2Like input에서 angle을 읽는다. 단위는 radian.
- *
- * tuple input은 index 1을, object input은 angle field를 읽는다.
- *
- * @param pose angle을 읽을 structural pose
- */
-export function readPoseAngle(pose: Pose2Like): number {
-  return isPose2Tuple(pose) ? pose[1] : pose.angle;
-}
+import type { Pose2Writable } from '../types/flat-shapes.internal';
 
 /**
  * pose translation 두 성분과 angle이 finite인지 검증한다.
@@ -96,9 +68,8 @@ export function validatePoseOperandFinite(x: number, y: number): void {
  * 두 rigid pose 성분을 `left * right`로 합성해 out에 기록하고 out을 반환한다.
  *
  * `right`를 먼저 적용하고 `left`를 나중에 적용한다. 산식은
- * `angle = la + ra`, `position = left.position + R(la) * right.position`이다.
- * 모든 입력을 number 성분으로 받으므로 `out.position`이 `left`나 `right` position과 같은
- * storage여도 안전하다. caller가 finite 검증을 먼저 끝낸다고 가정한다.
+ * `angle = la + ra`, `position = (lx, ly) + R(la) * (rx, ry)`이다.
+ * 모든 입력을 number 성분으로 받으므로 `out`이 입력 pose 중 하나여도 안전하다. caller가 finite 검증을 먼저 끝낸다고 가정한다.
  *
  * @param out 합성 결과를 기록할 writable pose output
  * @param lx left pose translation x 성분
@@ -108,7 +79,7 @@ export function validatePoseOperandFinite(x: number, y: number): void {
  * @param ry right pose translation y 성분
  * @param ra right pose 회전각. 단위는 radian.
  */
-export function writeComposedPose<Out extends Pose2Writable<XYWritable>>(
+export function writeComposedPose<Out extends Pose2Writable>(
   out: Out,
   lx: number,
   ly: number,
@@ -119,7 +90,8 @@ export function writeComposedPose<Out extends Pose2Writable<XYWritable>>(
 ): Out {
   const cos = Math.cos(la);
   const sin = Math.sin(la);
-  writeXY(out.position, lx + cos * rx - sin * ry, ly + sin * rx + cos * ry);
+  out.px = lx + cos * rx - sin * ry;
+  out.py = ly + sin * rx + cos * ry;
   out.angle = la + ra;
   return out;
 }
@@ -128,7 +100,7 @@ export function writeComposedPose<Out extends Pose2Writable<XYWritable>>(
  * rigid pose 성분의 inverse를 out에 기록하고 out을 반환한다.
  *
  * 산식은 `angle = -angle`, `position = R(-angle) * (-position)`이다. 모든 입력을 number
- * 성분으로 받으므로 `out.position`이 입력 pose position과 같은 storage여도 안전하다.
+ * 성분으로 받으므로 `out`이 입력 pose와 같은 객체여도 안전하다.
  * caller가 finite 검증을 먼저 끝낸다고 가정한다.
  *
  * @param out inverse 결과를 기록할 writable pose output
@@ -136,15 +108,11 @@ export function writeComposedPose<Out extends Pose2Writable<XYWritable>>(
  * @param py inverse 대상 pose translation y 성분
  * @param angle inverse 대상 pose 회전각. 단위는 radian.
  */
-export function writeInvertedPose<Out extends Pose2Writable<XYWritable>>(
-  out: Out,
-  px: number,
-  py: number,
-  angle: number
-): Out {
+export function writeInvertedPose<Out extends Pose2Writable>(out: Out, px: number, py: number, angle: number): Out {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
-  writeXY(out.position, -(cos * px + sin * py), sin * px - cos * py);
+  out.px = -(cos * px + sin * py);
+  out.py = sin * px - cos * py;
   out.angle = -angle;
   return out;
 }

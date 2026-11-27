@@ -1,11 +1,13 @@
-import type { MatrixLike, MatrixToPoseOptions, Pose2Writable } from '../types';
+import type { MatrixLike, MatrixToPoseOptions } from '../types';
+import type { Pose2Writable } from '../types/flat-shapes.internal';
 import { matrixToPoseInto } from './matrix-to-pose-into';
 
+// v2-migration: matrix 전환 묶음에서 MatrixLike 입력을 Matrix로 바꾼다.
 /**
  * rigid affine matrix를 rigid pose로 복원해 새 plain pose object로 반환하고, rigid가 아니면
  * `undefined`를 반환한다.
  *
- * `{ position: { x: tx, y: ty }, angle: Math.atan2(b, a) }`를 반환한다. `poseToMatrix`의 역방향이며
+ * `{ px: tx, py: ty, angle: Math.atan2(b, a) }`를 반환한다. `poseToMatrix`의 역방향이며
  * rigid matrix에서 round-trip이 성립한다. rigid 판정은 `options.epsilon`(생략 시 `1e-9`) 허용 오차로
  * 한다. column length(`hypot(a, b)`, `hypot(c, d)`)가 `1`에, column dot product
  * (`a·c + b·d`)가 `0`에, determinant(`a·d − b·c`)가 `1`에 epsilon 이내여야 한다. scale/skew/shear
@@ -17,9 +19,9 @@ import { matrixToPoseInto } from './matrix-to-pose-into';
  * 문서화한 `(-π, π]` 범위를 지키도록 `π`로 맞춘다.
  *
  * @param matrix pose로 복원할 rigid affine matrix
- * @param options rigid 판정 옵션. `epsilon` 생략 시 `1e-9`. non-finite/음수 epsilon은 `RangeError`.
+ * @param options rigid 판정 옵션.
  */
 export function matrixToPose(matrix: MatrixLike, options?: MatrixToPoseOptions): Pose2Writable | undefined {
-  const out = matrixToPoseInto({ position: { x: 0, y: 0 }, angle: 0 }, matrix, options);
+  const out = matrixToPoseInto({ px: 0, py: 0, angle: 0 }, matrix, options);
   return out === false ? undefined : out;
 }

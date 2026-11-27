@@ -11,11 +11,12 @@ import { describe, expect, test } from 'vitest';
 import { matrixToPose } from '../../../src/pose2/matrix-to-pose';
 import { matrixToPoseInto } from '../../../src/pose2/matrix-to-pose-into';
 import { poseToMatrix } from '../../../src/pose2/pose-to-matrix';
-import type { MatrixLike, Pose2Writable } from '../../../src/types';
+import type { MatrixLike } from '../../../src/types';
+import type { Pose2Writable } from '../../../src/types/flat-shapes.internal';
 
 /** 원점/zero angle로 초기화한 새 Pose2Writable seed를 만든다. */
 function makePose(): Pose2Writable {
-  return { position: { x: 0, y: 0 }, angle: 0 };
+  return { px: 0, py: 0, angle: 0 };
 }
 
 /** rigid rotation matrix component를 만든다. */
@@ -30,20 +31,20 @@ function rigidMatrix(angle: number, tx: number, ty: number): MatrixLike {
 describe('matrixToPoseInto - rigid 성공', () => {
   test('poseToMatrix 결과를 round-trip으로 복원한다', () => {
     const angle = 1.2;
-    const matrix = poseToMatrix({ position: { x: 7, y: -3 }, angle });
+    const matrix = poseToMatrix({ px: 7, py: -3, angle });
     const out = makePose();
     const result = matrixToPoseInto(out, matrix);
     expect(result).toBe(out);
-    expect(out.position.x).toBeCloseTo(7, 12);
-    expect(out.position.y).toBeCloseTo(-3, 12);
+    expect(out.px).toBeCloseTo(7, 12);
+    expect(out.py).toBeCloseTo(-3, 12);
     expect(out.angle).toBeCloseTo(angle, 12);
   });
 
   test('pure translation matrix는 angle 0과 translation을 복원한다', () => {
     const out = makePose();
     matrixToPoseInto(out, { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: -2 });
-    expect(out.position.x).toBeCloseTo(5, 12);
-    expect(out.position.y).toBeCloseTo(-2, 12);
+    expect(out.px).toBeCloseTo(5, 12);
+    expect(out.py).toBeCloseTo(-2, 12);
     expect(out.angle).toBeCloseTo(0, 12);
   });
 
@@ -69,17 +70,13 @@ describe('matrixToPoseInto - rigid 성공', () => {
     expect(out.angle).toBe(Math.PI);
   });
 
-  test('out.position이 matrix object와 storage를 공유해도 결과가 일관된다', () => {
-    // smoke test. 같은 object를 matrix 입력과 out.position storage로 동시에 쓴다.
-    // matrix는 tx/ty를, writeXY는 x/y를 쓰므로 두 필드 집합이 disjoint다. read/write 순서와
-    // 무관하게 충돌이 없음을 기록한다(구조상 aliasing 회귀로 실패할 수 없는 smoke 수준).
-    const shared = { a: 1, b: 0, c: 0, d: 1, tx: 5, ty: -2, x: 0, y: 0 };
-    const out = { position: shared, angle: 0 };
-    const result = matrixToPoseInto(out, shared);
-    expect(result).toBe(out);
-    expect(out.position.x).toBe(5);
-    expect(out.position.y).toBe(-2);
-    expect(out.angle).toBe(0);
+  test('out과 matrix가 같은 객체여도 위치와 각도를 복원한다', () => {
+    const shared = { ...rigidMatrix(0.5, 5, -2), px: 0, py: 0, angle: 0 };
+    const result = matrixToPoseInto(shared, shared);
+    expect(result).toBe(shared);
+    expect(shared.px).toBe(5);
+    expect(shared.py).toBe(-2);
+    expect(shared.angle).toBeCloseTo(0.5, 12);
   });
 });
 
@@ -90,8 +87,8 @@ describe('matrixToPoseInto - rigid 판정 실패', () => {
     const out = makePose();
     const result = matrixToPoseInto(out, { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 });
     expect(result).toBe(false);
-    expect(out.position.x).toBe(0);
-    expect(out.position.y).toBe(0);
+    expect(out.px).toBe(0);
+    expect(out.py).toBe(0);
     expect(out.angle).toBe(0);
   });
 
@@ -127,13 +124,9 @@ describe('matrixToPoseInto - rigid 판정 실패', () => {
     expect(matrixToPoseInto(out, { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0 })).toBe(false);
   });
 
-  test('실패 시 out.position object identity를 유지한다', () => {
-    // out.position을 freeze해 실패 경로가 writeXY를 호출하지 않음을 보인다.
-    const out = makePose();
-    const positionRef = out.position;
-    Object.freeze(out.position);
+  test('실패 시 동결한 출력에도 쓰기를 시도하지 않는다', () => {
+    const out = Object.freeze(makePose());
     expect(matrixToPoseInto(out, { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 })).toBe(false);
-    expect(out.position).toBe(positionRef);
   });
 
   test('epsilon을 키우면 약간 비rigid한 matrix도 성공한다', () => {
@@ -171,8 +164,8 @@ describe('matrixToPose - companion', () => {
   test('rigid matrix는 새 plain pose object를 반환한다', () => {
     const result = matrixToPose(rigidMatrix(0.5, 2, 3));
     expect(result).not.toBeUndefined();
-    expect(result?.position.x).toBeCloseTo(2, 12);
-    expect(result?.position.y).toBeCloseTo(3, 12);
+    expect(result?.px).toBeCloseTo(2, 12);
+    expect(result?.py).toBeCloseTo(3, 12);
     expect(result?.angle).toBeCloseTo(0.5, 12);
   });
 
@@ -185,7 +178,6 @@ describe('matrixToPose - companion', () => {
     const r1 = matrixToPose(matrix);
     const r2 = matrixToPose(matrix);
     expect(r1).not.toBe(r2);
-    expect(r1?.position).not.toBe(r2?.position);
   });
 
   test('non-finite component는 RangeError', () => {

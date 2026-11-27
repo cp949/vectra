@@ -1,12 +1,6 @@
-import {
-  readPoseAngle,
-  readPosePosition,
-  shortestAngleDifferenceAbs,
-  validatePoseEpsilon,
-  validatePoseFinite,
-} from '../internal/pose2';
-import { readX, readY } from '../internal/xy';
-import type { Pose2Like, PoseDistanceOptions } from '../types';
+import { shortestAngleDifferenceAbs, validatePoseEpsilon, validatePoseFinite } from '../internal/pose2';
+import type { PoseDistanceOptions } from '../types';
+import type { Pose2 } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -21,29 +15,27 @@ import { hypot2 } from '../internal/numeric';
  * angle distance `0`). 입력 pose angle을 normalize하지 않고 내부에서만 shortest difference를 계산한다.
  * `angularWeight: 0`이면 translation-only distance가 된다.
  *
- * 두 pose의 `position.x`/`position.y`/`angle` 중 하나라도 non-finite(`NaN`, `Infinity`,
+ * 두 pose의 `px`/`py`/`angle` 중 하나라도 non-finite(`NaN`, `Infinity`,
  * `-Infinity`)이면 `RangeError`다. `angularWeight`가 non-finite이거나 음수이면 `RangeError`다.
  * 결합 결과가 non-finite이면(position 차이나 weighted angular product가 overflow하면) `RangeError`다.
  * overflow를 `Infinity`로 조용히 반환하지 않는다.
  *
  * @param a 거리를 잴 첫 pose
  * @param b 거리를 잴 둘째 pose
- * @param options 거리 옵션. `angularWeight` 생략 시 `1`. non-finite/음수는 `RangeError`.
+ * @param options 거리 옵션.
  */
-export function poseDistance(a: Pose2Like, b: Pose2Like, options?: PoseDistanceOptions): number {
-  const aPosition = readPosePosition(a);
-  const ax = readX(aPosition);
-  const ay = readY(aPosition);
-  const aAngle = readPoseAngle(a);
+export function poseDistance(a: Pose2, b: Pose2, options?: PoseDistanceOptions): number {
+  const ax = a.px;
+  const ay = a.py;
+  const aAngle = a.angle;
   validatePoseFinite(ax, ay, aAngle);
 
-  const bPosition = readPosePosition(b);
-  const bx = readX(bPosition);
-  const by = readY(bPosition);
-  const bAngle = readPoseAngle(b);
+  const bx = b.px;
+  const by = b.py;
+  const bAngle = b.angle;
   validatePoseFinite(bx, by, bAngle);
 
-  const angularWeight = options?.angularWeight ?? 1;
+  const angularWeight = options === undefined ? 1 : options.angularWeight;
   validatePoseEpsilon(angularWeight, 'angularWeight');
 
   const positionDistance = hypot2(ax - bx, ay - by);

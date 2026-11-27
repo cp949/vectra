@@ -1,6 +1,6 @@
-import { readPoseAngle, readPosePosition, validatePoseFinite } from '../internal/pose2';
-import { readX, readY } from '../internal/xy';
-import type { MatrixWritable, Pose2Like } from '../types';
+import { validatePoseFinite } from '../internal/pose2';
+import type { MatrixWritable } from '../types';
+import type { Pose2 } from '../types/flat-shapes.internal';
 
 /**
  * rigid pose를 affine transform matrix component로 out에 기록하고 out을 반환한다.
@@ -11,14 +11,13 @@ import type { MatrixWritable, Pose2Like } from '../types';
  * non-finite(`NaN`, `Infinity`, `-Infinity`)이면 `RangeError`다. 검증을 통과한 angle에서는
  * `Math.cos`/`Math.sin` 결과가 항상 finite이므로 matrix component도 finite다.
  *
- * @param out matrix component를 기록할 writable output
+ * @param out 행렬 성분을 기록할 객체
  * @param pose matrix로 변환할 rigid pose
  */
-export function poseToMatrixInto<Out extends MatrixWritable>(out: Out, pose: Pose2Like): Out {
-  const position = readPosePosition(pose);
-  const px = readX(position);
-  const py = readY(position);
-  const angle = readPoseAngle(pose);
+export function poseToMatrixInto<Out extends MatrixWritable>(out: Out, pose: Pose2): Out {
+  const px = pose.px;
+  const py = pose.py;
+  const angle = pose.angle;
   validatePoseFinite(px, py, angle);
 
   const cos = Math.cos(angle);

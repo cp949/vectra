@@ -1,4 +1,4 @@
-import type { Pose2Like, XYInput, XYObjectWritable } from '../types';
+import type { Pose2, Point, PointWritable } from '../types/flat-shapes.internal';
 import { inverseTransformVectorByPoseInto } from './inverse-transform-vector-by-pose-into';
 
 /**
@@ -12,6 +12,6 @@ import { inverseTransformVectorByPoseInto } from './inverse-transform-vector-by-
  * @param pose vector에 적용할 rigid pose
  * @param vector local frame으로 되돌릴 free vector
  */
-export function inverseTransformVectorByPose(pose: Pose2Like, vector: XYInput): XYObjectWritable {
+export function inverseTransformVectorByPose(pose: Pose2, vector: Point): PointWritable {
   return inverseTransformVectorByPoseInto({ x: 0, y: 0 }, pose, vector);
 }

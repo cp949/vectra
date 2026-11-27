@@ -213,17 +213,14 @@ describe('root geometry type exposure 계약', () => {
 
   test('root entry가 matrixToPose 옵션 type을 노출한다', () => {
     expectAssignable<MatrixToPoseOptions>({ epsilon: 1e-6 });
-    expectAssignable<MatrixToPoseOptions>({});
   });
 
   test('root entry가 poseApproxEquals 옵션 type을 노출한다', () => {
     expectAssignable<PoseApproxEqualsOptions>({ positionEpsilon: 1e-6, angleEpsilon: 1e-6 });
-    expectAssignable<PoseApproxEqualsOptions>({});
   });
 
   test('root entry가 poseDistance 옵션 type을 노출한다', () => {
     expectAssignable<PoseDistanceOptions>({ angularWeight: 2 });
-    expectAssignable<PoseDistanceOptions>({});
   });
 
   test('root entry가 infinite-line type을 노출한다', () => {

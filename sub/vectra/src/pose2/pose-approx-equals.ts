@@ -1,12 +1,6 @@
-import {
-  readPoseAngle,
-  readPosePosition,
-  shortestAngleDifferenceAbs,
-  validatePoseEpsilon,
-  validatePoseFinite,
-} from '../internal/pose2';
-import { readX, readY } from '../internal/xy';
-import type { Pose2Like, PoseApproxEqualsOptions } from '../types';
+import { shortestAngleDifferenceAbs, validatePoseEpsilon, validatePoseFinite } from '../internal/pose2';
+import type { PoseApproxEqualsOptions } from '../types';
+import type { Pose2 } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -19,30 +13,28 @@ import { hypot2 } from '../internal/numeric';
  * angle 비교는 `2π` wrap-around에서도 shortest difference로 안정적이다(예: `0.3`과 `0.3 + 2π`는
  * 같다). 입력 pose angle을 normalize하지 않고 비교 내부에서만 shortest difference를 계산한다.
  *
- * 두 pose의 `position.x`/`position.y`/`angle` 중 하나라도 non-finite(`NaN`, `Infinity`,
+ * 두 pose의 `px`/`py`/`angle` 중 하나라도 non-finite(`NaN`, `Infinity`,
  * `-Infinity`)이면 `RangeError`다. `positionEpsilon`/`angleEpsilon`이 non-finite이거나 음수이면
  * `RangeError`다.
  *
  * @param a 비교할 첫 pose
  * @param b 비교할 둘째 pose
- * @param options 비교 옵션. `positionEpsilon`/`angleEpsilon` 생략 시 각 `1e-9`. non-finite/음수는 `RangeError`.
+ * @param options 비교 옵션.
  */
-export function poseApproxEquals(a: Pose2Like, b: Pose2Like, options?: PoseApproxEqualsOptions): boolean {
-  const aPosition = readPosePosition(a);
-  const ax = readX(aPosition);
-  const ay = readY(aPosition);
-  const aAngle = readPoseAngle(a);
+export function poseApproxEquals(a: Pose2, b: Pose2, options?: PoseApproxEqualsOptions): boolean {
+  const ax = a.px;
+  const ay = a.py;
+  const aAngle = a.angle;
   validatePoseFinite(ax, ay, aAngle);
 
-  const bPosition = readPosePosition(b);
-  const bx = readX(bPosition);
-  const by = readY(bPosition);
-  const bAngle = readPoseAngle(b);
+  const bx = b.px;
+  const by = b.py;
+  const bAngle = b.angle;
   validatePoseFinite(bx, by, bAngle);
 
-  const positionEpsilon = options?.positionEpsilon ?? 1e-9;
+  const positionEpsilon = options === undefined ? 1e-9 : options.positionEpsilon;
   validatePoseEpsilon(positionEpsilon, 'positionEpsilon');
-  const angleEpsilon = options?.angleEpsilon ?? 1e-9;
+  const angleEpsilon = options === undefined ? 1e-9 : options.angleEpsilon;
   validatePoseEpsilon(angleEpsilon, 'angleEpsilon');
 
   const positionEqual = hypot2(ax - bx, ay - by) <= positionEpsilon;
