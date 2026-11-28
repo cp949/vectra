@@ -59,13 +59,6 @@ describe('pointInRectOutsideInto — direct slab 선택', () => {
     expect(out).toEqual({ x: 87.5, y: 35 });
   });
 
-  test('tuple RectLike outer/inner 입력을 지원한다', () => {
-    const out = { x: 0, y: 0 };
-    const result = pointInRectOutsideInto(out, [0, 0, 100, 80], [25, 20, 50, 30], sequence([0, 0.5, 0.5]));
-    expect(result).toBe(true);
-    expect(out).toEqual({ x: 50, y: 10 });
-  });
-
   test('inner가 outer 좌변에 접하면(leftWidth=0) left slab 없이 area-uniform을 유지한다', () => {
     const out = { x: 0, y: 0 };
     // inner(0,20,50,30): leftWidth=0 → left slab 제외.

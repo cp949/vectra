@@ -13,11 +13,9 @@ class OutputPoint {
 test('점 생성 Into 함수가 출력 점의 타입과 참조를 보존한다', () => {
   const state = createRandomState(949);
   const out = new OutputPoint();
-  const start = { x: 0, y: 0 };
-  const end = { x: 2, y: 0 };
   const direction = state.directionInto(out, 2);
-  const segmentPoint = state.pointOnSegmentInto(out, { a: start, b: end });
-  const trianglePoint = state.pointInTriangleInto(out, start, end, { x: 0, y: 2 });
+  const segmentPoint = state.pointOnSegmentInto(out, { x1: 0, y1: 0, x2: 2, y2: 0 });
+  const trianglePoint = state.pointInTriangleInto(out, { x1: 0, y1: 0, x2: 2, y2: 0, x3: 0, y3: 2 });
 
   expectTypeOf(direction).toEqualTypeOf<OutputPoint>();
   expectTypeOf(segmentPoint).toEqualTypeOf<OutputPoint>();

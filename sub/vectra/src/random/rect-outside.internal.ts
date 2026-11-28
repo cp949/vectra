@@ -1,6 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { writeXY } from '../internal/xy';
-import type { RectLike, XYWritable } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { random } from './random';
 
@@ -20,30 +18,25 @@ type Slab = {
  * inner, zero/non-finite outside area)는 RNG 미소비, out 미수정으로 닫는다. 성공 시 RNG를 slab 선택
  * 1회 + slab 내부 x/y 2회로 총 3회 소비한다. public 계약은 위임 leaf의 JSDoc을 따른다.
  *
- * @param out 결과를 기록할 writable 좌표 output
+ * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param outer sampling 영역의 바깥 rect
  * @param inner 제외할 안쪽 rect. outer에 완전히 포함되어야 한다
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export const sampleRectOutsideInto = <Out extends XYWritable>(
-  out: Out,
-  outer: RectLike,
-  inner: RectLike,
-  rng?: RandomSource
-): boolean => {
-  const ox0 = readRectX(outer);
-  const oy0 = readRectY(outer);
-  const outerWidth = readRectWidth(outer);
-  const outerHeight = readRectHeight(outer);
+export const sampleRectOutsideInto = (out: PointWritable, outer: Rect, inner: Rect, rng?: RandomSource): boolean => {
+  const ox0 = outer.x;
+  const oy0 = outer.y;
+  const outerWidth = outer.width;
+  const outerHeight = outer.height;
   // outer는 positive-area rect여야 한다. NaN은 NaN > 0 === false로 함께 걸린다.
   if (!(outerWidth > 0) || !(outerHeight > 0)) {
     return false;
   }
 
-  const ix0 = readRectX(inner);
-  const iy0 = readRectY(inner);
-  const innerWidth = readRectWidth(inner);
-  const innerHeight = readRectHeight(inner);
+  const ix0 = inner.x;
+  const iy0 = inner.y;
+  const innerWidth = inner.width;
+  const innerHeight = inner.height;
   // 음수 dimension inner는 malformed hole로 보고 닫는다. 자동 clip하지 않는다.
   if (innerWidth < 0 || innerHeight < 0) {
     return false;
@@ -98,6 +91,9 @@ export const sampleRectOutsideInto = <Out extends XYWritable>(
     }
   }
 
-  writeXY(out, selected.x0 + random(rng) * selected.width, selected.y0 + random(rng) * selected.height);
+  const sampleX = selected.x0 + random(rng) * selected.width;
+  const sampleY = selected.y0 + random(rng) * selected.height;
+  out.x = sampleX;
+  out.y = sampleY;
   return true;
 };

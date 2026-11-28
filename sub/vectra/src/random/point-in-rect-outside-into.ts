@@ -1,4 +1,4 @@
-import type { RectLike, XYWritable } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { sampleRectOutsideInto } from './rect-outside.internal';
 
@@ -17,14 +17,10 @@ import { sampleRectOutsideInto } from './rect-outside.internal';
  * inner(dimension 0)는 outer 전체 2D uniform이 되며 이때도 3회를 소비한다. `rng` 반환값은
  * `[0, 1)` finite로 가정하고 clamp/normalize하지 않는다.
  *
- * @param out 결과를 기록할 writable 좌표 output
+ * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param outer sampling 영역의 바깥 rect
  * @param inner 제외할 안쪽 rect. outer에 완전히 포함되어야 한다
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export const pointInRectOutsideInto = <Out extends XYWritable>(
-  out: Out,
-  outer: RectLike,
-  inner: RectLike,
-  rng?: RandomSource
-): boolean => sampleRectOutsideInto(out, outer, inner, rng);
+export const pointInRectOutsideInto = (out: PointWritable, outer: Rect, inner: Rect, rng?: RandomSource): boolean =>
+  sampleRectOutsideInto(out, outer, inner, rng);

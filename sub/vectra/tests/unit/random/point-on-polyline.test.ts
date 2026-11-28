@@ -1,3 +1,5 @@
+/** 열린 점 배열에서 길이 비례 샘플링과 퇴화 입력을 검증한다. */
+
 import { describe, expect, test } from 'vitest';
 import { createRng } from '../../../src/random/create-rng';
 import { pointOnPolylineInto } from '../../../src/random/point-on-polyline-into';
@@ -54,26 +56,8 @@ describe('pointOnPolylineInto', () => {
     expect(out.y).toBeCloseTo(2);
   });
 
-  test('PolylineObjectLike({ points }) 형태 입력을 지원한다', () => {
+  test('두 점으로 만든 폴리라인의 중점을 기록한다', () => {
     const out = { x: 0, y: 0 };
-    const result = pointOnPolylineInto(
-      out,
-      {
-        points: [
-          { x: 0, y: 0 },
-          { x: 10, y: 0 },
-        ],
-      },
-      () => 0.5
-    );
-
-    expect(result).toBe(true);
-    expect(out.x).toBeCloseTo(5);
-    expect(out.y).toBeCloseTo(0);
-  });
-
-  test('tuple output 지원', () => {
-    const out: [number, number] = [0, 0];
     const result = pointOnPolylineInto(
       out,
       [
@@ -84,8 +68,8 @@ describe('pointOnPolylineInto', () => {
     );
 
     expect(result).toBe(true);
-    expect(out[0]).toBeCloseTo(5);
-    expect(out[1]).toBeCloseTo(0);
+    expect(out.x).toBeCloseTo(5);
+    expect(out.y).toBeCloseTo(0);
   });
 
   test('length-uniform 통계: 긴 segment에 ~75% sample, tolerance 3%', () => {
@@ -210,4 +194,19 @@ describe('pointOnPolylineInto', () => {
     pointOnPolylineInto(out3, polyline, countingRng);
     expect(calls).toBe(1);
   });
+});
+
+test('RNG가 점을 바꾸면 기존 길이에서 고른 거리를 바뀐 점 배열에 적용한다', () => {
+  const points = [
+    { x: 0, y: 0 },
+    { x: 10, y: 0 },
+  ];
+  const result = pointOnPolylineInto(points[0], points, () => {
+    points[1].x = 0;
+    points[1].y = 20;
+    return 0.5;
+  });
+
+  expect(result).toBe(true);
+  expect(points[0]).toEqual({ x: 0, y: 5 });
 });

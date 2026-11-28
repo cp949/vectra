@@ -1,3 +1,4 @@
+import type { PointWritable } from '../types/flat-shapes.internal';
 import type { PathCommand } from '../types';
 import type { RandomSource } from './random';
 import { weightedPointOnPathInto } from './weighted-point-on-path-into';
@@ -34,7 +35,7 @@ export function weightedPointOnPath(
   commands: readonly PathCommand[],
   weights: readonly number[],
   rng?: RandomSource
-): { x: number; y: number } | undefined {
+): PointWritable | undefined {
   const out = { x: 0, y: 0 };
   return weightedPointOnPathInto(out, commands, weights, rng) ? out : undefined;
 }

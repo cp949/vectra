@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { PointWritable, Polyline } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { weightedPointOnPolylineInto } from './weighted-point-on-polyline-into';
 
@@ -29,10 +29,10 @@ import { weightedPointOnPolylineInto } from './weighted-point-on-polyline-into';
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
 export function weightedPointOnPolyline(
-  polyline: PolylineLike,
+  polyline: Polyline,
   weights: readonly number[],
   rng?: RandomSource
-): { x: number; y: number } | undefined {
+): PointWritable | undefined {
   const out = { x: 0, y: 0 };
   return weightedPointOnPolylineInto(out, polyline, weights, rng) ? out : undefined;
 }

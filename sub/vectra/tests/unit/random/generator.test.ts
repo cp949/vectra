@@ -1,3 +1,5 @@
+/** seed 기반 RNG의 재현성과 난수 샘플링 연동을 검증한다. */
+
 import { describe, expect, test } from 'vitest';
 import { createRng } from '../../../src/random/create-rng';
 import { float } from '../../../src/random/float';
@@ -108,7 +110,7 @@ describe('createRng — seedable random source', () => {
     });
 
     test('pointInBoundsInto에 createRng 결과를 주입하면 재현 가능한 좌표를 기록한다', () => {
-      const bounds = { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } };
+      const bounds = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
       const outA = { x: 0, y: 0 };
       const outB = { x: 0, y: 0 };
       const resultA = pointInBoundsInto(outA, bounds, createRng('seed-bounds'));

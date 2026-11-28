@@ -1,6 +1,4 @@
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { writeXY } from '../internal/xy';
-import type { RectLike, XYWritable } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { random } from './random';
 
@@ -10,19 +8,22 @@ import { random } from './random';
  * `width <= 0` 또는 `height <= 0`이면 false를 반환하고 out을 수정하지 않는다.
  * 성공 시 true를 반환한다.
  *
- * @param out - 결과를 기록할 writable 좌표 output
+ * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param rect - 대상 rect
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export const pointInRectInto = <Out extends XYWritable>(out: Out, rect: RectLike, rng?: RandomSource): boolean => {
-  const x = readRectX(rect);
-  const y = readRectY(rect);
-  const width = readRectWidth(rect);
-  const height = readRectHeight(rect);
+export const pointInRectInto = (out: PointWritable, rect: Rect, rng?: RandomSource): boolean => {
+  const x = rect.x;
+  const y = rect.y;
+  const width = rect.width;
+  const height = rect.height;
   // degenerate rect 검사: width 또는 height가 양수가 아니면 실패
   if (width <= 0 || height <= 0) {
     return false;
   }
-  writeXY(out, x + random(rng) * width, y + random(rng) * height);
+  const sampleX = x + random(rng) * width;
+  const sampleY = y + random(rng) * height;
+  out.x = sampleX;
+  out.y = sampleY;
   return true;
 };

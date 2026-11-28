@@ -89,7 +89,7 @@ describe('createRandomState — rng override 우선순위', () => {
   test('geometry wrapper override는 seeded 내부 RNG를 소비하지 않는다', () => {
     const stateWithOverride = createRandomState('demo');
     const out = { x: 0, y: 0 };
-    const bounds = { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } };
+    const bounds = { minX: 0, minY: 0, maxX: 10, maxY: 10 };
     stateWithOverride.pointInBoundsInto(out, bounds, sequence([0, 0]));
     const afterOverride = stateWithOverride.float(0, 10);
 
@@ -115,7 +115,7 @@ describe('createRandomState — geometry wrapper', () => {
   test('pointInBoundsInto는 min x와 max 직전 y mapping을 기록한다', () => {
     const state = createRandomState('demo');
     const out = { x: 0, y: 0 };
-    const bounds = { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } };
+    const bounds = { minX: 0, minY: 0, maxX: 10, maxY: 10 };
     const result = state.pointInBoundsInto(out, bounds, sequence([0, 0.999999999999]));
     expect(result).toBe(true);
     expect(out.x).toBe(0);
@@ -125,7 +125,7 @@ describe('createRandomState — geometry wrapper', () => {
   test('inverted bounds에서 pointInBoundsInto는 false를 반환하고 out을 수정하지 않는다', () => {
     const state = createRandomState('demo');
     const out = { x: 5, y: 5 };
-    const bounds = { min: { x: 10, y: 0 }, max: { x: 0, y: 10 } };
+    const bounds = { minX: 10, minY: 0, maxX: 0, maxY: 10 };
     const result = state.pointInBoundsInto(out, bounds);
     expect(result).toBe(false);
     expect(out.x).toBe(5);

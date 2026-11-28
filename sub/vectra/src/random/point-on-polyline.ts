@@ -1,4 +1,4 @@
-import type { PolylineLike } from '../types';
+import type { PointWritable, Polyline } from '../types/flat-shapes.internal';
 import { pointOnPolylineInto } from './point-on-polyline-into';
 import type { RandomSource } from './random';
 
@@ -11,17 +11,17 @@ import type { RandomSource } from './random';
  *
  * degenerate 처리: `totalLength <= 0` 또는 `!Number.isFinite(totalLength)`이면
  * undefined를 반환한다.
- * — pts.length < 2는 totalLength=0으로 환원되어 같은 분기에서 처리된다.
+ * — polyline.length < 2는 totalLength=0으로 환원되어 같은 분기에서 처리된다.
  * — NaN vertex는 `length`의 Euclidean 거리를 통해 NaN이 전파되어 undefined를 반환한다.
  * — Infinity vertex는 totalLength가 Infinity가 되어 undefined를 반환한다.
  *
  * caller 책임: polyline vertex에 NaN/Infinity가 있으면 undefined를 반환한다.
  * RNG가 [0, 1) 범위를 벗어나는 값을 반환하면 결과는 정의되지 않는다.
  *
- * @param polyline 대상 polyline. pts.length < 2이면 undefined
+ * @param polyline 대상 polyline. polyline.length < 2이면 undefined
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export function pointOnPolyline(polyline: PolylineLike, rng?: RandomSource): { x: number; y: number } | undefined {
+export function pointOnPolyline(polyline: Polyline, rng?: RandomSource): PointWritable | undefined {
   const out = { x: 0, y: 0 };
   return pointOnPolylineInto(out, polyline, rng) ? out : undefined;
 }

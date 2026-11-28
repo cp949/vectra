@@ -1,4 +1,4 @@
-import type { RectLike } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import { pointInRectOutsideInto } from './point-in-rect-outside-into';
 import type { RandomSource } from './random';
 
@@ -21,11 +21,7 @@ import type { RandomSource } from './random';
  * @param inner 제외할 안쪽 rect. outer에 완전히 포함되어야 한다
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export function pointInRectOutside(
-  outer: RectLike,
-  inner: RectLike,
-  rng?: RandomSource
-): { x: number; y: number } | undefined {
+export function pointInRectOutside(outer: Rect, inner: Rect, rng?: RandomSource): PointWritable | undefined {
   const out = { x: 0, y: 0 };
   return pointInRectOutsideInto(out, outer, inner, rng) ? out : undefined;
 }

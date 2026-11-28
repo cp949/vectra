@@ -260,24 +260,10 @@ describe('레시피 6: random geometry sampling', () => {
     }
   });
 
-  it('tuple output으로도 pointInRectInto를 사용할 수 있다', async () => {
-    const { pointInRectInto } = await import('../../src/random/point-in-rect-into');
-
-    const rect = { x: 0, y: 0, width: 200, height: 200 };
-    const out: [number, number] = [0, 0];
-
-    pointInRectInto(out, rect);
-
-    expect(out[0]).toBeGreaterThanOrEqual(0);
-    expect(out[0]).toBeLessThanOrEqual(200);
-    expect(out[1]).toBeGreaterThanOrEqual(0);
-    expect(out[1]).toBeLessThanOrEqual(200);
-  });
-
   it('pointInBoundsInto로 bounds 안에 무작위 점을 샘플링할 수 있다', async () => {
     const { pointInBoundsInto } = await import('../../src/random/point-in-bounds-into');
 
-    const bounds = { min: { x: -50, y: -50 }, max: { x: 50, y: 50 } };
+    const bounds = { minX: -50, minY: -50, maxX: 50, maxY: 50 };
     const out = { x: 0, y: 0 };
 
     for (let i = 0; i < 50; i++) {
@@ -292,7 +278,7 @@ describe('레시피 6: random geometry sampling', () => {
   it('pointOnSegmentInto로 segment 위의 무작위 점을 샘플링할 수 있다', async () => {
     const { pointOnSegmentInto } = await import('../../src/random/point-on-segment-into');
 
-    const seg = { a: { x: 0, y: 0 }, b: { x: 100, y: 0 } };
+    const seg = { x1: 0, y1: 0, x2: 100, y2: 0 };
     const out = { x: 0, y: 0 };
 
     for (let i = 0; i < 50; i++) {
@@ -325,7 +311,7 @@ describe('레시피 7: seeded random 재현성', () => {
     const { createRng } = await import('../../src/random/create-rng');
     const { pointInBoundsInto } = await import('../../src/random/point-in-bounds-into');
 
-    const bounds = { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } };
+    const bounds = { minX: 0, minY: 0, maxX: 100, maxY: 100 };
     const rngA = createRng(20260517);
     const rngB = createRng(20260517);
     const a = { x: 0, y: 0 };

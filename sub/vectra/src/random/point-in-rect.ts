@@ -1,4 +1,4 @@
-import type { RectLike } from '../types';
+import type { PointWritable, Rect } from '../types/flat-shapes.internal';
 import { pointInRectInto } from './point-in-rect-into';
 import type { RandomSource } from './random';
 
@@ -10,7 +10,7 @@ import type { RandomSource } from './random';
  * @param rect - 대상 rect
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export function pointInRect(rect: RectLike, rng?: RandomSource): { x: number; y: number } | undefined {
+export function pointInRect(rect: Rect, rng?: RandomSource): PointWritable | undefined {
   const out = { x: 0, y: 0 };
   return pointInRectInto(out, rect, rng) ? out : undefined;
 }

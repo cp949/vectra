@@ -1,7 +1,7 @@
-import { writeXY } from '../internal/xy';
 import { length } from '../path/length';
 import { pointAtLengthInto } from '../path/point-at-length-into';
-import type { PathCommand, XYWritable } from '../types';
+import type { PathCommand } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { random } from './random';
 
@@ -22,15 +22,11 @@ import { random } from './random';
  * caller 책임: commands에 NaN/Infinity가 있으면 false를 반환한다.
  * RNG가 [0, 1) 범위를 벗어나는 값을 반환하면 결과는 정의되지 않는다.
  *
- * @param out 결과를 기록할 writable 좌표 output
+ * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param commands 대상 path command sequence. drawing segment가 없으면 false
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export const pointOnPathInto = <Out extends XYWritable>(
-  out: Out,
-  commands: readonly PathCommand[],
-  rng?: RandomSource
-): boolean => {
+export const pointOnPathInto = (out: PointWritable, commands: readonly PathCommand[], rng?: RandomSource): boolean => {
   const totalLength = length(commands);
 
   if (!Number.isFinite(totalLength) || totalLength <= 0) {
@@ -38,9 +34,5 @@ export const pointOnPathInto = <Out extends XYWritable>(
   }
 
   const distance = random(rng) * totalLength;
-  // v2-migration: random 전환 시 점 객체 출력에 직접 기록한다.
-  const point = { x: 0, y: 0 };
-  if (!pointAtLengthInto(point, commands, distance)) return false;
-  writeXY(out, point.x, point.y);
-  return true;
+  return pointAtLengthInto(out, commands, distance);
 };

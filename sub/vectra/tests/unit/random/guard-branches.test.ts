@@ -105,11 +105,7 @@ describe('multivariateNormalInto', () => {
 describe('pointInPolygonInto 너비 0', () => {
   test('모든 꼭짓점의 x가 같으면 반올림으로 면적이 0이 아니어도 false를 돌려주고 rng를 쓰지 않는다', () => {
     // x가 모두 0.1이라 수학적으로 면적이 0이지만 shoelace 합이 -3.47e-18로 남는다.
-    const polygon = [
-      { x: 0.1, y: 0.5702449908813797 },
-      { x: 0.1, y: 0.17794863347304668 },
-      { x: 0.1, y: 0.1889123377209847 },
-    ];
+    const polygon = [0.1, 0.5702449908813797, 0.1, 0.17794863347304668, 0.1, 0.1889123377209847];
     const out = { x: 7, y: 7 };
     expect(
       pointInPolygonInto(out, polygon, () => {

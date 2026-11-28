@@ -1,3 +1,5 @@
+/** 경로의 drawing segment 가중치에 따른 샘플링을 검증한다. */
+
 import { describe, expect, test } from 'vitest';
 import { weightedPointOnPathInto } from '../../../src/random/weighted-point-on-path-into';
 import type { PathCommand } from '../../../src/types';
@@ -436,22 +438,6 @@ describe('weightedPointOnPathInto', () => {
     expect(result).toBe(true);
     expect(out.x).toBeCloseTo(2);
     expect(out.y).toBeCloseTo(1);
-  });
-
-  test('tuple output 지원', () => {
-    const out: [number, number] = [0, 0];
-    const result = weightedPointOnPathInto(
-      out,
-      [
-        { kind: 'move', x: 0, y: 0 },
-        { kind: 'line', x: 10, y: 0 },
-      ],
-      [1],
-      () => 0.5
-    );
-    expect(result).toBe(true);
-    expect(out[0]).toBeCloseTo(5);
-    expect(out[1]).toBeCloseTo(0);
   });
 
   test('성공 시 RNG를 정확히 1회 소비한다', () => {

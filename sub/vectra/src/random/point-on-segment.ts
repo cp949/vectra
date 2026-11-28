@@ -1,4 +1,4 @@
-import type { SegmentLike } from '../types';
+import type { PointWritable, Segment } from '../types/flat-shapes.internal';
 import { pointOnSegmentInto } from './point-on-segment-into';
 import type { RandomSource } from './random';
 
@@ -10,7 +10,7 @@ import type { RandomSource } from './random';
  * @param segment - 대상 segment. 두 endpoint를 읽는다
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export function pointOnSegment(segment: SegmentLike, rng?: RandomSource): { x: number; y: number } {
+export function pointOnSegment(segment: Segment, rng?: RandomSource): PointWritable {
   const out = { x: 0, y: 0 };
   pointOnSegmentInto(out, segment, rng);
   return out;

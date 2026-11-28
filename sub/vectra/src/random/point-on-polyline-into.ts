@@ -1,8 +1,6 @@
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY, writeXY } from '../internal/xy';
 import { length } from '../polyline/length';
 import { pointAtLengthInto } from '../polyline/point-at-length-into';
-import type { PolylineLike, XYWritable } from '../types';
+import type { PointWritable, Polyline } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { random } from './random';
 
@@ -14,7 +12,7 @@ import { random } from './random';
  *
  * degenerate 처리: `totalLength <= 0` 또는 `!Number.isFinite(totalLength)`이면
  * false를 반환하고 out을 수정하지 않는다.
- * — pts.length < 2는 totalLength=0으로 환원되어 같은 분기에서 처리된다.
+ * — polyline.length < 2는 totalLength=0으로 환원되어 같은 분기에서 처리된다.
  * — NaN vertex는 `length`의 Euclidean 거리를 통해 NaN이 전파되어 false를 반환한다.
  * — Infinity vertex는 totalLength가 Infinity가 되어 false를 반환한다.
  *
@@ -23,27 +21,17 @@ import { random } from './random';
  * caller 책임: polyline vertex에 NaN/Infinity가 있으면 false를 반환한다.
  * RNG가 [0, 1) 범위를 벗어나는 값을 반환하면 결과는 정의되지 않는다.
  *
- * @param out 결과를 기록할 writable 좌표 output
- * @param polyline 대상 polyline. pts.length < 2이면 false
+ * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param polyline 대상 polyline. polyline.length < 2이면 false
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export const pointOnPolylineInto = <Out extends XYWritable>(
-  out: Out,
-  polyline: PolylineLike,
-  rng?: RandomSource
-): boolean => {
-  // v2-migration: D-7에서 random의 polyline 입력을 전환하면 변환을 제거한다.
-  const readPoints = () => readPolylinePoints(polyline).map((point) => ({ x: readX(point), y: readY(point) }));
-  const totalLength = length(readPoints());
+export const pointOnPolylineInto = (out: PointWritable, polyline: Polyline, rng?: RandomSource): boolean => {
+  const totalLength = length(polyline);
 
   if (!Number.isFinite(totalLength) || totalLength <= 0) {
     return false;
   }
 
   const distance = random(rng) * totalLength;
-  // v2-migration: D-7에서 random의 출력 변환을 제거한다.
-  const sample = { x: 0, y: 0 };
-  if (!pointAtLengthInto(sample, readPoints(), distance)) return false;
-  writeXY(out, sample.x, sample.y);
-  return true;
+  return pointAtLengthInto(out, polyline, distance);
 };

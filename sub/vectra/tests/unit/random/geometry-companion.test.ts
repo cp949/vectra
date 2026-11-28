@@ -55,12 +55,12 @@ describe('random geometry companion 함수', () => {
   describe('pointOnSegment', () => {
     test('pointOnSegment는 { x, y } 형태를 반환한다', () => {
       // t=0.25, a=(10,20), b=(30,60) → (15, 30)
-      const result = pointOnSegment({ a: { x: 10, y: 20 }, b: { x: 30, y: 60 } }, () => 0.25);
+      const result = pointOnSegment({ x1: 10, y1: 20, x2: 30, y2: 60 }, () => 0.25);
       expect(result).toEqual({ x: 15, y: 30 });
     });
 
     test('pointOnSegment는 degenerate segment에서 endpoint를 반환한다', () => {
-      const result = pointOnSegment({ a: { x: 5, y: 7 }, b: { x: 5, y: 7 } }, () => 0.5);
+      const result = pointOnSegment({ x1: 5, y1: 7, x2: 5, y2: 7 }, () => 0.5);
       expect(result).toEqual({ x: 5, y: 7 });
     });
   });
@@ -112,19 +112,19 @@ describe('random geometry companion 함수', () => {
   });
 
   describe('pointInBounds', () => {
-    test('pointInBounds는 inverted bounds(max.x < min.x)에서 undefined를 반환한다', () => {
-      const result = pointInBounds({ min: { x: 5, y: 0 }, max: { x: 3, y: 10 } }, sequence([0.5, 0.5]));
+    test('pointInBounds는 inverted bounds(maxX < minX)에서 undefined를 반환한다', () => {
+      const result = pointInBounds({ minX: 5, minY: 0, maxX: 3, maxY: 10 }, sequence([0.5, 0.5]));
       expect(result).toBeUndefined();
     });
 
-    test('pointInBounds는 inverted bounds(max.y < min.y)에서 undefined를 반환한다', () => {
-      const result = pointInBounds({ min: { x: 0, y: 5 }, max: { x: 10, y: 3 } }, sequence([0.5, 0.5]));
+    test('pointInBounds는 inverted bounds(maxY < minY)에서 undefined를 반환한다', () => {
+      const result = pointInBounds({ minX: 0, minY: 5, maxX: 10, maxY: 3 }, sequence([0.5, 0.5]));
       expect(result).toBeUndefined();
     });
 
     test('pointInBounds는 valid bounds에서 { x, y } 형태를 반환한다', () => {
       // min=(0,0), max=(10,20), rng=[0.5, 0.25] → (5, 5)
-      const result = pointInBounds({ min: { x: 0, y: 0 }, max: { x: 10, y: 20 } }, sequence([0.5, 0.25]));
+      const result = pointInBounds({ minX: 0, minY: 0, maxX: 10, maxY: 20 }, sequence([0.5, 0.25]));
       expect(result).toBeDefined();
       if (result !== undefined) {
         expect(result).toEqual({ x: 5, y: 5 });
@@ -134,18 +134,18 @@ describe('random geometry companion 함수', () => {
 
   describe('pointInCircle', () => {
     test('pointInCircle는 radius=0인 circle에서 undefined를 반환한다', () => {
-      const result = pointInCircle({ center: { x: 0, y: 0 }, radius: 0 }, sequence([0.5, 0.5]));
+      const result = pointInCircle({ cx: 0, cy: 0, r: 0 }, sequence([0.5, 0.5]));
       expect(result).toBeUndefined();
     });
 
     test('pointInCircle는 radius<0인 circle에서 undefined를 반환한다', () => {
-      const result = pointInCircle({ center: { x: 0, y: 0 }, radius: -1 }, sequence([0.5, 0.5]));
+      const result = pointInCircle({ cx: 0, cy: 0, r: -1 }, sequence([0.5, 0.5]));
       expect(result).toBeUndefined();
     });
 
     test('pointInCircle는 valid circle에서 { x, y } 형태를 반환한다', () => {
       // center=(1,2), radius=4, rng=[0.5, 0.5] → theta=PI, r=sqrt(0.5)*4
-      const result = pointInCircle({ center: { x: 1, y: 2 }, radius: 4 }, sequence([0.5, 0.5]));
+      const result = pointInCircle({ cx: 1, cy: 2, r: 4 }, sequence([0.5, 0.5]));
       expect(result).toBeDefined();
       if (result !== undefined) {
         const expectedR = Math.sqrt(0.5) * 4;
@@ -157,13 +157,13 @@ describe('random geometry companion 함수', () => {
 
   describe('pointOnCircle', () => {
     test('pointOnCircle는 radius<=0인 circle에서 undefined를 반환한다', () => {
-      const result = pointOnCircle({ center: { x: 0, y: 0 }, radius: -1 }, () => 0.5);
+      const result = pointOnCircle({ cx: 0, cy: 0, r: -1 }, () => 0.5);
       expect(result).toBeUndefined();
     });
 
     test('pointOnCircle는 valid circle에서 { x, y } 형태를 반환한다', () => {
       // center=(0,0), radius=5, rng=0 → theta=0 → (5, 0)
-      const result = pointOnCircle({ center: { x: 0, y: 0 }, radius: 5 }, () => 0);
+      const result = pointOnCircle({ cx: 0, cy: 0, r: 5 }, () => 0);
       expect(result).toBeDefined();
       if (result !== undefined) {
         expect(result.x).toBeCloseTo(5);
@@ -174,19 +174,19 @@ describe('random geometry companion 함수', () => {
 
   describe('pointInEllipse', () => {
     test('radiusX<=0 → undefined', () => {
-      const result = pointInEllipse({ center: { x: 0, y: 0 }, radiusX: 0, radiusY: 5 }, () => 0.5);
+      const result = pointInEllipse({ cx: 0, cy: 0, rx: 0, ry: 5 }, () => 0.5);
       expect(result).toBeUndefined();
     });
 
     test('radiusY<=0 → undefined', () => {
-      const result = pointInEllipse({ center: { x: 0, y: 0 }, radiusX: 3, radiusY: 0 }, () => 0.5);
+      const result = pointInEllipse({ cx: 0, cy: 0, rx: 3, ry: 0 }, () => 0.5);
       expect(result).toBeUndefined();
     });
 
     test('valid ellipse → { x, y } 반환, Into와 동일 좌표', () => {
       let call = 0;
       const rng = () => (call++ % 2 === 0 ? 0.5 : 0.25);
-      const ellipse = { center: { x: 1, y: 2 }, radiusX: 3, radiusY: 5 };
+      const ellipse = { cx: 1, cy: 2, rx: 3, ry: 5 };
       const result = pointInEllipse(ellipse, rng);
       expect(result).toBeDefined();
       if (result !== undefined) {
@@ -265,34 +265,11 @@ describe('random geometry companion 함수', () => {
       const result = pointOnPolyline([{ x: 3, y: 4 }], () => 0.5);
       expect(result).toBeUndefined();
     });
-
-    test('PolylineObjectLike({ points }) 형태 입력을 지원한다', () => {
-      // { points: [...] } 형태의 PolylineObjectLike 입력 검증
-      const result = pointOnPolyline(
-        {
-          points: [
-            { x: 0, y: 0 },
-            { x: 10, y: 0 },
-          ],
-        },
-        () => 0.5
-      );
-      expect(result).toBeDefined();
-      if (result !== undefined) {
-        expect(result.x).toBeCloseTo(5);
-        expect(result.y).toBeCloseTo(0);
-      }
-    });
   });
 
   describe('pointInPolygon', () => {
     /** 단위 정사각형 polygon (0~1 범위) */
-    const unitSquare = [
-      { x: 0, y: 0 },
-      { x: 1, y: 0 },
-      { x: 1, y: 1 },
-      { x: 0, y: 1 },
-    ];
+    const unitSquare = [0, 0, 1, 0, 1, 1, 0, 1];
 
     test('빈 polygon → undefined', () => {
       const result = pointInPolygon([], () => 0.5);
@@ -300,13 +277,7 @@ describe('random geometry companion 함수', () => {
     });
 
     test('vertex 2개(point-count < 3) → undefined', () => {
-      const result = pointInPolygon(
-        [
-          { x: 0, y: 0 },
-          { x: 1, y: 0 },
-        ],
-        () => 0.5
-      );
+      const result = pointInPolygon([0, 0, 1, 0], () => 0.5);
       expect(result).toBeUndefined();
     });
 
@@ -324,30 +295,16 @@ describe('random geometry companion 함수', () => {
     });
 
     test('degenerate polygon(NaN vertex) → undefined', () => {
-      const result = pointInPolygon(
-        [
-          { x: 0, y: 0 },
-          { x: NaN, y: 0 },
-          { x: 1, y: 1 },
-        ],
-        () => 0.5
-      );
+      const result = pointInPolygon([0, 0, NaN, 0, 1, 1], () => 0.5);
       expect(result).toBeUndefined();
     });
 
     test('degenerate polygon(signedArea === 0) → undefined', () => {
       let calls = 0;
-      const result = pointInPolygon(
-        [
-          { x: 0, y: 0 },
-          { x: 1, y: 1 },
-          { x: 2, y: 2 },
-        ],
-        () => {
-          calls++;
-          return 0.5;
-        }
-      );
+      const result = pointInPolygon([0, 0, 1, 1, 2, 2], () => {
+        calls++;
+        return 0.5;
+      });
       expect(result).toBeUndefined();
       expect(calls).toBe(0);
     });
@@ -356,24 +313,22 @@ describe('random geometry companion 함수', () => {
   describe('pointInTriangle', () => {
     test('pointInTriangle는 { x, y } 형태를 반환한다', () => {
       // a=(0,0), b=(4,0), c=(0,4), r=0.2, s=0.3 → (0.8, 1.2)
-      const result = pointInTriangle({ x: 0, y: 0 }, { x: 4, y: 0 }, { x: 0, y: 4 }, sequence([0.2, 0.3]));
+      const result = pointInTriangle({ x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 }, sequence([0.2, 0.3]));
       expect(result.x).toBeCloseTo(0.8);
       expect(result.y).toBeCloseTo(1.2);
     });
 
     test('pointInTriangle는 barycentric reflection case를 올바르게 처리한다', () => {
       // r=0.7, s=0.6 → r+s=1.3>1 → r=0.3, s=0.4 → (1.2, 1.6)
-      const result = pointInTriangle({ x: 0, y: 0 }, { x: 4, y: 0 }, { x: 0, y: 4 }, sequence([0.7, 0.6]));
+      const result = pointInTriangle({ x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 }, sequence([0.7, 0.6]));
       expect(result.x).toBeCloseTo(1.2);
       expect(result.y).toBeCloseTo(1.6);
     });
 
     test('pointInTriangle는 매번 새 object를 반환한다', () => {
-      const a = { x: 0, y: 0 };
-      const b = { x: 1, y: 0 };
-      const c = { x: 0, y: 1 };
-      const r1 = pointInTriangle(a, b, c, sequence([0.2, 0.3]));
-      const r2 = pointInTriangle(a, b, c, sequence([0.2, 0.3]));
+      const triangle = { x1: 0, y1: 0, x2: 1, y2: 0, x3: 0, y3: 1 };
+      const r1 = pointInTriangle(triangle, sequence([0.2, 0.3]));
+      const r2 = pointInTriangle(triangle, sequence([0.2, 0.3]));
       expect(r1).not.toBe(r2);
     });
   });

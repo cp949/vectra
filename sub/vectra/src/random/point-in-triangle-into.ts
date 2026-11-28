@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { PointWritable, Triangle } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { random } from './random';
 
@@ -8,17 +7,13 @@ import { random } from './random';
  *
  * r + s > 1인 경우 삼각형 반대편 영역에 해당하므로 (1-r, 1-s)로 반사 처리한다.
  *
- * @param out - 결과를 기록할 writable 좌표 output
- * @param a - 삼각형 첫 번째 꼭짓점
- * @param b - 삼각형 두 번째 꼭짓점
- * @param c - 삼각형 세 번째 꼭짓점
+ * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param triangle 대상 삼각형
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export const pointInTriangleInto = <Out extends XYWritable>(
+export const pointInTriangleInto = <Out extends PointWritable>(
   out: Out,
-  a: XYInput,
-  b: XYInput,
-  c: XYInput,
+  triangle: Triangle,
   rng?: RandomSource
 ): Out => {
   let r = random(rng);
@@ -30,10 +25,12 @@ export const pointInTriangleInto = <Out extends XYWritable>(
     s = 1 - s;
   }
 
-  const ax = readX(a);
-  const ay = readY(a);
+  const ax = triangle.x1;
+  const ay = triangle.y1;
   // a + (b-a)*r + (c-a)*s 공식으로 삼각형 내부 점 계산
-  const x = ax + (readX(b) - ax) * r + (readX(c) - ax) * s;
-  const y = ay + (readY(b) - ay) * r + (readY(c) - ay) * s;
-  return writeXY(out, x, y);
+  const x = ax + (triangle.x2 - ax) * r + (triangle.x3 - ax) * s;
+  const y = ay + (triangle.y2 - ay) * r + (triangle.y3 - ay) * s;
+  out.x = x;
+  out.y = y;
+  return out;
 };

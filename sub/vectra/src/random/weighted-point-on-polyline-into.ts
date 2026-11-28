@@ -1,7 +1,6 @@
-import { pointDist, readPolylinePoints } from '../internal/polyline';
-import { readX, readY, writeXY } from '../internal/xy';
+import { pointDist } from '../internal/polyline-distance-primitive.internal';
 import { pointAtLengthInto } from '../polyline/point-at-length-into';
-import type { PolylineLike, XYWritable } from '../types';
+import type { PointWritable, Polyline } from '../types/flat-shapes.internal';
 import type { RandomSource } from './random';
 import { validateGeometryWeights, weightedSegmentOffset } from './weighted-geometry.internal';
 
@@ -14,7 +13,7 @@ import { validateGeometryWeights, weightedSegmentOffset } from './weighted-geome
  * 선택 threshold 계산에 1회만 소비한다. open segment model을 따르며 closed polyline의 closing
  * edge는 포함하지 않는다.
  *
- * weight mapping: `weights.length`는 source segment count(`points.length - 1`)와 같아야 한다.
+ * weight mapping: `weights.length`는 source segment count(`polyline.length - 1`)와 같아야 한다.
  * zero-length segment는 weight가 양수여도 effective weight `0`으로 선택 대상이 아니다.
  *
  * 평가 순서(앞 단계에서 결정되면 이후는 평가하지 않는다):
@@ -29,25 +28,24 @@ import { validateGeometryWeights, weightedSegmentOffset } from './weighted-geome
  * caller 책임: polyline vertex에 NaN/Infinity가 있으면 `false`를 반환한다. RNG가 `[0, 1)` 범위를
  * 벗어나는 값을 반환하면 결과는 정의되지 않는다.
  *
- * @param out 결과를 기록할 writable 좌표 output. `false` 또는 `RangeError` 시 수정하지 않는다
- * @param polyline 대상 polyline. source segment count는 `points.length - 1`
- * @param weights segment별 가중치 배열. 길이는 `points.length - 1`, 각 값은 finite `>= 0`
+ * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`). `false` 또는 `RangeError` 시 수정하지 않는다
+ * @param polyline 대상 polyline. source segment count는 `polyline.length - 1`
+ * @param weights segment별 가중치 배열. 길이는 `polyline.length - 1`, 각 값은 finite `>= 0`
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export const weightedPointOnPolylineInto = <Out extends XYWritable>(
-  out: Out,
-  polyline: PolylineLike,
+export const weightedPointOnPolylineInto = (
+  out: PointWritable,
+  polyline: Polyline,
   weights: readonly number[],
   rng?: RandomSource
 ): boolean => {
-  const points = readPolylinePoints(polyline);
-  const segmentCount = Math.max(0, points.length - 1);
+  const segmentCount = Math.max(0, polyline.length - 1);
   validateGeometryWeights(weights, segmentCount, 'weightedPointOnPolylineInto');
 
   const segLengths: number[] = [];
   let totalLength = 0;
-  for (let i = 1; i < points.length; i++) {
-    const len = pointDist(readX(points[i - 1]), readY(points[i - 1]), readX(points[i]), readY(points[i]));
+  for (let i = 1; i < polyline.length; i++) {
+    const len = pointDist(polyline[i - 1].x, polyline[i - 1].y, polyline[i].x, polyline[i].y);
     segLengths.push(len);
     totalLength += len;
   }
@@ -57,16 +55,5 @@ export const weightedPointOnPolylineInto = <Out extends XYWritable>(
   }
 
   const distance = weightedSegmentOffset(segLengths, weights, rng, 'weightedPointOnPolylineInto');
-  // v2-migration: D-7에서 random의 출력 변환을 제거한다.
-  const sample = { x: 0, y: 0 };
-  if (
-    !pointAtLengthInto(
-      sample,
-      points.map((point) => ({ x: readX(point), y: readY(point) })),
-      distance
-    )
-  )
-    return false;
-  writeXY(out, sample.x, sample.y);
-  return true;
+  return pointAtLengthInto(out, polyline, distance);
 };

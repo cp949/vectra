@@ -50,28 +50,24 @@ const PASS_THROUGH = [
 const rampWeight = (param: number): number => 0.25 + param * 0.5;
 
 // 아래 fixture는 모두 팩토리다. 호출마다 새 객체를 만들어 `out`과 입력 변이가 경로 사이에서 섞이지 않게 한다.
-// 같은 타입 인자(triangle a/b/c, outer/inner 등)는 서로 다른 값이라 뒤바꿈이 결과에 드러난다.
+// 같은 타입 인자(outer/inner 등)는 서로 다른 값이라 뒤바꿈이 결과에 드러난다.
 const makeOut = () => ({ x: 0, y: 0 });
 
-const segment = () => ({ a: { x: 1, y: 2 }, b: { x: 9, y: -3 } });
+/** 서로 다른 두 끝점을 가진 선분. */
+const segment = () => ({ x1: 1, y1: 2, x2: 9, y2: -3 });
 const rect = () => ({ x: -5, y: 3, width: 30, height: 12 });
 const outerRect = () => ({ x: 0, y: 0, width: 100, height: 80 });
 const innerRect = () => ({ x: 25, y: 20, width: 50, height: 30 });
-const bounds = () => ({ min: { x: -4, y: 2 }, max: { x: 11, y: 9 } });
-const circle = () => ({ center: { x: 3, y: -2 }, radius: 7 });
-const ellipse = () => ({ center: { x: 1, y: -1 }, radiusX: 6, radiusY: 2.5 });
-const triangle = () => [
-  { x: 0, y: 0 },
-  { x: 10, y: 1 },
-  { x: 2, y: 7 },
-];
-const polygon = () => [
-  { x: 0, y: 0 },
-  { x: 8, y: 0 },
-  { x: 9, y: 5 },
-  { x: 3, y: 7 },
-  { x: -1, y: 4 },
-];
+/** 최소·최대 좌표가 다른 경계 상자. */
+const bounds = () => ({ minX: -4, minY: 2, maxX: 11, maxY: 9 });
+/** 원점에서 벗어난 원. */
+const circle = () => ({ cx: 3, cy: -2, r: 7 });
+/** 두 반지름이 다른 타원. */
+const ellipse = () => ({ cx: 1, cy: -1, rx: 6, ry: 2.5 });
+/** 세 꼭짓점이 서로 다른 삼각형. */
+const triangle = () => ({ x1: 0, y1: 0, x2: 10, y2: 1, x3: 2, y3: 7 });
+/** 좌표를 x, y 순으로 저장한 다각형. */
+const polygon = () => [0, 0, 8, 0, 9, 5, 3, 7, -1, 4];
 const polyline = () => [
   { x: 0, y: 0 },
   { x: 5, y: 0 },
@@ -120,8 +116,8 @@ const CASES: readonly WiringCase[] = [
   { name: 'pointInCircle', args: () => [circle()] },
   { name: 'pointOnCircleInto', args: () => [makeOut(), circle()] },
   { name: 'pointOnCircle', args: () => [circle()] },
-  { name: 'pointInTriangleInto', args: () => [makeOut(), ...triangle()] },
-  { name: 'pointInTriangle', args: () => triangle() },
+  { name: 'pointInTriangleInto', args: () => [makeOut(), triangle()] },
+  { name: 'pointInTriangle', args: () => [triangle()] },
   { name: 'pointInEllipseInto', args: () => [makeOut(), ellipse()] },
   { name: 'pointInEllipse', args: () => [ellipse()] },
   { name: 'pointInPolygonInto', args: () => [makeOut(), polygon()] },

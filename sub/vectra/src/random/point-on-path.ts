@@ -1,3 +1,4 @@
+import type { PointWritable } from '../types/flat-shapes.internal';
 import type { PathCommand } from '../types';
 import { pointOnPathInto } from './point-on-path-into';
 import type { RandomSource } from './random';
@@ -21,10 +22,7 @@ import type { RandomSource } from './random';
  * @param commands 대상 path command sequence. drawing segment가 없으면 undefined
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
-export function pointOnPath(
-  commands: readonly PathCommand[],
-  rng?: RandomSource
-): { x: number; y: number } | undefined {
+export function pointOnPath(commands: readonly PathCommand[], rng?: RandomSource): PointWritable | undefined {
   const out = { x: 0, y: 0 };
   return pointOnPathInto(out, commands, rng) ? out : undefined;
 }

@@ -2,17 +2,18 @@ import type { RandomSeed } from '../random/create-rng';
 import type { RandomSource } from '../random/random';
 import type { HaltonSequenceOptions, SobolSequenceOptions } from '../random/types';
 import type { WeightedProbabilitySample } from '../random/weighted-probability';
-import type { Point, PointWritable } from '../types/flat-shapes.internal';
+import type { PathCommand } from '../types';
 import type {
-  BoundsLike,
-  CircleLike,
-  EllipseLike,
-  PathCommand,
-  PolygonLike,
-  PolylineLike,
-  RectLike,
-  SegmentLike,
-} from '../types';
+  Bounds,
+  Circle,
+  Ellipse,
+  PointWritable,
+  Polygon,
+  Polyline,
+  Rect,
+  Segment,
+  Triangle,
+} from '../types/flat-shapes.internal';
 
 /**
  * `random` domain 함수를 thin wrapper로 묶은 stateful facade.
@@ -34,46 +35,41 @@ export interface RandomState {
 
   directionInto<Out extends PointWritable>(out: Out, length?: number, rng?: RandomSource): Out;
   direction(length?: number, rng?: RandomSource): PointWritable;
-  pointOnSegmentInto<Out extends PointWritable>(out: Out, segment: SegmentLike, rng?: RandomSource): Out;
-  pointOnSegment(segment: SegmentLike, rng?: RandomSource): PointWritable;
-  pointInRectInto<Out extends PointWritable>(out: Out, rect: RectLike, rng?: RandomSource): boolean;
-  pointInRect(rect: RectLike, rng?: RandomSource): PointWritable | undefined;
-  pointInRectOutsideInto<Out extends PointWritable>(
-    out: Out,
-    outer: RectLike,
-    inner: RectLike,
-    rng?: RandomSource
-  ): boolean;
-  pointInRectOutside(outer: RectLike, inner: RectLike, rng?: RandomSource): PointWritable | undefined;
-  pointInBoundsInto<Out extends PointWritable>(out: Out, bounds: BoundsLike, rng?: RandomSource): boolean;
-  pointInBounds(bounds: BoundsLike, rng?: RandomSource): PointWritable | undefined;
-  pointInCircleInto<Out extends PointWritable>(out: Out, circle: CircleLike, rng?: RandomSource): boolean;
-  pointInCircle(circle: CircleLike, rng?: RandomSource): PointWritable | undefined;
-  pointOnCircleInto<Out extends PointWritable>(out: Out, circle: CircleLike, rng?: RandomSource): boolean;
-  pointOnCircle(circle: CircleLike, rng?: RandomSource): PointWritable | undefined;
-  pointInTriangleInto<Out extends PointWritable>(out: Out, a: Point, b: Point, c: Point, rng?: RandomSource): Out;
-  pointInTriangle(a: Point, b: Point, c: Point, rng?: RandomSource): PointWritable;
-  pointInEllipseInto<Out extends PointWritable>(out: Out, ellipse: EllipseLike, rng?: RandomSource): boolean;
-  pointInEllipse(ellipse: EllipseLike, rng?: RandomSource): PointWritable | undefined;
-  pointInPolygonInto<Out extends PointWritable>(out: Out, polygon: PolygonLike, rng?: RandomSource): boolean;
-  pointInPolygon(polygon: PolygonLike, rng?: RandomSource): PointWritable | undefined;
-  pointOnPolylineInto<Out extends PointWritable>(out: Out, polyline: PolylineLike, rng?: RandomSource): boolean;
-  pointOnPolyline(polyline: PolylineLike, rng?: RandomSource): PointWritable | undefined;
-  pointOnPathInto<Out extends PointWritable>(out: Out, commands: readonly PathCommand[], rng?: RandomSource): boolean;
+  pointOnSegmentInto<Out extends PointWritable>(out: Out, segment: Segment, rng?: RandomSource): Out;
+  pointOnSegment(segment: Segment, rng?: RandomSource): PointWritable;
+  pointInRectInto(out: PointWritable, rect: Rect, rng?: RandomSource): boolean;
+  pointInRect(rect: Rect, rng?: RandomSource): PointWritable | undefined;
+  pointInRectOutsideInto(out: PointWritable, outer: Rect, inner: Rect, rng?: RandomSource): boolean;
+  pointInRectOutside(outer: Rect, inner: Rect, rng?: RandomSource): PointWritable | undefined;
+  pointInBoundsInto(out: PointWritable, bounds: Bounds, rng?: RandomSource): boolean;
+  pointInBounds(bounds: Bounds, rng?: RandomSource): PointWritable | undefined;
+  pointInCircleInto(out: PointWritable, circle: Circle, rng?: RandomSource): boolean;
+  pointInCircle(circle: Circle, rng?: RandomSource): PointWritable | undefined;
+  pointOnCircleInto(out: PointWritable, circle: Circle, rng?: RandomSource): boolean;
+  pointOnCircle(circle: Circle, rng?: RandomSource): PointWritable | undefined;
+  pointInTriangleInto<Out extends PointWritable>(out: Out, triangle: Triangle, rng?: RandomSource): Out;
+  pointInTriangle(triangle: Triangle, rng?: RandomSource): PointWritable;
+  pointInEllipseInto(out: PointWritable, ellipse: Ellipse, rng?: RandomSource): boolean;
+  pointInEllipse(ellipse: Ellipse, rng?: RandomSource): PointWritable | undefined;
+  pointInPolygonInto(out: PointWritable, polygon: Polygon, rng?: RandomSource): boolean;
+  pointInPolygon(polygon: Polygon, rng?: RandomSource): PointWritable | undefined;
+  pointOnPolylineInto(out: PointWritable, polyline: Polyline, rng?: RandomSource): boolean;
+  pointOnPolyline(polyline: Polyline, rng?: RandomSource): PointWritable | undefined;
+  pointOnPathInto(out: PointWritable, commands: readonly PathCommand[], rng?: RandomSource): boolean;
   pointOnPath(commands: readonly PathCommand[], rng?: RandomSource): PointWritable | undefined;
-  weightedPointOnPolylineInto<Out extends PointWritable>(
-    out: Out,
-    polyline: PolylineLike,
+  weightedPointOnPolylineInto(
+    out: PointWritable,
+    polyline: Polyline,
     weights: readonly number[],
     rng?: RandomSource
   ): boolean;
   weightedPointOnPolyline(
-    polyline: PolylineLike,
+    polyline: Polyline,
     weights: readonly number[],
     rng?: RandomSource
   ): PointWritable | undefined;
-  weightedPointOnPathInto<Out extends PointWritable>(
-    out: Out,
+  weightedPointOnPathInto(
+    out: PointWritable,
     commands: readonly PathCommand[],
     weights: readonly number[],
     rng?: RandomSource
