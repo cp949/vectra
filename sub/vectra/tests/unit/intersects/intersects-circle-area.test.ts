@@ -12,70 +12,56 @@ const intersectsSegment = (
 describe('circle boolean query - intersectsCircle', () => {
   test('두 circle이 분리되면 false를 반환한다', () => {
     // distance=6 > r1+r2=4
-    const a = { center: { x: 0, y: 0 }, radius: 2 };
-    const b = { center: { x: 6, y: 0 }, radius: 2 };
+    const a = { cx: 0, cy: 0, r: 2 };
+    const b = { cx: 6, cy: 0, r: 2 };
     expect(intersectsCircleCircle(a, b)).toBe(false);
   });
 
   test('외접 tangent (distance = r1 + r2)이면 true를 반환한다', () => {
     // distance=4 = r1+r2=4
-    const a = { center: { x: 0, y: 0 }, radius: 2 };
-    const b = { center: { x: 4, y: 0 }, radius: 2 };
+    const a = { cx: 0, cy: 0, r: 2 };
+    const b = { cx: 4, cy: 0, r: 2 };
     expect(intersectsCircleCircle(a, b)).toBe(true);
   });
 
   test('두 circle이 교차하면 true를 반환한다', () => {
     // distance=4 < r1+r2=6
-    const a = { center: { x: 0, y: 0 }, radius: 3 };
-    const b = { center: { x: 4, y: 0 }, radius: 3 };
+    const a = { cx: 0, cy: 0, r: 3 };
+    const b = { cx: 4, cy: 0, r: 3 };
     expect(intersectsCircleCircle(a, b)).toBe(true);
   });
 
   test('내접 tangent (distance = |r1 - r2|)이면 true를 반환한다', () => {
     // distance=3 = r1 - r2 (b가 a 내부에서 a 경계에 접함)
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 3, y: 0 }, radius: 2 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 3, cy: 0, r: 2 };
     expect(intersectsCircleCircle(a, b)).toBe(true);
   });
 
   test('한 circle이 다른 circle을 완전히 포함하면 true를 반환한다', () => {
     // distance=1 < r1+r2=12
-    const a = { center: { x: 0, y: 0 }, radius: 10 };
-    const b = { center: { x: 1, y: 0 }, radius: 2 };
+    const a = { cx: 0, cy: 0, r: 10 };
+    const b = { cx: 1, cy: 0, r: 2 };
     expect(intersectsCircleCircle(a, b)).toBe(true);
   });
 
   test('동심원이면 true를 반환한다', () => {
     // distance=0 < r1+r2=8
-    const a = { center: { x: 0, y: 0 }, radius: 3 };
-    const b = { center: { x: 0, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 3 };
+    const b = { cx: 0, cy: 0, r: 5 };
     expect(intersectsCircleCircle(a, b)).toBe(true);
   });
 
   test('a가 empty (radius=0)이면 false를 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 0 };
-    const b = { center: { x: 0, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 0 };
+    const b = { cx: 0, cy: 0, r: 5 };
     expect(intersectsCircleCircle(a, b)).toBe(false);
   });
 
   test('b가 empty (radius<0)이면 false를 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 0, y: 0 }, radius: -1 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 0, cy: 0, r: -1 };
     expect(intersectsCircleCircle(a, b)).toBe(false);
-  });
-
-  test('tuple center에서도 동작한다', () => {
-    // distance=4 < r1+r2=6
-    const a = { center: [0, 0] as const, radius: 3 };
-    const b = { center: [4, 0] as const, radius: 3 };
-    expect(intersectsCircleCircle(a, b)).toBe(true);
-  });
-
-  test('tuple shorthand CircleLike에서도 동작한다', () => {
-    // distance=4 < r1+r2=6
-    const a = [[0, 0], 3] as const;
-    const b = [[4, 0], 3] as const;
-    expect(intersectsCircleCircle(a, b)).toBe(true);
   });
 });
 

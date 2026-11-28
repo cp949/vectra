@@ -1,6 +1,4 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 import { hypot2 } from '../internal/numeric';
 
 /**
@@ -23,15 +21,13 @@ import { hypot2 } from '../internal/numeric';
  * @param a 첫 번째 circle
  * @param b 두 번째 circle
  */
-export function circleLensArea(a: CircleLike, b: CircleLike): number {
-  const ca = readCircleCenter(a);
-  const cb = readCircleCenter(b);
-  const ax = readX(ca);
-  const ay = readY(ca);
-  const bx = readX(cb);
-  const by = readY(cb);
-  const ra = readCircleRadius(a);
-  const rb = readCircleRadius(b);
+export function circleLensArea(a: Circle, b: Circle): number {
+  const ax = a.cx;
+  const ay = a.cy;
+  const bx = b.cx;
+  const by = b.cy;
+  const ra = a.r;
+  const rb = b.r;
 
   if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(bx) || !Number.isFinite(by)) return 0;
   if (!Number.isFinite(ra) || !Number.isFinite(rb) || ra <= 0 || rb <= 0) return 0;

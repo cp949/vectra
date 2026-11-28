@@ -1,7 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { DEFAULT_EPSILON, hypot2 } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { AreaOverlapDetail, CircleLike } from '../types';
+import type { AreaOverlapDetail } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 
 /**
  * 두 disk(채워진 원)의 면적 중첩 관계 detail을 반환한다.
@@ -14,7 +13,7 @@ import type { AreaOverlapDetail, CircleLike } from '../types';
  * - `contains`: 한 disk가 다른 disk를 완전히 포함한다. 동심 반지름 다른 disk와 완전히 같은 disk도 `contains`다.
  *
  * `AreaOverlapDetail`은 어느 쪽이 포함자인지 표현하지 않는다. 실제 lens 면적이나 교점은 담지 않는다.
- * tangent point는 매 호출 새로 만든 plain `{ x, y }` object이며 입력 center object를 재사용하지 않는다.
+ * tangent point는 매 호출 새로 만든 plain `{ x, y }` object다.
  * fixed plain result object이며 `Into`/companion 대상이 아니다.
  * `epsilon`은 center distance 기반 분리/tangent/contains 경계 판정에만 쓰고 finite validation에는
  * 쓰지 않는다. 계산은 공통 scale로 정규화해 center distance와 radius sum 비교 overflow를 피한다.
@@ -25,19 +24,13 @@ import type { AreaOverlapDetail, CircleLike } from '../types';
  * @param b 두 번째 circle
  * @param epsilon 분리/tangent/contains 경계 판정 임계값
  */
-export function circleCircleAreaOverlapDetail(
-  a: CircleLike,
-  b: CircleLike,
-  epsilon = DEFAULT_EPSILON
-): AreaOverlapDetail {
-  const ca = readCircleCenter(a);
-  const cb = readCircleCenter(b);
-  const ax = readX(ca);
-  const ay = readY(ca);
-  const bx = readX(cb);
-  const by = readY(cb);
-  const ra = readCircleRadius(a);
-  const rb = readCircleRadius(b);
+export function circleCircleAreaOverlapDetail(a: Circle, b: Circle, epsilon = DEFAULT_EPSILON): AreaOverlapDetail {
+  const ax = a.cx;
+  const ay = a.cy;
+  const bx = b.cx;
+  const by = b.cy;
+  const ra = a.r;
+  const rb = b.r;
 
   if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(bx) || !Number.isFinite(by)) {
     return { kind: 'none' };

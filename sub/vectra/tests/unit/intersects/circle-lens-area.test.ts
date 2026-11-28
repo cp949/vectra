@@ -2,15 +2,16 @@
  * circle-circle lens area scalar helper 단위 테스트.
  *
  * S11-RM-026: circleLensArea의 disjoint / external·internal tangent / containment /
- * coincident / proper lens / non-finite·non-positive radius / tuple input을 검증한다.
+ * coincident / proper lens / non-finite·non-positive radius를 검증한다.
  * 분기 분류는 circleCircleAreaOverlapDetail(none/touch/overlap/contains)과 일치한다.
  */
 
 import { describe, expect, test } from 'vitest';
 import { circleLensArea } from '../../../src/intersects/circle-lens-area';
-import type { CircleLike } from '../../../src/types';
 
-const circle = (cx: number, cy: number, radius: number): CircleLike => ({ center: { x: cx, y: cy }, radius });
+/** 원 교차 판정에 쓸 입력을 구성한다. */
+/** 원 교차 판정에 쓸 입력을 구성한다. */
+const circle = (cx: number, cy: number, r: number) => ({ cx, cy, r });
 
 describe('circleLensArea', () => {
   test('disjoint circles는 0이다', () => {
@@ -147,10 +148,5 @@ describe('circleLensArea', () => {
     expect(circleLensArea(circle(0, 0, Number.POSITIVE_INFINITY), circle(1, 0, 2))).toBe(0);
     expect(circleLensArea(circle(Number.NEGATIVE_INFINITY, 0, 2), circle(1, 0, 2))).toBe(0);
     expect(circleLensArea(circle(0, 0, Number.NEGATIVE_INFINITY), circle(1, 0, 2))).toBe(0);
-  });
-
-  test('tuple shorthand circle input을 지원한다', () => {
-    const expected = (2 * Math.PI) / 3 - Math.sqrt(3) / 2;
-    expect(circleLensArea([[0, 0], 1], [[1, 0], 1])).toBeCloseTo(expected, 12);
   });
 });

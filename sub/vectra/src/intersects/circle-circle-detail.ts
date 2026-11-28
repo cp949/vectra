@@ -1,7 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { CircleCircleDetail, CircleLike } from '../types';
+import type { CircleCircleDetail } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
 import { circleCircleDetailXY } from './circle-circle-intersections.internal';
 
 /**
@@ -23,22 +22,12 @@ import { circleCircleDetailXY } from './circle-circle-intersections.internal';
  * 계산은 공통 scale로 정규화해 `d²`/`r²` overflow를 피한다.
  * `epsilon`은 절대 임계값이며 두 radius보다 충분히 작다고 가정한다. radius가 `epsilon` 규모 이하면
  * 분리/접선 경계가 합쳐져 분리된 circle을 `point`로 분류할 수 있다.
- * 결과는 매 호출 새 plain object를 반환하며 입력 center object를 재사용하지 않는다.
+ * 결과는 매 호출 새 plain object를 반환한다.
  *
  * @param a 첫 번째 circle. point ordering과 `tA`의 기준이다.
  * @param b 두 번째 circle. `tB`의 기준이다.
  * @param epsilon center distance 및 tangent 판정 임계값
  */
-export function circleCircleDetail(a: CircleLike, b: CircleLike, epsilon = DEFAULT_EPSILON): CircleCircleDetail {
-  const ca = readCircleCenter(a);
-  const cb = readCircleCenter(b);
-  return circleCircleDetailXY(
-    readX(ca),
-    readY(ca),
-    readX(cb),
-    readY(cb),
-    readCircleRadius(a),
-    readCircleRadius(b),
-    epsilon
-  );
+export function circleCircleDetail(a: Circle, b: Circle, epsilon = DEFAULT_EPSILON): CircleCircleDetail {
+  return circleCircleDetailXY(a.cx, a.cy, b.cx, b.cy, a.r, b.r, epsilon);
 }

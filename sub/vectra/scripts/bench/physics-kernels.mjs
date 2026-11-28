@@ -86,7 +86,7 @@ async function makeCase(name) {
   const segment = await import(pathToFileURL(path.join(distRoot, 'segment/index.js')).href);
   const { surfaces, rays, circles, points } = makeScene();
   const segmentShapes = surfaces.map((s) => ({ a: { x: s.x1, y: s.y1 }, b: { x: s.x2, y: s.y2 } }));
-  const circleShapes = circles.map((c) => ({ center: { x: c.x, y: c.y }, radius: c.r }));
+  const circleShapes = circles.map((c) => ({ cx: c.x, cy: c.y, r: c.r }));
   const line = { x1: 100, y1: 100, x2: 900, y2: 700 };
 
   const cases = {

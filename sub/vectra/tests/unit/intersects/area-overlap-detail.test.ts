@@ -9,14 +9,16 @@ import { describe, expect, test } from 'vitest';
 import { boundsBoundsAreaOverlapDetail } from '../../../src/intersects/bounds-bounds-area-overlap-detail';
 import { circleCircleAreaOverlapDetail } from '../../../src/intersects/circle-circle-area-overlap-detail';
 import { rectRectAreaOverlapDetail } from '../../../src/intersects/rect-rect-area-overlap-detail';
-import type { AreaOverlapDetail, BoundsLike, CircleLike, RectLike } from '../../../src/types';
+import type { AreaOverlapDetail, BoundsLike, RectLike } from '../../../src/types';
 
 const rect = (x: number, y: number, width: number, height: number): RectLike => ({ x, y, width, height });
 const bounds = (minX: number, minY: number, maxX: number, maxY: number): BoundsLike => ({
   min: { x: minX, y: minY },
   max: { x: maxX, y: maxY },
 });
-const circle = (cx: number, cy: number, radius: number): CircleLike => ({ center: { x: cx, y: cy }, radius });
+/** 원 교차 판정에 쓸 입력을 구성한다. */
+/** 원 교차 판정에 쓸 입력을 구성한다. */
+const circle = (cx: number, cy: number, r: number) => ({ cx, cy, r });
 
 /** detail의 touch point 좌표 배열 (touch가 아니면 빈 배열) */
 function touchPoints(detail: AreaOverlapDetail): Array<[number, number]> {
@@ -245,9 +247,5 @@ describe('circleCircleAreaOverlapDetail', () => {
 
   test('epsilon보다 작은 coincident disk도 contains다', () => {
     expect(circleCircleAreaOverlapDetail(circle(0, 0, 1e-12), circle(0, 0, 1e-12))).toEqual({ kind: 'contains' });
-  });
-
-  test('tuple shorthand circle 입력을 지원한다', () => {
-    expect(circleCircleAreaOverlapDetail([[0, 0], 3], [[4, 0], 3])).toEqual({ kind: 'overlap' });
   });
 });

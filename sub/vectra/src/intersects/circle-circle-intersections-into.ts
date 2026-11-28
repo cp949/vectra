@@ -1,7 +1,5 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, XYObjectWritable } from '../types';
+import type { Circle, PointWritable } from '../types/flat-shapes.internal';
 import { circleCircleDetailXY } from './circle-circle-intersections.internal';
 
 /**
@@ -13,34 +11,24 @@ import { circleCircleDetailXY } from './circle-circle-intersections.internal';
  *   빈 결과를 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }`
- * object이며 입력 center object를 재사용하지 않는다.
+ * object다.
  * `epsilon`은 center distance 비교와 tangent 판정에만 쓰고 finite validation에는 쓰지 않는다.
  * 계산은 공통 scale로 정규화해 `d²`/`r²` overflow를 피한다.
  * `epsilon`은 절대 임계값이며 두 radius보다 충분히 작다고 가정한다. radius가 `epsilon` 규모 이하면
  * 분리/접선 경계가 합쳐져 분리된 circle을 `point`로 분류할 수 있다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param a 첫 번째 circle. point ordering의 기준이다.
  * @param b 두 번째 circle
  * @param epsilon center distance 및 tangent 판정 임계값
  */
-export function circleCircleIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  a: CircleLike,
-  b: CircleLike,
+export function circleCircleIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  a: Circle,
+  b: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const ca = readCircleCenter(a);
-  const cb = readCircleCenter(b);
-  const detail = circleCircleDetailXY(
-    readX(ca),
-    readY(ca),
-    readX(cb),
-    readY(cb),
-    readCircleRadius(a),
-    readCircleRadius(b),
-    epsilon
-  );
+): Out {
+  const detail = circleCircleDetailXY(a.cx, a.cy, b.cx, b.cy, a.r, b.r, epsilon);
 
   outPoints.length = 0;
   if (detail.kind === 'point') {

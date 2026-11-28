@@ -21,8 +21,8 @@ function expectRelativeClose(actual: number, expected: number, relativeTolerance
 
 describe('circleCircleDetail — two-point 분기', () => {
   test('proper two-point 교차는 circle a 기준 turn 오름차순 두 점을 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 8, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 8, cy: 0, r: 5 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('two-point');
     if (result.kind !== 'two-point') return;
@@ -34,8 +34,8 @@ describe('circleCircleDetail — two-point 분기', () => {
   });
 
   test('두 교점은 매 호출 새 plain object다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 8, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 8, cy: 0, r: 5 };
     const first = circleCircleDetail(a, b);
     const second = circleCircleDetail(a, b);
     expect(first).not.toBe(second);
@@ -46,8 +46,8 @@ describe('circleCircleDetail — two-point 분기', () => {
 
   test('대각선 배치 two-point도 circle a 기준 turn 오름차순이다 (swap 분기)', () => {
     // 중심 (0,0)/(3,4), 반지름 5/3. 자연 p0/p1 turn이 내림차순이라 swap 분기를 탄다.
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 3, y: 4 }, radius: 3 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 3, cy: 4, r: 3 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('two-point');
     if (result.kind !== 'two-point') return;
@@ -69,8 +69,8 @@ describe('circleCircleDetail — two-point 분기', () => {
 
 describe('circleCircleDetail — point(tangent) 분기', () => {
   test('external tangent는 접점 한 점과 [0,1) parameter를 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 10, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 10, cy: 0, r: 5 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('point');
     if (result.kind !== 'point') return;
@@ -81,8 +81,8 @@ describe('circleCircleDetail — point(tangent) 분기', () => {
   });
 
   test('internal tangent는 접점 한 점을 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 4, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 4, cy: 0, r: 1 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('point');
     if (result.kind !== 'point') return;
@@ -92,8 +92,8 @@ describe('circleCircleDetail — point(tangent) 분기', () => {
 
   test('rA < rB internal tangent (작은 a가 큰 b 안쪽)도 같은 식으로 접점을 구한다', () => {
     // 중심 (0,0)/(4,0), 반지름 1/5. a=(d²+rA²-rB²)/2d 가 음수라 접점이 a 중심 반대편이다.
-    const a = { center: { x: 0, y: 0 }, radius: 1 };
-    const b = { center: { x: 4, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 1 };
+    const b = { cx: 4, cy: 0, r: 5 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('point');
     if (result.kind !== 'point') return;
@@ -110,8 +110,8 @@ describe('circleCircleDetail — point(tangent) 분기', () => {
 
   test('custom epsilon은 tangent 판정 임계값을 넓힌다', () => {
     // d=10.05, rSum=10. 기본 epsilon(1e-9)에서는 외부 분리(none), epsilon=0.1에서는 tangent.
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 10.05, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 10.05, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
     const widened = circleCircleDetail(a, b, 0.1);
     expect(widened.kind).toBe('point');
@@ -124,8 +124,8 @@ describe('circleCircleDetail — point(tangent) 분기', () => {
   });
 
   test('tangent point의 tA/tB는 [0,1) 범위다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 10, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 10, cy: 0, r: 5 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('point');
     if (result.kind !== 'point') return;
@@ -138,38 +138,38 @@ describe('circleCircleDetail — point(tangent) 분기', () => {
 
 describe('circleCircleDetail — none / overlap / contains 분기', () => {
   test('외부 분리는 none을 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 11, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 11, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
   });
 
   test('한 circle이 다른 disk 내부에 있고 닿지 않으면 contains를 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 2, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 2, cy: 0, r: 1 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'contains' });
   });
 
   test('같은 중심 같은 반지름 coincident는 overlap을 반환한다', () => {
-    const a = { center: { x: 3, y: -4 }, radius: 5 };
-    const b = { center: { x: 3, y: -4 }, radius: 5 };
+    const a = { cx: 3, cy: -4, r: 5 };
+    const b = { cx: 3, cy: -4, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'overlap' });
   });
 
   test('같은 중심 다른 반지름 concentric는 contains를 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 0, y: 0 }, radius: 3 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 0, cy: 0, r: 3 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'contains' });
   });
 
   test('radius 0이면 none을 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 0 };
-    const b = { center: { x: 5, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 0 };
+    const b = { cx: 5, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
   });
 
   test('radius 음수이면 none을 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 5, y: 0 }, radius: -1 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 5, cy: 0, r: -1 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
   });
 });
@@ -179,8 +179,8 @@ describe('circleCircleDetail — concentric 분기는 d===0으로 한정', () =>
     // 중심 (0,0)/(1e-10,0), 반지름 1/1. 옛 가드(d<=epsilonN)는 이 입력을 overlap으로
     // 오분류했다. 새 가드(d===0)는 d>0이므로 단축을 건너뛰고 일반 경로가 분류한다.
     // d(=1e-10)가 내접 tangent band(|d-rDiff|=1e-10 ≤ epsilonN=1e-9) 안이라 결과는 point다.
-    const a = { center: { x: 0, y: 0 }, radius: 1 };
-    const b = { center: { x: 1e-10, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 1 };
+    const b = { cx: 1e-10, cy: 0, r: 1 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).not.toBe('overlap');
     expect(result.kind).toBe('point');
@@ -189,8 +189,8 @@ describe('circleCircleDetail — concentric 분기는 d===0으로 한정', () =>
   test('중심이 epsilon band 밖으로 미세하게 떨어지고 반지름이 같으면 two-point를 반환한다', () => {
     // 중심 (0,0)/(1e-7,0), 반지름 1/1. d(=1e-7)가 epsilon band(1e-9)를 벗어나
     // 일반 two-point 경로가 (≈5e-8, ±1) 두 점을 circle a 기준 turn 오름차순으로 반환한다.
-    const a = { center: { x: 0, y: 0 }, radius: 1 };
-    const b = { center: { x: 1e-7, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 1 };
+    const b = { cx: 1e-7, cy: 0, r: 1 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('two-point');
     if (result.kind !== 'two-point') return;
@@ -211,20 +211,20 @@ describe('circleCircleDetail — concentric 분기는 d===0으로 한정', () =>
   });
 
   test('중심이 정확히 동일하고 반지름이 같으면 overlap을 반환한다 (대조군)', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 1 };
-    const b = { center: { x: 0, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 1 };
+    const b = { cx: 0, cy: 0, r: 1 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'overlap' });
   });
 
   test('중심이 정확히 동일하고 반지름이 다르면 contains를 반환한다 (대조군)', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 2 };
-    const b = { center: { x: 0, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 2 };
+    const b = { cx: 0, cy: 0, r: 1 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'contains' });
   });
 
   test('collection helper도 epsilon band 밖 동일 반지름 입력에서 점 2개를 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 1 };
-    const b = { center: { x: 1e-7, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 1 };
+    const b = { cx: 1e-7, cy: 0, r: 1 };
     const out: { x: number; y: number }[] = [];
     expect(circleCircleIntersectionsInto(out, a, b)).toHaveLength(2);
     expect(circleCircleIntersections(a, b)).toHaveLength(2);
@@ -237,8 +237,8 @@ describe('circleCircleDetail — non-finite 입력', () => {
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
   ])('center.x %s는 none을 반환한다', (_label, x) => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: x, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
   });
 
@@ -247,8 +247,8 @@ describe('circleCircleDetail — non-finite 입력', () => {
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
   ])('center.y %s는 none을 반환한다', (_label, y) => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 5, y }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 5, cy: y, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
   });
 
@@ -257,15 +257,15 @@ describe('circleCircleDetail — non-finite 입력', () => {
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
   ])('radius %s는 none을 반환한다', (_label, r) => {
-    const a = { center: { x: 0, y: 0 }, radius: r };
-    const b = { center: { x: 5, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: r };
+    const b = { cx: 5, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
   });
 
   test('반지름 합이 overflow해도 finite 교점은 정규화 계산으로 반환한다', () => {
     // rSum은 overflow하지만 정규화 좌표계에서는 안정적으로 two-point를 계산할 수 있다.
-    const a = { center: { x: 0, y: 0 }, radius: 1e308 };
-    const b = { center: { x: 1e307, y: 0 }, radius: 1e308 };
+    const a = { cx: 0, cy: 0, r: 1e308 };
+    const b = { cx: 1e307, cy: 0, r: 1e308 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('two-point');
     if (result.kind !== 'two-point') return;
@@ -278,8 +278,8 @@ describe('circleCircleDetail — non-finite 입력', () => {
 
   test('d² overflow(중간 반지름 + 큰 거리)도 finite 교점이면 반환한다', () => {
     // rSum은 finite지만 d²와 r²는 overflow한다. 정규화 계산은 finite 교점을 유지한다.
-    const a = { center: { x: 0, y: 0 }, radius: 1e160 };
-    const b = { center: { x: 1e160, y: 0 }, radius: 1e160 };
+    const a = { cx: 0, cy: 0, r: 1e160 };
+    const b = { cx: 1e160, cy: 0, r: 1e160 };
     const result = circleCircleDetail(a, b);
     expect(result.kind).toBe('two-point');
     if (result.kind !== 'two-point') return;
@@ -297,31 +297,11 @@ describe('circleCircleDetail — non-finite 입력', () => {
   // 외접/내접 양쪽 모두 좌표가 두 원 envelope 안에 머물러 px/py가 overflow하지 않는다.
 });
 
-describe('circleCircleDetail — 입력 형식과 reference', () => {
-  test('tuple 입력과 object 입력은 같은 결과를 반환한다', () => {
-    const aObj = { center: { x: 0, y: 0 }, radius: 5 };
-    const bObj = { center: { x: 8, y: 0 }, radius: 5 };
-    const aTuple = [[0, 0], 5] as const;
-    const bTuple = [[8, 0], 5] as const;
-    expect(circleCircleDetail(aTuple, bTuple)).toEqual(circleCircleDetail(aObj, bObj));
-  });
-
-  test('반환 point object는 입력 center object와 다른 reference다', () => {
-    const sharedCenter = { x: 0, y: 0 };
-    const a = { center: sharedCenter, radius: 5 };
-    const b = { center: { x: 10, y: 0 }, radius: 5 };
-    const result = circleCircleDetail(a, b);
-    expect(result.kind).toBe('point');
-    if (result.kind !== 'point') return;
-    expect(result.point).not.toBe(sharedCenter);
-  });
-});
-
 describe('circleCircleIntersectionsInto', () => {
   test('proper two-point는 두 점을 push하고 같은 outPoints reference를 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 8, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 8, cy: 0, r: 5 };
     const result = circleCircleIntersectionsInto(out, a, b);
     expect(result).toBe(out);
     expect(out).toHaveLength(2);
@@ -333,8 +313,8 @@ describe('circleCircleIntersectionsInto', () => {
 
   test('tangent는 한 점을 push한다', () => {
     const out: { x: number; y: number }[] = [];
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 10, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 10, cy: 0, r: 5 };
     circleCircleIntersectionsInto(out, a, b);
     expect(out).toHaveLength(1);
     expect(out[0].x).toBeCloseTo(5, 12);
@@ -343,22 +323,22 @@ describe('circleCircleIntersectionsInto', () => {
 
   test('none은 빈 배열을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 11, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 11, cy: 0, r: 5 };
     expect(circleCircleIntersectionsInto(out, a, b)).toHaveLength(0);
   });
 
   test('contains는 빈 배열을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 2, y: 0 }, radius: 1 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 2, cy: 0, r: 1 };
     expect(circleCircleIntersectionsInto(out, a, b)).toHaveLength(0);
   });
 
   test('overlap은 빈 배열을 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 0, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 0, cy: 0, r: 5 };
     expect(circleCircleIntersectionsInto(out, a, b)).toHaveLength(0);
   });
 
@@ -368,41 +348,18 @@ describe('circleCircleIntersectionsInto', () => {
       { x: 88, y: 88 },
       { x: 77, y: 77 },
     ];
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 8, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 8, cy: 0, r: 5 };
     circleCircleIntersectionsInto(out, a, b);
     expect(out).toHaveLength(2);
     expect(out).not.toContainEqual({ x: 99, y: 99 });
-  });
-
-  test('push된 point는 입력 center object와 다른 reference다', () => {
-    const sharedCenter = { x: 0, y: 0 };
-    const out: { x: number; y: number }[] = [];
-    const a = { center: sharedCenter, radius: 5 };
-    const b = { center: { x: 8, y: 0 }, radius: 5 };
-    circleCircleIntersectionsInto(out, a, b);
-    for (const p of out) {
-      expect(p).not.toBe(sharedCenter);
-    }
-  });
-
-  test('tuple 입력과 object 입력은 같은 좌표를 반환한다', () => {
-    const aObj = { center: { x: 0, y: 0 }, radius: 5 };
-    const bObj = { center: { x: 8, y: 0 }, radius: 5 };
-    const aTuple = [[0, 0], 5] as const;
-    const bTuple = [[8, 0], 5] as const;
-    const outObj: { x: number; y: number }[] = [];
-    const outTuple: { x: number; y: number }[] = [];
-    circleCircleIntersectionsInto(outObj, aObj, bObj);
-    circleCircleIntersectionsInto(outTuple, aTuple, bTuple);
-    expect(outTuple).toEqual(outObj);
   });
 });
 
 describe('circleCircleIntersections', () => {
   test('새 배열을 반환하고 Into와 같은 좌표를 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 8, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 8, cy: 0, r: 5 };
     const into: { x: number; y: number }[] = [];
     circleCircleIntersectionsInto(into, a, b);
     const result = circleCircleIntersections(a, b);
@@ -411,8 +368,8 @@ describe('circleCircleIntersections', () => {
   });
 
   test('none은 빈 배열을 반환한다', () => {
-    const a = { center: { x: 0, y: 0 }, radius: 5 };
-    const b = { center: { x: 11, y: 0 }, radius: 5 };
+    const a = { cx: 0, cy: 0, r: 5 };
+    const b = { cx: 11, cy: 0, r: 5 };
     expect(circleCircleIntersections(a, b)).toEqual([]);
   });
 });

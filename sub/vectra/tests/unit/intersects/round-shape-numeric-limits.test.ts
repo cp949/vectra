@@ -13,8 +13,8 @@ import { ellipseEllipseDetail } from '../../../src/intersects/ellipse-ellipse-de
 const BIG = Number.MAX_VALUE;
 
 /** 중심과 반지름으로 circle 입력을 만든다. */
-function circle(x: number, y: number, radius: number) {
-  return { center: { x, y }, radius };
+function circle(cx: number, cy: number, r: number) {
+  return { cx, cy, r };
 }
 
 /** 중심과 두 반지름으로 ellipse 입력을 만든다. */
@@ -99,7 +99,7 @@ describe('ellipse 교차의 수치 한계 fallback', () => {
 
   test('ellipseCircleIntersectionsInto는 네 점에서 만나면 4개 교점을 모두 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    ellipseCircleIntersectionsInto(out, ellipse(0, 0, 5, 2), circle(0, 0, 3));
+    ellipseCircleIntersectionsInto(out, ellipse(0, 0, 5, 2), { center: { x: 0, y: 0 }, radius: 3 });
     expect(out).toHaveLength(4);
     for (const p of out) {
       expect(Math.hypot(p.x, p.y)).toBeCloseTo(3, 9);
