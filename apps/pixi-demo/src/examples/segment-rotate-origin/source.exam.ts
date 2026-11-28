@@ -14,7 +14,7 @@
 import * as Segments from '@cp949/vectra/segment';
 
 type XY = { x: number; y: number };
-type Seg = { a: XY; b: XY };
+type Seg = { x1: number; y1: number; x2: number; y2: number };
 
 const SEG_COLOR = 0x38bdf8; // 회전된 segment: 하늘색
 const GHOST_COLOR = 0x475569; // θ=0 base ghost: 회색
@@ -40,11 +40,11 @@ export function setup(runtime: PixiRuntime): () => void {
   const origin: XY = { x: 330, y: 235 };
 
   // base segment (원점 상대 좌표). 두 끝점 모두 O에서 떨어져 있어 회전 시 위치까지 도는 게 보인다.
-  const base: Seg = { a: { x: 70, y: -95 }, b: { x: 150, y: -25 } };
+  const base: Seg = { x1: 70, y1: -95, x2: 150, y2: -25 };
 
   // 회전 상태. angle은 회전각(radian), world는 화면 좌표로 옮긴 회전 결과, segLength는 불변량 증거.
   let angle = 0;
-  const world: Seg = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  const world: Seg = { x1: 0, y1: 0, x2: 0, y2: 0 };
   let segLength = 0;
   let grabbed = false;
 
@@ -53,10 +53,10 @@ export function setup(runtime: PixiRuntime): () => void {
     // 핵심 호출: base를 원점 기준으로 angle만큼 회전한 새 segment
     const rotated = Segments.rotate(base, angle);
     // 회전 결과는 원점 상대 좌표 → 화면 원점 O를 더해 월드 좌표로 옮긴다
-    world.a.x = origin.x + rotated.a.x;
-    world.a.y = origin.y + rotated.a.y;
-    world.b.x = origin.x + rotated.b.x;
-    world.b.y = origin.y + rotated.b.y;
+    world.x1 = origin.x + rotated.x1;
+    world.y1 = origin.y + rotated.y1;
+    world.x2 = origin.x + rotated.x2;
+    world.y2 = origin.y + rotated.y2;
     // 강체 회전이라 길이는 angle과 무관하게 상수 (offset과도 무관)
     segLength = Segments.length(rotated);
   };
@@ -125,29 +125,29 @@ export function setup(runtime: PixiRuntime): () => void {
       .stroke({ color: HANDLE_COLOR, width: 2, alpha: 0.7 });
 
     // θ=0 base ghost: 회전 시작 위치를 흐리게 깔아 회전 전/후 대비를 보인다
-    g.moveTo(origin.x + base.a.x, origin.y + base.a.y)
-      .lineTo(origin.x + base.b.x, origin.y + base.b.y)
+    g.moveTo(origin.x + base.x1, origin.y + base.y1)
+      .lineTo(origin.x + base.x2, origin.y + base.y2)
       .stroke({ color: GHOST_COLOR, width: 2, alpha: 0.6 });
 
     // O→끝점 radius line 2개: 두 끝점이 원점에서 같은 반지름으로 도는("원점 기준") 증거
-    g.moveTo(origin.x, origin.y).lineTo(world.a.x, world.a.y).stroke({
+    g.moveTo(origin.x, origin.y).lineTo(world.x1, world.y1).stroke({
       color: RADIUS_COLOR,
       width: 1,
       alpha: 0.5,
     });
-    g.moveTo(origin.x, origin.y).lineTo(world.b.x, world.b.y).stroke({
+    g.moveTo(origin.x, origin.y).lineTo(world.x2, world.y2).stroke({
       color: RADIUS_COLOR,
       width: 1,
       alpha: 0.5,
     });
 
     // 회전된 segment (핵심 결과)
-    g.moveTo(world.a.x, world.a.y).lineTo(world.b.x, world.b.y).stroke({
+    g.moveTo(world.x1, world.y1).lineTo(world.x2, world.y2).stroke({
       color: SEG_COLOR,
       width: 3,
     });
-    g.circle(world.a.x, world.a.y, 5).fill({ color: SEG_COLOR });
-    g.circle(world.b.x, world.b.y, 5).fill({ color: SEG_COLOR });
+    g.circle(world.x1, world.y1, 5).fill({ color: SEG_COLOR });
+    g.circle(world.x2, world.y2, 5).fill({ color: SEG_COLOR });
 
     // 원점 marker O
     g.circle(origin.x, origin.y, 4).fill({ color: 0xf8fafc });

@@ -15,7 +15,7 @@ import * as Rectx from '@cp949/vectra/rect';
 
 type XY = { x: number; y: number };
 type Rect = { x: number; y: number; width: number; height: number };
-type Bounds = { min: XY; max: XY };
+type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
 type CaseId = 'include' | 'inflate' | 'split' | 'union';
 
 const BG = 0x0f172a;
@@ -66,16 +66,15 @@ export function setup(runtime: PixiRuntime): () => void {
   const splitFrame: Rect = { x: 340, y: rows.split.y + 18, width: 240, height: 62 };
   let splitX = splitFrame.x + splitFrame.width * 0.56;
 
-  const boxA: Bounds = {
-    min: { x: 355, y: rows.union.y + 16 },
-    max: { x: 495, y: rows.union.y + 66 },
-  };
+  const boxA: Bounds = { minX: 355, minY: rows.union.y + 16, maxX: 495, maxY: rows.union.y + 66 };
   const boxBSize = { width: 92, height: 54 };
   const boxB: Bounds = {
-    min: { x: 520, y: rows.union.y + 40 },
-    max: { x: 520 + boxBSize.width, y: rows.union.y + 40 + boxBSize.height },
+    minX: 520,
+    minY: rows.union.y + 40,
+    maxX: 520 + boxBSize.width,
+    maxY: rows.union.y + 40 + boxBSize.height,
   };
-  const unionOut: Bounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const unionOut: Bounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 
   let dragTarget: CaseId | null = null;
   let unionGrabOffset: XY = { x: 0, y: 0 };
@@ -96,8 +95,8 @@ export function setup(runtime: PixiRuntime): () => void {
     if (id === 'inflate') return inflateHandle;
     if (id === 'split') return { x: splitX, y: splitFrame.y + splitFrame.height / 2 };
     return {
-      x: (boxB.min.x + boxB.max.x) / 2,
-      y: (boxB.min.y + boxB.max.y) / 2,
+      x: (boxB.minX + boxB.maxX) / 2,
+      y: (boxB.minY + boxB.maxY) / 2,
     };
   };
 
@@ -110,7 +109,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const p = getCanvasXY(e);
     dragTarget = nearestHandle(p);
     if (dragTarget === 'union') {
-      unionGrabOffset = { x: p.x - boxB.min.x, y: p.y - boxB.min.y };
+      unionGrabOffset = { x: p.x - boxB.minX, y: p.y - boxB.minY };
     }
   };
 
@@ -131,10 +130,10 @@ export function setup(runtime: PixiRuntime): () => void {
     } else {
       const minX = clamp(p.x - unionGrabOffset.x, 250, size.width - boxBSize.width - 20);
       const minY = clamp(p.y - unionGrabOffset.y, row.y + 6, row.y + ROW_H - boxBSize.height - 6);
-      boxB.min.x = minX;
-      boxB.min.y = minY;
-      boxB.max.x = minX + boxBSize.width;
-      boxB.max.y = minY + boxBSize.height;
+      boxB.minX = minX;
+      boxB.minY = minY;
+      boxB.maxX = minX + boxBSize.width;
+      boxB.maxY = minY + boxBSize.height;
     }
   };
 
@@ -158,7 +157,7 @@ export function setup(runtime: PixiRuntime): () => void {
   };
 
   const drawBounds = (b: Bounds, color: number, alpha = 0.16, width = 2): void => {
-    g.rect(b.min.x, b.min.y, b.max.x - b.min.x, b.max.y - b.min.y)
+    g.rect(b.minX, b.minY, b.maxX - b.minX, b.maxY - b.minY)
       .fill({ color, alpha })
       .stroke({ color, width });
   };
@@ -206,8 +205,8 @@ export function setup(runtime: PixiRuntime): () => void {
       .stroke({ color: LABEL, width: 2 });
     g.circle(splitX, splitFrame.y + splitFrame.height / 2, dragTarget === 'split' ? 8 : 6).fill({ color: HANDLE });
 
-    const unionW = unionOut.max.x - unionOut.min.x;
-    const unionH = unionOut.max.y - unionOut.min.y;
+    const unionW = unionOut.maxX - unionOut.minX;
+    const unionH = unionOut.maxY - unionOut.minY;
     const unionMetric = `${unionW.toFixed(0)} x ${unionH.toFixed(0)} group bounds`;
     drawHeader('union', unionMetric);
     drawBounds(unionOut, RESULT, 0.1, 3);

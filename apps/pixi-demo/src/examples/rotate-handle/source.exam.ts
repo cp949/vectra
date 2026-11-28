@@ -31,7 +31,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 회전 대상 box: unrotated AABB. 회전은 angle 상태로만 관리한다
-  const bounds = { min: { x: 290, y: 170 }, max: { x: 470, y: 300 } };
+  const bounds = { minX: 290, minY: 170, maxX: 470, maxY: 300 };
 
   // 적용 중인 회전 각도(radian). snap 보정된 값을 누적 유지한다
   let angle = 0;
@@ -52,7 +52,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const handles: RotateHandle[] = [];
   EditorGeometry.rotateHandlesInto(handles, bounds, () => ({ x: 0, y: 0 }), { offset: HANDLE_OFFSET });
   const handleRest = handles[0].point; // unrotated 기준 handle 좌표(top-center 위)
-  const stemRest = { x: (bounds.min.x + bounds.max.x) / 2, y: bounds.min.y }; // top-center
+  const stemRest = { x: (bounds.minX + bounds.maxX) / 2, y: bounds.minY }; // top-center
 
   // raw 각도의 기준선: pivot에서 unrotated handle을 본 방향(보통 위쪽 -90°)
   const restAngle = Math.atan2(handleRest.y - pivot.y, handleRest.x - pivot.x);
@@ -62,10 +62,10 @@ export function setup(runtime: PixiRuntime): () => void {
   const worldHandle = { x: 0, y: 0 };
   const worldStem = { x: 0, y: 0 };
   const restCorners = [
-    { x: bounds.min.x, y: bounds.min.y },
-    { x: bounds.max.x, y: bounds.min.y },
-    { x: bounds.max.x, y: bounds.max.y },
-    { x: bounds.min.x, y: bounds.max.y },
+    { x: bounds.minX, y: bounds.minY },
+    { x: bounds.maxX, y: bounds.minY },
+    { x: bounds.maxX, y: bounds.maxY },
+    { x: bounds.minX, y: bounds.maxY },
   ];
   const worldCorners = restCorners.map(() => ({ x: 0, y: 0 }));
 
@@ -107,6 +107,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const snapped = EditorGeometry.constrainRotate(rawAngle, {
       step: SNAP_STEP,
       tolerance: SNAP_TOLERANCE,
+      snapAngles: [],
     });
     snapActive = snapped !== rawAngle;
     angle = snapped;

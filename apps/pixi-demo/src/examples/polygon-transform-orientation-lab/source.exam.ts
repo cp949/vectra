@@ -31,22 +31,16 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 14);
   app.stage.addChild(label);
 
-  const source = Polygons.polygonFrom([
-    { x: 110, y: 150 },
-    { x: 245, y: 105 },
-    { x: 320, y: 205 },
-    { x: 255, y: 325 },
-    { x: 125, y: 285 },
-  ]);
+  const source = Polygons.polygonFrom([110, 150, 245, 105, 320, 205, 255, 325, 125, 285]);
   const pivot: Point = { x: 570, y: 235 };
   const handle: Point = { x: 680, y: 140 };
   const offset: Point = { x: 330, y: 0 };
 
-  const edge = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  const edge = { x1: 0, y1: 0, x2: 0, y2: 0 };
   const HIT_RADIUS = 18;
   const VERTEX_RADIUS = 8;
 
-  let grabbed: Point | undefined;
+  let grabbed: number | undefined;
 
   const getCanvasXY = (e: PointerEvent): Point => {
     const rect = (app.canvas as HTMLCanvasElement).getBoundingClientRect();
@@ -61,27 +55,29 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const pointer = getCanvasXY(e);
     if (Math.hypot(handle.x - pointer.x, handle.y - pointer.y) <= HIT_RADIUS) {
-      grabbed = handle;
+      grabbed = -1;
       return;
     }
 
-    for (const point of source.points) {
-      if (Math.hypot(point.x - pointer.x, point.y - pointer.y) <= HIT_RADIUS) {
-        grabbed = point;
+    for (let i = 0; i < source.length; i += 2) {
+      if (Math.hypot(source[i] - pointer.x, source[i + 1] - pointer.y) <= HIT_RADIUS) {
+        grabbed = i;
         return;
       }
     }
   };
 
   const onPointerMove = (e: PointerEvent): void => {
-    if (!grabbed) return;
+    if (grabbed === undefined) return;
     const pointer = getCanvasXY(e);
-    grabbed.x = pointer.x;
-    grabbed.y = pointer.y;
-    if (grabbed === handle) {
-      clampPoint(grabbed, pivot.x + 36, size.width - 36);
+    if (grabbed === -1) {
+      clampPoint(pointer, pivot.x + 36, size.width - 36);
+      handle.x = pointer.x;
+      handle.y = pointer.y;
     } else {
-      clampPoint(grabbed, 48, 340);
+      clampPoint(pointer, 48, 340);
+      source[grabbed] = pointer.x;
+      source[grabbed + 1] = pointer.y;
     }
   };
 
@@ -89,19 +85,17 @@ export function setup(runtime: PixiRuntime): () => void {
     grabbed = undefined;
   };
 
-  const toPixiPoints = (points: readonly Point[]): number[] => points.flatMap((point) => [point.x, point.y]);
-
-  const drawPolygon = (points: readonly Point[], stroke: number, fill: number, alpha: number, width = 2.5): void => {
-    g.poly(toPixiPoints(points)).fill({ color: fill, alpha }).stroke({ color: stroke, width });
+  const drawPolygon = (points: number[], stroke: number, fill: number, alpha: number, width = 2.5): void => {
+    g.poly(points).fill({ color: fill, alpha }).stroke({ color: stroke, width });
   };
 
-  const drawHandles = (points: readonly Point[], color: number): void => {
-    for (const point of points) {
-      g.circle(point.x, point.y, VERTEX_RADIUS).fill({ color });
+  const drawHandles = (points: readonly number[], color: number): void => {
+    for (let i = 0; i < points.length; i += 2) {
+      g.circle(points[i], points[i + 1], VERTEX_RADIUS).fill({ color });
     }
   };
 
-  const drawEdgeDirection = (polygon: { points: readonly Point[] }, color: number): void => {
+  const drawEdgeDirection = (polygon: readonly number[], color: number): void => {
     const count = Polygons.edgeCount(polygon);
     if (count === 0) return;
     const index = Math.floor((app.ticker.lastTime / 700) % count);
@@ -109,15 +103,15 @@ export function setup(runtime: PixiRuntime): () => void {
     const mid = Polygons.pointAtIndex(polygon, index);
     if (!mid) return;
 
-    const dx = edge.b.x - edge.a.x;
-    const dy = edge.b.y - edge.a.y;
+    const dx = edge.x2 - edge.x1;
+    const dy = edge.y2 - edge.y1;
     const len = Math.hypot(dx, dy) || 1;
     const ux = dx / len;
     const uy = dy / len;
-    const markerX = edge.a.x + dx * 0.62;
-    const markerY = edge.a.y + dy * 0.62;
+    const markerX = edge.x1 + dx * 0.62;
+    const markerY = edge.y1 + dy * 0.62;
 
-    g.moveTo(edge.a.x, edge.a.y).lineTo(edge.b.x, edge.b.y).stroke({ color, width: 3 });
+    g.moveTo(edge.x1, edge.y1).lineTo(edge.x2, edge.y2).stroke({ color, width: 3 });
     g.moveTo(markerX, markerY)
       .lineTo(markerX - ux * 14 - uy * 6, markerY - uy * 14 + ux * 6)
       .lineTo(markerX - ux * 14 + uy * 6, markerY - uy * 14 - ux * 6)
@@ -139,17 +133,17 @@ export function setup(runtime: PixiRuntime): () => void {
     const angle = Math.atan2(dy, dx);
     const scale = Math.max(0.45, Math.min(1.7, Math.hypot(dx, dy) / 130));
     const rotation = Matrix.rotationAroundPoint(pivot, angle);
-    const scaling = Matrix.scaleAroundPoint(pivot, scale);
+    const scaling = Matrix.scaleAroundPoint(pivot, { x: scale, y: scale });
     const transform = Matrix.multiply(rotation, scaling);
-    const transformed = Polygons.transformPoints({ points: base }, transform);
+    const transformed = Polygons.transformPoints(base, transform);
     const mirror = Matrix.scaleAroundPoint(pivot, { x: -1, y: 1 });
-    const mirrored = Polygons.transformPoints({ points: transformed }, mirror);
-    const reversedMirror = Polygons.reversePoints({ points: mirrored });
+    const mirrored = Polygons.transformPoints(transformed, mirror);
+    const reversedMirror = Polygons.reversePoints(mirrored);
 
     const sourceArea = Polygons.signedArea(source);
-    const transformedArea = Polygons.signedArea({ points: transformed });
-    const mirroredArea = Polygons.signedArea({ points: mirrored });
-    const restoredArea = Polygons.signedArea({ points: reversedMirror });
+    const transformedArea = Polygons.signedArea(transformed);
+    const mirroredArea = Polygons.signedArea(mirrored);
+    const restoredArea = Polygons.signedArea(reversedMirror);
     const winding = Polygons.isCounterClockwise(source) ? 'ccw' : Polygons.isClockwise(source) ? 'cw' : 'flat';
 
     g.clear();
@@ -158,17 +152,17 @@ export function setup(runtime: PixiRuntime): () => void {
       .lineTo(390, size.height - 24)
       .stroke({ color: 0x334155, width: 1 });
 
-    drawPolygon(source.points, 0x38bdf8, 0x0f172a, 0.48);
-    drawHandles(source.points, 0x38bdf8);
+    drawPolygon(source, 0x38bdf8, 0x0f172a, 0.48);
+    drawHandles(source, 0x38bdf8);
     drawEdgeDirection(source, 0xfacc15);
 
     drawPolygon(base, 0x64748b, 0x334155, 0.14, 1.5);
     drawPolygon(transformed, 0xa78bfa, 0x4c1d95, 0.2);
     drawPolygon(mirrored, 0xfb7185, 0x7f1d1d, 0.12, 1.5);
     drawPolygon(reversedMirror, 0x4ade80, 0x14532d, 0.16, 2);
-    drawEdgeDirection({ points: transformed }, 0xfacc15);
-    drawEdgeDirection({ points: mirrored }, 0xfb7185);
-    drawEdgeDirection({ points: reversedMirror }, 0x4ade80);
+    drawEdgeDirection(transformed, 0xfacc15);
+    drawEdgeDirection(mirrored, 0xfb7185);
+    drawEdgeDirection(reversedMirror, 0x4ade80);
 
     g.circle(pivot.x, pivot.y, 6).fill({ color: 0xe2e8f0 });
     g.moveTo(pivot.x, pivot.y).lineTo(handle.x, handle.y).stroke({ color: 0xa78bfa, width: 2 });

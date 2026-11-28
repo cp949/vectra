@@ -47,11 +47,11 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 forward ray: origin O + 단위에 가까운 고정 방향(우상향). 조작 대상이 아니다
-  const ray = { origin: { x: 210, y: 320 }, direction: { x: 0.82, y: -0.57 } };
+  const ray = { ox: 210, oy: 320, dx: 0.82, dy: -0.57 };
   // 그리기용 단위 방향 (고정 direction이라 1회만 계산)
-  const dlen = Math.hypot(ray.direction.x, ray.direction.y);
-  const ux = ray.direction.x / dlen;
-  const uy = ray.direction.y / dlen;
+  const dlen = Math.hypot(ray.dx, ray.dy);
+  const ux = ray.dx / dlen;
+  const uy = ray.dy / dlen;
 
   // 질의 점 핸들 P: 유일한 drag 대상
   const handle: XY = { x: 470, y: 150 };
@@ -114,8 +114,8 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: BG_COLOR });
 
-    const ox = ray.origin.x;
-    const oy = ray.origin.y;
+    const ox = ray.ox;
+    const oy = ray.oy;
     const clamped = t < 0; // origin 뒤로 투영 → foot가 origin에 clamp
 
     // backward 연장선(faint dashed 대신 faint 실선): ray가 forward만임을 강조 (ray 아님)

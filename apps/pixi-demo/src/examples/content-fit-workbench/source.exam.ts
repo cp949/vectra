@@ -50,7 +50,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   const src: Rect = { x: 0, y: 0, width: 300, height: 200 };
-  const srcBounds = { min: { x: 0, y: 0 }, max: { x: src.width, y: src.height } };
+  const srcBounds = { minX: 0, minY: 0, maxX: src.width, maxY: src.height };
   const srcPoints: readonly XY[] = [
     { x: 0, y: 0 },
     { x: src.width, y: 0 },
@@ -179,7 +179,7 @@ export function setup(runtime: PixiRuntime): () => void {
     }
     containG.closePath().stroke({ color: FOCAL, width: 2, alpha: 0.8 });
     overlayG.rect(frame.x, frame.y, frame.width, frame.height).stroke({ color: FRAME, width: 2 });
-    overlayG.rect(fitted.min.x, fitted.min.y, fitted.max.x - fitted.min.x, fitted.max.y - fitted.min.y).stroke({
+    overlayG.rect(fitted.minX, fitted.minY, fitted.maxX - fitted.minX, fitted.maxY - fitted.minY).stroke({
       color: HANDLE,
       width: 1,
       alpha: 0.8,

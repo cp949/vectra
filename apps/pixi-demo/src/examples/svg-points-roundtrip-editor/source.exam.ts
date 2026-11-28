@@ -4,7 +4,7 @@
  * SVG `<polygon>`과 `<polyline>` points 문자열을 파싱해 도형을 그리고, 꼭짓점을 드래그하면
  * 편집된 좌표가 다시 SVG points 문자열과 generic point-array 문자열로 직렬화된다.
  *
- * - Adapters.parseSvgPolygon: polygon points 문자열을 `{ x, y }` 배열로 변환
+ * - Adapters.parseSvgPolygon: polygon points 문자열을 `[x0, y0, x1, y1, ...]` 배열로 변환
  * - Adapters.parseSvgPolyline: polyline points 문자열을 `{ x, y }` 배열로 변환
  * - Adapters.svgPolygonToString: 편집된 polygon 좌표를 SVG points 문자열로 직렬화
  * - Adapters.svgPolylineToString: 편집된 polyline 좌표를 SVG points 문자열로 직렬화
@@ -62,38 +62,53 @@ export function setup(runtime: PixiRuntime): () => void {
   const polyline = Adapters.parseSvgPolyline(polylineInput);
   const genericPoints = Adapters.parsePointArray(pointArrayInput);
 
-  let grabbed: { points: Point[]; index: number } | null = null;
+  let moveGrabbed: ((x: number, y: number) => void) | null = null;
 
   const getCanvasXY = (e: PointerEvent): Point => {
     const rect = (app.canvas as HTMLCanvasElement).getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   };
 
-  const findHandle = (p: Point): { points: Point[]; index: number } | null => {
-    const sets = [polygon, polyline, genericPoints];
+  const findHandle = (p: Point): typeof moveGrabbed => {
+    for (let i = 0; i < polygon.length; i += 2) {
+      const dx = p.x - polygon[i];
+      const dy = p.y - polygon[i + 1];
+      if (dx * dx + dy * dy <= 144) {
+        return (x, y) => {
+          polygon[i] = x;
+          polygon[i + 1] = y;
+        };
+      }
+    }
+
+    const sets = [polyline, genericPoints];
     for (const points of sets) {
       for (let i = 0; i < points.length; i++) {
         const dx = p.x - points[i].x;
         const dy = p.y - points[i].y;
-        if (dx * dx + dy * dy <= 144) return { points, index: i };
+        if (dx * dx + dy * dy <= 144) {
+          return (x, y) => {
+            points[i].x = x;
+            points[i].y = y;
+          };
+        }
       }
     }
     return null;
   };
 
   const onPointerDown = (e: PointerEvent): void => {
-    grabbed = findHandle(getCanvasXY(e));
+    moveGrabbed = findHandle(getCanvasXY(e));
   };
 
   const onPointerMove = (e: PointerEvent): void => {
-    if (!grabbed) return;
+    if (!moveGrabbed) return;
     const p = getCanvasXY(e);
-    grabbed.points[grabbed.index].x = Math.max(42, Math.min(size.width - 42, p.x));
-    grabbed.points[grabbed.index].y = Math.max(72, Math.min(size.height - 36, p.y));
+    moveGrabbed(Math.max(42, Math.min(size.width - 42, p.x)), Math.max(72, Math.min(size.height - 36, p.y)));
   };
 
   const onPointerUp = (): void => {
-    grabbed = null;
+    moveGrabbed = null;
   };
 
   const canvas = app.canvas as HTMLCanvasElement;
@@ -102,12 +117,10 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerup', onPointerUp);
   canvas.addEventListener('pointerleave', onPointerUp);
 
-  const drawPointList = (points: Point[], color: number, closed: boolean): void => {
+  const drawPointList = (points: Point[], color: number): void => {
     if (points.length === 0) return;
     g.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) g.lineTo(points[i].x, points[i].y);
-    if (closed) g.closePath();
-    if (closed) g.fill({ color, alpha: 0.14 });
     g.stroke({ color, width: 2 });
 
     for (const p of points) {
@@ -132,9 +145,15 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
-    drawPointList(polygon, 0x38bdf8, true);
-    drawPointList(polyline, 0x4ade80, false);
-    drawPointList(genericPoints, 0xf472b6, false);
+    g.poly(polygon).fill({ color: 0x38bdf8, alpha: 0.14 }).stroke({ color: 0x38bdf8, width: 2 });
+    for (let i = 0; i < polygon.length; i += 2) {
+      g.circle(polygon[i], polygon[i + 1], 6)
+        .fill({ color: 0x0f172a })
+        .stroke({ color: 0x38bdf8, width: 2 });
+    }
+
+    drawPointList(polyline, 0x4ade80);
+    drawPointList(genericPoints, 0xf472b6);
     drawFlatPreview(flatPreview);
 
     label.text =

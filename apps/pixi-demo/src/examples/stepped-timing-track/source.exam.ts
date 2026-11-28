@@ -19,7 +19,9 @@ import * as Segments from '@cp949/vectra/segment';
 type XY = { x: number; y: number };
 
 export function setup(runtime: PixiRuntime): () => void {
-  const { PIXI, app, segment } = runtime;
+  const { PIXI, app } = runtime;
+  const { a, b } = runtime.segment;
+  const segment = { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
 
   const g = new PIXI.Graphics();
   app.stage.addChild(g);
@@ -133,11 +135,11 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(dotX, dotY, 5).fill(0xf472b6);
 
     // 이동 트랙 segment와 계단 위치 tick (count칸의 밟을 수 있는 지점)
-    g.moveTo(segment.a.x, segment.a.y).lineTo(segment.b.x, segment.b.y).stroke({ color: 0x475569, width: 3 });
+    g.moveTo(segment.x1, segment.y1).lineTo(segment.x2, segment.y2).stroke({ color: 0x475569, width: 3 });
     for (let k = 0; k < count; k++) {
       const tickT = k / count;
-      const tx = segment.a.x + (segment.b.x - segment.a.x) * tickT;
-      const ty = segment.a.y + (segment.b.y - segment.a.y) * tickT;
+      const tx = segment.x1 + (segment.x2 - segment.x1) * tickT;
+      const ty = segment.y1 + (segment.y2 - segment.y1) * tickT;
       g.circle(tx, ty, 4).stroke({ color: 0x475569, width: 2 });
     }
 

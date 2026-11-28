@@ -15,7 +15,9 @@ import * as Segmentx from '@cp949/vectra/segment';
 type XY = { x: number; y: number };
 
 export function setup(runtime: PixiRuntime): () => void {
-  const { PIXI, app, segment } = runtime;
+  const { PIXI, app } = runtime;
+  const { a: start, b: end } = runtime.segment;
+  const segment = { x1: start.x, y1: start.y, x2: end.x, y2: end.y };
 
   const g = new PIXI.Graphics();
   app.stage.addChild(g);
@@ -119,7 +121,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(dotX, dotY, 5).fill(0xf472b6);
 
     // segment 이동 경로
-    g.moveTo(segment.a.x, segment.a.y).lineTo(segment.b.x, segment.b.y).stroke({ color: 0x475569, width: 3 });
+    g.moveTo(segment.x1, segment.y1).lineTo(segment.x2, segment.y2).stroke({ color: 0x475569, width: 3 });
 
     // 등속 ghost marker (회색 외곽선)와 bias 진행 marker (분홍 채움)
     g.circle(ghostPt.x, ghostPt.y, 9).stroke({ color: 0x94a3b8, width: 2 });

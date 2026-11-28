@@ -17,7 +17,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Seg = { a: XY; b: XY };
+type Seg = { x1: number; y1: number; x2: number; y2: number };
 type Rect = { x: number; y: number; width: number; height: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 가로지름: 파랑
@@ -43,7 +43,7 @@ export function setup(runtime: PixiRuntime): () => void {
   // rect: 화면 고정 AABB zone (조작 대상 아님). 너비·높이 고정 양수라 empty rect degenerate 미발생
   const rect: Rect = { x: 270, y: 160, width: 240, height: 150 };
   // 유한 선분: A는 zone 왼쪽 바깥에 고정, B는 오른쪽 끝점 핸들(주 drag 대상)
-  const seg: Seg = { a: { x: 120, y: 360 }, b: { x: 600, y: 120 } };
+  const seg: Seg = { x1: 120, y1: 360, x2: 600, y2: 120 };
 
   let grabbed = false;
 
@@ -54,14 +54,14 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 끝점 B를 화면 안으로 clamp → 선분이 항상 finite (NaN/Infinity 미발생)
   const clampToScreen = (p: XY): void => {
-    seg.b.x = Math.max(MARGIN, Math.min(size.width - MARGIN, p.x));
-    seg.b.y = Math.max(MARGIN, Math.min(size.height - MARGIN, p.y));
+    seg.x2 = Math.max(MARGIN, Math.min(size.width - MARGIN, p.x));
+    seg.y2 = Math.max(MARGIN, Math.min(size.height - MARGIN, p.y));
   };
 
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // 끝점 B 근처를 누르면 잡는다 (B가 유일한 조작 대상)
-    grabbed = Math.hypot(p.x - seg.b.x, p.y - seg.b.y) <= HANDLE_R + 16;
+    grabbed = Math.hypot(p.x - seg.x2, p.y - seg.y2) <= HANDLE_R + 16;
     if (grabbed) clampToScreen(p);
   };
 
@@ -96,20 +96,20 @@ export function setup(runtime: PixiRuntime): () => void {
       .stroke({ color: stateColor, width: 2 });
 
     // 유한 선분 본체: 같은 상태 색. 끝점을 잡으면 굵게
-    g.moveTo(seg.a.x, seg.a.y)
-      .lineTo(seg.b.x, seg.b.y)
+    g.moveTo(seg.x1, seg.y1)
+      .lineTo(seg.x2, seg.y2)
       .stroke({ color: stateColor, width: grabbed ? 4 : 3 });
 
     // 고정 끝점 A marker (조작 대상 아님)
-    g.circle(seg.a.x, seg.a.y, 5).fill({ color: FIXED_COLOR });
+    g.circle(seg.x1, seg.y1, 5).fill({ color: FIXED_COLOR });
 
     // 끝점 B 핸들 (주 조작 대상)
-    g.circle(seg.b.x, seg.b.y, grabbed ? HANDLE_R + 2 : HANDLE_R)
+    g.circle(seg.x2, seg.y2, grabbed ? HANDLE_R + 2 : HANDLE_R)
       .fill({ color: 0x0f172a })
       .stroke({ color: HANDLE_COLOR, width: grabbed ? 3 : 2 });
 
     // 선분 길이는 단일 도형 파라미터를 읽은 표시용 분해다 (두 번째 관계가 아님)
-    const segLen = Math.hypot(seg.b.x - seg.a.x, seg.b.y - seg.a.y);
+    const segLen = Math.hypot(seg.x2 - seg.x1, seg.y2 - seg.y1);
 
     // boolean predicate라 분해할 scalar가 없다 → cross + 두 도형 파라미터만 표시한다
     label.text = [

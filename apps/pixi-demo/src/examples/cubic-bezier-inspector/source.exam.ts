@@ -42,7 +42,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const normal = { x: 0, y: 0 };
 
   // cubicBoundsInto 출력
-  const bounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const bounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 
   // 드래그 상태
   let dragging: { x: number; y: number } | null = null;
@@ -108,17 +108,29 @@ export function setup(runtime: PixiRuntime): () => void {
     // t: 0..1 왕복
     const t = (Math.sin(ticker.lastTime / 1200) + 1) / 2;
 
+    const curve = {
+      kind: 'cubic' as const,
+      x0: p0.x,
+      y0: p0.y,
+      x1: p1.x,
+      y1: p1.y,
+      x2: p2.x,
+      y2: p2.y,
+      x3: p3.x,
+      y3: p3.y,
+    };
+
     // vectra API 호출
-    Curves.cubicHullInto(hull, p0, p1, p2, p3, t);
-    Curves.cubicPointAtTInto(point, p0, p1, p2, p3, t);
-    Curves.cubicTangentAtInto(tangent, p0, p1, p2, p3, t);
-    Curves.cubicNormalAtInto(normal, p0, p1, p2, p3, t);
-    Curves.cubicBoundsInto(bounds, p0, p1, p2, p3);
+    Curves.cubicHullInto(hull, curve, t);
+    Curves.cubicPointAtTInto(point, curve, t);
+    Curves.cubicTangentAtInto(tangent, curve, t);
+    Curves.cubicNormalAtInto(normal, curve, t);
+    Curves.cubicBoundsInto(bounds, curve);
 
     g.clear();
 
     // tight bounds box (얇은 점선 느낌의 회색 사각형)
-    g.rect(bounds.min.x, bounds.min.y, bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y).stroke({
+    g.rect(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY).stroke({
       color: 0x475569,
       width: 1,
     });

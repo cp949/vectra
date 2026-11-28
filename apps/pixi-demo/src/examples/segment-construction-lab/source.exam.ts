@@ -7,7 +7,7 @@
 import * as Segmentx from '@cp949/vectra/segment';
 
 type XY = { x: number; y: number };
-type Segment = { a: XY; b: XY };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 
 const BG = 0x0f172a;
 const LABEL = 0xe2e8f0;
@@ -25,12 +25,12 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const origin: XY = { x: 120, y: 135 };
   const midpoint: XY = { x: 500, y: 250 };
-  const circle = { center: { x: 190, y: 375 }, radius: 70 };
-  const base: Segment = { a: { x: 420, y: 400 }, b: { x: 650, y: 340 } };
-  const fromAngle: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
-  const fromCircle: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
-  const fromMid: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
-  const normalRib: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  const circle = { cx: 190, cy: 375, r: 70 };
+  const base: Segment = { x1: 420, y1: 400, x2: 650, y2: 340 };
+  const fromAngle: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  const fromCircle: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  const fromMid: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  const normalRib: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
   let angle = -0.35;
   let grabbed = false;
 
@@ -60,9 +60,9 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const drawSeg = (s: Segment, color: number, width = 3): void => {
-    g.moveTo(s.a.x, s.a.y).lineTo(s.b.x, s.b.y).stroke({ color, width });
-    g.circle(s.a.x, s.a.y, 4).fill({ color });
-    g.circle(s.b.x, s.b.y, 4).fill({ color });
+    g.moveTo(s.x1, s.y1).lineTo(s.x2, s.y2).stroke({ color, width });
+    g.circle(s.x1, s.y1, 4).fill({ color });
+    g.circle(s.x2, s.y2, 4).fill({ color });
   };
 
   const render = (): void => {
@@ -76,7 +76,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: BG });
     drawSeg(fromAngle, RESULT);
     g.circle(handle().x, handle().y, grabbed ? 9 : 7).fill({ color: HANDLE });
-    g.circle(circle.center.x, circle.center.y, circle.radius).stroke({ color: GUIDE, width: 2 });
+    g.circle(circle.cx, circle.cy, circle.r).stroke({ color: GUIDE, width: 2 });
     drawSeg(fromCircle, 0xfbbf24);
     drawSeg(fromMid, 0x38bdf8);
     g.circle(mid.x, mid.y, 5).fill({ color: LABEL });

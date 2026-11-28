@@ -89,14 +89,14 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // A→B 반지름 guide: 핸들이 origin 둘레를 도는 "강체 회전·스케일" 기준임을 드러낸다.
-    g.moveTo(origin.x, origin.y).lineTo(tri.b.x, tri.b.y).stroke({ color: RADIUS_COLOR, width: 1, alpha: 0.7 });
+    g.moveTo(origin.x, origin.y).lineTo(tri.x2, tri.y2).stroke({ color: RADIUS_COLOR, width: 1, alpha: 0.7 });
 
     // side ≈ 0이면 세 vertex가 한 점에 겹친 degenerate → warn 색으로 강조.
     const degenerate = side <= DEGEN_EPS;
     const stateColor = degenerate ? WARN_COLOR : TRI_COLOR;
 
     // 정삼각형 면 + 외곽선
-    const poly = [tri.a.x, tri.a.y, tri.b.x, tri.b.y, tri.c.x, tri.c.y];
+    const poly = [tri.x1, tri.y1, tri.x2, tri.y2, tri.x3, tri.y3];
     g.poly(poly).fill({ color: stateColor, alpha: degenerate ? 0.12 : 0.22 });
     g.poly(poly).stroke({ color: stateColor, width: 2.5, alpha: 0.95 });
 
@@ -104,13 +104,13 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(origin.x, origin.y, 5).fill({ color: ORIGIN_COLOR });
 
     // 정점 B 핸들 (유일 drag 대상)
-    g.circle(tri.b.x, tri.b.y, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
-    g.circle(tri.b.x, tri.b.y, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
+    g.circle(tri.x2, tri.y2, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
+    g.circle(tri.x2, tri.y2, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
 
     // 세 변 길이: 정삼각형이라 항상 |AB|≈|BC|≈|CA|(같은 구성의 정의 성질, Math.hypot inline).
-    const legAB = Math.hypot(tri.b.x - tri.a.x, tri.b.y - tri.a.y);
-    const legBC = Math.hypot(tri.c.x - tri.b.x, tri.c.y - tri.b.y);
-    const legCA = Math.hypot(tri.a.x - tri.c.x, tri.a.y - tri.c.y);
+    const legAB = Math.hypot(tri.x2 - tri.x1, tri.y2 - tri.y1);
+    const legBC = Math.hypot(tri.x3 - tri.x2, tri.y3 - tri.y2);
+    const legCA = Math.hypot(tri.x1 - tri.x3, tri.y1 - tri.y3);
 
     label.text = [
       'equilateral from origin + side   drag vertex B',

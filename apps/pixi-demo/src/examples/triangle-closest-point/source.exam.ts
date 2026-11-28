@@ -36,11 +36,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 고정 scalene triangle (조작 대상 아님). 세 변 길이가 모두 달라 어느 변에 투영되는지 또렷하다.
   // non-degenerate(세 점이 한 직선 위 아님)라 edge 환원·세 vertex 동일 분기는 발생하지 않는다.
-  const triangle = {
-    a: { x: 250, y: 120 }, // 위쪽 꼭짓점
-    b: { x: 560, y: 250 }, // 오른쪽 아래 꼭짓점
-    c: { x: 230, y: 360 }, // 왼쪽 아래 꼭짓점
-  };
+  const triangle = { x1: 250, y1: 120, x2: 560, y2: 250, x3: 230, y3: 360 };
 
   // probe (유일 drag 대상). 초기 위치는 삼각형 밖 오른쪽 위
   const probe: XY = { x: 620, y: 90 };
@@ -92,7 +88,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 고정 triangle 면 + 외곽선. 면 색은 현재 상태(inside/edge)를 따라간다.
-    const tri = [triangle.a.x, triangle.a.y, triangle.b.x, triangle.b.y, triangle.c.x, triangle.c.y];
+    const tri = [triangle.x1, triangle.y1, triangle.x2, triangle.y2, triangle.x3, triangle.y3];
     g.poly(tri).fill({ color: stateColor, alpha: inside ? 0.28 : 0.12 });
     g.poly(tri).stroke({ color: stateColor, width: 2.5, alpha: 0.95 });
 

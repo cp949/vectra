@@ -62,12 +62,12 @@ export function setup(runtime: PixiRuntime): () => void {
     point.y = Math.max(56, Math.min(size.height - 24, point.y));
   };
 
-  const normalizedBounds = (): Bounds => {
+  const normalizedBounds = () => {
     const minX = Math.min(boundsGate.min.x, boundsGate.max.x);
     const minY = Math.min(boundsGate.min.y, boundsGate.max.y);
     const maxX = Math.max(boundsGate.min.x, boundsGate.max.x);
     const maxY = Math.max(boundsGate.min.y, boundsGate.max.y);
-    return { min: { x: minX, y: minY }, max: { x: maxX, y: maxY } };
+    return { minX, minY, maxX, maxY };
   };
 
   const syncRadiusHandle = (): void => {
@@ -149,18 +149,29 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     syncRadiusHandle();
     const bounds = normalizedBounds();
+    const segment = { x1: path.a.x, y1: path.a.y, x2: path.b.x, y2: path.b.y };
+    const circle = { cx: circleGate.center.x, cy: circleGate.center.y, r: circleGate.radius };
+    const triangle = {
+      x1: triangleGate.a.x,
+      y1: triangleGate.a.y,
+      x2: triangleGate.b.x,
+      y2: triangleGate.b.y,
+      x3: triangleGate.c.x,
+      y3: triangleGate.c.y,
+    };
+    const sensorCircle = { cx: sensor.center.x, cy: sensor.center.y, r: sensor.radius };
     sensor.center.x = path.b.x;
     sensor.center.y = path.b.y;
 
-    const circleHit = Intersections.intersectsCircleSegment(circleGate, path);
-    const boundsHit = Intersections.intersectsBoundsSegment(bounds, path);
-    const triangleHit = Intersections.intersectsTriangleSegment(triangleGate, path);
-    const sensorBoundsHit = Intersections.intersectsCircleBounds(sensor, bounds);
-    const sensorTriangleHit = Intersections.intersectsCircleTriangle(sensor, triangleGate);
+    const circleHit = Intersections.intersectsCircleSegment(circle, segment);
+    const boundsHit = Intersections.intersectsBoundsSegment(bounds, segment);
+    const triangleHit = Intersections.intersectsTriangleSegment(triangle, segment);
+    const sensorBoundsHit = Intersections.intersectsCircleBounds(sensorCircle, bounds);
+    const sensorTriangleHit = Intersections.intersectsCircleTriangle(sensorCircle, triangle);
 
-    const circleSingle = Intersections.singleIntersectionSegmentCircle(path, circleGate, 0.001);
-    const boundsSingle = Intersections.singleIntersectionSegmentBounds(path, bounds, 0.001);
-    const triangleSingle = Intersections.singleIntersectionSegmentTriangle(path, triangleGate, 0.001);
+    const circleSingle = Intersections.singleIntersectionSegmentCircle(segment, circle, 0.001);
+    const boundsSingle = Intersections.singleIntersectionSegmentBounds(segment, bounds, 0.001);
+    const triangleSingle = Intersections.singleIntersectionSegmentTriangle(segment, triangle, 0.001);
 
     g.clear();
 
@@ -178,9 +189,9 @@ export function setup(runtime: PixiRuntime): () => void {
       width: 1,
     });
 
-    const w = bounds.max.x - bounds.min.x;
-    const h = bounds.max.y - bounds.min.y;
-    g.rect(bounds.min.x, bounds.min.y, w, h)
+    const w = bounds.maxX - bounds.minX;
+    const h = bounds.maxY - bounds.minY;
+    g.rect(bounds.minX, bounds.minY, w, h)
       .fill({ color: 0x1e293b, alpha: 0.28 })
       .stroke({ color: contactColor(boundsHit, 0xa78bfa), width: 2.5 });
 

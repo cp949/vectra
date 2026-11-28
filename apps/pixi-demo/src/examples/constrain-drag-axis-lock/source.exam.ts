@@ -65,7 +65,7 @@ export function setup(runtime: PixiRuntime): () => void {
     rawTo.x = Math.max(MARGIN, Math.min(size.width - MARGIN - BOX_W, p.x - grab.x));
     rawTo.y = Math.max(MARGIN, Math.min(size.height - MARGIN - BOX_H, p.y - grab.y));
     // 핵심 호출: 우세 축 잠금으로 보정한 박스 origin (allocating, pointermove당 1회 단발)
-    const next = EditorGeometry.constrainDrag(from, rawTo, { axisLock: 'auto' });
+    const next = EditorGeometry.constrainDrag(from, rawTo, { axisLock: 'auto', containIn: undefined, size: undefined });
     box.x = next.x;
     box.y = next.y;
   };

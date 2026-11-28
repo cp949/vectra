@@ -24,11 +24,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(g);
 
   // axis-aligned ellipse 내부 mutable state
-  const ellipse = {
-    center: { x: size.width / 2, y: size.height / 2 },
-    radiusX: 220,
-    radiusY: 130,
-  };
+  const ellipse = { cx: size.width / 2, cy: size.height / 2, rx: 220, ry: 130 };
 
   // 드래그로 ellipse 내부/외부를 오갈 probe 점
   const probe = { x: size.width / 2 + 300, y: size.height / 2 - 60 };
@@ -38,8 +34,8 @@ export function setup(runtime: PixiRuntime): () => void {
   const tangent = { x: 0, y: 0 };
   const normal = { x: 0, y: 0 };
   const closest = { x: 0, y: 0 };
-  const fociSegment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
-  const box = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const fociSegment = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  const box = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 
   // 드래그 대상 식별자
   let dragTarget: 'probe' | 'radiusX' | 'radiusY' | null = null;
@@ -52,12 +48,12 @@ export function setup(runtime: PixiRuntime): () => void {
 
   /** 반지름 핸들 좌표는 매번 ellipse state에서 파생한다. */
   const radiusXHandle = (): { x: number; y: number } => ({
-    x: ellipse.center.x + ellipse.radiusX,
-    y: ellipse.center.y,
+    x: ellipse.cx + ellipse.rx,
+    y: ellipse.cy,
   });
   const radiusYHandle = (): { x: number; y: number } => ({
-    x: ellipse.center.x,
-    y: ellipse.center.y + ellipse.radiusY,
+    x: ellipse.cx,
+    y: ellipse.cy + ellipse.ry,
   });
 
   /** pointerdown: hit radius 안에서 드래그 대상을 고른다. probe 우선, 그다음 반지름 핸들. */
@@ -85,9 +81,9 @@ export function setup(runtime: PixiRuntime): () => void {
       probe.x = x;
       probe.y = y;
     } else if (dragTarget === 'radiusX') {
-      ellipse.radiusX = Math.max(20, Math.abs(x - ellipse.center.x));
+      ellipse.rx = Math.max(20, Math.abs(x - ellipse.cx));
     } else {
-      ellipse.radiusY = Math.max(20, Math.abs(y - ellipse.center.y));
+      ellipse.ry = Math.max(20, Math.abs(y - ellipse.cy));
     }
   };
 
@@ -122,13 +118,13 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
 
     // bounding box (회색 사각형)
-    g.rect(box.min.x, box.min.y, box.max.x - box.min.x, box.max.y - box.min.y).stroke({
+    g.rect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY).stroke({
       color: 0x475569,
       width: 1,
     });
 
     // ellipse 본선 (하늘색)
-    g.ellipse(ellipse.center.x, ellipse.center.y, ellipse.radiusX, ellipse.radiusY).stroke({
+    g.ellipse(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry).stroke({
       color: 0x38bdf8,
       width: 3,
     });
@@ -147,8 +143,8 @@ export function setup(runtime: PixiRuntime): () => void {
       .stroke({ color: 0x34d399, width: 2 });
 
     // 두 초점 (주황)
-    g.circle(fociSegment.a.x, fociSegment.a.y, 5).fill({ color: 0xf59e0b });
-    g.circle(fociSegment.b.x, fociSegment.b.y, 5).fill({ color: 0xf59e0b });
+    g.circle(fociSegment.x1, fociSegment.y1, 5).fill({ color: 0xf59e0b });
+    g.circle(fociSegment.x2, fociSegment.y2, 5).fill({ color: 0xf59e0b });
 
     // 경계 sweep marker (분홍)
     g.circle(boundaryPoint.x, boundaryPoint.y, 6).fill({ color: 0xf472b6 });

@@ -97,9 +97,9 @@ export function setup(runtime: PixiRuntime): () => void {
     const flatness = flatnessAt(knobY);
 
     // 핵심 호출: flatness 허용오차로 호를 adaptive polyline 근사
-    Curves.arcFlattenInto(polyOut, arc, { flatness });
+    Curves.arcFlattenInto(polyOut, arc, { flatness, maxRecursion: 32 });
     // 참조 true arc: 같은 API를 아주 작은 flatness로 호출해 dense polyline 생성
-    Curves.arcFlattenInto(refOut, arc, { flatness: 0.05 });
+    Curves.arcFlattenInto(refOut, arc, { flatness: 0.05, maxRecursion: 32 });
 
     // 원호와 polyline 사이 최대 gap: 원호라 |중심까지 거리 - radius|로 정확히 측정
     // 인접 vertex의 midpoint가 호에서 얼마나 벗어났는지로 chord-error 근사를 본다

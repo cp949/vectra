@@ -14,7 +14,7 @@
 import * as Segments from '@cp949/vectra/segment';
 
 type XY = { x: number; y: number };
-type Segment = { a: XY; b: XY };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 
 const BAR_COLOR = 0xe2e8f0; // 정상 막대·핸들 색
 const PIVOT_COLOR = 0x60a5fa; // pivot(중점) marker: 파랑
@@ -45,7 +45,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const handle: XY = { x: pivot.x + 150, y: pivot.y - 70 };
 
   // drag 시에만 갱신하는 geometry state (ticker render는 이 state만 읽어 프레임당 할당 없음)
-  let seg: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  let seg: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
   let angleVal = 0;
   let lengthVal = 0;
   let halfVal = 0;
@@ -74,7 +74,7 @@ export function setup(runtime: PixiRuntime): () => void {
     lengthVal = halfVal * 2; // 전체 길이 = 양쪽 half 합
     degen = halfVal <= DEGEN_EPS; // 핸들이 pivot에 겹치면 zero-length 붕괴
     // 핵심 호출: midpoint(pivot) 중심으로 대칭인 segment 구성. b == handle, a == pivot 점대칭
-    seg = Segments.fromMidpointAngleLength(pivot, angleVal, lengthVal) as Segment;
+    seg = Segments.fromMidpointAngleLength(pivot, angleVal, lengthVal);
   };
 
   const onPointerDown = (e: PointerEvent): void => {
@@ -112,12 +112,12 @@ export function setup(runtime: PixiRuntime): () => void {
     const mainColor = degen ? WARN_COLOR : BAR_COLOR;
 
     // pivot→두 끝점 radius line: 두 길이가 항상 같음(= half)을 드러내는 대칭 분해
-    g.moveTo(pivot.x, pivot.y).lineTo(seg.a.x, seg.a.y).stroke({ color: RADIUS_COLOR, width: 1 });
-    g.moveTo(pivot.x, pivot.y).lineTo(seg.b.x, seg.b.y).stroke({ color: RADIUS_COLOR, width: 1 });
+    g.moveTo(pivot.x, pivot.y).lineTo(seg.x1, seg.y1).stroke({ color: RADIUS_COLOR, width: 1 });
+    g.moveTo(pivot.x, pivot.y).lineTo(seg.x2, seg.y2).stroke({ color: RADIUS_COLOR, width: 1 });
 
     // 구성된 막대(segment) a—b
     if (!degen) {
-      g.moveTo(seg.a.x, seg.a.y).lineTo(seg.b.x, seg.b.y).stroke({ color: mainColor, width: 3 });
+      g.moveTo(seg.x1, seg.y1).lineTo(seg.x2, seg.y2).stroke({ color: mainColor, width: 3 });
     }
 
     // angle 호: +x축에서 막대 방향까지 (degenerate면 방향이 없어 생략)
@@ -129,7 +129,7 @@ export function setup(runtime: PixiRuntime): () => void {
     }
 
     // a 끝점 marker (pivot 기준 handle의 점대칭점)
-    g.circle(seg.a.x, seg.a.y, 5).fill({ color: mainColor });
+    g.circle(seg.x1, seg.y1, 5).fill({ color: mainColor });
 
     // pivot(중점) marker
     g.circle(pivot.x, pivot.y, 4).fill({ color: PIVOT_COLOR });

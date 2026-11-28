@@ -17,8 +17,8 @@
 import * as EditorGeometry from '@cp949/vectra/editor-geometry';
 
 type Point = { x: number; y: number };
-type Bounds = { min: Point; max: Point };
-type Segment = { a: Point; b: Point };
+type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 type SnapSource = 'grid' | 'angle' | 'distance' | 'pixel' | 'segment' | 'vertex' | 'guide' | 'none';
 type SnapResult = { snapped: boolean; x: number; y: number; distance: number; source: SnapSource };
 type SnapCandidate = { x: number; y: number; source: SnapSource };
@@ -40,9 +40,9 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   const objects: Bounds[] = [
-    { min: { x: 112, y: 118 }, max: { x: 232, y: 204 } },
-    { min: { x: 404, y: 96 }, max: { x: 552, y: 184 } },
-    { min: { x: 426, y: 284 }, max: { x: 610, y: 370 } },
+    { minX: 112, minY: 118, maxX: 232, maxY: 204 },
+    { minX: 404, minY: 96, maxX: 552, maxY: 184 },
+    { minX: 426, minY: 284, maxX: 610, maxY: 370 },
   ];
   const handle: Point = { x: 356, y: 232 };
   const rawPointer: Point = { ...handle };
@@ -108,10 +108,10 @@ export function setup(runtime: PixiRuntime): () => void {
     const vertices: Point[] = [];
     for (const box of objects) {
       vertices.push(
-        { x: box.min.x, y: box.min.y },
-        { x: box.max.x, y: box.min.y },
-        { x: box.max.x, y: box.max.y },
-        { x: box.min.x, y: box.max.y }
+        { x: box.minX, y: box.minY },
+        { x: box.maxX, y: box.minY },
+        { x: box.maxX, y: box.maxY },
+        { x: box.minX, y: box.maxY }
       );
     }
     return vertices;
@@ -120,11 +120,16 @@ export function setup(runtime: PixiRuntime): () => void {
   const getSegments = (): Segment[] => {
     const segments: Segment[] = [];
     for (const box of objects) {
-      const nw = { x: box.min.x, y: box.min.y };
-      const ne = { x: box.max.x, y: box.min.y };
-      const se = { x: box.max.x, y: box.max.y };
-      const sw = { x: box.min.x, y: box.max.y };
-      segments.push({ a: nw, b: ne }, { a: ne, b: se }, { a: se, b: sw }, { a: sw, b: nw });
+      const nw = { x: box.minX, y: box.minY };
+      const ne = { x: box.maxX, y: box.minY };
+      const se = { x: box.maxX, y: box.maxY };
+      const sw = { x: box.minX, y: box.maxY };
+      segments.push(
+        { x1: nw.x, y1: nw.y, x2: ne.x, y2: ne.y },
+        { x1: ne.x, y1: ne.y, x2: se.x, y2: se.y },
+        { x1: se.x, y1: se.y, x2: sw.x, y2: sw.y },
+        { x1: sw.x, y1: sw.y, x2: nw.x, y2: nw.y }
+      );
     }
     return segments;
   };
@@ -170,7 +175,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const drawObjects = (): void => {
     for (const box of objects) {
-      g.rect(box.min.x, box.min.y, box.max.x - box.min.x, box.max.y - box.min.y)
+      g.rect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY)
         .fill({ color: 0x38bdf8, alpha: 0.12 })
         .stroke({ color: 0x38bdf8, width: 2 });
     }
@@ -199,7 +204,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const guideSnap = EditorGeometry.snapPointToGuides(point, guides, SNAP_TOLERANCE);
     const vertexSnap = EditorGeometry.snapPointToVertices(point, vertices, SNAP_TOLERANCE);
     const segmentSnap = EditorGeometry.snapPointToSegments(point, segments, SNAP_TOLERANCE);
-    const gridSnap = EditorGeometry.snapPointToGrid(point, GRID_SIZE, { offset: { x: 0, y: 0 } });
+    const gridSnap = EditorGeometry.snapPointToGrid(point, { x: GRID_SIZE, y: GRID_SIZE });
     const bestSnap = chooseBest([vertexSnap, segmentSnap, guideSnap]) ?? gridSnap;
 
     const candidates: SnapCandidate[] = [

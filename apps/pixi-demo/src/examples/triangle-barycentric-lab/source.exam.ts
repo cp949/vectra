@@ -30,18 +30,18 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 14);
   app.stage.addChild(label);
 
-  const triangle = {
+  const handles = {
     a: { x: 180, y: 330 },
     b: { x: 580, y: 155 },
     c: { x: 320, y: 390 },
   };
   const probe: Point = { x: 370, y: 285 };
-  const vertices = [triangle.a, triangle.b, triangle.c];
+  const vertices = [handles.a, handles.b, handles.c];
 
   const altitudes = [
-    { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
-    { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
-    { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
+    { x1: 0, y1: 0, x2: 0, y2: 0 },
+    { x1: 0, y1: 0, x2: 0, y2: 0 },
+    { x1: 0, y1: 0, x2: 0, y2: 0 },
   ];
   const orthocenter = { x: 0, y: 0 };
 
@@ -86,18 +86,11 @@ export function setup(runtime: PixiRuntime): () => void {
     grabbed = undefined;
   };
 
-  const trianglePoints = (): number[] => [
-    triangle.a.x,
-    triangle.a.y,
-    triangle.b.x,
-    triangle.b.y,
-    triangle.c.x,
-    triangle.c.y,
-  ];
+  const trianglePoints = (): number[] => [handles.a.x, handles.a.y, handles.b.x, handles.b.y, handles.c.x, handles.c.y];
 
   const format = (value: number): string => value.toFixed(2);
 
-  const typeLabel = (): string => {
+  const typeLabel = (triangle: Parameters<typeof Triangles.isDegenerate>[0]): string => {
     if (Triangles.isDegenerate(triangle, 0.5)) return 'degenerate';
     if (Triangles.isRight(triangle, 0.02)) return 'right';
     if (Triangles.isObtuse(triangle)) return 'obtuse';
@@ -112,6 +105,14 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const render = (): void => {
+    const triangle = {
+      x1: handles.a.x,
+      y1: handles.a.y,
+      x2: handles.b.x,
+      y2: handles.b.y,
+      x3: handles.c.x,
+      y3: handles.c.y,
+    };
     const classification = Triangles.classifyPoint(triangle, probe, 3);
     const barycentric = Triangles.barycentric(triangle, probe);
     const bounds = Triangles.bounds(triangle);
@@ -132,7 +133,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
     g.clear();
 
-    g.rect(bounds.min.x, bounds.min.y, bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y).stroke({
+    g.rect(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY).stroke({
       color: 0x475569,
       width: 1,
     });
@@ -140,12 +141,12 @@ export function setup(runtime: PixiRuntime): () => void {
     g.poly(trianglePoints()).fill({ color: 0x1e293b, alpha: 0.38 }).stroke({ color: 0xe2e8f0, width: 2.5 });
 
     for (const altitude of altitudes) {
-      g.moveTo(altitude.a.x, altitude.a.y).lineTo(altitude.b.x, altitude.b.y).stroke({
+      g.moveTo(altitude.x1, altitude.y1).lineTo(altitude.x2, altitude.y2).stroke({
         color: 0x38bdf8,
         width: 1.5,
         alpha: 0.8,
       });
-      g.circle(altitude.b.x, altitude.b.y, 4).fill({ color: 0x38bdf8 });
+      g.circle(altitude.x2, altitude.y2, 4).fill({ color: 0x38bdf8 });
     }
 
     if (hasOrthocenter) {
@@ -163,8 +164,8 @@ export function setup(runtime: PixiRuntime): () => void {
           barycentric.w
         )}) area=${area.toFixed(1)} perimeter=${perimeter.toFixed(1)} signed=${signedArea.toFixed(
           1
-        )} ${orientation}/${typeLabel()}`
-      : `probe=${classification} bary=(undefined) area=${area.toFixed(1)} ${orientation}/${typeLabel()}`;
+        )} ${orientation}/${typeLabel(triangle)}`
+      : `probe=${classification} bary=(undefined) area=${area.toFixed(1)} ${orientation}/${typeLabel(triangle)}`;
   };
 
   app.ticker.add(render);

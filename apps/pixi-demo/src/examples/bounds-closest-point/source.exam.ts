@@ -40,7 +40,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 box(AABB): 최근접점을 탐색할 기준 영역. 조작 대상이 아니다
-  const box = { min: { x: 280, y: 170 }, max: { x: 460, y: 320 } };
+  const box = { minX: 280, minY: 170, maxX: 460, maxY: 320 };
 
   // 질의 점 P: 유일한 drag 대상. 화면 어디로든 끌 수 있다
   let p: XY = { x: 560, y: 110 };
@@ -104,11 +104,11 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: BG_COLOR });
 
-    const bw = box.max.x - box.min.x;
-    const bh = box.max.y - box.min.y;
+    const bw = box.maxX - box.minX;
+    const bh = box.maxY - box.minY;
 
     // 고정 box: P가 내부면 둘레를 contact 색으로 전환(foot=P가 box 위에 놓였음)
-    g.rect(box.min.x, box.min.y, bw, bh)
+    g.rect(box.minX, box.minY, bw, bh)
       .fill({ color: BOX_FILL })
       .stroke({ color: inside ? INSIDE_COLOR : BOX_COLOR, width: 2 });
 

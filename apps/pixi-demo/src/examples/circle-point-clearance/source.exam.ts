@@ -40,7 +40,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 원형 keep-out zone: 거리를 측정할 대상 도형. 조작 대상이 아니다
-  const circle = { center: { x: 320, y: 240 }, radius: 90 };
+  const circle = { cx: 320, cy: 240, r: 90 };
 
   // 점 핸들 P: 유일한 drag 대상. 원까지의 여유 거리를 측정할 점이다
   const handle: XY = { x: 470, y: 150 };
@@ -69,8 +69,8 @@ export function setup(runtime: PixiRuntime): () => void {
     d = Circlex.distanceToPoint(circle, handle);
 
     // |CP|는 같은 관계를 center 기준 거리로 읽은 inline 분해 (d = max(0, |CP| − r))
-    const dx = handle.x - circle.center.x;
-    const dy = handle.y - circle.center.y;
+    const dx = handle.x - circle.cx;
+    const dy = handle.y - circle.cy;
     centerDist = Math.hypot(dx, dy);
     inside = d <= 0; // distanceToPoint은 내부/경계에서 0을 valid 반환
 
@@ -78,8 +78,8 @@ export function setup(runtime: PixiRuntime): () => void {
     // P가 center에 정확히 겹치면(|CP|=0) 방향이 정의 불가 → 내부라 clearance 선분을 안 그리므로 무관
     if (centerDist > 0) {
       foot = {
-        x: circle.center.x + (dx / centerDist) * circle.radius,
-        y: circle.center.y + (dy / centerDist) * circle.radius,
+        x: circle.cx + (dx / centerDist) * circle.r,
+        y: circle.cy + (dy / centerDist) * circle.r,
       };
     }
   };
@@ -120,13 +120,11 @@ export function setup(runtime: PixiRuntime): () => void {
     const zoneStroke = inside ? CONTACT_COLOR : ZONE_COLOR;
 
     // 고정 원형 keep-out zone
-    g.circle(circle.center.x, circle.center.y, circle.radius)
-      .fill({ color: ZONE_FILL })
-      .stroke({ color: zoneStroke, width: 2 });
+    g.circle(circle.cx, circle.cy, circle.r).fill({ color: ZONE_FILL }).stroke({ color: zoneStroke, width: 2 });
 
     if (!inside) {
       // center→최근접점 반지름 guide: 최근접점이 반지름 위에 있음을 흐리게 보인다
-      g.moveTo(circle.center.x, circle.center.y).lineTo(foot.x, foot.y).stroke({ color: RADIUS_COLOR, width: 1 });
+      g.moveTo(circle.cx, circle.cy).lineTo(foot.x, foot.y).stroke({ color: RADIUS_COLOR, width: 1 });
 
       // clearance 선분: 둘레 최근접점 → P. 이 선분 길이가 곧 거리 d다
       g.moveTo(foot.x, foot.y).lineTo(handle.x, handle.y).stroke({ color: CLEAR_COLOR, width: 2 });
@@ -136,7 +134,7 @@ export function setup(runtime: PixiRuntime): () => void {
     }
 
     // 고정 center marker
-    g.circle(circle.center.x, circle.center.y, 4).fill({ color: CENTER_COLOR });
+    g.circle(circle.cx, circle.cy, 4).fill({ color: CENTER_COLOR });
 
     // 점 핸들 P (주 조작 대상): 닿으면 contact 색으로 강조
     g.circle(handle.x, handle.y, grabbed ? HANDLE_R + 2 : HANDLE_R)
@@ -146,7 +144,7 @@ export function setup(runtime: PixiRuntime): () => void {
     label.text = [
       `d     : ${d.toFixed(1)}   drag P`,
       `status: ${inside ? 'inside (touching)' : 'outside'}`,
-      `|CP|  : ${centerDist.toFixed(1)}  (r = ${circle.radius})`,
+      `|CP|  : ${centerDist.toFixed(1)}  (r = ${circle.r})`,
     ].join('\n');
   };
 

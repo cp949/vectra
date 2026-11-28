@@ -40,7 +40,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 사각 keep-out zone(AABB): 거리를 측정할 대상 영역. 조작 대상이 아니다
-  const box = { min: { x: 280, y: 170 }, max: { x: 460, y: 320 } };
+  const box = { minX: 280, minY: 170, maxX: 460, maxY: 320 };
 
   // 점 핸들 P: 유일한 drag 대상. box까지의 여유 거리를 측정할 점이다
   const handle: XY = { x: 560, y: 110 };
@@ -73,8 +73,8 @@ export function setup(runtime: PixiRuntime): () => void {
     // 둘레 위 최근접점: P를 각 축 [min, max]로 독립 clamp (inline, closestPoint 미호출)
     // 한 축만 벗어나면 변 위, 두 축 모두 벗어나면 모서리, 내부면 foot=P가 된다
     foot = {
-      x: Math.max(box.min.x, Math.min(box.max.x, handle.x)),
-      y: Math.max(box.min.y, Math.min(box.max.y, handle.y)),
+      x: Math.max(box.minX, Math.min(box.maxX, handle.x)),
+      y: Math.max(box.minY, Math.min(box.maxY, handle.y)),
     };
 
     // 축별 gap: d = hypot(gx, gy) 임을 드러내는 inline 분해 (distanceToPoint 재호출 아님)
@@ -114,11 +114,11 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: BG_COLOR });
 
-    const bw = box.max.x - box.min.x;
-    const bh = box.max.y - box.min.y;
+    const bw = box.maxX - box.minX;
+    const bh = box.maxY - box.minY;
 
     // 고정 box: P가 내부/경계면 둘레를 contact 색으로 전환(거리 0)
-    g.rect(box.min.x, box.min.y, bw, bh)
+    g.rect(box.minX, box.minY, bw, bh)
       .fill({ color: ZONE_FILL })
       .stroke({ color: inside ? CONTACT_COLOR : ZONE_COLOR, width: 2 });
 

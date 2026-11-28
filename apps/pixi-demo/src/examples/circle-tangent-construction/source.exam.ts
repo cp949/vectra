@@ -26,12 +26,12 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 좌 패널: 고정 원 + 드래그 가능한 외부 점
-  const fromCircle = { center: { x: 180, y: 240 }, radius: 70 };
+  const fromCircle = { cx: 180, cy: 240, r: 70 };
   const external = { x: 320, y: 120 };
 
   // 우 패널: 드래그 가능한 두 원
-  const circleA = { center: { x: 480, y: 180 }, radius: 55 };
-  const circleB = { center: { x: 620, y: 300 }, radius: 35 };
+  const circleA = { cx: 480, cy: 180, r: 55 };
+  const circleB = { cx: 620, cy: 300, r: 35 };
 
   // 출력 buffer (매 프레임 재기록 hot path)
   const externalTangents: { x: number; y: number }[] = [];
@@ -43,8 +43,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const HIT_TOLERANCE = 18;
 
   // 드래그 핸들: 외부 점과 두 원 center
-  const handles = [external, circleA.center, circleB.center];
-  let grabbed: { x: number; y: number } | undefined;
+  let grabbed: typeof circleA | 'external' | undefined;
 
   const getCanvasXY = (e: PointerEvent): { x: number; y: number } => {
     const rect = (app.canvas as HTMLCanvasElement).getBoundingClientRect();
@@ -53,8 +52,12 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const onPointerDown = (e: PointerEvent): void => {
     const { x, y } = getCanvasXY(e);
-    for (const h of handles) {
-      if (Math.hypot(h.x - x, h.y - y) < HIT_TOLERANCE) {
+    if (Math.hypot(external.x - x, external.y - y) < HIT_TOLERANCE) {
+      grabbed = 'external';
+      return;
+    }
+    for (const h of [circleA, circleB]) {
+      if (Math.hypot(h.cx - x, h.cy - y) < HIT_TOLERANCE) {
         grabbed = h;
         return;
       }
@@ -64,8 +67,15 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerMove = (e: PointerEvent): void => {
     if (!grabbed) return;
     const { x, y } = getCanvasXY(e);
-    grabbed.x = Math.max(20, Math.min(700, x));
-    grabbed.y = Math.max(20, Math.min(420, y));
+    const clampedX = Math.max(20, Math.min(700, x));
+    const clampedY = Math.max(20, Math.min(420, y));
+    if (grabbed === 'external') {
+      external.x = clampedX;
+      external.y = clampedY;
+    } else {
+      grabbed.cx = clampedX;
+      grabbed.cy = clampedY;
+    }
   };
 
   const onPointerUp = (): void => {
@@ -98,7 +108,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
 
     // 좌 패널: 원 + 외부 점 접선
-    g.circle(fromCircle.center.x, fromCircle.center.y, fromCircle.radius).stroke({ color: 0x64748b, width: 2 });
+    g.circle(fromCircle.cx, fromCircle.cy, fromCircle.r).stroke({ color: 0x64748b, width: 2 });
     for (const t of externalTangents) {
       g.moveTo(external.x, external.y).lineTo(t.x, t.y).stroke({ color: 0xfacc15, width: 1.5 });
       g.circle(t.x, t.y, 4).fill(0xfacc15);
@@ -106,12 +116,12 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(external.x, external.y, 6).fill(0xf472b6);
 
     // 우 패널: 두 원 + 공통접선
-    g.circle(circleA.center.x, circleA.center.y, circleA.radius).stroke({ color: 0x64748b, width: 2 });
-    g.circle(circleB.center.x, circleB.center.y, circleB.radius).stroke({ color: 0x64748b, width: 2 });
+    g.circle(circleA.cx, circleA.cy, circleA.r).stroke({ color: 0x64748b, width: 2 });
+    g.circle(circleB.cx, circleB.cy, circleB.r).stroke({ color: 0x64748b, width: 2 });
     drawCommonTangents(outerAngles, 0x38bdf8, false);
     drawCommonTangents(innerAngles, 0x4ade80, true);
-    g.circle(circleA.center.x, circleA.center.y, 6).fill(0xf472b6);
-    g.circle(circleB.center.x, circleB.center.y, 6).fill(0xf472b6);
+    g.circle(circleA.cx, circleA.cy, 6).fill(0xf472b6);
+    g.circle(circleB.cx, circleB.cy, 6).fill(0xf472b6);
 
     const leftMsg =
       externalTangents.length > 0 ? `외부 점 접선 ${externalTangents.length}개` : '점이 원 안 — 접선 없음';

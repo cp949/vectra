@@ -162,9 +162,24 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const hitFor = (id: CaseId): boolean => {
     if (id === 'point') return Rectx.containsPoint(rowZone(id), point);
-    if (id === 'circle') return Intersects.intersectsCircleRect(circle, rowZone(id));
-    if (id === 'triangle') return Intersects.intersectsRectTriangle(rowZone(id), triangle);
-    return Intersects.intersectsSegmentSegment(segA, segB);
+    if (id === 'circle')
+      return Intersects.intersectsCircleRect(
+        { cx: circle.center.x, cy: circle.center.y, r: circle.radius },
+        rowZone(id)
+      );
+    if (id === 'triangle')
+      return Intersects.intersectsRectTriangle(rowZone(id), {
+        x1: triangle.a.x,
+        y1: triangle.a.y,
+        x2: triangle.b.x,
+        y2: triangle.b.y,
+        x3: triangle.c.x,
+        y3: triangle.c.y,
+      });
+    return Intersects.intersectsSegmentSegment(
+      { x1: segA.a.x, y1: segA.a.y, x2: segA.b.x, y2: segA.b.y },
+      { x1: segB.a.x, y1: segB.a.y, x2: segB.b.x, y2: segB.b.y }
+    );
   };
 
   const drawCaseHeader = (id: CaseId, hit: boolean): void => {

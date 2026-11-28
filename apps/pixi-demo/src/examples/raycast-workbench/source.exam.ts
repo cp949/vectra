@@ -25,9 +25,9 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const origin: XY = { x: 92, y: 260 };
   const aim: XY = { x: 560, y: 185 };
-  const bounds = { min: { x: 280, y: 92 }, max: { x: 410, y: 188 } };
-  const circle = { center: { x: 525, y: 305 }, radius: 58 };
-  const wall = { a: { x: 440, y: 115 }, b: { x: 610, y: 180 } };
+  const bounds = { minX: 280, minY: 92, maxX: 410, maxY: 188 };
+  const circle = { cx: 525, cy: 305, r: 58 };
+  const wall = { x1: 440, y1: 115, x2: 610, y2: 180 };
   const p0: XY = { x: 310, y: 430 };
   const p1: XY = { x: 420, y: 250 };
   const p2: XY = { x: 560, y: 520 };
@@ -59,26 +59,36 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const render = (): void => {
-    const ray = { origin, direction: { x: aim.x - origin.x, y: aim.y - origin.y } };
+    const ray = { ox: origin.x, oy: origin.y, dx: aim.x - origin.x, dy: aim.y - origin.y };
     const hitBounds = Intersects.intersectsBoundsRay(bounds, ray);
     const hitCircle = Intersects.intersectsCircleRay(circle, ray);
     const hitWall = Intersects.intersectsRaySegment(ray, wall);
-    const curveHits = Intersects.rayCubicIntersections(ray, p0, p1, p2, p3);
-    const len = Math.hypot(ray.direction.x, ray.direction.y) || 1;
-    const end = { x: origin.x + (ray.direction.x / len) * 1200, y: origin.y + (ray.direction.y / len) * 1200 };
+    const curveHits = Intersects.rayCubicIntersections(ray, {
+      kind: 'cubic',
+      x0: p0.x,
+      y0: p0.y,
+      x1: p1.x,
+      y1: p1.y,
+      x2: p2.x,
+      y2: p2.y,
+      x3: p3.x,
+      y3: p3.y,
+    });
+    const len = Math.hypot(ray.dx, ray.dy) || 1;
+    const end = { x: origin.x + (ray.dx / len) * 1200, y: origin.y + (ray.dy / len) * 1200 };
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: BG });
     g.moveTo(origin.x, origin.y)
       .lineTo(end.x, end.y)
       .stroke({ color: curveHits.length || hitBounds || hitCircle || hitWall ? HIT : CLEAR, width: 2 });
-    g.rect(bounds.min.x, bounds.min.y, bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y).stroke({
+    g.rect(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY).stroke({
       color: hitBounds ? HIT : GUIDE,
       width: 3,
     });
-    g.circle(circle.center.x, circle.center.y, circle.radius).stroke({ color: hitCircle ? HIT : GUIDE, width: 3 });
-    g.moveTo(wall.a.x, wall.a.y)
-      .lineTo(wall.b.x, wall.b.y)
+    g.circle(circle.cx, circle.cy, circle.r).stroke({ color: hitCircle ? HIT : GUIDE, width: 3 });
+    g.moveTo(wall.x1, wall.y1)
+      .lineTo(wall.x2, wall.y2)
       .stroke({ color: hitWall ? HIT : GUIDE, width: 4 });
     g.moveTo(p0.x, p0.y)
       .bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)

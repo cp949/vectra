@@ -101,11 +101,13 @@ export function setup(runtime: PixiRuntime): () => void {
     // t: 0..1 왕복
     const t = (Math.sin(ticker.lastTime / 1200) + 1) / 2;
 
+    const curve = { kind: 'quadratic' as const, x0: p0.x, y0: p0.y, x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y };
+
     // vectra API 호출
-    Curves.quadraticHullInto(hull, p0, p1, p2, t);
-    Curves.quadraticPointAtTInto(point, p0, p1, p2, t);
-    Curves.quadraticTangentAtInto(tangent, p0, p1, p2, t);
-    Curves.quadraticNormalAtInto(normal, p0, p1, p2, t);
+    Curves.quadraticHullInto(hull, curve, t);
+    Curves.quadraticPointAtTInto(point, curve, t);
+    Curves.quadraticTangentAtInto(tangent, curve, t);
+    Curves.quadraticNormalAtInto(normal, curve, t);
 
     g.clear();
 

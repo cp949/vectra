@@ -16,7 +16,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Circle = { center: XY; radius: number };
+type Circle = { cx: number; cy: number; r: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 맞음: 파랑
 const HIT_COLOR = 0xf87171; // 맞음: 빨강
@@ -42,7 +42,7 @@ export function setup(runtime: PixiRuntime): () => void {
   // 빔 방향을 정하는 주 drag 대상. direction = aim − origin.
   const aim: XY = { x: 470, y: 160 };
   // 고정 원형 타깃 (조작 대상 아님). radius는 고정 양수라 degenerate(radius ≤ 0) 미발생.
-  const circle: Circle = { center: { x: 500, y: 230 }, radius: 70 };
+  const circle: Circle = { cx: 500, cy: 230, r: 70 };
 
   let grabbed = false;
 
@@ -80,7 +80,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     // ray 입력: origin에서 (aim − origin) 방향으로 뻗는 반직선
     const dir: XY = { x: aim.x - origin.x, y: aim.y - origin.y };
-    const ray = { origin, direction: dir };
+    const ray = { ox: origin.x, oy: origin.y, dx: dir.x, dy: dir.y };
 
     // 핵심 호출: forward ray가 원(closed disk)에 명중하면 true (aim을 emitter에 겹치면
     // direction zero → 점으로 환원돼 origin의 disk containment로 판정되는 degenerate)
@@ -95,9 +95,9 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 원형 타깃: 채움 + 둘레 stroke (closed disk라 둘레 접점도 hit)
-    g.circle(circle.center.x, circle.center.y, circle.radius).fill({ color: stateColor, alpha: 0.18 });
-    g.circle(circle.center.x, circle.center.y, circle.radius).stroke({ color: stateColor, width: 3, alpha: 0.95 });
-    g.circle(circle.center.x, circle.center.y, 3).fill({ color: stateColor });
+    g.circle(circle.cx, circle.cy, circle.r).fill({ color: stateColor, alpha: 0.18 });
+    g.circle(circle.cx, circle.cy, circle.r).stroke({ color: stateColor, width: 3, alpha: 0.95 });
+    g.circle(circle.cx, circle.cy, 3).fill({ color: stateColor });
 
     // forward 빔: origin → beamEnd (원 반대로 돌리면 이 선이 원을 지나지 않아 hit=no)
     g.moveTo(origin.x, origin.y).lineTo(beamEnd.x, beamEnd.y).stroke({ color: stateColor, width: 2, alpha: 0.85 });

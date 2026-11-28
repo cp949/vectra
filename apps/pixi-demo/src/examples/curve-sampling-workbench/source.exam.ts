@@ -35,7 +35,7 @@ export function setup(runtime: PixiRuntime): () => void {
     endAngle: 2 * Math.PI,
     sweep: true,
   };
-  const segment = { a: { x: 104, y: 236 }, b: { x: 315, y: 194 } };
+  const segment = { x1: 104, y1: 236, x2: 315, y2: 194 };
   const polyline: XY[] = [
     { x: 88, y: 330 },
     { x: 170, y: 285 },
@@ -97,7 +97,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     const t = (knobX - 430) / 290;
     const flatness = 1 + t * 60;
-    Curves.arcFlattenInto(flatOut, arc, { flatness });
+    Curves.arcFlattenInto(flatOut, arc, { flatness, maxRecursion: 32 });
     const arcT = Curves.arcTAtLength(arc, Curves.arcLengthAtT(arc, 1) * t);
     Curves.arcPointAtTInto(arcMarker, arc, arcT);
     Segmentx.pointAtLengthInto(segmentMarker, segment, Segmentx.length(segment) * t);
@@ -110,7 +110,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: BG });
     drawPolyline(flatOut, RESULT, 2);
     g.circle(arcMarker.x, arcMarker.y, 6).fill({ color: HANDLE });
-    g.moveTo(segment.a.x, segment.a.y).lineTo(segment.b.x, segment.b.y).stroke({ color: GUIDE, width: 3 });
+    g.moveTo(segment.x1, segment.y1).lineTo(segment.x2, segment.y2).stroke({ color: GUIDE, width: 3 });
     g.circle(segmentMarker.x, segmentMarker.y, 6).fill({ color: RESULT });
     drawPolyline(polyline, GUIDE, 3);
     g.circle(polyMarker.x, polyMarker.y, 6).fill({ color: RESULT });

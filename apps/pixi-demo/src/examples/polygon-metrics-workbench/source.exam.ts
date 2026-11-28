@@ -5,7 +5,7 @@
  * 실시간으로 분류된다. centroid와 approximate bounding circle은 polygon이 바뀔 때 함께 갱신되어
  * 현재 polygon의 기준점과 범위를 확인할 수 있다.
  *
- * - Polygons.polygonFrom: 드래그 가능한 polygon point list 생성
+ * - Polygons.polygonFrom: 드래그 가능한 다각형 좌표 배열 생성
  * - Polygons.classifyPoint: probe 점의 inside/boundary/outside 분류
  * - Polygons.centroid: polygon 중심 marker 계산
  * - Polygons.boundingCircle: point list를 감싸는 approximate circle 계산
@@ -28,18 +28,12 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 16);
   app.stage.addChild(label);
 
-  const polygon = Polygons.polygonFrom([
-    { x: 190, y: 130 },
-    { x: 430, y: 100 },
-    { x: 590, y: 250 },
-    { x: 500, y: 360 },
-    { x: 240, y: 330 },
-  ]);
+  const polygon = Polygons.polygonFrom([190, 130, 430, 100, 590, 250, 500, 360, 240, 330]);
   const probe: Point = { x: 420, y: 240 };
 
   const HIT_RADIUS = 18;
   const VERTEX_RADIUS = 8;
-  let grabbed: Point | undefined;
+  let grabbed: number | undefined;
 
   const getCanvasXY = (e: PointerEvent): Point => {
     const rect = (app.canvas as HTMLCanvasElement).getBoundingClientRect();
@@ -54,31 +48,34 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const pointer = getCanvasXY(e);
     if (Math.hypot(probe.x - pointer.x, probe.y - pointer.y) <= HIT_RADIUS) {
-      grabbed = probe;
+      grabbed = -1;
       return;
     }
 
-    for (const point of polygon.points) {
-      if (Math.hypot(point.x - pointer.x, point.y - pointer.y) <= HIT_RADIUS) {
-        grabbed = point;
+    for (let i = 0; i < polygon.length; i += 2) {
+      if (Math.hypot(polygon[i] - pointer.x, polygon[i + 1] - pointer.y) <= HIT_RADIUS) {
+        grabbed = i;
         return;
       }
     }
   };
 
   const onPointerMove = (e: PointerEvent): void => {
-    if (!grabbed) return;
+    if (grabbed === undefined) return;
     const pointer = getCanvasXY(e);
-    grabbed.x = pointer.x;
-    grabbed.y = pointer.y;
-    clampToCanvas(grabbed);
+    clampToCanvas(pointer);
+    if (grabbed === -1) {
+      probe.x = pointer.x;
+      probe.y = pointer.y;
+    } else {
+      polygon[grabbed] = pointer.x;
+      polygon[grabbed + 1] = pointer.y;
+    }
   };
 
   const onPointerUp = (): void => {
     grabbed = undefined;
   };
-
-  const toPixiPoints = (points: readonly Point[]): number[] => points.flatMap((point) => [point.x, point.y]);
 
   const canvas = app.canvas as HTMLCanvasElement;
   canvas.addEventListener('pointerdown', onPointerDown);
@@ -94,9 +91,9 @@ export function setup(runtime: PixiRuntime): () => void {
 
     g.clear();
 
-    g.circle(circle.center.x, circle.center.y, circle.radius).stroke({ color: 0x64748b, width: 1.5 });
+    g.circle(circle.cx, circle.cy, circle.r).stroke({ color: 0x64748b, width: 1.5 });
 
-    g.poly(toPixiPoints(polygon.points)).fill({ color: 0x1e293b, alpha: 0.34 }).stroke({
+    g.poly(polygon).fill({ color: 0x1e293b, alpha: 0.34 }).stroke({
       color: 0xe2e8f0,
       width: 2.5,
     });
@@ -105,11 +102,11 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(centroid.x, centroid.y, 6).fill({ color: 0xfacc15 });
     g.circle(probe.x, probe.y, 10).fill({ color: probeColor });
 
-    for (const point of polygon.points) {
-      g.circle(point.x, point.y, VERTEX_RADIUS).fill({ color: 0x38bdf8 });
+    for (let i = 0; i < polygon.length; i += 2) {
+      g.circle(polygon[i], polygon[i + 1], VERTEX_RADIUS).fill({ color: 0x38bdf8 });
     }
 
-    label.text = `probe=${containment}   vertices=${polygon.points.length}`;
+    label.text = `probe=${containment}   vertices=${Polygons.pointCount(polygon)}`;
   };
 
   app.ticker.add(render);

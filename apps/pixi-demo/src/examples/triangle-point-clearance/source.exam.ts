@@ -42,17 +42,13 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 고정 non-degenerate scalene 삼각형: 거리를 측정할 대상 영역. 조작 대상이 아니다.
   // 세 점이 한 직선 위가 아니라 degenerate(segment 환원·세 vertex 동일) 분기는 발생하지 않는다.
-  const triangle = {
-    a: { x: 250, y: 130 }, // 위쪽 꼭짓점
-    b: { x: 560, y: 250 }, // 오른쪽 아래 꼭짓점
-    c: { x: 230, y: 370 }, // 왼쪽 아래 꼭짓점
-  };
+  const triangle = { x1: 250, y1: 130, x2: 560, y2: 250, x3: 230, y3: 370 };
 
   // 세 변을 (start, end) 쌍과 label로 묶어둔다. foot는 이 세 변 segment clamp 중 최소 거리로 구한다.
   const edges: { s: XY; e: XY; name: string }[] = [
-    { s: triangle.a, e: triangle.b, name: 'AB' },
-    { s: triangle.b, e: triangle.c, name: 'BC' },
-    { s: triangle.c, e: triangle.a, name: 'CA' },
+    { s: { x: triangle.x1, y: triangle.y1 }, e: { x: triangle.x2, y: triangle.y2 }, name: 'AB' },
+    { s: { x: triangle.x2, y: triangle.y2 }, e: { x: triangle.x3, y: triangle.y3 }, name: 'BC' },
+    { s: { x: triangle.x3, y: triangle.y3 }, e: { x: triangle.x1, y: triangle.y1 }, name: 'CA' },
   ];
 
   // 점 핸들 P: 유일한 drag 대상. 삼각형까지의 여유 거리를 측정할 점이다
@@ -147,7 +143,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const zoneStroke = inside ? CONTACT_COLOR : ZONE_COLOR;
 
     // 고정 삼각형 keep-out 영역
-    const poly = [triangle.a.x, triangle.a.y, triangle.b.x, triangle.b.y, triangle.c.x, triangle.c.y];
+    const poly = [triangle.x1, triangle.y1, triangle.x2, triangle.y2, triangle.x3, triangle.y3];
     g.poly(poly).fill({ color: ZONE_FILL });
     g.poly(poly).stroke({ color: zoneStroke, width: 2 });
 

@@ -7,7 +7,7 @@
  * 구성 작업 흐름을 보인다.
  *
  * - Triangles.fromSegmentApex: base segment(a,b)와 apex point(c)로 삼각형을 만든다.
- *   a=base.a, b=base.b, c=apex. 세 변 길이 |AB|·|AC|·|BC|는 이 구성의 분해 표시이지
+ *   첫 두 꼭짓점은 base의 끝점이고 세 번째는 apex다. 세 변 길이 |AB|·|AC|·|BC|는 이 구성의 분해 표시이지
  *   두 번째 관계가 아니다. apex가 base 지지선 위에 오면 면적 0 flat 삼각형이 된다.
  */
 
@@ -37,17 +37,14 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 밑변 segment (조작 대상 아님). length가 finite positive라 구성은 항상 성공한다.
-  const base = {
-    a: { x: 230, y: 300 },
-    b: { x: 490, y: 300 },
-  };
+  const base = { x1: 230, y1: 300, x2: 490, y2: 300 };
 
   // base 길이 |AB|는 고정 상수라 setup에서 1회만 inline 계산한다(hot path 아님).
-  const baseLen = Math.hypot(base.b.x - base.a.x, base.b.y - base.a.y);
+  const baseLen = Math.hypot(base.x2 - base.x1, base.y2 - base.y1);
 
   // base 방향 단위벡터: 지지선 guide를 양쪽으로 길게 뻗을 때 쓴다.
-  const ux = (base.b.x - base.a.x) / baseLen;
-  const uy = (base.b.y - base.a.y) / baseLen;
+  const ux = (base.x2 - base.x1) / baseLen;
+  const uy = (base.y2 - base.y1) / baseLen;
 
   // 자유 apex 정점 상태(유일 drag 대상). 시작은 base 위쪽.
   const apex: XY = { x: 360, y: 140 };
@@ -95,34 +92,34 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // base 지지선 guide(양 끝점을 지나는 무한 직선). apex가 이 선 위로 오면 collinear → 면적 0.
     const far = 1000;
-    g.moveTo(base.a.x - ux * far, base.a.y - uy * far)
-      .lineTo(base.b.x + ux * far, base.b.y + uy * far)
+    g.moveTo(base.x1 - ux * far, base.y1 - uy * far)
+      .lineTo(base.x2 + ux * far, base.y2 + uy * far)
       .stroke({ color: LINE_COLOR, width: 1, alpha: 0.7 });
 
     // 고정 base segment + 양 끝 marker(삼각형의 변 AB)
-    g.moveTo(base.a.x, base.a.y).lineTo(base.b.x, base.b.y).stroke({ color: BASE_COLOR, width: 3 });
-    g.circle(base.a.x, base.a.y, 5).fill({ color: BASE_COLOR });
-    g.circle(base.b.x, base.b.y, 5).fill({ color: BASE_COLOR });
+    g.moveTo(base.x1, base.y1).lineTo(base.x2, base.y2).stroke({ color: BASE_COLOR, width: 3 });
+    g.circle(base.x1, base.y1, 5).fill({ color: BASE_COLOR });
+    g.circle(base.x2, base.y2, 5).fill({ color: BASE_COLOR });
 
     // apex의 base 지지선까지 부호 거리: |cross|/baseLen. ≈0이면 collinear(면적 0).
     // cross = (B−A) × (apex−A). 별도 domain import 없이 inline 산술.
-    const cross = (base.b.x - base.a.x) * (apex.y - base.a.y) - (base.b.y - base.a.y) * (apex.x - base.a.x);
+    const cross = (base.x2 - base.x1) * (apex.y - base.y1) - (base.y2 - base.y1) * (apex.x - base.x1);
     const distToLine = Math.abs(cross) / baseLen;
     const degenerate = distToLine <= DEGEN_EPS;
     const stateColor = degenerate ? WARN_COLOR : TRI_COLOR;
 
     // 삼각형 면 + 외곽선(세 변 AB·BC·CA가 곧 stroke edge)
-    const poly = [tri.a.x, tri.a.y, tri.b.x, tri.b.y, tri.c.x, tri.c.y];
+    const poly = [tri.x1, tri.y1, tri.x2, tri.y2, tri.x3, tri.y3];
     g.poly(poly).fill({ color: stateColor, alpha: degenerate ? 0.12 : 0.22 });
     g.poly(poly).stroke({ color: stateColor, width: 2.5, alpha: 0.95 });
 
     // apex handle (유일 drag 대상)
-    g.circle(tri.c.x, tri.c.y, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
-    g.circle(tri.c.x, tri.c.y, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
+    g.circle(tri.x3, tri.y3, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
+    g.circle(tri.x3, tri.y3, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
 
     // 세 변 길이: |AB|는 고정, |AC|·|BC|는 apex로 변한다(같은 구성의 분해 표시, Math.hypot inline).
-    const sideAC = Math.hypot(tri.c.x - tri.a.x, tri.c.y - tri.a.y);
-    const sideBC = Math.hypot(tri.c.x - tri.b.x, tri.c.y - tri.b.y);
+    const sideAC = Math.hypot(tri.x3 - tri.x1, tri.y3 - tri.y1);
+    const sideBC = Math.hypot(tri.x3 - tri.x2, tri.y3 - tri.y2);
 
     label.text = [
       'triangle from base + free apex   drag apex',

@@ -14,7 +14,7 @@
 import * as Segments from '@cp949/vectra/segment';
 
 type XY = { x: number; y: number };
-type Segment = { a: XY; b: XY };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app, size } = runtime;
@@ -32,8 +32,8 @@ export function setup(runtime: PixiRuntime): () => void {
   const origin: XY = { x: 160, y: size.height / 2 };
   const anchor: XY = { x: size.width / 2 + 110, y: size.height / 2 };
   const directionHandle: XY = { x: origin.x + 220, y: origin.y - 80 };
-  const sourceBuffer: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
-  const centeredBuffer: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  const sourceBuffer: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  const centeredBuffer: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
 
   const HIT_TOLERANCE = 20;
   let dragging = false;
@@ -69,7 +69,7 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const drawSegment = (line: Segment, color: number, width: number): void => {
-    g.moveTo(line.a.x, line.a.y).lineTo(line.b.x, line.b.y).stroke({ color, width });
+    g.moveTo(line.x1, line.y1).lineTo(line.x2, line.y2).stroke({ color, width });
   };
 
   const drawHandle = (point: XY, color: number, radius = 8): void => {

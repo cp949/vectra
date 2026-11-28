@@ -16,7 +16,9 @@ import * as Interpolation from '@cp949/vectra/interpolation';
 import * as Segments from '@cp949/vectra/segment';
 
 export function setup(runtime: PixiRuntime): () => void {
-  const { PIXI, app, segment } = runtime;
+  const { PIXI, app } = runtime;
+  const { a, b } = runtime.segment;
+  const segment = { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
 
   const g = new PIXI.Graphics();
   app.stage.addChild(g);
@@ -103,7 +105,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(dotX, dotY, 5).fill(0xf472b6);
 
     // 이동 경로 segment
-    g.moveTo(segment.a.x, segment.a.y).lineTo(segment.b.x, segment.b.y).stroke({ color: 0x475569, width: 3 });
+    g.moveTo(segment.x1, segment.y1).lineTo(segment.x2, segment.y2).stroke({ color: 0x475569, width: 3 });
 
     // 등속 ghost marker (회색 외곽선)와 eased marker (분홍 채움)
     g.circle(ghost.x, ghost.y, 9).stroke({ color: 0x94a3b8, width: 2 });

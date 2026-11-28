@@ -86,7 +86,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     // 단일 핵심 관계: live 선분 {a,b} → 선분 위 균일 난수 점. 매 프레임 소수를 emit한다
     for (let i = 0; i < SPAWN_PER_FRAME; i += 1) {
-      points.push(Random.pointOnSegment({ a, b }));
+      points.push(Random.pointOnSegment({ x1: a.x, y1: a.y, x2: b.x, y2: b.y }));
     }
     // 상한 초과분은 가장 오래된 점부터 제거 (흐르는 emit 효과)
     while (points.length > MAX_POINTS) points.shift();

@@ -80,9 +80,9 @@ export function setup(runtime: PixiRuntime): () => void {
   const fmt = (n: number): string => n.toFixed(1).padStart(7);
 
   const render = (): void => {
-    // 두 끝점 쌍을 SegmentLike로 묶어 교차를 계산한다
-    const segA = { a: a0, b: a1 };
-    const segB = { a: b0, b: b1 };
+    // 두 선분의 끝점 좌표로 교차를 계산한다
+    const segA = { x1: a0.x, y1: a0.y, x2: a1.x, y2: a1.y };
+    const segB = { x1: b0.x, y1: b0.y, x2: b1.x, y2: b1.y };
     // 교점이 양쪽 선분 범위 안에 있을 때만 점, 아니면 undefined
     const hit = Segments.singleIntersection(segA, segB);
 

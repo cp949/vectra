@@ -7,7 +7,7 @@
  * 가까워지면 outer/inner 반지름이 비슷해져 정 2N각형에 가까워진다. "두 반지름의 교차에서 별
  * 꼭짓점을 구성한다"는 작업 흐름을 보인다.
  *
- * - Polygonx.starPolygon: center·inner 반지름·outer 반지름·points에서 별 꼭짓점 `{ points }`를
+ * - Polygonx.starPolygon: center·inner 반지름·outer 반지름·points에서 별 꼭짓점 좌표 배열를
  *   구성해 반환한다. outer부터 시작해 inner와 교차하며 정확히 `2*points`개 꼭짓점을 만든다(close
  *   vertex 없음). inner 비율 변경 시에만 1회 호출하고, 단발 결과라 allocating companion을 그대로
  *   쓴다(`starPolygonInto` out-buffer scaffold 미사용).
@@ -68,9 +68,10 @@ export function setup(runtime: PixiRuntime): () => void {
 
   let ratio = 0.4; // 초기 inner 비율
   // 단일 핵심 관계: (center, r=R*ratio, R, POINTS) → outer/inner 교차 별 꼭짓점
-  let poly: XY[] = Polygonx.starPolygon(center, OUTER_RADIUS * ratio, OUTER_RADIUS, POINTS, {
+  let poly = Polygonx.starPolygon(center, OUTER_RADIUS * ratio, OUTER_RADIUS, POINTS, {
     startAngle: START_ANGLE,
-  }).points;
+    clockwise: true,
+  });
   let grabbed = false;
 
   const getCanvasXY = (e: PointerEvent): XY => {
@@ -85,7 +86,8 @@ export function setup(runtime: PixiRuntime): () => void {
   const rebuild = (): void => {
     poly = Polygonx.starPolygon(center, OUTER_RADIUS * ratio, OUTER_RADIUS, POINTS, {
       startAngle: START_ANGLE,
-    }).points;
+      clockwise: true,
+    });
   };
 
   const onPointerDown = (e: PointerEvent): void => {
@@ -124,14 +126,11 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(center.x, center.y, 3).fill({ color: CENTER_COLOR });
 
     // 별 외곽선: 저장된 꼭짓점만 그림 → 프레임당 vectra 할당 없음
-    g.moveTo(poly[0].x, poly[0].y);
-    for (let i = 1; i < poly.length; i++) g.lineTo(poly[i].x, poly[i].y);
-    g.closePath();
-    g.fill({ color: STAR_FILL, alpha: 0.6 }).stroke({ color: STAR_STROKE, width: 2 });
+    g.poly(poly).fill({ color: STAR_FILL, alpha: 0.6 }).stroke({ color: STAR_STROKE, width: 2 });
 
     // 꼭짓점 dot: 짝수 index = outer, 홀수 index = inner (교차 순서를 색으로 구분)
-    for (let i = 0; i < poly.length; i++) {
-      g.circle(poly[i].x, poly[i].y, 4).fill({ color: i % 2 === 0 ? OUTER_VERTEX : INNER_VERTEX });
+    for (let i = 0; i < poly.length; i += 2) {
+      g.circle(poly[i], poly[i + 1], 4).fill({ color: i % 4 === 0 ? OUTER_VERTEX : INNER_VERTEX });
     }
 
     // 슬라이더 트랙 + knob (유일한 조작 대상)
@@ -144,7 +143,7 @@ export function setup(runtime: PixiRuntime): () => void {
     label.text = [
       `points  : ${String(POINTS).padStart(6)}   drag slider for ratio`,
       `ratio   : ${fmt(ratio)}   inner r / outer R`,
-      `vertices: ${String(poly.length).padStart(6)}   = 2 * points`,
+      `vertices: ${String(poly.length / 2).padStart(6)}   = 2 * points`,
     ].join('\n');
   };
 

@@ -13,9 +13,9 @@
  */
 
 import * as Curves from '@cp949/vectra/curve';
+import type { CubicCurveWritable } from '@cp949/vectra/types';
 
 type Point = { x: number; y: number };
-type Cubic = { p0: Point; p1: Point; p2: Point; p3: Point };
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app, size } = runtime;
@@ -37,24 +37,9 @@ export function setup(runtime: PixiRuntime): () => void {
   const probe = { x: 350, y: 215 };
   const splitHandle = { x: 380, y: 398 };
 
-  const leftSplit: Cubic = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-    p3: { x: 0, y: 0 },
-  };
-  const rightSplit: Cubic = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-    p3: { x: 0, y: 0 },
-  };
-  const partInto: Cubic = {
-    p0: { x: 0, y: 0 },
-    p1: { x: 0, y: 0 },
-    p2: { x: 0, y: 0 },
-    p3: { x: 0, y: 0 },
-  };
+  const leftSplit: CubicCurveWritable = { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
+  const rightSplit: CubicCurveWritable = { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
+  const partInto: CubicCurveWritable = { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
 
   const closestInto = { x: 0, y: 0 };
   const derivative = { x: 0, y: 0 };
@@ -120,9 +105,9 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerup', onPointerUp);
   canvas.addEventListener('pointerleave', onPointerUp);
 
-  const drawCubic = (curve: Cubic, color: number, width: number, alpha = 1): void => {
-    g.moveTo(curve.p0.x, curve.p0.y)
-      .bezierCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y, curve.p3.x, curve.p3.y)
+  const drawCubic = (curve: CubicCurveWritable, color: number, width: number, alpha = 1): void => {
+    g.moveTo(curve.x0, curve.y0)
+      .bezierCurveTo(curve.x1, curve.y1, curve.x2, curve.y2, curve.x3, curve.y3)
       .stroke({ color, width, alpha });
   };
 
@@ -139,44 +124,56 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(point.x, point.y, radius).fill({ color });
   };
 
-  const drawParameterMarkers = (parameters: readonly number[], color: number): void => {
+  const drawParameterMarkers = (curve: CubicCurveWritable, parameters: readonly number[], color: number): void => {
     for (const t of parameters) {
-      Curves.cubicPointAtTInto(markerPoint, p0, p1, p2, p3, t);
+      Curves.cubicPointAtTInto(markerPoint, curve, t);
       drawPoint(markerPoint, 4, color);
     }
   };
 
   const render = (): void => {
+    const curve: CubicCurveWritable = {
+      kind: 'cubic',
+      x0: p0.x,
+      y0: p0.y,
+      x1: p1.x,
+      y1: p1.y,
+      x2: p2.x,
+      y2: p2.y,
+      x3: p3.x,
+      y3: p3.y,
+    };
     const t = (splitHandle.x - rail.x0) / (rail.x1 - rail.x0);
     const fromT = Math.max(0, t - 0.16);
     const toT = Math.min(1, t + 0.16);
     const flatness = 3.2;
 
-    const closest = Curves.cubicClosestPoint(p0, p1, p2, p3, probe, { sampleCount: 21 });
-    Curves.cubicClosestPointInto(closestInto, p0, p1, p2, p3, probe, { sampleCount: 21 });
-    const split = Curves.cubicSplit(p0, p1, p2, p3, t);
-    Curves.cubicSplitInto(leftSplit, rightSplit, p0, p1, p2, p3, t);
-    const part = Curves.cubicPart(p0, p1, p2, p3, fromT, toT);
-    Curves.cubicPartInto(partInto, p0, p1, p2, p3, fromT, toT);
-    const coarseFlatten = Curves.cubicFlatten(p0, p1, p2, p3, { flatness: 12 });
-    Curves.cubicFlattenInto(flattenInto, p0, p1, p2, p3, { flatness });
-    const totalLength = Curves.cubicLength(p0, p1, p2, p3);
-    const lengthAtT = Curves.cubicLengthAtT(p0, p1, p2, p3, t);
-    const tAtHalfLength = Curves.cubicTAtLength(p0, p1, p2, p3, totalLength / 2);
-    const curvature = Curves.cubicCurvatureAt(p0, p1, p2, p3, t);
-    const classification = Curves.cubicClassify(p0, p1, p2, p3);
-    const extrema = Curves.cubicExtrema(p0, p1, p2, p3);
-    const inflections = Curves.cubicInflections(p0, p1, p2, p3);
-    const flatEnough = Curves.cubicIsFlatEnough(p0, p1, p2, p3, flatness);
-    const linear = Curves.cubicIsLinear(p0, p1, p2, p3);
-    const straight = Curves.cubicIsStraight(p0, p1, p2, p3);
-    const simple = Curves.cubicIsSimple(p0, p1, p2, p3);
+    const closestOptions = { sampleCount: 21, tolerance: 1e-8, maxIterations: 20 };
+    const closest = Curves.cubicClosestPoint(curve, probe, closestOptions);
+    Curves.cubicClosestPointInto(closestInto, curve, probe, closestOptions);
+    const split = Curves.cubicSplit(curve, t);
+    Curves.cubicSplitInto(leftSplit, rightSplit, curve, t);
+    const part = Curves.cubicPart(curve, fromT, toT);
+    Curves.cubicPartInto(partInto, curve, fromT, toT);
+    const coarseFlatten = Curves.cubicFlatten(curve, { flatness: 12, maxRecursion: 32 });
+    Curves.cubicFlattenInto(flattenInto, curve, { flatness, maxRecursion: 32 });
+    const totalLength = Curves.cubicLength(curve);
+    const lengthAtT = Curves.cubicLengthAtT(curve, t);
+    const tAtHalfLength = Curves.cubicTAtLength(curve, totalLength / 2);
+    const curvature = Curves.cubicCurvatureAt(curve, t);
+    const classification = Curves.cubicClassify(curve);
+    const extrema = Curves.cubicExtrema(curve);
+    const inflections = Curves.cubicInflections(curve);
+    const flatEnough = Curves.cubicIsFlatEnough(curve, flatness);
+    const linear = Curves.cubicIsLinear(curve);
+    const straight = Curves.cubicIsStraight(curve);
+    const simple = Curves.cubicIsSimple(curve);
 
-    Curves.cubicPointAtTInto(splitPoint, p0, p1, p2, p3, t);
-    Curves.cubicPointAtTInto(halfLengthPoint, p0, p1, p2, p3, tAtHalfLength);
-    Curves.cubicPointAtTInto(parameterPoint, p0, p1, p2, p3, 0.5);
-    Curves.cubicDerivativeAtInto(derivative, p0, p1, p2, p3, t);
-    Curves.cubicSecondDerivativeAtInto(secondDerivative, p0, p1, p2, p3, t);
+    Curves.cubicPointAtTInto(splitPoint, curve, t);
+    Curves.cubicPointAtTInto(halfLengthPoint, curve, tAtHalfLength);
+    Curves.cubicPointAtTInto(parameterPoint, curve, 0.5);
+    Curves.cubicDerivativeAtInto(derivative, curve, t);
+    Curves.cubicSecondDerivativeAtInto(secondDerivative, curve, t);
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
@@ -189,7 +186,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
     strokePolyline(coarseFlatten, 0x334155, 2, 0.8);
     strokePolyline(flattenInto, 0x38bdf8, 2.5);
-    drawCubic({ p0, p1, p2, p3 }, 0xe2e8f0, 1.25, 0.8);
+    drawCubic(curve, 0xe2e8f0, 1.25, 0.8);
 
     drawCubic(split.left, 0x22c55e, 4, 0.28);
     drawCubic(rightSplit, 0xf59e0b, 4, 0.28);
@@ -216,8 +213,8 @@ export function setup(runtime: PixiRuntime): () => void {
       .lineTo(splitPoint.x + secondX * 34, splitPoint.y + secondY * 34)
       .stroke({ color: 0xa78bfa, width: 2 });
 
-    drawParameterMarkers(extrema, 0x60a5fa);
-    drawParameterMarkers(inflections, 0xef4444);
+    drawParameterMarkers(curve, extrema, 0x60a5fa);
+    drawParameterMarkers(curve, inflections, 0xef4444);
     drawPoint(splitPoint, 7, 0x22c55e);
     drawPoint(halfLengthPoint, 5, 0xa78bfa);
     drawPoint(parameterPoint, 4, 0x94a3b8);

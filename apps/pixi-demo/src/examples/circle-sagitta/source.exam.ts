@@ -49,7 +49,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const cx = size.width / 2;
   const cy = size.height / 2 + 10;
   const R = 150;
-  const circle = { center: { x: cx, y: cy }, radius: R };
+  const circle = { cx, cy, r: R };
 
   // 고정 호 시작점 A (원 위 START_ANGLE 위치)
   const ax = cx + R * Math.cos(START_ANGLE);

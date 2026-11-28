@@ -6,7 +6,7 @@
  * 삼각형→사각형→…으로 정다각형이 새로 구성돼, "파라미터(center·반지름·변 수)에서 정다각형 꼭짓점을
  * 구성한다"는 작업 흐름을 보인다.
  *
- * - Polygonx.regularPolygon: center·외접원 반지름·sides에서 정 N각형 꼭짓점 `{ points }`를 구성해
+ * - Polygonx.regularPolygon: center·외접원 반지름·sides에서 정 N각형 꼭짓점 좌표 배열를 구성해
  *   반환한다. close vertex 없이 정확히 N개 꼭짓점만 만든다. N 변경 시에만 1회 호출하고, 단발 결과라
  *   allocating companion을 그대로 쓴다(`regularPolygonInto` out-buffer scaffold 미사용).
  */
@@ -64,7 +64,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   let sides = 6; // 초기 변 수
   // 단일 핵심 관계: (center, RADIUS, sides) → 정 N각형 꼭짓점
-  let poly: XY[] = Polygonx.regularPolygon(center, RADIUS, sides, { startAngle: START_ANGLE }).points;
+  let poly = Polygonx.regularPolygon(center, RADIUS, sides, { startAngle: START_ANGLE, clockwise: true });
   let grabbed = false;
 
   const getCanvasXY = (e: PointerEvent): XY => {
@@ -77,7 +77,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // N 변경 시에만 1회 재구성 → state 저장. ticker render는 저장 state만 그린다.
   const rebuild = (): void => {
-    poly = Polygonx.regularPolygon(center, RADIUS, sides, { startAngle: START_ANGLE }).points;
+    poly = Polygonx.regularPolygon(center, RADIUS, sides, { startAngle: START_ANGLE, clockwise: true });
   };
 
   const onPointerDown = (e: PointerEvent): void => {
@@ -118,14 +118,11 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(center.x, center.y, 3).fill({ color: CENTER_COLOR });
 
     // 정 N각형: 저장된 꼭짓점만 그림 → 프레임당 vectra 할당 없음
-    g.moveTo(poly[0].x, poly[0].y);
-    for (let i = 1; i < poly.length; i++) g.lineTo(poly[i].x, poly[i].y);
-    g.closePath();
-    g.fill({ color: POLY_FILL, alpha: 0.55 }).stroke({ color: POLY_STROKE, width: 2 });
+    g.poly(poly).fill({ color: POLY_FILL, alpha: 0.55 }).stroke({ color: POLY_STROKE, width: 2 });
 
     // 꼭짓점 dot + 첫 꼭짓점(startAngle 기준) 강조
-    for (let i = 0; i < poly.length; i++) {
-      g.circle(poly[i].x, poly[i].y, 4).fill({ color: i === 0 ? FIRST_COLOR : VERTEX_COLOR });
+    for (let i = 0; i < poly.length; i += 2) {
+      g.circle(poly[i], poly[i + 1], 4).fill({ color: i === 0 ? FIRST_COLOR : VERTEX_COLOR });
     }
 
     // 슬라이더 트랙 + 정수 눈금 + knob (유일한 조작 대상)
@@ -138,7 +135,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(kx, trackY, HIT_RADIUS).stroke({ color: KNOB_COLOR, width: 1, alpha: 0.16 });
 
     // 변 길이: 반환된 꼭짓점 0·1 사이 거리를 inline으로 잰다 (등간격 출력 확인, 두 번째 API 아님)
-    const edge = Math.hypot(poly[1].x - poly[0].x, poly[1].y - poly[0].y);
+    const edge = Math.hypot(poly[2] - poly[0], poly[3] - poly[1]);
 
     // diagnostics: 단일 구성 관계를 변 수·외접원 반지름·출력 변 길이로 읽는다 (3개)
     label.text = [

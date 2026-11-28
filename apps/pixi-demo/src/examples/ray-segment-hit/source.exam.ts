@@ -15,7 +15,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Segment = { a: XY; b: XY };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 맞음: 파랑
 const HIT_COLOR = 0xf87171; // 맞음: 빨강
@@ -41,7 +41,7 @@ export function setup(runtime: PixiRuntime): () => void {
   // 빔 방향을 정하는 주 drag 대상. direction = aim − origin.
   const aim: XY = { x: 470, y: 150 };
   // 고정 벽 segment (조작 대상 아님). 빔 경로를 가로지르도록 비스듬히 배치.
-  const wall: Segment = { a: { x: 430, y: 90 }, b: { x: 560, y: 370 } };
+  const wall: Segment = { x1: 430, y1: 90, x2: 560, y2: 370 };
 
   let grabbed = false;
 
@@ -79,7 +79,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     // ray 입력: origin에서 (aim − origin) 방향으로 뻗는 반직선
     const dir: XY = { x: aim.x - origin.x, y: aim.y - origin.y };
-    const ray = { origin, direction: dir };
+    const ray = { ox: origin.x, oy: origin.y, dx: dir.x, dy: dir.y };
 
     // 핵심 호출: forward ray가 벽 segment를 가로지르면 true (aim을 emitter에 겹치면
     // direction zero → 점으로 환원돼 containment 판정되는 degenerate)
@@ -94,9 +94,9 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 벽 segment: 굵은 stroke + 양 끝점 dot
-    g.moveTo(wall.a.x, wall.a.y).lineTo(wall.b.x, wall.b.y).stroke({ color: stateColor, width: 5, alpha: 0.95 });
-    g.circle(wall.a.x, wall.a.y, 4).fill({ color: stateColor });
-    g.circle(wall.b.x, wall.b.y, 4).fill({ color: stateColor });
+    g.moveTo(wall.x1, wall.y1).lineTo(wall.x2, wall.y2).stroke({ color: stateColor, width: 5, alpha: 0.95 });
+    g.circle(wall.x1, wall.y1, 4).fill({ color: stateColor });
+    g.circle(wall.x2, wall.y2, 4).fill({ color: stateColor });
 
     // forward 빔: origin → beamEnd (벽 반대로 돌리면 이 선이 벽을 지나지 않아 hit=no)
     g.moveTo(origin.x, origin.y).lineTo(beamEnd.x, beamEnd.y).stroke({ color: stateColor, width: 2, alpha: 0.85 });

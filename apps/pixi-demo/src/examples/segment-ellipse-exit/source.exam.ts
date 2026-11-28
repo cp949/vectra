@@ -16,7 +16,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Ellipse = { center: XY; radiusX: number; radiusY: number };
+type Ellipse = { cx: number; cy: number; rx: number; ry: number };
 
 const EXIT_COLOR = 0xf87171; // 경계 통과(exit): 빨강
 const INSIDE_COLOR = 0x60a5fa; // 선분 전체 내부(contained): 파랑
@@ -37,7 +37,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 타원 (조작 대상 아님). radiusX ≠ radiusY라 원이 아닌 타원 경계로 통과점을 본다.
-  const ellipse: Ellipse = { center: { x: 380, y: 230 }, radiusX: 170, radiusY: 110 };
+  const ellipse: Ellipse = { cx: 380, cy: 230, rx: 170, ry: 110 };
 
   // 선분 내부 anchor A (조작 대상 아님). 타원 내부에 고정 → 항상 "교점 정확히 1개" case로 유도.
   const a: XY = { x: 340, y: 250 };
@@ -79,7 +79,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const render = (): void => {
     // segment 입력: 내부 anchor A → 드래그 끝 B
-    const segment = { a, b };
+    const segment = { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
 
     // 핵심 호출: 선분이 타원 경계를 정확히 한 번 통과하면 그 exit point, 아니면 undefined.
     // A가 내부 고정이므로 B 바깥 ⇒ 점 1개, B 안쪽 ⇒ contained(undefined).
@@ -91,12 +91,12 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 타원 경계 (closed region). exit가 있으면 경계를 통과했음을 색으로 강조.
-    g.ellipse(ellipse.center.x, ellipse.center.y, ellipse.radiusX, ellipse.radiusY).stroke({
+    g.ellipse(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry).stroke({
       color: stateColor,
       width: 3,
       alpha: 0.9,
     });
-    g.ellipse(ellipse.center.x, ellipse.center.y, ellipse.radiusX, ellipse.radiusY).fill({
+    g.ellipse(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry).fill({
       color: stateColor,
       alpha: 0.08,
     });

@@ -12,7 +12,7 @@
 import * as Ellipses from '@cp949/vectra/ellipse';
 
 type XY = { x: number; y: number };
-type Ellipse = { center: XY; radiusX: number; radiusY: number };
+type Ellipse = { cx: number; cy: number; rx: number; ry: number };
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app, size } = runtime;
@@ -29,11 +29,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // base ellipse는 화면 중앙 고정 (확장 기준이 되는 원본). rx≠ry라 같은 delta가 두 반지름에
   // 더해질 때 이심률이 바뀌는 것을 드러낸다
-  const base: Ellipse = {
-    center: { x: size.width / 2, y: size.height / 2 },
-    radiusX: 170,
-    radiusY: 95,
-  };
+  const base: Ellipse = { cx: size.width / 2, cy: size.height / 2, rx: 170, ry: 95 };
 
   // delta 세로 트랙. handle은 이 x에 고정해 1 자유도로 둔다 (delta는 수직 변위로만 결정)
   const trackX = size.width - 60;
@@ -41,7 +37,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const trackBottom = 370;
   // delta 범위: deflate가 두 반지름을 모두 0으로 붕괴(점)시키는 -(rx)-20까지 내려간다
   const deltaMax = 120;
-  const deltaMin = -base.radiusX - 20;
+  const deltaMin = -base.rx - 20;
 
   // delta → 트랙 y (top=deltaMax, bottom=deltaMin) 역매핑으로 handle 초기 위치를 잡는다
   const deltaToY = (d: number): number => {
@@ -52,7 +48,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const handle: XY = { x: trackX, y: deltaToY(40) };
 
   // 확장 결과를 매 프레임 기록할 out-buffer (hot path buffer 재사용, allocating expandBy 미사용)
-  const expanded: Ellipse = { center: { x: 0, y: 0 }, radiusX: 0, radiusY: 0 };
+  const expanded: Ellipse = { cx: 0, cy: 0, rx: 0, ry: 0 };
 
   const HIT_RADIUS = 24;
   let grabbed = false;
@@ -103,10 +99,10 @@ export function setup(runtime: PixiRuntime): () => void {
     // 핵심 호출: 단일 delta로 두 반지름 동시 확장. 결과 radius<0이면 0으로 clamp(음수 없음)
     Ellipses.expandByInto(expanded, base, delta);
 
-    const cx = expanded.center.x;
-    const cy = expanded.center.y;
-    const rx = expanded.radiusX;
-    const ry = expanded.radiusY;
+    const cx = expanded.cx;
+    const cy = expanded.cy;
+    const rx = expanded.rx;
+    const ry = expanded.ry;
     // 한 축이라도 0으로 붕괴하면(rx+delta<=0 또는 ry+delta<=0) warn 색
     const collapsed = rx <= 0 || ry <= 0;
     const hi = collapsed ? 0xf87171 : delta >= 0 ? 0x4ade80 : 0x38bdf8;
@@ -115,7 +111,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // base ellipse (고정 기준, 중립색 외곽선)
-    g.ellipse(base.center.x, base.center.y, base.radiusX, base.radiusY).stroke({ color: 0x64748b, width: 2 });
+    g.ellipse(base.cx, base.cy, base.rx, base.ry).stroke({ color: 0x64748b, width: 2 });
 
     // expanded ellipse. 0-radius는 g.ellipse가 그리지 못하므로 선/점 fallback으로 붕괴를 보인다
     if (rx <= 0 && ry <= 0) {
@@ -136,8 +132,8 @@ export function setup(runtime: PixiRuntime): () => void {
     }
 
     // +x축/+y축 radial delta 화살표: base 반지름 끝 → expanded 반지름 끝. 두 축이 같은 delta
-    drawAxisDelta(base.center.x + base.radiusX, cy, cx + rx, cy, hi); // +x축
-    drawAxisDelta(cx, base.center.y + base.radiusY, cx, cy + ry, hi); // +y축
+    drawAxisDelta(base.cx + base.rx, cy, cx + rx, cy, hi); // +x축
+    drawAxisDelta(cx, base.cy + base.ry, cx, cy + ry, hi); // +y축
 
     // 세로 트랙과 delta handle (주 대상). delta=0 지점에 기준 tick을 둔다
     g.moveTo(trackX, trackTop).lineTo(trackX, trackBottom).stroke({ color: 0x1e293b, width: 1 });

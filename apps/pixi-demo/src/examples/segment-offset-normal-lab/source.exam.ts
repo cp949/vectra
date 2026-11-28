@@ -15,7 +15,7 @@
 import * as Segments from '@cp949/vectra/segment';
 
 type XY = { x: number; y: number };
-type Segment = { a: XY; b: XY };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app } = runtime;
@@ -30,10 +30,11 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 16);
   app.stage.addChild(label);
 
-  const segment: Segment = { a: { x: 150, y: 260 }, b: { x: 470, y: 170 } };
+  const start = { x: 150, y: 260 };
+  const end = { x: 470, y: 170 };
   const offsetHandle: XY = { x: 350, y: 90 };
   const projection = { x: 0, y: 0 };
-  const bounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const bounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 
   const HIT_TOLERANCE = 18;
   const ROTATION_RADIANS = Math.PI / 9;
@@ -49,7 +50,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
-    const handles = [segment.a, segment.b, offsetHandle];
+    const handles = [start, end, offsetHandle];
     grabbed = handles.find((h) => distance(h, p) <= HIT_TOLERANCE);
   };
 
@@ -71,7 +72,7 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const drawSegment = (line: Segment, color: number, width = 2): void => {
-    g.moveTo(line.a.x, line.a.y).lineTo(line.b.x, line.b.y).stroke({ color, width });
+    g.moveTo(line.x1, line.y1).lineTo(line.x2, line.y2).stroke({ color, width });
   };
 
   const drawHandle = (p: XY, color: number): void => {
@@ -79,6 +80,7 @@ export function setup(runtime: PixiRuntime): () => void {
   };
 
   const render = (): void => {
+    const segment = { x1: start.x, y1: start.y, x2: end.x, y2: end.y };
     const normal = Segments.normal(segment);
     const foot = Segments.projectPoint(segment, offsetHandle);
     projection.x = foot.x;
@@ -100,7 +102,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
 
     // endpoint bounds 표시
-    g.rect(bounds.min.x, bounds.min.y, bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y).stroke({
+    g.rect(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY).stroke({
       color: 0x475569,
       width: 1,
     });
@@ -123,8 +125,8 @@ export function setup(runtime: PixiRuntime): () => void {
     g.moveTo(midpoint.x, midpoint.y).lineTo(arrowEnd.x, arrowEnd.y).stroke({ color: 0x22c55e, width: 2 });
     g.circle(arrowEnd.x, arrowEnd.y, 4).fill(0x22c55e);
 
-    drawHandle(segment.a, grabbed === segment.a ? 0xf472b6 : 0xe2e8f0);
-    drawHandle(segment.b, grabbed === segment.b ? 0xf472b6 : 0xe2e8f0);
+    drawHandle(start, grabbed === start ? 0xf472b6 : 0xe2e8f0);
+    drawHandle(end, grabbed === end ? 0xf472b6 : 0xe2e8f0);
     drawHandle(offsetHandle, grabbed === offsetHandle ? 0xf472b6 : 0xf59e0b);
 
     const offset = Math.round(offsetDistance);

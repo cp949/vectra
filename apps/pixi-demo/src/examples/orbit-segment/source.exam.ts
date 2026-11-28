@@ -22,7 +22,11 @@ import * as Segments from '@cp949/vectra/segment';
  * boolean 관계 함수는 렌더링 색상을 결정하는 값으로 직접 사용된다.
  */
 export function setup(runtime: PixiRuntime): () => void {
-  const { PIXI, app, circle, segment } = runtime;
+  const { PIXI, app } = runtime;
+  const { a, b } = runtime.segment;
+  const segment = { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
+  const { center, radius } = runtime.circle;
+  const circle = { cx: center.x, cy: center.y, r: radius };
   const g = new PIXI.Graphics();
   app.stage.addChild(g);
 
@@ -51,9 +55,9 @@ export function setup(runtime: PixiRuntime): () => void {
     const hit = Intersects.intersectsCircleSegment(circle, segment);
 
     g.clear();
-    g.circle(circle.center.x, circle.center.y, circle.radius).stroke({ color: 0x38bdf8, width: 2 });
-    g.moveTo(segment.a.x, segment.a.y)
-      .lineTo(segment.b.x, segment.b.y)
+    g.circle(circle.cx, circle.cy, circle.r).stroke({ color: 0x38bdf8, width: 2 });
+    g.moveTo(segment.x1, segment.y1)
+      .lineTo(segment.x2, segment.y2)
       .stroke({
         color: hit ? 0x4ade80 : 0x94a3b8,
         width: 4,

@@ -26,19 +26,19 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 드래그 가능한 triangle 꼭짓점 (local mutable 상태)
-  const triangle = {
+  const handles = {
     a: { x: 200, y: 110 },
     b: { x: 560, y: 250 },
     c: { x: 260, y: 370 },
   };
-  const vertices = [triangle.a, triangle.b, triangle.c];
+  const vertices = [handles.a, handles.b, handles.c];
 
   // center/circle 출력 buffer (매 프레임 재기록 hot path)
   const centroid = { x: 0, y: 0 };
   const incenter = { x: 0, y: 0 };
   const circumcenter = { x: 0, y: 0 };
-  const incircle = { center: { x: 0, y: 0 }, radius: 0 };
-  const circumcircle = { center: { x: 0, y: 0 }, radius: 0 };
+  const incircle = { cx: 0, cy: 0, r: 0 };
+  const circumcircle = { cx: 0, cy: 0, r: 0 };
 
   const VERTEX_RADIUS = 8;
   const HIT_TOLERANCE = 16;
@@ -78,6 +78,14 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const render = (): void => {
+    const triangle = {
+      x1: handles.a.x,
+      y1: handles.a.y,
+      x2: handles.b.x,
+      y2: handles.b.y,
+      x3: handles.c.x,
+      y3: handles.c.y,
+    };
     // 무게중심은 항상 정의된다.
     Triangles.centroidInto(centroid, triangle);
 
@@ -90,14 +98,14 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
 
     // triangle 변
-    g.poly([triangle.a.x, triangle.a.y, triangle.b.x, triangle.b.y, triangle.c.x, triangle.c.y]).stroke({
+    g.poly([handles.a.x, handles.a.y, handles.b.x, handles.b.y, handles.c.x, handles.c.y]).stroke({
       color: 0x64748b,
       width: 2,
     });
 
     // 외접원 (옅은 파랑)
     if (hasCircCircle) {
-      g.circle(circumcircle.center.x, circumcircle.center.y, circumcircle.radius).stroke({
+      g.circle(circumcircle.cx, circumcircle.cy, circumcircle.r).stroke({
         color: 0x38bdf8,
         width: 1.5,
       });
@@ -105,7 +113,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // 내접원 (옅은 초록)
     if (hasInCircle) {
-      g.circle(incircle.center.x, incircle.center.y, incircle.radius).stroke({
+      g.circle(incircle.cx, incircle.cy, incircle.r).stroke({
         color: 0x4ade80,
         width: 1.5,
       });

@@ -15,7 +15,7 @@ import * as InfiniteLines from '@cp949/vectra/infinite-line';
 
 type XY = { x: number; y: number };
 type Handle = XY & { role: string; color: number };
-type Segment = { a: Handle; b: Handle };
+type SegmentHandles = { a: Handle; b: Handle };
 type LineShape = ReturnType<typeof InfiniteLines.createInfiniteLine>;
 
 export function setup(runtime: PixiRuntime): () => void {
@@ -31,11 +31,11 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 16);
   app.stage.addChild(label);
 
-  const lineAHandles: Segment = {
+  const lineAHandles: SegmentHandles = {
     a: { x: 105, y: 315, role: 'A origin', color: 0x38bdf8 },
     b: { x: 430, y: 140, role: 'A direction', color: 0x38bdf8 },
   };
-  const lineBHandles: Segment = {
+  const lineBHandles: SegmentHandles = {
     a: { x: 135, y: 125, role: 'B origin', color: 0xfb7185 },
     b: { x: 615, y: 355, role: 'B direction', color: 0xfb7185 },
   };
@@ -95,7 +95,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(handle.x, handle.y, HIT_RADIUS).stroke({ color: handle.color, width: 1, alpha: 0.16 });
   };
 
-  const drawHandleSegment = (segment: Segment): void => {
+  const drawHandleSegment = (segment: SegmentHandles): void => {
     g.moveTo(segment.a.x, segment.a.y).lineTo(segment.b.x, segment.b.y).stroke({
       color: segment.a.color,
       width: 1,
@@ -117,9 +117,16 @@ export function setup(runtime: PixiRuntime): () => void {
     return 'on-line';
   };
 
+  const segmentFromHandles = ({ a, b }: SegmentHandles): { x1: number; y1: number; x2: number; y2: number } => ({
+    x1: a.x,
+    y1: a.y,
+    x2: b.x,
+    y2: b.y,
+  });
+
   const render = (): void => {
-    const lineA = InfiniteLines.fromSegment(lineAHandles);
-    InfiniteLines.fromSegmentInto(lineB, lineBHandles);
+    const lineA = InfiniteLines.fromSegment(segmentFromHandles(lineAHandles));
+    InfiniteLines.fromSegmentInto(lineB, segmentFromHandles(lineBHandles));
     InfiniteLines.copyInto(lineACopy, lineA);
     InfiniteLines.reverseInto(reversedA, lineACopy);
     const reversedPreview = InfiniteLines.reverse(lineB);
@@ -155,7 +162,7 @@ export function setup(runtime: PixiRuntime): () => void {
       alpha: 0.7,
     });
     InfiniteLines.pointAtTInto(lineEnd, reversedPreview, 0.22);
-    g.moveTo(lineB.origin.x, lineB.origin.y).lineTo(lineEnd.x, lineEnd.y).stroke({
+    g.moveTo(lineB.ox, lineB.oy).lineTo(lineEnd.x, lineEnd.y).stroke({
       color: 0xf9a8d4,
       width: 2,
       alpha: 0.55,

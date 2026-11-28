@@ -25,9 +25,9 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 16);
   app.stage.addChild(label);
 
-  const circle = { center: { x: 390, y: 270 }, radius: 145 };
+  const circle = { cx: 390, cy: 270, r: 145 };
   const startAngle = -Math.PI * 0.75;
-  const orbitSegment = { a: { x: 230, y: 420 }, b: { x: 570, y: 120 } };
+  const orbitSegment = { x1: 230, y1: 420, x2: 570, y2: 120 };
   const arcPoint: XY = { x: 0, y: 0 };
   const turnPoint: XY = { x: 0, y: 0 };
   const nearest: XY = { x: 0, y: 0 };
@@ -36,8 +36,8 @@ export function setup(runtime: PixiRuntime): () => void {
   let grabbed = false;
 
   const pointAt = (a: number): XY => ({
-    x: circle.center.x + Math.cos(a) * circle.radius,
-    y: circle.center.y + Math.sin(a) * circle.radius,
+    x: circle.cx + Math.cos(a) * circle.r,
+    y: circle.cy + Math.sin(a) * circle.r,
   });
   const getCanvasXY = (e: PointerEvent): XY => {
     const rect = (app.canvas as HTMLCanvasElement).getBoundingClientRect();
@@ -52,7 +52,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerMove = (e: PointerEvent): void => {
     if (!grabbed) return;
     const p = getCanvasXY(e);
-    angle = Math.atan2(p.y - circle.center.y, p.x - circle.center.x);
+    angle = Math.atan2(p.y - circle.cy, p.x - circle.cx);
   };
   const onPointerUp = (): void => {
     grabbed = false;
@@ -77,15 +77,15 @@ export function setup(runtime: PixiRuntime): () => void {
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: BG });
-    g.circle(circle.center.x, circle.center.y, circle.radius).stroke({ color: GUIDE, width: 2 });
-    g.moveTo(circle.center.x, circle.center.y)
+    g.circle(circle.cx, circle.cy, circle.r).stroke({ color: GUIDE, width: 2 });
+    g.moveTo(circle.cx, circle.cy)
       .lineTo(pointAt(startAngle).x, pointAt(startAngle).y)
       .stroke({ color: GUIDE, width: 2 });
-    g.moveTo(circle.center.x, circle.center.y).lineTo(arcPoint.x, arcPoint.y).stroke({ color: RESULT, width: 3 });
+    g.moveTo(circle.cx, circle.cy).lineTo(arcPoint.x, arcPoint.y).stroke({ color: RESULT, width: 3 });
     g.circle(arcPoint.x, arcPoint.y, grabbed ? 9 : 7).fill({ color: HANDLE });
     g.circle(turnPoint.x, turnPoint.y, 5).fill({ color: 0x38bdf8 });
-    g.moveTo(orbitSegment.a.x, orbitSegment.a.y)
-      .lineTo(orbitSegment.b.x, orbitSegment.b.y)
+    g.moveTo(orbitSegment.x1, orbitSegment.y1)
+      .lineTo(orbitSegment.x2, orbitSegment.y2)
       .stroke({ color: hit ? 0xf87171 : GUIDE, width: 3 });
     g.circle(nearest.x, nearest.y, 5).fill({ color: 0xfbbf24 });
     g.moveTo(segMid.x, segMid.y).lineTo(nearest.x, nearest.y).stroke({ color: 0xfbbf24, width: 1 });

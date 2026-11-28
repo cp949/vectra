@@ -28,7 +28,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 ellipse. rx≠ry라 최근접점이 비방사적임을 드러낸다(circle이면 trivial)
-  const ellipse = { center: { x: 360, y: 232 }, radiusX: 185, radiusY: 110 };
+  const ellipse = { cx: 360, cy: 232, rx: 185, ry: 110 };
 
   // 단일 주 드래그 대상: probe 점. 초기 위치는 ellipse 밖
   const probe: XY = { x: 560, y: 96 };
@@ -68,8 +68,8 @@ export function setup(runtime: PixiRuntime): () => void {
   const fmt = (n: number): string => n.toFixed(1);
 
   const render = (): void => {
-    const cx = ellipse.center.x;
-    const cy = ellipse.center.y;
+    const cx = ellipse.cx;
+    const cy = ellipse.cy;
 
     // 경계 최근접점. pointermove당 1회 단발 계산이라 allocating companion을 쓴다
     const closest = Ellipses.closestPoint(ellipse, probe);
@@ -77,14 +77,14 @@ export function setup(runtime: PixiRuntime): () => void {
     // probe↔경계점 최단 거리. 이 연결선은 ellipse 경계에 수직(normal)이다
     const distance = Math.hypot(probe.x - closest.x, probe.y - closest.y);
     // 경계점의 parametric angle: closest = (cx+cos θ·rx, cy+sin θ·ry)
-    const theta = Math.atan2((closest.y - cy) / ellipse.radiusY, (closest.x - cx) / ellipse.radiusX);
+    const theta = Math.atan2((closest.y - cy) / ellipse.ry, (closest.x - cx) / ellipse.rx);
     const thetaDeg = (theta * 180) / Math.PI;
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 고정 ellipse 채움 + 외곽선
-    g.ellipse(cx, cy, ellipse.radiusX, ellipse.radiusY)
+    g.ellipse(cx, cy, ellipse.rx, ellipse.ry)
       .fill({ color: 0xa78bfa, alpha: 0.16 })
       .stroke({ color: 0xa78bfa, width: 2 });
 

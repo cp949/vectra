@@ -103,7 +103,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     const [A, B, C] = verts;
     // 꼭짓점 3개로 분류용 삼각형을 만든다
-    const tri = Triangles.triangleFrom(A, B, C);
+    const tri = Triangles.triangleFrom({ x1: A.x, y1: A.y, x2: B.x, y2: B.y, x3: C.x, y3: C.y });
 
     // 변 길이 3개 (AB, BC, CA)
     const sideLens = edges.map(([i, j]) => Vectors.distance(verts[i], verts[j]));

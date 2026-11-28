@@ -56,11 +56,11 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 forward ray: origin O + 고정 방향(우상향). 조작 대상이 아니다
-  const ray = { origin: { x: 200, y: 320 }, direction: { x: 0.82, y: -0.57 } };
+  const ray = { ox: 200, oy: 320, dx: 0.82, dy: -0.57 };
   // 그리기용 단위 방향/법선 (고정 direction이라 1회만 계산)
-  const dlen = Math.hypot(ray.direction.x, ray.direction.y);
-  const ux = ray.direction.x / dlen; // ray 방향 단위 벡터
-  const uy = ray.direction.y / dlen;
+  const dlen = Math.hypot(ray.dx, ray.dy);
+  const ux = ray.dx / dlen; // ray 방향 단위 벡터
+  const uy = ray.dy / dlen;
   const nx = -uy; // ray 방향에 수직인 단위 벡터(법선)
   const ny = ux;
 
@@ -90,11 +90,11 @@ export function setup(runtime: PixiRuntime): () => void {
     // 단일 핵심 관계: 점 P → forward ray membership. tol 안 + forward면 true
     onRay = Rayx.containsPoint(ray, handle, TOL);
     // 같은 판정을 parameter/거리로 읽는 inline 분해 read (왜 on/off인지 설명)
-    const relx = handle.x - ray.origin.x;
-    const rely = handle.y - ray.origin.y;
+    const relx = handle.x - ray.ox;
+    const rely = handle.y - ray.oy;
     t = relx * ux + rely * uy; // ray 방향 투영(부호 있음, 음수=뒤쪽)
     perp = Math.abs(relx * nx + rely * ny); // 법선 방향 거리 = supporting line까지 수직 거리
-    foot = { x: ray.origin.x + t * ux, y: ray.origin.y + t * uy };
+    foot = { x: ray.ox + t * ux, y: ray.oy + t * uy };
   };
 
   const onPointerDown = (e: PointerEvent): void => {
@@ -129,8 +129,8 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: BG_COLOR });
 
-    const ox = ray.origin.x;
-    const oy = ray.origin.y;
+    const ox = ray.ox;
+    const oy = ray.oy;
     const tipX = ox + ux * RAY_LEN;
     const tipY = oy + uy * RAY_LEN;
 

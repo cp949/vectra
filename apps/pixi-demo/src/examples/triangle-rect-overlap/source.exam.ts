@@ -15,7 +15,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Tri = { a: XY; b: XY; c: XY };
+type Tri = { x1: number; y1: number; x2: number; y2: number; x3: number; y3: number };
 type Rect = { x: number; y: number; width: number; height: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 겹침: 파랑
@@ -39,11 +39,11 @@ export function setup(runtime: PixiRuntime): () => void {
   // rect: 화면 고정 AABB zone (조작 대상 아님). 너비·높이 고정 양수라 empty rect degenerate 미발생
   const rect: Rect = { x: 250, y: 160, width: 240, height: 150 };
   // 삼각형: 주 drag 대상. scalene 모양은 고정하고 위치만 평행이동한다(non-degenerate 유지)
-  const tri: Tri = { a: { x: 540, y: 110 }, b: { x: 640, y: 150 }, c: { x: 560, y: 250 } };
+  const tri: Tri = { x1: 540, y1: 110, x2: 640, y2: 150, x3: 560, y3: 250 };
 
-  // v1·v2를 기준점 v0(tri.a)에 대한 offset으로 보관 → 평행이동 시 모양 유지
-  const off1 = { x: tri.b.x - tri.a.x, y: tri.b.y - tri.a.y };
-  const off2 = { x: tri.c.x - tri.a.x, y: tri.c.y - tri.a.y };
+  // v1·v2를 기준점 첫 꼭짓점에 대한 offset으로 보관 → 평행이동 시 모양 유지
+  const off1 = { x: tri.x2 - tri.x1, y: tri.y2 - tri.y1 };
+  const off2 = { x: tri.x3 - tri.x1, y: tri.y3 - tri.y1 };
   // 기준점 v0를 화면 안에 가두기 위한 clamp 범위 (삼각형 bbox extent 반영)
   const minOffX = Math.min(0, off1.x, off2.x);
   const maxOffX = Math.max(0, off1.x, off2.x);
@@ -51,7 +51,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const maxOffY = Math.max(0, off1.y, off2.y);
 
   let grabbed = false;
-  let grabDX = 0; // pointer와 tri.a의 오프셋 (drag 중 유지)
+  let grabDX = 0; // pointer와 첫 꼭짓점의 오프셋 (drag 중 유지)
   let grabDY = 0;
 
   const getCanvasXY = (e: PointerEvent): XY => {
@@ -64,9 +64,9 @@ export function setup(runtime: PixiRuntime): () => void {
   const sideOf = (px: number, py: number, ux: number, uy: number, vx: number, vy: number): number =>
     (vx - ux) * (py - uy) - (vy - uy) * (px - ux);
   const insideTri = (p: XY, t: Tri): boolean => {
-    const d1 = sideOf(p.x, p.y, t.a.x, t.a.y, t.b.x, t.b.y);
-    const d2 = sideOf(p.x, p.y, t.b.x, t.b.y, t.c.x, t.c.y);
-    const d3 = sideOf(p.x, p.y, t.c.x, t.c.y, t.a.x, t.a.y);
+    const d1 = sideOf(p.x, p.y, t.x1, t.y1, t.x2, t.y2);
+    const d2 = sideOf(p.x, p.y, t.x2, t.y2, t.x3, t.y3);
+    const d3 = sideOf(p.x, p.y, t.x3, t.y3, t.x1, t.y1);
     const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
     const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
     return !(hasNeg && hasPos);
@@ -77,8 +77,8 @@ export function setup(runtime: PixiRuntime): () => void {
     // 삼각형 내부를 누르면 잡는다
     grabbed = insideTri(p, tri);
     if (grabbed) {
-      grabDX = p.x - tri.a.x;
-      grabDY = p.y - tri.a.y;
+      grabDX = p.x - tri.x1;
+      grabDY = p.y - tri.y1;
     }
   };
 
@@ -89,12 +89,12 @@ export function setup(runtime: PixiRuntime): () => void {
     const v0x = Math.max(M - minOffX, Math.min(size.width - M - maxOffX, p.x - grabDX));
     const v0y = Math.max(TOP - minOffY, Math.min(size.height - M - maxOffY, p.y - grabDY));
     // v0 이동량만큼 세 vertex를 통째로 평행이동한다(모양 고정 → non-degenerate 유지)
-    tri.a.x = v0x;
-    tri.a.y = v0y;
-    tri.b.x = v0x + off1.x;
-    tri.b.y = v0y + off1.y;
-    tri.c.x = v0x + off2.x;
-    tri.c.y = v0y + off2.y;
+    tri.x1 = v0x;
+    tri.y1 = v0y;
+    tri.x2 = v0x + off1.x;
+    tri.y2 = v0y + off1.y;
+    tri.x3 = v0x + off2.x;
+    tri.y3 = v0y + off2.y;
   };
 
   const onPointerUp = (): void => {
@@ -123,14 +123,14 @@ export function setup(runtime: PixiRuntime): () => void {
       .stroke({ color: stateColor, width: 2 });
 
     // 삼각형 hitbox(drag 대상): 같은 상태 색, 잡으면 stroke 굵게
-    g.poly([tri.a.x, tri.a.y, tri.b.x, tri.b.y, tri.c.x, tri.c.y]);
+    g.poly([tri.x1, tri.y1, tri.x2, tri.y2, tri.x3, tri.y3]);
     g.fill({ color: stateColor, alpha: 0.16 });
-    g.poly([tri.a.x, tri.a.y, tri.b.x, tri.b.y, tri.c.x, tri.c.y]);
+    g.poly([tri.x1, tri.y1, tri.x2, tri.y2, tri.x3, tri.y3]);
     g.stroke({ color: stateColor, width: grabbed ? 3 : 2 });
 
     // 삼각형 bbox는 단일 도형 파라미터를 읽은 표시용 분해다 (두 번째 관계가 아님)
-    const triW = Math.max(tri.a.x, tri.b.x, tri.c.x) - Math.min(tri.a.x, tri.b.x, tri.c.x);
-    const triH = Math.max(tri.a.y, tri.b.y, tri.c.y) - Math.min(tri.a.y, tri.b.y, tri.c.y);
+    const triW = Math.max(tri.x1, tri.x2, tri.x3) - Math.min(tri.x1, tri.x2, tri.x3);
+    const triH = Math.max(tri.y1, tri.y2, tri.y3) - Math.min(tri.y1, tri.y2, tri.y3);
 
     // boolean predicate라 분해할 scalar가 없다 → overlap + 두 도형 파라미터만 표시한다
     label.text = [

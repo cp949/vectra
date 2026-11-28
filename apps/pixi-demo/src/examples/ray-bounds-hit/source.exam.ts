@@ -16,7 +16,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Bounds = { min: XY; max: XY };
+type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 들어감: 파랑
 const HIT_COLOR = 0xf87171; // 들어감: 빨강
@@ -42,7 +42,7 @@ export function setup(runtime: PixiRuntime): () => void {
   // 빔 방향을 정하는 주 drag 대상. direction = aim − origin.
   const aim: XY = { x: 470, y: 180 };
   // 고정 사각 영역 (조작 대상 아님). min < max인 valid box라 inverted bounds(false)는 미발생.
-  const zone: Bounds = { min: { x: 430, y: 150 }, max: { x: 610, y: 340 } };
+  const zone: Bounds = { minX: 430, minY: 150, maxX: 610, maxY: 340 };
 
   let grabbed = false;
 
@@ -80,7 +80,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     // ray 입력: origin에서 (aim − origin) 방향으로 뻗는 반직선
     const dir: XY = { x: aim.x - origin.x, y: aim.y - origin.y };
-    const ray = { origin, direction: dir };
+    const ray = { ox: origin.x, oy: origin.y, dx: dir.x, dy: dir.y };
 
     // 핵심 호출: forward ray가 사각 영역에 들어가면 true (aim을 emitter에 겹치면
     // direction zero → 점으로 환원돼 bounds containment로 판정되는 degenerate)
@@ -92,10 +92,10 @@ export function setup(runtime: PixiRuntime): () => void {
     const beamEnd: XY = { x: origin.x + (dir.x / len) * BEAM_LEN, y: origin.y + (dir.y / len) * BEAM_LEN };
 
     // bounds → 그리기용 좌표/크기 inline 분해
-    const zx = zone.min.x;
-    const zy = zone.min.y;
-    const zw = zone.max.x - zone.min.x;
-    const zh = zone.max.y - zone.min.y;
+    const zx = zone.minX;
+    const zy = zone.minY;
+    const zw = zone.maxX - zone.minX;
+    const zh = zone.maxY - zone.minY;
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });

@@ -15,7 +15,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Bounds = { min: XY; max: XY };
+type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 겹침: 파랑
 const HIT_COLOR = 0xf87171; // 겹침: 빨강
@@ -40,11 +40,11 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 박스 A: 화면 고정 AABB (조작 대상 아님). 항상 valid(min < max)라 inverted degenerate 미발생
-  const a: Bounds = { min: { x: 270, y: 170 }, max: { x: 470, y: 310 } };
+  const a: Bounds = { minX: 270, minY: 170, maxX: 470, maxY: 310 };
   // 박스 B: 주 drag 대상. 위치만 옮기고 너비·높이는 고정
-  const b: Bounds = { min: { x: 90, y: 120 }, max: { x: 250, y: 240 } };
-  const bW = b.max.x - b.min.x;
-  const bH = b.max.y - b.min.y;
+  const b: Bounds = { minX: 90, minY: 120, maxX: 250, maxY: 240 };
+  const bW = b.maxX - b.minX;
+  const bH = b.maxY - b.minY;
 
   let grabbed = false;
   let grabDX = 0; // pointer와 b.min의 오프셋 (drag 중 유지)
@@ -58,10 +58,10 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // 박스 B 내부를 누르면 잡는다
-    grabbed = p.x >= b.min.x && p.x <= b.max.x && p.y >= b.min.y && p.y <= b.max.y;
+    grabbed = p.x >= b.minX && p.x <= b.maxX && p.y >= b.minY && p.y <= b.maxY;
     if (grabbed) {
-      grabDX = p.x - b.min.x;
-      grabDY = p.y - b.min.y;
+      grabDX = p.x - b.minX;
+      grabDY = p.y - b.minY;
     }
   };
 
@@ -69,10 +69,10 @@ export function setup(runtime: PixiRuntime): () => void {
     if (!grabbed) return;
     const p = getCanvasXY(e);
     // b.min을 영역 안으로 clamp → min < max 유지 + 항상 finite 입력 (inverted/NaN 회피)
-    b.min.x = Math.max(M, Math.min(size.width - M - bW, p.x - grabDX));
-    b.min.y = Math.max(TOP, Math.min(BOT - bH, p.y - grabDY));
-    b.max.x = b.min.x + bW;
-    b.max.y = b.min.y + bH;
+    b.minX = Math.max(M, Math.min(size.width - M - bW, p.x - grabDX));
+    b.minY = Math.max(TOP, Math.min(BOT - bH, p.y - grabDY));
+    b.maxX = b.minX + bW;
+    b.maxY = b.minY + bH;
   };
 
   const onPointerUp = (): void => {
@@ -100,8 +100,8 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // 판정 식을 표시용으로 inline 분해한다 (별도 domain import 없이 같은 비교를 드러냄).
     // overlap == (xOv >= 0) && (yOv >= 0): 두 축 구간이 모두 겹쳐야 true
-    const xOv = axisOverlap(a.min.x, a.max.x, b.min.x, b.max.x);
-    const yOv = axisOverlap(a.min.y, a.max.y, b.min.y, b.max.y);
+    const xOv = axisOverlap(a.minX, a.maxX, b.minX, b.maxX);
+    const yOv = axisOverlap(a.minY, a.maxY, b.minY, b.maxY);
     // 어느 한 축이 접점(겹침 ≈ 0)이면서 전체가 겹치면 "접촉" 경계 상태
     const touching = overlap && Math.min(xOv, yOv) <= EDGE_EPS;
     const stateColor = touching ? EDGE_COLOR : overlap ? HIT_COLOR : CLEAR_COLOR;
@@ -110,30 +110,30 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 박스 A(고정): 상태 색으로 칠한다
-    g.rect(a.min.x, a.min.y, a.max.x - a.min.x, a.max.y - a.min.y)
+    g.rect(a.minX, a.minY, a.maxX - a.minX, a.maxY - a.minY)
       .fill({ color: stateColor, alpha: 0.14 })
       .stroke({ color: stateColor, width: 2 });
     // 박스 B(drag 대상): 같은 상태 색, 잡으면 stroke 굵게
-    g.rect(b.min.x, b.min.y, bW, bH)
+    g.rect(b.minX, b.minY, bW, bH)
       .fill({ color: stateColor, alpha: 0.14 })
       .stroke({ color: stateColor, width: grabbed ? 3 : 2 });
 
     // x축 투영 막대(하단): A·B의 x구간을 나란히 그려 x축 겹침을 드러낸다
     const xc = axisColor(xOv);
-    g.moveTo(a.min.x, BOT + 18)
-      .lineTo(a.max.x, BOT + 18)
+    g.moveTo(a.minX, BOT + 18)
+      .lineTo(a.maxX, BOT + 18)
       .stroke({ color: xc, width: 5 });
-    g.moveTo(b.min.x, BOT + 30)
-      .lineTo(b.max.x, BOT + 30)
+    g.moveTo(b.minX, BOT + 30)
+      .lineTo(b.maxX, BOT + 30)
       .stroke({ color: xc, width: 5 });
 
     // y축 투영 막대(우측): A·B의 y구간을 나란히 그려 y축 겹침을 드러낸다
     const yc = axisColor(yOv);
-    g.moveTo(size.width - 24, a.min.y)
-      .lineTo(size.width - 24, a.max.y)
+    g.moveTo(size.width - 24, a.minY)
+      .lineTo(size.width - 24, a.maxY)
       .stroke({ color: yc, width: 5 });
-    g.moveTo(size.width - 12, b.min.y)
-      .lineTo(size.width - 12, b.max.y)
+    g.moveTo(size.width - 12, b.minY)
+      .lineTo(size.width - 12, b.maxY)
       .stroke({ color: yc, width: 5 });
 
     label.text = [

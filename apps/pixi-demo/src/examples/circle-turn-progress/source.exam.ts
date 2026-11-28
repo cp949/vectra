@@ -49,7 +49,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const cx = size.width / 2;
   const cy = size.height * 0.42;
   const R = 140;
-  const circle = { center: { x: cx, y: cy }, radius: R };
+  const circle = { cx, cy, r: R };
 
   // turn=0 위치(angle 0 = +x 동쪽). pointAtTurn(circle, 0)의 시작 기준점
   const startX = cx + R;

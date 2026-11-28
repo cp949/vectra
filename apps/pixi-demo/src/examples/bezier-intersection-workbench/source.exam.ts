@@ -11,12 +11,11 @@
  */
 
 import * as Curves from '@cp949/vectra/curve';
-import type { IntersectionHit } from '@cp949/vectra/types';
+import type { CubicCurveWritable, IntersectionHit, QuadraticCurveWritable } from '@cp949/vectra/types';
 
 type Point = { x: number; y: number };
 type Quadratic = { p0: Point; p1: Point; p2: Point };
 type Cubic = { p0: Point; p1: Point; p2: Point; p3: Point };
-type Hit = IntersectionHit<Point>;
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app, size } = runtime;
@@ -56,12 +55,12 @@ export function setup(runtime: PixiRuntime): () => void {
   const lineOrigin = { x: 54, y: 236 };
   const lineEnd = { x: 714, y: 236 };
 
-  const quadLineHits: Hit[] = [];
-  const cubicLineHits: Hit[] = [];
-  const quadQuadHits: Hit[] = [];
-  const quadCubicHits: Hit[] = [];
-  const cubicCubicHits: Hit[] = [];
-  const selfHits: Hit[] = [];
+  const quadLineHits: IntersectionHit[] = [];
+  const cubicLineHits: IntersectionHit[] = [];
+  const quadQuadHits: IntersectionHit[] = [];
+  const quadCubicHits: IntersectionHit[] = [];
+  const cubicCubicHits: IntersectionHit[] = [];
+  const selfHits: IntersectionHit[] = [];
   const sampleIntoPoints: Point[] = [];
 
   const controls = [
@@ -150,14 +149,14 @@ export function setup(runtime: PixiRuntime): () => void {
     g.stroke({ color, width, alpha });
   };
 
-  const drawHits = (hits: readonly Hit[], color: number, radius: number): void => {
+  const drawHits = (hits: readonly IntersectionHit[], color: number, radius: number): void => {
     for (const hit of hits) {
       g.circle(hit.point.x, hit.point.y, radius).fill({ color });
       g.circle(hit.point.x, hit.point.y, radius + 3).stroke({ color, width: 1 });
     }
   };
 
-  const formatHits = (name: string, hits: readonly Hit[]): string => {
+  const formatHits = (name: string, hits: readonly IntersectionHit[]): string => {
     if (hits.length === 0) return `${name}: -`;
     return `${name}: ${hits
       .map((hit) => `${hit.kind}@${hit.tA.toFixed(2)}/${hit.tB.toFixed(2)}`)
@@ -165,46 +164,47 @@ export function setup(runtime: PixiRuntime): () => void {
       .join(' ')}`;
   };
 
+  const flattenQuadratic = ({ p0, p1, p2 }: Quadratic): QuadraticCurveWritable => ({
+    kind: 'quadratic',
+    x0: p0.x,
+    y0: p0.y,
+    x1: p1.x,
+    y1: p1.y,
+    x2: p2.x,
+    y2: p2.y,
+  });
+
+  const flattenCubic = ({ p0, p1, p2, p3 }: Cubic): CubicCurveWritable => ({
+    kind: 'cubic',
+    x0: p0.x,
+    y0: p0.y,
+    x1: p1.x,
+    y1: p1.y,
+    x2: p2.x,
+    y2: p2.y,
+    x3: p3.x,
+    y3: p3.y,
+  });
+
   const render = (): void => {
     const line = {
-      origin: lineOrigin,
-      direction: { x: lineEnd.x - lineOrigin.x, y: lineEnd.y - lineOrigin.y },
+      ox: lineOrigin.x,
+      oy: lineOrigin.y,
+      dx: lineEnd.x - lineOrigin.x,
+      dy: lineEnd.y - lineOrigin.y,
     };
-    const coarseCubicSamples = Curves.cubicSample(cubicA.p0, cubicA.p1, cubicA.p2, cubicA.p3, 10);
-    Curves.cubicSampleInto(sampleIntoPoints, cubicB.p0, cubicB.p1, cubicB.p2, cubicB.p3, 16);
-    Curves.quadraticLineIntersectionsInto(quadLineHits, quadA.p0, quadA.p1, quadA.p2, line);
-    Curves.cubicLineIntersectionsInto(cubicLineHits, cubicA.p0, cubicA.p1, cubicA.p2, cubicA.p3, line);
-    Curves.quadraticQuadraticIntersectionsInto(
-      quadQuadHits,
-      quadA.p0,
-      quadA.p1,
-      quadA.p2,
-      quadB.p0,
-      quadB.p1,
-      quadB.p2
-    );
-    Curves.quadraticCubicIntersectionsInto(
-      quadCubicHits,
-      quadB.p0,
-      quadB.p1,
-      quadB.p2,
-      cubicA.p0,
-      cubicA.p1,
-      cubicA.p2,
-      cubicA.p3
-    );
-    Curves.cubicCubicIntersectionsInto(
-      cubicCubicHits,
-      cubicA.p0,
-      cubicA.p1,
-      cubicA.p2,
-      cubicA.p3,
-      cubicB.p0,
-      cubicB.p1,
-      cubicB.p2,
-      cubicB.p3
-    );
-    Curves.cubicSelfIntersectionsInto(selfHits, cubicB.p0, cubicB.p1, cubicB.p2, cubicB.p3);
+    const quadraticCurveA = flattenQuadratic(quadA);
+    const quadraticCurveB = flattenQuadratic(quadB);
+    const cubicCurveA = flattenCubic(cubicA);
+    const cubicCurveB = flattenCubic(cubicB);
+    const coarseCubicSamples = Curves.cubicSample(cubicCurveA, { steps: 10 });
+    Curves.cubicSampleInto(sampleIntoPoints, cubicCurveB, { steps: 16 });
+    Curves.quadraticLineIntersectionsInto(quadLineHits, quadraticCurveA, line);
+    Curves.cubicLineIntersectionsInto(cubicLineHits, cubicCurveA, line);
+    Curves.quadraticQuadraticIntersectionsInto(quadQuadHits, quadraticCurveA, quadraticCurveB);
+    Curves.quadraticCubicIntersectionsInto(quadCubicHits, quadraticCurveB, cubicCurveA);
+    Curves.cubicCubicIntersectionsInto(cubicCubicHits, cubicCurveA, cubicCurveB);
+    Curves.cubicSelfIntersectionsInto(selfHits, cubicCurveB);
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });

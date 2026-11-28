@@ -43,7 +43,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 선분(edge). 지지직선의 기준이며 조작 대상이 아니다 (기울여 직선 방향을 드러낸다)
-  const seg = { a: { x: 220, y: 308 } as XY, b: { x: 512, y: 168 } as XY };
+  const seg = { x1: 220, y1: 308, x2: 512, y2: 168 };
 
   // point 핸들: 유일한 drag 대상. 지지직선에 투영할 점 하나를 정한다
   const handle: XY = { x: 392, y: 318 };
@@ -108,19 +108,19 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 지지직선 단위 방향 (선분이 고정 non-zero라 분모 0 미발생)
-    const dx = seg.b.x - seg.a.x;
-    const dy = seg.b.y - seg.a.y;
+    const dx = seg.x2 - seg.x1;
+    const dy = seg.y2 - seg.y1;
     const segLen = Math.hypot(dx, dy);
     const ux = dx / segLen;
     const uy = dy / segLen;
 
     // 지지직선 연장: 끝점 너머로 양쪽 LINE_EXT만큼 faint하게 그린다 (발이 나갈 수 있는 영역)
-    g.moveTo(seg.a.x - ux * LINE_EXT, seg.a.y - uy * LINE_EXT)
-      .lineTo(seg.b.x + ux * LINE_EXT, seg.b.y + uy * LINE_EXT)
+    g.moveTo(seg.x1 - ux * LINE_EXT, seg.y1 - uy * LINE_EXT)
+      .lineTo(seg.x2 + ux * LINE_EXT, seg.y2 + uy * LINE_EXT)
       .stroke({ color: LINE_COLOR, width: 1 });
 
     // 고정 선분 본체 (밝게): 발이 이 위에 있으면 segment 안, 벗어나면 연장선 위
-    g.moveTo(seg.a.x, seg.a.y).lineTo(seg.b.x, seg.b.y).stroke({ color: SEG_COLOR, width: 3 });
+    g.moveTo(seg.x1, seg.y1).lineTo(seg.x2, seg.y2).stroke({ color: SEG_COLOR, width: 3 });
 
     // 점 → 수선의 발 수선 (점이 직선 위라 거리≈0이면 생략)
     const onLine = Math.abs(dist) <= ON_EPS;
@@ -142,8 +142,8 @@ export function setup(runtime: PixiRuntime): () => void {
     }
 
     // 선분 끝점 marker (조작 대상 아님)
-    g.circle(seg.a.x, seg.a.y, 5).fill({ color: ENDPOINT_COLOR });
-    g.circle(seg.b.x, seg.b.y, 5).fill({ color: ENDPOINT_COLOR });
+    g.circle(seg.x1, seg.y1, 5).fill({ color: ENDPOINT_COLOR });
+    g.circle(seg.x2, seg.y2, 5).fill({ color: ENDPOINT_COLOR });
 
     // 수선의 발 marker (핵심 관계의 결과)
     g.circle(foot.x, foot.y, 6).fill({ color: FOOT_COLOR });

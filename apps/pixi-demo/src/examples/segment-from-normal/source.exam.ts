@@ -14,7 +14,7 @@
 import * as Segments from '@cp949/vectra/segment';
 
 type XY = { x: number; y: number };
-type Segment = { a: XY; b: XY };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 
 const BASE_COLOR = 0x94a3b8; // 고정 base segment(spine): 회색
 const RIB_LEFT_COLOR = 0x34d399; // left normal 측 rib (length >= 0): 청록
@@ -41,9 +41,9 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 화면 고정 base segment(spine). 살짝 기울여 직각 rib가 축에 평행하지 않게 둔다 (조작 대상 아님)
-  const base: Segment = { a: { x: 180, y: 300 }, b: { x: 560, y: 205 } };
-  const dx = base.b.x - base.a.x;
-  const dy = base.b.y - base.a.y;
+  const base: Segment = { x1: 180, y1: 300, x2: 560, y2: 205 };
+  const dx = base.x2 - base.x1;
+  const dy = base.y2 - base.y1;
   const lenSq = dx * dx + dy * dy; // |base|^2 (고정이라 setup에서 1회 계산)
   const baseLen = Math.sqrt(lenSq); // |base| (left normal 단위화에 사용)
 
@@ -51,7 +51,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const handle: XY = { x: 470, y: 150 };
 
   // drag 시에만 갱신하는 geometry state (ticker render는 이 state만 읽어 프레임당 할당 없음)
-  let rib: Segment = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  let rib: Segment = { x1: 0, y1: 0, x2: 0, y2: 0 };
   let tVal = 0; // base 위 foot의 parametric 위치 [0,1]
   let lenVal = 0; // signed 수선 길이 (left normal +, right normal -)
   let perpDeg = 90; // rib와 base 사잇각 (항상 90°: 구성의 정의 성질)
@@ -72,8 +72,8 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 핸들 위치에서 직각 rib를 다시 구성한다 (drag 1회마다 호출)
   const rebuild = (): void => {
-    const rx = handle.x - base.a.x;
-    const ry = handle.y - base.a.y;
+    const rx = handle.x - base.x1;
+    const ry = handle.y - base.y1;
     // foot 파라미터 t: 핸들을 base 직선에 투영한 위치. [0,1]로 clamp해 foot가 항상 base 위
     const tRaw = (rx * dx + ry * dy) / lenSq;
     tVal = Math.max(0, Math.min(1, tRaw));
@@ -83,8 +83,8 @@ export function setup(runtime: PixiRuntime): () => void {
     // 핵심 호출: base 위 foot(t)에서 left normal 방향으로 length만큼 세운 직각 rib 구성
     rib = Segments.fromNormal(base, tVal, lenVal) as Segment;
     // rib와 base 사잇각을 inline으로 측정해 직각(90°) 불변을 확인 (별도 domain import 없음)
-    const rdx = rib.b.x - rib.a.x;
-    const rdy = rib.b.y - rib.a.y;
+    const rdx = rib.x2 - rib.x1;
+    const rdy = rib.y2 - rib.y1;
     const cross = dx * rdy - dy * rdx;
     const dot = dx * rdx + dy * rdy;
     perpDeg = Math.abs((Math.atan2(cross, dot) * 180) / Math.PI);
@@ -93,7 +93,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // rib tip 근처를 누르면 잡는다 (tip이 유일한 조작 대상)
-    grabbed = Math.hypot(p.x - rib.b.x, p.y - rib.b.y) <= HANDLE_R + 16;
+    grabbed = Math.hypot(p.x - rib.x2, p.y - rib.y2) <= HANDLE_R + 16;
     if (grabbed) {
       clampToScreen(p);
       rebuild();
@@ -126,18 +126,18 @@ export function setup(runtime: PixiRuntime): () => void {
     const ribColor = degen ? WARN_COLOR : lenVal >= 0 ? RIB_LEFT_COLOR : RIB_RIGHT_COLOR;
 
     // 고정 base segment(spine)
-    g.moveTo(base.a.x, base.a.y).lineTo(base.b.x, base.b.y).stroke({ color: BASE_COLOR, width: 3 });
-    g.circle(base.a.x, base.a.y, 4).fill({ color: BASE_COLOR });
-    g.circle(base.b.x, base.b.y, 4).fill({ color: BASE_COLOR });
+    g.moveTo(base.x1, base.y1).lineTo(base.x2, base.y2).stroke({ color: BASE_COLOR, width: 3 });
+    g.circle(base.x1, base.y1, 4).fill({ color: BASE_COLOR });
+    g.circle(base.x2, base.y2, 4).fill({ color: BASE_COLOR });
 
     // foot의 직각 표식: base 단위방향 u·rib 단위방향 v로 작은 정사각형을 그려 90°를 보인다
     if (!degen) {
       const ux = dx / baseLen; // base 단위방향 (a→b)
       const uy = dy / baseLen;
-      const vx = (rib.b.x - rib.a.x) / Math.abs(lenVal); // rib 단위방향 (foot→tip, 측 따라 부호 포함)
-      const vy = (rib.b.y - rib.a.y) / Math.abs(lenVal);
-      const fx = rib.a.x;
-      const fy = rib.a.y;
+      const vx = (rib.x2 - rib.x1) / Math.abs(lenVal); // rib 단위방향 (foot→tip, 측 따라 부호 포함)
+      const vy = (rib.y2 - rib.y1) / Math.abs(lenVal);
+      const fx = rib.x1;
+      const fy = rib.y1;
       const k = SQUARE_SIZE;
       g.moveTo(fx + ux * k, fy + uy * k)
         .lineTo(fx + ux * k + vx * k, fy + uy * k + vy * k)
@@ -147,14 +147,14 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // 구성된 직각 rib: foot(a') → tip(b')
     if (!degen) {
-      g.moveTo(rib.a.x, rib.a.y).lineTo(rib.b.x, rib.b.y).stroke({ color: ribColor, width: 3 });
+      g.moveTo(rib.x1, rib.y1).lineTo(rib.x2, rib.y2).stroke({ color: ribColor, width: 3 });
     }
 
     // base 위 foot marker (= rib의 a' = pointAtT(base, t))
-    g.circle(rib.a.x, rib.a.y, 5).fill({ color: FOOT_COLOR });
+    g.circle(rib.x1, rib.y1, 5).fill({ color: FOOT_COLOR });
 
     // rib tip 핸들 (= rib의 b')
-    g.circle(rib.b.x, rib.b.y, grabbed ? HANDLE_R + 2 : HANDLE_R)
+    g.circle(rib.x2, rib.y2, grabbed ? HANDLE_R + 2 : HANDLE_R)
       .fill({ color: 0x0f172a })
       .stroke({ color: ribColor, width: grabbed ? 3 : 2 });
 

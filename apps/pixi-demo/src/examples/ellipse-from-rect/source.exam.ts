@@ -82,7 +82,7 @@ export function setup(runtime: PixiRuntime): () => void {
     // 박스에 내접하는 ellipse. center=박스 중심, radiusX=|width|/2, radiusY=|height|/2
     const e = Ellipses.fromRect(rect);
     // width<=0이면 radiusX=0, height<=0이면 radiusY=0으로 접힌다
-    const degenerate = e.radiusX === 0 || e.radiusY === 0;
+    const degenerate = e.rx === 0 || e.ry === 0;
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
@@ -100,28 +100,26 @@ export function setup(runtime: PixiRuntime): () => void {
 
     if (degenerate) {
       // 접힌 축을 경고색 선으로 그려 degenerate 정책을 드러낸다
-      const x0 = e.center.x - e.radiusX;
-      const y0 = e.center.y - e.radiusY;
-      const x1 = e.center.x + e.radiusX;
-      const y1 = e.center.y + e.radiusY;
+      const x0 = e.cx - e.rx;
+      const y0 = e.cy - e.ry;
+      const x1 = e.cx + e.rx;
+      const y1 = e.cy + e.ry;
       g.moveTo(x0, y0).lineTo(x1, y1).stroke({ color: 0xfacc15, width: 3 });
     } else {
       // 내접 ellipse 채우기 + 외곽선
-      g.ellipse(e.center.x, e.center.y, e.radiusX, e.radiusY)
-        .fill({ color: 0xa78bfa, alpha: 0.22 })
-        .stroke({ color: 0xa78bfa, width: 2 });
+      g.ellipse(e.cx, e.cy, e.rx, e.ry).fill({ color: 0xa78bfa, alpha: 0.22 }).stroke({ color: 0xa78bfa, width: 2 });
       // 네 변 중점 = ellipse가 박스에 접하는 점. "내접"을 시각화한다
       const touches: XY[] = [
-        { x: e.center.x, y: e.center.y - e.radiusY }, // 위
-        { x: e.center.x, y: e.center.y + e.radiusY }, // 아래
-        { x: e.center.x - e.radiusX, y: e.center.y }, // 왼
-        { x: e.center.x + e.radiusX, y: e.center.y }, // 오른
+        { x: e.cx, y: e.cy - e.ry }, // 위
+        { x: e.cx, y: e.cy + e.ry }, // 아래
+        { x: e.cx - e.rx, y: e.cy }, // 왼
+        { x: e.cx + e.rx, y: e.cy }, // 오른
       ];
       for (const t of touches) g.circle(t.x, t.y, 4).fill({ color: 0xfbbf24 });
     }
 
     // center marker
-    g.circle(e.center.x, e.center.y, 4).fill({ color: 0xe2e8f0 });
+    g.circle(e.cx, e.cy, 4).fill({ color: 0xe2e8f0 });
 
     // 코너 핸들 marker. 잡은 핸들을 크게 그린다
     g.circle(cornerA.x, cornerA.y, grabbed === 0 ? 11 : 9).fill({ color: 0x38bdf8 });
@@ -129,9 +127,9 @@ export function setup(runtime: PixiRuntime): () => void {
 
     label.text = [
       `inscribed ellipse${degenerate ? '  (degenerate: radius 0)' : ''}   drag corners`,
-      `center   : (${fmt(e.center.x)}, ${fmt(e.center.y)})`,
-      `radiusX  : ${fmt(e.radiusX)}`,
-      `radiusY  : ${fmt(e.radiusY)}`,
+      `center   : (${fmt(e.cx)}, ${fmt(e.cy)})`,
+      `radiusX  : ${fmt(e.rx)}`,
+      `radiusY  : ${fmt(e.ry)}`,
     ].join('\n');
   };
 

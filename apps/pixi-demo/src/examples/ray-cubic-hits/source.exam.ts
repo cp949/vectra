@@ -82,10 +82,20 @@ export function setup(runtime: PixiRuntime): () => void {
   const render = (): void => {
     // ray 입력: origin에서 (aim − origin) 방향으로 뻗는 반직선
     const dir: XY = { x: aim.x - origin.x, y: aim.y - origin.y };
-    const ray = { origin, direction: dir };
+    const ray = { ox: origin.x, oy: origin.y, dx: dir.x, dy: dir.y };
 
     // 핵심 호출: forward ray(t ≥ 0)와 cubic 곡선의 교차점들 (곡선 반대로 돌리면 빈 배열)
-    const hits = Intersects.rayCubicIntersections(ray, p0, p1, p2, p3);
+    const hits = Intersects.rayCubicIntersections(ray, {
+      kind: 'cubic',
+      x0: p0.x,
+      y0: p0.y,
+      x1: p1.x,
+      y1: p1.y,
+      x2: p2.x,
+      y2: p2.y,
+      x3: p3.x,
+      y3: p3.y,
+    });
     const stateColor = hits.length > 0 ? HIT_COLOR : CLEAR_COLOR;
 
     // 빔 그리기용 단위벡터 (그리기 전용 inline 계산, vectra 관계 아님)

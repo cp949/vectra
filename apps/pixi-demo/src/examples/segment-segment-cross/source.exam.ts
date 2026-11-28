@@ -14,7 +14,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Segment = { a: XY; b: XY };
+type Segment = { x1: number; y1: number; x2: number; y2: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 교차: 파랑
 const HIT_COLOR = 0xf87171; // 교차: 빨강
@@ -35,9 +35,9 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 선분 A: 화면 고정 (조작 대상 아님)
-  const segA: Segment = { a: { x: 200, y: 130 }, b: { x: 520, y: 320 } };
+  const segA: Segment = { x1: 200, y1: 130, x2: 520, y2: 320 };
   // 선분 B: a는 고정 anchor, b가 주 drag 대상
-  const segB: Segment = { a: { x: 230, y: 330 }, b: { x: 500, y: 140 } };
+  const segB: Segment = { x1: 230, y1: 330, x2: 500, y2: 140 };
 
   let grabbed = false;
 
@@ -49,8 +49,8 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // 선분 B의 자유 끝점(b) 근처를 누르면 잡는다
-    const dx = p.x - segB.b.x;
-    const dy = p.y - segB.b.y;
+    const dx = p.x - segB.x2;
+    const dy = p.y - segB.y2;
     grabbed = dx * dx + dy * dy <= GRAB_R * GRAB_R;
   };
 
@@ -58,8 +58,8 @@ export function setup(runtime: PixiRuntime): () => void {
     if (!grabbed) return;
     const p = getCanvasXY(e);
     // 끝점을 화면 안으로 clamp → 항상 finite 입력 (NaN/Infinity 회피)
-    segB.b.x = Math.max(M, Math.min(size.width - M, p.x));
-    segB.b.y = Math.max(M, Math.min(size.height - M, p.y));
+    segB.x2 = Math.max(M, Math.min(size.width - M, p.x));
+    segB.y2 = Math.max(M, Math.min(size.height - M, p.y));
   };
 
   const onPointerUp = (): void => {
@@ -74,9 +74,9 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 선분 하나를 굵은 stroke + 양 끝점 dot으로 그린다
   const drawSegment = (s: Segment, color: number, dotB: number): void => {
-    g.moveTo(s.a.x, s.a.y).lineTo(s.b.x, s.b.y).stroke({ color, width: 4, alpha: 0.95 });
-    g.circle(s.a.x, s.a.y, 4).fill({ color }); // anchor 끝점
-    g.circle(s.b.x, s.b.y, dotB).fill({ color }); // 자유 끝점
+    g.moveTo(s.x1, s.y1).lineTo(s.x2, s.y2).stroke({ color, width: 4, alpha: 0.95 });
+    g.circle(s.x1, s.y1, 4).fill({ color }); // anchor 끝점
+    g.circle(s.x2, s.y2, dotB).fill({ color }); // 자유 끝점
   };
 
   const render = (): void => {

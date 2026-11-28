@@ -25,18 +25,18 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 드래그 가능한 triangle 꼭짓점 (local mutable 상태)
-  const triangle = {
+  const handles = {
     a: { x: 230, y: 100 },
     b: { x: 560, y: 250 },
     c: { x: 200, y: 380 },
   };
-  const vertices = [triangle.a, triangle.b, triangle.c];
+  const vertices = [handles.a, handles.b, handles.c];
 
   // 중선 3개를 한 번에 담는 nested out-buffer (매 프레임 재기록 hot path)
   const medians = {
-    a: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
-    b: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
-    c: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
+    a: { x1: 0, y1: 0, x2: 0, y2: 0 },
+    b: { x1: 0, y1: 0, x2: 0, y2: 0 },
+    c: { x1: 0, y1: 0, x2: 0, y2: 0 },
   };
   // 무게중심 out-buffer (매 프레임 재기록)
   const centroid = { x: 0, y: 0 };
@@ -84,6 +84,14 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const render = (): void => {
+    const triangle = {
+      x1: handles.a.x,
+      y1: handles.a.y,
+      x2: handles.b.x,
+      y2: handles.b.y,
+      x3: handles.c.x,
+      y3: handles.c.y,
+    };
     // 세 중선과 무게중심을 hot path buffer에 재기록한다.
     // degenerate(collinear/동일 꼭짓점)도 산식 그대로 적용돼 항상 정의된다.
     Triangles.mediansInto(medians, triangle);
@@ -92,7 +100,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
 
     // triangle 세 변 (옅은 회색)
-    g.poly([triangle.a.x, triangle.a.y, triangle.b.x, triangle.b.y, triangle.c.x, triangle.c.y]).stroke({
+    g.poly([handles.a.x, handles.a.y, handles.b.x, handles.b.y, handles.c.x, handles.c.y]).stroke({
       color: 0x475569,
       width: 2,
     });
@@ -103,8 +111,8 @@ export function setup(runtime: PixiRuntime): () => void {
       const m = list[i];
       const color = MEDIAN_COLORS[i];
       // m.a = source vertex, m.b = 맞은편 변 midpoint
-      g.moveTo(m.a.x, m.a.y).lineTo(m.b.x, m.b.y).stroke({ color, width: 2 });
-      g.circle(m.b.x, m.b.y, 4).fill(color); // midpoint marker
+      g.moveTo(m.x1, m.y1).lineTo(m.x2, m.y2).stroke({ color, width: 2 });
+      g.circle(m.x2, m.y2, 4).fill(color); // midpoint marker
     }
 
     // 무게중심 G: 세 중선의 교점 (흰 점)
@@ -118,7 +126,7 @@ export function setup(runtime: PixiRuntime): () => void {
     // 중선 A(=A→BC 중점)에서 2:1 분할을 라이브 측정한다.
     // |AG| : |G·midpoint| 은 삼각형 모양과 무관하게 항상 2:1.
     const av = vertices[0];
-    const mid = medians.a.b;
+    const mid = { x: medians.a.x2, y: medians.a.y2 };
     const vertexToG = Math.hypot(centroid.x - av.x, centroid.y - av.y);
     const gToMid = Math.hypot(mid.x - centroid.x, mid.y - centroid.y);
     const ratio = gToMid > 0 ? vertexToG / gToMid : Number.POSITIVE_INFINITY;

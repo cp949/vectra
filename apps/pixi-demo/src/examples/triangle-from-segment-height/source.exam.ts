@@ -6,7 +6,7 @@
  * 구성한다. "밑변 위에 높이 h인 이등변 삼각형 세우기(gable/tent 구성)" 작업 흐름을 보인다.
  *
  * - Triangles.fromSegmentHeight: base segment와 signed height로 이등변 삼각형을 만든다.
- *   a=base.a, b=base.b, apex(c)=base midpoint + height·(base normal). 음수 height는 base
+ *   첫 두 꼭짓점은 base의 끝점이다. 꼭짓점 C는 base 중점에서 법선 방향으로 height만큼 떨어져 있다. 음수 height는 base
  *   반대쪽 apex. 두 다리 |AC|=|BC| 등길이는 이 구성의 분해 표시이지 두 번째 관계가 아니다.
  */
 
@@ -37,20 +37,17 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 수평 base segment (조작 대상 아님). length가 finite positive라 구성은 항상 성공한다.
-  const base = {
-    a: { x: 220, y: 250 },
-    b: { x: 500, y: 250 },
-  };
+  const base = { x1: 220, y1: 250, x2: 500, y2: 250 };
 
   // base midpoint M: apex가 이 점에서 normal 방향으로 height만큼 떨어진다.
-  const mid: XY = { x: (base.a.x + base.b.x) / 2, y: (base.a.y + base.b.y) / 2 };
+  const mid: XY = { x: (base.x1 + base.x2) / 2, y: (base.y1 + base.y2) / 2 };
 
   // base 길이는 고정 상수라 setup에서 1회만 inline 계산한다(hot path 아님).
-  const baseLen = Math.hypot(base.b.x - base.a.x, base.b.y - base.a.y);
+  const baseLen = Math.hypot(base.x2 - base.x1, base.y2 - base.y1);
 
   // base의 left normal 단위벡터: (-dy/len, dx/len). 수평 base라 (0, 1) = 화면 아래쪽.
-  const nx = -(base.b.y - base.a.y) / baseLen;
-  const ny = (base.b.x - base.a.x) / baseLen;
+  const nx = -(base.y2 - base.y1) / baseLen;
+  const ny = (base.x2 - base.x1) / baseLen;
 
   // signed height 상태. 초기값 음수 → apex가 base 위쪽(지붕 모양)에서 시작.
   let height = -130;
@@ -110,9 +107,9 @@ export function setup(runtime: PixiRuntime): () => void {
       .stroke({ color: AXIS_COLOR, width: 1, alpha: 0.7 });
 
     // 고정 base segment + 양 끝 marker
-    g.moveTo(base.a.x, base.a.y).lineTo(base.b.x, base.b.y).stroke({ color: BASE_COLOR, width: 3 });
-    g.circle(base.a.x, base.a.y, 5).fill({ color: BASE_COLOR });
-    g.circle(base.b.x, base.b.y, 5).fill({ color: BASE_COLOR });
+    g.moveTo(base.x1, base.y1).lineTo(base.x2, base.y2).stroke({ color: BASE_COLOR, width: 3 });
+    g.circle(base.x1, base.y1, 5).fill({ color: BASE_COLOR });
+    g.circle(base.x2, base.y2, 5).fill({ color: BASE_COLOR });
     // base midpoint M
     g.circle(mid.x, mid.y, 4).fill({ color: BASE_COLOR });
 
@@ -123,20 +120,20 @@ export function setup(runtime: PixiRuntime): () => void {
       const stateColor = degenerate ? WARN_COLOR : TRI_COLOR;
 
       // 높이선 M→apex(현재 height)
-      g.moveTo(mid.x, mid.y).lineTo(tri.c.x, tri.c.y).stroke({ color: HEIGHT_COLOR, width: 1.5 });
+      g.moveTo(mid.x, mid.y).lineTo(tri.x3, tri.y3).stroke({ color: HEIGHT_COLOR, width: 1.5 });
 
       // 이등변 삼각형 면 + 외곽선(두 다리 AC·BC가 곧 stroke edge)
-      const poly = [tri.a.x, tri.a.y, tri.b.x, tri.b.y, tri.c.x, tri.c.y];
+      const poly = [tri.x1, tri.y1, tri.x2, tri.y2, tri.x3, tri.y3];
       g.poly(poly).fill({ color: stateColor, alpha: degenerate ? 0.12 : 0.22 });
       g.poly(poly).stroke({ color: stateColor, width: 2.5, alpha: 0.95 });
 
       // apex handle (유일 drag 대상)
-      g.circle(tri.c.x, tri.c.y, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
-      g.circle(tri.c.x, tri.c.y, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
+      g.circle(tri.x3, tri.y3, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
+      g.circle(tri.x3, tri.y3, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
 
       // 두 다리 길이: 이등변이라 항상 |AC| ≈ |BC|(같은 구성의 분해 표시, Math.hypot inline).
-      const legAC = Math.hypot(tri.c.x - tri.a.x, tri.c.y - tri.a.y);
-      const legBC = Math.hypot(tri.c.x - tri.b.x, tri.c.y - tri.b.y);
+      const legAC = Math.hypot(tri.x3 - tri.x1, tri.y3 - tri.y1);
+      const legBC = Math.hypot(tri.x3 - tri.x2, tri.y3 - tri.y2);
 
       label.text = [
         'isosceles from base + height   drag apex',

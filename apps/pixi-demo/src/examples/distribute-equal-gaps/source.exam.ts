@@ -98,10 +98,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const render = (): void => {
     // 입력 bounds 배열을 source 위치로 구성한다(index 0..4 = box0..box4).
-    const bounds = srcX.map((x, i) => ({
-      min: { x, y: BAND_TOP },
-      max: { x: x + boxW[i], y: BAND_TOP + BOX_H },
-    }));
+    const bounds = srcX.map((x, i) => ({ minX: x, minY: BAND_TOP, maxX: x + boxW[i], maxY: BAND_TOP + BOX_H }));
 
     // 핵심 호출: 'gap-x'로 중간 박스(index 1·2·3) target top-left를 out 배열에 기록한다.
     // 양 끝 anchor(정렬상 첫/마지막)는 이동하지 않아 출력에 포함되지 않는다.

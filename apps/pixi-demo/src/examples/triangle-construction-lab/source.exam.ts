@@ -10,7 +10,7 @@ import * as Trianglex from '@cp949/vectra/triangle';
 import * as Vecx from '@cp949/vectra/vec';
 
 type XY = { x: number; y: number };
-type Triangle = { a: XY; b: XY; c: XY };
+type Triangle = { x1: number; y1: number; x2: number; y2: number; x3: number; y3: number };
 
 const BG = 0x0f172a;
 const LABEL = 0xe2e8f0;
@@ -26,7 +26,7 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 16);
   app.stage.addChild(label);
 
-  const base = { a: { x: 380, y: 375 }, b: { x: 650, y: 375 } };
+  const base = { x1: 380, y1: 375, x2: 650, y2: 375 };
   const apex: XY = { x: 520, y: 190 };
   let grabbed = false;
 
@@ -55,9 +55,9 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const drawTri = (t: Triangle, color: number, alpha = 0.12): void => {
-    g.moveTo(t.a.x, t.a.y)
-      .lineTo(t.b.x, t.b.y)
-      .lineTo(t.c.x, t.c.y)
+    g.moveTo(t.x1, t.y1)
+      .lineTo(t.x2, t.y2)
+      .lineTo(t.x3, t.y3)
       .closePath()
       .fill({ color, alpha })
       .stroke({ color, width: 2 });
@@ -68,7 +68,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const right = Trianglex.buildRight({ x: 80, y: 385 }, 150, -110, -0.1);
     const baseApex = Trianglex.fromSegmentApex(base, apex);
     const baseHeight = Trianglex.fromSegmentHeight(base, 120, { side: 'left' });
-    const classified = Trianglex.triangleFrom(baseApex.a, baseApex.b, baseApex.c);
+    const classified = Trianglex.triangleFrom(baseApex);
     const centroid = Trianglex.centroid(baseApex);
     const incenter = Trianglex.incenter(baseApex);
     const circumcenter = Trianglex.circumcenter(baseApex);
@@ -89,9 +89,9 @@ export function setup(runtime: PixiRuntime): () => void {
     for (const p of [centroid, incenter, circumcenter, orthocenter]) {
       if (p) g.circle(p.x, p.y, 5).fill({ color: RESULT });
     }
-    const sideA = Vecx.distance(baseApex.a, baseApex.b);
-    const sideB = Vecx.distance(baseApex.b, baseApex.c);
-    const sideC = Vecx.distance(baseApex.c, baseApex.a);
+    const sideA = Vecx.distance({ x: baseApex.x1, y: baseApex.y1 }, { x: baseApex.x2, y: baseApex.y2 });
+    const sideB = Vecx.distance({ x: baseApex.x2, y: baseApex.y2 }, { x: baseApex.x3, y: baseApex.y3 });
+    const sideC = Vecx.distance({ x: baseApex.x3, y: baseApex.y3 }, { x: baseApex.x1, y: baseApex.y1 });
     const baseLen = Segmentx.length(base);
     label.text = `Triangle Construction Lab\n${sideLabel}  base ${baseLen.toFixed(0)}  sides ${sideA.toFixed(0)}, ${sideB.toFixed(0)}, ${sideC.toFixed(0)}`;
   };

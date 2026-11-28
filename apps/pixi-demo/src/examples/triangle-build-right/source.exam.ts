@@ -94,29 +94,29 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // A→B 반지름 guide: 핸들이 origin 둘레를 도는 "강체 회전·스케일" 기준임을 드러낸다.
-    g.moveTo(origin.x, origin.y).lineTo(tri.b.x, tri.b.y).stroke({ color: RADIUS_COLOR, width: 1, alpha: 0.7 });
+    g.moveTo(origin.x, origin.y).lineTo(tri.x2, tri.y2).stroke({ color: RADIUS_COLOR, width: 1, alpha: 0.7 });
 
     // width ≈ 0이면 b가 a에 붕괴한 면적 0 degenerate → warn 색으로 강조.
     const degenerate = width <= DEGEN_EPS;
     const stateColor = degenerate ? WARN_COLOR : TRI_COLOR;
 
     // 직각삼각형 면 + 외곽선
-    const poly = [tri.a.x, tri.a.y, tri.b.x, tri.b.y, tri.c.x, tri.c.y];
+    const poly = [tri.x1, tri.y1, tri.x2, tri.y2, tri.x3, tri.y3];
     g.poly(poly).fill({ color: stateColor, alpha: degenerate ? 0.12 : 0.22 });
     g.poly(poly).stroke({ color: stateColor, width: 2.5, alpha: 0.95 });
 
     // A 코너 직각 표시 정사각형: 두 leg 단위 방향을 따라 작은 정사각형을 그려 A 내각이 90°(직교)임을
     // 드러낸다. 이는 직각삼각형 구성의 정의 성질을 보이는 inline 분해이지 두 번째 관계가 아니다.
     if (!degenerate) {
-      const abLen = Math.hypot(tri.b.x - tri.a.x, tri.b.y - tri.a.y);
-      const acLen = Math.hypot(tri.c.x - tri.a.x, tri.c.y - tri.a.y);
-      const ux = (tri.b.x - tri.a.x) / abLen; // A→B 단위 방향
-      const uy = (tri.b.y - tri.a.y) / abLen;
-      const vx = (tri.c.x - tri.a.x) / acLen; // A→C 단위 방향(AB와 직교)
-      const vy = (tri.c.y - tri.a.y) / acLen;
-      g.moveTo(tri.a.x + ux * SQUARE_S, tri.a.y + uy * SQUARE_S)
-        .lineTo(tri.a.x + (ux + vx) * SQUARE_S, tri.a.y + (uy + vy) * SQUARE_S)
-        .lineTo(tri.a.x + vx * SQUARE_S, tri.a.y + vy * SQUARE_S)
+      const abLen = Math.hypot(tri.x2 - tri.x1, tri.y2 - tri.y1);
+      const acLen = Math.hypot(tri.x3 - tri.x1, tri.y3 - tri.y1);
+      const ux = (tri.x2 - tri.x1) / abLen; // A→B 단위 방향
+      const uy = (tri.y2 - tri.y1) / abLen;
+      const vx = (tri.x3 - tri.x1) / acLen; // A→C 단위 방향(AB와 직교)
+      const vy = (tri.y3 - tri.y1) / acLen;
+      g.moveTo(tri.x1 + ux * SQUARE_S, tri.y1 + uy * SQUARE_S)
+        .lineTo(tri.x1 + (ux + vx) * SQUARE_S, tri.y1 + (uy + vy) * SQUARE_S)
+        .lineTo(tri.x1 + vx * SQUARE_S, tri.y1 + vy * SQUARE_S)
         .stroke({ color: SQUARE_COLOR, width: 2, alpha: 0.95 });
     }
 
@@ -124,15 +124,15 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(origin.x, origin.y, 5).fill({ color: ORIGIN_COLOR });
 
     // 정점 B 핸들 (유일 drag 대상)
-    g.circle(tri.b.x, tri.b.y, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
-    g.circle(tri.b.x, tri.b.y, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
+    g.circle(tri.x2, tri.y2, grabbed ? 10 : 8).fill({ color: 0xf8fafc });
+    g.circle(tri.x2, tri.y2, grabbed ? 10 : 8).stroke({ color: stateColor, width: 2 });
 
     // 두 leg 길이와 A 내각: 직각삼각형이라 A 내각은 항상 90°(두 leg 직교, atan2 inline).
-    const legAB = Math.hypot(tri.b.x - tri.a.x, tri.b.y - tri.a.y);
-    const legAC = Math.hypot(tri.c.x - tri.a.x, tri.c.y - tri.a.y);
+    const legAB = Math.hypot(tri.x2 - tri.x1, tri.y2 - tri.y1);
+    const legAC = Math.hypot(tri.x3 - tri.x1, tri.y3 - tri.y1);
     // A에서 두 leg 사이 각: 두 방향 벡터의 atan2 차이를 [0,180]로 환산. 항상 90°.
-    const angAB = Math.atan2(tri.b.y - tri.a.y, tri.b.x - tri.a.x);
-    const angAC = Math.atan2(tri.c.y - tri.a.y, tri.c.x - tri.a.x);
+    const angAB = Math.atan2(tri.y2 - tri.y1, tri.x2 - tri.x1);
+    const angAC = Math.atan2(tri.y3 - tri.y1, tri.x3 - tri.x1);
     let cornerDeg = Math.abs(((angAB - angAC) * 180) / Math.PI);
     if (cornerDeg > 180) cornerDeg = 360 - cornerDeg;
 

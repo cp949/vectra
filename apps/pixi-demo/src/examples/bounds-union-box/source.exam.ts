@@ -14,7 +14,7 @@
 import * as Bounds from '@cp949/vectra/bounds';
 
 type XY = { x: number; y: number };
-type Box = { min: XY; max: XY };
+type Box = { minX: number; minY: number; maxX: number; maxY: number };
 
 const A_COLOR = 0x60a5fa; // box A 색 (고정)
 const B_COLOR = 0xf472b6; // box B 색 (draggable)
@@ -34,15 +34,15 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // box A: 화면 고정 AABB (조작 대상 아님). min<max로 항상 valid하게 둔다
-  const boxA: Box = { min: { x: 170, y: 150 }, max: { x: 360, y: 300 } };
+  const boxA: Box = { minX: 170, minY: 150, maxX: 360, maxY: 300 };
 
   // box B: 주 drag 대상. 크기는 고정하고 위치(min)만 옮긴다
   const BW = 160;
   const BH = 110;
-  const boxB: Box = { min: { x: 430, y: 240 }, max: { x: 430 + BW, y: 240 + BH } };
+  const boxB: Box = { minX: 430, minY: 240, maxX: 430 + BW, maxY: 240 + BH };
 
   // 합집합 결과 buffer. 매 프레임 같은 object에 재기록한다 (allocating companion 없음)
-  const unionOut: Box = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const unionOut: Box = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 
   let grabbed = false;
   let grabDX = 0; // pointer와 boxB.min의 x 오프셋 (drag 중 유지)
@@ -56,10 +56,10 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // box B 내부를 누르면 잡는다
-    grabbed = p.x >= boxB.min.x && p.x <= boxB.max.x && p.y >= boxB.min.y && p.y <= boxB.max.y;
+    grabbed = p.x >= boxB.minX && p.x <= boxB.maxX && p.y >= boxB.minY && p.y <= boxB.maxY;
     if (grabbed) {
-      grabDX = p.x - boxB.min.x;
-      grabDY = p.y - boxB.min.y;
+      grabDX = p.x - boxB.minX;
+      grabDY = p.y - boxB.minY;
     }
   };
 
@@ -69,10 +69,10 @@ export function setup(runtime: PixiRuntime): () => void {
     // box B를 화면 안으로 clamp (min<max 유지 → inverted bounds degenerate 회피)
     const minX = Math.max(M, Math.min(size.width - M - BW, p.x - grabDX));
     const minY = Math.max(M, Math.min(size.height - M - BH, p.y - grabDY));
-    boxB.min.x = minX;
-    boxB.min.y = minY;
-    boxB.max.x = minX + BW;
-    boxB.max.y = minY + BH;
+    boxB.minX = minX;
+    boxB.minY = minY;
+    boxB.maxX = minX + BW;
+    boxB.maxY = minY + BH;
   };
 
   const onPointerUp = (): void => {
@@ -87,9 +87,9 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 옅은 채움 + 외곽선으로 입력 box를 그린다
   const drawBox = (box: Box, color: number, alpha: number, lineW: number): void => {
-    const w = box.max.x - box.min.x;
-    const h = box.max.y - box.min.y;
-    g.rect(box.min.x, box.min.y, w, h)
+    const w = box.maxX - box.minX;
+    const h = box.maxY - box.minY;
+    g.rect(box.minX, box.minY, w, h)
       .fill({ color, alpha: alpha * 0.18 })
       .stroke({ color, width: lineW, alpha });
   };
@@ -107,10 +107,10 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // 각 union 극값을 어느 box가 결정했는지 판정. 함수와 같은 비교를 써서 tie 처리까지 맞춘다
     // (min: b<o ? A : B, max: b>o ? A : B → 동일 좌표면 둘 다 B(other)를 택함)
-    const ownerMinX = boxA.min.x < boxB.min.x ? A_COLOR : B_COLOR;
-    const ownerMinY = boxA.min.y < boxB.min.y ? A_COLOR : B_COLOR;
-    const ownerMaxX = boxA.max.x > boxB.max.x ? A_COLOR : B_COLOR;
-    const ownerMaxY = boxA.max.y > boxB.max.y ? A_COLOR : B_COLOR;
+    const ownerMinX = boxA.minX < boxB.minX ? A_COLOR : B_COLOR;
+    const ownerMinY = boxA.minY < boxB.minY ? A_COLOR : B_COLOR;
+    const ownerMaxX = boxA.maxX > boxB.maxX ? A_COLOR : B_COLOR;
+    const ownerMaxY = boxA.maxY > boxB.maxY ? A_COLOR : B_COLOR;
     const tag = (c: number): string => (c === A_COLOR ? 'A' : 'B');
 
     g.clear();
@@ -121,14 +121,14 @@ export function setup(runtime: PixiRuntime): () => void {
     drawBox(boxB, B_COLOR, grabbed ? 1 : 0.85, grabbed ? 2.5 : 1.5);
 
     // 합집합 box: 옅은 기준 외곽선을 깔고, 네 변을 owner 색으로 덧칠한다
-    const uw = unionOut.max.x - unionOut.min.x;
-    const uh = unionOut.max.y - unionOut.min.y;
-    g.rect(unionOut.min.x, unionOut.min.y, uw, uh).stroke({ color: 0x334155, width: 1, alpha: 0.6 });
+    const uw = unionOut.maxX - unionOut.minX;
+    const uh = unionOut.maxY - unionOut.minY;
+    g.rect(unionOut.minX, unionOut.minY, uw, uh).stroke({ color: 0x334155, width: 1, alpha: 0.6 });
     // left/right 세로 변, top/bottom 가로 변을 각 owner 색으로
-    drawEdge(unionOut.min.x, unionOut.min.y, unionOut.min.x, unionOut.max.y, ownerMinX); // left  (min.x)
-    drawEdge(unionOut.max.x, unionOut.min.y, unionOut.max.x, unionOut.max.y, ownerMaxX); // right (max.x)
-    drawEdge(unionOut.min.x, unionOut.min.y, unionOut.max.x, unionOut.min.y, ownerMinY); // top   (min.y)
-    drawEdge(unionOut.min.x, unionOut.max.y, unionOut.max.x, unionOut.max.y, ownerMaxY); // bottom(max.y)
+    drawEdge(unionOut.minX, unionOut.minY, unionOut.minX, unionOut.maxY, ownerMinX); // left  (min.x)
+    drawEdge(unionOut.maxX, unionOut.minY, unionOut.maxX, unionOut.maxY, ownerMaxX); // right (max.x)
+    drawEdge(unionOut.minX, unionOut.minY, unionOut.maxX, unionOut.minY, ownerMinY); // top   (min.y)
+    drawEdge(unionOut.minX, unionOut.maxY, unionOut.maxX, unionOut.maxY, ownerMaxY); // bottom(max.y)
 
     label.text = [
       `union: ${fmt(uw)} × ${fmt(uh)}   drag box B`,

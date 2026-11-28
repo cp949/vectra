@@ -32,10 +32,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const cy = 240;
   const halfW = 90;
   const halfH = 55;
-  const box = {
-    min: { x: cx - halfW, y: cy - halfH },
-    max: { x: cx + halfW, y: cy + halfH },
-  };
+  const box = { minX: cx - halfW, minY: cy - halfH, maxX: cx + halfW, maxY: cy + halfH };
 
   // 회전 handle은 중심에서 고정 반지름만큼 떨어진 점에 둔다(반박스 대각선 + 여백).
   const handleRadius = Math.hypot(halfW, halfH) + 46;
@@ -43,7 +40,7 @@ export function setup(runtime: PixiRuntime): () => void {
   // 저장 state: 각도는 드래그 시에만 바뀌므로 회전 matrix·꼭짓점·AABB를 그때 1회 계산해 둔다.
   let angle = 0;
   let corners: { x: number; y: number }[] = [];
-  let aabb = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  let aabb = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
   let handle = { x: 0, y: 0 };
 
   // 각도로부터 회전된 꼭짓점·AABB·handle 위치를 한 번에 다시 계산한다(드래그 시에만 호출).
@@ -52,10 +49,10 @@ export function setup(runtime: PixiRuntime): () => void {
     const m = Matrixx.rotationAroundPoint({ x: cx, y: cy }, angle);
     // transformPoints(matrix, points): 회전된 네 꼭짓점(입력 시각화)
     corners = Matrixx.transformPoints(m, [
-      { x: box.min.x, y: box.min.y },
-      { x: box.max.x, y: box.min.y },
-      { x: box.max.x, y: box.max.y },
-      { x: box.min.x, y: box.max.y },
+      { x: box.minX, y: box.minY },
+      { x: box.maxX, y: box.minY },
+      { x: box.maxX, y: box.maxY },
+      { x: box.minX, y: box.maxY },
     ]);
     // bounds.transform(bounds, matrix): 회전된 꼭짓점을 감싸는 AABB(핵심 출력)
     aabb = Boundsx.transform(box, m);
@@ -102,10 +99,10 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
 
     // AABB(출력): 강조 색 채움 + 외곽선. 회전된 사각형을 감싸는 화면 정렬 박스.
-    const aw = aabb.max.x - aabb.min.x;
-    const ah = aabb.max.y - aabb.min.y;
-    g.rect(aabb.min.x, aabb.min.y, aw, ah).fill({ color: 0x38bdf8, alpha: 0.12 });
-    g.rect(aabb.min.x, aabb.min.y, aw, ah).stroke({ color: 0x38bdf8, width: 2 });
+    const aw = aabb.maxX - aabb.minX;
+    const ah = aabb.maxY - aabb.minY;
+    g.rect(aabb.minX, aabb.minY, aw, ah).fill({ color: 0x38bdf8, alpha: 0.12 });
+    g.rect(aabb.minX, aabb.minY, aw, ah).stroke({ color: 0x38bdf8, width: 2 });
 
     // 회전된 사각형(입력 시각화): 연한 외곽선 폴리곤.
     g.poly(corners.flatMap((p) => [p.x, p.y])).stroke({ color: 0xe2e8f0, width: 2 });

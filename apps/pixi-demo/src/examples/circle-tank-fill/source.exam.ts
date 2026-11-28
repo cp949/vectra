@@ -47,7 +47,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const cx = size.width / 2;
   const cy = size.height / 2;
   const R = 150;
-  const circle = { center: { x: cx, y: cy }, radius: R };
+  const circle = { cx, cy, r: R };
 
   // drag 시에만 갱신하는 state (ticker render는 이 state만 읽어 프레임당 vectra 할당 없음)
   let level = cy + R * 0.35; // 수면의 화면 y. 시작 수위는 중심보다 약간 아래

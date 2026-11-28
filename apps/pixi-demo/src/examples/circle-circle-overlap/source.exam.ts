@@ -15,7 +15,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Circle = { center: XY; radius: number };
+type Circle = { cx: number; cy: number; r: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 겹침: 파랑
 const HIT_COLOR = 0xf87171; // 겹침: 빨강
@@ -37,9 +37,9 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // circle A: 화면 고정 (조작 대상 아님)
-  const circleA: Circle = { center: { x: 275, y: 220 }, radius: 95 };
+  const circleA: Circle = { cx: 275, cy: 220, r: 95 };
   // circle B: 주 drag 대상. center만 옮기고 radius는 고정
-  const circleB: Circle = { center: { x: 480, y: 215 }, radius: 70 };
+  const circleB: Circle = { cx: 480, cy: 215, r: 70 };
 
   let grabbed = false;
   let grabDX = 0; // pointer와 circleB.center의 오프셋 (drag 중 유지)
@@ -53,22 +53,22 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // circle B 안쪽(disk)을 누르면 잡는다
-    const dx = p.x - circleB.center.x;
-    const dy = p.y - circleB.center.y;
-    grabbed = dx * dx + dy * dy <= circleB.radius * circleB.radius;
+    const dx = p.x - circleB.cx;
+    const dy = p.y - circleB.cy;
+    grabbed = dx * dx + dy * dy <= circleB.r * circleB.r;
     if (grabbed) {
-      grabDX = p.x - circleB.center.x;
-      grabDY = p.y - circleB.center.y;
+      grabDX = p.x - circleB.cx;
+      grabDY = p.y - circleB.cy;
     }
   };
 
   const onPointerMove = (e: PointerEvent): void => {
     if (!grabbed) return;
     const p = getCanvasXY(e);
-    const r = circleB.radius;
+    const r = circleB.r;
     // center B를 화면 안으로 clamp → 항상 finite 입력 (NaN/Infinity 회피)
-    circleB.center.x = Math.max(M + r, Math.min(size.width - M - r, p.x - grabDX));
-    circleB.center.y = Math.max(M + r, Math.min(size.height - M - r, p.y - grabDY));
+    circleB.cx = Math.max(M + r, Math.min(size.width - M - r, p.x - grabDX));
+    circleB.cy = Math.max(M + r, Math.min(size.height - M - r, p.y - grabDY));
   };
 
   const onPointerUp = (): void => {
@@ -83,8 +83,8 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 원 하나를 옅은 채움 + 외곽선으로 그린다
   const drawCircle = (c: Circle, color: number, lineW: number): void => {
-    g.circle(c.center.x, c.center.y, c.radius).fill({ color, alpha: 0.16 }).stroke({ color, width: lineW });
-    g.circle(c.center.x, c.center.y, 3).fill({ color }); // center dot
+    g.circle(c.cx, c.cy, c.r).fill({ color, alpha: 0.16 }).stroke({ color, width: lineW });
+    g.circle(c.cx, c.cy, 3).fill({ color }); // center dot
   };
 
   const fmt = (n: number): string => n.toFixed(0).padStart(4);
@@ -94,10 +94,10 @@ export function setup(runtime: PixiRuntime): () => void {
     const overlap = Intersects.intersectsCircleCircle(circleA, circleB);
 
     // 판정 식의 두 항을 표시용으로 inline 계산한다 (별도 domain import 없이 같은 비교를 분해)
-    const dx = circleB.center.x - circleA.center.x;
-    const dy = circleB.center.y - circleA.center.y;
+    const dx = circleB.cx - circleA.cx;
+    const dy = circleB.cy - circleA.cy;
     const centerDist = Math.hypot(dx, dy);
-    const sumRadii = circleA.radius + circleB.radius;
+    const sumRadii = circleA.r + circleB.r;
     // 외접(centerDist ≈ sumRadii) 경계는 따로 노랑으로 강조한다 (접점도 overlap=true인 경계 상태)
     const onEdge = Math.abs(centerDist - sumRadii) <= EDGE_EPS;
     const stateColor = onEdge ? EDGE_COLOR : overlap ? HIT_COLOR : CLEAR_COLOR;
@@ -106,9 +106,7 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // center↔center 연결선: 길이가 centerDist, 색이 판정 상태
-    g.moveTo(circleA.center.x, circleA.center.y)
-      .lineTo(circleB.center.x, circleB.center.y)
-      .stroke({ color: stateColor, width: 2, alpha: 0.9 });
+    g.moveTo(circleA.cx, circleA.cy).lineTo(circleB.cx, circleB.cy).stroke({ color: stateColor, width: 2, alpha: 0.9 });
 
     // 두 원을 같은 상태 색으로 칠한다 (겹침 여부가 색으로 드러남)
     drawCircle(circleA, stateColor, 2);

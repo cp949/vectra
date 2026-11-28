@@ -33,7 +33,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 편집 대상 box: unrotated AABB
-  const bounds = { min: { x: 260, y: 150 }, max: { x: 460, y: 290 } };
+  const bounds = { minX: 260, minY: 150, maxX: 460, maxY: 290 };
 
   // resizeHandlesInto 출력 buffer (매 프레임 재기록)
   const handles: { id: HandleId; point: { x: number; y: number } }[] = [];
@@ -41,7 +41,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // transform 중간 buffer
   const matrix = Matrix.createMatrix();
-  const rawBounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const rawBounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 
   // resize 제약
   const MIN_SIZE = 28;
@@ -74,23 +74,23 @@ export function setup(runtime: PixiRuntime): () => void {
     const ok = EditorGeometry.transformFromHandlesInto(
       matrix,
       { bounds, handle: grabbed, to: cursor },
-      { aspectLocked: e.shiftKey }
+      { aspectLocked: e.shiftKey, fromAnchor: undefined }
     );
     if (!ok) return;
 
     // matrix를 bounds에 적용한 미보정 AABB
     Matrix.transformBoundsInto(rawBounds, matrix, bounds);
 
-    const curW = bounds.max.x - bounds.min.x;
-    const curH = bounds.max.y - bounds.min.y;
-    const proposedW = rawBounds.max.x - rawBounds.min.x;
-    const proposedH = rawBounds.max.y - rawBounds.min.y;
+    const curW = bounds.maxX - bounds.minX;
+    const curH = bounds.maxY - bounds.minY;
+    const proposedW = rawBounds.maxX - rawBounds.minX;
+    const proposedH = rawBounds.maxY - rawBounds.minY;
 
     // 최소 크기 보정
     const size = EditorGeometry.constrainResize(
       { width: curW, height: curH },
       { width: proposedW, height: proposedH },
-      { minWidth: MIN_SIZE, minHeight: MIN_SIZE }
+      { aspectLocked: false, minWidth: MIN_SIZE, minHeight: MIN_SIZE, maxWidth: Infinity, maxHeight: Infinity }
     );
 
     // handle 대각 anchor(고정 변)를 기준으로 보정된 크기를 재배치한다
@@ -100,14 +100,14 @@ export function setup(runtime: PixiRuntime): () => void {
     const hasS = grabbed.includes('s');
 
     if (hasE) {
-      bounds.max.x = bounds.min.x + size.width;
+      bounds.maxX = bounds.minX + size.width;
     } else if (hasW) {
-      bounds.min.x = bounds.max.x - size.width;
+      bounds.minX = bounds.maxX - size.width;
     }
     if (hasS) {
-      bounds.max.y = bounds.min.y + size.height;
+      bounds.maxY = bounds.minY + size.height;
     } else if (hasN) {
-      bounds.min.y = bounds.max.y - size.height;
+      bounds.minY = bounds.maxY - size.height;
     }
   };
 
@@ -127,11 +127,9 @@ export function setup(runtime: PixiRuntime): () => void {
     g.clear();
 
     // box (반투명 채움 + 외곽선)
-    const w = bounds.max.x - bounds.min.x;
-    const h = bounds.max.y - bounds.min.y;
-    g.rect(bounds.min.x, bounds.min.y, w, h)
-      .fill({ color: 0x38bdf8, alpha: 0.12 })
-      .stroke({ color: 0x38bdf8, width: 2 });
+    const w = bounds.maxX - bounds.minX;
+    const h = bounds.maxY - bounds.minY;
+    g.rect(bounds.minX, bounds.minY, w, h).fill({ color: 0x38bdf8, alpha: 0.12 }).stroke({ color: 0x38bdf8, width: 2 });
 
     // 8개 resize handle (grab 중이면 강조)
     for (const handle of handles) {
@@ -142,8 +140,8 @@ export function setup(runtime: PixiRuntime): () => void {
     }
 
     label.text = `${Math.round(w)} × ${Math.round(h)}`;
-    label.x = bounds.min.x;
-    label.y = bounds.min.y - 22;
+    label.x = bounds.minX;
+    label.y = bounds.minY - 22;
   };
 
   app.ticker.add(render);

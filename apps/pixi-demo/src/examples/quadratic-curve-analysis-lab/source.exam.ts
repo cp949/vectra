@@ -18,21 +18,22 @@
 import * as Curves from '@cp949/vectra/curve';
 
 type Point = { x: number; y: number };
-type Quadratic = { p0: Point; p1: Point; p2: Point };
-type Cubic = { p0: Point; p1: Point; p2: Point; p3: Point };
+type Quadratic = { kind: 'quadratic'; x0: number; y0: number; x1: number; y1: number; x2: number; y2: number };
+type Cubic = {
+  kind: 'cubic';
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  x3: number;
+  y3: number;
+};
 
-const createQuadratic = (): Quadratic => ({
-  p0: { x: 0, y: 0 },
-  p1: { x: 0, y: 0 },
-  p2: { x: 0, y: 0 },
-});
+const createQuadratic = (): Quadratic => ({ kind: 'quadratic', x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0 });
 
-const createCubic = (): Cubic => ({
-  p0: { x: 0, y: 0 },
-  p1: { x: 0, y: 0 },
-  p2: { x: 0, y: 0 },
-  p3: { x: 0, y: 0 },
-});
+const createCubic = (): Cubic => ({ kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 });
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app, size } = runtime;
@@ -59,7 +60,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const elevatedInto = createCubic();
 
   const closestInto = { x: 0, y: 0 };
-  const boundsInto = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const boundsInto = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
   const derivative = { x: 0, y: 0 };
   const tangent = { x: 0, y: 0 };
   const splitPoint = { x: 0, y: 0 };
@@ -124,7 +125,7 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const drawQuadratic = (curve: Quadratic, color: number, width: number, alpha = 1): void => {
-    g.moveTo(curve.p0.x, curve.p0.y).quadraticCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y).stroke({
+    g.moveTo(curve.x0, curve.y0).quadraticCurveTo(curve.x1, curve.y1, curve.x2, curve.y2).stroke({
       color,
       width,
       alpha,
@@ -132,8 +133,8 @@ export function setup(runtime: PixiRuntime): () => void {
   };
 
   const drawCubic = (curve: Cubic, color: number, width: number, alpha = 1): void => {
-    g.moveTo(curve.p0.x, curve.p0.y)
-      .bezierCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y, curve.p3.x, curve.p3.y)
+    g.moveTo(curve.x0, curve.y0)
+      .bezierCurveTo(curve.x1, curve.y1, curve.x2, curve.y2, curve.x3, curve.y3)
       .stroke({ color, width, alpha });
   };
 
@@ -150,61 +151,69 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(point.x, point.y, radius).fill({ color });
   };
 
-  const drawBounds = (bounds: { min: Point; max: Point }, color: number, alpha = 1): void => {
-    g.rect(bounds.min.x, bounds.min.y, bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y).stroke({
+  const drawBounds = (
+    bounds: { minX: number; minY: number; maxX: number; maxY: number },
+    color: number,
+    alpha = 1
+  ): void => {
+    g.rect(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY).stroke({
       color,
       width: 1.5,
       alpha,
     });
   };
 
-  const drawParameterMarkers = (parameters: readonly number[], color: number): void => {
+  const drawParameterMarkers = (curve: Quadratic, parameters: readonly number[], color: number): void => {
     for (const t of parameters) {
-      Curves.quadraticPointAtTInto(markerPoint, p0, p1, p2, t);
+      Curves.quadraticPointAtTInto(markerPoint, curve, t);
       drawPoint(markerPoint, 4, color);
     }
   };
 
   const render = (): void => {
-    const curve = { p0, p1, p2 };
+    const curve: Quadratic = { kind: 'quadratic', x0: p0.x, y0: p0.y, x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y };
     const t = (splitHandle.x - rail.x0) / (rail.x1 - rail.x0);
     const fromT = Math.max(0, t - 0.18);
     const toT = Math.min(1, t + 0.18);
     const flatness = 2.4;
 
-    const closest = Curves.quadraticClosestPoint(p0, p1, p2, probe, { sampleCount: 17 });
-    Curves.quadraticClosestPointInto(closestInto, p0, p1, p2, probe, { sampleCount: 17 });
-    const bounds = Curves.quadraticBounds(p0, p1, p2);
-    Curves.quadraticBoundsInto(boundsInto, p0, p1, p2);
-    const split = Curves.quadraticSplit(p0, p1, p2, t);
-    Curves.quadraticSplitInto(leftSplit, rightSplit, p0, p1, p2, t);
-    const part = Curves.quadraticPart(p0, p1, p2, fromT, toT);
-    Curves.quadraticPartInto(partInto, p0, p1, p2, fromT, toT);
-    const coarseFlatten = Curves.quadraticFlatten(p0, p1, p2, { flatness: 13 });
-    Curves.quadraticFlattenInto(flattenInto, p0, p1, p2, { flatness });
-    const sample = Curves.quadraticSample(p0, p1, p2, { steps: 9 });
-    Curves.quadraticSampleInto(sampleInto, p0, p1, p2, { steps: 15 });
-    const elevated = Curves.quadraticElevateToCubic(p0, p1, p2);
-    Curves.quadraticElevateToCubicInto(elevatedInto, p0, p1, p2);
-    const totalLength = Curves.quadraticLength(p0, p1, p2);
-    const lengthAtT = Curves.quadraticLengthAtT(p0, p1, p2, t);
-    const tAtHalfLength = Curves.quadraticTAtLength(p0, p1, p2, totalLength / 2);
-    const curvature = Curves.quadraticCurvatureAt(p0, p1, p2, t);
-    const extrema = Curves.quadraticExtrema(p0, p1, p2);
+    const closest = Curves.quadraticClosestPoint(curve, probe, { sampleCount: 17, tolerance: 1e-8, maxIterations: 20 });
+    Curves.quadraticClosestPointInto(closestInto, curve, probe, {
+      sampleCount: 17,
+      tolerance: 1e-8,
+      maxIterations: 20,
+    });
+    const bounds = Curves.quadraticBounds(curve);
+    Curves.quadraticBoundsInto(boundsInto, curve);
+    const split = Curves.quadraticSplit(curve, t);
+    Curves.quadraticSplitInto(leftSplit, rightSplit, curve, t);
+    const part = Curves.quadraticPart(curve, fromT, toT);
+    Curves.quadraticPartInto(partInto, curve, fromT, toT);
+    const coarseFlatten = Curves.quadraticFlatten(curve, { flatness: 13, maxRecursion: 32 });
+    Curves.quadraticFlattenInto(flattenInto, curve, { flatness, maxRecursion: 32 });
+    const sample = Curves.quadraticSample(curve, { steps: 9 });
+    Curves.quadraticSampleInto(sampleInto, curve, { steps: 15 });
+    const elevated = Curves.quadraticElevateToCubic(curve);
+    Curves.quadraticElevateToCubicInto(elevatedInto, curve);
+    const totalLength = Curves.quadraticLength(curve);
+    const lengthAtT = Curves.quadraticLengthAtT(curve, t);
+    const tAtHalfLength = Curves.quadraticTAtLength(curve, totalLength / 2);
+    const curvature = Curves.quadraticCurvatureAt(curve, t);
+    const extrema = Curves.quadraticExtrema(curve);
 
-    Curves.quadraticPointAtTInto(splitPoint, p0, p1, p2, t);
-    Curves.quadraticPointAtTInto(halfLengthPoint, p0, p1, p2, tAtHalfLength);
-    Curves.quadraticDerivativeAtInto(derivative, p0, p1, p2, t);
-    Curves.quadraticTangentAtInto(tangent, p0, p1, p2, t);
+    Curves.quadraticPointAtTInto(splitPoint, curve, t);
+    Curves.quadraticPointAtTInto(halfLengthPoint, curve, tAtHalfLength);
+    Curves.quadraticDerivativeAtInto(derivative, curve, t);
+    Curves.quadraticTangentAtInto(tangent, curve, t);
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     g.moveTo(p0.x, p0.y).lineTo(p1.x, p1.y).lineTo(p2.x, p2.y).stroke({ color: 0x64748b, width: 1 });
-    g.moveTo(elevatedInto.p0.x, elevatedInto.p0.y)
-      .lineTo(elevatedInto.p1.x, elevatedInto.p1.y)
-      .lineTo(elevatedInto.p2.x, elevatedInto.p2.y)
-      .lineTo(elevatedInto.p3.x, elevatedInto.p3.y)
+    g.moveTo(elevatedInto.x0, elevatedInto.y0)
+      .lineTo(elevatedInto.x1, elevatedInto.y1)
+      .lineTo(elevatedInto.x2, elevatedInto.y2)
+      .lineTo(elevatedInto.x3, elevatedInto.y3)
       .stroke({ color: 0xa78bfa, width: 1, alpha: 0.72 });
 
     drawBounds(bounds, 0x60a5fa, 0.5);
@@ -236,7 +245,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
     for (const point of sample) drawPoint(point, 3.5, 0x64748b);
     for (const point of sampleInto) drawPoint(point, 2.5, 0x38bdf8);
-    drawParameterMarkers(extrema, 0x60a5fa);
+    drawParameterMarkers(curve, extrema, 0x60a5fa);
     drawPoint(splitPoint, 7, 0x22c55e);
     drawPoint(halfLengthPoint, 5, 0xa78bfa);
 
@@ -250,8 +259,8 @@ export function setup(runtime: PixiRuntime): () => void {
     label.text =
       `t=${t.toFixed(3)} length=${totalLength.toFixed(1)} lengthAtT=${lengthAtT.toFixed(1)} halfLengthT=${tAtHalfLength.toFixed(3)}` +
       `\nflatten points=${flattenInto.length} coarse=${coarseFlatten.length} sample=${sampleInto.length} extrema=${extrema.map((v) => v.toFixed(2)).join(',') || '-'}` +
-      `\ncurvature@t=${curvature.toFixed(4)} bounds=${(bounds.max.x - bounds.min.x).toFixed(1)}x${(bounds.max.y - bounds.min.y).toFixed(1)}` +
-      `\nclosest=(${closestInto.x.toFixed(1)}, ${closestInto.y.toFixed(1)}) elevated cubic p1=(${elevatedInto.p1.x.toFixed(1)}, ${elevatedInto.p1.y.toFixed(1)})`;
+      `\ncurvature@t=${curvature.toFixed(4)} bounds=${(bounds.maxX - bounds.minX).toFixed(1)}x${(bounds.maxY - bounds.minY).toFixed(1)}` +
+      `\nclosest=(${closestInto.x.toFixed(1)}, ${closestInto.y.toFixed(1)}) elevated cubic p1=(${elevatedInto.x1.toFixed(1)}, ${elevatedInto.y1.toFixed(1)})`;
   };
 
   app.ticker.add(render);

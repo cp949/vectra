@@ -35,11 +35,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 고정 scalene triangle (조작 대상 아님). 세 변 길이가 모두 달라 형태가 또렷하다.
   // non-degenerate(세 점이 한 직선 위에 있지 않음)라 degenerate→false 분기는 발생하지 않는다.
-  const triangle = {
-    a: { x: 250, y: 110 }, // 위쪽 꼭짓점
-    b: { x: 540, y: 250 }, // 오른쪽 아래 꼭짓점
-    c: { x: 210, y: 350 }, // 왼쪽 아래 꼭짓점
-  };
+  const triangle = { x1: 250, y1: 110, x2: 540, y2: 250, x3: 210, y3: 350 };
 
   // probe (유일 drag 대상). 초기 위치는 삼각형 밖 위쪽
   const probe: XY = { x: 380, y: 60 };
@@ -86,9 +82,9 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // triangle 면을 채우고(판정 결과 색) 같은 외곽에 stroke를 덧그린다
-    g.poly([triangle.a.x, triangle.a.y, triangle.b.x, triangle.b.y, triangle.c.x, triangle.c.y]);
+    g.poly([triangle.x1, triangle.y1, triangle.x2, triangle.y2, triangle.x3, triangle.y3]);
     g.fill({ color: stateColor, alpha: inside ? 0.32 : 0.14 });
-    g.poly([triangle.a.x, triangle.a.y, triangle.b.x, triangle.b.y, triangle.c.x, triangle.c.y]);
+    g.poly([triangle.x1, triangle.y1, triangle.x2, triangle.y2, triangle.x3, triangle.y3]);
     g.stroke({ color: stateColor, width: 2.5, alpha: 0.95 });
 
     // probe (유일 drag 대상). 내부 판정 색으로 칠해 fill과 상태를 일치시킨다

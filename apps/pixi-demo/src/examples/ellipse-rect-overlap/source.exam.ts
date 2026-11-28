@@ -16,7 +16,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Ellipse = { center: XY; radiusX: number; radiusY: number };
+type Ellipse = { cx: number; cy: number; rx: number; ry: number };
 type Rect = { x: number; y: number; width: number; height: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 겹침: 파랑
@@ -39,7 +39,7 @@ export function setup(runtime: PixiRuntime): () => void {
   // rect: 화면 고정 AABB (조작 대상 아님). 너비·높이 고정 양수라 degenerate 미발생
   const rect: Rect = { x: 320, y: 160, width: 240, height: 150 };
   // ellipse: 주 drag 대상. center만 옮기고 rx/ry는 고정. rx≠ry 비균등 반경
-  const ellipse: Ellipse = { center: { x: 150, y: 110 }, radiusX: 120, radiusY: 72 };
+  const ellipse: Ellipse = { cx: 150, cy: 110, rx: 120, ry: 72 };
 
   let grabbed = false;
   let grabDX = 0; // pointer와 ellipse.center의 오프셋 (drag 중 유지)
@@ -53,23 +53,23 @@ export function setup(runtime: PixiRuntime): () => void {
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // 타원 단위공간 포함( (dx/rx)^2 + (dy/ry)^2 <= 1 )이면 타원을 잡는다
-    const ndx = (p.x - ellipse.center.x) / ellipse.radiusX;
-    const ndy = (p.y - ellipse.center.y) / ellipse.radiusY;
+    const ndx = (p.x - ellipse.cx) / ellipse.rx;
+    const ndy = (p.y - ellipse.cy) / ellipse.ry;
     grabbed = ndx * ndx + ndy * ndy <= 1;
     if (grabbed) {
-      grabDX = p.x - ellipse.center.x;
-      grabDY = p.y - ellipse.center.y;
+      grabDX = p.x - ellipse.cx;
+      grabDY = p.y - ellipse.cy;
     }
   };
 
   const onPointerMove = (e: PointerEvent): void => {
     if (!grabbed) return;
     const p = getCanvasXY(e);
-    const rx = ellipse.radiusX;
-    const ry = ellipse.radiusY;
+    const rx = ellipse.rx;
+    const ry = ellipse.ry;
     // center를 화면 안으로 clamp → 항상 finite 입력 (NaN/Infinity 회피)
-    ellipse.center.x = Math.max(M + rx, Math.min(size.width - M - rx, p.x - grabDX));
-    ellipse.center.y = Math.max(M + ry, Math.min(size.height - M - ry, p.y - grabDY));
+    ellipse.cx = Math.max(M + rx, Math.min(size.width - M - rx, p.x - grabDX));
+    ellipse.cy = Math.max(M + ry, Math.min(size.height - M - ry, p.y - grabDY));
   };
 
   const onPointerUp = (): void => {
@@ -101,14 +101,14 @@ export function setup(runtime: PixiRuntime): () => void {
     g.circle(rect.x + rect.width / 2, rect.y + rect.height / 2, 3).fill({ color: stateColor }); // rect center dot
 
     // 타원형 cursor를 같은 상태 색으로 그린다. 잡으면 stroke 굵게
-    g.ellipse(ellipse.center.x, ellipse.center.y, ellipse.radiusX, ellipse.radiusY)
+    g.ellipse(ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry)
       .fill({ color: stateColor, alpha: 0.16 })
       .stroke({ color: stateColor, width: grabbed ? 3 : 2 });
-    g.circle(ellipse.center.x, ellipse.center.y, 3).fill({ color: stateColor }); // ellipse center dot
+    g.circle(ellipse.cx, ellipse.cy, 3).fill({ color: stateColor }); // ellipse center dot
 
     label.text = [
       `overlap: ${overlap ? 'yes' : 'no '}   drag ellipse`,
-      `axes   : ${fmt(ellipse.radiusX)} x ${fmt(ellipse.radiusY)}`,
+      `axes   : ${fmt(ellipse.rx)} x ${fmt(ellipse.ry)}`,
       `rect   : ${fmt(rect.width)} x ${fmt(rect.height)}`,
     ].join('\n');
   };

@@ -40,10 +40,10 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 원 A: 거리를 측정할 기준 도형. 조작 대상이 아니다
-  const circleA = { center: { x: 300, y: 240 }, radius: 80 };
+  const circleA = { cx: 300, cy: 240, r: 80 };
 
   // 드래그 원 B: center가 유일한 drag 대상. radius는 고정이라 모양은 평행이동만 한다
-  const circleB = { center: { x: 480, y: 150 }, radius: 45 };
+  const circleB = { cx: 480, cy: 150, r: 45 };
 
   // drag 시에만 갱신하는 state (ticker render는 이 state만 읽어 프레임당 할당 없음)
   let d = 0; // 두 원 둘레 사이의 부호 없는 최단 여유 거리 (distanceToCircle 출력, overlap이면 0)
@@ -61,8 +61,8 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // B center를 화면 안으로 clamp → 항상 finite (non-finite pass-through 미발생)
   const clampToScreen = (p: XY): void => {
-    circleB.center.x = Math.max(MARGIN, Math.min(size.width - MARGIN, p.x));
-    circleB.center.y = Math.max(MARGIN, Math.min(size.height - MARGIN, p.y));
+    circleB.cx = Math.max(MARGIN, Math.min(size.width - MARGIN, p.x));
+    circleB.cy = Math.max(MARGIN, Math.min(size.height - MARGIN, p.y));
   };
 
   const rebuild = (): void => {
@@ -70,8 +70,8 @@ export function setup(runtime: PixiRuntime): () => void {
     d = Circlex.distanceToCircle(circleA, circleB);
 
     // |C|는 같은 관계를 center 거리로 읽은 inline 분해 (d = max(0, |C| − rA − rB))
-    const dx = circleB.center.x - circleA.center.x;
-    const dy = circleB.center.y - circleA.center.y;
+    const dx = circleB.cx - circleA.cx;
+    const dy = circleB.cy - circleA.cy;
     centerDist = Math.hypot(dx, dy);
     overlap = d <= 0; // distanceToCircle은 overlap/접촉에서 0을 valid 반환
 
@@ -80,15 +80,15 @@ export function setup(runtime: PixiRuntime): () => void {
     if (centerDist > 0) {
       const ux = dx / centerDist;
       const uy = dy / centerDist;
-      footA = { x: circleA.center.x + ux * circleA.radius, y: circleA.center.y + uy * circleA.radius };
-      footB = { x: circleB.center.x - ux * circleB.radius, y: circleB.center.y - uy * circleB.radius };
+      footA = { x: circleA.cx + ux * circleA.r, y: circleA.cy + uy * circleA.r };
+      footB = { x: circleB.cx - ux * circleB.r, y: circleB.cy - uy * circleB.r };
     }
   };
 
   const onPointerDown = (e: PointerEvent): void => {
     const p = getCanvasXY(e);
     // B center 근처를 누르면 잡는다 (B가 유일한 조작 대상)
-    grabbed = Math.hypot(p.x - circleB.center.x, p.y - circleB.center.y) <= circleB.radius + GRAB_PAD;
+    grabbed = Math.hypot(p.x - circleB.cx, p.y - circleB.cy) <= circleB.r + GRAB_PAD;
     if (grabbed) {
       clampToScreen(p);
       rebuild();
@@ -122,15 +122,11 @@ export function setup(runtime: PixiRuntime): () => void {
     const bStroke = overlap ? CONTACT_COLOR : B_COLOR;
 
     // 고정 원 A
-    g.circle(circleA.center.x, circleA.center.y, circleA.radius)
-      .fill({ color: ZONE_FILL })
-      .stroke({ color: aStroke, width: 2 });
+    g.circle(circleA.cx, circleA.cy, circleA.r).fill({ color: ZONE_FILL }).stroke({ color: aStroke, width: 2 });
 
     if (!overlap) {
       // center↔center 연결선: 두 최근접점이 이 직선 위에 있음을 흐리게 보인다
-      g.moveTo(circleA.center.x, circleA.center.y)
-        .lineTo(circleB.center.x, circleB.center.y)
-        .stroke({ color: LINK_COLOR, width: 1 });
+      g.moveTo(circleA.cx, circleA.cy).lineTo(circleB.cx, circleB.cy).stroke({ color: LINK_COLOR, width: 1 });
 
       // clearance 선분: A 둘레 최근접점 → B 둘레 최근접점. 이 선분 길이가 곧 거리 d다
       g.moveTo(footA.x, footA.y).lineTo(footB.x, footB.y).stroke({ color: CLEAR_COLOR, width: 2 });
@@ -141,18 +137,18 @@ export function setup(runtime: PixiRuntime): () => void {
     }
 
     // 드래그 원 B (주 조작 대상): grab 시 둘레를 굵게
-    g.circle(circleB.center.x, circleB.center.y, circleB.radius)
+    g.circle(circleB.cx, circleB.cy, circleB.r)
       .fill({ color: ZONE_FILL })
       .stroke({ color: bStroke, width: grabbed ? 3 : 2 });
 
     // 두 center marker
-    g.circle(circleA.center.x, circleA.center.y, 4).fill({ color: CENTER_COLOR });
-    g.circle(circleB.center.x, circleB.center.y, 4).fill({ color: CENTER_COLOR });
+    g.circle(circleA.cx, circleA.cy, 4).fill({ color: CENTER_COLOR });
+    g.circle(circleB.cx, circleB.cy, 4).fill({ color: CENTER_COLOR });
 
     label.text = [
       `d     : ${d.toFixed(1)}   drag B`,
       `status: ${overlap ? 'overlap (touching)' : 'apart'}`,
-      `|C|   : ${centerDist.toFixed(1)}  (rA = ${circleA.radius}, rB = ${circleB.radius})`,
+      `|C|   : ${centerDist.toFixed(1)}  (rA = ${circleA.r}, rB = ${circleB.r})`,
     ].join('\n');
   };
 

@@ -48,7 +48,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const handle: XY = { x: 360, y: 140 };
 
   // drag 시에만 갱신하는 state (ticker render는 이 state만 읽어 프레임당 할당 없음)
-  let circle: { center: XY; radius: number } | undefined; // 외접원 (정의 불가면 undefined)
+  let circle: { cx: number; cy: number; r: number } | undefined; // 외접원 (정의 불가면 undefined)
 
   let grabbed = false;
 
@@ -111,15 +111,15 @@ export function setup(runtime: PixiRuntime): () => void {
 
     if (circle) {
       // 외접원 둘레: 세 점을 모두 지난다
-      g.circle(circle.center.x, circle.center.y, circle.radius).stroke({ color: CIRCLE_COLOR, width: 2 });
+      g.circle(circle.cx, circle.cy, circle.r).stroke({ color: CIRCLE_COLOR, width: 2 });
 
       // center→세 꼭짓점 spoke: 길이가 모두 같은 반지름 r임을 보이는 분해 표시 (두 번째 관계 아님)
       for (const p of [a, b, handle]) {
-        g.moveTo(circle.center.x, circle.center.y).lineTo(p.x, p.y).stroke({ color: SPOKE_COLOR, width: 1 });
+        g.moveTo(circle.cx, circle.cy).lineTo(p.x, p.y).stroke({ color: SPOKE_COLOR, width: 1 });
       }
 
       // 외접원 중심 marker
-      g.circle(circle.center.x, circle.center.y, 4).fill({ color: CENTER_COLOR });
+      g.circle(circle.cx, circle.cy, 4).fill({ color: CENTER_COLOR });
     }
 
     // 고정 두 점 A·B
@@ -133,8 +133,8 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // diagnostics: 단일 외접원 출력을 중심·반지름·상태로 읽는다 (3개)
     label.text = [
-      `center: ${circle ? `(${circle.center.x.toFixed(1)}, ${circle.center.y.toFixed(1)})` : '—'}   drag C`,
-      `r     : ${circle ? circle.radius.toFixed(1) : '—'}`,
+      `center: ${circle ? `(${circle.cx.toFixed(1)}, ${circle.cy.toFixed(1)})` : '—'}   drag C`,
+      `r     : ${circle ? circle.r.toFixed(1) : '—'}`,
       `status: ${circle ? 'ok' : 'collinear (no circle)'}`,
     ].join('\n');
   };

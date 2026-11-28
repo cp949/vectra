@@ -42,11 +42,8 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 고정 무한 직선: 거리를 측정할 기준 guide line. 조작 대상이 아니다.
   // direction은 non-zero라 degenerate(directionLengthSq===0→origin-point 거리) 분기는 미발생.
-  // object literal({ origin, direction }) structural Like 입력으로 구성한다.
-  const line = {
-    origin: { x: 200, y: 330 }, // 직선이 지나는 한 점
-    direction: { x: 320, y: -150 }, // 직선 방향(정규화 불필요, distanceToPoint이 길이로 나눔)
-  };
+  // 기준점과 방향을 ox, oy, dx, dy로 기록한다.
+  const line = { ox: 200, oy: 330, dx: 320, dy: -150 };
 
   // 점 핸들 P: 유일한 drag 대상. 직선까지의 수직 거리를 측정할 점이다
   const handle: XY = { x: 540, y: 130 };
@@ -76,11 +73,11 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // 수선의 발 foot: P를 직선에 투영한 점. distanceToPoint이 쓰는 것과 같은 투영 산술을 inline으로
     // 구해 projectPoint(두 번째 API)를 끌어오지 않는다.
-    const dx = line.direction.x;
-    const dy = line.direction.y;
+    const dx = line.dx;
+    const dy = line.dy;
     const lenSq = dx * dx + dy * dy; // 고정 non-zero direction이라 0 아님
-    const t = ((handle.x - line.origin.x) * dx + (handle.y - line.origin.y) * dy) / lenSq;
-    foot = { x: line.origin.x + t * dx, y: line.origin.y + t * dy };
+    const t = ((handle.x - line.ox) * dx + (handle.y - line.oy) * dy) / lenSq;
+    foot = { x: line.ox + t * dx, y: line.oy + t * dy };
   };
 
   const onPointerDown = (ev: PointerEvent): void => {
@@ -113,13 +110,13 @@ export function setup(runtime: PixiRuntime): () => void {
 
   // 무한 직선을 화면 양 끝까지 늘린 두 끝점을 구한다(시각화 전용, 충분히 큰 길이로 외삽)
   const lineEndpoints = (): [XY, XY] => {
-    const dx = line.direction.x;
-    const dy = line.direction.y;
+    const dx = line.dx;
+    const dy = line.dy;
     const len = Math.hypot(dx, dy);
     const k = (size.width + size.height) / len; // 화면을 확실히 가로지르는 배율
     return [
-      { x: line.origin.x - dx * k, y: line.origin.y - dy * k },
-      { x: line.origin.x + dx * k, y: line.origin.y + dy * k },
+      { x: line.ox - dx * k, y: line.oy - dy * k },
+      { x: line.ox + dx * k, y: line.oy + dy * k },
     ];
   };
 
@@ -142,9 +139,9 @@ export function setup(runtime: PixiRuntime): () => void {
       g.circle(foot.x, foot.y, 5).fill({ color: CLEAR_COLOR });
 
       // 직각 marker: 수직임을 표시 (foot에서 직선 방향·수선 방향으로 작은 ㄱ자)
-      const len = Math.hypot(line.direction.x, line.direction.y);
-      const ux = line.direction.x / len; // 직선 단위 방향
-      const uy = line.direction.y / len;
+      const len = Math.hypot(line.dx, line.dy);
+      const ux = line.dx / len; // 직선 단위 방향
+      const uy = line.dy / len;
       const nx = (handle.x - foot.x) / d; // 수선 단위 방향 (foot→P)
       const ny = (handle.y - foot.y) / d;
       const s = 12; // 직각 marker 변 길이 (px)

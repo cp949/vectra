@@ -24,33 +24,33 @@ export function setup(runtime: PixiRuntime): () => void {
   const origin = { x: 360, y: 330 };
 
   // 벽 segment 집합: 바깥 테두리 + 사각 장애물 2개 + 삼각 장애물 1개
-  const walls: { a: { x: number; y: number }; b: { x: number; y: number } }[] = [
+  const walls: { x1: number; y1: number; x2: number; y2: number }[] = [
     // 바깥 테두리
-    { a: { x: 20, y: 20 }, b: { x: 700, y: 20 } },
-    { a: { x: 700, y: 20 }, b: { x: 700, y: 420 } },
-    { a: { x: 700, y: 420 }, b: { x: 20, y: 420 } },
-    { a: { x: 20, y: 420 }, b: { x: 20, y: 20 } },
+    { x1: 20, y1: 20, x2: 700, y2: 20 },
+    { x1: 700, y1: 20, x2: 700, y2: 420 },
+    { x1: 700, y1: 420, x2: 20, y2: 420 },
+    { x1: 20, y1: 420, x2: 20, y2: 20 },
     // 사각 장애물 A
-    { a: { x: 180, y: 120 }, b: { x: 280, y: 120 } },
-    { a: { x: 280, y: 120 }, b: { x: 280, y: 220 } },
-    { a: { x: 280, y: 220 }, b: { x: 180, y: 220 } },
-    { a: { x: 180, y: 220 }, b: { x: 180, y: 120 } },
+    { x1: 180, y1: 120, x2: 280, y2: 120 },
+    { x1: 280, y1: 120, x2: 280, y2: 220 },
+    { x1: 280, y1: 220, x2: 180, y2: 220 },
+    { x1: 180, y1: 220, x2: 180, y2: 120 },
     // 사각 장애물 B
-    { a: { x: 440, y: 250 }, b: { x: 560, y: 250 } },
-    { a: { x: 560, y: 250 }, b: { x: 560, y: 360 } },
-    { a: { x: 560, y: 360 }, b: { x: 440, y: 360 } },
-    { a: { x: 440, y: 360 }, b: { x: 440, y: 250 } },
+    { x1: 440, y1: 250, x2: 560, y2: 250 },
+    { x1: 560, y1: 250, x2: 560, y2: 360 },
+    { x1: 560, y1: 360, x2: 440, y2: 360 },
+    { x1: 440, y1: 360, x2: 440, y2: 250 },
     // 삼각 장애물
-    { a: { x: 360, y: 80 }, b: { x: 430, y: 200 } },
-    { a: { x: 430, y: 200 }, b: { x: 300, y: 200 } },
-    { a: { x: 300, y: 200 }, b: { x: 360, y: 80 } },
+    { x1: 360, y1: 80, x2: 430, y2: 200 },
+    { x1: 430, y1: 200, x2: 300, y2: 200 },
+    { x1: 300, y1: 200, x2: 360, y2: 80 },
   ];
 
   // sweep 광선 수
   const RAY_COUNT = 240;
 
   // fromAngleInto 출력 buffer (매 광선마다 재기록)
-  const ray = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } };
+  const ray = { ox: 0, oy: 0, dx: 0, dy: 0 };
 
   // singleIntersectionSegmentRayInto 출력 buffer (매 벽마다 재기록)
   const hit = { x: 0, y: 0 };
@@ -136,7 +136,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
     // 벽 segment (짙은 회색)
     for (const wall of walls) {
-      g.moveTo(wall.a.x, wall.a.y).lineTo(wall.b.x, wall.b.y).stroke({ color: 0x334155, width: 3 });
+      g.moveTo(wall.x1, wall.y1).lineTo(wall.x2, wall.y2).stroke({ color: 0x334155, width: 3 });
     }
 
     // 광원 마커 (주황)

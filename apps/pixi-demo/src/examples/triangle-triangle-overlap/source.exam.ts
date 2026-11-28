@@ -14,7 +14,7 @@
 import * as Intersects from '@cp949/vectra/intersects';
 
 type XY = { x: number; y: number };
-type Tri = { a: XY; b: XY; c: XY };
+type Tri = { x1: number; y1: number; x2: number; y2: number; x3: number; y3: number };
 
 const CLEAR_COLOR = 0x60a5fa; // 안 겹침: 파랑
 const HIT_COLOR = 0xf87171; // 겹침: 빨강
@@ -35,13 +35,13 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 삼각형 A: 화면 고정 scalene. non-degenerate라 SAT degenerate 경로 미발생
-  const a: Tri = { a: { x: 180, y: 150 }, b: { x: 360, y: 300 }, c: { x: 140, y: 330 } };
+  const a: Tri = { x1: 180, y1: 150, x2: 360, y2: 300, x3: 140, y3: 330 };
   // 삼각형 B: 주 drag 대상. 모양은 고정하고 위치만 평행이동한다
-  const b: Tri = { a: { x: 500, y: 110 }, b: { x: 620, y: 160 }, c: { x: 520, y: 260 } };
+  const b: Tri = { x1: 500, y1: 110, x2: 620, y2: 160, x3: 520, y3: 260 };
 
-  // B의 v1·v2를 기준점 v0(b.a)에 대한 offset으로 보관 → 평행이동 시 모양 유지
-  const off1 = { x: b.b.x - b.a.x, y: b.b.y - b.a.y };
-  const off2 = { x: b.c.x - b.a.x, y: b.c.y - b.a.y };
+  // B의 v1·v2를 기준점 첫 꼭짓점에 대한 offset으로 보관 → 평행이동 시 모양 유지
+  const off1 = { x: b.x2 - b.x1, y: b.y2 - b.y1 };
+  const off2 = { x: b.x3 - b.x1, y: b.y3 - b.y1 };
   // 기준점 v0를 화면 안에 가두기 위한 clamp 범위 (삼각형 bbox extent 반영)
   const minOffX = Math.min(0, off1.x, off2.x);
   const maxOffX = Math.max(0, off1.x, off2.x);
@@ -49,7 +49,7 @@ export function setup(runtime: PixiRuntime): () => void {
   const maxOffY = Math.max(0, off1.y, off2.y);
 
   let grabbed = false;
-  let grabDX = 0; // pointer와 b.a의 오프셋 (drag 중 유지)
+  let grabDX = 0; // pointer와 첫 꼭짓점의 오프셋 (drag 중 유지)
   let grabDY = 0;
 
   const getCanvasXY = (e: PointerEvent): XY => {
@@ -62,9 +62,9 @@ export function setup(runtime: PixiRuntime): () => void {
   const side = (px: number, py: number, ux: number, uy: number, vx: number, vy: number): number =>
     (vx - ux) * (py - uy) - (vy - uy) * (px - ux);
   const insideTri = (p: XY, t: Tri): boolean => {
-    const d1 = side(p.x, p.y, t.a.x, t.a.y, t.b.x, t.b.y);
-    const d2 = side(p.x, p.y, t.b.x, t.b.y, t.c.x, t.c.y);
-    const d3 = side(p.x, p.y, t.c.x, t.c.y, t.a.x, t.a.y);
+    const d1 = side(p.x, p.y, t.x1, t.y1, t.x2, t.y2);
+    const d2 = side(p.x, p.y, t.x2, t.y2, t.x3, t.y3);
+    const d3 = side(p.x, p.y, t.x3, t.y3, t.x1, t.y1);
     const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
     const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
     return !(hasNeg && hasPos);
@@ -75,8 +75,8 @@ export function setup(runtime: PixiRuntime): () => void {
     // 삼각형 B 내부를 누르면 잡는다
     grabbed = insideTri(p, b);
     if (grabbed) {
-      grabDX = p.x - b.a.x;
-      grabDY = p.y - b.a.y;
+      grabDX = p.x - b.x1;
+      grabDY = p.y - b.y1;
     }
   };
 
@@ -87,12 +87,12 @@ export function setup(runtime: PixiRuntime): () => void {
     const v0x = Math.max(M - minOffX, Math.min(size.width - M - maxOffX, p.x - grabDX));
     const v0y = Math.max(TOP - minOffY, Math.min(size.height - M - maxOffY, p.y - grabDY));
     // v0 이동량만큼 세 vertex를 통째로 평행이동한다
-    b.a.x = v0x;
-    b.a.y = v0y;
-    b.b.x = v0x + off1.x;
-    b.b.y = v0y + off1.y;
-    b.c.x = v0x + off2.x;
-    b.c.y = v0y + off2.y;
+    b.x1 = v0x;
+    b.y1 = v0y;
+    b.x2 = v0x + off1.x;
+    b.y2 = v0y + off1.y;
+    b.x3 = v0x + off2.x;
+    b.y3 = v0y + off2.y;
   };
 
   const onPointerUp = (): void => {
@@ -114,15 +114,15 @@ export function setup(runtime: PixiRuntime): () => void {
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
 
     // 삼각형 A(고정): 상태 색으로 칠한다
-    g.poly([a.a.x, a.a.y, a.b.x, a.b.y, a.c.x, a.c.y]);
+    g.poly([a.x1, a.y1, a.x2, a.y2, a.x3, a.y3]);
     g.fill({ color: stateColor, alpha: 0.14 });
-    g.poly([a.a.x, a.a.y, a.b.x, a.b.y, a.c.x, a.c.y]);
+    g.poly([a.x1, a.y1, a.x2, a.y2, a.x3, a.y3]);
     g.stroke({ color: stateColor, width: 2 });
 
     // 삼각형 B(drag 대상): 같은 상태 색, 잡으면 stroke 굵게
-    g.poly([b.a.x, b.a.y, b.b.x, b.b.y, b.c.x, b.c.y]);
+    g.poly([b.x1, b.y1, b.x2, b.y2, b.x3, b.y3]);
     g.fill({ color: stateColor, alpha: 0.14 });
-    g.poly([b.a.x, b.a.y, b.b.x, b.b.y, b.c.x, b.c.y]);
+    g.poly([b.x1, b.y1, b.x2, b.y2, b.x3, b.y3]);
     g.stroke({ color: stateColor, width: grabbed ? 3 : 2 });
 
     // boolean predicate라 분해할 scalar가 없다 → overlap + 안내만 표시한다

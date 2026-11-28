@@ -138,7 +138,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const eased = Easing.cubicInOut(pingPong);
 
     morphPathInto(morphed, equalizedA, equalizedB, eased);
-    Paths.flattenInto(flat, morphed, { flatness: 2 });
+    Paths.flattenInto(flat, morphed, { flatness: 2, maxRecursion: 32 });
 
     g.clear();
 

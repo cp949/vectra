@@ -15,9 +15,9 @@
 
 import * as Angles from '@cp949/vectra/angle';
 import * as Curves from '@cp949/vectra/curve';
+import type { CubicCurveWritable } from '@cp949/vectra/types';
 
 type XY = { x: number; y: number };
-type Cubic = { p0: XY; p1: XY; p2: XY; p3: XY };
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app, size } = runtime;
@@ -54,7 +54,7 @@ export function setup(runtime: PixiRuntime): () => void {
   };
 
   // ticker hot path: 매 프레임 다시 계산하므로 out 배열 1개씩 재사용해 프레임당 재할당을 피한다
-  const cubicsOut: Cubic[] = [];
+  const cubicsOut: CubicCurveWritable[] = [];
   const arcPointsOut: XY[] = [];
 
   // 끝 handle 화면 좌표 (호 끝점). startAngle 이 0 이라 endAngle 위치의 원 위 점
@@ -107,7 +107,7 @@ export function setup(runtime: PixiRuntime): () => void {
     // 핵심 호출: 호를 ≤maxAngle(기본 π/2) cubic Bezier 목록으로 근사
     Curves.arcToCubicInto(cubicsOut, arc);
     // 참조용 true arc: dense polyline 으로 같은 호를 샘플
-    Curves.arcSampleInto(arcPointsOut, arc, 96);
+    Curves.arcSampleInto(arcPointsOut, arc, { steps: 96 });
 
     g.clear();
     g.rect(0, 0, size.width, size.height).fill({ color: 0x0f172a });
@@ -126,23 +126,23 @@ export function setup(runtime: PixiRuntime): () => void {
     // cubic 근사 곡선 (밝은 청록): 각 segment 를 bezierCurveTo 로 그린다
     for (let i = 0; i < cubicsOut.length; i++) {
       const c = cubicsOut[i];
-      g.moveTo(c.p0.x, c.p0.y).bezierCurveTo(c.p1.x, c.p1.y, c.p2.x, c.p2.y, c.p3.x, c.p3.y);
+      g.moveTo(c.x0, c.y0).bezierCurveTo(c.x1, c.y1, c.x2, c.y2, c.x3, c.y3);
     }
     g.stroke({ color: 0x22d3ee, width: 2 });
 
     // segment 구조: control handle 선(p0-p1, p2-p3), control point(p1/p2), junction(p0/p3)
     for (let i = 0; i < cubicsOut.length; i++) {
       const c = cubicsOut[i];
-      g.moveTo(c.p0.x, c.p0.y).lineTo(c.p1.x, c.p1.y).stroke({ color: 0xf59e0b, width: 1, alpha: 0.7 });
-      g.moveTo(c.p3.x, c.p3.y).lineTo(c.p2.x, c.p2.y).stroke({ color: 0xf59e0b, width: 1, alpha: 0.7 });
-      g.circle(c.p1.x, c.p1.y, 3).fill({ color: 0xf59e0b });
-      g.circle(c.p2.x, c.p2.y, 3).fill({ color: 0xf59e0b });
+      g.moveTo(c.x0, c.y0).lineTo(c.x1, c.y1).stroke({ color: 0xf59e0b, width: 1, alpha: 0.7 });
+      g.moveTo(c.x3, c.y3).lineTo(c.x2, c.y2).stroke({ color: 0xf59e0b, width: 1, alpha: 0.7 });
+      g.circle(c.x1, c.y1, 3).fill({ color: 0xf59e0b });
+      g.circle(c.x2, c.y2, 3).fill({ color: 0xf59e0b });
       // junction(segment 경계)은 흰 점으로 강조 — sweep 90° 마다 하나씩 늘어난다
-      g.circle(c.p0.x, c.p0.y, 4).fill({ color: 0xe2e8f0 });
+      g.circle(c.x0, c.y0, 4).fill({ color: 0xe2e8f0 });
     }
     // 마지막 segment 끝 junction
     const last = cubicsOut[cubicsOut.length - 1];
-    if (last) g.circle(last.p3.x, last.p3.y, 4).fill({ color: 0xe2e8f0 });
+    if (last) g.circle(last.x3, last.y3, 4).fill({ color: 0xe2e8f0 });
 
     // 끝 handle (주 대상)
     g.circle(handleX(), handleY(), grabbed ? 9 : 7).fill({ color: 0x4ade80 });

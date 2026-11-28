@@ -42,25 +42,21 @@ export function setup(runtime: PixiRuntime): () => void {
   label.position.set(16, 14);
   app.stage.addChild(label);
 
-  const triangle: MutableTriangle = {
+  const handles: MutableTriangle = {
     a: { x: 135, y: 320 },
     b: { x: 345, y: 320 },
     c: { x: 220, y: 105 },
   };
-  const vertices = [triangle.a, triangle.b, triangle.c];
+  const vertices = [handles.a, handles.b, handles.c];
 
   const sssAngles: TriangleAngleBuffer = { a: 0, b: 0, c: 0 };
   const asaSides: TriangleSideBuffer = { a: 0, b: 0, c: 0 };
   const rawAngles: number[] = [];
   const rawAnglesBuffer: number[] = [];
   const excentersBuffer: Point[] = [];
-  const excirclesBuffer: { center: Point; radius: number }[] = [];
-  const medialBuffer: MutableTriangle = {
-    a: { x: 0, y: 0 },
-    b: { x: 0, y: 0 },
-    c: { x: 0, y: 0 },
-  };
-  const sideBuffer = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+  const excirclesBuffer: ReturnType<typeof Triangles.excircles> = [];
+  const medialBuffer = { x1: 0, y1: 0, x2: 0, y2: 0, x3: 0, y3: 0 };
+  const sideBuffer = { x1: 0, y1: 0, x2: 0, y2: 0 };
   const vertexBuffer: Point = { x: 0, y: 0 };
 
   const VERTEX_RADIUS = 8;
@@ -101,8 +97,13 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerup', onPointerUp);
   canvas.addEventListener('pointerleave', onPointerUp);
 
-  const drawTriangle = (target: MutableTriangle, color: number, width: number, alpha = 1): void => {
-    g.poly([target.a.x, target.a.y, target.b.x, target.b.y, target.c.x, target.c.y]).stroke({
+  const drawTriangle = (
+    target: Parameters<typeof Triangles.area>[0],
+    color: number,
+    width: number,
+    alpha = 1
+  ): void => {
+    g.poly([target.x1, target.y1, target.x2, target.y2, target.x3, target.y3]).stroke({
       color,
       width,
       alpha,
@@ -130,9 +131,17 @@ export function setup(runtime: PixiRuntime): () => void {
   const clampCircleRadius = (radius: number): number => Math.min(520, Math.max(0, radius));
 
   const render = (): void => {
-    const sideA = distance(triangle.b, triangle.c);
-    const sideB = distance(triangle.c, triangle.a);
-    const sideC = distance(triangle.a, triangle.b);
+    const triangle = {
+      x1: handles.a.x,
+      y1: handles.a.y,
+      x2: handles.b.x,
+      y2: handles.b.y,
+      x3: handles.c.x,
+      y3: handles.c.y,
+    };
+    const sideA = distance(handles.b, handles.c);
+    const sideB = distance(handles.c, handles.a);
+    const sideC = distance(handles.a, handles.b);
 
     const sss = Triangles.solveSss(sideA, sideB, sideC);
     const hasSSSInto = Triangles.solveSssInto(sssAngles, sideA, sideB, sideC) !== false;
@@ -145,7 +154,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const hasASAInto = sss ? Triangles.solveAsaInto(asaSides, sss.a, sideC, sss.b) !== false : false;
     const preview = asa ? buildTriangleFromSides(asa.a, asa.b, asa.c, previewOrigin) : undefined;
 
-    const medial = Triangles.medialTriangle(triangle) as MutableTriangle;
+    const medial = Triangles.medialTriangle(triangle);
     Triangles.medialTriangleInto(medialBuffer, triangle);
 
     const excenters = Triangles.excenters(triangle);
@@ -164,7 +173,7 @@ export function setup(runtime: PixiRuntime): () => void {
     for (let i = 0; i < excircles.length; i++) {
       const circle = excircles[i];
       if (!circle) continue;
-      g.circle(circle.center.x, circle.center.y, clampCircleRadius(circle.radius)).stroke({
+      g.circle(circle.cx, circle.cy, clampCircleRadius(circle.r)).stroke({
         color: EXCIRCLE_COLORS[i] ?? 0x94a3b8,
         width: 1,
         alpha: 0.32,
@@ -176,19 +185,17 @@ export function setup(runtime: PixiRuntime): () => void {
     drawTriangle(medialBuffer, MEDIAL_COLOR, 1, 0.35);
 
     if (hasSideInto) {
-      g.moveTo(sideBuffer.a.x, sideBuffer.a.y).lineTo(sideBuffer.b.x, sideBuffer.b.y).stroke({
+      g.moveTo(sideBuffer.x1, sideBuffer.y1).lineTo(sideBuffer.x2, sideBuffer.y2).stroke({
         color: 0xfb7185,
         width: 4,
         alpha: 0.65,
       });
     }
     if (sideFromCompanion) {
-      g.moveTo(sideFromCompanion.a.x, sideFromCompanion.a.y)
-        .lineTo(sideFromCompanion.b.x, sideFromCompanion.b.y)
-        .stroke({
-          color: 0xfacc15,
-          width: 1.5,
-        });
+      g.moveTo(sideFromCompanion.x1, sideFromCompanion.y1).lineTo(sideFromCompanion.x2, sideFromCompanion.y2).stroke({
+        color: 0xfacc15,
+        width: 1.5,
+      });
     }
 
     for (let i = 0; i < excenters.length; i++) {
@@ -201,7 +208,11 @@ export function setup(runtime: PixiRuntime): () => void {
     if (vertexFromCompanion) drawPoint(vertexFromCompanion, 0xffffff, 2.5);
 
     if (preview) {
-      drawTriangle(preview, PREVIEW_COLOR, 3);
+      drawTriangle(
+        { x1: preview.a.x, y1: preview.a.y, x2: preview.b.x, y2: preview.b.y, x3: preview.c.x, y3: preview.c.y },
+        PREVIEW_COLOR,
+        3
+      );
       drawPoint(preview.a, PREVIEW_COLOR, 5);
       drawPoint(preview.b, PREVIEW_COLOR, 5);
       drawPoint(preview.c, PREVIEW_COLOR, 5);

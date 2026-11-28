@@ -55,12 +55,15 @@ export function setup(runtime: PixiRuntime): () => void {
     path: { y: 398, name: 'path magnetic snap', fn: 'path.closestPoint' },
   } satisfies Record<CaseId, { y: number; name: string; fn: string }>;
 
-  const box = { min: { x: 360, y: rows.bounds.y + 16 }, max: { x: 540, y: rows.bounds.y + 74 } };
-  const circle = { center: { x: 450, y: rows.circle.y + 48 }, radius: 38 };
+  const box = { minX: 360, minY: rows.bounds.y + 16, maxX: 540, maxY: rows.bounds.y + 74 };
+  const circle = { cx: 450, cy: rows.circle.y + 48, r: 38 };
   const triangle = {
-    a: { x: 380, y: rows.triangle.y + 20 },
-    b: { x: 545, y: rows.triangle.y + 52 },
-    c: { x: 392, y: rows.triangle.y + 82 },
+    x1: 380,
+    y1: rows.triangle.y + 20,
+    x2: 545,
+    y2: rows.triangle.y + 52,
+    x3: 392,
+    y3: rows.triangle.y + 82,
   };
   const pathCommands = [
     { kind: 'move', x: 350, y: rows.path.y + 70 },
@@ -116,13 +119,13 @@ export function setup(runtime: PixiRuntime): () => void {
   canvas.addEventListener('pointerleave', onPointerUp);
 
   const circleNearest = (probe: XY): XY => {
-    const dx = probe.x - circle.center.x;
-    const dy = probe.y - circle.center.y;
+    const dx = probe.x - circle.cx;
+    const dy = probe.y - circle.cy;
     const len = Math.hypot(dx, dy);
-    if (len <= EPS) return { x: circle.center.x + circle.radius, y: circle.center.y };
+    if (len <= EPS) return { x: circle.cx + circle.r, y: circle.cy };
     return {
-      x: circle.center.x + (dx / len) * circle.radius,
-      y: circle.center.y + (dy / len) * circle.radius,
+      x: circle.cx + (dx / len) * circle.r,
+      y: circle.cy + (dy / len) * circle.r,
     };
   };
 
@@ -176,15 +179,13 @@ export function setup(runtime: PixiRuntime): () => void {
       drawRowHeader(id, clearance[id]);
     }
 
-    g.rect(box.min.x, box.min.y, box.max.x - box.min.x, box.max.y - box.min.y)
+    g.rect(box.minX, box.minY, box.maxX - box.minX, box.maxY - box.minY)
       .fill({ color: SHAPE, alpha: 0.16 })
       .stroke({ color: SHAPE, width: 2 });
 
-    g.circle(circle.center.x, circle.center.y, circle.radius)
-      .fill({ color: SHAPE, alpha: 0.16 })
-      .stroke({ color: SHAPE, width: 2 });
+    g.circle(circle.cx, circle.cy, circle.r).fill({ color: SHAPE, alpha: 0.16 }).stroke({ color: SHAPE, width: 2 });
 
-    g.poly([triangle.a.x, triangle.a.y, triangle.b.x, triangle.b.y, triangle.c.x, triangle.c.y])
+    g.poly([triangle.x1, triangle.y1, triangle.x2, triangle.y2, triangle.x3, triangle.y3])
       .fill({ color: SHAPE, alpha: 0.16 })
       .stroke({ color: SHAPE, width: 2 });
 

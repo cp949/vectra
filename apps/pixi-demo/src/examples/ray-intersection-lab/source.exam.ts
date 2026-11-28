@@ -17,7 +17,7 @@ import * as Rays from '@cp949/vectra/ray';
 type XY = { x: number; y: number };
 type Handle = XY & { role: string; color: number };
 type RayHandles = { origin: Handle; direction: Handle };
-type RayShape = { origin: XY; direction: XY };
+type RayShape = ReturnType<typeof Rays.createRay>;
 
 export function setup(runtime: PixiRuntime): () => void {
   const { PIXI, app, size } = runtime;
@@ -59,9 +59,11 @@ export function setup(runtime: PixiRuntime): () => void {
   const distance = (a: XY, b: XY): number => Math.hypot(a.x - b.x, a.y - b.y);
 
   const toRay = (handles: RayHandles): RayShape => {
-    return Rays.rayFrom(handles.origin, {
-      x: handles.direction.x - handles.origin.x,
-      y: handles.direction.y - handles.origin.y,
+    return Rays.rayFrom({
+      ox: handles.origin.x,
+      oy: handles.origin.y,
+      dx: handles.direction.x - handles.origin.x,
+      dy: handles.direction.y - handles.origin.y,
     });
   };
 
@@ -98,8 +100,8 @@ export function setup(runtime: PixiRuntime): () => void {
 
   const drawRay = (ray: RayShape, color: number): void => {
     const end = rayEnd(ray, 3);
-    g.moveTo(ray.origin.x, ray.origin.y).lineTo(end.x, end.y).stroke({ color, width: 3 });
-    g.moveTo(ray.origin.x, ray.origin.y).lineTo(rayEnd(ray, -0.35).x, rayEnd(ray, -0.35).y).stroke({
+    g.moveTo(ray.ox, ray.oy).lineTo(end.x, end.y).stroke({ color, width: 3 });
+    g.moveTo(ray.ox, ray.oy).lineTo(rayEnd(ray, -0.35).x, rayEnd(ray, -0.35).y).stroke({
       color,
       width: 1,
       alpha: 0.28,
@@ -127,7 +129,7 @@ export function setup(runtime: PixiRuntime): () => void {
     const reverseEnd = Rays.pointAtT(reverseA, 0.45);
     const aDegenerate = Rays.isDegenerate(reusableA);
     const bDegenerate = Rays.isDegenerate(sourceB);
-    const bOriginDistanceSq = Rays.distanceToPointSq(reusableA, sourceB.origin);
+    const bOriginDistanceSq = Rays.distanceToPointSq(reusableA, rayB.origin);
     const statusColor = hasIntersectionInto ? 0x4ade80 : aDegenerate || bDegenerate ? 0xfacc15 : 0xf97316;
 
     g.clear();
@@ -135,7 +137,7 @@ export function setup(runtime: PixiRuntime): () => void {
 
     drawRay(reusableA, 0x38bdf8);
     drawRay(sourceB, 0xfb7185);
-    g.moveTo(reusableA.origin.x, reusableA.origin.y).lineTo(reverseEnd.x, reverseEnd.y).stroke({
+    g.moveTo(reusableA.ox, reusableA.oy).lineTo(reverseEnd.x, reverseEnd.y).stroke({
       color: 0xa78bfa,
       width: 2,
       alpha: 0.75,
@@ -147,12 +149,12 @@ export function setup(runtime: PixiRuntime): () => void {
     if (hasIntersectionInto && intersection) {
       g.circle(intersectionOut.x, intersectionOut.y, 11).fill({ color: statusColor, alpha: 0.25 });
       g.circle(intersection.x, intersection.y, 6).fill({ color: statusColor });
-      g.moveTo(reusableA.origin.x, reusableA.origin.y).lineTo(intersection.x, intersection.y).stroke({
+      g.moveTo(reusableA.ox, reusableA.oy).lineTo(intersection.x, intersection.y).stroke({
         color: statusColor,
         width: 1.5,
         alpha: 0.5,
       });
-      g.moveTo(sourceB.origin.x, sourceB.origin.y).lineTo(intersection.x, intersection.y).stroke({
+      g.moveTo(sourceB.ox, sourceB.oy).lineTo(intersection.x, intersection.y).stroke({
         color: statusColor,
         width: 1.5,
         alpha: 0.5,

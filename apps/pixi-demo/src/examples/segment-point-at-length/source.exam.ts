@@ -32,7 +32,7 @@ export function setup(runtime: PixiRuntime): () => void {
   app.stage.addChild(label);
 
   // 고정 segment(비수평이라 방향이 자명하지 않게). 시작점 a가 거리 0의 기준이다
-  const seg = { a: { x: 180, y: 300 }, b: { x: 560, y: 150 } };
+  const seg = { x1: 180, y1: 300, x2: 560, y2: 150 };
   const segLen = Segments.length(seg); // ≈ 408.5
 
   // distance 트랙(하단 가로 막대). 트랙 x ↔ 거리 d를 선형 매핑한다
@@ -117,11 +117,11 @@ export function setup(runtime: PixiRuntime): () => void {
     g.moveTo(guideStart.x, guideStart.y).lineTo(guideEnd.x, guideEnd.y).stroke({ color: 0x334155, width: 1 });
 
     // segment 본체(밝게): 거리 [0, length] 구간
-    g.moveTo(seg.a.x, seg.a.y).lineTo(seg.b.x, seg.b.y).stroke({ color: 0x94a3b8, width: 3 });
+    g.moveTo(seg.x1, seg.y1).lineTo(seg.x2, seg.y2).stroke({ color: 0x94a3b8, width: 3 });
 
     // 시작점 a(거리 0 기준)·끝점 b(거리 length)
-    g.circle(seg.a.x, seg.a.y, 5).fill({ color: 0x64748b });
-    g.circle(seg.b.x, seg.b.y, 5).fill({ color: 0x64748b });
+    g.circle(seg.x1, seg.y1, 5).fill({ color: 0x64748b });
+    g.circle(seg.x2, seg.y2, 5).fill({ color: 0x64748b });
 
     // extrapolate ghost marker: 범위 밖일 때만 clamp marker와 갈라져 보인다
     g.circle(extraPt.x, extraPt.y, 7).stroke({ color: 0xf59e0b, width: 1.5 });
