@@ -1,4 +1,4 @@
-# Degenerate와 Numeric Policy
+# 예외 처리와 수치 정책
 
 `vectra`는 throw-heavy geometry API가 아니다.
 계산 결과가 존재하지 않는 geometry case는 함수별 sentinel로 알린다.

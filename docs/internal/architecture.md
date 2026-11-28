@@ -165,7 +165,7 @@ depth 4+ 파일, 도메인 `index.ts`가 아닌 leaf를 entrypoint에서 제외�
 
 예외 throw 최소화. non-finite 입력은 IEEE 754 전파 규칙을 따른다(throw 대신 NaN/Infinity 전파).
 결과 없음은 `null`/빈 결과/sentinel로 표현한다. 상세 규칙은 [정밀도 정책](./precision.md)과
-[Degenerate와 Numeric Policy](../guides/degen-and-numeric-policy.md) 참고.
+[예외 처리와 수치 정책](../guides/degen-and-numeric-policy.md) 참고.
 
 - degenerate geometry(zero-length segment, near-collinear triangle)는 명시적 guard로 수렴 결과 반환.
 - circumcenter류는 guard와 denominator를 동일 float 전개로 묶어 near-collinear 모순

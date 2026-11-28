@@ -6,7 +6,7 @@
 | ------------------------------------------------ | --------------------------------------- |
 | [issue-tracker.md](./issue-tracker.md)           | GitHub Issues 조작과 상태 규칙          |
 | [triage-labels.md](./triage-labels.md)           | 분류 역할과 라벨 대응                   |
-| [domain.md](./domain.md)                         | `CONTEXT.md`와 ADR 읽기 규칙            |
+| [domain.md](./domain.md)                         | 도메인 용어와 ADR 읽기 규칙            |
 | [writing-styles.md](./writing-styles.md)         | 주석·문서 문장 규칙과 참조 표기         |
 | [workflow-shared.md](./workflow-shared.md)       | 두 레인의 공통 계약                     |
 | [qq-workflow.md](./qq-workflow.md)               | 계획서 하나로 끝내는 경량 흐름          |
@@ -29,8 +29,8 @@
 
 - 코드와 타입에서 바로 읽히는 내용. 소스를 직접 읽는다.
 - 한 함수 안에서 끝나는 구현 방식. TSDoc에 둔다.
-- 한 작업의 진행 과정과 임시 결정. `_works/`와 커밋 메시지에 둔다.
-- 에이전트가 반복한 실수. `docs/internal/agent-traps/`에 둔다.
+- 한 작업의 진행 과정과 임시 결정. 작업 폴더와 커밋 메시지에 둔다.
+- 에이전트가 반복한 실수. [에이전트 함정](../internal/agent-traps/README.md)에 둔다.
 
 `docs/internal/adr/`와의 구분:
 
@@ -44,7 +44,7 @@
 - 기존 문서(`architecture.md`, `api-design.md`, `precision.md` 등)에 맞는 주제면 그 문서에 절을 추가한다.
 - 새 문서를 만들면 `docs/internal/README.md` 색인 표에 한 줄을 추가한다.
 - 현재 시점의 내용만 적는다. 소스 줄 번호를 적지 않는다.
-- 무효가 된 문서의 처리는 `writing-styles.md`의 "수명"을 따른다.
+- 무효가 된 문서는 [문서 수명 규칙](./writing-styles.md#수명)에 따라 처리한다.
 - 기록할지 애매하면 쓰기 전에 사용자에게 묻는다.
 - `_works/`, `_tmp/`, `docs/superpowers/`는 Git 추적 대상이 아니다.
 

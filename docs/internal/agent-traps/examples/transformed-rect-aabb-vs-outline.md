@@ -26,7 +26,7 @@ d.rect(ctx, transformed, { stroke: '#38bdf8' });
 ## 방지
 
 예제가 "회전된 도형"을 보여줘야 하면 네 corner를 `transformPointInto`로 직접 변환하고
-`polygon` 또는 `polyline`으로 그린다.
+`polygon` 또는 `polyline`으로 그린다. Canvas draw API의 `polygon`에는 x, y가 번갈아 나오는 좌표 배열을 넘긴다.
 
 ```ts
 const transformedRect = {
@@ -46,7 +46,8 @@ Matrices.transformPointInto(transformedRect.points[2], matrix, {
 });
 Matrices.transformPointInto(transformedRect.points[3], matrix, { x: rect.x, y: rect.y + rect.height });
 
-d.polygon(ctx, transformedRect, { stroke: '#38bdf8' });
+const polygon = transformedRect.points.flatMap(({ x, y }) => [x, y]);
+d.polygon(ctx, polygon, { stroke: '#38bdf8' });
 ```
 
 `transformRectInto`를 함께 쓰는 경우에는 AABB임을 라벨/주석/시각 스타일로 분명히 구분한다.

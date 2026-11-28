@@ -17,7 +17,7 @@
 | [Import 방식](./guides/imports.md) | root(type·metadata)와 domain subpath를 구분할 때 |
 | [Output과 Into](./guides/outputs-and-into.md) | allocation과 caller-owned output 재사용을 선택할 때 |
 | [Input과 Shape](./guides/inputs-and-shapes.md) | `{ x, y }`와 평평한 도형 입력 규칙을 확인할 때 |
-| [Degenerate와 Numeric Policy](./guides/degen-and-numeric-policy.md) | sentinel, `RangeError`, epsilon 처리를 확인할 때 |
+| [예외 처리와 수치 정책](./guides/degen-and-numeric-policy.md) | sentinel, `RangeError`, epsilon 처리를 확인할 때 |
 | [Adapter](./guides/adapters.md) | SVG points/path 같은 외부 format 변환을 사용할 때 |
 
 ## Reference
@@ -29,12 +29,11 @@
 
 ## 내부 문서
 
-내부 문서는 외부 사용자 첫 흐름이 아니다.
-기여, release, agent 작업, numeric regression 방지에 필요할 때 읽는다.
+기여 절차, 배포, 에이전트 작업, 수치 계산의 회귀 방지 규칙을 다룬다.
 
 | 문서 | 읽는 때 |
 | --- | --- |
 | [내부 문서 허브](./internal/README.md) | 내부 문서 목록을 볼 때 |
 | [API 설계](./internal/api-design.md) | public API 설계 규칙을 확인할 때 |
 | [정밀도 정책](./internal/precision.md) | numeric tolerance와 degenerate policy를 확인할 때 |
-| [Agent 함정](./internal/agent-traps/) | 반복 회귀를 피할 때 |
+| [Agent 함정](./internal/agent-traps/index.md) | 반복 회귀를 피할 때 |

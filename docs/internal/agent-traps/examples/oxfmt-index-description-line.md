@@ -1,4 +1,4 @@
-# 예제 index.ts description 한 줄 강제 (oxfmt)
+# 예제 index.ts description 줄바꿈은 oxfmt에 맡긴다
 
 태그: `examples`, `oxfmt`, `format`, `verify`
 
@@ -27,15 +27,8 @@ wrap한다. 즉 양방향 모두 강제된다.
 
 ## 증상
 
-`pnpm verify`에서 `@repo/pixi-demo:format:check`가 실패하고 turbo가 같은 캐시 그룹의 typecheck/
-build/lint까지 연쇄 ELIFECYCLE로 막는다.
-
-```txt
-@repo/pixi-demo:format:check:     17    │ - ··description:
-@repo/pixi-demo:format:check:     18    │ - ····'...'
-@repo/pixi-demo:format:check:        17 │ + ··description: '...'
-@repo/pixi-demo:format:check: Found 1 error.
-```
+`pnpm verify`가 호출하는 루트 `pnpm lint`의 `oxfmt --check .` 단계에서 실패한다.
+oxfmt가 현재 줄바꿈과 정규화된 줄바꿈의 차이를 출력한다.
 
 ## 방지
 

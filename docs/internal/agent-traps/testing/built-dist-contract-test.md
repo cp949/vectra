@@ -10,9 +10,9 @@ string으로 dynamic import를 쓰면 TypeScript가 정적으로 모듈을 해�
 `pnpm clean` 직후)에서는 `error TS2307: Cannot find module '../../dist/vec/index.js'`로 typecheck가
 항상 실패한다.
 
-또한 같은 test 파일을 default `tests/` 디렉터리에 두면 Turborepo `test` task가 같은 package의
-`build`에 의존하지 않아 `pnpm verify`에서 test와 build가 병렬로 실행된다. dist가 없거나 stale한
-상태에서 test가 먼저 시작하면 runtime dynamic import도 실패한다.
+Turborepo의 기본 `test` task는 의존 패키지의 `^build`에만 의존한다. 같은 패키지의
+`build`는 `pnpm verify`의 기본 테스트보다 먼저 끝난다는 보장이 없다. dist가 없으면
+runtime dynamic import가 실패하고, 이전 빌드가 남으면 오래된 산출물을 검사할 수 있다.
 
 ## 증상
 
@@ -49,25 +49,12 @@ turbo cache가 살아 있거나 dist가 이미 빌드된 상태에서만 우연�
    }
    ```
 
-   default `test`에서 contract test가 dist 없이 실행되는 것을 막는 방법은 두 가지가 있다.
+   저장소 루트에서 `pnpm test:contract`를 실행한다. 이 명령은 같은 패키지의 build를
+   먼저 실행한 뒤 계약 테스트를 실행한다. `pnpm --filter @cp949/vectra test:contract`는
+   패키지 스크립트를 직접 실행하므로 build를 선행하지 않는다.
 
-   **2a. turbo `test` task에 same-package `build`를 `dependsOn`으로 추가한다 (현 vectra 구성)**
-
-   `turbo.json`의 `test` task에 `"build"`를 추가하면 default `pnpm test`에서도 build가 선행된다.
-   `vitest.config.ts`는 `include: ['tests/**/*.test.ts']`로 단순하게 유지할 수 있다.
-
-   ```json
-   "test": {
-     "dependsOn": ["^build", "build"],
-     ...
-   }
-   ```
-
-   **2b. vitest config의 `include`/`exclude`로 default `test`에서 contract test를 제외한다**
-
-   `vitest.config.ts`에서 `tests/contract` 디렉터리를 `exclude`하거나 `include` 패턴을 좁혀
-   default `test`에서 contract test가 실행되지 않도록 한다. `test:contract` script만 해당
-   디렉터리를 실행한다.
+   현재 Vectra의 기본 Vitest 설정도 `tests/contract`를 수집하므로, 기본 테스트를 단독으로
+   실행할 때는 최신 dist를 먼저 빌드하거나 dist에 의존하지 않는 테스트 경로를 지정한다.
 
 3. **두 contract test 파일이 동일한 함수 목록을 공유하면 drift 위험**
 

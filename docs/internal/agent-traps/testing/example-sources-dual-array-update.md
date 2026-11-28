@@ -33,7 +33,7 @@
 
 ## 방지
 
-새 pixi 예제를 추가하면 `example-sources.test.ts`에서 네 곳을 모두 갱신한다.
+새 pixi 예제를 추가하면 `example-sources.test.ts`에서 다음 항목을 함께 갱신한다.
 
 - `import { fooExample } from './foo';`
 - `import fooCode from './foo/source.exam.ts?raw';`

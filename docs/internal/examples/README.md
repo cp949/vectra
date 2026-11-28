@@ -16,12 +16,7 @@
 `<example-id>`는 `PlaygroundExample.id`와 URL slug가 모두 같은 값이다. 형식은
 `^[a-z0-9]+(?:-[a-z0-9]+)*$`다.
 
-예제 추가 계획서는 기본적으로 `S1-RM-013` 아래에 둔다. 예제가 특정 domain API를 보여주더라도
-roadmap 연결은 API 구현 item보다 `S1-RM-013: MVP usability recipes and examples`를 우선한다.
-
-```txt
-_works/S1-RM-013/<yyyyMMdd>-<seq>-<example-id>-example/01-계획.md
-```
+계획서가 필요한 작업은 [작업 레인](../../agents/README.md#작업-레인)의 절차를 따른다.
 
 ## 새 예제 추가 체크리스트
 
@@ -51,8 +46,7 @@ Pixi 예제:
 2. `apps/pixi-demo/src/examples/<example-id>/source.exam.ts`를 추가한다.
 3. `apps/pixi-demo/src/examples/catalog.ts`에 import와 `EXAMPLES` 항목을 추가한다.
 4. `apps/pixi-demo/src/examples/example-sources.test.ts`에 raw source 검증을 추가한다.
-5. 새 `@cp949/vectra/<domain>` namespace import가 있으면 `apps/pixi-demo/src/sandbox/pixi-module-specifiers.ts`의
-   allowlist와 runtime module specifier를 함께 갱신한다.
+5. 새 domain을 import하면 sandbox 실행을 확인한다. allowlist와 런타임 모듈 목록은 패키지의 `exports`에서 가져온다.
 6. 필요하면 `docs/internal/examples/recommended.md`의 후보를 `Done`으로 옮기고 연결을 기록한다.
 
 예제 파일 역할:
@@ -126,10 +120,8 @@ Vectorx.addScaledInto(position, position, velocity, dt);
   PascalCase 단수 의미 + `x` 접미사(`Anglex`, `Vectorx`, `Segmentx`, `Circlex`,
   `Randomx`)를 사용한다. 하이픈 domain은 하이픈을 제거한 PascalCase 뒤에 `x`를 붙인다
   (`InfiniteLinex`).
-- 예제에서 새 domain namespace import를 쓰면 sandbox allowlist에도 같은 `@cp949/vectra/<domain>`을
-  추가한다.
+- Canvas와 Pixi의 sandbox는 패키지의 `exports`에 등록된 공개 경로를 사용한다.
 - leaf package subpath import는 쓰지 않는다. 공식 import 경로는 root/domain barrel이다.
-- sandbox allowlist 오류 때문에 leaf import로 우회하지 않는다. allowlist를 domain barrel에 맞춘다.
 
 ## 예제 API 형식 선택 (`*Into` vs allocating companion)
 
@@ -138,12 +130,19 @@ Vectorx.addScaledInto(position, position, velocity, dt);
 생겨 예제가 복잡해지고, 사용자에게 API가 쓰기 불편하다는 인상을 준다.
 
 ```ts
+import * as Pathx from '@cp949/vectra/path';
+
+const commands: Pathx.PathCommand[] = [
+  { kind: 'move', x: 0, y: 0 },
+  { kind: 'line', x: 3, y: 4 },
+];
+
 // 권장: 결과를 한 번만 쓰는 경우
-const b = Paths.bounds(commands);
+const bounds = Pathx.bounds(commands);
 
 // 비권장: out-object scaffold가 예제 흐름을 가린다
-const b = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-Paths.boundsInto(b, commands);
+const out = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+Pathx.boundsInto(out, commands);
 ```
 
 `*Into`를 쓰는 경우는 다음으로 제한한다.
@@ -151,13 +150,12 @@ Paths.boundsInto(b, commands);
 - 동일 buffer를 loop 안에서 반복 기록하는 hot path (예: 등거리 샘플링에서 marker point 1개를
   재사용).
 - output buffer 소유와 재사용 흐름 자체가 예제 주제일 때.
-- allocating companion이 없는 함수 (예: `svg-path/parsePathDataInto`).
+- allocating companion이 없는 함수.
 
 규칙:
 
 - allocating companion 유무는 domain barrel에서 확인한다 (`bounds`/`boundsInto` 쌍 등).
 - companion이 없으면 `*Into`를 그대로 쓴다. companion을 만들려고 public API를 늘리지 않는다.
-- companion이 없어 `*Into`를 유지한 단발성 object 결과는 루트 `TODO.md`에 companion 후보로 기록한다.
 - `*Into` 시연을 위해 buffer 재사용이 필요 없는 곳에 억지 loop를 넣지 않는다.
 
 ## 읽는 순서
@@ -176,10 +174,8 @@ Paths.boundsInto(b, commands);
 
 필요하면 함께 읽는다.
 
-- 과거 프로젝트 상태 문서: 현재 작업 queue와 제품 비범위 상태를 추적하던 내부 문서. 현재 이 문서 트리에는 없다.
 - [제품 범위](../product-scope.md): 구현하지 않는 geometry 범위의 canonical source
-- API surface 운영 정보: public leaf module과 domain map. 현재 별도 문서 파일은 없다.
-- Reference learning 운영 정보: 로컬 reference project 위치. 현재 별도 문서 파일은 없다.
+- [Import Map](../../reference/import-map.md): 공개 import 경로
 
 ## 핵심 규칙
 
@@ -258,11 +254,8 @@ pnpm examples:coverage:strict
    - 정적 한 장면: `apps/canvas-demo`
    - drag, hover, animation, editor-like state: `apps/pixi-demo`
    - 짧은 설명과 코드 조각: 문서 recipe
-6. 계획서를 작성한다면 `_works/S1-RM-013/<yyyyMMdd>-<seq>-<example-id>-example/01-계획.md`에 둔다.
-7. Canvas/Pixi sandbox 예제에서 새 domain namespace import를 쓰면
-   [sandbox allowlist와 module map 분리 갱신](../agent-traps/testing/sandbox-allowlist-module-map.md)을
-   계획서의 `확인할 함정`에 연결한다.
-8. 구현 후 사용된 public leaf와 연결을 `recommended.md` 또는 후속 coverage 문서에 기록한다.
+6. 새 domain을 import하면 예제 타입 검사와 sandbox 실행을 확인한다.
+7. 구현 후 사용된 public leaf와 연결을 `recommended.md` 또는 후속 coverage 문서에 기록한다.
 
 ## 새 후보 기록 형식
 

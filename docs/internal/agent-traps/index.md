@@ -30,6 +30,7 @@
 - [arc-length spaced sampling이 uniform-t와 다름을 검증할 때 대칭 곡선을 쓰면 구분이 사라진다](./testing/arc-length-spaced-sampling-symmetric-curve.md)
 - [vitest `toEqual`은 `+0`과 `-0`을 구분한다: builder의 부호 반전 산술이 `-0`을 만들 때 `Object.is`로 명시한다](./testing/vitest-toequal-signed-zero.md)
 - [random helper의 rng 반환 boundary 테스트 누락: rng=0, rng→1 경계 검증을 빠뜨린다](./testing/random-rng-boundary-coverage.md)
+- [Pixi 예제 source 테스트의 두 목록 배열을 함께 갱신한다](./testing/example-sources-dual-array-update.md)
 - [예제 source 문자열 테스트는 함수명 접두어만 검사하지 않는다](./testing/example-source-string-prefix.md)
 - [sandbox allowlist와 module map 분리 갱신: compile은 통과하고 iframe 런타임만 실패한다](./testing/sandbox-allowlist-module-map.md)
 - [Sandbox 직렬화 함수의 클로저 helper 누락](./testing/sandbox-serialized-helper-closure.md)
@@ -40,6 +41,7 @@
 
 ## Examples
 
+- [예제 index.ts description 줄바꿈은 oxfmt에 맡긴다](./examples/oxfmt-index-description-line.md)
 - [transformed rect: AABB와 rotated outline을 혼동하지 않는다](./examples/transformed-rect-aabb-vs-outline.md)
 - [API inventory 예제는 사용자 작업 흐름이 없으면 실패한다](./examples/api-inventory-example-without-user-task.md)
 - [예제 coverage는 leaf 파일 단위라 type export도 같이 covered로 보인다](./examples/coverage-leaf-level-type-export.md)

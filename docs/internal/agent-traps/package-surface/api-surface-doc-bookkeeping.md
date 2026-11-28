@@ -89,6 +89,6 @@ Matrix output (반환 타입 `{ a; b; c; d; tx; ty }`):
 6. **boolean-primary Into 예외 함수의 companion 반환 타입 오기재**: Companion 분류 표의
    "companion 반환 타입" 열은 항상 companion 함수의 반환 타입이다. `averageInto`처럼
    boolean-primary Into 예외인 경우 Into 반환 타입(`boolean`)과 companion 반환 타입
-   (`XYObjectWritable | undefined`)이 다르다. "companion 반환 타입" 열에 Into 반환 타입인
+   (`PointWritable | undefined`)이 다르다. "companion 반환 타입" 열에 Into 반환 타입인
    `boolean`을 오기재하지 않는다. companion(`average`)의 반환 타입을 기재하고 비고에
    "boolean-primary Into 예외" 설명을 추가한다.

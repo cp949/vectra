@@ -1,7 +1,7 @@
 # 내부 문서
 
 이 영역은 `vectra` 유지보수자와 agent가 읽는 내부 문서다.
-외부 사용자 문서는 이후 docs/README.md에서 시작한다.
+사용 가이드와 API 탐색은 [사용자 문서](../README.md)에서 시작한다.
 
 ## 설계와 제품 경계
 
@@ -21,13 +21,14 @@
 | [테스트 작성 지침](./testing-guidelines.md) | 과도한 테스트를 피하고 회귀 신호 품질을 확인할 때 |
 | [테스트 메커니즘](./testing-mechanics.md) | runner, 파일 조직, 표준 검증 시나리오, 함정을 확인할 때 |
 | [주석 작성 규칙](./comment-style.md) | public JSDoc과 테스트 주석을 작성할 때 |
-| [ADR](./adr/) | 과거 결정 이유를 확인할 때 |
+| [ADR](./adr/) | 설계 결정과 근거를 확인할 때 |
 | [ADR 0010: v2 도형 입출력](./adr/0010-flat-shape-input.md) | v2 입력 타입과 출력 형식을 확인할 때 |
+| [에이전트 작업 규칙](../agents/README.md) | 작업 절차와 문서 작성 규칙을 확인할 때 |
 | [체크리스트](./checklists/) | release 또는 작업 완료 전 확인할 때 |
 
 ## 회귀 방지 자료
 
 | 문서 | 읽는 때 |
 | --- | --- |
-| [Agent 함정](./agent-traps/) | numeric, package surface, workflow 회귀를 피할 때 |
+| [Agent 함정](./agent-traps/index.md) | numeric, package surface, workflow 회귀를 피할 때 |
 | [예제 운영](./examples/) | demo/example 추가 기준을 확인할 때 |
