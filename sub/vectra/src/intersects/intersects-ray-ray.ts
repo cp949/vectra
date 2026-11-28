@@ -1,7 +1,5 @@
 import { lineFamilyIntersects, rayToLineFamilyParam } from '../internal/line-family';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { RayLike } from '../types';
+import type { Ray } from '../types/flat-shapes.internal';
 
 /**
  * 두 ray가 교차하면 true를 반환한다.
@@ -15,14 +13,10 @@ import type { RayLike } from '../types';
  * @param epsilon 평행 판정 및 거리 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsRayRay(a: RayLike, b: RayLike, epsilon?: number): boolean {
-  const ao = readRayOrigin(a);
-  const ad = readRayDirection(a);
-  const bo = readRayOrigin(b);
-  const bd = readRayDirection(b);
+export function intersectsRayRay(a: Ray, b: Ray, epsilon?: number): boolean {
   return lineFamilyIntersects(
-    rayToLineFamilyParam(readX(ao), readY(ao), readX(ad), readY(ad)),
-    rayToLineFamilyParam(readX(bo), readY(bo), readX(bd), readY(bd)),
+    rayToLineFamilyParam(a.ox, a.oy, a.dx, a.dy),
+    rayToLineFamilyParam(b.ox, b.oy, b.dx, b.dy),
     epsilon
   );
 }

@@ -172,13 +172,12 @@ describe('raySegmentHitT — singleIntersectionSegmentRayInto와 같은 교점',
 
     for (let i = 0; i < CASES; i++) {
       const coords = randomRayCoords(rng);
-      const ray = makeRay(rng, ...coords);
       const a = point(rng, range(rng, -20, 20), range(rng, -20, 20));
       const b = point(rng, range(rng, -20, 20), range(rng, -20, 20));
-      const segment: SegmentLike = rng() < 0.5 ? { a, b } : [a, b];
-
       const [ox, oy, dx, dy] = coords;
-      const t = raySegmentHitT({ ox, oy, dx, dy }, { x1: readX(a), y1: readY(a), x2: readX(b), y2: readY(b) });
+      const ray = { ox, oy, dx, dy };
+      const segment = { x1: readX(a), y1: readY(a), x2: readX(b), y2: readY(b) };
+      const t = raySegmentHitT(ray, segment);
       const found = singleIntersectionSegmentRayInto(out, segment, ray);
 
       if (!found) {

@@ -7,7 +7,7 @@
  * 점 하나가 degenerate(길이 0)인 입력은 드물어서 기존 함수에 맡긴다.
  */
 
-import type { XYObjectWritable, XYTupleWritable, XYWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { lineFamilyIntersectionPoint } from './line-family-core.internal';
 import { rayToLineFamilyParam, segmentToLineFamilyParam } from './line-family-param-builders.internal';
 import { crossWithin } from './numeric';
@@ -17,7 +17,7 @@ import { crossWithin } from './numeric';
  *
  * 평행·collinear, range 밖이면 false를 반환하고 out을 수정하지 않는다.
  *
- * @param out 교점 좌표를 기록할 writable output
+ * @param out 교점 좌표를 기록할 { x, y } 객체.
  * @param ax segment 시작점 x
  * @param ay segment 시작점 y
  * @param bx segment 끝점 x
@@ -29,7 +29,7 @@ import { crossWithin } from './numeric';
  * @param epsilon 평행 판정 임계값. 생략하면 `sin θ <= DEFAULT_EPSILON`이다.
  */
 export function segmentRayPointInto(
-  out: XYWritable,
+  out: PointWritable,
   ax: number,
   ay: number,
   bx: number,
@@ -68,12 +68,7 @@ export function segmentRayPointInto(
 
   const x = ax + t * ex;
   const y = ay + t * ey;
-  if (Array.isArray(out)) {
-    (out as XYTupleWritable)[0] = x;
-    (out as XYTupleWritable)[1] = y;
-  } else {
-    (out as XYObjectWritable).x = x;
-    (out as XYObjectWritable).y = y;
-  }
+  out.x = x;
+  out.y = y;
   return true;
 }

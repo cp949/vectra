@@ -166,6 +166,16 @@ function makeRay(spec: RaySpec): RayLike {
   return { origin: [spec.origin.x, spec.origin.y], direction: [spec.direction.x, spec.direction.y] };
 }
 
+/** 난수 선분의 두 끝점을 평평한 입력으로 만든다. */
+function flatSegment(spec: SegmentSpec) {
+  return { x1: spec.a.x, y1: spec.a.y, x2: spec.b.x, y2: spec.b.y };
+}
+
+/** 난수 반직선의 원점과 방향을 평평한 입력으로 만든다. */
+function flatRay(spec: RaySpec) {
+  return { ox: spec.origin.x, oy: spec.origin.y, dx: spec.direction.x, dy: spec.direction.y };
+}
+
 interface CircleSpec {
   kind: number;
   center: PointSpec;
@@ -200,11 +210,11 @@ describe('ray 점 반환 함수 — 이전 구현과 비트 단위 동일성', (
       const epsilon = pick(rng, EPSILONS);
       const outTuple = rng() < 0.2;
       const expectedOut: XYWritable = outTuple ? [77, 88] : { x: 77, y: 88 };
-      const actualOut: XYWritable = outTuple ? [77, 88] : { x: 77, y: 88 };
+      const actualOut = { x: 77, y: 88 };
       const expected = referenceSegmentRayInto(expectedOut, makeSegment(seg), makeRay(ray), epsilon);
-      const actual = singleIntersectionSegmentRayInto(actualOut, makeSegment(seg), makeRay(ray), epsilon);
+      const actual = singleIntersectionSegmentRayInto(actualOut, flatSegment(seg), flatRay(ray), epsilon);
       const [ex, ey] = Array.isArray(expectedOut) ? expectedOut : [expectedOut.x, expectedOut.y];
-      const [ax, ay] = Array.isArray(actualOut) ? actualOut : [actualOut.x, actualOut.y];
+      const { x: ax, y: ay } = actualOut;
       if (actual !== expected || !same(ex, ax) || !same(ey, ay)) {
         throw new Error(
           `불일치: seg=${JSON.stringify(seg)} ray=${JSON.stringify(ray)} eps=${epsilon} 기대=${expected}(${ex}, ${ey}) 실제=${actual}(${ax}, ${ay})`
@@ -228,7 +238,7 @@ describe('ray 점 반환 함수 — 이전 구현과 비트 단위 동일성', (
       const expected = referenceSegmentRayInto(expectedOut, makeSegment(seg), makeRay(ray), epsilon)
         ? expectedOut
         : undefined;
-      const actual = singleIntersectionSegmentRay(makeSegment(seg), makeRay(ray), epsilon);
+      const actual = singleIntersectionSegmentRay(flatSegment(seg), flatRay(ray), epsilon);
       if ((actual === undefined) !== (expected === undefined)) {
         throw new Error(`판정 불일치: seg=${JSON.stringify(seg)} ray=${JSON.stringify(ray)} eps=${epsilon}`);
       }

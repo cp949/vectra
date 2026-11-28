@@ -1,11 +1,13 @@
 /** 교차점 기록 함수의 출력 배열 반환 타입과 참조를 검증한다. */
 import { expect, expectTypeOf, test } from 'vitest';
+import { intersectsRayRay } from '../../../src/intersects/intersects-ray-ray';
+import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
 import { circleBoundsIntersectionsInto } from '../../../src/intersects/circle-bounds-intersections-into';
 import { circleTriangleIntersectionsInto } from '../../../src/intersects/circle-triangle-intersections-into';
 import { segmentCircleIntersectionsInto } from '../../../src/intersects/segment-circle-intersections-into';
 import { circleRectIntersectionsInto } from '../../../src/intersects/circle-rect-intersections-into';
 import { circleCircleIntersectionsInto } from '../../../src/intersects/circle-circle-intersections-into';
-import type { Circle, PointWritable } from '../../../src/types/flat-shapes.internal';
+import type { Circle, PointWritable, Ray, Segment } from '../../../src/types/flat-shapes.internal';
 
 class IntersectionPoints extends Array<PointWritable> {
   readonly label = '교점';
@@ -56,4 +58,10 @@ test('segmentCircleIntersectionsInto는 전달받은 배열 서브클래스를 �
   expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
   expect(result).toBe(out);
   expect(out).toHaveLength(2);
+});
+
+test('반직선 판정과 선분 교점에 평평한 도형을 전달한다', () => {
+  expectTypeOf(intersectsRayRay).parameter(0).toEqualTypeOf<Ray>();
+  expectTypeOf(singleIntersectionSegmentRayInto).parameter(0).toEqualTypeOf<PointWritable>();
+  expectTypeOf(singleIntersectionSegmentRayInto).parameter(1).toEqualTypeOf<Segment>();
 });

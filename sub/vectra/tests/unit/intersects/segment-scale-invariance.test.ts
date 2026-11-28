@@ -251,7 +251,7 @@ describe('direction 길이는 판정 결과에 영향을 주지 않는다', () =
   });
 
   test.each(DIRECTION_SCALES)('direction 배율 %s: ray와 segment가 수직으로 만나면 교차한다', (m) => {
-    expect(intersectsRaySegment(scaledRay(1, m, -1, 0, 1, 0), scaledSegment(1, 0, -1, 0, 1))).toBe(true);
+    expect(intersectsRaySegment({ ox: -1, oy: 0, dx: m, dy: 0 }, { x1: 0, y1: -1, x2: 0, y2: 1 })).toBe(true);
   });
 
   test.each(DIRECTION_SCALES)('direction 배율 %s: infinite-line과 segment가 수직으로 만나면 교차한다', (m) => {
@@ -266,7 +266,7 @@ describe('direction 길이는 판정 결과에 영향을 주지 않는다', () =
 
 describe('작은 scale에서 intersects 공개 함수가 같은 결과를 낸다', () => {
   test.each(COORD_SCALES)('scale %s: 작은 segment와 수직 ray는 교차한다', (s) => {
-    expect(intersectsRaySegment(scaledRay(s, s, -1, 0, 1, 0), scaledSegment(s, 0, -1, 0, 1))).toBe(true);
+    expect(intersectsRaySegment({ ox: -s, oy: 0, dx: s, dy: 0 }, { x1: 0, y1: -s, x2: 0, y2: s })).toBe(true);
   });
 
   test.each(COORD_SCALES)('scale %s: 작은 segment와 수직 infinite-line은 교차한다', (s) => {

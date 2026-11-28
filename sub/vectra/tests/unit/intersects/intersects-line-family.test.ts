@@ -1,3 +1,4 @@
+/** 반직선, 직선, 선분 쌍의 교차 판정과 단일 교점을 확인한다. */
 import { describe, expect, test } from 'vitest';
 import { intersectsInfiniteLineRay } from '../../../src/intersects/intersects-infinite-line-ray';
 import { intersectsInfiniteLineSegment } from '../../../src/intersects/intersects-infinite-line-segment';
@@ -8,12 +9,23 @@ import { singleIntersectionSegmentInfiniteLine } from '../../../src/intersects/s
 import { singleIntersectionSegmentInfiniteLineInto } from '../../../src/intersects/single-intersection-segment-infinite-line-into';
 import { singleIntersectionSegmentRay } from '../../../src/intersects/single-intersection-segment-ray';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
-import type { InfiniteLineLike, RayLike, SegmentLike, XYWritable } from '../../../src/types';
+import type { InfiniteLineLike, RayLike, SegmentLike } from '../../../src/types';
+import type { Ray, Segment, PointWritable } from '../../../src/types/flat-shapes.internal';
 
 type Point = { x: number; y: number };
-type SegmentRayArgs = [SegmentLike, RayLike];
+type SegmentRayArgs = [Segment, Ray];
 type SegmentInfiniteLineArgs = [SegmentLike, InfiniteLineLike];
 type RayInfiniteLineArgs = [RayLike, InfiniteLineLike];
+
+/** 교차 시험에 쓸 선분을 만든다. */
+function flatSegment(x1: number, y1: number, x2: number, y2: number): Segment {
+  return { x1, y1, x2, y2 };
+}
+
+/** 교차 시험에 쓸 반직선을 만든다. */
+function flatRay(ox: number, oy: number, dx: number, dy: number): Ray {
+  return { ox, oy, dx, dy };
+}
 
 function segment(ax: number, ay: number, bx: number, by: number): SegmentLike {
   return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
@@ -34,19 +46,22 @@ function expectPointClose(actual: Point | undefined, expected: Point): void {
 }
 
 function expectIntoHit<TArgs extends unknown[]>(
-  fn: (out: XYWritable, ...args: TArgs) => boolean,
+  fn: (out: PointWritable, ...args: TArgs) => boolean,
   args: TArgs,
   expected: Point
 ): void {
-  const out: XYWritable = { x: 0, y: 0 };
+  const out: PointWritable = { x: 0, y: 0 };
   const result = fn(out, ...args);
 
   expect(result).toBe(true);
-  expect((out as Point).x).toBeCloseTo(expected.x, 10);
-  expect((out as Point).y).toBeCloseTo(expected.y, 10);
+  expect(out.x).toBeCloseTo(expected.x, 10);
+  expect(out.y).toBeCloseTo(expected.y, 10);
 }
 
-function expectIntoMiss<TArgs extends unknown[]>(fn: (out: XYWritable, ...args: TArgs) => boolean, args: TArgs): void {
+function expectIntoMiss<TArgs extends unknown[]>(
+  fn: (out: PointWritable, ...args: TArgs) => boolean,
+  args: TArgs
+): void {
   const sentinel = { x: 999, y: 999 };
   const result = fn(sentinel, ...args);
 
@@ -63,65 +78,46 @@ describe('intersectsRaySegment', () => {
   test.each([
     {
       name: 'line (0,0)→(2,0)와 ray origin(1,-1) dir(0,1)는 교차한다',
-      args: [ray(1, -1, 0, 1), segment(0, 0, 2, 0)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(1, -1, 0, 1), flatSegment(0, 0, 2, 0)] satisfies [Ray, Segment],
       expected: true,
     },
     {
       name: 'line (0,0)→(0.5,0)와 ray origin(1,-1) dir(0,1)는 range 밖으로 교차하지 않는다',
-      args: [ray(1, -1, 0, 1), segment(0, 0, 0.5, 0)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(1, -1, 0, 1), flatSegment(0, 0, 0.5, 0)] satisfies [Ray, Segment],
       expected: false,
     },
     {
       name: 'ray 역방향으로 교점이 있어도 range 밖이면 false를 반환한다',
-      args: [ray(1, 1, 0, -1), segment(0, 2, 2, 2)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(1, 1, 0, -1), flatSegment(0, 2, 2, 2)] satisfies [Ray, Segment],
       expected: false,
     },
     {
       name: 'line (0,0)→(1,0)와 ray origin(0,1) dir(1,0)는 평행하고 교차하지 않는다',
-      args: [ray(0, 1, 1, 0), segment(0, 0, 1, 0)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(0, 1, 1, 0), flatSegment(0, 0, 1, 0)] satisfies [Ray, Segment],
       expected: false,
     },
     {
       name: 'line (0,0)→(2,0)와 collinear ray origin(1,0) dir(1,0)는 true를 반환한다',
-      args: [ray(1, 0, 1, 0), segment(0, 0, 2, 0)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(1, 0, 1, 0), flatSegment(0, 0, 2, 0)] satisfies [Ray, Segment],
       expected: true,
     },
     {
       name: 'line (0,0)→(1,0)와 collinear ray origin(1,0) dir(1,0)는 true를 반환한다',
-      args: [ray(1, 0, 1, 0), segment(0, 0, 1, 0)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(1, 0, 1, 0), flatSegment(0, 0, 1, 0)] satisfies [Ray, Segment],
       expected: true,
     },
     {
       name: 'zero-length line이 ray 위에 있으면 true를 반환한다',
-      args: [ray(0, 0, 1, 0), segment(1, 0, 1, 0)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(0, 0, 1, 0), flatSegment(1, 0, 1, 0)] satisfies [Ray, Segment],
       expected: true,
     },
     {
       name: 'zero-length line이 ray range 밖이면 false를 반환한다',
-      args: [ray(0, 0, 1, 0), segment(-1, 0, -1, 0)] satisfies [RayLike, SegmentLike],
+      args: [flatRay(0, 0, 1, 0), flatSegment(-1, 0, -1, 0)] satisfies [Ray, Segment],
       expected: false,
     },
   ])('$name', ({ args, expected }) => {
     expect(intersectsRaySegment(...args)).toBe(expected);
-  });
-
-  describe('tuple/object input 혼합', () => {
-    test('tuple line과 object ray 입력은 object 입력과 같은 결과를 반환한다', () => {
-      const lineTuple: [readonly [number, number], readonly [number, number]] = [
-        [0, 0],
-        [2, 0],
-      ];
-      const rayObj = ray(1, -1, 0, 1);
-      const lineObj = segment(0, 0, 2, 0);
-      expect(intersectsRaySegment(rayObj, lineTuple)).toBe(intersectsRaySegment(rayObj, lineObj));
-    });
-
-    test('object line과 tuple ray 입력은 object 입력과 같은 결과를 반환한다', () => {
-      const lineObj = segment(0, 0, 2, 0);
-      const rayTuple: readonly [number, number, number, number] = [1, -1, 0, 1];
-      const rayObj = ray(1, -1, 0, 1);
-      expect(intersectsRaySegment(rayTuple, lineObj)).toBe(intersectsRaySegment(rayObj, lineObj));
-    });
   });
 });
 
@@ -129,12 +125,12 @@ describe('singleIntersectionSegmentRayInto', () => {
   test.each([
     {
       name: '교점 (1,0)을 out에 기록하고 true를 반환한다',
-      args: [segment(0, 0, 2, 0), ray(1, -1, 0, 1)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 2, 0), flatRay(1, -1, 0, 1)] satisfies SegmentRayArgs,
       expected: { x: 1, y: 0 },
     },
     {
       name: 'zero-length line이 ray 위에 있으면 point를 기록하고 true를 반환한다',
-      args: [segment(1, 0, 1, 0), ray(0, 0, 1, 0)] satisfies SegmentRayArgs,
+      args: [flatSegment(1, 0, 1, 0), flatRay(0, 0, 1, 0)] satisfies SegmentRayArgs,
       expected: { x: 1, y: 0 },
     },
   ])('$name', ({ args, expected }) => {
@@ -144,19 +140,19 @@ describe('singleIntersectionSegmentRayInto', () => {
   test.each([
     {
       name: 'range 밖이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 0.5, 0), ray(1, -1, 0, 1)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 0.5, 0), flatRay(1, -1, 0, 1)] satisfies SegmentRayArgs,
     },
     {
       name: '평행이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 1, 0), ray(0, 1, 1, 0)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 1, 0), flatRay(0, 1, 1, 0)] satisfies SegmentRayArgs,
     },
     {
       name: 'collinear overlap이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 2, 0), ray(1, 0, 1, 0)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 2, 0), flatRay(1, 0, 1, 0)] satisfies SegmentRayArgs,
     },
     {
       name: 'collinear endpoint touch이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 1, 0), ray(1, 0, 1, 0)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 1, 0), flatRay(1, 0, 1, 0)] satisfies SegmentRayArgs,
     },
   ])('$name', ({ args }) => {
     expectIntoMiss(singleIntersectionSegmentRayInto, args);
@@ -165,25 +161,25 @@ describe('singleIntersectionSegmentRayInto', () => {
 
 describe('singleIntersectionSegmentRay (allocating companion)', () => {
   test('hit이면 Into와 같은 좌표를 가진 object를 반환한다', () => {
-    expectPointClose(singleIntersectionSegmentRay(segment(0, 0, 2, 0), ray(1, -1, 0, 1)), { x: 1, y: 0 });
+    expectPointClose(singleIntersectionSegmentRay(flatSegment(0, 0, 2, 0), flatRay(1, -1, 0, 1)), { x: 1, y: 0 });
   });
 
   test.each([
     {
       name: 'miss이면 undefined를 반환한다',
-      args: [segment(0, 0, 0.5, 0), ray(1, -1, 0, 1)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 0.5, 0), flatRay(1, -1, 0, 1)] satisfies SegmentRayArgs,
     },
     {
       name: 'collinear overlap이면 undefined를 반환한다',
-      args: [segment(0, 0, 2, 0), ray(1, 0, 1, 0)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 2, 0), flatRay(1, 0, 1, 0)] satisfies SegmentRayArgs,
     },
     {
       name: 'collinear endpoint touch이면 undefined를 반환한다',
-      args: [segment(0, 0, 1, 0), ray(1, 0, 1, 0)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 1, 0), flatRay(1, 0, 1, 0)] satisfies SegmentRayArgs,
     },
     {
       name: 'parallel disjoint이면 undefined를 반환한다',
-      args: [segment(0, 0, 1, 0), ray(0, 1, 1, 0)] satisfies SegmentRayArgs,
+      args: [flatSegment(0, 0, 1, 0), flatRay(0, 1, 1, 0)] satisfies SegmentRayArgs,
     },
   ])('$name', ({ args }) => {
     expect(singleIntersectionSegmentRay(...args)).toBeUndefined();

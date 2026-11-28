@@ -57,12 +57,7 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
     expect(
       intersectsSegmentSegment({ a: { x: 0, y: 0 }, b: { x: 4, y: 4 } }, { a: { x: 0, y: 4 }, b: { x: 4, y: 0 } })
     ).toBe(true);
-    expect(
-      intersectsRayRay(
-        { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } },
-        { origin: { x: 2, y: 0 }, direction: { x: 1, y: 0 } }
-      )
-    ).toBe(true);
+    expect(intersectsRayRay({ ox: 0, oy: 0, dx: 1, dy: 0 }, { ox: 2, oy: 0, dx: 1, dy: 0 })).toBe(true);
     expect(
       intersectsInfiniteLineInfiniteLine(
         { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } },
