@@ -7,10 +7,12 @@
  *  - rayPolygonHitT                : polygon edge와 처음 만나는 t
  *  - rayRectHitT, rayBoundsHitT    : box boundary와 처음 만나는 t
  *
+ * rayRectHitT·rayBoundsHitT는 중첩 ray·box 입력을 받는다. 나머지는 평평한 ray(ox, oy, dx, dy)를 받는다.
+ *
  * 검증:
- *  - t는 direction 길이 단위다. direction을 정규화하지 않는다.
- *  - hit이 없으면 Infinity다. 접선, 평행, 공선, zero direction, empty shape, NaN 입력을 고정한다.
- *  - tMin은 inclusive 경계다. origin이 안쪽이면 exit 교점이다.
+ *  - t는 ray 방향 벡터의 길이 단위다. 방향 벡터를 정규화하지 않는다.
+ *  - hit이 없으면 Infinity다. 접선, 평행, 공선, 방향 벡터 0, empty shape, NaN 입력을 고정한다.
+ *  - tMin은 inclusive 경계다. 시작점이 안쪽이면 exit 교점이다.
  *  - 반사 직후 출발 면은 tMin으로 거른다. 거르지 않으면 같은 면에서 t = 0이 나온다.
  *
  * 기존 점 반환 함수와의 동일성은 ray-hit-t-equivalence.test.ts가 난수 입력으로 확인한다.
@@ -37,12 +39,12 @@ describe('rayCircleHitT', () => {
     expect(rayCircleHitT(right, circle)).toBe(4);
   });
 
-  test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
+  test('(dx, dy)를 정규화하지 않으므로 t는 (dx, dy) 길이 단위다', () => {
     expect(rayCircleHitT({ ox: 0, oy: 0, dx: 2, dy: 0 }, circle)).toBe(2);
     expect(rayCircleHitT({ ox: 0, oy: 0, dx: 0.5, dy: 0 }, circle)).toBe(8);
   });
 
-  test('origin이 안쪽이면 exit 교점의 t를 반환한다', () => {
+  test('시작점 (ox, oy)가 안쪽이면 exit 교점의 t를 반환한다', () => {
     expect(rayCircleHitT({ ox: 5, oy: 0, dx: 1, dy: 0 }, { cx: 5, cy: 0, r: 2 })).toBe(2);
     expect(rayCircleHitT({ ox: 5, oy: 0, dx: 2, dy: 0 }, { cx: 5, cy: 0, r: 2 })).toBe(1);
   });
@@ -85,11 +87,11 @@ describe('rayCircleHitT', () => {
     expect(rayCircleHitT({ ox: 4, oy: 0, dx: 1, dy: 0 }, circle, 1e-9)).toBe(2);
   });
 
-  test('zero direction은 Infinity를 반환한다', () => {
+  test('dx = dy = 0이면 Infinity를 반환한다', () => {
     expect(rayCircleHitT({ ox: 5, oy: 0, dx: 0, dy: 0 }, { cx: 5, cy: 0, r: 2 })).toBe(Infinity);
   });
 
-  test('empty circle(radius ≤ 0)은 Infinity를 반환한다', () => {
+  test('empty circle(r ≤ 0)은 Infinity를 반환한다', () => {
     expect(rayCircleHitT(right, { cx: 5, cy: 0, r: 0 })).toBe(Infinity);
     expect(rayCircleHitT(right, { cx: 5, cy: 0, r: -1 })).toBe(Infinity);
   });
@@ -118,7 +120,7 @@ describe('rayEllipseHitT', () => {
     expect(rayEllipseHitT({ ox: 5, oy: 4, dx: 0, dy: -1 }, ellipse)).toBe(3);
   });
 
-  test('origin이 안쪽이면 exit 교점의 t를 반환한다', () => {
+  test('시작점 (ox, oy)가 안쪽이면 exit 교점의 t를 반환한다', () => {
     expect(rayEllipseHitT({ ox: 5, oy: 0, dx: 1, dy: 0 }, ellipse)).toBe(2);
     expect(rayEllipseHitT({ ox: 5, oy: 0, dx: 0, dy: 1 }, ellipse)).toBe(1);
   });
@@ -135,7 +137,7 @@ describe('rayEllipseHitT', () => {
     expect(rayEllipseHitT(right, ellipse, 7.5)).toBe(Infinity);
   });
 
-  test('빗나감, zero direction, empty ellipse는 Infinity를 반환한다', () => {
+  test('빗나감, dx = dy = 0인 ray, empty ellipse는 Infinity를 반환한다', () => {
     expect(rayEllipseHitT(right, { cx: 5, cy: 3, rx: 2, ry: 1 })).toBe(Infinity);
     expect(rayEllipseHitT({ ox: 0, oy: 0, dx: 0, dy: 0 }, ellipse)).toBe(Infinity);
     expect(rayEllipseHitT(right, { cx: 5, cy: 0, rx: 0, ry: 1 })).toBe(Infinity);
@@ -155,7 +157,7 @@ describe('raySegmentHitT', () => {
     expect(raySegmentHitT(right, wall)).toBe(3);
   });
 
-  test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
+  test('(dx, dy)를 정규화하지 않으므로 t는 (dx, dy) 길이 단위다', () => {
     expect(raySegmentHitT({ ox: 0, oy: 0, dx: 2, dy: 0 }, wall)).toBe(1.5);
     expect(raySegmentHitT({ ox: 0, oy: 0, dx: 3, dy: 4 }, { x1: 3, y1: 0, x2: 3, y2: 8 })).toBeCloseTo(1, 12);
   });
@@ -183,7 +185,7 @@ describe('raySegmentHitT', () => {
     expect(raySegmentHitT({ ox: 4, oy: 0, dx: 1, dy: 0 }, { x1: 2, y1: 0, x2: 6, y2: 0 })).toBe(Infinity);
   });
 
-  test('zero-length segment와 zero direction은 Infinity를 반환한다', () => {
+  test('zero-length segment와 dx = dy = 0인 ray는 Infinity를 반환한다', () => {
     expect(raySegmentHitT(right, { x1: 3, y1: 0, x2: 3, y2: 0 })).toBe(Infinity);
     expect(raySegmentHitT({ ox: 0, oy: 0, dx: 0, dy: 0 }, wall)).toBe(Infinity);
   });
@@ -217,12 +219,12 @@ describe('rayPolygonHitT', () => {
     expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, square)).toBe(2);
   });
 
-  test('origin이 안쪽이면 exit edge의 t를 반환한다', () => {
+  test('시작점 (ox, oy)가 안쪽이면 exit edge의 t를 반환한다', () => {
     expect(rayPolygonHitT({ ox: 2, oy: 2, dx: 1, dy: 0 }, square)).toBe(2);
     expect(rayPolygonHitT({ ox: 2, oy: 2, dx: 0, dy: -1 }, square)).toBe(2);
   });
 
-  test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
+  test('(dx, dy)를 정규화하지 않으므로 t는 (dx, dy) 길이 단위다', () => {
     expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 4, dy: 0 }, square)).toBe(0.5);
   });
 
@@ -255,7 +257,7 @@ describe('rayPolygonHitT', () => {
     expect(rayPolygonHitT({ ox: -2, oy: 2, dx: -1, dy: 0 }, square)).toBe(Infinity);
   });
 
-  test('3점 미만 polygon과 zero direction은 Infinity를 반환한다', () => {
+  test('좌표 수 < 6인 polygon과 dx = dy = 0인 ray는 Infinity를 반환한다', () => {
     expect(rayPolygonHitT(right, [1, -1, 1, 1])).toBe(Infinity);
     expect(rayPolygonHitT(right, [])).toBe(Infinity);
     expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 0, dy: 0 }, square)).toBe(Infinity);

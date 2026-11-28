@@ -14,7 +14,7 @@ import type { InfiniteLine, Polygon } from '../types/flat-shapes.internal';
  * - infinite-line이 polygon edge와 collinear로 겹칠 때만 interval을 만든다.
  * - transversal crossing, vertex touch, containment-only는 빈 배열이다.
  * - 한 점으로 수렴하는 overlap은 빈 배열이다.
- * - empty polygon(`좌표 수 < 6`)과 degenerate direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate direction(`dx = dy = 0`)은 빈 배열이다.
  *
  * outIntervals는 먼저 clear되고 결과 interval이 `tLineStart` 오름차순으로 push된다. push되는 interval과
  * nested `start`/`end` point는 매 호출 새 object이며 입력 point object를 재사용하지 않는다.
@@ -26,12 +26,12 @@ import type { InfiniteLine, Polygon } from '../types/flat-shapes.internal';
  * @param epsilon collinear/수렴 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function infiniteLinePolygonOverlapIntervalsInto<Out extends LinePolygonOverlapIntervalDetail[]>(
-  outIntervals: Out,
+export function infiniteLinePolygonOverlapIntervalsInto(
+  outIntervals: LinePolygonOverlapIntervalDetail[],
   infiniteLine: InfiniteLine,
   polygon: Polygon,
   epsilon?: number
-): Out {
+): LinePolygonOverlapIntervalDetail[] {
   lineFamilyPolygonOverlapIntervalsInto(
     outIntervals,
     infiniteLine.ox,

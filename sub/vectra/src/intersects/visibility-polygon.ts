@@ -3,7 +3,7 @@ import type { Point, Polygon, PolygonWritable } from '../types/flat-shapes.inter
 import { visibilityPolygonInto } from './visibility-polygon-into';
 
 /**
- * point에서 본 visibility polygon의 x·y 좌표 목록를 새 배열로 반환한다.
+ * point에서 본 visibility polygon의 x·y 좌표 목록을 새 배열로 반환한다.
  *
  * `visibilityPolygonInto`의 allocating companion이다. hit point를 angle 순서로 반환하며 순서는
  * `raysFromPointToPolygon`의 angle 순서와 같다.

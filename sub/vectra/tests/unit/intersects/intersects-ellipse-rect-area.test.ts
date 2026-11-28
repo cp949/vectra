@@ -13,19 +13,19 @@ describe('intersectsRect', () => {
       expect(intersectsEllipseRect(ellipse, rect)).toBe(false);
     });
 
-    test('empty ellipse (radiusX=0)이면 false를 반환한다', () => {
+    test('empty ellipse (rx=0)이면 false를 반환한다', () => {
       const e = { cx: 0, cy: 0, rx: 0, ry: 2 };
       const rect = { x: -5, y: -5, width: 10, height: 10 };
       expect(intersectsEllipseRect(e, rect)).toBe(false);
     });
 
-    test('empty ellipse (radiusX<0)이면 false를 반환한다', () => {
+    test('empty ellipse (rx<0)이면 false를 반환한다', () => {
       const e = { cx: 0, cy: 0, rx: -1, ry: 2 };
       const rect = { x: -5, y: -5, width: 10, height: 10 };
       expect(intersectsEllipseRect(e, rect)).toBe(false);
     });
 
-    test('empty ellipse (radiusY=0)이면 false를 반환한다', () => {
+    test('empty ellipse (ry=0)이면 false를 반환한다', () => {
       const e = { cx: 0, cy: 0, rx: 3, ry: 0 };
       const rect = { x: -5, y: -5, width: 10, height: 10 };
       expect(intersectsEllipseRect(e, rect)).toBe(false);

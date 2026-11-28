@@ -332,7 +332,7 @@ describe('polylinePolylineIntersectionsInto', () => {
     expect(toXY(result)).toEqual([[5, 0]]);
   });
 
-  test('outPoints가 target polyline points array와 같아도 clear 전에 입력 좌표를 보존한다', () => {
+  test('outPoints가 target polyline array와 같아도 clear 전에 입력 좌표를 보존한다', () => {
     const subject = [
       { x: 0, y: 0 },
       { x: 10, y: 0 },

@@ -317,17 +317,17 @@ describe('intersectsInfiniteLineRay', () => {
       expected: true,
     },
     {
-      name: 'collinear이고 ray origin이 infinite-line 위에 있으면 true를 반환한다',
+      name: 'collinear이고 ray 시작점 (ox, oy)가 infinite-line 위에 있으면 true를 반환한다',
       args: [infiniteLine(1, 0, 1, 0), flatRay(1, 0, 1, 0)] satisfies [InfiniteLine, Ray],
       expected: true,
     },
     {
-      name: 'zero-direction ray가 infinite-line 위에 있으면 true를 반환한다',
+      name: 'dx = dy = 0인 ray가 infinite-line 위에 있으면 true를 반환한다',
       args: [infiniteLine(0, 0, 1, 0), flatRay(1, 0, 0, 0)] satisfies [InfiniteLine, Ray],
       expected: true,
     },
     {
-      name: 'zero-direction ray가 infinite-line 밖에 있으면 false를 반환한다',
+      name: 'dx = dy = 0인 ray가 infinite-line 밖에 있으면 false를 반환한다',
       args: [infiniteLine(0, 0, 1, 0), flatRay(1, 1, 0, 0)] satisfies [InfiniteLine, Ray],
       expected: false,
     },
@@ -344,7 +344,7 @@ describe('singleIntersectionRayInfiniteLineInto', () => {
       expected: { x: 2, y: 0 },
     },
     {
-      name: 'zero-direction ray가 infinite-line 위에 있으면 point를 기록하고 true를 반환한다',
+      name: 'dx = dy = 0인 ray가 infinite-line 위에 있으면 point를 기록하고 true를 반환한다',
       args: [flatRay(1, 0, 0, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
       expected: { x: 1, y: 0 },
     },

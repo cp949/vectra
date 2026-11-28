@@ -7,7 +7,7 @@ import type { Circle } from '../types/flat-shapes.internal';
  *
  * `circleCircleDetail`은 circumference(경계선) 교점 관계인 반면 이 함수는 disk area 중첩 관계다.
  * boolean `intersectsCircleCircle`로 손실되는 touch / overlap / contains 구분을 노출한다.
- * - `none`: 외부 분리, radius ≤ 0, non-finite center/radius.
+ * - `none`: 외부 분리, r ≤ 0, non-finite cx/cy/r.
  * - `touch`: 외접/내접 tangent. tangent point 1개를 반환한다.
  * - `overlap`: 두 disk가 양의 면적으로 겹치는 proper lens. 어느 쪽도 다른 쪽을 포함하지 않는다.
  * - `contains`: 한 disk가 다른 disk를 완전히 포함한다. 동심 반지름 다른 disk와 완전히 같은 disk도 `contains`다.

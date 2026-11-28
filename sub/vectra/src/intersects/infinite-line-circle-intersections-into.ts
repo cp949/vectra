@@ -5,10 +5,10 @@ import type { Circle, InfiniteLine, PointWritable } from '../types/flat-shapes.i
 /**
  * infinite-line과 circle circumference의 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
  *
- * circle을 radiusX=radiusY인 ellipse로 환원해 line-family × ellipse 정책과 동일하게 계산한다.
+ * circle을 rx = ry = r인 ellipse로 환원해 line-family × ellipse 정책과 동일하게 계산한다.
  * single-intersection helper와 달리 교점이 2개여도 두 점을 모두 push한다.
  * - tangent는 중복 없이 한 점, proper two-point는 두 점을 line parameter `t` 오름차순으로 push한다.
- * - no hit, degenerate direction(zero-length), empty circle(radius ≤ 0)은 빈 배열을 남긴다.
+ * - no hit, degenerate direction(`dx = dy = 0`), empty circle(r ≤ 0)은 빈 배열을 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }`
  * object다.
@@ -19,12 +19,12 @@ import type { Circle, InfiniteLine, PointWritable } from '../types/flat-shapes.i
  * @param circle 교점을 구할 circle
  * @param epsilon discriminant tangent 판정 임계값
  */
-export function infiniteLineCircleIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function infiniteLineCircleIntersectionsInto(
+  outPoints: PointWritable[],
   line: InfiniteLine,
   circle: Circle,
   epsilon = DEFAULT_EPSILON
-): Out {
+): PointWritable[] {
   const radius = circle.r;
   lineFamilyEllipseIntersectionPoints(
     outPoints,

@@ -1,5 +1,6 @@
 /** 가시성 ray의 교점 순서, 가림 및 다각형 좌표 출력을 확인한다. */
 import { describe, expect, test } from 'vitest';
+import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
 import { raysFromPointToPolygon } from '../../../src/intersects/rays-from-point-to-polygon';
 import { raysFromPointToPolygonInto } from '../../../src/intersects/rays-from-point-to-polygon-into';
 import { visibilityPolygon } from '../../../src/intersects/visibility-polygon';
@@ -107,6 +108,20 @@ describe('raysFromPointToPolygon', () => {
     expectCornerOrder(out.map((h) => h.point));
   });
 
+  test('epsilon이 빠진 옵션 객체는 기본 epsilon을 채우지 않는다', () => {
+    const filled = raysFromPointToPolygon(p(2, 2), [square], { epsilon: DEFAULT_EPSILON, angleOffset: 0 });
+    // @ts-expect-error epsilon은 필수 필드다.
+    const missing = raysFromPointToPolygon(p(2, 2), [square], { angleOffset: 0 });
+    expect(missing).not.toEqual(filled);
+  });
+
+  test('angleOffset이 빠진 옵션 객체는 기본 angleOffset을 채우지 않는다', () => {
+    const filled = raysFromPointToPolygon(p(2, 2), [square], { epsilon: 1e-9, angleOffset: 1e-4 });
+    // @ts-expect-error angleOffset은 필수 필드다.
+    const missing = raysFromPointToPolygon(p(2, 2), [square], { epsilon: 1e-9 });
+    expect(missing).not.toEqual(filled);
+  });
+
   test('companion은 새 array를 반환한다', () => {
     const a = raysFromPointToPolygon(p(2, 2), [square]);
     const b = raysFromPointToPolygon(p(2, 2), [square]);
@@ -127,6 +142,14 @@ describe('visibilityPolygon', () => {
     expect(result).toBe(out);
     SQUARE_CORNERS.flat().forEach((coordinate, i) => expect(out[i]).toBeCloseTo(coordinate, 9));
     expect(out).toHaveLength(8);
+  });
+
+  test('out이 obstacle polygon과 같은 배열이어도 결과가 같다', () => {
+    const expected = visibilityPolygon(p(2, 2), [square]);
+    const shared = [...square];
+    const result = visibilityPolygonInto(shared, p(2, 2), [shared]);
+    expect(result).toBe(shared);
+    expect(shared).toEqual(expected);
   });
 
   test('empty obstacle list는 빈 배열이다', () => {

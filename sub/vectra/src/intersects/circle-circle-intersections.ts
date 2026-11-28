@@ -7,7 +7,7 @@ import { circleCircleIntersectionsInto } from './circle-circle-intersections-int
  *
  * `circleCircleIntersectionsInto`의 allocating companion이다. point relation만 점으로 노출한다.
  * - tangent는 한 점, proper two-point는 circle `a` 기준 turn 오름차순 두 점을 반환한다.
- * - 외부 분리, containment, coincident overlap, radius ≤ 0, non-finite는 빈 배열을 반환한다.
+ * - 외부 분리, containment, coincident overlap, r ≤ 0, non-finite는 빈 배열을 반환한다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object다.
  * `epsilon`은 center distance 비교와 tangent 판정에만 쓰고 finite validation에는 쓰지 않는다.

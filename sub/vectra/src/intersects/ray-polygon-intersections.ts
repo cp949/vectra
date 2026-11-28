@@ -11,10 +11,10 @@ import { rayPolygonIntersectionsInto } from './ray-polygon-intersections-into';
  * `edgeIndex`=polygon edge index, `kind`=edge-level 교차 종류(`cross`/`touch`/`overlap`)다.
  *
  * - ray는 `tLine >= 0` 구간만 포함한다. ray 뒤쪽(`tLine < 0`) 교점은 제외한다.
- * - origin이 polygon 내부면 boundary exit hit만 반환한다(containment-only hit 없음).
+ * - 시작점 (ox, oy)가 polygon 내부면 boundary exit hit만 반환한다(containment-only hit 없음).
  * - polygon vertex를 지나는 hit은 인접 edge 중복 없이 `kind: 'touch'` 하나로 dedupe된다.
  * - polygon edge와 collinear overlap이면 overlap 구간 양 끝점을 `kind: 'overlap'`으로 반환한다.
- * - empty polygon(`좌표 수 < 6`)과 degenerate ray direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate ray(`dx = dy = 0`)은 빈 배열이다.
  *
  * 결과 hit은 ray parameter `tLine` 오름차순이다. 반환 hit과 nested point는 매 호출 새 object이며
  * 입력 point object를 재사용하지 않는다.

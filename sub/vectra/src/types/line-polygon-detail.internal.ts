@@ -1,5 +1,5 @@
 import type { IntersectionKind } from './curve.internal';
-import type { XYObjectWritable, XYWritable } from './xy.internal';
+import type { PointWritable } from './flat-shapes.internal';
 
 /**
  * line-family(segment, ray, infinite-line) × polygon 교점 1건.
@@ -12,9 +12,9 @@ import type { XYObjectWritable, XYWritable } from './xy.internal';
  * - `tEdge`: 교점이 놓인 polygon edge의 edge-local parameter `[0, 1]`
  * - `edgeIndex`: 교점이 놓인 polygon edge index (`vertex[i] → vertex[(i + 1) % n]`)
  */
-export interface LinePolygonIntersectionHit<P extends XYWritable = XYObjectWritable> {
+export interface LinePolygonIntersectionHit {
   /** 교점 좌표 */
-  point: P;
+  point: PointWritable;
 
   /** edge-level 교차 종류 */
   kind: IntersectionKind;
@@ -42,15 +42,15 @@ export interface LinePolygonIntersectionHit<P extends XYWritable = XYObjectWrita
  *   start/end 순서에 대응한다.
  * - `edgeIndex`: overlap이 놓인 polygon edge index (`vertex[i] → vertex[(i + 1) % n]`)
  */
-export interface LinePolygonOverlapIntervalDetail<P extends XYWritable = XYObjectWritable> {
+export interface LinePolygonOverlapIntervalDetail {
   /** detail 종류 */
   kind: 'overlap';
 
   /** overlap 구간 시작점 좌표 (`tLineStart` 대응) */
-  start: P;
+  start: PointWritable;
 
   /** overlap 구간 끝점 좌표 (`tLineEnd` 대응) */
-  end: P;
+  end: PointWritable;
 
   /** 구간 시작 line-family parameter */
   tLineStart: number;
@@ -78,9 +78,9 @@ export interface LinePolygonOverlapIntervalDetail<P extends XYWritable = XYObjec
  * - `polygonIndex`: hit이 놓인 obstacle polygon의 list index
  * - `edgeIndex`: 그 polygon의 edge index (`vertex[i] → vertex[(i + 1) % n]`)
  */
-export interface VisibilityRayHit<P extends XYWritable = XYObjectWritable> {
+export interface VisibilityRayHit {
   /** hit point 좌표 */
-  point: P;
+  point: PointWritable;
 
   /** origin에서 hit point까지의 방향각(radian) */
   angle: number;
@@ -99,8 +99,9 @@ export interface VisibilityRayHit<P extends XYWritable = XYObjectWritable> {
  * visibility ray helper 옵션.
  *
  * `epsilon`은 line/edge intersection과 angle/point dedupe에 쓰고 finite validation에는 쓰지 않는다.
- * `angleOffset`은 각 vertex angle 양옆으로 추가로 쏘는 ray의 각 offset(radian)이다. vertex 뒤
- * edge를 잡기 위한 값이며, 기본값은 작은 양수다.
+ * `angleOffset`은 각 vertex angle 양옆으로 추가로 쏘는 ray의 각 offset(radian)이다.
+ * vertex 뒤 edge를 잡기 위한 값이다.
+ * 옵션 객체를 생략하면 `epsilon`은 `DEFAULT_EPSILON`, `angleOffset`은 `1e-4`다.
  */
 export interface VisibilityOptions {
   /** line/edge intersection과 dedupe 임계값. */

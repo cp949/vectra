@@ -131,5 +131,9 @@ describe('root intersection type exposure 계약', () => {
       edgeIndex: 1,
     });
     expectAssignable<VisibilityOptions>({ epsilon: 1e-9, angleOffset: 1e-4 });
+    // @ts-expect-error angleOffset은 필수 필드다.
+    expectAssignable<VisibilityOptions>({ epsilon: 1e-9 });
+    // @ts-expect-error epsilon은 필수 필드다.
+    expectAssignable<VisibilityOptions>({ angleOffset: 1e-4 });
   });
 });

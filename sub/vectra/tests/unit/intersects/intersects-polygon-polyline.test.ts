@@ -202,7 +202,7 @@ const polygonSegmentCases: RelationCase<Polygon, Segment>[] = [
 
 const polygonRayCases: RelationCase<Polygon, Ray>[] = [
   {
-    name: 'ray origin이 polygon 내부에 있으면 true를 반환한다',
+    name: 'ray 시작점 (ox, oy)가 polygon 내부에 있으면 true를 반환한다',
     subject: wideSquare,
     target: flatRay(3, 3, 1, 0),
     expected: true,
@@ -304,7 +304,7 @@ const polygonPolylineCases: RelationCase<Polygon, Polyline>[] = [
     expected: false,
   },
   {
-    name: 'empty polyline(points.length === 0)은 false를 반환한다',
+    name: 'empty polyline(polyline.length === 0)은 false를 반환한다',
     subject: square,
     target: polyline(),
     expected: false,

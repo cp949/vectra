@@ -5,8 +5,8 @@ import type { Circle, Ray } from '../types/flat-shapes.internal';
 /**
  * circle과 ray가 교차하거나 접하면 true를 반환한다.
  *
- * closed disk 판정. ray origin이 disk 내부이면 true.
- * radius ≤ 0인 circle: false.
+ * closed disk 판정. ray 시작점 (ox, oy)가 disk 내부이면 true.
+ * r ≤ 0인 circle: false.
  *
  * @param circle 교차를 판정할 circle
  * @param ray 교차를 판정할 ray

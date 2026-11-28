@@ -163,9 +163,7 @@ export function lineFamilyPolygonOverlapIntervalsInto(
 }
 
 /** raw interval record를 public `LinePolygonOverlapIntervalDetail` object로 변환한다. nested point는 새 `{ x, y }`다. */
-export function recordToInterval(
-  record: LinePolygonOverlapIntervalRecord
-): LinePolygonOverlapIntervalDetail<XYObjectWritable> {
+export function recordToInterval(record: LinePolygonOverlapIntervalRecord): LinePolygonOverlapIntervalDetail {
   return {
     kind: 'overlap',
     start: { x: record.startX, y: record.startY },

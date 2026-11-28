@@ -9,7 +9,7 @@ import { ellipseEllipseIntersectionsInto } from './ellipse-ellipse-intersections
  * - tangent는 한 점, proper 2점은 두 점, 3~4점은 모든 점을 ellipse `a` 기준 turn 오름차순으로
  *   반환한다.
  * - 외부 분리, boundary 교점 없는 disjoint, containment, coincident, empty ellipse
- *   (radiusX/radiusY ≤ 0), non-finite는 빈 배열을 반환한다. coincident overlap에서 임의 점을 만들지
+ *   (rx ≤ 0 또는 ry ≤ 0), non-finite는 빈 배열을 반환한다. coincident overlap에서 임의 점을 만들지
  *   않는다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object다.

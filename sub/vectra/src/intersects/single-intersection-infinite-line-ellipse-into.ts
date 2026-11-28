@@ -6,7 +6,7 @@ import type { Ellipse, InfiniteLine, PointWritable } from '../types/flat-shapes.
  * infinite-line과 ellipse의 단일 교점을 out에 기록하고 true를 반환한다.
  *
  * tangent이면 접점을 기록한다. 2-point crossing이면 false (out 미수정).
- * empty ellipse (radiusX ≤ 0 또는 radiusY ≤ 0): false.
+ * empty ellipse (rx ≤ 0 또는 ry ≤ 0): false.
  */
 export function singleIntersectionInfiniteLineEllipseInto(
   out: PointWritable,

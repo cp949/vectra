@@ -13,7 +13,7 @@ import type { Bounds, Polygon } from '../types/flat-shapes.internal';
  * - inverted bounds (min > max): false.
  * - empty polygon (좌표 수 < 6): false.
  *
- * @param polygon polygon 꼭짓점 목록
+ * @param polygon x, y를 번갈아 담은 polygon 좌표 배열
  * @param bounds  교차를 검사할 bounds
  */
 export function intersectsPolygonBounds(polygon: Polygon, bounds: Bounds): boolean {

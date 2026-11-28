@@ -7,7 +7,7 @@ import type { Ellipse, InfiniteLine } from '../types/flat-shapes.internal';
  *
  * tangent, 2-point crossing 모두 true.
  * degenerate ellipse (rx ≤ 0 또는 ry ≤ 0): false.
- * degenerate direction (= 0): origin이 ellipse 경계/내부이면 true.
+ * degenerate direction(`dx = dy = 0`): 기준점 (ox, oy)가 ellipse 경계/내부이면 true.
  *
  * @param ellipse 교차를 검사할 ellipse
  * @param line 교차를 검사할 infinite-line

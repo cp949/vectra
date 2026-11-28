@@ -11,9 +11,9 @@ import type { PointWritable, Polygon, Ray } from '../types/flat-shapes.internal'
  * `tLine`=ray parameter `[0, ∞)`, `tEdge`=edge-local parameter `[0, 1]`, `edgeIndex`=polygon edge
  * index를 기록한다. overlap이 첫 hit이면 overlap 구간 시작점(`kind: 'overlap'`)을 기록한다.
  *
- * - ray는 `tLine >= 0` 구간만 본다. origin이 polygon 내부면 boundary exit hit을 기록한다.
+ * - ray는 `tLine >= 0` 구간만 본다. 시작점 (ox, oy)가 polygon 내부면 boundary exit hit을 기록한다.
  * - 교점이 없으면 `false`를 반환하고 out을 수정하지 않는다.
- * - empty polygon(`좌표 수 < 6`)과 degenerate ray direction(zero-length)도 `false`다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate ray(`dx = dy = 0`)도 `false`다.
  *
  * out.point는 매 호출 새로 기록하므로 좌표를 받을 writable storage여야 한다.
  * `epsilon`은 collinear/vertex dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
@@ -25,7 +25,7 @@ import type { PointWritable, Polygon, Ray } from '../types/flat-shapes.internal'
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function closestRayPolygonIntersectionInto(
-  out: LinePolygonIntersectionHit<PointWritable>,
+  out: LinePolygonIntersectionHit,
   ray: Ray,
   polygon: Polygon,
   epsilon?: number

@@ -25,7 +25,7 @@ import {
  *
  * public `IntersectionHit`로 매핑하기 전 단계의 평면 record다.
  * `tLine`은 line-family parameter, `tEdge`는 edge-local parameter `[0, 1]`,
- * `edgeIndex`는 polygon edge index(`vertex[i] → vertex[(i + 2) % n]`)다.
+ * `edgeIndex`는 polygon edge index(`vertex[i] → vertex[(i + 1) % n]`)다.
  */
 export interface LinePolygonHitRecord {
   /** 교점 x 좌표 */
@@ -168,10 +168,9 @@ export function lineFamilyPolygonIntersectionHitsInto(
  * collection(`tLine` 오름차순)의 첫 hit을 source of truth로 사용한다. 별도 교점 계산으로 drift를
  * 만들지 않는다. 교점이 없으면 false를 반환하고 out을 수정하지 않는다.
  *
- * out.point는 `writeXY`로 기록하고 나머지 metadata field를 덮어쓴다. caller가 out.point를 유효한
- * writable storage로 보장해야 한다.
+ * out.point의 x·y와 나머지 metadata field를 덮어쓴다. out.point는 caller가 둔 점 객체를 그대로 쓴다.
  *
- * @param out 첫 교점을 기록할 writable hit (no-hit이면 미수정)
+ * @param out 첫 교점을 기록할 hit 객체 (no-hit이면 미수정)
  * @param ox line-family origin x
  * @param oy line-family origin y
  * @param dx line-family direction x
@@ -181,7 +180,7 @@ export function lineFamilyPolygonIntersectionHitsInto(
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function closestLineFamilyPolygonIntersectionInto(
-  out: LinePolygonIntersectionHit<PointWritable>,
+  out: LinePolygonIntersectionHit,
   ox: number,
   oy: number,
   dx: number,
@@ -204,7 +203,7 @@ export function closestLineFamilyPolygonIntersectionInto(
 }
 
 /** raw record를 public `LinePolygonIntersectionHit` object로 변환한다. nested point는 새 `{ x, y }`다. */
-export function recordToHit(record: LinePolygonHitRecord): LinePolygonIntersectionHit<XYObjectWritable> {
+export function recordToHit(record: LinePolygonHitRecord): LinePolygonIntersectionHit {
   return {
     point: { x: record.x, y: record.y },
     kind: record.kind,

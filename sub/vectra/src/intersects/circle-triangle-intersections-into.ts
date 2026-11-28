@@ -9,7 +9,7 @@ import type { Circle, Triangle, PointWritable } from '../types/flat-shapes.inter
  * triangle boundary 3개 edge와 circle의 교점을 모으고 vertex/tangent 중복을 dedupe한다. boundary 교점만
  * 점으로 노출하므로, circle이 triangle을 완전히 포함하거나 triangle이 circle을 완전히 포함해 boundary
  * 교점이 없으면 빈 배열이다. edge crossing은 edge별 최대 2점, vertex/tangent touch는 dedupe된 1점이다.
- * empty circle(radius ≤ 0), degenerate triangle(signed area 2× === 0), non-finite vertex는 빈 배열을
+ * empty circle(r ≤ 0), degenerate triangle(signed area 2× === 0), non-finite vertex는 빈 배열을
  * 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object다. 반환 순서는 circle center 기준 normalized turn
@@ -20,12 +20,12 @@ import type { Circle, Triangle, PointWritable } from '../types/flat-shapes.inter
  * @param triangle 교점을 구할 triangle
  * @param epsilon tangent/dedupe 판정 임계값
  */
-export function circleTriangleIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function circleTriangleIntersectionsInto(
+  outPoints: PointWritable[],
   circle: Circle,
   triangle: Triangle,
   epsilon = DEFAULT_EPSILON
-): Out {
+): PointWritable[] {
   outPoints.length = 0;
   if (hasNonFiniteTriangleVertex(triangle) || flatTriangleSignedArea2x(triangle) === 0) return outPoints;
   const radius = circle.r;

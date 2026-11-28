@@ -13,13 +13,13 @@ describe('intersectsBounds', () => {
       expect(intersectsEllipseBounds(ellipse, bounds)).toBe(false);
     });
 
-    test('empty ellipse (radiusX=0)이면 false를 반환한다', () => {
+    test('empty ellipse (rx=0)이면 false를 반환한다', () => {
       const e = { cx: 0, cy: 0, rx: 0, ry: 2 };
       const bounds = { minX: -5, minY: -5, maxX: 5, maxY: 5 };
       expect(intersectsEllipseBounds(e, bounds)).toBe(false);
     });
 
-    test('empty ellipse (radiusY<0)이면 false를 반환한다', () => {
+    test('empty ellipse (ry<0)이면 false를 반환한다', () => {
       const e = { cx: 0, cy: 0, rx: 3, ry: -1 };
       const bounds = { minX: -5, minY: -5, maxX: 5, maxY: 5 };
       expect(intersectsEllipseBounds(e, bounds)).toBe(false);

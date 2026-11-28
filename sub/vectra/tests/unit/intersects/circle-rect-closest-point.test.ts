@@ -2,7 +2,7 @@
  * circle × rect closest point helper 단위 테스트.
  *
  * S11-RM-026: circleRectClosestPoint(Into)의 outside clamp / inside boundary projection /
- * boundary center / tie / failure(empty·non-finite rect, negative·non-finite radius) /
+ * boundary center / tie / failure(empty·non-finite rect, negative·non-finite r) /
  * companion allocation을 검증한다.
  */
 
@@ -80,14 +80,14 @@ describe('circleRectClosestPoint failure', () => {
     expect(out).toEqual({ x: 99, y: 99 });
   });
 
-  test('non-finite center는 false + out 미수정이다', () => {
+  test('non-finite cx/cy는 false + out 미수정이다', () => {
     const out: PointWritable = { x: 99, y: 99 };
     expect(circleRectClosestPointInto(out, circle(Number.NaN, 5, 1), rect(0, 0, 10, 10))).toBe(false);
     expect(circleRectClosestPointInto(out, circle(5, Number.POSITIVE_INFINITY, 1), rect(0, 0, 10, 10))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
 
-  test('negative/non-finite radius는 false + out 미수정이다', () => {
+  test('negative/non-finite r은 false + out 미수정이다', () => {
     const out: PointWritable = { x: 99, y: 99 };
     expect(circleRectClosestPointInto(out, circle(5, 5, -1), rect(0, 0, 10, 10))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
@@ -95,7 +95,7 @@ describe('circleRectClosestPoint failure', () => {
     expect(out).toEqual({ x: 99, y: 99 });
   });
 
-  test('radius 0은 valid input이다', () => {
+  test('r = 0은 valid input이다', () => {
     expect(closest(circle(-5, 5, 0), rect(0, 0, 10, 10))).toEqual([true, 0, 5]);
   });
 });

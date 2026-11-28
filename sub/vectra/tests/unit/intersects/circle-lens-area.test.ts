@@ -2,14 +2,13 @@
  * circle-circle lens area scalar helper 단위 테스트.
  *
  * S11-RM-026: circleLensArea의 disjoint / external·internal tangent / containment /
- * coincident / proper lens / non-finite·non-positive radius를 검증한다.
+ * coincident / proper lens / non-finite·non-positive r을 검증한다.
  * 분기 분류는 circleCircleAreaOverlapDetail(none/touch/overlap/contains)과 일치한다.
  */
 
 import { describe, expect, test } from 'vitest';
 import { circleLensArea } from '../../../src/intersects/circle-lens-area';
 
-/** 원 교차 판정에 쓸 입력을 구성한다. */
 /** 원 교차 판정에 쓸 입력을 구성한다. */
 const circle = (cx: number, cy: number, r: number) => ({ cx, cy, r });
 
@@ -138,12 +137,12 @@ describe('circleLensArea', () => {
     expect(area / 1.332332886470164e307).toBeCloseTo(1, 12);
   });
 
-  test('radius <= 0은 0이다', () => {
+  test('r <= 0은 0이다', () => {
     expect(circleLensArea(circle(0, 0, 0), circle(0, 0, 3))).toBe(0);
     expect(circleLensArea(circle(0, 0, -1), circle(0, 0, 3))).toBe(0);
   });
 
-  test('non-finite center/radius는 0이다', () => {
+  test('non-finite cx/cy/r은 0이다', () => {
     expect(circleLensArea(circle(Number.NaN, 0, 2), circle(1, 0, 2))).toBe(0);
     expect(circleLensArea(circle(0, 0, Number.POSITIVE_INFINITY), circle(1, 0, 2))).toBe(0);
     expect(circleLensArea(circle(Number.NEGATIVE_INFINITY, 0, 2), circle(1, 0, 2))).toBe(0);

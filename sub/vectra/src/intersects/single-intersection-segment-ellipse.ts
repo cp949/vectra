@@ -7,7 +7,7 @@ import type { Ellipse, Segment, PointWritable } from '../types/flat-shapes.inter
  *
  * tangent이면 접점 object를 반환한다. 교점이 없거나 2개 이상이면 undefined를 반환한다.
  * contained (segment 전체가 ellipse 내부) 또는 zero-length segment이면 undefined.
- * empty ellipse (radiusX ≤ 0 또는 radiusY ≤ 0)이면 undefined.
+ * empty ellipse (rx ≤ 0 또는 ry ≤ 0)이면 undefined.
  * allocating companion — internal helper를 직접 호출한다.
  *
  * @param line 교점을 구할 segment

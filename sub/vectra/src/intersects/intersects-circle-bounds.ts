@@ -4,7 +4,7 @@ import type { Bounds, Circle } from '../types/flat-shapes.internal';
  * circle과 bounds가 교차하거나 접하면 true를 반환한다.
  *
  * bounds 내부에서 circle center에 가장 가까운 점과의 거리로 판정한다.
- * radius ≤ 0인 circle: false.
+ * r ≤ 0인 circle: false.
  * inverted bounds (min > max): false.
  * closed boundary 포함 (접점도 true).
  *

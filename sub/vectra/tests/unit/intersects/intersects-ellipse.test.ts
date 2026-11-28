@@ -40,22 +40,22 @@ describe('intersectsEllipseSegment', () => {
     expect(intersectsEllipseSegment(ellipse, line)).toBe(true);
   });
 
-  test('degenerate line (a===b): origin이 ellipse 내부이면 true를 반환한다', () => {
+  test('degenerate segment((x1, y1) = (x2, y2)): 그 점이 ellipse 내부이면 true를 반환한다', () => {
     const line = { x1: 0, y1: 0, x2: 0, y2: 0 };
     expect(intersectsEllipseSegment(ellipse, line)).toBe(true);
   });
 
-  test('degenerate line (a===b): origin이 ellipse 외부이면 false를 반환한다', () => {
+  test('degenerate segment((x1, y1) = (x2, y2)): 그 점이 ellipse 외부이면 false를 반환한다', () => {
     const line = { x1: 10, y1: 10, x2: 10, y2: 10 };
     expect(intersectsEllipseSegment(ellipse, line)).toBe(false);
   });
 
-  test('empty ellipse (radiusX=0): false를 반환한다', () => {
+  test('empty ellipse (rx=0): false를 반환한다', () => {
     const line = { x1: -4, y1: 0, x2: 4, y2: 0 };
     expect(intersectsEllipseSegment({ cx: 0, cy: 0, rx: 0, ry: 2 }, line)).toBe(false);
   });
 
-  test('empty ellipse (radiusY<=0): false를 반환한다', () => {
+  test('empty ellipse (ry<=0): false를 반환한다', () => {
     const line = { x1: -4, y1: 0, x2: 4, y2: 0 };
     expect(intersectsEllipseSegment({ cx: 0, cy: 0, rx: 3, ry: -1 }, line)).toBe(false);
   });
@@ -155,7 +155,7 @@ describe('singleIntersectionSegmentEllipse', () => {
 // ─── intersectsEllipseRay ────────────────────────────────────────────────────
 
 describe('intersectsEllipseRay', () => {
-  test('ray origin이 ellipse 내부: true를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 ellipse 내부: true를 반환한다', () => {
     const ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
     expect(intersectsEllipseRay(ellipse, ray)).toBe(true);
   });
@@ -181,12 +181,12 @@ describe('intersectsEllipseRay', () => {
     expect(intersectsEllipseRay({ cx: 0, cy: 0, rx: 3, ry: 0 }, ray)).toBe(false);
   });
 
-  test('degenerate ray (direction=0): origin이 내부이면 true를 반환한다', () => {
+  test('degenerate ray(dx = dy = 0): 시작점 (ox, oy)가 내부이면 true를 반환한다', () => {
     const ray = { ox: 0, oy: 0, dx: 0, dy: 0 };
     expect(intersectsEllipseRay(ellipse, ray)).toBe(true);
   });
 
-  test('degenerate ray (direction=0): origin이 외부이면 false를 반환한다', () => {
+  test('degenerate ray(dx = dy = 0): 시작점 (ox, oy)가 외부이면 false를 반환한다', () => {
     const ray = { ox: 10, oy: 10, dx: 0, dy: 0 };
     expect(intersectsEllipseRay(ellipse, ray)).toBe(false);
   });
@@ -210,7 +210,7 @@ describe('singleIntersectionRayEllipseInto', () => {
     expect(out.x).toBe(99);
   });
 
-  test('ray origin이 내부 — exit point를 기록하고 true를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 내부 — exit point를 기록하고 true를 반환한다', () => {
     // origin (0,0) 내부, dir (1,0) → exit at (3,0)
     const out = { x: 0, y: 0 };
     const ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
@@ -257,7 +257,7 @@ describe('singleIntersectionRayEllipse', () => {
     expect(singleIntersectionRayEllipse(ray, ellipse)).toBeUndefined();
   });
 
-  test('ray origin 내부 exit: exit point object를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 내부일 때 exit point object를 반환한다', () => {
     const ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
     const result = singleIntersectionRayEllipse(ray, ellipse);
     expect(result).not.toBeUndefined();
@@ -295,12 +295,12 @@ describe('intersectsEllipseInfiniteLine', () => {
     expect(intersectsEllipseInfiniteLine({ cx: 0, cy: 0, rx: 3, ry: 0 }, infLine)).toBe(false);
   });
 
-  test('degenerate infinite-line (direction=0): origin이 내부이면 true를 반환한다', () => {
+  test('degenerate infinite-line(dx = dy = 0): 기준점 (ox, oy)가 내부이면 true를 반환한다', () => {
     const infLine = { ox: 0, oy: 0, dx: 0, dy: 0 };
     expect(intersectsEllipseInfiniteLine(ellipse, infLine)).toBe(true);
   });
 
-  test('degenerate infinite-line (direction=0): origin이 ellipse 밖이면 false를 반환한다', () => {
+  test('degenerate infinite-line(dx = dy = 0): 기준점 (ox, oy)가 ellipse 밖이면 false를 반환한다', () => {
     // direction=0, origin (10, 10) — ellipse 외부
     const infLine = { ox: 10, oy: 10, dx: 0, dy: 0 };
     expect(intersectsEllipseInfiniteLine(ellipse, infLine)).toBe(false);
@@ -368,8 +368,8 @@ describe('singleIntersectionInfiniteLineEllipse', () => {
 // non-degenerate contained fallback이 같은 closed disk 정책을 따르는지 고정한다.
 
 describe('intersectsEllipseSegment closed disk boundary', () => {
-  test('segment endpoint가 경계 위(origin on boundary)면 true를 반환한다', () => {
-    // a=(3,0) 우측 vertex(경계), b=(0,0) 내부 — t=0에서 경계 접촉
+  test('segment 끝점 (x1, y1)이 경계 위면 true를 반환한다', () => {
+    // (x1, y1)=(3,0) 우측 vertex(경계), (x2, y2)=(0,0) 내부 — t=0에서 경계 접촉
     const line = { x1: 3, y1: 0, x2: 0, y2: 0 };
     expect(intersectsEllipseSegment(ellipse, line)).toBe(true);
   });
@@ -379,15 +379,15 @@ describe('intersectsEllipseSegment closed disk boundary', () => {
     expect(intersectsEllipseSegment(ellipse, line)).toBe(true);
   });
 
-  test('degenerate segment(a===b)가 경계 위면 true를 반환한다', () => {
-    // a=b=(0,2) 상단 vertex(경계) — degenerate direction, c=0 → closed disk
+  test('degenerate segment((x1, y1) = (x2, y2))가 경계 위면 true를 반환한다', () => {
+    // (x1, y1) = (x2, y2) = (0,2) 상단 vertex(경계) — degenerate direction, c=0 → closed disk
     const line = { x1: 0, y1: 2, x2: 0, y2: 2 };
     expect(intersectsEllipseSegment(ellipse, line)).toBe(true);
   });
 
-  test('origin이 경계 위이고 방향이 near-tangent여도 true를 반환한다', () => {
+  test('끝점 (x1, y1)이 경계 위이고 방향이 near-tangent여도 true를 반환한다', () => {
     // unit circle 경계 (1,0) → c=0. dir이 거의 접선이라 접점 t가 epsilon band에서 range 밖으로
-    // 밀려도 origin이 closed disk이므로 tangent 분기 fallback이 true를 보장한다.
+    // 밀려도 (x1, y1)이 closed disk이므로 tangent 분기 fallback이 true를 보장한다.
     const unit = { cx: 0, cy: 0, rx: 1, ry: 1 };
     const line = { x1: 1, y1: 0, x2: 1 + 5e-10, y2: 1 };
     expect(intersectsEllipseSegment(unit, line)).toBe(true);
@@ -395,18 +395,18 @@ describe('intersectsEllipseSegment closed disk boundary', () => {
 });
 
 describe('intersectsEllipseRay closed disk boundary', () => {
-  test('ray origin이 경계 위에서 바깥을 향해도 true를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 경계 위에서 바깥을 향해도 true를 반환한다', () => {
     // origin=(3,0) 경계, dir=(1,0) 바깥 방향 — t=0 경계 접촉만 존재
     const ray = { ox: 3, oy: 0, dx: 1, dy: 0 };
     expect(intersectsEllipseRay(ellipse, ray)).toBe(true);
   });
 
-  test('degenerate ray(direction=0) origin이 경계 위면 true를 반환한다', () => {
+  test('degenerate ray(dx = dy = 0)의 시작점 (ox, oy)가 경계 위면 true를 반환한다', () => {
     const ray = { ox: 0, oy: 2, dx: 0, dy: 0 };
     expect(intersectsEllipseRay(ellipse, ray)).toBe(true);
   });
 
-  test('ray origin이 경계 위이고 방향이 near-tangent여도 true를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 경계 위이고 방향이 near-tangent여도 true를 반환한다', () => {
     // origin (1,0)은 closed disk 경계. near-tangent dir로 접점 t가 range 밖이어도 boundary touch.
     const unit = { cx: 0, cy: 0, rx: 1, ry: 1 };
     const ray = { ox: 1, oy: 0, dx: 5e-10, dy: 1 };
@@ -415,7 +415,7 @@ describe('intersectsEllipseRay closed disk boundary', () => {
 });
 
 describe('intersectsEllipseInfiniteLine closed disk boundary', () => {
-  test('degenerate infinite-line(direction=0) origin이 경계 위면 true를 반환한다', () => {
+  test('degenerate infinite-line(dx = dy = 0)의 기준점 (ox, oy)가 경계 위면 true를 반환한다', () => {
     const infLine = { ox: 0, oy: 2, dx: 0, dy: 0 };
     expect(intersectsEllipseInfiniteLine(ellipse, infLine)).toBe(true);
   });

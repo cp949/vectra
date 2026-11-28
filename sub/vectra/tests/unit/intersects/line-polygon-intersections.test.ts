@@ -65,7 +65,7 @@ describe('segmentPolygonIntersections', () => {
     expect(segmentPolygonIntersections(segment(1, 1, 3, 3), square)).toEqual([]);
   });
 
-  test('empty polygon(points.length < 3)은 빈 배열이다', () => {
+  test('empty polygon(좌표 수 < 6)은 빈 배열이다', () => {
     expect(segmentPolygonIntersections(segment(2, -1, 2, 5), [0, 0, 4, 0])).toEqual([]);
   });
 
@@ -94,7 +94,7 @@ describe('segmentPolygonIntersections', () => {
 });
 
 describe('rayPolygonIntersections', () => {
-  test('origin이 polygon 내부면 exit hit 1개를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 polygon 내부면 exit hit 1개를 반환한다', () => {
     const hits = rayPolygonIntersections(ray(3, 3, 1, 0), wideSquare);
     expect(points(hits)).toEqual([[6, 3]]);
     expect(hits[0].kind).toBe('cross');
@@ -110,7 +110,7 @@ describe('rayPolygonIntersections', () => {
     expect(hits[0].kind).toBe('touch');
   });
 
-  test('empty polygon과 degenerate ray direction은 빈 배열이다', () => {
+  test('empty polygon과 dx = dy = 0인 ray는 빈 배열이다', () => {
     expect(rayPolygonIntersections(ray(3, 3, 1, 0), [0, 0, 6, 0])).toEqual([]);
     expect(rayPolygonIntersections(ray(3, 3, 0, 0), wideSquare)).toEqual([]);
   });
@@ -145,7 +145,7 @@ describe('infiniteLinePolygonIntersections', () => {
     expect(hits.map((h) => h.kind)).toEqual(['overlap', 'overlap']);
   });
 
-  test('empty polygon과 degenerate direction은 빈 배열이다', () => {
+  test('empty polygon과 dx = dy = 0인 infinite-line은 빈 배열이다', () => {
     expect(infiniteLinePolygonIntersections(infiniteLine(2, 2, 1, 0), [0, 0, 4, 0])).toEqual([]);
     expect(infiniteLinePolygonIntersections(infiniteLine(2, 2, 0, 0), square)).toEqual([]);
   });
@@ -242,7 +242,7 @@ describe('line/polygon kernel edge cases', () => {
     expect(segmentPolygonIntersections(segment(2, Number.NaN, 2, 5), square)).toEqual([]);
   });
 
-  test('Infinity origin은 가짜 NaN record를 만들지 않는다', () => {
+  test('ox 또는 oy가 Infinity여도 가짜 NaN record를 만들지 않는다', () => {
     expect(infiniteLinePolygonIntersections(infiniteLine(Number.POSITIVE_INFINITY, 0, 0, 1), square)).toEqual([]);
     expect(infiniteLinePolygonIntersections(infiniteLine(0, Number.POSITIVE_INFINITY, 1, 0), square)).toEqual([]);
   });

@@ -3,7 +3,8 @@
  *
  * 난수 입력 수천 개에서 `origin + t * direction`이 기존 함수가 기록한 첫 교점과
  * ±1e-9 안에서 같은지, 기존 함수가 교점을 주지 않는 입력에서 Infinity인지 확인한다.
- * ray, circle, segment 같은 입력은 객체와 tuple 형태를 무작위로 섞는다. tMin은 0이다.
+ * rect·bounds 시험의 ray와 도형은 객체와 tuple 형태를 무작위로 섞는다. 나머지 시험은 평평한 객체를 쓴다.
+ * tMin은 0이다.
  *
  * 대상 함수:
  *  - rayCircleHitT   ↔ rayCircleIntersectionsInto
@@ -32,13 +33,9 @@ import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single
 import { createRng } from '../../../src/random/create-rng';
 import type {
   BoundsLike,
-  CircleLike,
-  EllipseLike,
   LinePolygonIntersectionHit,
-  PolygonLike,
   RayLike,
   RectLike,
-  SegmentLike,
   XYInput,
   XYObjectWritable,
 } from '../../../src/types';

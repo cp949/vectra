@@ -3,7 +3,7 @@ import type { Circle } from '../types/flat-shapes.internal';
 /**
  * 두 circle이 교차하거나 접하면 true를 반환한다.
  *
- * radius ≤ 0인 circle: false.
+ * r ≤ 0인 circle: false.
  * closed boundary 포함 (접점도 true).
  *
  * @param a 첫 번째 circle

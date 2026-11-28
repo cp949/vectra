@@ -25,12 +25,12 @@ import type { Polygon, Segment } from '../types/flat-shapes.internal';
  * @param epsilon collinear/수렴 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function segmentPolygonOverlapIntervalsInto<Out extends LinePolygonOverlapIntervalDetail[]>(
-  outIntervals: Out,
+export function segmentPolygonOverlapIntervalsInto(
+  outIntervals: LinePolygonOverlapIntervalDetail[],
   segment: Segment,
   polygon: Polygon,
   epsilon?: number
-): Out {
+): LinePolygonOverlapIntervalDetail[] {
   const ax = segment.x1;
   const ay = segment.y1;
   lineFamilyPolygonOverlapIntervalsInto(

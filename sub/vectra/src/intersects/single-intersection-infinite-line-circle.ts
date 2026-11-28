@@ -6,7 +6,7 @@ import type { Circle, InfiniteLine, PointWritable } from '../types/flat-shapes.i
  * infinite-line과 circle의 단일 교점을 새 object로 반환한다.
  *
  * tangent이면 접점 object를 반환한다. 2-point crossing이면 undefined.
- * empty circle (radius ≤ 0): undefined.
+ * empty circle (r ≤ 0): undefined.
  * allocating companion — internal helper를 직접 호출한다.
  */
 export function singleIntersectionInfiniteLineCircle(

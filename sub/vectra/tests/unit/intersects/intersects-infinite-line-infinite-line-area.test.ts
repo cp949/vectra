@@ -23,26 +23,26 @@ describe('intersectsInfiniteLine', () => {
     expect(intersectsInfiniteLineInfiniteLine(horizA, horizB)).toBe(false);
   });
 
-  test('degenerate a, a.origin이 b 위 → true', () => {
+  test('degenerate a, a의 (ox, oy)가 b 위 → true', () => {
     const degOnHoriz = { ox: 3, oy: 0, dx: 0, dy: 0 };
     expect(intersectsInfiniteLineInfiniteLine(degOnHoriz, horizA)).toBe(true);
   });
 
-  test('degenerate a, a.origin이 b 위 아님 → false', () => {
+  test('degenerate a, a의 (ox, oy)가 b 위 아님 → false', () => {
     // degA origin=(1,2), horizA는 y=0
     expect(intersectsInfiniteLineInfiniteLine(degA, horizA)).toBe(false);
   });
 
-  test('degenerate b, b.origin이 a 위 → true', () => {
+  test('degenerate b, b의 (ox, oy)가 a 위 → true', () => {
     const degOnHoriz = { ox: 0, oy: 0, dx: 0, dy: 0 };
     expect(intersectsInfiniteLineInfiniteLine(horizA, degOnHoriz)).toBe(true);
   });
 
-  test('양쪽 degenerate — origin 일치 → true', () => {
+  test('양쪽 degenerate — (ox, oy) 일치 → true', () => {
     expect(intersectsInfiniteLineInfiniteLine(degA, degB)).toBe(true);
   });
 
-  test('양쪽 degenerate — origin 불일치 → false', () => {
+  test('양쪽 degenerate — (ox, oy) 불일치 → false', () => {
     expect(intersectsInfiniteLineInfiniteLine(degA, degC)).toBe(false);
   });
 });

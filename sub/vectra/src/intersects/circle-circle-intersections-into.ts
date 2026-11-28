@@ -7,7 +7,7 @@ import { circleCircleDetailXY } from './circle-circle-intersections.internal';
  *
  * `circleCircleDetail`과 같은 계산을 source로 쓰고 point relation만 점으로 노출한다.
  * - tangent(`point`)는 한 점, proper two-point는 circle `a` 기준 turn 오름차순 두 점을 push한다.
- * - 외부 분리, containment, coincident overlap, radius ≤ 0, non-finite는 점으로 표현할 수 없어
+ * - 외부 분리, containment, coincident overlap, r ≤ 0, non-finite는 점으로 표현할 수 없어
  *   빈 결과를 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }`
@@ -22,12 +22,12 @@ import { circleCircleDetailXY } from './circle-circle-intersections.internal';
  * @param b 두 번째 circle
  * @param epsilon center distance 및 tangent 판정 임계값
  */
-export function circleCircleIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function circleCircleIntersectionsInto(
+  outPoints: PointWritable[],
   a: Circle,
   b: Circle,
   epsilon = DEFAULT_EPSILON
-): Out {
+): PointWritable[] {
   const detail = circleCircleDetailXY(a.cx, a.cy, b.cx, b.cy, a.r, b.r, epsilon);
 
   outPoints.length = 0;

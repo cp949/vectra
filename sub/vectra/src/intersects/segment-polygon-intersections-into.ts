@@ -26,12 +26,12 @@ import type { Polygon, Segment } from '../types/flat-shapes.internal';
  * @param epsilon collinear/dedupe 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function segmentPolygonIntersectionsInto<Out extends LinePolygonIntersectionHit[]>(
-  outHits: Out,
+export function segmentPolygonIntersectionsInto(
+  outHits: LinePolygonIntersectionHit[],
   segment: Segment,
   polygon: Polygon,
   epsilon?: number
-): Out {
+): LinePolygonIntersectionHit[] {
   const ax = segment.x1;
   const ay = segment.y1;
   lineFamilyPolygonIntersectionHitsInto(outHits, ax, ay, segment.x2 - ax, segment.y2 - ay, 'finite', polygon, epsilon);

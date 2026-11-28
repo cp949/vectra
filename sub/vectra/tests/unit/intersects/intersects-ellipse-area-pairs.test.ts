@@ -9,7 +9,7 @@ describe('ellipse.intersectsCircle - 기본 교차 판정', () => {
     expect(intersectsEllipseCircle({ cx: 0, cy: 0, rx: 2, ry: 0 }, { cx: 0, cy: 0, r: 5 })).toBe(false);
   });
 
-  test('empty circle (radius <= 0)은 false를 반환한다', () => {
+  test('empty circle (r <= 0)은 false를 반환한다', () => {
     expect(intersectsEllipseCircle({ cx: 0, cy: 0, rx: 2, ry: 1 }, { cx: 0, cy: 0, r: 0 })).toBe(false);
     expect(intersectsEllipseCircle({ cx: 0, cy: 0, rx: 2, ry: 1 }, { cx: 0, cy: 0, r: -1 })).toBe(false);
   });

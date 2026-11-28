@@ -33,12 +33,12 @@ describe('intersectsCircleSegment', () => {
     expect(intersectsCircleSegment(circle, line)).toBe(true);
   });
 
-  test('empty circle (radius=0): false를 반환한다', () => {
+  test('empty circle (r=0): false를 반환한다', () => {
     const line = { x1: 0, y1: 3, x2: 6, y2: 3 };
     expect(intersectsCircleSegment({ cx: 3, cy: 3, r: 0 }, line)).toBe(false);
   });
 
-  test('empty circle (radius<0): false를 반환한다', () => {
+  test('empty circle (r<0): false를 반환한다', () => {
     const line = { x1: 0, y1: 3, x2: 6, y2: 3 };
     expect(intersectsCircleSegment({ cx: 3, cy: 3, r: -1 }, line)).toBe(false);
   });
@@ -108,7 +108,7 @@ describe('singleIntersectionSegmentCircle (allocating companion)', () => {
 describe('intersectsCircleRay', () => {
   const circle = { cx: 3, cy: 3, r: 2 };
 
-  test('ray origin이 circle 내부: true를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 circle 내부: true를 반환한다', () => {
     // origin at (3,3) = center, inside circle
     const ray = { ox: 3, oy: 3, dx: 1, dy: 0 };
     expect(intersectsCircleRay(circle, ray)).toBe(true);
@@ -130,10 +130,10 @@ describe('intersectsCircleRay', () => {
   });
 });
 
-describe('singleIntersectionRayCircleInto (contained origin)', () => {
+describe('singleIntersectionRayCircleInto (시작점이 circle 내부)', () => {
   const circle = { cx: 3, cy: 3, r: 2 };
 
-  test('ray origin이 내부일 때 exit point를 기록한다', () => {
+  test('ray 시작점 (ox, oy)가 내부일 때 exit point를 기록한다', () => {
     const out = { x: 0, y: 0 };
     // origin at center (3,3), dir (1,0) → exit at (5,3)
     const ray = { ox: 3, oy: 3, dx: 1, dy: 0 };
@@ -206,7 +206,7 @@ describe('singleIntersectionRayCircle (allocating companion)', () => {
     expect(singleIntersectionRayCircle(ray, circle)).toBeUndefined();
   });
 
-  test('ray origin 내부 exit: exit point object를 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 내부일 때 exit point object를 반환한다', () => {
     // origin at center (3,3), dir (1,0) → exit at (5,3)
     const ray = { ox: 3, oy: 3, dx: 1, dy: 0 };
     const result = singleIntersectionRayCircle(ray, circle);

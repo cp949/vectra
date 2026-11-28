@@ -7,7 +7,7 @@ import { infiniteLineEllipseIntersectionsInto } from './infinite-line-ellipse-in
  *
  * `infiniteLineEllipseIntersectionsInto`의 allocating companion이다.
  * - tangent는 중복 없이 한 점, proper two-point는 두 점을 line parameter `t` 오름차순으로 반환한다.
- * - no hit, degenerate direction(zero-length), empty ellipse(radiusX ≤ 0 또는 radiusY ≤ 0)는
+ * - no hit, degenerate direction(`dx = dy = 0`), empty ellipse(rx ≤ 0 또는 ry ≤ 0)는
  *   빈 배열을 반환한다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object다.

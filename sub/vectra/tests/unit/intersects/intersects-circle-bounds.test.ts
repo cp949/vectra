@@ -23,13 +23,13 @@ describe('intersectsBounds', () => {
       expect(intersectsCircleBounds(circle, bounds)).toBe(false);
     });
 
-    test('empty circle (radius=0)이면 false를 반환한다', () => {
+    test('empty circle (r=0)이면 false를 반환한다', () => {
       const circle = { cx: 0, cy: 0, r: 0 };
       const bounds = { minX: -5, minY: -5, maxX: 5, maxY: 5 };
       expect(intersectsCircleBounds(circle, bounds)).toBe(false);
     });
 
-    test('empty circle (radius<0)이면 false를 반환한다', () => {
+    test('empty circle (r<0)이면 false를 반환한다', () => {
       const circle = { cx: 0, cy: 0, r: -1 };
       const bounds = { minX: -5, minY: -5, maxX: 5, maxY: 5 };
       expect(intersectsCircleBounds(circle, bounds)).toBe(false);

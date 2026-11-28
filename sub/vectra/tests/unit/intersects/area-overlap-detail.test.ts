@@ -17,7 +17,6 @@ const bounds = (minX: number, minY: number, maxX: number, maxY: number): BoundsL
   max: { x: maxX, y: maxY },
 });
 /** 원 교차 판정에 쓸 입력을 구성한다. */
-/** 원 교차 판정에 쓸 입력을 구성한다. */
 const circle = (cx: number, cy: number, r: number) => ({ cx, cy, r });
 
 /** detail의 touch point 좌표 배열 (touch가 아니면 빈 배열) */
@@ -179,12 +178,12 @@ describe('circleCircleAreaOverlapDetail', () => {
     expect(circleCircleAreaOverlapDetail(circle(0, 0, 1), circle(10, 0, 1))).toEqual({ kind: 'none' });
   });
 
-  test('empty circle(radius <= 0)은 none이다', () => {
+  test('empty circle(r <= 0)은 none이다', () => {
     expect(circleCircleAreaOverlapDetail(circle(0, 0, 0), circle(0, 0, 4))).toEqual({ kind: 'none' });
     expect(circleCircleAreaOverlapDetail(circle(0, 0, -3), circle(0, 0, 4))).toEqual({ kind: 'none' });
   });
 
-  test('non-finite center/radius는 none이다', () => {
+  test('non-finite cx/cy/r은 none이다', () => {
     expect(circleCircleAreaOverlapDetail(circle(Number.NaN, 0, 1), circle(0, 0, 1))).toEqual({ kind: 'none' });
     expect(circleCircleAreaOverlapDetail(circle(0, Number.NaN, 1), circle(0, 0, 1))).toEqual({ kind: 'none' });
     expect(circleCircleAreaOverlapDetail(circle(0, 0, Number.POSITIVE_INFINITY), circle(0, 0, 1))).toEqual({
@@ -194,7 +193,7 @@ describe('circleCircleAreaOverlapDetail', () => {
       kind: 'none',
     });
     expect(circleCircleAreaOverlapDetail(circle(0, 0, Number.NaN), circle(0, 0, 1))).toEqual({ kind: 'none' });
-    // 두 번째 circle의 non-finite center/radius도 none이다.
+    // 두 번째 circle의 non-finite cx/cy/r도 none이다.
     expect(circleCircleAreaOverlapDetail(circle(0, 0, 1), circle(Number.POSITIVE_INFINITY, 0, 1))).toEqual({
       kind: 'none',
     });

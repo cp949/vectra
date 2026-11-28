@@ -12,7 +12,7 @@ import type { Polygon, Polyline } from '../types/flat-shapes.internal';
  * - polyline 전체가 polygon 내부에 완전히 포함된 경우: 첫 point containment로 true.
  * - collinear 꼭짓점, self-intersecting polygon도 동일한 규칙으로 판정한다.
  * - empty polygon (좌표 수 < 6): false.
- * - empty polyline (points.length === 0): false.
+ * - empty polyline (polyline.length === 0): false.
  * - single-point polyline: point containment만 판정한다.
  *
  * @param polygon  교차를 검사할 polygon

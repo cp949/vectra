@@ -4,7 +4,7 @@ import type { Circle, Rect } from '../types/flat-shapes.internal';
  * circle과 rect가 교차하거나 접하면 true를 반환한다.
  *
  * rect 내부에서 circle center에 가장 가까운 점과의 거리로 판정한다.
- * radius ≤ 0인 circle: false.
+ * r ≤ 0인 circle: false.
  * width ≤ 0 또는 height ≤ 0인 rect: false.
  * closed boundary 포함 (접점도 true).
  *

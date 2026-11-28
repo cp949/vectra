@@ -16,7 +16,7 @@ import { rayEllipseIntersectionsInto } from '../../../src/intersects/ray-ellipse
 import { segmentEllipseIntersections } from '../../../src/intersects/segment-ellipse-intersections';
 import { segmentEllipseIntersectionsInto } from '../../../src/intersects/segment-ellipse-intersections-into';
 
-// 중심 원점, radiusX=2, radiusY=1 ellipse를 기본 fixture로 쓴다.
+// 중심 원점, rx=2, ry=1 ellipse를 기본 fixture로 쓴다.
 const ellipse = { cx: 0, cy: 0, rx: 2, ry: 1 };
 
 describe('infiniteLineEllipseIntersections', () => {
@@ -56,12 +56,12 @@ describe('infiniteLineEllipseIntersections', () => {
   });
 
   test('no hit line은 빈 배열을 반환한다', () => {
-    // y=2 수평선은 ellipse(radiusY=1) 바깥을 지난다.
+    // y=2 수평선은 ellipse(ry=1) 바깥을 지난다.
     const line = { ox: -5, oy: 2, dx: 1, dy: 0 };
     expect(infiniteLineEllipseIntersections(line, ellipse)).toEqual([]);
   });
 
-  test('degenerate direction(zero-length)은 빈 배열을 반환한다', () => {
+  test('degenerate direction(dx = dy = 0)은 빈 배열을 반환한다', () => {
     const line = { ox: 0, oy: 0, dx: 0, dy: 0 };
     expect(infiniteLineEllipseIntersections(line, ellipse)).toEqual([]);
   });
@@ -132,7 +132,7 @@ describe('rayEllipseIntersections', () => {
     expect(result[1].x).toBeCloseTo(2, 12);
   });
 
-  test('origin이 내부이면 t ≥ 0 exit 한 점만 반환한다', () => {
+  test('시작점 (ox, oy)가 내부이면 t ≥ 0 exit 한 점만 반환한다', () => {
     // origin (0,0) 내부, direction (+x). exit (2,0)만 t ≥ 0.
     const ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
     const out: { x: number; y: number }[] = [];
@@ -148,7 +148,7 @@ describe('rayEllipseIntersections', () => {
     expect(rayEllipseIntersections(ray, ellipse)).toEqual([]);
   });
 
-  test('degenerate direction(zero-length)은 빈 배열을 반환한다', () => {
+  test('degenerate direction(dx = dy = 0)은 빈 배열을 반환한다', () => {
     const ray = { ox: 0, oy: 0, dx: 0, dy: 0 };
     expect(rayEllipseIntersections(ray, ellipse)).toEqual([]);
   });

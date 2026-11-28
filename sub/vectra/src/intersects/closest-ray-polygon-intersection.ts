@@ -10,9 +10,9 @@ import { closestRayPolygonIntersectionInto } from './closest-ray-polygon-interse
  * `rayPolygonIntersections` collection의 첫 hit(ray parameter `tLine` 최소)과 같은 point/metadata를
  * 반환한다. overlap이 첫 hit이면 overlap 구간 시작점(`kind: 'overlap'`)을 반환한다.
  *
- * - ray는 `tLine >= 0` 구간만 본다. origin이 polygon 내부면 boundary exit hit을 반환한다.
+ * - ray는 `tLine >= 0` 구간만 본다. 시작점 (ox, oy)가 polygon 내부면 boundary exit hit을 반환한다.
  * - 교점이 없으면 `undefined`를 반환한다.
- * - empty polygon(`좌표 수 < 6`)과 degenerate ray direction(zero-length)도 `undefined`다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate ray(`dx = dy = 0`)도 `undefined`다.
  *
  * 반환 hit과 nested point는 매 호출 새 object이며 입력 point object를 재사용하지 않는다.
  * `epsilon`은 collinear/vertex dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
@@ -25,8 +25,8 @@ export function closestRayPolygonIntersection(
   ray: Ray,
   polygon: Polygon,
   epsilon = DEFAULT_EPSILON
-): LinePolygonIntersectionHit<PointWritable> | undefined {
-  const out: LinePolygonIntersectionHit<PointWritable> = {
+): LinePolygonIntersectionHit | undefined {
+  const out: LinePolygonIntersectionHit = {
     point: { x: 0, y: 0 },
     kind: 'cross',
     tLine: 0,

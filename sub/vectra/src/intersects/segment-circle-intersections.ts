@@ -8,7 +8,7 @@ import { segmentCircleIntersectionsInto } from './segment-circle-intersections-i
  * `segmentCircleIntersectionsInto`의 allocating companion이다.
  * - tangent는 접점 t가 range(`t in [0, 1]`) 안일 때만 중복 없이 한 점이고, range 밖이면 빈 배열이다.
  * - proper two-point는 두 점을 segment parameter `t` 오름차순으로 반환한다.
- * - segment 전체가 circle 내부(boundary root 없음), zero-length segment, empty circle(radius ≤ 0)은
+ * - segment 전체가 circle 내부(boundary root 없음), zero-length segment, empty circle(r ≤ 0)은
  *   빈 배열을 반환한다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 point object를 재사용하지 않는다.

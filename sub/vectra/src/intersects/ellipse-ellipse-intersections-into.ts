@@ -9,7 +9,7 @@ import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
  * - tangent(`point`)는 한 점, proper 2점(`two-point`)은 두 점, 3~4점(`multi-point`)은 모든 점을
  *   ellipse `a` 기준 turn 오름차순으로 push한다.
  * - 외부 분리, boundary 교점 없는 disjoint(`none`), 한 ellipse가 다른 ellipse 내부에 있는
- *   containment(`contains`), coincident(`overlap`), empty ellipse(radiusX/radiusY ≤ 0), non-finite는
+ *   containment(`contains`), coincident(`overlap`), empty ellipse(rx ≤ 0 또는 ry ≤ 0), non-finite는
  *   점으로 표현할 수 없어 빈 결과를 남긴다. coincident overlap에서 임의 점을 만들지 않는다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }`
@@ -22,12 +22,12 @@ import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
  * @param b 두 번째 ellipse
  * @param epsilon coincident / tangent / containment 판정 임계값
  */
-export function ellipseEllipseIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function ellipseEllipseIntersectionsInto(
+  outPoints: PointWritable[],
   a: Ellipse,
   b: Ellipse,
   epsilon = DEFAULT_EPSILON
-): Out {
+): PointWritable[] {
   const detail = ellipseEllipseDetailXY(a.cx, a.cy, a.rx, a.ry, b.cx, b.cy, b.rx, b.ry, epsilon);
 
   outPoints.length = 0;

@@ -1,4 +1,8 @@
-/** 교차점 기록 함수의 출력 배열 반환 타입과 참조를 검증한다. */
+/**
+ * 교차 결과를 기록하는 Into 함수의 입력·출력 타입과 참조를 검증한다.
+ * 새 원소를 push하는 출력 배열은 원소 타입을 함수가 만드는 타입으로 고정한다.
+ * 좁은 원소 타입 배열을 넘겨도 반환 타입이 넓어진 실제 원소 타입인지 확인한다.
+ */
 import { expect, expectTypeOf, test } from 'vitest';
 import { rayPolygonIntersectionsInto } from '../../../src/intersects/ray-polygon-intersections-into';
 import { infiniteLinePolygonIntersectionsInto } from '../../../src/intersects/infinite-line-polygon-intersections-into';
@@ -37,63 +41,54 @@ import type {
   InfiniteLine,
   PointWritable,
   Polygon,
+  PolygonWritable,
   Ray,
   Segment,
 } from '../../../src/types/flat-shapes.internal';
 
-class PolygonOutput<T> extends Array<T> {
-  readonly label = '다각형 교차 출력';
+/** 호출자가 점에 표지를 붙여 쓰는 좁은 원소 타입. 함수가 push한 점은 이 클래스의 인스턴스가 아니다. */
+class TaggedPoint {
+  x = 0;
+  y = 0;
+  readonly tag = '호출자 점';
 }
 
-class IntersectionPoints extends Array<PointWritable> {
-  readonly label = '교점';
-}
+type TaggedHit = LinePolygonIntersectionHit & { tag: string };
+type TaggedInterval = LinePolygonOverlapIntervalDetail & { tag: string };
+type TaggedRayHit = VisibilityRayHit & { tag: string };
 
-test('circleCircleIntersectionsInto는 전달받은 배열 서브클래스를 그대로 반환한다', () => {
+test('circleCircleIntersectionsInto는 새 점을 push하므로 원소 타입을 PointWritable로 고정한다', () => {
   const a: Circle = { cx: 0, cy: 0, r: 2 };
   const b: Circle = { cx: 4, cy: 0, r: 2 };
-  const out = new IntersectionPoints();
+  const out: TaggedPoint[] = [];
   const result = circleCircleIntersectionsInto(out, a, b);
 
-  expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
   expect(result).toBe(out);
   expect(out[0]).toEqual({ x: 2, y: 0 });
+  expect(out[0]).not.toBeInstanceOf(TaggedPoint);
 });
 
-test('circleBoundsIntersectionsInto는 전달받은 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new IntersectionPoints();
-  const result = circleBoundsIntersectionsInto(out, { cx: 0, cy: 5, r: 3 }, { minX: 0, minY: 0, maxX: 10, maxY: 10 });
-  expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
-  expect(result).toBe(out);
-  expect(out).toHaveLength(2);
-});
-
-test('circleRectIntersectionsInto는 전달받은 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new IntersectionPoints();
-  const result = circleRectIntersectionsInto(out, { cx: 0, cy: 5, r: 3 }, { x: 0, y: 0, width: 10, height: 10 });
-  expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
-  expect(result).toBe(out);
-  expect(out).toHaveLength(2);
-});
-
-test('circleTriangleIntersectionsInto는 전달받은 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new IntersectionPoints();
-  const result = circleTriangleIntersectionsInto(
+test('원과 사각 경계·삼각형·선분의 교점 함수는 원소 타입을 PointWritable로 고정한다', () => {
+  const circle = { cx: 0, cy: 5, r: 3 };
+  const out: TaggedPoint[] = [];
+  const bounds = circleBoundsIntersectionsInto(out, circle, { minX: 0, minY: 0, maxX: 10, maxY: 10 });
+  const rect = circleRectIntersectionsInto(out, circle, { x: 0, y: 0, width: 10, height: 10 });
+  const triangle = circleTriangleIntersectionsInto(
     out,
     { cx: 0, cy: 0, r: 2 },
     { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 }
   );
-  expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
-  expect(result).toBe(out);
+  const segment = segmentCircleIntersectionsInto(out, { x1: -3, y1: 0, x2: 3, y2: 0 }, { cx: 0, cy: 0, r: 2 });
+  expectTypeOf(bounds).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(rect).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(triangle).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(segment).toEqualTypeOf<PointWritable[]>();
+  for (const result of [bounds, rect, triangle, segment]) {
+    expect(result).toBe(out);
+  }
   expect(out).toHaveLength(2);
-});
-
-test('segmentCircleIntersectionsInto는 전달받은 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new IntersectionPoints();
-  const result = segmentCircleIntersectionsInto(out, { x1: -3, y1: 0, x2: 3, y2: 0 }, { cx: 0, cy: 0, r: 2 });
-  expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
-  expect(result).toBe(out);
-  expect(out).toHaveLength(2);
+  expect(out[0]).not.toBeInstanceOf(TaggedPoint);
 });
 
 test('반직선 판정과 선분 교점에 평평한 도형을 전달한다', () => {
@@ -108,8 +103,8 @@ test('선분과 직선의 교점은 평평한 입력과 점 출력을 받는다'
   expectTypeOf(singleIntersectionSegmentInfiniteLineInto).parameter(2).toEqualTypeOf<InfiniteLine>();
 });
 
-test('원과 타원의 직선 계열 교점 함수는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new IntersectionPoints();
+test('원과 타원의 직선 계열 교점 함수는 원소 타입을 PointWritable로 고정한다', () => {
+  const out: TaggedPoint[] = [];
   const ray = { ox: -3, oy: 0, dx: 1, dy: 0 };
   const segment = { x1: -3, y1: 0, x2: 3, y2: 0 };
   const circle = { cx: 0, cy: 0, r: 2 };
@@ -119,19 +114,20 @@ test('원과 타원의 직선 계열 교점 함수는 출력 배열 서브클래
   const lineCircle = infiniteLineCircleIntersectionsInto(out, ray, circle);
   const lineEllipse = infiniteLineEllipseIntersectionsInto(out, ray, ellipse);
   const segmentEllipse = segmentEllipseIntersectionsInto(out, segment, ellipse);
-  expectTypeOf(rayCircle).toEqualTypeOf<IntersectionPoints>();
-  expectTypeOf(rayEllipse).toEqualTypeOf<IntersectionPoints>();
-  expectTypeOf(lineCircle).toEqualTypeOf<IntersectionPoints>();
-  expectTypeOf(lineEllipse).toEqualTypeOf<IntersectionPoints>();
-  expectTypeOf(segmentEllipse).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(rayCircle).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(rayEllipse).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(lineCircle).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(lineEllipse).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(segmentEllipse).toEqualTypeOf<PointWritable[]>();
   for (const result of [rayCircle, rayEllipse, lineCircle, lineEllipse, segmentEllipse]) {
     expect(result).toBe(out);
   }
   expect(out).toHaveLength(2);
+  expect(out[0]).not.toBeInstanceOf(TaggedPoint);
 });
 
-test('타원 경계의 교점 함수는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new IntersectionPoints();
+test('타원 경계의 교점 함수는 원소 타입을 PointWritable로 고정한다', () => {
+  const out: TaggedPoint[] = [];
   const ellipse = { cx: 0, cy: 0, rx: 2, ry: 1 };
   const circle = { cx: 2, cy: 0, r: 2 };
   const other = { cx: 2, cy: 0, rx: 2, ry: 1 };
@@ -139,17 +135,18 @@ test('타원 경계의 교점 함수는 출력 배열 서브클래스를 그대�
   const circleResult = ellipseCircleIntersectionsInto(out, ellipse, circle);
   const ellipseResult = ellipseEllipseIntersectionsInto(out, ellipse, other);
   const triangleResult = ellipseTriangleIntersectionsInto(out, ellipse, triangle);
-  expectTypeOf(circleResult).toEqualTypeOf<IntersectionPoints>();
-  expectTypeOf(ellipseResult).toEqualTypeOf<IntersectionPoints>();
-  expectTypeOf(triangleResult).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(circleResult).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(ellipseResult).toEqualTypeOf<PointWritable[]>();
+  expectTypeOf(triangleResult).toEqualTypeOf<PointWritable[]>();
   for (const result of [circleResult, ellipseResult, triangleResult]) {
     expect(result).toBe(out);
   }
   expect(out).toHaveLength(2);
+  expect(out[0]).not.toBeInstanceOf(TaggedPoint);
 });
 
-test('polyline 교점 함수는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new IntersectionPoints();
+test('polyline 교점 함수는 원소 타입을 PointWritable로 고정한다', () => {
+  const out: TaggedPoint[] = [];
   const horizontal = [
     { x: -3, y: 0 },
     { x: 3, y: 0 },
@@ -159,12 +156,13 @@ test('polyline 교점 함수는 출력 배열 서브클래스를 그대로 반�
     { x: 0, y: 3 },
   ];
   const circleResult = circlePolylineIntersectionsInto(out, { cx: 0, cy: 0, r: 2 }, horizontal);
-  expectTypeOf(circleResult).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(circleResult).toEqualTypeOf<PointWritable[]>();
   expect(circleResult).toBe(out);
   expect(out).toHaveLength(2);
+  expect(out[0]).not.toBeInstanceOf(TaggedPoint);
 
   const polylineResult = polylinePolylineIntersectionsInto(out, horizontal, vertical);
-  expectTypeOf(polylineResult).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(polylineResult).toEqualTypeOf<PointWritable[]>();
   expect(polylineResult).toBe(out);
   expect(out[0]).toEqual({ x: 0, y: 0 });
 });
@@ -174,74 +172,53 @@ test('rayPolygonHitT는 평평한 반직선과 다각형을 받는다', () => {
   expectTypeOf(rayPolygonHitT).parameter(1).toEqualTypeOf<Polygon>();
 });
 
-test('rayPolygonIntersectionsInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<LinePolygonIntersectionHit<PointWritable>>();
+test('다각형 교점 함수는 새 hit을 push하므로 원소 타입을 LinePolygonIntersectionHit로 고정한다', () => {
   const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
-  const result = rayPolygonIntersectionsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<LinePolygonIntersectionHit<PointWritable>>>();
-  expect(result).toBe(out);
+  const out: TaggedHit[] = [];
+  const ray = rayPolygonIntersectionsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
+  const line = infiniteLinePolygonIntersectionsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
+  const segment = segmentPolygonIntersectionsInto(out, { x1: -1, y1: 0, x2: 3, y2: 0 }, polygon);
+  expectTypeOf(ray).toEqualTypeOf<LinePolygonIntersectionHit[]>();
+  expectTypeOf(line).toEqualTypeOf<LinePolygonIntersectionHit[]>();
+  expectTypeOf(segment).toEqualTypeOf<LinePolygonIntersectionHit[]>();
+  for (const result of [ray, line, segment]) {
+    expect(result).toBe(out);
+  }
   expect(out.length).toBeGreaterThan(0);
+  expect('tag' in out[0]).toBe(false);
 });
 
-test('infiniteLinePolygonIntersectionsInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<LinePolygonIntersectionHit<PointWritable>>();
+test('다각형 겹침 구간 함수는 원소 타입을 LinePolygonOverlapIntervalDetail로 고정한다', () => {
   const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
-  const result = infiniteLinePolygonIntersectionsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<LinePolygonIntersectionHit<PointWritable>>>();
-  expect(result).toBe(out);
+  const out: TaggedInterval[] = [];
+  const ray = rayPolygonOverlapIntervalsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
+  const line = infiniteLinePolygonOverlapIntervalsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
+  const segment = segmentPolygonOverlapIntervalsInto(out, { x1: -1, y1: 0, x2: 3, y2: 0 }, polygon);
+  expectTypeOf(ray).toEqualTypeOf<LinePolygonOverlapIntervalDetail[]>();
+  expectTypeOf(line).toEqualTypeOf<LinePolygonOverlapIntervalDetail[]>();
+  expectTypeOf(segment).toEqualTypeOf<LinePolygonOverlapIntervalDetail[]>();
+  for (const result of [ray, line, segment]) {
+    expect(result).toBe(out);
+  }
   expect(out.length).toBeGreaterThan(0);
+  expect('tag' in out[0]).toBe(false);
 });
 
-test('segmentPolygonIntersectionsInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<LinePolygonIntersectionHit<PointWritable>>();
-  const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
-  const result = segmentPolygonIntersectionsInto(out, { x1: -1, y1: 0, x2: 3, y2: 0 }, polygon);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<LinePolygonIntersectionHit<PointWritable>>>();
-  expect(result).toBe(out);
-  expect(out.length).toBeGreaterThan(0);
-});
-
-test('rayPolygonOverlapIntervalsInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<LinePolygonOverlapIntervalDetail<PointWritable>>();
-  const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
-  const result = rayPolygonOverlapIntervalsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<LinePolygonOverlapIntervalDetail<PointWritable>>>();
-  expect(result).toBe(out);
-  expect(out.length).toBeGreaterThan(0);
-});
-
-test('infiniteLinePolygonOverlapIntervalsInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<LinePolygonOverlapIntervalDetail<PointWritable>>();
-  const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
-  const result = infiniteLinePolygonOverlapIntervalsInto(out, { ox: -1, oy: 0, dx: 1, dy: 0 }, polygon);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<LinePolygonOverlapIntervalDetail<PointWritable>>>();
-  expect(result).toBe(out);
-  expect(out.length).toBeGreaterThan(0);
-});
-
-test('segmentPolygonOverlapIntervalsInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<LinePolygonOverlapIntervalDetail<PointWritable>>();
-  const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
-  const result = segmentPolygonOverlapIntervalsInto(out, { x1: -1, y1: 0, x2: 3, y2: 0 }, polygon);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<LinePolygonOverlapIntervalDetail<PointWritable>>>();
-  expect(result).toBe(out);
-  expect(out.length).toBeGreaterThan(0);
-});
-
-test('raysFromPointToPolygonInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<VisibilityRayHit<PointWritable>>();
+test('raysFromPointToPolygonInto는 원소 타입을 VisibilityRayHit로 고정한다', () => {
+  const out: TaggedRayHit[] = [];
   const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
   const result = raysFromPointToPolygonInto(out, { x: 1, y: 1 }, [polygon]);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<VisibilityRayHit<PointWritable>>>();
+  expectTypeOf(result).toEqualTypeOf<VisibilityRayHit[]>();
   expect(result).toBe(out);
   expect(out.length).toBeGreaterThan(0);
+  expect('tag' in out[0]).toBe(false);
 });
 
-test('visibilityPolygonInto는 출력 배열 서브클래스를 그대로 반환한다', () => {
-  const out = new PolygonOutput<number>();
+test('visibilityPolygonInto는 좌표 배열을 받아 PolygonWritable로 반환한다', () => {
+  const out: Array<0 | 1> = [];
   const polygon = [0, 0, 2, 0, 2, 2, 0, 2];
   const result = visibilityPolygonInto(out, { x: 1, y: 1 }, [polygon]);
-  expectTypeOf(result).toEqualTypeOf<PolygonOutput<number>>();
+  expectTypeOf(result).toEqualTypeOf<PolygonWritable>();
   expect(result).toBe(out);
   expect(out.length).toBeGreaterThan(0);
 });

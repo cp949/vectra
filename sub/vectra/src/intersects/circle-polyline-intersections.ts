@@ -13,7 +13,7 @@ import { circlePolylineIntersectionsInto } from './circle-polyline-intersections
  *   노출하고 disk containment은 점으로 보지 않는다.
  * - 인접 segment가 같은 circle point를 보고하면 same-point dedupe로 1점만 남긴다.
  * - zero-length polyline segment는 point relation으로 환원하지 않고 건너뛴다.
- * - empty circle(`radius <= 0`), `points.length < 2`, 좌표가 하나라도 non-finite(circle center/radius
+ * - empty circle(`r <= 0`), `polyline.length < 2`, 좌표가 하나라도 non-finite(circle cx/cy/r
  *   또는 polyline 좌표)이면 빈 배열이다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 point object를 재사용하지 않는다. 대응 `Into`는

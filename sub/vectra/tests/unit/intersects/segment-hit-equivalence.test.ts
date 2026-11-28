@@ -1,13 +1,20 @@
-import { flatPolygonFromLegacyPoints } from '../../../src/internal/legacy-polygon.internal';
 /**
  * intersects.intersectsPolygonSegment / intersectsPolygonRay / intersectsPolygonInfiniteLine /
  * intersectsCircleSegment / intersectsSegmentSegment — 전용 reader, 재사용 param, 경계 근접 건너뛰기를
  * 쓰는 구현이 이전 구현과 같은 값을 반환하는지 고정한다.
  *
- * 검증: 객체·tuple·class instance·{ points } 입력, 점 모양이 섞인 polygon·segment, 점 수 0~12,
- * 정수 격자·실수·큰 offset·±0·NaN·±Infinity 좌표, polygon 경계에서 epsilon 근처로 떨어진 시작점,
+ * 입력:
+ * - 무작위 장면은 객체·tuple·class instance 점과 { points } polygon으로 만든다.
+ * - 이전 구현은 이 중첩 입력을 그대로 받는다.
+ * - 대상 함수에는 같은 좌표를 평평한 도형으로 넘긴다. polygon은 좌표 배열이다.
+ * - segment는 x1·y1·x2·y2, ray·infinite-line은 ox·oy·dx·dy, circle은 cx·cy·r이다.
+ * - intersectsSegmentSegment는 아직 중첩 segment를 받는다. 이전 구현과 같은 입력을 넘긴다.
+ *
+ * 검증: 점 수 0~12, 정수 격자·실수·큰 offset·±0·NaN·±Infinity 좌표,
+ * polygon 경계에서 epsilon 근처로 떨어진 시작점,
  * epsilon 생략·0·음수·NaN·Infinity·여러 크기에서 반환값이 이전 구현과 같다.
  */
+import { flatPolygonFromLegacyPoints } from '../../../src/internal/legacy-polygon.internal';
 import { describe, expect, test } from 'vitest';
 import { intersectsCircleSegment } from '../../../src/intersects/intersects-circle-segment';
 import { intersectsPolygonInfiniteLine } from '../../../src/intersects/intersects-polygon-infinite-line';

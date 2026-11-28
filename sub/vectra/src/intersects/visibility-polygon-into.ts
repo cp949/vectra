@@ -4,7 +4,7 @@ import type { VisibilityOptions } from '../types';
 import type { Point, Polygon, PolygonWritable } from '../types/flat-shapes.internal';
 
 /**
- * point에서 본 visibility polygon의 x·y 좌표 목록를 outPoints에 기록하고 같은 outPoints를 반환한다.
+ * point에서 본 visibility polygon의 x·y 좌표 목록을 outPoints에 기록하고 같은 outPoints를 반환한다.
  *
  * `raysFromPointToPolygonInto`와 같은 ray casting 계산을 source로 쓰고 hit point만 angle 순서로
  * 기록한다. point 순서는 `raysFromPointToPolygonInto`의 angle 순서와 같다.
@@ -15,7 +15,8 @@ import type { Point, Polygon, PolygonWritable } from '../types/flat-shapes.inter
  * - empty obstacle list나 vertex 없는 입력은 빈 배열이다.
  *
  * outPoints는 먼저 비우고 교점의 x·y를 차례로 기록한다.
- * `polygons`는 읽기 전용이다.
+ * `polygons` input은 readonly로 읽고 mutate하지 않는다. renderer mask나 scene graph는 해석하지 않는다.
+ * outPoints가 `polygons`의 원소와 같은 배열이어도 모든 hit을 계산한 뒤 기록하므로 결과가 같다.
  * `options.epsilon`은 line/edge intersection과 dedupe에만 쓰고 finite validation에는 쓰지 않는다.
  * 옵션을 생략하면 `epsilon`은 `DEFAULT_EPSILON`, `angleOffset`은 `1e-4`다.
  *
@@ -24,12 +25,12 @@ import type { Point, Polygon, PolygonWritable } from '../types/flat-shapes.inter
  * @param polygons obstacle polygon list
  * @param options epsilon과 angleOffset을 지정하는 옵션.
  */
-export function visibilityPolygonInto<Out extends PolygonWritable>(
-  outPoints: Out,
+export function visibilityPolygonInto(
+  outPoints: PolygonWritable,
   point: Point,
   polygons: readonly Polygon[],
   options?: VisibilityOptions
-): Out {
+): PolygonWritable {
   const epsilon = options === undefined ? DEFAULT_EPSILON : options.epsilon;
   const angleOffset = options === undefined ? DEFAULT_VISIBILITY_ANGLE_OFFSET : options.angleOffset;
   const records = computeVisibilityRayHits(point.x, point.y, polygons, epsilon, angleOffset);

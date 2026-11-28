@@ -38,7 +38,7 @@ describe('line-family × circle 교점 collection (S10-RM-007)', () => {
     expect(points).toEqual([]);
   });
 
-  test('ray origin이 circle 내부면 exit 한 점만 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 circle 내부면 exit 한 점만 반환한다', () => {
     const points = rayCircleIntersections({ ox: 0, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 5, 0);
@@ -56,12 +56,12 @@ describe('line-family × circle 교점 collection (S10-RM-007)', () => {
     expectPointClose(points[1], -5, 0);
   });
 
-  test('zero direction(degenerate)은 빈 배열이다', () => {
+  test('dx = dy = 0인 degenerate infinite-line은 빈 배열이다', () => {
     const points = infiniteLineCircleIntersections({ ox: 0, oy: 0, dx: 0, dy: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toEqual([]);
   });
 
-  test('radius 0/negative empty circle은 빈 배열이다', () => {
+  test('r이 0 또는 음수인 empty circle은 빈 배열이다', () => {
     expect(segmentCircleIntersections({ x1: -10, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: 0 })).toEqual([]);
     expect(segmentCircleIntersections({ x1: -10, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: -3 })).toEqual([]);
   });

@@ -10,11 +10,11 @@ import type { Polygon, Ray } from '../types/flat-shapes.internal';
  * `tLineStart`/`tLineEnd`=ray parameter `[0, ∞)`로 clipping된 구간(`tLineStart <= tLineEnd`),
  * `tEdgeStart`/`tEdgeEnd`=각 끝점의 edge-local parameter `[0, 1]`, `edgeIndex`=polygon edge index다.
  *
- * - ray는 `tLine >= 0` 구간만 포함한다. ray 뒤쪽 overlap은 제외하고 일부만 겹치면 origin부터 clipping한다.
+ * - ray는 `tLine >= 0` 구간만 포함한다. ray 뒤쪽 overlap은 제외하고 일부만 겹치면 시작점 (ox, oy)부터 clipping한다.
  * - ray가 polygon edge와 collinear로 겹칠 때만 interval을 만든다.
  * - transversal crossing, vertex touch, containment-only는 빈 배열이다.
  * - 한 점으로 수렴하는 overlap은 빈 배열이다.
- * - empty polygon(`좌표 수 < 6`)과 degenerate ray direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate ray(`dx = dy = 0`)은 빈 배열이다.
  *
  * outIntervals는 먼저 clear되고 결과 interval이 `tLineStart` 오름차순으로 push된다. push되는 interval과
  * nested `start`/`end` point는 매 호출 새 object이며 입력 point object를 재사용하지 않는다.
@@ -26,12 +26,12 @@ import type { Polygon, Ray } from '../types/flat-shapes.internal';
  * @param epsilon collinear/수렴 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function rayPolygonOverlapIntervalsInto<Out extends LinePolygonOverlapIntervalDetail[]>(
-  outIntervals: Out,
+export function rayPolygonOverlapIntervalsInto(
+  outIntervals: LinePolygonOverlapIntervalDetail[],
   ray: Ray,
   polygon: Polygon,
   epsilon?: number
-): Out {
+): LinePolygonOverlapIntervalDetail[] {
   lineFamilyPolygonOverlapIntervalsInto(outIntervals, ray.ox, ray.oy, ray.dx, ray.dy, 'ray', polygon, epsilon);
   return outIntervals;
 }

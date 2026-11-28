@@ -1,3 +1,12 @@
+/**
+ * 교차 판정 canonical 함수가 대표 입력에서 true를 반환하는지 확인한다.
+ *
+ * - 닫힌 영역 쌍: bounds·rect·circle·ellipse·triangle·polygon 조합의 겹침과 접촉.
+ * - 같은 종류 직선 계열 쌍: segment·ray·infinite-line이 점을 공유하는 경우.
+ * - circle·ellipse·polygon·ray·infinite-line은 평평한 입력으로 넘긴다.
+ * - triangle은 받는 함수에 따라 평평한 입력과 중첩 입력을 함께 쓴다.
+ * - bounds·rect·segment는 함수가 받는 형태 그대로 넘긴다.
+ */
 import { describe, expect, test } from 'vitest';
 import { intersectsBoundsBounds } from '../../../src/intersects/intersects-bounds-bounds';
 import { intersectsBoundsTriangle } from '../../../src/intersects/intersects-bounds-triangle';
@@ -27,7 +36,7 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
   const triangle = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 4 } };
   const polygon = [0, 0, 4, 0, 4, 4, 0, 4];
 
-  test('closed area canonical pair leaves return true for overlap/touch cases', () => {
+  test('닫힌 영역 canonical 쌍은 겹침과 접촉에서 true를 반환한다', () => {
     expect(intersectsBoundsBounds(bounds, { min: { x: 4, y: 4 }, max: { x: 5, y: 5 } })).toBe(true);
     expect(intersectsCircleBounds({ cx: 2, cy: 2, r: 1 }, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
     expect(intersectsCircleCircle({ cx: 2, cy: 2, r: 1 }, { cx: 3, cy: 2, r: 1 })).toBe(true);
@@ -48,7 +57,7 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
     );
   });
 
-  test('line-family same-domain canonical pair leaves return true for shared points', () => {
+  test('같은 종류 직선 계열 쌍은 공유점이 있으면 true를 반환한다', () => {
     expect(
       intersectsSegmentSegment({ a: { x: 0, y: 0 }, b: { x: 4, y: 4 } }, { a: { x: 0, y: 4 }, b: { x: 4, y: 0 } })
     ).toBe(true);

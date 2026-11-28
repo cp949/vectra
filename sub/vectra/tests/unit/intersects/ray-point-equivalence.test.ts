@@ -2,8 +2,11 @@
  * intersects.singleIntersectionSegmentRayInto / singleIntersectionSegmentRay / rayCircleIntersectionsInto /
  * rayCircleIntersections — object 전용 경로와 scalar kernel이 이전 구현과 비트 단위로 같은지 고정한다.
  *
- * 검증: 객체·tuple·class instance 입력, 점 모양이 섞인 segment·ray·circle, 정수 격자·실수·±0·NaN·±Infinity 좌표,
- * 평행·collinear·zero-length·zero direction·끝점 접촉·tangent·origin이 circle 안인 경우, epsilon 생략·0·음수·NaN·여러 크기에서
+ * 입력: 이전 구현에는 객체·tuple·class instance 점이 섞인 중첩 segment·ray·circle을 넘긴다.
+ * 대상 함수에는 같은 좌표의 평평한 segment(x1·y1·x2·y2)·ray(ox·oy·dx·dy)·circle(cx·cy·r)을 넘긴다.
+ *
+ * 검증: 정수 격자·실수·±0·NaN·±Infinity 좌표,
+ * 평행·collinear·zero-length·방향 벡터 0·끝점 접촉·tangent·ray 시작점이 circle 안인 경우, epsilon 생략·0·음수·NaN·여러 크기에서
  * 반환값과 기록한 좌표가 이전 구현과 `Object.is` 수준으로 같다. false일 때 out을 수정하지 않는 정책도 같다.
  * 이전 구현은 공유 reader와 `lineFamilyIntersectionPoint`/`lineFamilyEllipseIntersectionPoints`를 그대로 쓴다.
  */

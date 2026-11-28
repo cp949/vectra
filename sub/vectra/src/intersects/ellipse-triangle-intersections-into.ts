@@ -9,7 +9,7 @@ import type { Ellipse, Triangle, PointWritable } from '../types/flat-shapes.inte
  * triangle boundary 3개 edge와 ellipse의 교점을 모으고 vertex/tangent 중복을 dedupe한다. boundary 교점만
  * 점으로 노출하므로, ellipse가 triangle을 완전히 포함하거나 triangle이 ellipse를 완전히 포함해 boundary
  * 교점이 없으면 빈 배열이다. edge crossing은 edge별 최대 2점, vertex/tangent touch는 dedupe된 1점이다.
- * empty ellipse(radiusX/radiusY ≤ 0), degenerate triangle(signed area 2× === 0), non-finite vertex는
+ * empty ellipse(rx ≤ 0 또는 ry ≤ 0), degenerate triangle(signed area 2× === 0), non-finite vertex는
  * 빈 배열을 남긴다. axis-aligned ellipse만 지원한다(rotated ellipse 비범위).
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object다. 반환 순서는 ellipse center 기준 normalized turn
@@ -20,12 +20,12 @@ import type { Ellipse, Triangle, PointWritable } from '../types/flat-shapes.inte
  * @param triangle 교점을 구할 triangle
  * @param epsilon tangent/dedupe 판정 임계값
  */
-export function ellipseTriangleIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function ellipseTriangleIntersectionsInto(
+  outPoints: PointWritable[],
   ellipse: Ellipse,
   triangle: Triangle,
   epsilon = DEFAULT_EPSILON
-): Out {
+): PointWritable[] {
   outPoints.length = 0;
   if (hasNonFiniteTriangleVertex(triangle) || flatTriangleSignedArea2x(triangle) === 0) return outPoints;
   closedEllipseBoundaryIntersectionPoints(

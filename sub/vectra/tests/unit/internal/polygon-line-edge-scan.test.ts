@@ -37,7 +37,7 @@ function makeSpyRecorder(): LineFamilyPolygonEdgeScanRecorder & {
 const square = [0, 0, 4, 0, 4, 4, 0, 4];
 
 describe('scanLineFamilyPolygonEdges', () => {
-  test('empty polygon(n < 3)이면 어떤 edge도 방문하지 않는다', () => {
+  test('empty polygon(좌표 수 n < 6)이면 어떤 edge도 방문하지 않는다', () => {
     const recorder = makeSpyRecorder();
     scanLineFamilyPolygonEdges(-1, 1, 1, 0, 'inf', [0, 0, 1, 1], 1e-9, recorder);
     expect(recorder.crossings).toHaveLength(0);

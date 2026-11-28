@@ -7,7 +7,7 @@ import type { Ellipse, Segment } from '../types/flat-shapes.internal';
  *
  * closed disk 판정. tangent, 2-point crossing, segment endpoint 내부 포함 모두 true.
  * degenerate ellipse (rx ≤ 0 또는 ry ≤ 0): false.
- * degenerate segment (a === b): a가 ellipse 경계/내부이면 true.
+ * degenerate segment((x1, y1) = (x2, y2)): (x1, y1)이 ellipse 경계/내부이면 true.
  *
  * @param ellipse 교차를 검사할 ellipse
  * @param line 교차를 검사할 segment

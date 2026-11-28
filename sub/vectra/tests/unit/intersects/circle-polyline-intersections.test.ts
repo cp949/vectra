@@ -188,7 +188,7 @@ describe('circlePolylineIntersections — empty / degenerate', () => {
     expect(circlePolylineIntersections(UNIT_CIRCLE, polyline)).toEqual([]);
   });
 
-  test('radius 0인 empty circle은 빈 배열을 반환한다', () => {
+  test('r = 0인 empty circle은 빈 배열을 반환한다', () => {
     const polyline = [
       { x: -10, y: 0 },
       { x: 10, y: 0 },
@@ -196,7 +196,7 @@ describe('circlePolylineIntersections — empty / degenerate', () => {
     expect(circlePolylineIntersections({ cx: 0, cy: 0, r: 0 }, polyline)).toEqual([]);
   });
 
-  test('radius 음수인 empty circle은 빈 배열을 반환한다', () => {
+  test('r이 음수인 empty circle은 빈 배열을 반환한다', () => {
     const polyline = [
       { x: -10, y: 0 },
       { x: 10, y: 0 },
@@ -208,7 +208,7 @@ describe('circlePolylineIntersections — empty / degenerate', () => {
     ['NaN', Number.NaN],
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
-  ])('circle center.x %s는 빈 배열을 반환한다', (_label, bad) => {
+  ])('circle cx %s는 빈 배열을 반환한다', (_label, bad) => {
     const polyline = [
       { x: -10, y: 0 },
       { x: 10, y: 0 },
@@ -220,7 +220,7 @@ describe('circlePolylineIntersections — empty / degenerate', () => {
     ['NaN', Number.NaN],
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
-  ])('circle center.y %s는 빈 배열을 반환한다', (_label, bad) => {
+  ])('circle cy %s는 빈 배열을 반환한다', (_label, bad) => {
     const polyline = [
       { x: -10, y: 0 },
       { x: 10, y: 0 },
@@ -232,7 +232,7 @@ describe('circlePolylineIntersections — empty / degenerate', () => {
     ['NaN', Number.NaN],
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
-  ])('circle radius %s는 빈 배열을 반환한다', (_label, bad) => {
+  ])('circle r %s는 빈 배열을 반환한다', (_label, bad) => {
     const polyline = [
       { x: -10, y: 0 },
       { x: 10, y: 0 },
@@ -282,6 +282,19 @@ describe('circlePolylineIntersectionsInto', () => {
       [-5, 0],
       [5, 0],
     ]);
+  });
+
+  test('교점이 polyline 꼭짓점과 같아도 꼭짓점 객체를 재사용하지 않는다', () => {
+    const polyline = [
+      { x: -2, y: 0 },
+      { x: 2, y: 0 },
+    ];
+    const out = circlePolylineIntersectionsInto([], { cx: 0, cy: 0, r: 2 }, polyline);
+    expect(out).toHaveLength(2);
+    for (const point of out) {
+      expect(polyline.some((vertex) => vertex.x === point.x && vertex.y === point.y)).toBe(true);
+      expect(polyline).not.toContain(point);
+    }
   });
 
   test('companion은 Into와 같은 좌표를 새 배열과 새 nested object로 반환한다', () => {

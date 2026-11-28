@@ -6,7 +6,7 @@ import type { InfiniteLine } from '../types/flat-shapes.internal';
  *
  * 평행 (방향 벡터가 평행, 서로 다른 직선): false.
  * 동일 직선 (collinear): true.
- * direction이 zero-vector인 degenerate infinite-line은 점으로 환원해 다른 쪽 직선의 containment로 판정한다.
+ * `dx = dy = 0`인 degenerate infinite-line은 점으로 환원해 다른 쪽 직선의 containment로 판정한다.
  *
  * @param a 첫 번째 infinite-line
  * @param b 두 번째 infinite-line

@@ -18,12 +18,12 @@ describe('intersectsCircle', () => {
       expect(intersectsCircleTriangle(circle, degenerate)).toBe(false);
     });
 
-    test('empty circle (radius=0)이면 false를 반환한다', () => {
+    test('empty circle (r=0)이면 false를 반환한다', () => {
       const circle = { cx: 2, cy: 1, r: 0 };
       expect(intersectsCircleTriangle(circle, tri)).toBe(false);
     });
 
-    test('empty circle (radius<0)이면 false를 반환한다', () => {
+    test('empty circle (r<0)이면 false를 반환한다', () => {
       const circle = { cx: 2, cy: 1, r: -1 };
       expect(intersectsCircleTriangle(circle, tri)).toBe(false);
     });

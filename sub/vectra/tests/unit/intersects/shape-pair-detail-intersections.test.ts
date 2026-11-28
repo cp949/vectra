@@ -139,7 +139,7 @@ describe('ellipseEllipseIntersections — point/two-point/multi-point/empty 분�
     expect(points).toEqual([]);
   });
 
-  test('empty ellipse(radiusX ≤ 0)는 빈 배열이다', () => {
+  test('empty ellipse(rx ≤ 0)는 빈 배열이다', () => {
     const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 0, ry: 5 }, { cx: 1, cy: 0, rx: 2, ry: 2 });
     expect(points).toEqual([]);
   });

@@ -6,10 +6,10 @@ import type { Ray, Segment } from '../types/flat-shapes.internal';
  *
  * 평행 (방향 벡터가 평행, 서로 다른 직선): false.
  * collinear이고 range가 겹치면 true.
- * ray direction이 zero-vector인 degenerate ray는 점으로 환원해 segment의 containment로 판정한다.
+ * `dx = dy = 0`인 degenerate ray는 점으로 환원해 segment의 containment로 판정한다.
  * zero-length segment는 점으로 환원해 ray의 containment로 판정한다.
  *
- * @param ray origin에서 direction 방향으로 뻗는 반직선
+ * @param ray (ox, oy)에서 (dx, dy) 방향으로 뻗는 반직선
  * @param line 두 끝점으로 정의된 유한 선분
  * @param epsilon 평행 판정 및 거리 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.

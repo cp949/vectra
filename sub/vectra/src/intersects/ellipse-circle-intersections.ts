@@ -7,7 +7,7 @@ import { ellipseCircleIntersectionsInto } from './ellipse-circle-intersections-i
  *
  * `ellipseCircleIntersectionsInto`의 allocating companion이다. boundary 교점만 노출한다.
  * - tangent는 한 점, proper 2점은 두 점, 3~4점은 모든 점을 ellipse `a` 기준 turn 오름차순으로 반환한다.
- * - 외부 분리, containment, coincident, empty ellipse/circle(radiusX/radiusY/radius ≤ 0), non-finite는
+ * - 외부 분리, containment, coincident, empty ellipse/circle(rx, ry, r 중 하나라도 ≤ 0), non-finite는
  *   빈 배열을 반환한다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object다.

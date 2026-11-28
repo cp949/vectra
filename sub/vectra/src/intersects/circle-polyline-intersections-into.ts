@@ -15,7 +15,7 @@ import { hasNearbyPoint, hasNonFinitePolylinePoint, snapshotPolylinePoints } fro
  *   노출하고 disk containment은 점으로 보지 않는다.
  * - 인접 segment가 같은 circle point를 보고하면 same-point dedupe로 1점만 남긴다.
  * - zero-length polyline segment는 point relation으로 환원하지 않고 건너뛴다.
- * - empty circle(`radius <= 0`), `points.length < 2`, 좌표가 하나라도 non-finite(circle center/radius
+ * - empty circle(`r <= 0`), `polyline.length < 2`, 좌표가 하나라도 non-finite(circle cx/cy/r
  *   또는 polyline 좌표)이면 빈 배열이다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. `outPoints`가 polyline array와 같은
@@ -30,12 +30,12 @@ import { hasNearbyPoint, hasNonFinitePolylinePoint, snapshotPolylinePoints } fro
  * @param polyline 교점을 구할 polyline. point ordering의 기준이다.
  * @param epsilon discriminant tangent/dedupe 판정 임계값
  */
-export function circlePolylineIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function circlePolylineIntersectionsInto(
+  outPoints: PointWritable[],
   circle: Circle,
   polyline: Polyline,
   epsilon = DEFAULT_EPSILON
-): Out {
+): PointWritable[] {
   const cx = circle.cx;
   const cy = circle.cy;
   const radius = circle.r;

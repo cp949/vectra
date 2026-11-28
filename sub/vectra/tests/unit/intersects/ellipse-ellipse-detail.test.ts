@@ -13,7 +13,7 @@ import type { Ellipse } from '../../../src/types/flat-shapes.internal';
 
 const EPS = 1e-9;
 
-/** object ellipse helper */
+/** 중심 (cx, cy)와 반지름 rx, ry로 평평한 ellipse 입력을 만든다. */
 function E(cx: number, cy: number, rx: number, ry: number): Ellipse {
   return { cx, cy, rx, ry };
 }
@@ -68,11 +68,11 @@ describe('ellipseEllipseDetail — overlap 분기', () => {
 });
 
 describe('ellipseEllipseDetail — none 분기', () => {
-  test('T3 empty ellipse(radiusX=0)는 none', () => {
+  test('T3 empty ellipse(rx=0)는 none', () => {
     expect(ellipseEllipseDetail(E(0, 0, 0, 2), E(0, 0, 1, 1))).toEqual({ kind: 'none' });
   });
 
-  test('T4 empty ellipse(radiusY<0)는 none', () => {
+  test('T4 empty ellipse(ry<0)는 none', () => {
     expect(ellipseEllipseDetail(E(0, 0, 1, 1), E(0, 0, 1, -1))).toEqual({ kind: 'none' });
   });
 
@@ -171,23 +171,23 @@ describe('ellipseEllipseDetail — multi-point 분기', () => {
 });
 
 describe('ellipseEllipseDetail — non-finite 입력', () => {
-  test('T15 center.x가 NaN이면 none', () => {
+  test('T15 cx가 NaN이면 none', () => {
     expect(ellipseEllipseDetail(E(Number.NaN, 0, 1, 1), E(0, 0, 1, 1))).toEqual({ kind: 'none' });
   });
 
-  test('T16 radiusX가 Infinity면 none', () => {
+  test('T16 rx가 Infinity면 none', () => {
     expect(ellipseEllipseDetail(E(0, 0, 1, 1), E(0, 0, Number.POSITIVE_INFINITY, 1))).toEqual({
       kind: 'none',
     });
   });
 
-  test('T17 center.y가 -Infinity면 none', () => {
+  test('T17 cy가 -Infinity면 none', () => {
     expect(ellipseEllipseDetail(E(0, Number.NEGATIVE_INFINITY, 1, 1), E(0, 0, 1, 1))).toEqual({
       kind: 'none',
     });
   });
 
-  test('radiusY가 NaN이면 none', () => {
+  test('ry가 NaN이면 none', () => {
     expect(ellipseEllipseDetail(E(0, 0, 1, 1), E(0, 0, 1, Number.NaN))).toEqual({ kind: 'none' });
   });
 });

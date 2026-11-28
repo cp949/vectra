@@ -12,22 +12,7 @@
  * - 새 reader는 ray*HitT가 읽는 입력에만 추가한다. 다른 함수에서 호출하지 않는다.
  */
 
-import type {
-  BoundsLike,
-  BoundsTuple,
-  CircleLike,
-  CircleTuple,
-  EllipseLike,
-  EllipseTuple,
-  PolygonLike,
-  RectLike,
-  RectTuple,
-  SegmentLike,
-  SegmentTuple,
-  XYInput,
-  XYLike,
-  XYTuple,
-} from '../types';
+import type { BoundsLike, BoundsTuple, RectLike, RectTuple, XYInput, XYLike, XYTuple } from '../types';
 
 /** point x를 읽는다. */
 export function hitX(input: XYInput): number {
@@ -39,48 +24,6 @@ export function hitX(input: XYInput): number {
 export function hitY(input: XYInput): number {
   const v = (input as XYLike).y;
   return v !== undefined ? v : (input as XYTuple)[1];
-}
-
-/** circle 중심을 읽는다. */
-export function hitCircleCenter(circle: CircleLike): XYInput {
-  const v = (circle as Exclude<CircleLike, CircleTuple>).center;
-  return v !== undefined ? v : (circle as CircleTuple)[0];
-}
-
-/** circle 반지름을 읽는다. */
-export function hitCircleRadius(circle: CircleLike): number {
-  const v = (circle as Exclude<CircleLike, CircleTuple>).radius;
-  return v !== undefined ? v : (circle as CircleTuple)[1];
-}
-
-/** segment 시작점을 읽는다. */
-export function hitSegmentA(segment: SegmentLike): XYInput {
-  const v = (segment as Exclude<SegmentLike, SegmentTuple>).a;
-  return v !== undefined ? v : (segment as SegmentTuple)[0];
-}
-
-/** segment 끝점을 읽는다. */
-export function hitSegmentB(segment: SegmentLike): XYInput {
-  const v = (segment as Exclude<SegmentLike, SegmentTuple>).b;
-  return v !== undefined ? v : (segment as SegmentTuple)[1];
-}
-
-/** ellipse 중심을 읽는다. */
-export function hitEllipseCenter(ellipse: EllipseLike): XYInput {
-  const v = (ellipse as Exclude<EllipseLike, EllipseTuple>).center;
-  return v !== undefined ? v : (ellipse as EllipseTuple)[0];
-}
-
-/** ellipse x반지름을 읽는다. */
-export function hitEllipseRadiusX(ellipse: EllipseLike): number {
-  const v = (ellipse as Exclude<EllipseLike, EllipseTuple>).radiusX;
-  return v !== undefined ? v : (ellipse as EllipseTuple)[1];
-}
-
-/** ellipse y반지름을 읽는다. */
-export function hitEllipseRadiusY(ellipse: EllipseLike): number {
-  const v = (ellipse as Exclude<EllipseLike, EllipseTuple>).radiusY;
-  return v !== undefined ? v : (ellipse as EllipseTuple)[2];
 }
 
 /** bounds 최소 모서리를 읽는다. */
@@ -117,11 +60,4 @@ export function hitRectWidth(rect: RectLike): number {
 export function hitRectHeight(rect: RectLike): number {
   const v = (rect as Exclude<RectLike, RectTuple>).height;
   return v !== undefined ? v : (rect as RectTuple)[3];
-}
-
-/** polygon 점 목록을 읽는다. */
-export function hitPolygonPoints(polygon: PolygonLike): readonly XYInput[] {
-  return Array.isArray(polygon)
-    ? (polygon as readonly XYInput[])
-    : (polygon as Exclude<PolygonLike, readonly XYInput[]>).points;
 }

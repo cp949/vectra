@@ -6,7 +6,7 @@ import type { Circle, Segment, PointWritable } from '../types/flat-shapes.intern
  * segment와 circle의 단일 교점을 새 object로 반환한다.
  *
  * tangent이면 접점 object를 반환한다. 교점이 없거나 2개 이상이면 undefined를 반환한다.
- * empty circle (radius ≤ 0) 또는 zero-length segment이면 undefined.
+ * empty circle (r ≤ 0) 또는 zero-length segment이면 undefined.
  * allocating companion — internal helper를 직접 호출한다.
  *
  * @param line 교점을 구할 segment

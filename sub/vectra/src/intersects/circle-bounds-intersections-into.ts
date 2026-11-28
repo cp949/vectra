@@ -9,7 +9,7 @@ import type { Bounds, Circle, PointWritable } from '../types/flat-shapes.interna
  * 같으나 empty 기준이 다르다: bounds는 inverted(max < min)만 empty로 보아 zero-extent(점·선) bounds도 유효
  * 입력으로 처리한다(rect는 width/height ≤ 0을 empty). boundary 교점만 점으로 노출하므로 containment-only(circle이
  * bounds를 포함하거나 bounds가 circle을 포함)는 빈 배열이다. edge crossing은 2점, corner/tangent touch는
- * dedupe된 1점이다. empty circle(radius ≤ 0), inverted bounds(max < min)는 빈 배열을 남긴다.
+ * dedupe된 1점이다. empty circle(r ≤ 0), inverted bounds(max < min)는 빈 배열을 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object다. 반환 순서는 circle center 기준 normalized turn 오름차순이다.
  * `epsilon`은 tangent/dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
@@ -19,12 +19,12 @@ import type { Bounds, Circle, PointWritable } from '../types/flat-shapes.interna
  * @param bounds 교점을 구할 bounds (axis-aligned)
  * @param epsilon tangent/dedupe 판정 임계값
  */
-export function circleBoundsIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function circleBoundsIntersectionsInto(
+  outPoints: PointWritable[],
   circle: Circle,
   bounds: Bounds,
   epsilon = DEFAULT_EPSILON
-): Out {
+): PointWritable[] {
   outPoints.length = 0;
   const x0 = bounds.minX;
   const y0 = bounds.minY;

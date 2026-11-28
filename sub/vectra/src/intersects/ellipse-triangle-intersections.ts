@@ -7,7 +7,7 @@ import { ellipseTriangleIntersectionsInto } from './ellipse-triangle-intersectio
  *
  * `ellipseTriangleIntersectionsInto`의 allocating companion이다. boundary 3개 edge와 ellipse의 교점을
  * 모으고 vertex/tangent 중복을 dedupe하며, ellipse center 기준 normalized turn 오름차순으로 반환한다.
- * boundary 교점이 없는 containment-only, empty ellipse(radiusX/radiusY ≤ 0), degenerate triangle(signed
+ * boundary 교점이 없는 containment-only, empty ellipse(rx ≤ 0 또는 ry ≤ 0), degenerate triangle(signed
  * area 2× === 0), non-finite vertex는 빈 배열을 반환한다. axis-aligned ellipse만 지원한다(rotated ellipse 비범위).
  *
  * 반환 point는 매 호출 새 `{ x, y }` object다.

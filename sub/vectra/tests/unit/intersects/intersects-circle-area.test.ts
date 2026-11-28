@@ -52,13 +52,13 @@ describe('circle boolean query - intersectsCircle', () => {
     expect(intersectsCircleCircle(a, b)).toBe(true);
   });
 
-  test('a가 empty (radius=0)이면 false를 반환한다', () => {
+  test('a가 empty (r=0)이면 false를 반환한다', () => {
     const a = { cx: 0, cy: 0, r: 0 };
     const b = { cx: 0, cy: 0, r: 5 };
     expect(intersectsCircleCircle(a, b)).toBe(false);
   });
 
-  test('b가 empty (radius<0)이면 false를 반환한다', () => {
+  test('b가 empty (r<0)이면 false를 반환한다', () => {
     const a = { cx: 0, cy: 0, r: 5 };
     const b = { cx: 0, cy: 0, r: -1 };
     expect(intersectsCircleCircle(a, b)).toBe(false);
@@ -120,13 +120,13 @@ describe('circle boolean query - intersectsRect', () => {
     expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 
-  test('empty circle (radius=0)이면 false를 반환한다', () => {
+  test('empty circle (r=0)이면 false를 반환한다', () => {
     const circle = { cx: 0, cy: 0, r: 0 };
     const rect = { x: -5, y: -5, width: 10, height: 10 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
   });
 
-  test('empty circle (radius < 0)이면 false를 반환한다', () => {
+  test('empty circle (r < 0)이면 false를 반환한다', () => {
     const circle = { cx: 0, cy: 0, r: -1 };
     const rect = { x: -5, y: -5, width: 10, height: 10 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
@@ -187,25 +187,25 @@ describe('circle boolean query - intersectsSegment', () => {
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
-  test('degenerate segment (a===b 좌표)가 circle 안에 있으면 true를 반환한다', () => {
+  test('시작점과 끝점이 같은 segment가 circle 안에 있으면 true를 반환한다', () => {
     const circle = { cx: 0, cy: 0, r: 5 };
     const segment = { x1: 3, y1: 0, x2: 3, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
-  test('degenerate segment (a===b 좌표)가 circle 밖에 있으면 false를 반환한다', () => {
+  test('시작점과 끝점이 같은 segment가 circle 밖에 있으면 false를 반환한다', () => {
     const circle = { cx: 0, cy: 0, r: 2 };
     const segment = { x1: 5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(false);
   });
 
-  test('empty circle (radius=0)이면 false를 반환한다', () => {
+  test('empty circle (r=0)이면 false를 반환한다', () => {
     const circle = { cx: 0, cy: 0, r: 0 };
     const segment = { x1: -5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(false);
   });
 
-  test('empty circle (radius < 0)이면 false를 반환한다', () => {
+  test('empty circle (r < 0)이면 false를 반환한다', () => {
     const circle = { cx: 0, cy: 0, r: -1 };
     const segment = { x1: -5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(false);

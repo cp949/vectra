@@ -27,12 +27,12 @@ import type { Point, Polygon } from '../types/flat-shapes.internal';
  * @param polygons obstacle polygon list
  * @param options epsilon과 angleOffset을 지정하는 옵션.
  */
-export function raysFromPointToPolygonInto<Out extends VisibilityRayHit[]>(
-  outHits: Out,
+export function raysFromPointToPolygonInto(
+  outHits: VisibilityRayHit[],
   point: Point,
   polygons: readonly Polygon[],
   options?: VisibilityOptions
-): Out {
+): VisibilityRayHit[] {
   const epsilon = options === undefined ? DEFAULT_EPSILON : options.epsilon;
   const angleOffset = options === undefined ? DEFAULT_VISIBILITY_ANGLE_OFFSET : options.angleOffset;
   const records = computeVisibilityRayHits(point.x, point.y, polygons, epsilon, angleOffset);

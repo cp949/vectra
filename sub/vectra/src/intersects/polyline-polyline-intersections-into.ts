@@ -20,7 +20,7 @@ interface LocalHit {
  *   수렴하면 1점으로 dedupe한다.
  * - zero-length segment는 point relation으로 환원하지 않고 건너뛴다. 두 polyline이 모두 valid
  *   segment가 없으면 빈 배열이다.
- * - `points.length < 2`, 좌표가 하나라도 non-finite이면 빈 배열이다.
+ * - `subject.length < 2` 또는 `target.length < 2`이거나 좌표가 하나라도 non-finite이면 빈 배열이다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. `outPoints`가 subject/target polyline array와
  * 같은 reference여도 alias-safe하도록 clear 전에 입력 좌표를 snapshot한다. push되는 point는 매 호출 새
@@ -36,12 +36,12 @@ interface LocalHit {
  * @param epsilon 평행/거리/dedupe 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function polylinePolylineIntersectionsInto<Out extends PointWritable[]>(
-  outPoints: Out,
+export function polylinePolylineIntersectionsInto(
+  outPoints: PointWritable[],
   subject: Polyline,
   target: Polyline,
   epsilon?: number
-): Out {
+): PointWritable[] {
   const subPts = snapshotPolylinePoints(subject);
   const tgtPts = snapshotPolylinePoints(target);
   outPoints.length = 0;

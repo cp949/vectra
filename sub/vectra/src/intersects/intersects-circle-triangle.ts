@@ -7,7 +7,7 @@ import type { Circle, Triangle } from '../types/flat-shapes.internal';
  * circle center가 triangle 내부이면 true.
  * triangle 각 변과 circle의 교차를 추가로 판정한다.
  * degenerate triangle (면적 0, non-finite 꼭짓점): false.
- * radius ≤ 0인 circle: false.
+ * r ≤ 0인 circle: false.
  * closed boundary 포함 (접점도 true).
  *
  * @param circle 교차를 판정할 circle

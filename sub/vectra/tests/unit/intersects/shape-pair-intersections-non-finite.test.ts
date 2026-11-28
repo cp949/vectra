@@ -28,7 +28,6 @@ import type { XYObjectWritable } from '../../../src/types';
 describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', () => {
   const rect = { x: 0, y: 0, width: 10, height: 10 };
   const bounds = { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } };
-  const triangle = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, c: { x: 0, y: 10 } };
 
   const cases: Array<[string, (v: number) => XYObjectWritable[]]> = [
     [

@@ -7,7 +7,7 @@ import type { Ellipse, Segment, PointWritable } from '../types/flat-shapes.inter
  *
  * tangent이면 접점을 기록한다. 2-point crossing이면 false (out 미수정).
  * contained (segment 전체가 ellipse 내부) 또는 zero-length segment이면 false.
- * empty ellipse (radiusX ≤ 0 또는 radiusY ≤ 0)이면 false.
+ * empty ellipse (rx ≤ 0 또는 ry ≤ 0)이면 false.
  *
  * @param out 교점 좌표를 기록할 { x, y } 객체. 실패 시 수정하지 않는다.
  * @param line 교점을 구할 segment

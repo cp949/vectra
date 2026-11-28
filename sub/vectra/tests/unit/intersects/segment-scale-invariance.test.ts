@@ -53,7 +53,7 @@ function scaledRay(s: number, m: number, ox: number, oy: number, dx: number, dy:
 }
 
 /**
- * origin은 좌표 scale s로, direction은 길이 배율 m으로 키운 infinite-line을 만든다.
+ * (ox, oy)는 좌표 scale s로, (dx, dy)는 길이 배율 m으로 키운 infinite-line을 만든다.
  */
 function scaledLine(s: number, m: number, ox: number, oy: number, dx: number, dy: number): InfiniteLine {
   return { ox: s * ox, oy: s * oy, dx: m * dx, dy: m * dy };

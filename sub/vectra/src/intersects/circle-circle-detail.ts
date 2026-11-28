@@ -14,9 +14,9 @@ import { circleCircleDetailXY } from './circle-circle-intersections.internal';
  *   오름차순이다.
  * - 같은 중심 같은 반지름은 `{ kind: 'overlap' }`이고, 한 circumference가 다른 disk 내부에 있으면
  *   `{ kind: 'contains' }`다.
- * - 외부 분리, radius ≤ 0, non-finite center/radius, scale 복원 후 좌표 overflow는 `{ kind: 'none' }`이다.
+ * - 외부 분리, r ≤ 0, non-finite cx/cy/r, scale 복원 후 좌표 overflow는 `{ kind: 'none' }`이다.
  *
- * radius ≤ 0과 non-finite는 boolean relation 성격에 맞춰 `none`으로 처리한다.
+ * r ≤ 0과 non-finite는 boolean relation 성격에 맞춰 `none`으로 처리한다.
  * `distanceToCircle`의 radius clamp 정책은 적용하지 않는다.
  * `epsilon`은 center distance 비교와 tangent 판정에만 쓰고 finite validation에는 쓰지 않는다.
  * 계산은 공통 scale로 정규화해 `d²`/`r²` overflow를 피한다.

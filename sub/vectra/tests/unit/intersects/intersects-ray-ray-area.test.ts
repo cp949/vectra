@@ -50,7 +50,7 @@ describe('intersectsRay', () => {
   });
 
   test('collinear overlap (같은 방향, b가 앞) → true', () => {
-    // a: (0,0)→+x, b: (3,0)→+x — a 위에 b.origin이 있고 tB=3>=0
+    // a: (0,0)→+x, b: (3,0)→+x — a 위에 b의 (ox, oy)가 있고 tB=3>=0
     const a = { ox: 0, oy: 0, dx: 1, dy: 0 };
     const b = { ox: 3, oy: 0, dx: 1, dy: 0 };
     expect(intersectsRayRay(a, b)).toBe(true);
@@ -65,7 +65,7 @@ describe('intersectsRay', () => {
 
   test('collinear no overlap (반대 방향, 등을 맞댄) → false', () => {
     // a: (0,0)→-x, b: (1,0)→+x — a는 왼쪽, b는 오른쪽으로 벌어짐
-    // tB = b.origin 기준 a의 dir에 따른 파라미터: q=(1,0), dir=(-1,0), aLenSq=1
+    // tB = b의 (ox, oy) 기준 a의 dir에 따른 파라미터: q=(1,0), dir=(-1,0), aLenSq=1
     // tB = (1*(-1)+0*0)/1 = -1 < 0
     // uA = (-1*1 - 0*0)/1 = -1 < 0
     // → false
@@ -85,11 +85,11 @@ describe('intersectsRay', () => {
     expect(intersectsRayRay(degA, rayLeft)).toBe(false);
   });
 
-  test('양쪽 degenerate — origin 일치 → true', () => {
+  test('양쪽 degenerate — (ox, oy) 일치 → true', () => {
     expect(intersectsRayRay(degA, degB)).toBe(true);
   });
 
-  test('양쪽 degenerate — origin 불일치 → false', () => {
+  test('양쪽 degenerate — (ox, oy) 불일치 → false', () => {
     expect(intersectsRayRay(degA, degC)).toBe(false);
   });
 });

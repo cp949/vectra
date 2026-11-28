@@ -24,8 +24,8 @@ export function closestSegmentPolygonIntersection(
   segment: Segment,
   polygon: Polygon,
   epsilon = DEFAULT_EPSILON
-): LinePolygonIntersectionHit<PointWritable> | undefined {
-  const out: LinePolygonIntersectionHit<PointWritable> = {
+): LinePolygonIntersectionHit | undefined {
+  const out: LinePolygonIntersectionHit = {
     point: { x: 0, y: 0 },
     kind: 'cross',
     tLine: 0,

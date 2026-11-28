@@ -10,7 +10,7 @@ import type { Polyline } from '../types/flat-shapes.internal';
  * - path를 polyline으로 근사한 뒤 판정한다. 근사 정밀도는 options.flatness로 제어한다.
  * - 판정 조건: flattened path의 임의 segment와 polyline segment가 교차한다.
  * - polyline은 open path이므로 면적을 정의하지 않는다. containment는 판정하지 않는다.
- * - empty polyline(points.length < 2) 또는 empty path(commands.length === 0): false.
+ * - empty polyline(polyline.length < 2) 또는 empty path(commands.length === 0): false.
  *
  * @param polyline 교차를 검사할 polyline
  * @param commands flatten할 path command sequence

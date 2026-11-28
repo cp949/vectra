@@ -12,7 +12,7 @@ import { polylinePolylineIntersectionsInto } from './polyline-polyline-intersect
  *   수렴하면 1점으로 dedupe한다.
  * - zero-length segment는 point relation으로 환원하지 않고 건너뛴다. 두 polyline이 모두 valid
  *   segment가 없으면 빈 배열이다.
- * - `points.length < 2`, 좌표가 하나라도 non-finite이면 빈 배열이다.
+ * - `subject.length < 2` 또는 `target.length < 2`이거나 좌표가 하나라도 non-finite이면 빈 배열이다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 point object를 재사용하지 않는다. 대응 `Into`는
  * `outPoints`가 subject/target polyline array와 같은 reference여도 alias-safe하도록 clear 전에 입력

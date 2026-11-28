@@ -103,7 +103,7 @@ describe('segmentPolygonOverlapIntervals', () => {
     expect(segmentPolygonOverlapIntervals(segment(-2, 0, 0, 0), square)).toEqual([]);
   });
 
-  test('empty polygon(points.length < 3)은 빈 배열이다', () => {
+  test('empty polygon(좌표 수 < 6)은 빈 배열이다', () => {
     expect(segmentPolygonOverlapIntervals(segment(-1, 0, 5, 0), [0, 0, 4, 0])).toEqual([]);
   });
 
@@ -157,7 +157,7 @@ describe('rayPolygonOverlapIntervals', () => {
     expect(rayPolygonOverlapIntervals(ray(5, 0, 1, 0), square)).toEqual([]);
   });
 
-  test('origin이 edge 중간에 있고 forward range가 일부만 겹치면 origin부터 edge end까지 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 edge 중간에 있고 forward range가 일부만 겹치면 시작점부터 edge end까지 반환한다', () => {
     const intervals = rayPolygonOverlapIntervals(ray(2, 0, 1, 0), square);
     expect(intervalSpans(intervals)).toEqual([
       [
@@ -238,7 +238,7 @@ describe('non-finite / degenerate pass-through', () => {
     expect(infiniteLinePolygonOverlapIntervals(infiniteLine(-1, 0, Number.POSITIVE_INFINITY, 0), square)).toEqual([]);
   });
 
-  test('non-finite origin은 빈 배열이다', () => {
+  test('non-finite ox/oy는 빈 배열이다', () => {
     expect(rayPolygonOverlapIntervals(ray(Number.NaN, 0, 1, 0), square)).toEqual([]);
     expect(infiniteLinePolygonOverlapIntervals(infiniteLine(Number.NEGATIVE_INFINITY, 0, 1, 0), square)).toEqual([]);
   });
@@ -250,7 +250,7 @@ describe('non-finite / degenerate pass-through', () => {
     expect(infiniteLinePolygonOverlapIntervals(infiniteLine(-1, 0, 1, 0), broken)).toEqual([]);
   });
 
-  test('zero-length ray/infinite-line direction은 빈 배열이다', () => {
+  test('dx = dy = 0인 ray/infinite-line은 빈 배열이다', () => {
     expect(rayPolygonOverlapIntervals(ray(0, 0, 0, 0), square)).toEqual([]);
     expect(infiniteLinePolygonOverlapIntervals(infiniteLine(0, 0, 0, 0), square)).toEqual([]);
   });

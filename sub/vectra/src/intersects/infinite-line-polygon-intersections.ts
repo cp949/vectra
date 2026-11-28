@@ -14,12 +14,12 @@ import { infiniteLinePolygonIntersectionsInto } from './infinite-line-polygon-in
  * - infinite-line은 range filter 없이 양방향 교점을 모두 포함한다.
  * - polygon vertex를 지나는 hit은 인접 edge 중복 없이 `kind: 'touch'` 하나로 dedupe된다.
  * - polygon edge와 collinear overlap이면 overlap 구간 양 끝점을 `kind: 'overlap'`으로 반환한다.
- * - empty polygon(`좌표 수 < 6`)과 degenerate direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate direction(`dx = dy = 0`)은 빈 배열이다.
  *
  * 결과 hit은 infinite-line parameter `tLine` 오름차순이다. 반환 hit과 nested point는 매 호출 새
  * object이며 입력 point object를 재사용하지 않는다.
  * `epsilon`은 collinear/vertex dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
- * infinite-line은 origin 선택이 caller 임의라서 closest helper를 제공하지 않는다.
+ * infinite-line은 기준점 (ox, oy) 선택이 caller 임의라서 closest helper를 제공하지 않는다.
  *
  * @param infiniteLine 교점을 구할 infinite-line
  * @param polygon 교점을 구할 polygon

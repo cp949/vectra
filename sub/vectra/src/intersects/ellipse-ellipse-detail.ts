@@ -12,12 +12,12 @@ import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
  *   normalized turn parameter `[0, 1)`다.
  * - proper 2점 교차는 `{ kind: 'two-point', points }`, 3~4점 교차는 `{ kind: 'multi-point', points }`다.
  *   `points`는 ellipse `a` 기준 turn 오름차순이다.
- * - 같은 center 같은 radiusX/radiusY는 `{ kind: 'overlap' }`이고, 한 ellipse가 다른 ellipse 내부에
+ * - 같은 cx/cy와 같은 rx/ry는 `{ kind: 'overlap' }`이고, 한 ellipse가 다른 ellipse 내부에
  *   있어 경계 교점이 없으면 `{ kind: 'contains' }`다.
- * - 외부 분리, boundary 교점 없는 disjoint, empty ellipse(radiusX/radiusY ≤ 0), non-finite
- *   center/radius, quartic 계수 무효, scale 복원 후 좌표 overflow는 `{ kind: 'none' }`이다.
+ * - 외부 분리, boundary 교점 없는 disjoint, empty ellipse(rx ≤ 0 또는 ry ≤ 0), non-finite
+ *   cx/cy/rx/ry, quartic 계수 무효, scale 복원 후 좌표 overflow는 `{ kind: 'none' }`이다.
  *
- * radiusX/radiusY ≤ 0과 non-finite는 boolean relation 성격에 맞춰 `none`으로 처리한다.
+ * rx ≤ 0 또는 ry ≤ 0인 입력과 non-finite 입력은 boolean relation 성격에 맞춰 `none`으로 처리한다.
  * `epsilon`은 coincident/tangent/containment 판정에만 쓰고 finite validation에는 쓰지 않는다
  * (finite는 `Number.isFinite`로 별도 검사). 계산은 공통 scale로 정규화하되 center offset은
  * 정규화 전에 직접 차분해 local offset 손실을 피하고, 차분 conic을 quartic으로 환원해 최대 4점을

@@ -5,8 +5,7 @@
  * containment / coincident 관계를 circleCircleDetail로 분리하고, circleCircleIntersectionsInto /
  * circleCircleIntersections collection helper가 detail의 point/two-point만 점으로 노출하는지
  * 검증한다. proper two-point, external/internal tangent, external disjoint, containment,
- * coincident, concentric unequal, radius ≤ 0, non-finite, tuple/object 입력 동등성,
- * 반환 point object의 fresh reference, out array clear/reference 보존을 다룬다.
+ * coincident, concentric unequal, r ≤ 0, non-finite, out array clear/reference 보존을 다룬다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -161,13 +160,13 @@ describe('circleCircleDetail — none / overlap / contains 분기', () => {
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'contains' });
   });
 
-  test('radius 0이면 none을 반환한다', () => {
+  test('r = 0이면 none을 반환한다', () => {
     const a = { cx: 0, cy: 0, r: 0 };
     const b = { cx: 5, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
   });
 
-  test('radius 음수이면 none을 반환한다', () => {
+  test('r이 음수이면 none을 반환한다', () => {
     const a = { cx: 0, cy: 0, r: 5 };
     const b = { cx: 5, cy: 0, r: -1 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
@@ -236,7 +235,7 @@ describe('circleCircleDetail — non-finite 입력', () => {
     ['NaN', Number.NaN],
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
-  ])('center.x %s는 none을 반환한다', (_label, x) => {
+  ])('cx %s는 none을 반환한다', (_label, x) => {
     const a = { cx: 0, cy: 0, r: 5 };
     const b = { cx: x, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
@@ -246,7 +245,7 @@ describe('circleCircleDetail — non-finite 입력', () => {
     ['NaN', Number.NaN],
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
-  ])('center.y %s는 none을 반환한다', (_label, y) => {
+  ])('cy %s는 none을 반환한다', (_label, y) => {
     const a = { cx: 0, cy: 0, r: 5 };
     const b = { cx: 5, cy: y, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });
@@ -256,7 +255,7 @@ describe('circleCircleDetail — non-finite 입력', () => {
     ['NaN', Number.NaN],
     ['Infinity', Number.POSITIVE_INFINITY],
     ['-Infinity', Number.NEGATIVE_INFINITY],
-  ])('radius %s는 none을 반환한다', (_label, r) => {
+  ])('r %s는 none을 반환한다', (_label, r) => {
     const a = { cx: 0, cy: 0, r: r };
     const b = { cx: 5, cy: 0, r: 5 };
     expect(circleCircleDetail(a, b)).toEqual({ kind: 'none' });

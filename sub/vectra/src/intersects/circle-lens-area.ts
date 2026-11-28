@@ -7,7 +7,7 @@ import { hypot2 } from '../internal/numeric';
  * 반환 값은 두 disk 교집합의 면적이다. `circleCircleAreaOverlapDetail`과 분기 경계는 공유하지만
  * 위상 분류 `touch`가 곧 면적 0은 아니다. 내접 tangent는 위상상 `touch`여도 작은 disk가 큰 disk에
  * 완전히 포함돼 경계 한 점만 닿으므로 면적은 작은 disk 전체다.
- * - radius ≤ 0, non-finite center/radius: `0`.
+ * - r ≤ 0, non-finite cx/cy/r: `0`.
  * - disjoint, external tangent(`d === r1 + r2`): `0`(면적 중첩 없음).
  * - internal tangent(`d === |r1 - r2|`, `d > 0`), strict containment(`d < |r1 - r2|`), concentric: 작은 disk area.
  * - coincident equal circles(`d === 0`, 같은 반지름): full circle area.

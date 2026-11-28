@@ -93,7 +93,7 @@ describe('intersectsPathPolyline', () => {
       expect(intersectsPathPolyline([], verticalPolyline)).toBe(false);
     });
 
-    test('empty polyline(points.length < 2)은 false를 반환한다', () => {
+    test('empty polyline(polyline.length < 2)은 false를 반환한다', () => {
       const emptyPolyline = [{ x: 5, y: 4 }];
       const cmd: PathCommand[] = [
         { kind: 'move', x: 0, y: 4 },

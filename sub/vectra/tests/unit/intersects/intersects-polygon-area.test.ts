@@ -12,7 +12,7 @@ const intersectsSegment = (
 ) => intersectsPolygonSegment(polygon, segment, epsilon);
 
 // 수학적 y-up 좌표계 기준 counter-clockwise 3-4-5 삼각형
-// points: (0,0) → (4,0) → (0,3)
+// 꼭짓점: (0,0) → (4,0) → (0,3)
 const CCW_TRI: Polygon = [0, 0, 4, 0, 0, 3];
 
 // 단위 정사각형 (CCW), (0,0)→(1,0)→(1,1)→(0,1)
