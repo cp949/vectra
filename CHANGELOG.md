@@ -7,8 +7,6 @@
 
 ## [Unreleased]
 
-## [2.0.0]
-
 ### Breaking changes
 
 - 점 입력과 출력은 `Point`와 `PointWritable`의 `{ x, y }` 객체로 통일한다. 좌표 tuple, `XYInput`, `XYWritable`을 제거한다.
