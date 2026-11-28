@@ -1312,7 +1312,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/polygon/perimeter` | `perimeter` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/point-at-index` | `pointAtIndex` | `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/point-at-index-into` | `pointAtIndexInto` | `pixi:polygon-transform-orientation-lab` |  | covered |
-| `@cp949/vectra/polygon/point-count` | `pointCount` | `pixi:polygon-transform-orientation-lab` |  | covered |
+| `@cp949/vectra/polygon/point-count` | `pointCount` | `pixi:polygon-metrics-workbench`, `pixi:polygon-transform-orientation-lab` |  | covered |
 | `@cp949/vectra/polygon/points-along-edges` | `pointsAlongEdges` |  |  | uncovered |
 | `@cp949/vectra/polygon/points-along-edges-into` | `pointsAlongEdgesInto` |  |  | uncovered |
 | `@cp949/vectra/polygon/polygon-from` | `polygonFrom` | `pixi:polygon-metrics-workbench`, `pixi:polygon-transform-orientation-lab` |  | covered |
@@ -1822,7 +1822,7 @@ pnpm examples:coverage:write
 | `@cp949/vectra/triangle/point-at-index` | `pointAtIndex` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/point-at-index-into` | `pointAtIndexInto` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/point-from-barycentric` | `pointFromBarycentric` |  |  | uncovered |
-| `@cp949/vectra/triangle/point-from-barycentric-into` | `type BarycentricLike` |  |  | uncovered |
+| `@cp949/vectra/triangle/point-from-barycentric-into` | `type Barycentric` |  |  | uncovered |
 | `@cp949/vectra/triangle/point-from-barycentric-into` | `pointFromBarycentricInto` |  |  | uncovered |
 | `@cp949/vectra/triangle/side-at` | `sideAt` | `pixi:triangle-solver-excircles-lab` |  | covered |
 | `@cp949/vectra/triangle/side-at-into` | `sideAtInto` | `pixi:triangle-solver-excircles-lab` |  | covered |

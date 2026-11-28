@@ -1,6 +1,6 @@
 // Canvas runtime 타입 정의 (apps/canvas-demo 소유)
 // TASK-05에서 실제 구현이 연결된다
-import type { Bounds, Circle, Polygon, Rect, Segment, Point } from '@cp949/vectra/types';
+import type { Bounds, Circle, Point, Polygon, Rect, Segment } from '@cp949/vectra/types';
 
 /** draw 옵션: 점 */
 export interface DrawPointOptions {

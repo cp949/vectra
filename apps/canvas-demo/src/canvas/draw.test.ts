@@ -29,7 +29,7 @@ describe('canvasDrawApi 직렬화 실행', () => {
     runSerializedDrawMethod('point');
   });
 
-  it('segment 메서드는 평평한 좌표를 받아를 iframe 직렬화 후에도 렌더링한다', () => {
+  it('segment 메서드는 평평한 좌표를 iframe 직렬화 후에도 렌더링한다', () => {
     const fn = new Function(
       'ctx',
       `const api = ${serializeCanvasDrawApi(canvasDrawApi as unknown as Record<string, unknown>)}; api.segment(ctx, { x1: 1, y1: 2, x2: 5, y2: 6 }, { color: '#38bdf8', width: 2 });`
@@ -61,7 +61,7 @@ describe('canvasDrawApi 직렬화 실행', () => {
     ]);
   });
 
-  it('bounds 메서드는 평평한 좌표를 받아를 iframe 직렬화 후에도 렌더링한다', () => {
+  it('bounds 메서드는 평평한 좌표를 iframe 직렬화 후에도 렌더링한다', () => {
     const fn = new Function(
       'ctx',
       `const api = ${serializeCanvasDrawApi(canvasDrawApi as unknown as Record<string, unknown>)}; api.bounds(ctx, { minX: 1, minY: 2, maxX: 5, maxY: 6 }, { fill: 'none' });`
@@ -79,7 +79,7 @@ describe('canvasDrawApi 직렬화 실행', () => {
     expect(calls).toEqual([['beginPath'], ['rect', 1, 2, 4, 4], ['stroke']]);
   });
 
-  it('circle 메서드는 평평한 좌표를 받아를 iframe 직렬화 후에도 렌더링한다', () => {
+  it('circle 메서드는 평평한 좌표를 iframe 직렬화 후에도 렌더링한다', () => {
     const fn = new Function(
       'ctx',
       `const api = ${serializeCanvasDrawApi(canvasDrawApi as unknown as Record<string, unknown>)}; api.circle(ctx, { cx: 3, cy: 4, r: 5 }, { fill: 'none' });`
@@ -97,7 +97,7 @@ describe('canvasDrawApi 직렬화 실행', () => {
     expect(calls).toEqual([['beginPath'], ['arc', 3, 4, 5, 0, Math.PI * 2], ['stroke']]);
   });
 
-  it('rect 메서드는 평평한 좌표를 받아를 iframe 직렬화 후에도 렌더링한다', () => {
+  it('rect 메서드는 평평한 좌표를 iframe 직렬화 후에도 렌더링한다', () => {
     const fn = new Function(
       'ctx',
       `const api = ${serializeCanvasDrawApi(canvasDrawApi as unknown as Record<string, unknown>)}; api.rect(ctx, { x: 1, y: 2, width: 3, height: 4 }, { fill: 'none' });`
@@ -113,5 +113,31 @@ describe('canvasDrawApi 직렬화 실행', () => {
     fn(ctx);
 
     expect(calls).toEqual([['beginPath'], ['rect', 1, 2, 3, 4], ['stroke']]);
+  });
+  it('polygon 메서드는 x, y가 번갈아 나오는 좌표 배열을 iframe 직렬화 후에도 닫힌 경로로 그린다', () => {
+    const fn = new Function(
+      'ctx',
+      `const api = ${serializeCanvasDrawApi(canvasDrawApi as unknown as Record<string, unknown>)}; api.polygon(ctx, [0, 0, 4, 0, 4, 3], { fill: 'none' });`
+    ) as (ctx: Record<string, unknown>) => void;
+
+    const calls: unknown[][] = [];
+    const ctx = {
+      beginPath: () => calls.push(['beginPath']),
+      moveTo: (...args: unknown[]) => calls.push(['moveTo', ...args]),
+      lineTo: (...args: unknown[]) => calls.push(['lineTo', ...args]),
+      closePath: () => calls.push(['closePath']),
+      stroke: () => calls.push(['stroke']),
+    };
+
+    fn(ctx);
+
+    expect(calls).toEqual([
+      ['beginPath'],
+      ['moveTo', 0, 0],
+      ['lineTo', 4, 0],
+      ['lineTo', 4, 3],
+      ['closePath'],
+      ['stroke'],
+    ]);
   });
 });

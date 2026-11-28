@@ -1,5 +1,5 @@
 // CanvasDrawApi 구현체
-// structural type으로 좌표를 읽어 Canvas 2D API로 렌더링한다
+// 평평한 도형 좌표를 Canvas 2D API로 렌더링한다
 import type { Bounds, Circle, Point, Polygon, Rect, Segment } from '@cp949/vectra/types';
 import type { CanvasDrawApi, DrawFillStrokeOptions, DrawPointOptions, DrawStrokeOptions, DrawTextOptions } from './api';
 

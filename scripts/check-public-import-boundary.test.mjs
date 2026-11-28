@@ -8,6 +8,12 @@ import test from 'node:test';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const scriptPath = path.join(repoRoot, 'scripts/check-public-import-boundary.mjs');
+// 기대 개수는 커밋된 baseline에서 읽는다. 소스 변경마다 시험 숫자를 따로 고치지 않는다.
+const committedBaseline = JSON.parse(
+  readFileSync(path.join(repoRoot, 'scripts/fixtures/public-import-boundary-baseline.json'), 'utf8')
+);
+const expectedValueCount = committedBaseline.valueImports.length;
+const expectedTypeOnlyCount = committedBaseline.typeOnlyImports.length;
 
 test('import-boundary snapshot can be written and used as check baseline', async () => {
   const tempDir = mkdtempSync(path.join(tmpdir(), 'vectra-import-boundary-'));
@@ -23,8 +29,8 @@ test('import-boundary snapshot can be written and used as check baseline', async
     const baseline = JSON.parse(readFileSync(baselinePath, 'utf8'));
     assert.ok(Array.isArray(baseline.valueImports));
     assert.ok(Array.isArray(baseline.typeOnlyImports));
-    assert.equal(baseline.valueImports.length, 215);
-    assert.equal(baseline.typeOnlyImports.length, 71);
+    assert.equal(baseline.valueImports.length, expectedValueCount);
+    assert.equal(baseline.typeOnlyImports.length, expectedTypeOnlyCount);
 
     const output = execFileSync('node', [scriptPath, '--baseline', baselinePath], {
       cwd: repoRoot,
@@ -32,8 +38,8 @@ test('import-boundary snapshot can be written and used as check baseline', async
       stdio: 'pipe',
     });
 
-    assert.match(output, /value imports: 215 \/ 215/);
-    assert.match(output, /type-only imports: 71 \/ 71/);
+    assert.match(output, new RegExp(`value imports: ${expectedValueCount} / ${expectedValueCount}`));
+    assert.match(output, new RegExp(`type-only imports: ${expectedTypeOnlyCount} / ${expectedTypeOnlyCount}`));
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }
