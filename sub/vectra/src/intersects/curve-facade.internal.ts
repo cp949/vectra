@@ -6,16 +6,8 @@
  * public leaf끼리 helper 목적의 직접 import를 피하려고 변환을 이 internal helper에 모은다.
  */
 
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type {
-  CurveIntersectionHit,
-  CurveIntersectionKind,
-  InfiniteLineLike,
-  IntersectionHit,
-  IntersectionKind,
-  SegmentLike,
-} from '../types';
+import type { CurveIntersectionHit, CurveIntersectionKind, IntersectionHit, IntersectionKind } from '../types';
+import type { InfiniteLine, Segment } from '../types/flat-shapes.internal';
 
 /**
  * kernel `IntersectionKind`를 facade `CurveIntersectionKind`로 좁힌다.
@@ -34,15 +26,8 @@ export function toCurveKind(kind: IntersectionKind): CurveIntersectionKind {
  *
  * @param segment 선분 A→B
  */
-export function segmentToInfiniteLine(segment: SegmentLike): InfiniteLineLike {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const ax = readX(a);
-  const ay = readY(a);
-  return {
-    origin: { x: ax, y: ay },
-    direction: { x: readX(b) - ax, y: readY(b) - ay },
-  };
+export function segmentToInfiniteLine(segment: Segment): InfiniteLine {
+  return { ox: segment.x1, oy: segment.y1, dx: segment.x2 - segment.x1, dy: segment.y2 - segment.y1 };
 }
 
 /**

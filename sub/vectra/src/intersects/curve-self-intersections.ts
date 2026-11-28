@@ -1,4 +1,5 @@
-import type { CurveIntersectionHit, CurveIntersectionOptions, CurveLike } from '../types';
+import type { CurveIntersectionHit, CurveIntersectionOptions } from '../types';
+import type { Curve } from '../types/flat-shapes.internal';
 import { curveSelfIntersectionsInto } from './curve-self-intersections-into';
 
 /**
@@ -10,9 +11,12 @@ import { curveSelfIntersectionsInto } from './curve-self-intersections-into';
  * 성능 최적화가 필요하면 `curveSelfIntersectionsInto`를 사용한다.
  *
  * @param curve quadratic 또는 cubic Bezier curve
- * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. 생략하면 기본값을 쓴다.
  * @returns 새로 만든 facade hit 배열. 자기 교차점이 없으면 빈 배열.
  */
-export function curveSelfIntersections(curve: CurveLike, options?: CurveIntersectionOptions): CurveIntersectionHit[] {
+export function curveSelfIntersections(
+  curve: Curve,
+  options?: Required<CurveIntersectionOptions>
+): CurveIntersectionHit[] {
   return curveSelfIntersectionsInto([], curve, options);
 }

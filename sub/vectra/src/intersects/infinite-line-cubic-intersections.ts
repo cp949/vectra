@@ -1,4 +1,5 @@
-import type { CurveIntersectionOptions, InfiniteLineLike, IntersectionHit, XYInput } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { CubicCurve, InfiniteLine } from '../types/flat-shapes.internal';
 import { infiniteLineCubicIntersectionsInto } from './infinite-line-cubic-intersections-into';
 
 /**
@@ -9,21 +10,15 @@ import { infiniteLineCubicIntersectionsInto } from './infinite-line-cubic-inters
  * tB는 curve parameter [0,1]이다.
  * 성능 최적화가 필요하면 `infiniteLineCubicIntersectionsInto`를 사용한다.
  *
- * @param line infinite-line (origin + direction, 양방향)
- * @param p0 cubic curve 시작점
- * @param p1 cubic curve 첫 번째 제어점
- * @param p2 cubic curve 두 번째 제어점
- * @param p3 cubic curve 끝점
- * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
+ * @param line infinite-line (기점 `ox`, `oy`와 방향 `dx`, `dy`를 가진 양방향 직선)
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. `maxDepth`는 교점 계산에 쓰지 않는다. 생략하면 기본값을 쓴다.
  * @returns 새로 만든 IntersectionHit 배열. 교차점이 없으면 빈 배열.
  */
 export function infiniteLineCubicIntersections(
-  line: InfiniteLineLike,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  options?: CurveIntersectionOptions
+  line: InfiniteLine,
+  curve: CubicCurve,
+  options?: Required<CurveIntersectionOptions>
 ): IntersectionHit[] {
-  return infiniteLineCubicIntersectionsInto([], line, p0, p1, p2, p3, options);
+  return infiniteLineCubicIntersectionsInto([], line, curve, options);
 }

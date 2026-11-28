@@ -25,10 +25,8 @@ describe('segmentQuadraticIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     segmentQuadraticIntersectionsInto(
       hits,
-      { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } },
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 }
+      { x1: 0, y1: 0.5, x2: 1, y2: 0.5 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 }
     );
     expect(hits).toHaveLength(2);
     // tA는 segment parameter [0,1] 범위여야 한다
@@ -47,31 +45,14 @@ describe('segmentQuadraticIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     segmentQuadraticIntersectionsInto(
       hits,
-      { a: { x: 0.8, y: 0.5 }, b: { x: 1.5, y: 0.5 } },
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 }
+      { x1: 0.8, y1: 0.5, x2: 1.5, y2: 0.5 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 }
     );
     // segment 범위 밖(tA<0)인 hit는 제거됨
     for (const h of hits) {
       expect(h.tA).toBeGreaterThanOrEqual(0);
       expect(h.tA).toBeLessThanOrEqual(1);
     }
-  });
-
-  test('tuple segment input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    segmentQuadraticIntersectionsInto(
-      hits,
-      [
-        [0, 0.5],
-        [1, 0.5],
-      ] as const,
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 }
-    );
-    expect(hits).toHaveLength(2);
   });
 });
 
@@ -86,10 +67,8 @@ describe('rayQuadraticIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     rayQuadraticIntersectionsInto(
       hits,
-      { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } },
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 }
+      { ox: 0, oy: 0.5, dx: 1, dy: 0 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 }
     );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     // tA는 ray parameter [0, +∞) 범위여야 한다
@@ -103,19 +82,11 @@ describe('rayQuadraticIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     rayQuadraticIntersectionsInto(
       hits,
-      { origin: { x: 2, y: 0.5 }, direction: { x: 1, y: 0 } },
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 }
+      { ox: 2, oy: 0.5, dx: 1, dy: 0 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 }
     );
     // origin x=2에서 +x 방향 — curve(x∈[0,1])가 ray 뒤쪽에 있다
     expect(hits).toHaveLength(0);
-  });
-
-  test('tuple ray input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    rayQuadraticIntersectionsInto(hits, [0, 0.5, 1, 0] as const, { x: 0, y: 0 }, { x: 0.5, y: 2 }, { x: 1, y: 0 });
-    expect(hits.length).toBeGreaterThanOrEqual(1);
   });
 });
 
@@ -129,30 +100,13 @@ describe('infiniteLineQuadraticIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     infiniteLineQuadraticIntersectionsInto(
       hits,
-      { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } },
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 }
+      { ox: 0, oy: 0.5, dx: 1, dy: 0 },
+      { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 }
     );
     expect(hits).toHaveLength(2);
     for (const h of hits) {
       expect(h.point.y).toBeCloseTo(0.5, 6);
     }
-  });
-
-  test('tuple line input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    infiniteLineQuadraticIntersectionsInto(
-      hits,
-      [
-        [0, 0.5],
-        [1, 0],
-      ] as const,
-      { x: 0, y: 0 },
-      { x: 0.5, y: 2 },
-      { x: 1, y: 0 }
-    );
-    expect(hits).toHaveLength(2);
   });
 });
 
@@ -167,11 +121,8 @@ describe('segmentCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     segmentCubicIntersectionsInto(
       hits,
-      { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } },
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
+      { x1: 0, y1: 0.5, x2: 1, y2: 0.5 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 1, x3: 1, y3: 0 }
     );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     for (const h of hits) {
@@ -186,29 +137,10 @@ describe('segmentCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     segmentCubicIntersectionsInto(
       hits,
-      { a: { x: 5, y: 0.5 }, b: { x: 6, y: 0.5 } },
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
+      { x1: 5, y1: 0.5, x2: 6, y2: 0.5 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 1, x3: 1, y3: 0 }
     );
     expect(hits).toHaveLength(0);
-  });
-
-  test('tuple segment input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    segmentCubicIntersectionsInto(
-      hits,
-      [
-        [0, 0.5],
-        [1, 0.5],
-      ] as const,
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
-    );
-    expect(hits.length).toBeGreaterThanOrEqual(1);
   });
 });
 
@@ -223,11 +155,8 @@ describe('rayCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     rayCubicIntersectionsInto(
       hits,
-      { origin: { x: -1, y: 0.5 }, direction: { x: 1, y: 0 } },
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
+      { ox: -1, oy: 0.5, dx: 1, dy: 0 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 1, x3: 1, y3: 0 }
     );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     for (const h of hits) {
@@ -240,26 +169,10 @@ describe('rayCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     rayCubicIntersectionsInto(
       hits,
-      { origin: { x: 5, y: 0.5 }, direction: { x: 1, y: 0 } },
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
+      { ox: 5, oy: 0.5, dx: 1, dy: 0 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 1, x3: 1, y3: 0 }
     );
     expect(hits).toHaveLength(0);
-  });
-
-  test('tuple ray input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    rayCubicIntersectionsInto(
-      hits,
-      [-1, 0.5, 1, 0] as const,
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
-    );
-    expect(hits.length).toBeGreaterThanOrEqual(1);
   });
 });
 
@@ -273,31 +186,12 @@ describe('infiniteLineCubicIntersectionsInto', () => {
     const hits: IntersectionHit[] = [];
     infiniteLineCubicIntersectionsInto(
       hits,
-      { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } },
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
+      { ox: 0, oy: 0.5, dx: 1, dy: 0 },
+      { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 1, x3: 1, y3: 0 }
     );
     expect(hits.length).toBeGreaterThanOrEqual(1);
     for (const h of hits) {
       expect(h.point.y).toBeCloseTo(0.5, 5);
     }
-  });
-
-  test('tuple line input을 읽는다', () => {
-    const hits: IntersectionHit[] = [];
-    infiniteLineCubicIntersectionsInto(
-      hits,
-      [
-        [0, 0.5],
-        [1, 0],
-      ] as const,
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-      { x: 1, y: 0 }
-    );
-    expect(hits.length).toBeGreaterThanOrEqual(1);
   });
 });

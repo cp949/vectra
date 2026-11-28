@@ -15,23 +15,18 @@ import { lineCurveIntersections } from '../../../src/intersects/line-curve-inter
 import { lineCurveIntersectionsInto } from '../../../src/intersects/line-curve-intersections-into';
 import { segmentCurveIntersections } from '../../../src/intersects/segment-curve-intersections';
 import { segmentCurveIntersectionsInto } from '../../../src/intersects/segment-curve-intersections-into';
-import type { CurveIntersectionHit, CurveLike } from '../../../src/types';
+import type { CurveIntersectionHit } from '../../../src/types';
+import type { Curve } from '../../../src/types/flat-shapes.internal';
 
-const QUADRATIC: CurveLike = { kind: 'quadratic', p0: { x: 0, y: 0 }, p1: { x: 0.5, y: 2 }, p2: { x: 1, y: 0 } };
-const CUBIC: CurveLike = {
-  kind: 'cubic',
-  p0: { x: 0, y: 0 },
-  p1: { x: 0, y: 1 },
-  p2: { x: 1, y: 1 },
-  p3: { x: 1, y: 0 },
-};
+const QUADRATIC: Curve = { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 };
+const CUBIC: Curve = { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 1, x3: 1, y3: 0 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // lineCurveIntersections
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('lineCurveIntersections', () => {
-  const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
+  const line = { ox: 0, oy: 0.5, dx: 1, dy: 0 };
 
   test('quadratic에서 Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];
@@ -49,7 +44,7 @@ describe('lineCurveIntersections', () => {
   });
 
   test('교차하지 않으면 빈 배열을 반환한다', () => {
-    const miss = { origin: { x: 0, y: 5 }, direction: { x: 1, y: 0 } };
+    const miss = { ox: 0, oy: 5, dx: 1, dy: 0 };
     const actual = lineCurveIntersections(miss, QUADRATIC);
     expect(actual).toEqual([]);
   });
@@ -67,7 +62,7 @@ describe('lineCurveIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('segmentCurveIntersections', () => {
-  const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
+  const segment = { x1: 0, y1: 0.5, x2: 1, y2: 0.5 };
 
   test('quadratic에서 Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];
@@ -85,7 +80,7 @@ describe('segmentCurveIntersections', () => {
   });
 
   test('교차하지 않으면 빈 배열을 반환한다', () => {
-    const miss = { a: { x: 5, y: 0.5 }, b: { x: 6, y: 0.5 } };
+    const miss = { x1: 5, y1: 0.5, x2: 6, y2: 0.5 };
     const actual = segmentCurveIntersections(miss, QUADRATIC);
     expect(actual).toEqual([]);
   });
@@ -103,18 +98,8 @@ describe('segmentCurveIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('curveCurveIntersections', () => {
-  const QA = {
-    kind: 'quadratic',
-    p0: { x: 0, y: 0 },
-    p1: { x: 0.5, y: 2 },
-    p2: { x: 1, y: 0 },
-  } as const satisfies CurveLike;
-  const QB = {
-    kind: 'quadratic',
-    p0: { x: 0, y: 1 },
-    p1: { x: 0.5, y: -1 },
-    p2: { x: 1, y: 1 },
-  } as const satisfies CurveLike;
+  const QA = { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 } as const satisfies Curve;
+  const QB = { kind: 'quadratic', x0: 0, y0: 1, x1: 0.5, y1: -1, x2: 1, y2: 1 } as const satisfies Curve;
 
   test('Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];
@@ -125,18 +110,8 @@ describe('curveCurveIntersections', () => {
   });
 
   test('교차하지 않으면 빈 배열을 반환한다', () => {
-    const ca = {
-      kind: 'quadratic',
-      p0: { x: 0, y: 5 },
-      p1: { x: 0.5, y: 6 },
-      p2: { x: 1, y: 5 },
-    } as const satisfies CurveLike;
-    const cb = {
-      kind: 'quadratic',
-      p0: { x: 0, y: 0 },
-      p1: { x: 0.5, y: -1 },
-      p2: { x: 1, y: 0 },
-    } as const satisfies CurveLike;
+    const ca = { kind: 'quadratic', x0: 0, y0: 5, x1: 0.5, y1: 6, x2: 1, y2: 5 } as const satisfies Curve;
+    const cb = { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: -1, x2: 1, y2: 0 } as const satisfies Curve;
     const actual = curveCurveIntersections(ca, cb);
     expect(actual).toEqual([]);
   });
@@ -154,13 +129,7 @@ describe('curveCurveIntersections', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('curveSelfIntersections', () => {
-  const LOOP = {
-    kind: 'cubic',
-    p0: { x: 0, y: 0 },
-    p1: { x: 2, y: 2 },
-    p2: { x: -2, y: 2 },
-    p3: { x: 2, y: 0 },
-  } as const satisfies CurveLike;
+  const LOOP = { kind: 'cubic', x0: 0, y0: 0, x1: 2, y1: 2, x2: -2, y2: 2, x3: 2, y3: 0 } as const satisfies Curve;
 
   test('Into 결과와 동치 배열을 반환한다', () => {
     const expected: CurveIntersectionHit[] = [];

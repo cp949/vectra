@@ -1,18 +1,7 @@
-import {
-  flatQuadraticFromLegacyPoints,
-  flatLineFromLegacy,
-  flatIntersectionOptions,
-  flatCubicFromLegacyPoints,
-} from '../internal/legacy-curve.internal';
 import { cubicLineIntersectionsInto } from '../curve/cubic-line-intersections-into';
 import { quadraticLineIntersectionsInto } from '../curve/quadratic-line-intersections-into';
-import type {
-  CurveIntersectionHit,
-  CurveIntersectionOptions,
-  CurveLike,
-  InfiniteLineLike,
-  IntersectionHit,
-} from '../types';
+import type { CurveIntersectionHit, CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { Curve, InfiniteLine } from '../types/flat-shapes.internal';
 import { writeLineCurveHits } from './curve-facade.internal';
 
 /**
@@ -25,32 +14,22 @@ import { writeLineCurveHits } from './curve-facade.internal';
  * out을 먼저 비우고 교차점을 push한다. zero direction line은 빈 결과다.
  *
  * @param out 교차점을 기록할 facade hit 배열 (호출 전 내용은 무시되고 비워진다)
- * @param line infinite-line (origin + direction, 양방향)
+ * @param line infinite-line (기점 `ox`, `oy`와 방향 `dx`, `dy`를 가진 양방향 직선)
  * @param curve quadratic 또는 cubic Bezier curve
- * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. 생략하면 기본값을 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function lineCurveIntersectionsInto(
   out: CurveIntersectionHit[],
-  line: InfiniteLineLike,
-  curve: CurveLike,
-  options?: CurveIntersectionOptions
+  line: InfiniteLine,
+  curve: Curve,
+  options?: Required<CurveIntersectionOptions>
 ): CurveIntersectionHit[] {
   const hits: IntersectionHit[] = [];
   if (curve.kind === 'quadratic') {
-    quadraticLineIntersectionsInto(
-      hits,
-      flatQuadraticFromLegacyPoints(curve.p0, curve.p1, curve.p2),
-      flatLineFromLegacy(line),
-      flatIntersectionOptions(options)
-    );
+    quadraticLineIntersectionsInto(hits, curve, line, options);
   } else {
-    cubicLineIntersectionsInto(
-      hits,
-      flatCubicFromLegacyPoints(curve.p0, curve.p1, curve.p2, curve.p3),
-      flatLineFromLegacy(line),
-      flatIntersectionOptions(options)
-    );
+    cubicLineIntersectionsInto(hits, curve, line, options);
   }
   writeLineCurveHits(out, hits);
   return out;

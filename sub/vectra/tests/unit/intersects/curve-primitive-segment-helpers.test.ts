@@ -18,7 +18,7 @@ import {
   curveCrossesSegment,
   curveOverlapsSegment,
 } from '../../../src/intersects/curve-primitive-segment.internal';
-import type { IntersectionHit, XYInput } from '../../../src/types';
+import type { IntersectionHit } from '../../../src/types';
 
 const EPS = 1e-9;
 
@@ -55,19 +55,17 @@ describe('curveContainsPoint', () => {
 
 describe('curveCrossesSegment', () => {
   // S자 quadratic arc: 양 끝 (-2,-2),(2,-2), t=0.5에서 peak (0,0)을 지난다.
-  const aP0: XYInput = { x: -2, y: -2 };
-  const aP1: XYInput = { x: 0, y: 2 };
-  const aP2: XYInput = { x: 2, y: -2 };
+  const arc = { kind: 'quadratic', x0: -2, y0: -2, x1: 0, y1: 2, x2: 2, y2: -2 } as const;
 
   test('curve가 segment range 안에서 교차하면 true', () => {
-    const probe = makeQuadraticProbe(aP0, aP1, aP2, EPS);
+    const probe = makeQuadraticProbe(arc, EPS);
     const hits: IntersectionHit[] = [];
     // segment (-2,0)→(2,0): arc가 y=0을 두 번 가로지른다.
     expect(curveCrossesSegment(probe, hits, -2, 0, 2, 0)).toBe(true);
   });
 
   test('curve가 segment range 밖에서만 교차하면 false', () => {
-    const probe = makeQuadraticProbe(aP0, aP1, aP2, EPS);
+    const probe = makeQuadraticProbe(arc, EPS);
     const hits: IntersectionHit[] = [];
     // segment (10,0)→(12,0): arc 직선상 교점이 segment parameter range [0,1] 밖.
     expect(curveCrossesSegment(probe, hits, 10, 0, 12, 0)).toBe(false);

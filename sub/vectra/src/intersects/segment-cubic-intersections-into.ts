@@ -1,54 +1,31 @@
-import {
-  flatCubicFromLegacyPoints,
-  flatLineFromLegacy,
-  flatIntersectionOptions,
-} from '../internal/legacy-curve.internal';
+import { segmentToInfiniteLine } from './curve-facade.internal';
 import { cubicLineIntersectionsInto } from '../curve/cubic-line-intersections-into';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { CurveIntersectionOptions, IntersectionHit, SegmentLike, XYInput } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { CubicCurve, Segment } from '../types/flat-shapes.internal';
 
 /**
- * segment와 cubic Bezier curve의 교차점을 outHits에 push한다.
+ * segment와 cubic Bezier curve의 교차점을 outHits에 기록한다.
  *
  * segment A→B를 origin=A, direction=B-A의 infinite-line으로 변환해
  * cubicLineIntersectionsInto를 호출한 뒤 tA ∈ [0,1] 범위에 맞는 hit만 남긴다.
  * direction을 unit vector로 정규화하지 않으므로 tA가 segment parameter [0,1]로 유지된다.
  * tA는 segment parameter (A + (B-A)*tA), tB는 curve parameter [0,1]이다.
  *
- * @param outHits 결과 배열 (호출 전 비워야 한다)
+ * @param outHits 결과 배열 (함수가 먼저 비운다)
  * @param segment 선분 A→B
- * @param p0 cubic curve 시작점
- * @param p1 cubic curve 첫 번째 제어점
- * @param p2 cubic curve 두 번째 제어점
- * @param p3 cubic curve 끝점
- * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. `maxDepth`는 교점 계산에 쓰지 않는다. 생략하면 기본값을 쓴다.
  * @returns 기록이 완료된 outHits (입력과 동일한 참조)
  */
 export function segmentCubicIntersectionsInto(
   outHits: IntersectionHit[],
-  segment: SegmentLike,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  options?: CurveIntersectionOptions
+  segment: Segment,
+  curve: CubicCurve,
+  options?: Required<CurveIntersectionOptions>
 ): IntersectionHit[] {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const ax = readX(a);
-  const ay = readY(a);
-  const line = {
-    origin: { x: ax, y: ay },
-    direction: { x: readX(b) - ax, y: readY(b) - ay },
-  };
+  const line = segmentToInfiniteLine(segment);
 
-  cubicLineIntersectionsInto(
-    outHits,
-    flatCubicFromLegacyPoints(p0, p1, p2, p3),
-    flatLineFromLegacy(line),
-    flatIntersectionOptions(options)
-  );
+  cubicLineIntersectionsInto(outHits, curve, line, options);
 
   // segment는 tA ∈ [0,1] 범위만 유효하다 — 범위 밖 hit를 제거한다
   let i = outHits.length - 1;

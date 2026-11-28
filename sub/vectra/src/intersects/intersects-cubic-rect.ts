@@ -1,7 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { RectLike, XYInput } from '../types';
+import type { CubicCurve, Rect } from '../types/flat-shapes.internal';
 import { allFinite, curveRectIntersects, makeCubicProbe } from './curve-primitive-relation.internal';
 
 /**
@@ -11,34 +9,21 @@ import { allFinite, curveRectIntersects, makeCubicProbe } from './curve-primitiv
  * 완전히 둘러싸는 case는 endpoint containment로 잡는다. empty rect (width ≤ 0 또는 height ≤ 0):
  * false. non-finite 입력: false.
  *
- * @param p0 curve 시작점
- * @param p1 첫 번째 제어점
- * @param p2 두 번째 제어점
- * @param p3 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param rect 교차를 검사할 rect
  * @param epsilon curve × edge 교차 numeric tolerance
  */
-export function intersectsCubicRect(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  p3: XYInput,
-  rect: RectLike,
-  epsilon = DEFAULT_EPSILON
-): boolean {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const p3x = readX(p3);
-  const p3y = readY(p3);
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+export function intersectsCubicRect(curve: CubicCurve, rect: Rect, epsilon = DEFAULT_EPSILON): boolean {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const p3x = curve.x3;
+  const p3y = curve.y3;
+  const { x: rx, y: ry, width: rw, height: rh } = rect;
   if (!allFinite([p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y, rx, ry, rw, rh])) return false;
 
-  return curveRectIntersects(makeCubicProbe(p0, p1, p2, p3, epsilon), p0x, p0y, p3x, p3y, rx, ry, rw, rh);
+  return curveRectIntersects(makeCubicProbe(curve, epsilon), p0x, p0y, p3x, p3y, rx, ry, rw, rh);
 }

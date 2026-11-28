@@ -4,6 +4,10 @@
  * 좁은 원소 타입 배열을 넘겨도 반환 타입이 넓어진 실제 원소 타입인지 확인한다.
  * 기존 객체에 덮어쓰는 sweep 결과는 호출자의 결과 타입과 내부 점 참조를 보존한다.
  */
+
+import { infiniteLineQuadraticIntersectionsInto } from '../../../src/intersects/infinite-line-quadratic-intersections-into';
+import { lineCurveIntersectionsInto } from '../../../src/intersects/line-curve-intersections-into';
+import type { CurveIntersectionHit, IntersectionHit } from '../../../src/types';
 import { expect, expectTypeOf, test } from 'vitest';
 import { boundsSweepBoundsInto } from '../../../src/intersects/bounds-sweep-bounds-into';
 import { boundsSweepPointInto } from '../../../src/intersects/bounds-sweep-point-into';
@@ -315,4 +319,19 @@ test('선분 쌍과 삼각형·선분 교점 배열의 원소 타입을 고정�
     { x: 1, y: 1 },
   ]);
   expect(triangle[0]).not.toBeInstanceOf(TaggedPoint);
+});
+
+test('직선과 베지어 교차는 평평한 곡선과 필수 필드 옵션을 받는다', () => {
+  const line = { ox: 0, oy: 0, dx: 1, dy: 0 };
+  const curve = { kind: 'quadratic', x0: 0, y0: -1, x1: 1, y1: 0, x2: 2, y2: 1 } as const;
+  const options = { epsilon: 1e-9, epsilonT: 1e-10, maxDepth: 32 };
+  const hits: IntersectionHit[] = [];
+  const facade: CurveIntersectionHit[] = [];
+
+  expectTypeOf(infiniteLineQuadraticIntersectionsInto).parameter(3).toEqualTypeOf<typeof options | undefined>();
+  expectTypeOf(lineCurveIntersectionsInto).parameter(3).toEqualTypeOf<typeof options | undefined>();
+  expect(infiniteLineQuadraticIntersectionsInto(hits, line, curve, options)).toBe(hits);
+  expect(lineCurveIntersectionsInto(facade, line, curve, options)).toBe(facade);
+  expect(hits).toEqual([{ point: { x: 1, y: 0 }, kind: 'cross', tA: 1, tB: 0.5 }]);
+  expect(facade).toEqual([{ x: 1, y: 0, kind: 'cross', tLine: 1, tCurve: 0.5 }]);
 });

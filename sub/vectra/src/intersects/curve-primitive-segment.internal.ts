@@ -10,7 +10,8 @@
  */
 
 import { evaluatePolynomial, minOnClosedUnit, realRootsInClosedUnit } from '../internal/polynomial';
-import type { InfiniteLineLike, IntersectionHit } from '../types';
+import type { IntersectionHit } from '../types';
+import type { InfiniteLine } from '../types/flat-shapes.internal';
 import type { CurveLineProbe } from './curve-primitive-probe.internal';
 import { hypot2 } from '../internal/numeric';
 
@@ -25,9 +26,11 @@ export function curveCrossesSegment(
 ): boolean {
   if (probe.overlapsSegment(ax, ay, bx, by)) return true;
 
-  const line: InfiniteLineLike = {
-    origin: { x: ax, y: ay },
-    direction: { x: bx - ax, y: by - ay },
+  const line: InfiniteLine = {
+    ox: ax,
+    oy: ay,
+    dx: bx - ax,
+    dy: by - ay,
   };
   probe(hits, line);
   for (const hit of hits) {

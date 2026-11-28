@@ -1,4 +1,5 @@
-import type { CurveIntersectionOptions, IntersectionHit, RayLike, XYInput } from '../types';
+import type { CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { QuadraticCurve, Ray } from '../types/flat-shapes.internal';
 import { rayQuadraticIntersectionsInto } from './ray-quadratic-intersections-into';
 
 /**
@@ -9,19 +10,15 @@ import { rayQuadraticIntersectionsInto } from './ray-quadratic-intersections-int
  * tA는 ray line parameter (origin + direction * tA), tB는 curve parameter [0,1]이다.
  * 성능 최적화가 필요하면 `rayQuadraticIntersectionsInto`를 사용한다.
  *
- * @param ray origin에서 direction 방향으로 뻗는 반직선
- * @param p0 quadratic curve 시작점
- * @param p1 quadratic curve 제어점
- * @param p2 quadratic curve 끝점
- * @param options epsilon, epsilonT 제어 옵션. 미지정 시 기본값 사용.
+ * @param ray 기점 `ox`, `oy`에서 방향 `dx`, `dy`로 뻗는 반직선
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. `maxDepth`는 교점 계산에 쓰지 않는다. 생략하면 기본값을 쓴다.
  * @returns 새로 만든 IntersectionHit 배열. 교차점이 없으면 빈 배열.
  */
 export function rayQuadraticIntersections(
-  ray: RayLike,
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  options?: CurveIntersectionOptions
+  ray: Ray,
+  curve: QuadraticCurve,
+  options?: Required<CurveIntersectionOptions>
 ): IntersectionHit[] {
-  return rayQuadraticIntersectionsInto([], ray, p0, p1, p2, options);
+  return rayQuadraticIntersectionsInto([], ray, curve, options);
 }

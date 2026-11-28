@@ -1,4 +1,5 @@
-import type { CurveIntersectionHit, CurveIntersectionOptions, CurveLike, InfiniteLineLike } from '../types';
+import type { CurveIntersectionHit, CurveIntersectionOptions } from '../types';
+import type { Curve, InfiniteLine } from '../types/flat-shapes.internal';
 import { lineCurveIntersectionsInto } from './line-curve-intersections-into';
 
 /**
@@ -11,15 +12,15 @@ import { lineCurveIntersectionsInto } from './line-curve-intersections-into';
  * zero direction line은 빈 배열이다.
  * 성능 최적화가 필요하면 `lineCurveIntersectionsInto`를 사용한다.
  *
- * @param line infinite-line (origin + direction, 양방향)
+ * @param line infinite-line (기점 `ox`, `oy`와 방향 `dx`, `dy`를 가진 양방향 직선)
  * @param curve quadratic 또는 cubic Bezier curve
- * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. 생략하면 기본값을 쓴다.
  * @returns 새로 만든 facade hit 배열. 교차점이 없으면 빈 배열.
  */
 export function lineCurveIntersections(
-  line: InfiniteLineLike,
-  curve: CurveLike,
-  options?: CurveIntersectionOptions
+  line: InfiniteLine,
+  curve: Curve,
+  options?: Required<CurveIntersectionOptions>
 ): CurveIntersectionHit[] {
   return lineCurveIntersectionsInto([], line, curve, options);
 }

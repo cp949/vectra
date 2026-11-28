@@ -1,12 +1,8 @@
-import {
-  flatQuadraticFromLegacyPoints,
-  flatIntersectionOptions,
-  flatCubicFromLegacyPoints,
-} from '../internal/legacy-curve.internal';
 import { cubicCubicIntersectionsInto } from '../curve/cubic-cubic-intersections-into';
 import { quadraticCubicIntersectionsInto } from '../curve/quadratic-cubic-intersections-into';
 import { quadraticQuadraticIntersectionsInto } from '../curve/quadratic-quadratic-intersections-into';
-import type { CurveIntersectionHit, CurveIntersectionOptions, CurveLike, IntersectionHit } from '../types';
+import type { CurveIntersectionHit, CurveIntersectionOptions, IntersectionHit } from '../types';
+import type { Curve } from '../types/flat-shapes.internal';
 import { writeCurveCurveHits } from './curve-facade.internal';
 
 /**
@@ -22,48 +18,28 @@ import { writeCurveCurveHits } from './curve-facade.internal';
  * @param out 교차점을 기록할 facade hit 배열 (호출 전 내용은 무시되고 비워진다)
  * @param curveA quadratic 또는 cubic Bezier curve. `tA`의 기준이다.
  * @param curveB quadratic 또는 cubic Bezier curve. `tB`의 기준이다.
- * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. 생략하면 기본값을 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)
  */
 export function curveCurveIntersectionsInto(
   out: CurveIntersectionHit[],
-  curveA: CurveLike,
-  curveB: CurveLike,
-  options?: CurveIntersectionOptions
+  curveA: Curve,
+  curveB: Curve,
+  options?: Required<CurveIntersectionOptions>
 ): CurveIntersectionHit[] {
   const hits: IntersectionHit[] = [];
   let swap = false;
 
   if (curveA.kind === 'quadratic' && curveB.kind === 'quadratic') {
-    quadraticQuadraticIntersectionsInto(
-      hits,
-      flatQuadraticFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2),
-      flatQuadraticFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2),
-      flatIntersectionOptions(options)
-    );
+    quadraticQuadraticIntersectionsInto(hits, curveA, curveB, options);
   } else if (curveA.kind === 'quadratic' && curveB.kind === 'cubic') {
-    quadraticCubicIntersectionsInto(
-      hits,
-      flatQuadraticFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2),
-      flatCubicFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2, curveB.p3),
-      flatIntersectionOptions(options)
-    );
+    quadraticCubicIntersectionsInto(hits, curveA, curveB, options);
   } else if (curveA.kind === 'cubic' && curveB.kind === 'quadratic') {
     // kernel은 (quadratic, cubic) 순서만 제공한다 — quadratic을 A로 넣고 tA/tB를 swap해 caller 순서를 맞춘다
-    quadraticCubicIntersectionsInto(
-      hits,
-      flatQuadraticFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2),
-      flatCubicFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2, curveA.p3),
-      flatIntersectionOptions(options)
-    );
+    quadraticCubicIntersectionsInto(hits, curveB, curveA, options);
     swap = true;
   } else if (curveA.kind === 'cubic' && curveB.kind === 'cubic') {
-    cubicCubicIntersectionsInto(
-      hits,
-      flatCubicFromLegacyPoints(curveA.p0, curveA.p1, curveA.p2, curveA.p3),
-      flatCubicFromLegacyPoints(curveB.p0, curveB.p1, curveB.p2, curveB.p3),
-      flatIntersectionOptions(options)
-    );
+    cubicCubicIntersectionsInto(hits, curveA, curveB, options);
   }
 
   writeCurveCurveHits(out, hits, swap);

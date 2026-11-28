@@ -1,4 +1,5 @@
-import type { CurveIntersectionHit, CurveIntersectionOptions, CurveLike } from '../types';
+import type { CurveIntersectionHit, CurveIntersectionOptions } from '../types';
+import type { Curve } from '../types/flat-shapes.internal';
 import { curveCurveIntersectionsInto } from './curve-curve-intersections-into';
 
 /**
@@ -14,13 +15,13 @@ import { curveCurveIntersectionsInto } from './curve-curve-intersections-into';
  * caller-responsibility 가정은 `curveCurveIntersectionsInto`와 동일하다.
  * @param curveA quadratic 또는 cubic Bezier curve. `tA`의 기준이다.
  * @param curveB quadratic 또는 cubic Bezier curve. `tB`의 기준이다.
- * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. 생략하면 기본값을 쓴다.
  * @returns 새로 만든 facade hit 배열. 교차점이 없으면 빈 배열.
  */
 export function curveCurveIntersections(
-  curveA: CurveLike,
-  curveB: CurveLike,
-  options?: CurveIntersectionOptions
+  curveA: Curve,
+  curveB: Curve,
+  options?: Required<CurveIntersectionOptions>
 ): CurveIntersectionHit[] {
   return curveCurveIntersectionsInto([], curveA, curveB, options);
 }

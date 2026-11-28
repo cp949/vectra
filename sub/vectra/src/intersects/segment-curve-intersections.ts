@@ -1,4 +1,5 @@
-import type { CurveIntersectionHit, CurveIntersectionOptions, CurveLike, SegmentLike } from '../types';
+import type { CurveIntersectionHit, CurveIntersectionOptions } from '../types';
+import type { Curve, Segment } from '../types/flat-shapes.internal';
 import { segmentCurveIntersectionsInto } from './segment-curve-intersections-into';
 
 /**
@@ -13,13 +14,13 @@ import { segmentCurveIntersectionsInto } from './segment-curve-intersections-int
  *
  * @param segment 선분 A→B
  * @param curve quadratic 또는 cubic Bezier curve
- * @param options epsilon, epsilonT, maxDepth 제어 옵션. 미지정 시 기본값 사용.
+ * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. 생략하면 기본값을 쓴다.
  * @returns 새로 만든 facade hit 배열. 교차점이 없으면 빈 배열.
  */
 export function segmentCurveIntersections(
-  segment: SegmentLike,
-  curve: CurveLike,
-  options?: CurveIntersectionOptions
+  segment: Segment,
+  curve: Curve,
+  options?: Required<CurveIntersectionOptions>
 ): CurveIntersectionHit[] {
   return segmentCurveIntersectionsInto([], segment, curve, options);
 }

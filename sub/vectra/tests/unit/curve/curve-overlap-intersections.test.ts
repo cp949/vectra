@@ -251,11 +251,8 @@ describe('quadraticCubicIntersectionsInto overlap', () => {
 describe('curveCurveIntersectionsInto overlap', () => {
   test('facade도 overlap kind를 그대로 노출한다', () => {
     const out: CurveIntersectionHit[] = [];
-    curveCurveIntersectionsInto(
-      out,
-      { kind: 'cubic', p0: S_CUBIC[0], p1: S_CUBIC[1], p2: S_CUBIC[2], p3: S_CUBIC[3] },
-      { kind: 'cubic', p0: S_CUBIC[0], p1: S_CUBIC[1], p2: S_CUBIC[2], p3: S_CUBIC[3] }
-    );
+    const cubic = flatCubicFromLegacyPoints(...S_CUBIC);
+    curveCurveIntersectionsInto(out, cubic, cubic);
 
     expect(sortByTA(out)).toEqual([
       { x: 0, y: 0, kind: 'overlap', tA: 0, tB: 0 },
@@ -267,17 +264,7 @@ describe('curveCurveIntersectionsInto overlap', () => {
     // cubic은 PARABOLA_1_3의 차수 올림이고 quadratic은 PARABOLA_0_2다. 겹침은 x∈[1,2]다.
     const cubic = quadraticElevateToCubic(flatQuadraticFromLegacyPoints(...PARABOLA_1_3));
     const out: CurveIntersectionHit[] = [];
-    curveCurveIntersectionsInto(
-      out,
-      {
-        kind: 'cubic',
-        p0: { x: cubic.x0, y: cubic.y0 },
-        p1: { x: cubic.x1, y: cubic.y1 },
-        p2: { x: cubic.x2, y: cubic.y2 },
-        p3: { x: cubic.x3, y: cubic.y3 },
-      },
-      { kind: 'quadratic', p0: PARABOLA_0_2[0], p1: PARABOLA_0_2[1], p2: PARABOLA_0_2[2] }
-    );
+    curveCurveIntersectionsInto(out, cubic, flatQuadraticFromLegacyPoints(...PARABOLA_0_2));
 
     expect(out).toHaveLength(2);
     const [start, end] = sortByTA(out);

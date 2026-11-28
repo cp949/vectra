@@ -1,40 +1,27 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, XYInput } from '../types';
+import type { Circle, QuadraticCurve } from '../types/flat-shapes.internal';
 import { allFinite, curveEllipseDiskIntersects } from './curve-primitive-relation.internal';
 
 /**
  * quadratic Bezier segment와 circle이 교차하면 true를 반환한다.
  *
  * closed disk 판정. boundary 접촉(tangent), boundary 가로지르기, endpoint 내부 포함, circle이
- * curve를 완전히 둘러싸는 경우 모두 true. circle은 ellipse kernel에 rx = ry = radius로 환원한다.
- * empty circle (radius ≤ 0): false. non-finite 입력: false.
+ * curve를 완전히 둘러싸는 경우 모두 true. circle은 ellipse kernel에 rx = ry = r로 환원한다.
+ * empty circle (r ≤ 0): false. non-finite 입력: false.
  *
- * @param p0 curve 시작점
- * @param p1 curve 제어점
- * @param p2 curve 끝점
+ * @param curve 시작점·제어점·끝점 좌표를 담은 곡선 객체
  * @param circle 교차를 검사할 circle
  * @param epsilon boundary 접촉 판정 tolerance. circle-local 정규화 residual에 대한 무차원
- *   임계값이며 geometric 거리가 아니다. geometric 접촉폭은 radius에 비례한다.
+ *   임계값이며 geometric 거리가 아니다. geometric 접촉폭은 r에 비례한다.
  */
-export function intersectsQuadraticCircle(
-  p0: XYInput,
-  p1: XYInput,
-  p2: XYInput,
-  circle: CircleLike,
-  epsilon = DEFAULT_EPSILON
-): boolean {
-  const p0x = readX(p0);
-  const p0y = readY(p0);
-  const p1x = readX(p1);
-  const p1y = readY(p1);
-  const p2x = readX(p2);
-  const p2y = readY(p2);
-  const center = readCircleCenter(circle);
-  const cx = readX(center);
-  const cy = readY(center);
-  const r = readCircleRadius(circle);
+export function intersectsQuadraticCircle(curve: QuadraticCurve, circle: Circle, epsilon = DEFAULT_EPSILON): boolean {
+  const p0x = curve.x0;
+  const p0y = curve.y0;
+  const p1x = curve.x1;
+  const p1y = curve.y1;
+  const p2x = curve.x2;
+  const p2y = curve.y2;
+  const { cx, cy, r } = circle;
   if (!allFinite([p0x, p0y, p1x, p1y, p2x, p2y, cx, cy, r])) return false;
   if (r <= 0) return false;
 

@@ -22,15 +22,10 @@ import { segmentQuadraticIntersectionsInto } from '../../../src/intersects/segme
 import type { IntersectionHit } from '../../../src/types';
 
 // quadratic 아치형: p0=(0,0), p1=(0.5,2), p2=(1,0) — y=0.5 선과 두 번 교차
-const Q0 = { x: 0, y: 0 };
-const Q1 = { x: 0.5, y: 2 };
-const Q2 = { x: 1, y: 0 };
+const QUADRATIC = { kind: 'quadratic', x0: 0, y0: 0, x1: 0.5, y1: 2, x2: 1, y2: 0 } as const;
 
 // cubic 아치형: p0=(0,0), p1=(0,1), p2=(1,1), p3=(1,0) — y=0.5 선과 두 번 교차
-const C0 = { x: 0, y: 0 };
-const C1 = { x: 0, y: 1 };
-const C2 = { x: 1, y: 1 };
-const C3 = { x: 1, y: 0 };
+const CUBIC = { kind: 'cubic', x0: 0, y0: 0, x1: 0, y1: 1, x2: 1, y2: 1, x3: 1, y3: 0 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // segmentQuadraticIntersections
@@ -38,27 +33,27 @@ const C3 = { x: 1, y: 0 };
 
 describe('segmentQuadraticIntersections', () => {
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
-    const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
+    const segment = { x1: 0, y1: 0.5, x2: 1, y2: 0.5 };
     const expected: IntersectionHit[] = [];
-    segmentQuadraticIntersectionsInto(expected, segment, Q0, Q1, Q2);
+    segmentQuadraticIntersectionsInto(expected, segment, QUADRATIC);
 
-    const actual = segmentQuadraticIntersections(segment, Q0, Q1, Q2);
+    const actual = segmentQuadraticIntersections(segment, QUADRATIC);
 
     expect(actual).toEqual(expected);
     expect(actual.length).toBe(2);
   });
 
   test('교차하지 않으면 빈 배열을 반환한다', () => {
-    const segment = { a: { x: 5, y: 0.5 }, b: { x: 6, y: 0.5 } };
-    const actual = segmentQuadraticIntersections(segment, Q0, Q1, Q2);
+    const segment = { x1: 5, y1: 0.5, x2: 6, y2: 0.5 };
+    const actual = segmentQuadraticIntersections(segment, QUADRATIC);
     expect(actual).toEqual([]);
     expect(actual.length).toBe(0);
   });
 
   test('호출마다 새 배열 reference를 생성한다', () => {
-    const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
-    const a = segmentQuadraticIntersections(segment, Q0, Q1, Q2);
-    const b = segmentQuadraticIntersections(segment, Q0, Q1, Q2);
+    const segment = { x1: 0, y1: 0.5, x2: 1, y2: 0.5 };
+    const a = segmentQuadraticIntersections(segment, QUADRATIC);
+    const b = segmentQuadraticIntersections(segment, QUADRATIC);
     expect(a).not.toBe(b);
     expect(a).toEqual(b);
   });
@@ -70,11 +65,11 @@ describe('segmentQuadraticIntersections', () => {
 
 describe('segmentCubicIntersections', () => {
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
-    const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
+    const segment = { x1: 0, y1: 0.5, x2: 1, y2: 0.5 };
     const expected: IntersectionHit[] = [];
-    segmentCubicIntersectionsInto(expected, segment, C0, C1, C2, C3);
+    segmentCubicIntersectionsInto(expected, segment, CUBIC);
 
-    const actual = segmentCubicIntersections(segment, C0, C1, C2, C3);
+    const actual = segmentCubicIntersections(segment, CUBIC);
 
     expect(actual).toEqual(expected);
     // cubic 아치는 y=0.5 수평선과 대칭으로 정확히 2점에서 교차한다 (x ≈ 0.115, 0.885).
@@ -82,16 +77,16 @@ describe('segmentCubicIntersections', () => {
   });
 
   test('교차하지 않으면 빈 배열을 반환한다', () => {
-    const segment = { a: { x: 5, y: 0.5 }, b: { x: 6, y: 0.5 } };
-    const actual = segmentCubicIntersections(segment, C0, C1, C2, C3);
+    const segment = { x1: 5, y1: 0.5, x2: 6, y2: 0.5 };
+    const actual = segmentCubicIntersections(segment, CUBIC);
     expect(actual).toEqual([]);
     expect(actual.length).toBe(0);
   });
 
   test('호출마다 새 배열 reference를 생성한다', () => {
-    const segment = { a: { x: 0, y: 0.5 }, b: { x: 1, y: 0.5 } };
-    const a = segmentCubicIntersections(segment, C0, C1, C2, C3);
-    const b = segmentCubicIntersections(segment, C0, C1, C2, C3);
+    const segment = { x1: 0, y1: 0.5, x2: 1, y2: 0.5 };
+    const a = segmentCubicIntersections(segment, CUBIC);
+    const b = segmentCubicIntersections(segment, CUBIC);
     expect(a).not.toBe(b);
     expect(a).toEqual(b);
   });
@@ -103,11 +98,11 @@ describe('segmentCubicIntersections', () => {
 
 describe('rayQuadraticIntersections', () => {
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
-    const ray = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
+    const ray = { ox: 0, oy: 0.5, dx: 1, dy: 0 };
     const expected: IntersectionHit[] = [];
-    rayQuadraticIntersectionsInto(expected, ray, Q0, Q1, Q2);
+    rayQuadraticIntersectionsInto(expected, ray, QUADRATIC);
 
-    const actual = rayQuadraticIntersections(ray, Q0, Q1, Q2);
+    const actual = rayQuadraticIntersections(ray, QUADRATIC);
 
     expect(actual).toEqual(expected);
     // quadratic 아치는 y=0.5 수평선과 정확히 2점에서 교차하고 ray가 두 점을 모두 포함한다.
@@ -115,15 +110,15 @@ describe('rayQuadraticIntersections', () => {
   });
 
   test('ray 뒤쪽이면 빈 배열을 반환한다', () => {
-    const ray = { origin: { x: 2, y: 0.5 }, direction: { x: 1, y: 0 } };
-    const actual = rayQuadraticIntersections(ray, Q0, Q1, Q2);
+    const ray = { ox: 2, oy: 0.5, dx: 1, dy: 0 };
+    const actual = rayQuadraticIntersections(ray, QUADRATIC);
     expect(actual).toEqual([]);
   });
 
   test('호출마다 새 배열 reference를 생성한다', () => {
-    const ray = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
-    const a = rayQuadraticIntersections(ray, Q0, Q1, Q2);
-    const b = rayQuadraticIntersections(ray, Q0, Q1, Q2);
+    const ray = { ox: 0, oy: 0.5, dx: 1, dy: 0 };
+    const a = rayQuadraticIntersections(ray, QUADRATIC);
+    const b = rayQuadraticIntersections(ray, QUADRATIC);
     expect(a).not.toBe(b);
     expect(a).toEqual(b);
   });
@@ -135,11 +130,11 @@ describe('rayQuadraticIntersections', () => {
 
 describe('rayCubicIntersections', () => {
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
-    const ray = { origin: { x: -1, y: 0.5 }, direction: { x: 1, y: 0 } };
+    const ray = { ox: -1, oy: 0.5, dx: 1, dy: 0 };
     const expected: IntersectionHit[] = [];
-    rayCubicIntersectionsInto(expected, ray, C0, C1, C2, C3);
+    rayCubicIntersectionsInto(expected, ray, CUBIC);
 
-    const actual = rayCubicIntersections(ray, C0, C1, C2, C3);
+    const actual = rayCubicIntersections(ray, CUBIC);
 
     expect(actual).toEqual(expected);
     // cubic 아치는 y=0.5 수평선과 정확히 2점에서 교차하고 ray origin=(-1,0.5)가 두 점을 모두 포함한다.
@@ -147,15 +142,15 @@ describe('rayCubicIntersections', () => {
   });
 
   test('ray 뒤쪽이면 빈 배열을 반환한다', () => {
-    const ray = { origin: { x: 5, y: 0.5 }, direction: { x: 1, y: 0 } };
-    const actual = rayCubicIntersections(ray, C0, C1, C2, C3);
+    const ray = { ox: 5, oy: 0.5, dx: 1, dy: 0 };
+    const actual = rayCubicIntersections(ray, CUBIC);
     expect(actual).toEqual([]);
   });
 
   test('호출마다 새 배열 reference를 생성한다', () => {
-    const ray = { origin: { x: -1, y: 0.5 }, direction: { x: 1, y: 0 } };
-    const a = rayCubicIntersections(ray, C0, C1, C2, C3);
-    const b = rayCubicIntersections(ray, C0, C1, C2, C3);
+    const ray = { ox: -1, oy: 0.5, dx: 1, dy: 0 };
+    const a = rayCubicIntersections(ray, CUBIC);
+    const b = rayCubicIntersections(ray, CUBIC);
     expect(a).not.toBe(b);
     expect(a).toEqual(b);
   });
@@ -167,11 +162,11 @@ describe('rayCubicIntersections', () => {
 
 describe('infiniteLineQuadraticIntersections', () => {
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
-    const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
+    const line = { ox: 0, oy: 0.5, dx: 1, dy: 0 };
     const expected: IntersectionHit[] = [];
-    infiniteLineQuadraticIntersectionsInto(expected, line, Q0, Q1, Q2);
+    infiniteLineQuadraticIntersectionsInto(expected, line, QUADRATIC);
 
-    const actual = infiniteLineQuadraticIntersections(line, Q0, Q1, Q2);
+    const actual = infiniteLineQuadraticIntersections(line, QUADRATIC);
 
     expect(actual).toEqual(expected);
     expect(actual.length).toBe(2);
@@ -179,15 +174,15 @@ describe('infiniteLineQuadraticIntersections', () => {
 
   test('교차하지 않으면 빈 배열을 반환한다', () => {
     // y=5 horizontal infinite-line — quadratic 아치 (max y=1)와 교차 없음
-    const line = { origin: { x: 0, y: 5 }, direction: { x: 1, y: 0 } };
-    const actual = infiniteLineQuadraticIntersections(line, Q0, Q1, Q2);
+    const line = { ox: 0, oy: 5, dx: 1, dy: 0 };
+    const actual = infiniteLineQuadraticIntersections(line, QUADRATIC);
     expect(actual).toEqual([]);
   });
 
   test('호출마다 새 배열 reference를 생성한다', () => {
-    const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
-    const a = infiniteLineQuadraticIntersections(line, Q0, Q1, Q2);
-    const b = infiniteLineQuadraticIntersections(line, Q0, Q1, Q2);
+    const line = { ox: 0, oy: 0.5, dx: 1, dy: 0 };
+    const a = infiniteLineQuadraticIntersections(line, QUADRATIC);
+    const b = infiniteLineQuadraticIntersections(line, QUADRATIC);
     expect(a).not.toBe(b);
     expect(a).toEqual(b);
   });
@@ -199,11 +194,11 @@ describe('infiniteLineQuadraticIntersections', () => {
 
 describe('infiniteLineCubicIntersections', () => {
   test('교차하는 경우 Into 결과와 동치 배열을 반환한다', () => {
-    const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
+    const line = { ox: 0, oy: 0.5, dx: 1, dy: 0 };
     const expected: IntersectionHit[] = [];
-    infiniteLineCubicIntersectionsInto(expected, line, C0, C1, C2, C3);
+    infiniteLineCubicIntersectionsInto(expected, line, CUBIC);
 
-    const actual = infiniteLineCubicIntersections(line, C0, C1, C2, C3);
+    const actual = infiniteLineCubicIntersections(line, CUBIC);
 
     expect(actual).toEqual(expected);
     // cubic 아치는 y=0.5 수평선과 정확히 2점에서 교차한다 (x ≈ 0.115, 0.885).
@@ -212,15 +207,15 @@ describe('infiniteLineCubicIntersections', () => {
 
   test('교차하지 않으면 빈 배열을 반환한다', () => {
     // y=5 horizontal infinite-line — cubic 아치 (max y≈0.75)와 교차 없음
-    const line = { origin: { x: 0, y: 5 }, direction: { x: 1, y: 0 } };
-    const actual = infiniteLineCubicIntersections(line, C0, C1, C2, C3);
+    const line = { ox: 0, oy: 5, dx: 1, dy: 0 };
+    const actual = infiniteLineCubicIntersections(line, CUBIC);
     expect(actual).toEqual([]);
   });
 
   test('호출마다 새 배열 reference를 생성한다', () => {
-    const line = { origin: { x: 0, y: 0.5 }, direction: { x: 1, y: 0 } };
-    const a = infiniteLineCubicIntersections(line, C0, C1, C2, C3);
-    const b = infiniteLineCubicIntersections(line, C0, C1, C2, C3);
+    const line = { ox: 0, oy: 0.5, dx: 1, dy: 0 };
+    const a = infiniteLineCubicIntersections(line, CUBIC);
+    const b = infiniteLineCubicIntersections(line, CUBIC);
     expect(a).not.toBe(b);
     expect(a).toEqual(b);
   });
