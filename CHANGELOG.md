@@ -7,6 +7,8 @@
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-11-28
+
 ### Breaking changes
 
 - 점 입력과 출력은 `Point`와 `PointWritable`의 `{ x, y }` 객체로 통일한다. 좌표 tuple, `XYInput`, `XYWritable`을 제거한다.
@@ -93,7 +95,8 @@
 
 - npm 레지스트리에서 설치할 수 있는 첫 버전이다. 1.0.0은 배포 기록이 있지만 레지스트리에서 설치할 수 없다.
 
-[Unreleased]: https://github.com/cp949/vectra/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/cp949/vectra/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/cp949/vectra/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/cp949/vectra/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/cp949/vectra/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cp949/vectra/compare/fb75ddf...v1.1.0
