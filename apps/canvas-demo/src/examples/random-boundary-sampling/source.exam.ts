@@ -18,12 +18,8 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
 
   d.clear(ctx, '#1e1e1e');
 
-  const triangle = [
-    { x: 92, y: 68 },
-    { x: 226, y: 156 },
-    { x: 54, y: 178 },
-  ];
-  const ellipse = { center: { x: 566, y: 122 }, radiusX: 120, radiusY: 58 };
+  const triangle = { x1: 92, y1: 68, x2: 226, y2: 156, x3: 54, y3: 178 };
+  const ellipse = { cx: 566, cy: 122, rx: 120, ry: 58 };
   const polyline = [
     { x: 68, y: 350 },
     { x: 118, y: 276 },
@@ -44,16 +40,16 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
 
   d.label(ctx, 'pointInTriangle', { x: 42, y: 58 }, { color: '#38bdf8', font: '12px monospace' });
   d.label(ctx, '180pt · area uniform', { x: 42, y: 74 }, { color: '#64748b', font: '11px monospace' });
-  d.polygon(ctx, triangle, { fill: 'rgba(56,189,248,0.06)', stroke: '#334155', strokeWidth: 1 });
+  d.polygon(ctx, [triangle.x1, triangle.y1, triangle.x2, triangle.y2, triangle.x3, triangle.y3], { fill: 'rgba(56,189,248,0.06)', stroke: '#334155', strokeWidth: 1 });
   const triangleRng = Random.createRng('random-boundary-sampling-triangle');
   for (let i = 0; i < 180; i++) {
-    const pt = Random.pointInTriangle(triangle[0], triangle[1], triangle[2], triangleRng);
+    const pt = Random.pointInTriangle(triangle, triangleRng);
     d.point(ctx, pt, { color: '#38bdf8', radius: 1.6 });
   }
 
   d.label(ctx, 'pointInEllipse', { x: 412, y: 58 }, { color: '#fb923c', font: '12px monospace' });
   d.label(ctx, '180pt · area uniform', { x: 412, y: 74 }, { color: '#64748b', font: '11px monospace' });
-  strokeEllipseApprox(ctx, ellipse.center.x, ellipse.center.y, ellipse.radiusX, ellipse.radiusY, '#334155');
+  strokeEllipseApprox(ctx, ellipse.cx, ellipse.cy, ellipse.rx, ellipse.ry, '#334155');
   const ellipseRng = Random.createRng('random-boundary-sampling-ellipse');
   for (let i = 0; i < 180; i++) {
     const pt = Random.pointInEllipse(ellipse, ellipseRng);

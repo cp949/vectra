@@ -14,7 +14,7 @@ import * as Matrices from '@cp949/vectra/matrix';
 
 export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): void {
   const { bounds: worldBounds, draw: d } = runtime;
-  const viewport = { min: { x: 80, y: 64 }, max: { x: 680, y: 360 } };
+  const viewport = { minX: 80, minY: 64, maxX: 680, maxY: 360 };
   const modelPoints = [
     { x: -80, y: -40 },
     { x: 60, y: 120 },
@@ -46,7 +46,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
 
   d.point(ctx, screenMarker, { color: '#fb7185', radius: 5 });
   d.point(ctx, roundTripMarker, { color: '#4ade80', radius: 3 });
-  d.segment(ctx, { a: screenMarker, b: roundTripMarker }, { color: '#4ade80', width: 1 });
+  d.segment(ctx, { x1: screenMarker.x, y1: screenMarker.y, x2: roundTripMarker.x, y2: roundTripMarker.y }, { color: '#4ade80', width: 1 });
 
   d.label(ctx, 'fitBounds contain', { x: 84, y: 40 }, { color: '#38bdf8' });
   d.label(ctx, `scale=${scale.toFixed(2)}  tx=${worldToScreen.tx.toFixed(1)}  ty=${worldToScreen.ty.toFixed(1)}`, { x: 84, y: 384 }, { color: '#e2e8f0' });

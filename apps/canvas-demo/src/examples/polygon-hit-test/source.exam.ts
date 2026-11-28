@@ -29,11 +29,11 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
 
   // closestPoint: polygon 경계에서 가장 가까운 점을 새 object로 반환한다
   const snap = Polygons.closestPoint(polygon, pointer) ?? pointer;
-  const snapX = Array.isArray(snap) ? snap[0] : snap.x;
-  const snapY = Array.isArray(snap) ? snap[1] : snap.y;
+  const snapX = snap.x;
+  const snapY = snap.y;
 
   // pointer → snap 선
-  d.segment(ctx, { a: pointer, b: snap }, { color: '#475569', width: 1 });
+  d.segment(ctx, { x1: pointer.x, y1: pointer.y, x2: snap.x, y2: snap.y }, { color: '#475569', width: 1 });
 
   // snap point 강조
   d.point(ctx, snap, { color: '#fb923c', radius: 7 });

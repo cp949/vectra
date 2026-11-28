@@ -51,7 +51,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   // ── Panel 1: SVG points 문자열 입력 ──
   const pts1: { x: number; y: number }[] = [];
   Adapters.parseSvgPointsInto(pts1, svgInput);
-  d.polygon(ctx, { points: pts1 }, { fill: 'rgba(56,189,248,0.2)', stroke: '#38bdf8', strokeWidth: 1.5 });
+  d.polygon(ctx, pts1.flatMap(({ x, y }) => [x, y]), { fill: 'rgba(56,189,248,0.2)', stroke: '#38bdf8', strokeWidth: 1.5 });
   d.label(ctx, 'SVG points 문자열', { x: 40, y: 100 }, { color: '#38bdf8', font: '12px monospace' });
   d.label(ctx, 'parseSvgPointsInto', { x: 40, y: 118 }, { color: '#7dd3fc', font: '11px monospace' });
 
@@ -63,14 +63,14 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   // ── Panel 2: Float32Array 입력 (동일 도형) ──
   const pts2: { x: number; y: number }[] = [];
   Adapters.fromFloat32ArrayInto(pts2, f32Input);
-  d.polygon(ctx, { points: pts2 }, { fill: 'rgba(249,115,22,0.2)', stroke: '#f97316', strokeWidth: 1.5 });
+  d.polygon(ctx, pts2.flatMap(({ x, y }) => [x, y]), { fill: 'rgba(249,115,22,0.2)', stroke: '#f97316', strokeWidth: 1.5 });
   d.label(ctx, 'Float32Array', { x: 300, y: 100 }, { color: '#f97316', font: '12px monospace' });
   d.label(ctx, 'fromFloat32ArrayInto', { x: 300, y: 118 }, { color: '#fdba74', font: '11px monospace' });
   d.label(ctx, '동일 도형 (같은 입력의 다른 표현)', { x: 300, y: 250 }, { color: '#94a3b8', font: '11px monospace' });
 
   // ── Panel 3: flat coord transform ──
   // 원본 polygon
-  d.polygon(ctx, { points: base3 }, { stroke: '#64748b', strokeWidth: 1.5 });
+  d.polygon(ctx, base3.flatMap(({ x, y }) => [x, y]), { stroke: '#64748b', strokeWidth: 1.5 });
 
   // 점 배열 → flat Float32Array → flat number[]
   const flat = Array.from(Adapters.toFloat32Array(base3));
@@ -96,7 +96,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   const transformedFlat = Adapters.transformFlatCoords(flat, m);
   const pts3: { x: number; y: number }[] = [];
   Adapters.decodeFlatCoordsInto(pts3, transformedFlat);
-  d.polygon(ctx, { points: pts3 }, { fill: 'rgba(167,139,250,0.2)', stroke: '#a78bfa', strokeWidth: 1.5 });
+  d.polygon(ctx, pts3.flatMap(({ x, y }) => [x, y]), { fill: 'rgba(167,139,250,0.2)', stroke: '#a78bfa', strokeWidth: 1.5 });
 
   d.label(ctx, 'flat coord transform', { x: 540, y: 100 }, { color: '#a78bfa', font: '12px monospace' });
   d.label(ctx, 'toFloat32Array →', { x: 540, y: 118 }, { color: '#c4b5fd', font: '11px monospace' });

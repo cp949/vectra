@@ -20,14 +20,14 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   d.segment(ctx, segment, { color: '#64748b', width: 2 });
 
   // endpoint 점
-  d.point(ctx, segment.a, { color: '#94a3b8', radius: 5 });
-  d.point(ctx, segment.b, { color: '#94a3b8', radius: 5 });
+  d.point(ctx, { x: segment.x1, y: segment.y1 }, { color: '#94a3b8', radius: 5 });
+  d.point(ctx, { x: segment.x2, y: segment.y2 }, { color: '#94a3b8', radius: 5 });
 
   // closestPoint: pointer에서 segment 위 가장 가까운 점을 반환한다
   const snap = Segments.closestPoint(segment, pointer);
 
   // pointer → snap 연결선 (점선 효과 — setLineDash 미지원이면 solid)
-  d.segment(ctx, { a: pointer, b: snap }, { color: '#475569', width: 1 });
+  d.segment(ctx, { x1: pointer.x, y1: pointer.y, x2: snap.x, y2: snap.y }, { color: '#475569', width: 1 });
 
   // snap point 강조
   d.point(ctx, snap, { color: '#4ade80', radius: 8 });

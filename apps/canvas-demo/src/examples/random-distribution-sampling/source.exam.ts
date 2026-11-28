@@ -36,7 +36,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   }
 
   // ── Panel 2 (우상): pointInCircle — circle 내부 균등 scatter ──
-  const circle2 = { center: { x: 565, y: 118 }, radius: 68 };
+  const circle2 = { cx: 565, cy: 118, r: 68 };
   d.circle(ctx, circle2, { fill: 'rgba(251,146,60,0.06)', stroke: '#334155', strokeWidth: 1 });
   d.label(ctx, 'pointInCircle', { x: 400, y: 37 }, { color: '#fb923c', font: '12px monospace' });
   d.label(ctx, '200pt · uniform in circle', { x: 400, y: 53 }, { color: '#475569', font: '11px monospace' });
@@ -48,17 +48,17 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
 
   // direction 화살표 — circle 중심에서 random unit direction 4개
   const rngDir2 = Random.createRng(242);
-  const c2 = circle2.center;
+  const c2 = { x: circle2.cx, y: circle2.cy };
   for (let i = 0; i < 4; i++) {
     const dir = Random.direction(1, rngDir2);
     const tip = { x: c2.x + dir.x * 48, y: c2.y + dir.y * 48 };
-    d.segment(ctx, { a: c2, b: tip }, { color: '#f97316', width: 1.5 });
+    d.segment(ctx, { x1: c2.x, y1: c2.y, x2: tip.x, y2: tip.y }, { color: '#f97316', width: 1.5 });
     d.point(ctx, tip, { color: '#f97316', radius: 3 });
   }
   d.point(ctx, c2, { color: '#64748b', radius: 2 });
 
   // ── Panel 3 (좌하): pointOnCircle — circle 경계 균등 샘플 ──
-  const circle3 = { center: { x: 195, y: 322 }, radius: 68 };
+  const circle3 = { cx: 195, cy: 322, r: 68 };
   d.circle(ctx, circle3, { fill: 'rgba(74,222,128,0.04)', stroke: '#334155', strokeWidth: 1 });
   d.label(ctx, 'pointOnCircle', { x: 30, y: 247 }, { color: '#4ade80', font: '12px monospace' });
   d.label(ctx, '80pt · uniform on boundary', { x: 30, y: 263 }, { color: '#475569', font: '11px monospace' });
@@ -70,10 +70,10 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
 
   // direction 화살표 — circle 중심에서 random unit direction 3개
   const rngDir3 = Random.createRng(243);
-  const c3 = circle3.center;
+  const c3 = { x: circle3.cx, y: circle3.cy };
   for (let i = 0; i < 3; i++) {
     const dir = Random.direction(1, rngDir3);
-    d.segment(ctx, { a: c3, b: { x: c3.x + dir.x * 40, y: c3.y + dir.y * 40 } }, { color: '#86efac', width: 1 });
+    d.segment(ctx, { x1: c3.x, y1: c3.y, x2: c3.x + dir.x * 40, y2: c3.y + dir.y * 40 }, { color: '#86efac', width: 1 });
   }
   d.point(ctx, c3, { color: '#64748b', radius: 2 });
 
@@ -86,7 +86,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
     const a = (2 * Math.PI * i) / 5 - Math.PI / 2;
     return { x: cx4 + r4 * Math.cos(a), y: cy4 + r4 * Math.sin(a) };
   });
-  const pentagon = { points: pentagonPoints };
+  const pentagon = pentagonPoints.flatMap(({ x, y }) => [x, y]);
 
   d.polygon(ctx, pentagon, { fill: 'rgba(167,139,250,0.06)', stroke: '#334155', strokeWidth: 1 });
   d.label(ctx, 'pointInPolygon', { x: 400, y: 247 }, { color: '#a78bfa', font: '12px monospace' });

@@ -34,10 +34,10 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   const { draw: d } = runtime;
   d.clear(ctx, '#1e1e1e');
 
-  const bounds = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const bounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
   Curves.arcBoundsInto(bounds, ARC);
 
-  const arcPoints = Curves.arcSample(ARC, 64);
+  const arcPoints = Curves.arcSample(ARC, { steps: 64 });
   const lengthAtT = Curves.arcLengthAtT(ARC, T);
   const pointAtLength = Curves.arcPointAtLength(ARC, lengthAtT);
   const closest = Curves.arcClosestPoint(ARC, PROBE);
@@ -58,10 +58,12 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   d.point(ctx, PROBE, { color: '#f472b6', radius: 5 });
   d.point(ctx, closest, { color: '#4ade80', radius: 5 });
 
-  d.segment(ctx, { a: pointAtT, b: scaleFrom(pointAtT, tangent, 52) }, { color: '#facc15', width: 2 });
-  d.segment(ctx, { a: pointAtT, b: scaleFrom(pointAtT, normal, 44) }, { color: '#a78bfa', width: 2 });
-  d.segment(ctx, { a: PROBE, b: closest }, { color: '#64748b', width: 1 });
-  d.segment(ctx, { a: pointAtT, b: pointAtLength }, { color: '#fb923c', width: 1 });
+  const tangentTip = scaleFrom(pointAtT, tangent, 52);
+  d.segment(ctx, { x1: pointAtT.x, y1: pointAtT.y, x2: tangentTip.x, y2: tangentTip.y }, { color: '#facc15', width: 2 });
+  const normalTip = scaleFrom(pointAtT, normal, 44);
+  d.segment(ctx, { x1: pointAtT.x, y1: pointAtT.y, x2: normalTip.x, y2: normalTip.y }, { color: '#a78bfa', width: 2 });
+  d.segment(ctx, { x1: PROBE.x, y1: PROBE.y, x2: closest.x, y2: closest.y }, { color: '#64748b', width: 1 });
+  d.segment(ctx, { x1: pointAtT.x, y1: pointAtT.y, x2: pointAtLength.x, y2: pointAtLength.y }, { color: '#fb923c', width: 1 });
 
   const delta = Math.hypot(pointAtT.x - pointAtLength.x, pointAtT.y - pointAtLength.y);
   const closestDelta = Math.hypot(PROBE.x - closest.x, PROBE.y - closest.y);
@@ -82,12 +84,12 @@ function drawAxis(ctx: CanvasRenderingContext2D, d: CanvasRuntime['draw']): void
 
   d.segment(
     ctx,
-    { a: { x: ARC.cx - ux * ARC.rx, y: ARC.cy - uy * ARC.rx }, b: { x: ARC.cx + ux * ARC.rx, y: ARC.cy + uy * ARC.rx } },
+    { x1: ARC.cx - ux * ARC.rx, y1: ARC.cy - uy * ARC.rx, x2: ARC.cx + ux * ARC.rx, y2: ARC.cy + uy * ARC.rx },
     { color: '#334155', width: 1 },
   );
   d.segment(
     ctx,
-    { a: { x: ARC.cx - vx * ARC.ry, y: ARC.cy - vy * ARC.ry }, b: { x: ARC.cx + vx * ARC.ry, y: ARC.cy + vy * ARC.ry } },
+    { x1: ARC.cx - vx * ARC.ry, y1: ARC.cy - vy * ARC.ry, x2: ARC.cx + vx * ARC.ry, y2: ARC.cy + vy * ARC.ry },
     { color: '#334155', width: 1 },
   );
   d.point(ctx, { x: ARC.cx, y: ARC.cy }, { color: '#94a3b8', radius: 3 });

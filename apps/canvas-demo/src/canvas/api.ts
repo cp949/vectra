@@ -1,6 +1,6 @@
 // Canvas runtime 타입 정의 (apps/canvas-demo 소유)
 // TASK-05에서 실제 구현이 연결된다
-import type { BoundsLike, CircleLike, PolygonLike, RectLike, SegmentLike, XYInput } from '@cp949/vectra/types';
+import type { Bounds, Circle, Polygon, Rect, Segment, Point } from '@cp949/vectra/types';
 
 /** draw 옵션: 점 */
 export interface DrawPointOptions {
@@ -36,14 +36,14 @@ export interface DrawTextOptions {
  */
 export interface CanvasDrawApi {
   clear(ctx: CanvasRenderingContext2D, color?: string): void;
-  point(ctx: CanvasRenderingContext2D, point: XYInput, options?: DrawPointOptions): void;
-  segment(ctx: CanvasRenderingContext2D, segment: SegmentLike, options?: DrawStrokeOptions): void;
-  rect(ctx: CanvasRenderingContext2D, rect: RectLike, options?: DrawFillStrokeOptions): void;
-  bounds(ctx: CanvasRenderingContext2D, bounds: BoundsLike, options?: DrawFillStrokeOptions): void;
-  circle(ctx: CanvasRenderingContext2D, circle: CircleLike, options?: DrawFillStrokeOptions): void;
-  polygon(ctx: CanvasRenderingContext2D, polygon: PolygonLike, options?: DrawFillStrokeOptions): void;
-  polyline(ctx: CanvasRenderingContext2D, points: readonly XYInput[], options?: DrawStrokeOptions): void;
-  label(ctx: CanvasRenderingContext2D, text: string, at: XYInput, options?: DrawTextOptions): void;
+  point(ctx: CanvasRenderingContext2D, point: Point, options?: DrawPointOptions): void;
+  segment(ctx: CanvasRenderingContext2D, segment: Segment, options?: DrawStrokeOptions): void;
+  rect(ctx: CanvasRenderingContext2D, rect: Rect, options?: DrawFillStrokeOptions): void;
+  bounds(ctx: CanvasRenderingContext2D, bounds: Bounds, options?: DrawFillStrokeOptions): void;
+  circle(ctx: CanvasRenderingContext2D, circle: Circle, options?: DrawFillStrokeOptions): void;
+  polygon(ctx: CanvasRenderingContext2D, polygon: Polygon, options?: DrawFillStrokeOptions): void;
+  polyline(ctx: CanvasRenderingContext2D, points: readonly Point[], options?: DrawStrokeOptions): void;
+  label(ctx: CanvasRenderingContext2D, text: string, at: Point, options?: DrawTextOptions): void;
 }
 
 /**
@@ -72,17 +72,11 @@ export interface CanvasRuntime {
 export interface CanvasRuntimeSeed {
   readonly size: { readonly width: number; readonly height: number };
   readonly pointer: { readonly x: number; readonly y: number };
-  readonly segment: {
-    readonly a: { readonly x: number; readonly y: number };
-    readonly b: { readonly x: number; readonly y: number };
-  };
+  readonly segment: Segment;
   readonly rect: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
-  readonly circle: { readonly center: { readonly x: number; readonly y: number }; readonly radius: number };
-  readonly bounds: {
-    readonly min: { readonly x: number; readonly y: number };
-    readonly max: { readonly x: number; readonly y: number };
-  };
-  readonly polygon: readonly { readonly x: number; readonly y: number }[];
+  readonly circle: Circle;
+  readonly bounds: Bounds;
+  readonly polygon: Polygon;
   readonly matrix: {
     readonly a: number;
     readonly b: number;

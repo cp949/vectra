@@ -8,10 +8,10 @@ import code from './source.exam.ts?raw';
 const seed: CanvasRuntimeSeed = {
   size: { width: 600, height: 400 },
   pointer: { x: 320, y: 180 },
-  segment: { a: { x: 100, y: 300 }, b: { x: 500, y: 120 } },
+  segment: { x1: 100, y1: 300, x2: 500, y2: 120 },
   rect: { x: 0, y: 0, width: 0, height: 0 },
-  bounds: { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } },
-  circle: { center: { x: 0, y: 0 }, radius: 0 },
+  bounds: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
+  circle: { cx: 0, cy: 0, r: 0 },
   polygon: [],
   matrix: { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
 };

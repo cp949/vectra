@@ -67,7 +67,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   Matrices.transformPointInto(transformedRect.points[3], TRS, { x: rect.x, y: y2 });
 
   d.rect(ctx, transformedBounds, { fill: 'rgba(56, 189, 248, 0.08)', stroke: '#0ea5e9', strokeWidth: 1 });
-  d.polygon(ctx, transformedRect, { fill: 'rgba(56, 189, 248, 0.18)', stroke: '#38bdf8', strokeWidth: 2 });
+  d.polygon(ctx, transformedRect.points.flatMap(({ x, y }) => [x, y]), { fill: 'rgba(56, 189, 248, 0.18)', stroke: '#38bdf8', strokeWidth: 2 });
   d.label(ctx, 'T * R(30°) * S(1.4, 0.9)', { x: transformedBounds.x + 4, y: transformedBounds.y - 10 }, { color: '#38bdf8' });
 
   // 원점과 변환된 중점 연결

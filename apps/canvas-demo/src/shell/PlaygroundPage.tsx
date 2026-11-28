@@ -13,10 +13,10 @@ import { createCanvasRunnerHtml, VECTRA_ALLOWED_SPECIFIERS } from '../sandbox/ca
 const DEFAULT_RUNTIME_SEED: CanvasRuntimeSeed = {
   size: { width: 600, height: 400 },
   pointer: { x: 0, y: 0 },
-  segment: { a: { x: 0, y: 0 }, b: { x: 100, y: 100 } },
+  segment: { x1: 0, y1: 0, x2: 100, y2: 100 },
   rect: { x: 0, y: 0, width: 600, height: 400 },
-  bounds: { min: { x: 0, y: 0 }, max: { x: 600, y: 400 } },
-  circle: { center: { x: 300, y: 200 }, radius: 100 },
+  bounds: { minX: 0, minY: 0, maxX: 600, maxY: 400 },
+  circle: { cx: 300, cy: 200, r: 100 },
   polygon: [],
   matrix: { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
 };

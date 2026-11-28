@@ -5,61 +5,8 @@
  * draw API 메서드와 그 메서드가 참조하는 작은 helper를 함께 직렬화한다.
  */
 
-/** iframe 안에서 CanvasDrawApi 메서드가 참조할 helper 코드 */
+/** iframe 안에서 CanvasDrawApi 메서드가 참조하는 기본값 */
 const DRAW_API_HELPERS_JS = `
-function rx(p) {
-  return Array.isArray(p) ? (p[0] ?? 0) : p.x;
-}
-
-function ry(p) {
-  return Array.isArray(p) ? (p[1] ?? 0) : p.y;
-}
-
-function readSegmentA(segment) {
-  return Array.isArray(segment) ? segment[0] : segment.a;
-}
-
-function readSegmentB(segment) {
-  return Array.isArray(segment) ? segment[1] : segment.b;
-}
-
-function readBoundsMin(bounds) {
-  return Array.isArray(bounds) ? bounds[0] : bounds.min;
-}
-
-function readBoundsMax(bounds) {
-  return Array.isArray(bounds) ? bounds[1] : bounds.max;
-}
-
-function readCircleCenter(circle) {
-  return Array.isArray(circle) ? circle[0] : circle.center;
-}
-
-function readCircleRadius(circle) {
-  return Array.isArray(circle) ? circle[1] : circle.radius;
-}
-
-function readRectX(rect) {
-  return Array.isArray(rect) ? rect[0] : rect.x;
-}
-
-function readRectY(rect) {
-  return Array.isArray(rect) ? rect[1] : rect.y;
-}
-
-function readRectWidth(rect) {
-  return Array.isArray(rect) ? rect[2] : rect.width;
-}
-
-function readRectHeight(rect) {
-  return Array.isArray(rect) ? rect[3] : rect.height;
-}
-
-function readPoints(shape) {
-  if (Array.isArray(shape)) return shape;
-  return shape.points ?? [];
-}
-
 const DEFAULT_STROKE_COLOR = '#e2e8f0';
 const DEFAULT_FILL_COLOR = 'rgba(56, 189, 248, 0.15)';
 const DEFAULT_POINT_COLOR = '#38bdf8';

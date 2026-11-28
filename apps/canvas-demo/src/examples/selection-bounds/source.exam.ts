@@ -29,7 +29,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
 
   // 모든 점을 포함하는 bounds 계산
   // fromPointsInto — points를 포함하는 axis-aligned bounds를 out에 기록한다
-  const b = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
+  const b = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
   Bounds.fromPointsInto(b, points);
 
   // bounds → rect 변환
@@ -44,10 +44,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   const h = Bounds.height(b);
 
   // bounds 렌더링 (약간 확장하여 표시)
-  const padded = {
-    min: { x: b.min.x - 8, y: b.min.y - 8 },
-    max: { x: b.max.x + 8, y: b.max.y + 8 },
-  };
+  const padded = { minX: b.minX - 8, minY: b.minY - 8, maxX: b.maxX + 8, maxY: b.maxY + 8 };
   d.bounds(ctx, padded, { fill: 'rgba(56, 189, 248, 0.08)', stroke: '#38bdf8', strokeWidth: 1.5 });
 
   // 개별 점 렌더링
@@ -59,7 +56,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   d.point(ctx, center, { color: '#4ade80', radius: 5 });
 
   // 정보 라벨
-  d.label(ctx, `bounds: (${b.min.x}, ${b.min.y}) → (${b.max.x}, ${b.max.y})`, { x: 20, y: 30 }, { color: '#38bdf8' });
+  d.label(ctx, `bounds: (${b.minX}, ${b.minY}) → (${b.maxX}, ${b.maxY})`, { x: 20, y: 30 }, { color: '#38bdf8' });
   d.label(ctx, `rect: x=${r.x}, y=${r.y}, w=${w.toFixed(0)}, h=${h.toFixed(0)}`, { x: 20, y: 50 }, { color: '#e2e8f0' });
   d.label(ctx, `center = (${center.x.toFixed(0)}, ${center.y.toFixed(0)})`, { x: center.x + 8, y: center.y - 10 }, { color: '#4ade80' });
   d.label(ctx, `${points.length} points selected`, { x: 20, y: size.height - 20 }, { color: '#94a3b8' });

@@ -45,7 +45,7 @@ export function draw(ctx: CanvasRenderingContext2D, runtime: CanvasRuntime): voi
   }
 
   // Monte Carlo area 추정
-  const boundsArea = (b.max.x - b.min.x) * (b.max.y - b.min.y);
+  const boundsArea = (b.maxX - b.minX) * (b.maxY - b.minY);
   const estimatedArea = boundsArea * (accepted / candidates);
   const actualArea = Math.abs(Polygons.area(polygon));
 

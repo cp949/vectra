@@ -8,18 +8,11 @@ import code from './source.exam.ts?raw';
 const seed: CanvasRuntimeSeed = {
   size: { width: 600, height: 400 },
   pointer: { x: 0, y: 0 },
-  segment: { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } },
+  segment: { x1: 0, y1: 0, x2: 0, y2: 0 },
   rect: { x: 0, y: 0, width: 0, height: 0 },
-  bounds: { min: { x: 80, y: 60 }, max: { x: 520, y: 340 } },
-  circle: { center: { x: 300, y: 200 }, radius: 60 },
-  polygon: [
-    { x: 150, y: 80 },
-    { x: 350, y: 60 },
-    { x: 460, y: 180 },
-    { x: 400, y: 320 },
-    { x: 200, y: 340 },
-    { x: 100, y: 240 },
-  ],
+  bounds: { minX: 80, minY: 60, maxX: 520, maxY: 340 },
+  circle: { cx: 300, cy: 200, r: 60 },
+  polygon: [150, 80, 350, 60, 460, 180, 400, 320, 200, 340, 100, 240],
   matrix: { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
   randomSeed: 20260517,
 };

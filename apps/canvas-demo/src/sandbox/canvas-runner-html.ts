@@ -275,10 +275,10 @@ ${safeVectraSandboxJs}
         var runtime = {
           size: { width: w, height: h },
           pointer: seed.pointer || { x: 0, y: 0 },
-          segment: seed.segment || { a: { x: 0, y: 0 }, b: { x: 100, y: 100 } },
+          segment: seed.segment || { x1: 0, y1: 0, x2: 100, y2: 100 },
           rect: seed.rect || { x: 0, y: 0, width: w, height: h },
-          bounds: seed.bounds || { min: { x: 0, y: 0 }, max: { x: w, y: h } },
-          circle: seed.circle || { center: { x: w / 2, y: h / 2 }, radius: Math.min(w, h) / 4 },
+          bounds: seed.bounds || { minX: 0, minY: 0, maxX: w, maxY: h },
+          circle: seed.circle || { cx: w / 2, cy: h / 2, r: Math.min(w, h) / 4 },
           polygon: seed.polygon || [],
           matrix: seed.matrix || { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 },
           rng: (typeof seed.randomSeed === 'number' && __modules__['@cp949/vectra/random'] && __modules__['@cp949/vectra/random'].createRng)

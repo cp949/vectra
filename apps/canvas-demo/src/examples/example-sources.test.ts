@@ -107,7 +107,7 @@ describe('canvas demo example sources', () => {
     const result = compileForSandbox(matrixTransformExample.source.code, {
       allowedSpecifiers: VECTRA_ALLOWED_SPECIFIERS,
     });
-    const polygons: { points: { x: number; y: number }[] }[] = [];
+    const polygons: (readonly number[])[] = [];
     const runtime = {
       ...matrixTransformExample.runtimeSeed,
       rng: () => 0,
@@ -118,8 +118,7 @@ describe('canvas demo example sources', () => {
         circle: () => undefined,
         segment: () => undefined,
         point: () => undefined,
-        polygon: (_ctx: CanvasRenderingContext2D, polygon: { points: { x: number; y: number }[] }) =>
-          polygons.push(polygon),
+        polygon: (_ctx: CanvasRenderingContext2D, polygon: readonly number[]) => polygons.push(polygon),
         polyline: () => undefined,
         label: () => undefined,
       },
@@ -133,11 +132,9 @@ describe('canvas demo example sources', () => {
     runDraw({ '@cp949/vectra/matrix': Matrices }, {} as CanvasRenderingContext2D, runtime);
 
     expect(polygons).toHaveLength(1);
-    expect(polygons[0]?.points).toEqual([
-      { x: 245.25386608210715, y: 126.82308546376021 },
-      { x: 390.74613391789285, y: 210.8230854637602 },
-      { x: 354.74613391789285, y: 273.1769145362398 },
-      { x: 209.25386608210715, y: 189.1769145362398 },
+    expect(polygons[0]).toEqual([
+      245.25386608210715, 126.82308546376021, 390.74613391789285, 210.8230854637602, 354.74613391789285,
+      273.1769145362398, 209.25386608210715, 189.1769145362398,
     ]);
   });
 
@@ -231,7 +228,7 @@ describe('canvas demo example sources', () => {
     });
     const labels: string[] = [];
     const points: { x: number; y: number }[] = [];
-    const segments: { a: { x: number; y: number }; b: { x: number; y: number } }[] = [];
+    const segments: { x1: number; y1: number; x2: number; y2: number }[] = [];
     const polylines: { x: number; y: number }[][] = [];
     const runtime = {
       ...arcLengthProbeExample.runtimeSeed,
@@ -241,10 +238,8 @@ describe('canvas demo example sources', () => {
         rect: () => undefined,
         bounds: () => undefined,
         circle: () => undefined,
-        segment: (
-          _ctx: CanvasRenderingContext2D,
-          segment: { a: { x: number; y: number }; b: { x: number; y: number } }
-        ) => segments.push(segment),
+        segment: (_ctx: CanvasRenderingContext2D, segment: { x1: number; y1: number; x2: number; y2: number }) =>
+          segments.push(segment),
         point: (_ctx: CanvasRenderingContext2D, point: { x: number; y: number }) => points.push(point),
         polygon: () => undefined,
         polyline: (_ctx: CanvasRenderingContext2D, points: { x: number; y: number }[]) => polylines.push(points),
