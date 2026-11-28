@@ -1,9 +1,8 @@
 import { rayToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathMeasurementOptions, RayLike } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { Ray } from '../types/flat-shapes.internal';
 
 /**
  * ray와 path가 교차하면 true를 반환한다.
@@ -16,16 +15,10 @@ import type { PathCommand, PathMeasurementOptions, RayLike } from '../types';
  * @param commands flatten할 path command sequence
  * @param options  flatten 옵션 (flatness, maxRecursion)
  */
-export function intersectsPathRay(
-  commands: readonly PathCommand[],
-  ray: RayLike,
-  options?: Partial<PathMeasurementOptions>
-): boolean {
+export function intersectsPathRay(commands: readonly PathCommand[], ray: Ray, options?: PathFlattenOptions): boolean {
   if (commands.length === 0) return false;
-  const o = readRayOrigin(ray);
-  const d = readRayDirection(ray);
-  const lineParam = rayToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
+  const lineParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }

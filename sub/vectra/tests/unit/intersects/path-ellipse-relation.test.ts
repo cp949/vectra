@@ -6,16 +6,15 @@
  *
  * empty path/empty ellipse, flattened edge two-point crossing, tangent boundary touch,
  * path vertex 내부 포함, closed path containment fallback, open path containment 제외,
- * tuple/object 입력 동등성, non-finite(NaN/±Infinity) 입력을 검증한다.
+ * non-finite(NaN/±Infinity) 입력을 검증한다.
  */
 import { describe, expect, test } from 'vitest';
 import { intersectsPathEllipse } from '../../../src/intersects/intersects-path-ellipse';
-import type { EllipseLike, PathCommand } from '../../../src/types';
+import type { PathCommand } from '../../../src/types';
+import type { Ellipse } from '../../../src/types/flat-shapes.internal';
 
-// 중심 (0,0), rx=4, ry=2 ellipse (object 입력)
-const ellipse: EllipseLike = { center: { x: 0, y: 0 }, radiusX: 4, radiusY: 2 };
-// 동일 ellipse tuple 입력
-const ellipseTuple: EllipseLike = [{ x: 0, y: 0 }, 4, 2];
+// 중심 (0,0), rx=4, ry=2 ellipse
+const ellipse: Ellipse = { cx: 0, cy: 0, rx: 4, ry: 2 };
 
 // ellipse를 가로지르는 수평 open path (-10,0)→(10,0)
 const crossingPath: PathCommand[] = [
@@ -29,13 +28,13 @@ describe('intersectsPathEllipse', () => {
       expect(intersectsPathEllipse([], ellipse)).toBe(false);
     });
 
-    test('empty ellipse (radiusX ≤ 0)는 false를 반환한다', () => {
-      const empty: EllipseLike = { center: { x: 0, y: 0 }, radiusX: 0, radiusY: 2 };
+    test('empty ellipse (rx ≤ 0)는 false를 반환한다', () => {
+      const empty: Ellipse = { cx: 0, cy: 0, rx: 0, ry: 2 };
       expect(intersectsPathEllipse(crossingPath, empty)).toBe(false);
     });
 
-    test('empty ellipse (radiusY ≤ 0)는 false를 반환한다', () => {
-      const empty: EllipseLike = { center: { x: 0, y: 0 }, radiusX: 4, radiusY: -1 };
+    test('empty ellipse (ry ≤ 0)는 false를 반환한다', () => {
+      const empty: Ellipse = { cx: 0, cy: 0, rx: 4, ry: -1 };
       expect(intersectsPathEllipse(crossingPath, empty)).toBe(false);
     });
   });
@@ -98,26 +97,19 @@ describe('intersectsPathEllipse', () => {
     });
   });
 
-  describe('입력 형태 동등성', () => {
-    test('tuple ellipse와 object ellipse가 같은 결과를 낸다', () => {
-      expect(intersectsPathEllipse(crossingPath, ellipseTuple)).toBe(intersectsPathEllipse(crossingPath, ellipse));
-      expect(intersectsPathEllipse(crossingPath, ellipseTuple)).toBe(true);
-    });
-  });
-
   describe('non-finite 입력', () => {
     test('ellipse center가 NaN이면 false를 반환한다', () => {
-      const nan: EllipseLike = { center: { x: Number.NaN, y: 0 }, radiusX: 4, radiusY: 2 };
+      const nan: Ellipse = { cx: Number.NaN, cy: 0, rx: 4, ry: 2 };
       expect(intersectsPathEllipse(crossingPath, nan)).toBe(false);
     });
 
-    test('ellipse radiusX가 +Infinity이면 false를 반환한다', () => {
-      const inf: EllipseLike = { center: { x: 0, y: 0 }, radiusX: Number.POSITIVE_INFINITY, radiusY: 2 };
+    test('ellipse rx가 +Infinity이면 false를 반환한다', () => {
+      const inf: Ellipse = { cx: 0, cy: 0, rx: Number.POSITIVE_INFINITY, ry: 2 };
       expect(intersectsPathEllipse(crossingPath, inf)).toBe(false);
     });
 
-    test('ellipse radiusY가 -Infinity이면 false를 반환한다', () => {
-      const inf: EllipseLike = { center: { x: 0, y: 0 }, radiusX: 4, radiusY: Number.NEGATIVE_INFINITY };
+    test('ellipse ry가 -Infinity이면 false를 반환한다', () => {
+      const inf: Ellipse = { cx: 0, cy: 0, rx: 4, ry: Number.NEGATIVE_INFINITY };
       expect(intersectsPathEllipse(crossingPath, inf)).toBe(false);
     });
   });

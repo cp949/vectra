@@ -7,7 +7,7 @@
  * - 대칭 case에서 t=0.5 위치 점이 최근접점.
  * - out을 반환한다 (Into variant).
  */
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 import { describe, expect, it } from 'vitest';
 import { quadraticClosestLocation } from '../../../src/curve/quadratic-closest-location';

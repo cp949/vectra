@@ -1,11 +1,11 @@
-import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
-import { boundsContainsPointXY, readBoundsMax, readBoundsMin } from '../internal/bounds';
+import { boundsContainsPointXY } from '../internal/bounds';
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { BoundsLike, PathCommand, PathMeasurementOptions } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
+import { pathPolylineToPolygon } from './path-containment.internal';
 
 /**
  * bounds와 path가 교차하면 true를 반환한다.
@@ -26,21 +26,16 @@ import type { BoundsLike, PathCommand, PathMeasurementOptions } from '../types';
  */
 export function intersectsPathBounds(
   commands: readonly PathCommand[],
-  bounds: BoundsLike,
-  options?: Partial<PathMeasurementOptions>
+  bounds: Bounds,
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const x0 = readX(min);
-  const y0 = readY(min);
-  const x1 = readX(max);
-  const y1 = readY(max);
+  const { minX: x0, minY: y0, maxX: x1, maxY: y1 } = bounds;
   if (x1 < x0 || y1 < y0) return false;
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   const n = tmp.length;
   if (n === 0) return false;
 
@@ -62,7 +57,7 @@ export function intersectsPathBounds(
   // 조건 3: bounds 꼭짓점이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
-    const polygon = flatPolygonFromLegacyPoints(tmp);
+    const polygon = pathPolylineToPolygon(tmp);
     const corners: [number, number][] = [
       [x0, y0],
       [x1, y0],

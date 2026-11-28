@@ -1,10 +1,10 @@
-import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { lineFamilyTriangleIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathMeasurementOptions, TriangleLike } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { Triangle } from '../types/flat-shapes.internal';
+import { pathPolylineToPolygon } from './path-containment.internal';
 
 /**
  * triangle과 path가 교차하면 true를 반환한다.
@@ -25,18 +25,18 @@ import type { PathCommand, PathMeasurementOptions, TriangleLike } from '../types
  */
 export function intersectsPathTriangle(
   commands: readonly PathCommand[],
-  triangle: TriangleLike,
-  options?: Partial<PathMeasurementOptions>
+  triangle: Triangle,
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   // degenerate triangle 체크
   const area2 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   if (area2 === 0) return false;
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   const n = tmp.length;
   if (n === 0) return false;
 
@@ -69,7 +69,7 @@ export function intersectsPathTriangle(
   // 조건 3: triangle 꼭짓점이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
-    const polygon = flatPolygonFromLegacyPoints(tmp);
+    const polygon = pathPolylineToPolygon(tmp);
     if (polygonContainsPoint(polygon, ax, ay, DEFAULT_EPSILON)) return true;
     if (polygonContainsPoint(polygon, bx, by, DEFAULT_EPSILON)) return true;
     if (polygonContainsPoint(polygon, cx, cy, DEFAULT_EPSILON)) return true;

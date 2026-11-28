@@ -3,7 +3,7 @@
  * cubicBoundsInto와 cubicBounds가 내부 극값으로 경계 상자를 넓히는지 확인한다.
  * 좌표 scale이 1e-8에서 1e8까지 바뀌어도 결과가 비례하는지 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicBounds } from '../../../src/curve/cubic-bounds';
 import { cubicBoundsInto } from '../../../src/curve/cubic-bounds-into';

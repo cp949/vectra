@@ -2,7 +2,7 @@
  * cubicCurvatureAt의 곡률을 1차, 2차 도함수 수식 기준값과 비교한다.
  * 직선과 퇴화 곡선의 0 반환과 부호 방향도 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicCurvatureAt } from '../../../src/curve/cubic-curvature-at';
 

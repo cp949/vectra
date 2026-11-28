@@ -3,7 +3,7 @@
  * 짧은 입력의 빈 배열, 잘못된 옵션의 RangeError, 항목 수도 다룬다.
  * split, controlPoints companion이 매번 새 객체를 돌려주는지도 확인한다.
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, test } from 'vitest';
 import { arcFlatten } from '../../../src/curve/arc-flatten';
 import { arcFlattenInto } from '../../../src/curve/arc-flatten-into';

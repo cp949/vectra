@@ -1,7 +1,7 @@
 /**
  * quadraticLineIntersectionsInto 단위 테스트.
  */
-import { flatLineFromLegacy, flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatLineFromLegacy, flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 import { describe, expect, test } from 'vitest';
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';

@@ -5,7 +5,7 @@
  * 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록해야 한다.
  * 대상: quadraticQuadratic / quadraticCubic / cubicCubic kernel과 curveCurve facade.
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';

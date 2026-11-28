@@ -1,10 +1,11 @@
-import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
-import { readRectHeight, readRectWidth, readRectX, readRectY, rectContainsPointXY } from '../internal/rect';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathMeasurementOptions, RectLike } from '../types';
+import { rectContainsPointXY } from '../internal/rect';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
+import { pathPolylineToPolygon } from './path-containment.internal';
 
 /**
  * rect와 path가 교차하면 true를 반환한다.
@@ -25,21 +26,18 @@ import type { PathCommand, PathMeasurementOptions, RectLike } from '../types';
  */
 export function intersectsPathRect(
   commands: readonly PathCommand[],
-  rect: RectLike,
-  options?: Partial<PathMeasurementOptions>
+  rect: Rect,
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+  const { x: rx, y: ry, width: rw, height: rh } = rect;
   if (rw <= 0 || rh <= 0) return false;
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
   const x1 = rx + rw;
   const y1 = ry + rh;
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   const n = tmp.length;
   if (n === 0) return false;
 
@@ -61,7 +59,7 @@ export function intersectsPathRect(
   // 조건 3: rect 꼭짓점이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
-    const polygon = flatPolygonFromLegacyPoints(tmp);
+    const polygon = pathPolylineToPolygon(tmp);
     const corners: [number, number][] = [
       [rx, ry],
       [x1, ry],

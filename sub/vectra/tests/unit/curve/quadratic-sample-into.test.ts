@@ -3,7 +3,7 @@
  * 기본 steps 32, 잘못된 steps의 RangeError, 오류 시 out 보존을 다룬다.
  * 출력 점이 매번 새 객체인지도 확인한다.
  */
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticSampleInto } from '../../../src/curve/quadratic-sample-into';
 

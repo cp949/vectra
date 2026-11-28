@@ -9,7 +9,7 @@ import {
   flatCurveFromLegacy,
   flatQuadraticFromLegacyPoints,
   flatCubicFromLegacyPoints,
-} from '../../../src/internal/legacy-curve.internal';
+} from '../_helpers/curve-fixtures';
 
 import { describe, expect, it } from 'vitest';
 import { cubicCurvatureAt } from '../../../src/curve/cubic-curvature-at';

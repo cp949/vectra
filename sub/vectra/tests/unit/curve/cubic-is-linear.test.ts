@@ -2,7 +2,7 @@
  * cubicIsLinear가 직선이면서 제어점이 현의 1/3, 2/3 위치에 있을 때만 true인지 검증한다.
  * 비율이 어긋난 직선, 비직선 곡선, 퇴화 곡선을 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicIsLinear } from '../../../src/curve/cubic-is-linear';
 

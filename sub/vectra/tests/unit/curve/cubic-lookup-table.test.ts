@@ -4,7 +4,7 @@
  * 잘못된 steps의 RangeError와 out 보존, non-finite 좌표 전파도 다룬다.
  * cubicLookupTable은 Into 결과와 같은 값을 돌려준다.
  */
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicLength } from '../../../src/curve/cubic-length';
 import { cubicLookupTable } from '../../../src/curve/cubic-lookup-table';

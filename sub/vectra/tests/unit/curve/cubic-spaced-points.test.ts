@@ -4,7 +4,7 @@
  * 비대칭 곡선에서 균등 t 표본과 달라지는지 확인한다.
  * 잘못된 count의 RangeError, out 보존, non-finite 좌표 전파도 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicLength } from '../../../src/curve/cubic-length';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';

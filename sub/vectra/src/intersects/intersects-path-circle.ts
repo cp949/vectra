@@ -1,11 +1,10 @@
-import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { lineFamilyCircleIntersects, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { CircleLike, PathCommand, PathMeasurementOptions } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { Circle } from '../types/flat-shapes.internal';
+import { pathPolylineToPolygon } from './path-containment.internal';
 
 /**
  * circle과 path가 교차하면 true를 반환한다.
@@ -17,7 +16,7 @@ import type { CircleLike, PathCommand, PathMeasurementOptions } from '../types';
  *   1. flattened polyline의 임의 edge가 circle과 교차한다.
  *   2. flattened polyline의 임의 점이 circle 내부(경계 포함)에 있다.
  *   3. circle 중심이 closed path 내부(경계 포함)에 있다.
- * - empty circle (radius ≤ 0): false.
+ * - empty circle (r ≤ 0): false.
  * - empty path (commands.length === 0): false.
  *
  * @param circle   교차를 검사할 circle
@@ -26,20 +25,17 @@ import type { CircleLike, PathCommand, PathMeasurementOptions } from '../types';
  */
 export function intersectsPathCircle(
   commands: readonly PathCommand[],
-  circle: CircleLike,
-  options?: Partial<PathMeasurementOptions>
+  circle: Circle,
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
-  const r = readCircleRadius(circle);
+  const { cx: ccx, cy: ccy, r } = circle;
   if (r <= 0) return false;
-  const center = readCircleCenter(circle);
-  const ccx = readX(center);
-  const ccy = readY(center);
   const rSq = r * r;
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   const n = tmp.length;
   if (n === 0) return false;
 
@@ -63,7 +59,7 @@ export function intersectsPathCircle(
   // 조건 3: circle 중심이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
-    const polygon = flatPolygonFromLegacyPoints(tmp);
+    const polygon = pathPolylineToPolygon(tmp);
     if (polygonContainsPoint(polygon, ccx, ccy, DEFAULT_EPSILON)) return true;
   }
 

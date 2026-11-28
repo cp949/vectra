@@ -14,7 +14,6 @@
  * polygon 경계에서 epsilon 근처로 떨어진 시작점,
  * epsilon 생략·0·음수·NaN·Infinity·여러 크기에서 반환값이 이전 구현과 같다.
  */
-import { flatPolygonFromLegacyPoints } from '../../../src/internal/legacy-polygon.internal';
 import { describe, expect, test } from 'vitest';
 import { intersectsCircleSegment } from '../../../src/intersects/intersects-circle-segment';
 import { intersectsPolygonInfiniteLine } from '../../../src/intersects/intersects-polygon-infinite-line';
@@ -61,7 +60,12 @@ function referenceLineFamilyPolygonIntersects(
   }
 
   if (line.kind !== 'finite') return false;
-  return polygonContainsPoint(flatPolygonFromLegacyPoints(pts), line.ox, line.oy, epsilon ?? DEFAULT_EPSILON);
+  return polygonContainsPoint(
+    pts.flatMap((point) => [readX(point), readY(point)]),
+    line.ox,
+    line.oy,
+    epsilon ?? DEFAULT_EPSILON
+  );
 }
 
 function referencePolygonSegment(polygon: PolygonLike, line: SegmentLike, epsilon?: number): boolean {

@@ -1,5 +1,5 @@
 import type { Segment, SegmentWritable as FlatSegmentWritable } from '../types/flat-shapes.internal';
-import type { SegmentLike, SegmentTuple, SegmentWritable, XYInput } from '../types';
+import type { SegmentLike, SegmentTuple, XYInput } from '../types';
 import { readX, readY } from './xy';
 
 function isSegmentTuple(line: SegmentLike): line is SegmentTuple {
@@ -85,12 +85,6 @@ export function segmentContainsPoint(seg: Segment, px: number, py: number, epsil
 /** 두 끝점이 원점인 선분을 만든다. */
 export function createZeroSegment(): FlatSegmentWritable {
   return { x1: 0, y1: 0, x2: 0, y2: 0 };
-}
-
-// v2-migration: 선분을 반환하는 호출처를 전환한 뒤 제거한다.
-/** 중첩 끝점을 쓰는 선분을 만든다. */
-export function createLegacySegment(): SegmentWritable {
-  return { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
 }
 
 /**

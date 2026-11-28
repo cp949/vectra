@@ -2,7 +2,7 @@
  * cubicSplitInto의 좌우 곡선이 끝점을 공유하고 분할점이 cubicPointAtTInto와 같은지 검증한다.
  * cubicHullInto가 de Casteljau 점 10개를 기록하고 out을 비운 뒤 채우는지 확인한다.
  */
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicHullInto } from '../../../src/curve/cubic-hull-into';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';

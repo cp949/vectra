@@ -4,7 +4,7 @@
  * 일반 곡선은 0과 전체 길이 사이에 있다.
  * t clamp와 단조 증가는 speed-length.test.ts가 검증한다.
  */
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticLength } from '../../../src/curve/quadratic-length';
 import { quadraticLengthAtT } from '../../../src/curve/quadratic-length-at-t';

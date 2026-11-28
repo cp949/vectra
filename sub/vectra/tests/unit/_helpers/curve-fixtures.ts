@@ -1,10 +1,12 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from './infinite-line';
-import { DEFAULT_EPSILON } from './numeric';
-import type { CurveIntersectionOptions, CurveLike, InfiniteLineLike, XYInput } from '../types';
-import type { CubicCurve, Curve, InfiniteLine, QuadraticCurve } from '../types/flat-shapes.internal';
-import { readX, readY } from './xy';
+/**
+ * 기존 곡선 시험 데이터를 평평한 제어점과 교차 옵션으로 옮긴다.
+ */
+import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../../../src/internal/infinite-line';
+import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
+import type { CurveIntersectionOptions, CurveLike, InfiniteLineLike, XYInput } from '../../../src/types';
+import type { CubicCurve, Curve, InfiniteLine, QuadraticCurve } from '../../../src/types/flat-shapes.internal';
+import { readX, readY } from '../../../src/internal/xy';
 
-// v2-migration: 곡선 호출처가 평평한 제어점을 넘기면 이 변환을 지운다.
 /** 기존 제어점 세 개를 평평한 이차 베지어로 옮긴다. */
 export function flatQuadraticFromLegacyPoints(p0: XYInput, p1: XYInput, p2: XYInput): QuadraticCurve {
   return {

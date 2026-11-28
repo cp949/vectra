@@ -14,7 +14,7 @@
  *
  * 거부 검사는 `@ts-expect-error`가 맡는다. 오류가 사라지면 `pnpm typecheck`가 실패한다.
  */
-import { flatLineFromLegacy } from '../../../src/internal/legacy-curve.internal';
+import { flatLineFromLegacy } from '../_helpers/curve-fixtures';
 
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { tangentPointsFromExternalInto } from '../../../src/circle/tangent-points-from-external-into';

@@ -10,7 +10,7 @@
  *  - 3번 입력은 무작위 탐색으로 고른 것이다. 필터 조건을 하나씩 바꾼 변이가 각각 다른 결과를 내는 최소 입력이다.
  *  - 기대값은 현재 동작이다. 닫힌 loop의 끝점 근방 cross처럼 알고리즘이 바뀌면 달라질 수 있다.
  */
-import { flatCubicFromLegacyPoints, flatIntersectionOptions } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints, flatIntersectionOptions } from '../_helpers/curve-fixtures';
 
 import { describe, expect, test } from 'vitest';
 import { cubicSelfIntersectionsInto } from '../../../src/curve/cubic-self-intersections-into';

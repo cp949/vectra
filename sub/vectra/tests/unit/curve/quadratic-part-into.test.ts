@@ -3,7 +3,7 @@
  * 끝점 일치, fromT와 toT가 같은 경우, 역방향 구간, out 반환을 다룬다.
  * quadraticPart는 Into와 같은 값을 새 객체로 돌려준다.
  */
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticPart } from '../../../src/curve/quadratic-part';
 import { quadraticPartInto } from '../../../src/curve/quadratic-part-into';

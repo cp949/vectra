@@ -1,12 +1,11 @@
-import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { lineFamilyEllipseIntersects } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonContainsPoint } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { EllipseLike, PathCommand, PathMeasurementOptions } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { Ellipse } from '../types/flat-shapes.internal';
 import { allFinite } from './curve-primitive-relation.internal';
+import { pathPolylineToPolygon } from './path-containment.internal';
 
 /**
  * ellipse와 path가 교차하면 true를 반환한다.
@@ -18,7 +17,7 @@ import { allFinite } from './curve-primitive-relation.internal';
  *   1. flattened polyline의 임의 edge가 ellipse boundary와 교차한다.
  *   2. flattened polyline의 임의 점이 ellipse 내부(경계 포함)에 있다.
  *   3. ellipse 중심이 closed path 내부(경계 포함)에 있다.
- * - empty ellipse (radiusX ≤ 0 또는 radiusY ≤ 0): false.
+ * - empty ellipse (rx ≤ 0 또는 ry ≤ 0): false.
  * - empty path (commands.length === 0): false.
  *
  * @param commands flatten할 path command sequence
@@ -27,21 +26,17 @@ import { allFinite } from './curve-primitive-relation.internal';
  */
 export function intersectsPathEllipse(
   commands: readonly PathCommand[],
-  ellipse: EllipseLike,
-  options?: Partial<PathMeasurementOptions>
+  ellipse: Ellipse,
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
-  const center = readEllipseCenter(ellipse);
-  const ccx = readX(center);
-  const ccy = readY(center);
+  const { cx: ccx, cy: ccy, rx, ry } = ellipse;
   if (!allFinite([ccx, ccy, rx, ry])) return false;
   if (rx <= 0 || ry <= 0) return false;
 
   const hasClosed = commands.some((c) => c.kind === 'close');
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   const n = tmp.length;
   if (n === 0) return false;
 
@@ -66,7 +61,7 @@ export function intersectsPathEllipse(
   // 조건 3: ellipse 중심이 closed path 내부에 있는지 (polygon containment)
   // CloseCommand가 있는 closed path에만 적용한다. open path는 면적을 정의하지 않으므로 제외한다.
   if (n >= 3 && hasClosed) {
-    const polygon = flatPolygonFromLegacyPoints(tmp);
+    const polygon = pathPolylineToPolygon(tmp);
     if (polygonContainsPoint(polygon, ccx, ccy, DEFAULT_EPSILON)) return true;
   }
 

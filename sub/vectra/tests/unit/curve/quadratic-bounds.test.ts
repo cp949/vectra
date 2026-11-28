@@ -2,7 +2,7 @@
  * quadraticBounds가 quadraticBoundsInto와 같은 경계 상자를 새 객체로 돌려주는지 검증한다.
  * 같은 직선 위 세 점이면 끝점이 곧 경계다.
  */
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticBounds } from '../../../src/curve/quadratic-bounds';
 import { quadraticBoundsInto } from '../../../src/curve/quadratic-bounds-into';

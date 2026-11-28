@@ -1,7 +1,7 @@
 import { segmentToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathMeasurementOptions } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
 import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
@@ -19,11 +19,11 @@ import type { Polyline } from '../types/flat-shapes.internal';
 export function intersectsPathPolyline(
   commands: readonly PathCommand[],
   polyline: Polyline,
-  options?: Partial<PathMeasurementOptions>
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   const n = tmp.length;
   if (n < 2) return false;
   for (let i = 0; i < n - 1; i++) {

@@ -1,7 +1,7 @@
 /**
  * cubicLineIntersectionsInto 단위 테스트.
  */
-import { flatLineFromLegacy, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatLineFromLegacy, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 import { describe, expect, test } from 'vitest';
 import { cubicLineIntersectionsInto } from '../../../src/curve/cubic-line-intersections-into';

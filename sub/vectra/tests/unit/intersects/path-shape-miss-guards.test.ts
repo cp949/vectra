@@ -16,15 +16,15 @@ import { bigSquarePath } from './_helpers/path-intersection-fixtures';
 const moveOnlyPath: PathCommand[] = [{ kind: 'move', x: 1, y: 1 }];
 
 // bigSquarePath(0..10)와 겹치지 않는 영역에 둔 도형들
-const farBounds = { min: { x: 30, y: 30 }, max: { x: 32, y: 32 } };
+const farBounds = { minX: 30, minY: 30, maxX: 32, maxY: 32 };
 const farRect = { x: 30, y: 30, width: 2, height: 2 };
-const farCircle = { center: { x: 31, y: 31 }, radius: 1 };
-const farEllipse = { center: { x: 31, y: 31 }, radiusX: 2, radiusY: 1 };
-const farTriangle = { a: { x: 30, y: 30 }, b: { x: 34, y: 30 }, c: { x: 32, y: 34 } };
+const farCircle = { cx: 31, cy: 31, r: 1 };
+const farEllipse = { cx: 31, cy: 31, rx: 2, ry: 1 };
+const farTriangle = { x1: 30, y1: 30, x2: 34, y2: 30, x3: 32, y3: 34 };
 
 describe('그릴 선분이 없는 path', () => {
   test('intersectsPathBounds는 move만 있는 path에서 false를 반환한다', () => {
-    expect(intersectsPathBounds(moveOnlyPath, { min: { x: 0, y: 0 }, max: { x: 2, y: 2 } })).toBe(false);
+    expect(intersectsPathBounds(moveOnlyPath, { minX: 0, minY: 0, maxX: 2, maxY: 2 })).toBe(false);
   });
 
   test('intersectsPathRect는 move만 있는 path에서 false를 반환한다', () => {
@@ -32,15 +32,15 @@ describe('그릴 선분이 없는 path', () => {
   });
 
   test('intersectsPathCircle은 move만 있는 path에서 false를 반환한다', () => {
-    expect(intersectsPathCircle(moveOnlyPath, { center: { x: 1, y: 1 }, radius: 2 })).toBe(false);
+    expect(intersectsPathCircle(moveOnlyPath, { cx: 1, cy: 1, r: 2 })).toBe(false);
   });
 
   test('intersectsPathEllipse는 move만 있는 path에서 false를 반환한다', () => {
-    expect(intersectsPathEllipse(moveOnlyPath, { center: { x: 1, y: 1 }, radiusX: 2, radiusY: 2 })).toBe(false);
+    expect(intersectsPathEllipse(moveOnlyPath, { cx: 1, cy: 1, rx: 2, ry: 2 })).toBe(false);
   });
 
   test('intersectsPathTriangle은 move만 있는 path에서 false를 반환한다', () => {
-    const triangle = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 4 } };
+    const triangle = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 4 };
     expect(intersectsPathTriangle(moveOnlyPath, triangle)).toBe(false);
   });
 
@@ -80,7 +80,7 @@ describe('통째로 도형 안에 있는 open path', () => {
   ];
 
   test('intersectsPathBounds는 모든 vertex가 bounds 안에 있으면 true를 반환한다', () => {
-    expect(intersectsPathBounds(openFromOrigin, { min: { x: -1, y: -1 }, max: { x: 1, y: 1 } })).toBe(true);
+    expect(intersectsPathBounds(openFromOrigin, { minX: -1, minY: -1, maxX: 1, maxY: 1 })).toBe(true);
   });
 
   test('intersectsPathRect는 모든 vertex가 rect 안에 있으면 true를 반환한다', () => {
@@ -88,11 +88,11 @@ describe('통째로 도형 안에 있는 open path', () => {
   });
 
   test('intersectsPathCircle은 모든 vertex가 circle 안에 있으면 true를 반환한다', () => {
-    expect(intersectsPathCircle(openFromOrigin, { center: { x: 0, y: 0 }, radius: 1 })).toBe(true);
+    expect(intersectsPathCircle(openFromOrigin, { cx: 0, cy: 0, r: 1 })).toBe(true);
   });
 
   test('intersectsPathTriangle은 모든 vertex가 삼각형 안에 있으면 true를 반환한다', () => {
-    const triangle = { a: { x: -4, y: -4 }, b: { x: 4, y: -4 }, c: { x: 0, y: 4 } };
+    const triangle = { x1: -4, y1: -4, x2: 4, y2: -4, x3: 0, y3: 4 };
     expect(intersectsPathTriangle(openFromOrigin, triangle)).toBe(true);
   });
 });
@@ -101,17 +101,17 @@ describe('closed path 경계에서 epsilon 이내로 벗어난 triangle 꼭짓�
   // 변 교차 검사는 정확한 기하로 판정하고 꼭짓점 포함 검사는 DEFAULT_EPSILON(1e-9) 허용오차를 둔다.
   // 꼭짓점이 경계 바깥 1e-10에 있으면 변은 만나지 않지만 포함 검사는 true를 반환한다.
   test('b 꼭짓점이 경계 바깥 1e-10이면 true를 반환한다', () => {
-    const triangle = { a: { x: -5, y: 4 }, b: { x: -1e-10, y: 5 }, c: { x: -5, y: 6 } };
+    const triangle = { x1: -5, y1: 4, x2: -1e-10, y2: 5, x3: -5, y3: 6 };
     expect(intersectsPathTriangle(bigSquarePath, triangle)).toBe(true);
   });
 
   test('c 꼭짓점이 경계 바깥 1e-10이면 true를 반환한다', () => {
-    const triangle = { a: { x: -5, y: 4 }, b: { x: -5, y: 6 }, c: { x: -1e-10, y: 5 } };
+    const triangle = { x1: -5, y1: 4, x2: -5, y2: 6, x3: -1e-10, y3: 5 };
     expect(intersectsPathTriangle(bigSquarePath, triangle)).toBe(true);
   });
 
   test('꼭짓점이 경계 바깥 1e-8이면 false를 반환한다', () => {
-    const triangle = { a: { x: -5, y: 4 }, b: { x: -1e-8, y: 5 }, c: { x: -5, y: 6 } };
+    const triangle = { x1: -5, y1: 4, x2: -1e-8, y2: 5, x3: -5, y3: 6 };
     expect(intersectsPathTriangle(bigSquarePath, triangle)).toBe(false);
   });
 });

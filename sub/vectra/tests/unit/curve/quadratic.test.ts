@@ -3,7 +3,7 @@
  * 분할, hull 점 순서, 극값 t 정렬, 경계 상자를 검증한다.
  * 평탄화의 flatness 단조성과 길이 근사도 다룬다.
  */
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticBoundsInto } from '../../../src/curve/quadratic-bounds-into';
 import { quadraticDerivativeAtInto } from '../../../src/curve/quadratic-derivative-at-into';

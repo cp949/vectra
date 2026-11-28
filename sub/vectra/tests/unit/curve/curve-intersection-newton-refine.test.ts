@@ -9,7 +9,7 @@
  *
  * 기준 근은 원본 control point에서 double Newton을 60회 돌려 얻은 값이다.
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';

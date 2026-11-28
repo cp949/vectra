@@ -2,7 +2,7 @@
  * cubicIsFlatEnough가 제어점의 현 수직 거리를 flatness 임계값과 비교하는지 검증한다.
  * 직선, 약하게 휜 곡선, S자 곡선, 경계값 일치, 퇴화 곡선을 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicIsFlatEnough } from '../../../src/curve/cubic-is-flat-enough';
 

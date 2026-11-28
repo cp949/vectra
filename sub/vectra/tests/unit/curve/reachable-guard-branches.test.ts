@@ -12,7 +12,7 @@ import {
   flatQuadraticFromLegacyPoints,
   flatLineFromLegacy,
   flatCubicFromLegacyPoints,
-} from '../../../src/internal/legacy-curve.internal';
+} from '../_helpers/curve-fixtures';
 
 import { describe, expect, test } from 'vitest';
 import { cubicExtrema } from '../../../src/curve/cubic-extrema';

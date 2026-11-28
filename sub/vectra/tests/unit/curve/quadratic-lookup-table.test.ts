@@ -4,7 +4,7 @@
  * 잘못된 steps의 RangeError와 out 보존, non-finite 좌표 전파도 다룬다.
  * quadraticLookupTable은 Into 결과와 같은 값을 돌려준다.
  */
-import { flatQuadraticFromLegacyPoints } from '../../../src/internal/legacy-curve.internal';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticLength } from '../../../src/curve/quadratic-length';
 import { quadraticLookupTable } from '../../../src/curve/quadratic-lookup-table';

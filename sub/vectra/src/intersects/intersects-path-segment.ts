@@ -1,9 +1,8 @@
 import { segmentToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathMeasurementOptions, SegmentLike } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { Segment } from '../types/flat-shapes.internal';
 
 /**
  * segment과 path가 교차하면 true를 반환한다.
@@ -18,14 +17,12 @@ import type { PathCommand, PathMeasurementOptions, SegmentLike } from '../types'
  */
 export function intersectsPathSegment(
   commands: readonly PathCommand[],
-  line: SegmentLike,
-  options?: Partial<PathMeasurementOptions>
+  line: Segment,
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }

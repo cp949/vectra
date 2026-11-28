@@ -1,9 +1,8 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
-import { readX, readY } from '../internal/xy';
-import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { InfiniteLineLike, PathCommand, PathMeasurementOptions } from '../types';
+import { flattenPathInto } from '../path/flatten.internal';
+import type { PathCommand, PathFlattenOptions } from '../types';
+import type { InfiniteLine } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 path가 교차하면 true를 반환한다.
@@ -18,14 +17,12 @@ import type { InfiniteLineLike, PathCommand, PathMeasurementOptions } from '../t
  */
 export function intersectsPathInfiniteLine(
   commands: readonly PathCommand[],
-  infiniteLine: InfiniteLineLike,
-  options?: Partial<PathMeasurementOptions>
+  infiniteLine: InfiniteLine,
+  options?: PathFlattenOptions
 ): boolean {
   if (commands.length === 0) return false;
-  const o = readInfiniteLineOrigin(infiniteLine);
-  const d = readInfiniteLineDirection(infiniteLine);
-  const lineParam = infiniteLineToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
+  const lineParam = infiniteLineToLineFamilyParam(infiniteLine.ox, infiniteLine.oy, infiniteLine.dx, infiniteLine.dy);
   const tmp: { x: number; y: number }[] = [];
-  flattenPathInto(tmp, commands, fillLegacyFlattenOptions(options));
+  flattenPathInto(tmp, commands, options);
   return lineFamilyPolylineIntersects(lineParam, tmp, undefined);
 }
