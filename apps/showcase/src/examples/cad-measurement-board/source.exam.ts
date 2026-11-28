@@ -14,14 +14,25 @@ export async function setup({ app, size }: Runtime) {
   const cy = size.height / 2;
 
   // 측정 대상 도형들
-  const seg = { a: { x: cx - 160, y: cy - 60 }, b: { x: cx + 80, y: cy - 60 } };
-  const circ = { center: { x: cx + 10, y: cy + 60 }, radius: 55 };
+  const seg = { x1: cx - 160, y1: cy - 60, x2: cx + 80, y2: cy - 60 };
+  const circ = { cx: cx + 10, cy: cy + 60, r: 55 };
 
   // cubic bezier (bounds 측정용)
   const p0 = { x: cx - 180, y: cy + 120 };
   const p1 = { x: cx - 60, y: cy - 40 };
   const p2 = { x: cx + 80, y: cy + 40 };
   const p3 = { x: cx + 180, y: cy + 100 };
+  const curve = {
+    kind: 'cubic' as const,
+    x0: p0.x,
+    y0: p0.y,
+    x1: p1.x,
+    y1: p1.y,
+    x2: p2.x,
+    y2: p2.y,
+    x3: p3.x,
+    y3: p3.y,
+  };
 
   const gfx = new PIXI.Graphics();
   app.stage.addChild(gfx);
@@ -59,48 +70,48 @@ export async function setup({ app, size }: Runtime) {
     }
 
     // segment
-    gfx.moveTo(seg.a.x, seg.a.y).lineTo(seg.b.x, seg.b.y).stroke({ color: 0xe2e8f0, width: 2 });
+    gfx.moveTo(seg.x1, seg.y1).lineTo(seg.x2, seg.y2).stroke({ color: 0xe2e8f0, width: 2 });
     const segLen = Segment.length(seg);
-    drawDimensionLine(seg.a.x, seg.a.y, seg.b.x, seg.b.y, `${Math.round(segLen)}px`, -22);
+    drawDimensionLine(seg.x1, seg.y1, seg.x2, seg.y2, `${Math.round(segLen)}px`, -22);
 
     // midpoint 마커
     const mid = Segment.midpoint(seg);
     gfx.circle(mid.x, mid.y, 4).fill(0xfbbf24);
 
     // circle
-    gfx.circle(circ.center.x, circ.center.y, circ.radius).stroke({ color: 0x60a5fa, width: 2 });
+    gfx.circle(circ.cx, circ.cy, circ.r).stroke({ color: 0x60a5fa, width: 2 });
     const cArea = Circle.area(circ);
     const areaText = new PIXI.Text({
-      text: `r=${circ.radius}  A=${Math.round(cArea)}`,
+      text: `r=${circ.r}  A=${Math.round(cArea)}`,
       style: { fontSize: 11, fill: 0x60a5fa },
     });
-    areaText.x = circ.center.x - circ.radius;
-    areaText.y = circ.center.y + circ.radius + 6;
+    areaText.x = circ.cx - circ.r;
+    areaText.y = circ.cy + circ.r + 6;
     app.stage.addChild(areaText);
 
     // cubic bezier
     const tmp = { x: 0, y: 0 };
-    Curve.cubicPointAtTInto(tmp, p0, p1, p2, p3, 0);
+    Curve.cubicPointAtTInto(tmp, curve, 0);
     gfx.moveTo(tmp.x, tmp.y);
     for (let i = 1; i <= 60; i++) {
-      Curve.cubicPointAtTInto(tmp, p0, p1, p2, p3, i / 60);
+      Curve.cubicPointAtTInto(tmp, curve, i / 60);
       gfx.lineTo(tmp.x, tmp.y);
     }
     gfx.stroke({ color: 0x34d399, width: 2 });
 
     // bezier tight bounds
-    const bb = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    Curve.cubicBoundsInto(bb, p0, p1, p2, p3);
+    const bb = Bounds.createBounds();
+    Curve.cubicBoundsInto(bb, curve);
     const bw = Bounds.width(bb);
     const bh = Bounds.height(bb);
-    gfx.rect(bb.min.x, bb.min.y, bw, bh).stroke({ color: 0x34d399, width: 1, alpha: 0.4 });
+    gfx.rect(bb.minX, bb.minY, bw, bh).stroke({ color: 0x34d399, width: 1, alpha: 0.4 });
 
     const boundsText = new PIXI.Text({
       text: `bbox ${Math.round(bw)}\xd7${Math.round(bh)}`,
       style: { fontSize: 11, fill: 0x34d399 },
     });
-    boundsText.x = bb.min.x;
-    boundsText.y = bb.min.y - 16;
+    boundsText.x = bb.minX;
+    boundsText.y = bb.minY - 16;
     app.stage.addChild(boundsText);
   }
 

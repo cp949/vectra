@@ -18,8 +18,10 @@ export async function setup({ app, size, rng }: Runtime) {
 
   // 점 생성: bounds 내 무작위 배치
   const bounds = {
-    min: { x: size.width * 0.05, y: size.height * 0.05 },
-    max: { x: size.width * 0.95, y: size.height * 0.95 },
+    minX: size.width * 0.05,
+    minY: size.height * 0.05,
+    maxX: size.width * 0.95,
+    maxY: size.height * 0.95,
   };
 
   const points: { x: number; y: number }[] = [];
@@ -44,8 +46,8 @@ export async function setup({ app, size, rng }: Runtime) {
     for (let i = 0; i < points.length; i++) {
       points[i].x += drifts[i].x;
       points[i].y += drifts[i].y;
-      if (points[i].x < bounds.min.x || points[i].x > bounds.max.x) drifts[i].x *= -1;
-      if (points[i].y < bounds.min.y || points[i].y > bounds.max.y) drifts[i].y *= -1;
+      if (points[i].x < bounds.minX || points[i].x > bounds.maxX) drifts[i].x *= -1;
+      if (points[i].y < bounds.minY || points[i].y > bounds.maxY) drifts[i].y *= -1;
     }
 
     // 가까운 점끼리 선 연결
@@ -55,7 +57,7 @@ export async function setup({ app, size, rng }: Runtime) {
         if (d < CONNECT_DIST) {
           const alpha = 1 - d / CONNECT_DIST;
           // segment midpoint를 활용해 중간 색상 계산
-          const mid = Segment.midpoint({ a: points[i], b: points[j] });
+          const mid = Segment.midpoint({ x1: points[i].x, y1: points[i].y, x2: points[j].x, y2: points[j].y });
           gfx
             .moveTo(points[i].x, points[i].y)
             .lineTo(points[j].x, points[j].y)

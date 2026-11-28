@@ -42,7 +42,7 @@ export async function setup({ app, size, pointer }: Runtime) {
     const tmp = { x: 0, y: 0 };
     for (let s = 0; s <= TOTAL_STEPS; s++) {
       const t = s / TOTAL_STEPS;
-      Curve.catmullRomPointAtTInto(tmp, controlPts, t, { alpha: 0.5 });
+      Curve.catmullRomPointAtTInto(tmp, controlPts, t, { alpha: 0.5, closed: false });
       pts.push({ ...tmp });
     }
     return pts;
@@ -53,7 +53,7 @@ export async function setup({ app, size, pointer }: Runtime) {
     const tmp = { x: 0, y: 0 };
     for (let s = 0; s <= TOTAL_STEPS; s++) {
       const t = s / TOTAL_STEPS;
-      Curve.cardinalPointAtTInto(tmp, controlPts, t, 0.75);
+      Curve.cardinalPointAtTInto(tmp, controlPts, t, { tension: 0.75, closed: false });
       pts.push({ ...tmp });
     }
     return pts;
@@ -61,7 +61,7 @@ export async function setup({ app, size, pointer }: Runtime) {
 
   function sampleBspline(): { x: number; y: number }[] {
     const bsplinePts: { x: number; y: number }[] = [];
-    Curve.bsplinePolylineInto(bsplinePts as any, controlPts, TOTAL_STEPS);
+    Curve.bsplinePolylineInto(bsplinePts, controlPts, { steps: TOTAL_STEPS, closed: false });
     return bsplinePts;
   }
 

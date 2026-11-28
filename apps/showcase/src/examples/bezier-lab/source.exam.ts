@@ -36,6 +36,17 @@ export async function setup({ app, size, pointer }: Runtime) {
   function draw() {
     gfx.clear();
     const [p0, p1, p2, p3] = pts;
+    const curve = {
+      kind: 'cubic' as const,
+      x0: p0.x,
+      y0: p0.y,
+      x1: p1.x,
+      y1: p1.y,
+      x2: p2.x,
+      y2: p2.y,
+      x3: p3.x,
+      y3: p3.y,
+    };
 
     // hull 보조선 (회색)
     gfx.moveTo(p0.x, p0.y).lineTo(p1.x, p1.y).stroke({ color: 0x94a3b8, width: 1, alpha: 0.5 });
@@ -44,20 +55,20 @@ export async function setup({ app, size, pointer }: Runtime) {
     // cubic 곡선 (80 샘플)
     const step = 1 / 80;
     const tmp = { x: 0, y: 0 };
-    Curve.cubicPointAtTInto(tmp, p0, p1, p2, p3, 0);
+    Curve.cubicPointAtTInto(tmp, curve, 0);
     gfx.moveTo(tmp.x, tmp.y);
     for (let i = 1; i <= 80; i++) {
-      Curve.cubicPointAtTInto(tmp, p0, p1, p2, p3, i * step);
+      Curve.cubicPointAtTInto(tmp, curve, i * step);
       gfx.lineTo(tmp.x, tmp.y);
     }
     gfx.stroke({ color: 0x34d399, width: 2.5 });
 
     // tight bounds box
-    const b = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
-    Curve.cubicBoundsInto(b, p0, p1, p2, p3);
+    const b = Bounds.createBounds();
+    Curve.cubicBoundsInto(b, curve);
     const w = Bounds.width(b);
     const h = Bounds.height(b);
-    gfx.rect(b.min.x, b.min.y, w, h).stroke({ color: 0xfbbf24, width: 1, alpha: 0.6 });
+    gfx.rect(b.minX, b.minY, w, h).stroke({ color: 0xfbbf24, width: 1, alpha: 0.6 });
 
     // 제어점 핸들
     for (let i = 0; i < pts.length; i++) {

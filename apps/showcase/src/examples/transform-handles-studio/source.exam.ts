@@ -3,19 +3,20 @@ import * as EditorGeometry from '@cp949/vectra/editor-geometry';
 import * as Matrix from '@cp949/vectra/matrix';
 import * as PIXI from 'pixi.js';
 
+type HandlePoint = Parameters<typeof EditorGeometry.resizeHandlesInto>[0][number];
 type Runtime = {
   app: PIXI.Application;
   size: { width: number; height: number };
   pointer: { x: number; y: number };
 };
 
-type ResizeHandleId = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w';
-
 export async function setup({ app, size, pointer }: Runtime) {
   // 초기 bounds (화면 중앙 사각형)
   const bounds = {
-    min: { x: size.width * 0.25, y: size.height * 0.25 },
-    max: { x: size.width * 0.75, y: size.height * 0.75 },
+    minX: size.width * 0.25,
+    minY: size.height * 0.25,
+    maxX: size.width * 0.75,
+    maxY: size.height * 0.75,
   };
 
   const HANDLE_R = 8;
@@ -23,13 +24,13 @@ export async function setup({ app, size, pointer }: Runtime) {
   // 현재 너비/높이 (constrainResize 입력으로 사용)
   function currentWH() {
     return {
-      width: bounds.max.x - bounds.min.x,
-      height: bounds.max.y - bounds.min.y,
+      width: bounds.maxX - bounds.minX,
+      height: bounds.maxY - bounds.minY,
     };
   }
 
   let dragging: {
-    handleId: ResizeHandleId;
+    handleId: HandlePoint['id'];
     startBounds: typeof bounds;
     startPointer: { x: number; y: number };
   } | null = null;
@@ -39,20 +40,16 @@ export async function setup({ app, size, pointer }: Runtime) {
   app.stage.eventMode = 'static';
   app.stage.hitArea = app.screen;
 
-  // resizeHandlesInto: factory 필요. 반환값은 { id, point: { x, y } }[]
-  function getHandles(): { id: ResizeHandleId; x: number; y: number }[] {
-    const out: { id: ResizeHandleId; point: { x: number; y: number } }[] = [];
-    EditorGeometry.resizeHandlesInto(out as any, bounds, () => ({
-      x: 0,
-      y: 0,
-    }));
-    return out.map((p) => ({ id: p.id, x: p.point.x, y: p.point.y }));
+  function getHandles() {
+    const handles: HandlePoint[] = [];
+    EditorGeometry.resizeHandlesInto(handles, bounds, () => ({ x: 0, y: 0 }));
+    return handles;
   }
 
-  function hitHandle(x: number, y: number): ResizeHandleId | null {
+  function hitHandle(x: number, y: number): HandlePoint['id'] | null {
     for (const h of getHandles()) {
-      const dx = h.x - x;
-      const dy = h.y - y;
+      const dx = h.point.x - x;
+      const dy = h.point.y - y;
       if (dx * dx + dy * dy <= HANDLE_R * HANDLE_R * 4) return h.id;
     }
     return null;
@@ -68,17 +65,20 @@ export async function setup({ app, size, pointer }: Runtime) {
     // 변환 행렬로 bounds transform (identity → 그대로)
     const mat = Matrix.createMatrix();
     Matrix.identityInto(mat);
-    const tb = Bounds.transformInto({ min: { x: 0, y: 0 }, max: { x: 0, y: 0 } }, bounds, mat);
+    const tb = Bounds.transformInto(Bounds.createBounds(), bounds, mat);
 
     const w = Bounds.width(tb);
     const h = Bounds.height(tb);
 
     // 사각형
-    gfx.rect(tb.min.x, tb.min.y, w, h).fill({ color: 0x3b82f6, alpha: 0.2 }).stroke({ color: 0x60a5fa, width: 2 });
+    gfx.rect(tb.minX, tb.minY, w, h).fill({ color: 0x3b82f6, alpha: 0.2 }).stroke({ color: 0x60a5fa, width: 2 });
 
     // 핸들 8개
     for (const handle of getHandles()) {
-      gfx.circle(handle.x, handle.y, HANDLE_R).fill({ color: 0xf8fafc }).stroke({ color: 0x3b82f6, width: 2 });
+      gfx
+        .circle(handle.point.x, handle.point.y, HANDLE_R)
+        .fill({ color: 0xf8fafc })
+        .stroke({ color: 0x3b82f6, width: 2 });
     }
 
     // bounds 중심에 치수 표시
@@ -101,7 +101,7 @@ export async function setup({ app, size, pointer }: Runtime) {
     if (id) {
       dragging = {
         handleId: id,
-        startBounds: { min: { ...bounds.min }, max: { ...bounds.max } },
+        startBounds: { ...bounds },
         startPointer: { x: e.global.x, y: e.global.y },
       };
     }
@@ -115,33 +115,39 @@ export async function setup({ app, size, pointer }: Runtime) {
     const id = dragging.handleId;
 
     // 핸들별 bounds 직접 갱신 (단순 drag 매핑)
-    const next = { min: { ...sb.min }, max: { ...sb.max } };
-    if (id.includes('w')) next.min.x = sb.min.x + dx;
-    if (id.includes('e')) next.max.x = sb.max.x + dx;
-    if (id.includes('n')) next.min.y = sb.min.y + dy;
-    if (id.includes('s')) next.max.y = sb.max.y + dy;
+    const next = { ...sb };
+    if (id.includes('w')) next.minX = sb.minX + dx;
+    if (id.includes('e')) next.maxX = sb.maxX + dx;
+    if (id.includes('n')) next.minY = sb.minY + dy;
+    if (id.includes('s')) next.maxY = sb.maxY + dy;
 
     // constrainResize로 최소 크기 보장 (50×50)
     const currentSize = {
-      width: sb.max.x - sb.min.x,
-      height: sb.max.y - sb.min.y,
+      width: sb.maxX - sb.minX,
+      height: sb.maxY - sb.minY,
     };
     const proposedSize = {
-      width: next.max.x - next.min.x,
-      height: next.max.y - next.min.y,
+      width: next.maxX - next.minX,
+      height: next.maxY - next.minY,
     };
-    const constrained = EditorGeometry.constrainResize(currentSize, proposedSize, { minWidth: 50, minHeight: 50 });
+    const constrained = EditorGeometry.constrainResize(currentSize, proposedSize, {
+      aspectLocked: false,
+      minWidth: 50,
+      minHeight: 50,
+      maxWidth: Infinity,
+      maxHeight: Infinity,
+    });
 
     // constrained 결과를 bounds에 반영
-    if (id.includes('e')) next.max.x = next.min.x + constrained.width;
-    if (id.includes('w')) next.min.x = next.max.x - constrained.width;
-    if (id.includes('s')) next.max.y = next.min.y + constrained.height;
-    if (id.includes('n')) next.min.y = next.max.y - constrained.height;
+    if (id.includes('e')) next.maxX = next.minX + constrained.width;
+    if (id.includes('w')) next.minX = next.maxX - constrained.width;
+    if (id.includes('s')) next.maxY = next.minY + constrained.height;
+    if (id.includes('n')) next.minY = next.maxY - constrained.height;
 
-    bounds.min.x = next.min.x;
-    bounds.min.y = next.min.y;
-    bounds.max.x = next.max.x;
-    bounds.max.y = next.max.y;
+    bounds.minX = next.minX;
+    bounds.minY = next.minY;
+    bounds.maxX = next.maxX;
+    bounds.maxY = next.maxY;
     draw();
   });
 

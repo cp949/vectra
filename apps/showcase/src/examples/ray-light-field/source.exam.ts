@@ -9,11 +9,11 @@ type Runtime = {
 };
 
 const walls = [
-  { a: { x: 120, y: 90 }, b: { x: 520, y: 120 } },
-  { a: { x: 520, y: 120 }, b: { x: 610, y: 360 } },
-  { a: { x: 610, y: 360 }, b: { x: 180, y: 430 } },
-  { a: { x: 180, y: 430 }, b: { x: 120, y: 90 } },
-  { a: { x: 270, y: 190 }, b: { x: 430, y: 310 } },
+  { x1: 120, y1: 90, x2: 520, y2: 120 },
+  { x1: 520, y1: 120, x2: 610, y2: 360 },
+  { x1: 610, y1: 360, x2: 180, y2: 430 },
+  { x1: 180, y1: 430, x2: 120, y2: 90 },
+  { x1: 270, y1: 190, x2: 430, y2: 310 },
 ];
 
 export async function setup({ app, size }: Runtime) {
@@ -23,7 +23,7 @@ export async function setup({ app, size }: Runtime) {
   app.stage.hitArea = app.screen;
 
   const origin = { x: size.width * 0.48, y: size.height * 0.42 };
-  const ray = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
+  const ray = Rays.createRay();
 
   function nearestHit(angle: number) {
     Rays.fromAngleInto(ray, origin, angle);
@@ -33,7 +33,7 @@ export async function setup({ app, size }: Runtime) {
     for (const wall of walls) {
       const hit = Intersects.singleIntersectionSegmentRay(wall, ray);
       if (!hit) continue;
-      const distance = Segments.length({ a: origin, b: hit });
+      const distance = Segments.length({ x1: origin.x, y1: origin.y, x2: hit.x, y2: hit.y });
       if (distance < bestDistance) {
         bestDistance = distance;
         best = hit;
@@ -52,7 +52,7 @@ export async function setup({ app, size }: Runtime) {
 
     graphics.poly(points).fill({ color: 0xfacc15, alpha: 0.18 });
     for (const wall of walls) {
-      graphics.moveTo(wall.a.x, wall.a.y).lineTo(wall.b.x, wall.b.y).stroke({ color: 0xe2e8f0, width: 3 });
+      graphics.moveTo(wall.x1, wall.y1).lineTo(wall.x2, wall.y2).stroke({ color: 0xe2e8f0, width: 3 });
     }
     graphics.circle(origin.x, origin.y, 7).fill(0xffffff);
   }

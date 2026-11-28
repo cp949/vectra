@@ -13,14 +13,16 @@ type Runtime = {
 export async function setup({ app, size, pointer }: Runtime) {
   // 고정 도형들
   const fixedRect = { x: size.width * 0.55, y: size.height * 0.3, width: 120, height: 80 };
-  const fixedCircle = { center: { x: size.width * 0.25, y: size.height * 0.65 }, radius: 50 };
+  const fixedCircle = { cx: size.width * 0.25, cy: size.height * 0.65, r: 50 };
   const fixedSeg = {
-    a: { x: size.width * 0.6, y: size.height * 0.65 },
-    b: { x: size.width * 0.85, y: size.height * 0.8 },
+    x1: size.width * 0.6,
+    y1: size.height * 0.65,
+    x2: size.width * 0.85,
+    y2: size.height * 0.8,
   };
 
   // 포인터를 따라다니는 이동 원
-  const movingCircle = { center: { x: size.width / 2, y: size.height / 2 }, radius: 30 };
+  const movingCircle = { cx: size.width / 2, cy: size.height / 2, r: 30 };
 
   const gfx = new PIXI.Graphics();
   app.stage.addChild(gfx);
@@ -39,8 +41,8 @@ export async function setup({ app, size, pointer }: Runtime) {
       if (child instanceof PIXI.Text) child.destroy();
     }
 
-    movingCircle.center.x = pointer.x;
-    movingCircle.center.y = pointer.y;
+    movingCircle.cx = pointer.x;
+    movingCircle.cy = pointer.y;
 
     // 충돌 검사
     const hitRect = Intersects.intersectsCircleRect(movingCircle, fixedRect);
@@ -61,34 +63,34 @@ export async function setup({ app, size, pointer }: Runtime) {
     // 고정 원
     const circleColor = hitCircle ? 0xf87171 : 0x34d399;
     gfx
-      .circle(fixedCircle.center.x, fixedCircle.center.y, fixedCircle.radius)
+      .circle(fixedCircle.cx, fixedCircle.cy, fixedCircle.r)
       .fill({ color: circleColor, alpha: 0.3 })
       .stroke({ color: circleColor, width: 2 });
 
     // 고정 segment
     const segColor = hitSeg ? 0xf87171 : 0xfbbf24;
-    gfx.moveTo(fixedSeg.a.x, fixedSeg.a.y).lineTo(fixedSeg.b.x, fixedSeg.b.y).stroke({ color: segColor, width: 3 });
-    gfx.circle(fixedSeg.a.x, fixedSeg.a.y, 4).fill(segColor);
-    gfx.circle(fixedSeg.b.x, fixedSeg.b.y, 4).fill(segColor);
+    gfx.moveTo(fixedSeg.x1, fixedSeg.y1).lineTo(fixedSeg.x2, fixedSeg.y2).stroke({ color: segColor, width: 3 });
+    gfx.circle(fixedSeg.x1, fixedSeg.y1, 4).fill(segColor);
+    gfx.circle(fixedSeg.x2, fixedSeg.y2, 4).fill(segColor);
 
     // 이동 원
     gfx
-      .circle(movingCircle.center.x, movingCircle.center.y, movingCircle.radius)
+      .circle(movingCircle.cx, movingCircle.cy, movingCircle.r)
       .fill({ color: 0xf8fafc, alpha: 0.15 })
       .stroke({ color: 0xf8fafc, width: 2 });
 
     // circle에서 movingCircle까지 closest point
-    const closestOnCircle = Circle.closestPointInto({ x: 0, y: 0 }, fixedCircle, movingCircle.center);
+    const closestOnCircle = Circle.closestPointInto({ x: 0, y: 0 }, fixedCircle, pointer);
     gfx
-      .moveTo(movingCircle.center.x, movingCircle.center.y)
+      .moveTo(movingCircle.cx, movingCircle.cy)
       .lineTo(closestOnCircle.x, closestOnCircle.y)
       .stroke({ color: 0x94a3b8, width: 1, alpha: 0.5 });
     gfx.circle(closestOnCircle.x, closestOnCircle.y, 3).fill(0x94a3b8);
 
     // segment 위의 closest point
-    const closestOnSeg = Segment.closestPointInto({ x: 0, y: 0 }, fixedSeg, movingCircle.center);
+    const closestOnSeg = Segment.closestPointInto({ x: 0, y: 0 }, fixedSeg, pointer);
     gfx
-      .moveTo(movingCircle.center.x, movingCircle.center.y)
+      .moveTo(movingCircle.cx, movingCircle.cy)
       .lineTo(closestOnSeg.x, closestOnSeg.y)
       .stroke({ color: 0x94a3b8, width: 1, alpha: 0.5 });
     gfx.circle(closestOnSeg.x, closestOnSeg.y, 3).fill(0x94a3b8);
