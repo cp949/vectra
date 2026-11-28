@@ -13,7 +13,6 @@
  *
  * polygon 교차 Into가 배열을 반환하는 규칙과 맞춘다.
  */
-
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { decodeFlatCoordsInto } from '../../../src/adapter/flat/decode-flat-coords-into';
 import { fromFloat32ArrayInto } from '../../../src/adapter/flat/from-float32-array-into';

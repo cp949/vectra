@@ -4,10 +4,6 @@
  * 좁은 원소 타입 배열을 넘겨도 반환 타입이 넓어진 실제 원소 타입인지 확인한다.
  * 기존 객체에 덮어쓰는 sweep 결과는 호출자의 결과 타입과 내부 점 참조를 보존한다.
  */
-
-import { infiniteLineQuadraticIntersectionsInto } from '../../../src/intersects/infinite-line-quadratic-intersections-into';
-import { lineCurveIntersectionsInto } from '../../../src/intersects/line-curve-intersections-into';
-import type { CurveIntersectionHit, IntersectionHit } from '../../../src/types';
 import { expect, expectTypeOf, test } from 'vitest';
 import { boundsSweepBoundsInto } from '../../../src/intersects/bounds-sweep-bounds-into';
 import { boundsSweepPointInto } from '../../../src/intersects/bounds-sweep-point-into';
@@ -27,7 +23,11 @@ import { raysFromPointToPolygonInto } from '../../../src/intersects/rays-from-po
 import { visibilityPolygonInto } from '../../../src/intersects/visibility-polygon-into';
 import { segmentSegmentIntersectionsInto } from '../../../src/intersects/segment-segment-intersections-into';
 import { triangleSegmentIntersectionsInto } from '../../../src/intersects/triangle-segment-intersections-into';
+import { infiniteLineQuadraticIntersectionsInto } from '../../../src/intersects/infinite-line-quadratic-intersections-into';
+import { lineCurveIntersectionsInto } from '../../../src/intersects/line-curve-intersections-into';
 import type {
+  CurveIntersectionHit,
+  IntersectionHit,
   LinePolygonIntersectionHit,
   LinePolygonOverlapIntervalDetail,
   VisibilityRayHit,

@@ -7,15 +7,15 @@ import { segmentToInfiniteLine, writeSegmentCurveHits } from './curve-facade.int
 /**
  * segment와 generic Bezier curve의 교차점을 out에 기록한다.
  *
- * segment A→B를 origin=A, direction=B-A의 infinite-line으로 변환해 `curve.kind`별 kernel을 호출한 뒤
- * segment parameter `[0, 1]` 밖 hit를 제거한다. direction을 정규화하지 않으므로 `tLine`이 segment
+ * segment를 기점 (x1, y1), 방향 (x2 - x1, y2 - y1)의 infinite-line으로 변환해 `curve.kind`별 kernel을 호출한 뒤
+ * segment parameter `[0, 1]` 밖 hit를 제거한다. 방향 벡터를 정규화하지 않으므로 `tLine`이 segment
  * parameter `[0, 1]`로 유지된다.
  * 결과는 flat `{ x, y, kind, tLine, tCurve }`이고 `tLine`은 normalized segment parameter,
  * `tCurve`는 curve parameter `[0, 1]`이다. `kind`는 `cross`/`touch`만 사용한다.
  * out을 먼저 비우고 범위 내 교차점을 push한다. zero-length segment는 빈 결과다.
  *
  * @param out 교차점을 기록할 facade hit 배열 (호출 전 내용은 무시되고 비워진다)
- * @param segment 선분 A→B
+ * @param segment (x1, y1)에서 (x2, y2)로 가는 선분
  * @param curve quadratic 또는 cubic Bezier curve
  * @param options `epsilon`, `epsilonT`, `maxDepth`를 모두 지정한다. 생략하면 기본값을 쓴다.
  * @returns 기록이 완료된 out (입력과 동일한 참조)

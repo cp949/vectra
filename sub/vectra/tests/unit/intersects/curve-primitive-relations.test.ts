@@ -51,7 +51,7 @@ describe('intersectsQuadraticCircle', () => {
     expect(intersectsQuadraticCircle(quadratic, { cx: 0, cy: 10, r: 1 })).toBe(false);
   });
 
-  test('empty circle (radius ≤ 0)는 false를 반환한다', () => {
+  test('empty circle (r ≤ 0)은 false를 반환한다', () => {
     expect(intersectsQuadraticCircle(quadratic, { cx: 0, cy: 0, r: 0 })).toBe(false);
   });
 });
@@ -163,7 +163,7 @@ describe('intersectsCubicCircle', () => {
     expect(intersectsCubicCircle(cubic, { cx: 0, cy: 20, r: 1 })).toBe(false);
   });
 
-  test('empty circle (radius ≤ 0)는 false를 반환한다', () => {
+  test('empty circle (r ≤ 0)은 false를 반환한다', () => {
     expect(intersectsCubicCircle(cubic, { cx: 0, cy: 0, r: -1 })).toBe(false);
   });
 });

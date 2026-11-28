@@ -20,11 +20,11 @@ export function toCurveKind(kind: IntersectionKind): CurveIntersectionKind {
 }
 
 /**
- * segment A→B를 origin=A, direction=B-A의 infinite-line으로 변환한다.
+ * segment를 기점 (x1, y1), 방향 (x2 - x1, y2 - y1)의 infinite-line으로 변환한다.
  *
- * direction을 unit vector로 정규화하지 않으므로 kernel `tA`가 segment parameter `[0, 1]`로 유지된다.
+ * 방향 벡터를 unit vector로 정규화하지 않으므로 kernel `tA`가 segment parameter `[0, 1]`로 유지된다.
  *
- * @param segment 선분 A→B
+ * @param segment (x1, y1)에서 (x2, y2)로 가는 선분
  */
 export function segmentToInfiniteLine(segment: Segment): InfiniteLine {
   return { ox: segment.x1, oy: segment.y1, dx: segment.x2 - segment.x1, dy: segment.y2 - segment.y1 };

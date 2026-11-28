@@ -5,7 +5,6 @@
  * flat shape 기준 동치 결과를 내는지, result가 nested `point` 없이 `CurveIntersectionHit` flat
  * shape인지 검증한다. line/segment는 `tLine`/`tCurve`, curve/self는 `tA`/`tB`를 기록한다.
  */
-
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
 import { cubicLineIntersectionsInto } from '../../../src/curve/cubic-line-intersections-into';
@@ -83,7 +82,7 @@ describe('lineCurveIntersectionsInto', () => {
     }
   });
 
-  test('zero direction line은 빈 결과를 낸다', () => {
+  test('dx = dy = 0인 line은 빈 결과를 낸다', () => {
     const out: CurveIntersectionHit[] = [];
     lineCurveIntersectionsInto(out, { ox: 0, oy: 0.5, dx: 0, dy: 0 }, QUADRATIC);
     expect(out).toHaveLength(0);
