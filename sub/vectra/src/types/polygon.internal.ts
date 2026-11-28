@@ -8,6 +8,8 @@ export type PointContainment = 'inside' | 'boundary' | 'outside';
  * 동일한 의미로 사용한다. polygon vertex 분포 또는 circle/ellipse approximation 분포에 모두 적용된다.
  * `startAngle`은 첫 vertex의 각도 (기본 `-Math.PI / 2`, 즉 위쪽 vertex 시작).
  * `clockwise`는 진행 방향 (기본 `true`, SVG y-down clockwise).
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface RegularPolygonOptions {
   /** 첫 vertex의 각도. radian. 기본값 `-Math.PI / 2`. */
@@ -24,6 +26,8 @@ export interface RegularPolygonOptions {
  * `startAngle`은 첫(outer) vertex의 각도 (기본 `-Math.PI / 2`).
  * `clockwise`는 진행 방향 (기본 `true`).
  * `RegularPolygonOptions`와 표면은 동일하지만 별도 정의 (builder별 첫 vertex가 가리키는 의미가 다름).
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface StarOptions {
   /** 첫 outer vertex의 각도. radian. 기본값 `-Math.PI / 2`. */

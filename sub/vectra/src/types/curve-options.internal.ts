@@ -5,6 +5,8 @@ import type { StepCurveMode } from './curve-intersection.internal';
  *
  * `tolerance`는 후보 quadratic을 cubic으로 degree elevation했을 때 원본 cubic control point와의
  * 최대 허용 편차다. 이 값을 넘으면 축소가 실패한다.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface BezierDegreeReductionOptions {
   /**
@@ -27,7 +29,11 @@ export interface FlattenOptions {
   maxRecursion?: number;
 }
 
-/** quadratic Bezier length 수치 적분의 subdivision 수를 담는 옵션 object. */
+/**
+ * quadratic Bezier length 수치 적분의 subdivision 수를 담는 옵션 object.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface LengthOptions {
   /** Gauss-Legendre 적분 구간 분할 수. 기본값: 12 */
   segments?: number;
@@ -64,6 +70,8 @@ export interface QuadraticThroughOptions {
 /**
  * TAtLength 역함수 계산 option type.
  * LengthOptions(segments)를 상속하고, 이진 탐색 수렴 제어 option을 추가한다.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface TAtLengthOptions extends LengthOptions {
   /** 이진 탐색 수렴 threshold. 기본값: 1e-8 */
@@ -75,12 +83,16 @@ export interface TAtLengthOptions extends LengthOptions {
 /**
  * arc-length spaced point sampling option type.
  * 기존 TAtLength 탐색 option(segments / tolerance / maxIterations)을 그대로 재사용한다.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface CurveSpacedPointsOptions extends TAtLengthOptions {}
 
 /**
  * closest point 수치 최적화 option type.
  * 초기 탐색 sample 수와 Newton-Raphson 수렴 제어 option을 담는다.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface ClosestPointOptions {
   /**
@@ -119,13 +131,19 @@ export interface CubicToArcsOptions {
 
 /**
  * arcToCubicInto 분할 option type.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface ArcToCubicOptions {
   /** 분할 최대 각도 (radian). 기본값: Math.PI / 2 */
   maxAngle?: number;
 }
 
-/** curve intersection 수치 kernel option. 미지정 시 기본값이 적용된다. */
+/**
+ * curve intersection 수치 kernel option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface CurveIntersectionOptions {
   /** geometric 거리 허용 오차. 기본값: DEFAULT_EPSILON */
   epsilon?: number;
@@ -137,25 +155,41 @@ export interface CurveIntersectionOptions {
   maxDepth?: number;
 }
 
-/** step polyline/path helper 옵션. */
+/**
+ * step polyline/path helper 옵션.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface StepCurveOptions {
   /** step elbow 위치 mode. 기본값 'middle'. */
   mode?: StepCurveMode;
 }
 
-/** monotone cubic polyline sampling option. */
+/**
+ * monotone cubic polyline sampling option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface MonotonePolylineOptions {
   /** segment당 sample 수. 기본값 16. safe integer가 아니거나 1 미만이면 RangeError. */
   steps?: number;
 }
 
-/** natural cubic spline polyline sampling option. */
+/**
+ * natural cubic spline polyline sampling option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface NaturalSplinePolylineOptions {
   /** segment당 sample 수. 기본값 16. safe integer가 아니거나 1 미만이면 RangeError. */
   steps?: number;
 }
 
-/** Catmull-Rom curve evaluation option. */
+/**
+ * Catmull-Rom curve evaluation option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface CatmullRomOptions {
   /** centripetal 파라미터. 0=uniform, 0.5=centripetal(기본값), 1=chordal */
   alpha?: number;
@@ -177,13 +211,21 @@ export interface CatmullRomPolylineOptions {
   closed?: boolean;
 }
 
-/** Uniform cubic B-Spline curve evaluation option. */
+/**
+ * Uniform cubic B-Spline curve evaluation option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface BSplineOptions {
   /** true이면 closed loop curve. 기본값 false */
   closed?: boolean;
 }
 
-/** Uniform cubic B-Spline polyline sampling option. */
+/**
+ * Uniform cubic B-Spline polyline sampling option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface BSplinePolylineOptions {
   /** 전체 샘플 수. 기본값 32 */
   steps?: number;
@@ -191,7 +233,11 @@ export interface BSplinePolylineOptions {
   closed?: boolean;
 }
 
-/** Cardinal spline curve evaluation option. */
+/**
+ * Cardinal spline curve evaluation option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface CardinalOptions {
   /** tangent scale 계수. 0=full cardinal tangent, 1=zero tangent. 기본값 0 */
   tension?: number;
@@ -199,7 +245,11 @@ export interface CardinalOptions {
   closed?: boolean;
 }
 
-/** Cardinal spline polyline sampling option. */
+/**
+ * Cardinal spline polyline sampling option.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface CardinalPolylineOptions {
   /** tangent scale 계수. 0=full cardinal tangent, 1=zero tangent. 기본값 0 */
   tension?: number;
@@ -223,6 +273,8 @@ export interface CardinalTangentOptions {
  * curve segment-local 균등 샘플링 옵션.
  *
  * sampling 위치는 t = i / (steps - 1), i = 0..steps-1 (endpoint 포함).
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  */
 export interface CurveSampleOptions {
   /**
@@ -253,11 +305,15 @@ export interface SampleTableOptions {
   extrapolate?: boolean;
 }
 
-/** `controlPointsInto` / `controlPoints` 옵션. */
+/**
+ * `controlPointsInto` / `controlPoints` 옵션.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface ControlPointsOptions {
   /**
    * `true`이면 index lookup이 modulo wrapping을 사용한다.
-   * `false`이거나 생략하면 open edge clamp를 사용한다.
+   * `false`이면 open edge clamp를 사용한다.
    * 기본값: `false`.
    */
   closed?: boolean;

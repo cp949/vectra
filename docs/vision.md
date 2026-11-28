@@ -22,9 +22,9 @@ Broad geometry/math function catalog.
 - 재사용 가능한 2D geometry primitive shape와 알고리즘을 제공한다.
 - 실용적인 vector / matrix 수학 함수를 제공한다.
 - distance, intersection, containment, transform, bounds 함수를 폭넓게 제공한다.
-- `{ x, y }`, `[x, y]` 같은 일반적인 좌표 표현과 자연스럽게 호환된다.
-- `Float32Array` 같은 typed-array / array-like 좌표는 현재 공식 입력 contract에 포함하지 않는다.
-- object 결과는 `Into` 함수로 `XYWritable` 같은 외부 writable object에 기록한다.
+- 점은 `{ x, y }` 객체로, 도형은 좌표를 한 객체에 둔 평평한 필드로 받는다.
+- 좌표 배열과 typed array는 호출자가 점 객체로 변환한다.
+- object 결과는 `Into` 함수로 `PointWritable` 같은 외부 writable object에 기록한다.
 - 많은 함수를 제공하되 subpath import와 side-effect-free module 구조를 유지한다.
 - Path, Bezier, polygon boolean, spatial index, editor geometry utility까지 확장한다.
 - Triangle, ellipse, easing, interpolation, arc, Catmull-Rom spline, B-Spline 같은 실제

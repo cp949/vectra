@@ -26,7 +26,7 @@ Broad geometry/math function catalog.
 최종 제품이 넓어져도 `vectra`는 renderer, scene graph, editor state를 소유하지 않고
 geometry/math 계산 catalog로 남는다.
 
-입력은 structural `Like` object와 `XYInput`을 넓게 받고, object 결과는 caller가 제공한
+입력은 `Point`와 도형별 고정 필드 객체를 받는다. object 결과는 caller가 제공한
 writable output에 `Into` 함수로 기록한다. scalar, boolean, enum 결과는 직접 반환한다.
 typed-array / array-like 좌표를 자동으로 해석하지 않는다.
 
@@ -171,7 +171,7 @@ SVG path adapter는 이 domain 위에 올라가야 하며, path/curve foundation
 공식화하지 않는다.
 
 curve domain은 renderer-specific curve 구현을 검증하거나 대체할 수 있는 독립 계산
-기준점이어야 한다. 예를 들어 Catmull-Rom spline은 `readonly XYInput[]` control point를
+기준점이어야 한다. 예를 들어 Catmull-Rom spline은 `readonly Point[]` control point를
 받고, open/closed, uniform/chordal/centripetal parameterization, endpoint handling 같은
 정책을 명시적으로 제공해야 한다.
 

@@ -24,8 +24,8 @@
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │              Internal shared layer (non-public)                           │
-│  src/internal/*.ts        — 좌표·수치 계산 공유 헬퍼       │
-│  src/types/*.internal.ts  — structural 입력·출력 타입               │
+│  src/internal/*.ts        — 좌표·수치 계산 공유 헬퍼                      │
+│  src/types/*.internal.ts  — structural 입력·출력 타입                     │
 │  src/<domain>/*.internal.ts — 도메인 비공개 hot-path 헬퍼                 │
 └───────────────────────────────────────────────────────────────────────────┘
                                     │

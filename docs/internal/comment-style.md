@@ -108,8 +108,8 @@ object result를 기록하는 `Into` 함수는 output 계약을 주석에 드러
  * @param index 읽을 segment index
  */
 export function segmentAtInto(
-  out: FiniteLineWritable<XYWritable, XYWritable>,
-  polyline: PolylineLike,
+  out: SegmentWritable,
+  polyline: Polyline,
   index: number,
 ): boolean {
   // ...
@@ -163,12 +163,12 @@ public type, interface, enum은 이름만으로 도메인 의미가 충분히 �
 프로퍼티 주석이 2개 이상이면 각 프로퍼티 사이에 빈 줄을 둔다.
 
 ```ts
-interface BoundsWritable {
-  /** 왼쪽 위 corner storage */
-  min: XYWritable;
+interface OrientedRectWritable {
+  /** 회전 전 x축 너비 */
+  width: number;
 
-  /** 오른쪽 아래 corner storage */
-  max: XYWritable;
+  /** x축에서 잰 회전 각도. 단위는 radian이다. */
+  angle: number;
 }
 ```
 

@@ -8,6 +8,7 @@ export type { CenterArc, CenterArcWritable } from './arc.internal';
 export interface PointWritable {
   /** x 좌표 */
   x: number;
+
   /** y 좌표 */
   y: number;
 }
@@ -23,8 +24,10 @@ export type Point = Readonly<PointWritable>;
 export interface CircleWritable {
   /** 중심의 x 좌표 */
   cx: number;
+
   /** 중심의 y 좌표 */
   cy: number;
+
   /** 반지름 */
   r: number;
 }
@@ -35,10 +38,13 @@ export type Circle = Readonly<CircleWritable>;
 export interface EllipseWritable {
   /** 중심의 x 좌표 */
   cx: number;
+
   /** 중심의 y 좌표 */
   cy: number;
+
   /** x축 반지름 */
   rx: number;
+
   /** y축 반지름 */
   ry: number;
 }
@@ -50,12 +56,16 @@ export type Ellipse = Readonly<EllipseWritable>;
 export interface RotatedEllipseWritable {
   /** 중심의 x 좌표 */
   cx: number;
+
   /** 중심의 y 좌표 */
   cy: number;
+
   /** 회전 전 x축 반지름 */
   rx: number;
+
   /** 회전 전 y축 반지름 */
   ry: number;
+
   /** x축에서 잰 회전 각도. 단위는 radian이다. */
   rotation: number;
 }
@@ -66,10 +76,13 @@ export type RotatedEllipse = Readonly<RotatedEllipseWritable>;
 export interface SegmentWritable {
   /** 시작점의 x 좌표 */
   x1: number;
+
   /** 시작점의 y 좌표 */
   y1: number;
+
   /** 끝점의 x 좌표 */
   x2: number;
+
   /** 끝점의 y 좌표 */
   y2: number;
 }
@@ -80,12 +93,16 @@ export type Segment = Readonly<SegmentWritable>;
 export interface CapsuleWritable {
   /** 중심 선분 시작점의 x 좌표 */
   x1: number;
+
   /** 중심 선분 시작점의 y 좌표 */
   y1: number;
+
   /** 중심 선분 끝점의 x 좌표 */
   x2: number;
+
   /** 중심 선분 끝점의 y 좌표 */
   y2: number;
+
   /** 중심 선분에서 외곽까지의 반지름 */
   r: number;
 }
@@ -96,14 +113,19 @@ export type Capsule = Readonly<CapsuleWritable>;
 export interface TriangleWritable {
   /** 첫 꼭짓점의 x 좌표 */
   x1: number;
+
   /** 첫 꼭짓점의 y 좌표 */
   y1: number;
+
   /** 둘째 꼭짓점의 x 좌표 */
   x2: number;
+
   /** 둘째 꼭짓점의 y 좌표 */
   y2: number;
+
   /** 셋째 꼭짓점의 x 좌표 */
   x3: number;
+
   /** 셋째 꼭짓점의 y 좌표 */
   y3: number;
 }
@@ -115,10 +137,13 @@ export type Triangle = Readonly<TriangleWritable>;
 export interface RayWritable {
   /** 광선 원점의 x 좌표 */
   ox: number;
+
   /** 광선 원점의 y 좌표 */
   oy: number;
+
   /** 방향 벡터의 x 성분 */
   dx: number;
+
   /** 방향 벡터의 y 성분 */
   dy: number;
 }
@@ -130,10 +155,13 @@ export type Ray = Readonly<RayWritable>;
 export interface InfiniteLineWritable {
   /** 직선 위 기준점의 x 좌표 */
   ox: number;
+
   /** 직선 위 기준점의 y 좌표 */
   oy: number;
+
   /** 방향 벡터의 x 성분 */
   dx: number;
+
   /** 방향 벡터의 y 성분 */
   dy: number;
 }
@@ -144,10 +172,13 @@ export type InfiniteLine = Readonly<InfiniteLineWritable>;
 export interface BoundsWritable {
   /** x축 하한 좌표 */
   minX: number;
+
   /** y축 하한 좌표 */
   minY: number;
+
   /** x축 상한 좌표 */
   maxX: number;
+
   /** y축 상한 좌표 */
   maxY: number;
 }
@@ -159,10 +190,13 @@ export type Bounds = Readonly<BoundsWritable>;
 export interface RectWritable {
   /** 왼쪽 위 꼭짓점의 x 좌표 */
   x: number;
+
   /** 왼쪽 위 꼭짓점의 y 좌표 */
   y: number;
+
   /** x축 너비 */
   width: number;
+
   /** y축 높이 */
   height: number;
 }
@@ -174,12 +208,16 @@ export type Rect = Readonly<RectWritable>;
 export interface OrientedRectWritable {
   /** 중심의 x 좌표 */
   cx: number;
+
   /** 중심의 y 좌표 */
   cy: number;
+
   /** 회전 전 x축 너비 */
   width: number;
+
   /** 회전 전 y축 높이 */
   height: number;
+
   /** x축에서 잰 회전 각도. 단위는 radian이다. */
   angle: number;
 }
@@ -191,8 +229,10 @@ export type OrientedRect = Readonly<OrientedRectWritable>;
 export interface Pose2Writable {
   /** x축 평행 이동량 */
   px: number;
+
   /** y축 평행 이동량 */
   py: number;
+
   /** 회전 각도. 단위는 radian이다. */
   angle: number;
 }
@@ -208,14 +248,19 @@ export type Pose2 = Readonly<Pose2Writable>;
 export interface MatrixWritable {
   /** 변환한 x축 단위 벡터의 x 성분 */
   a: number;
+
   /** 변환한 x축 단위 벡터의 y 성분 */
   b: number;
+
   /** 변환한 y축 단위 벡터의 x 성분 */
   c: number;
+
   /** 변환한 y축 단위 벡터의 y 성분 */
   d: number;
+
   /** x축 평행 이동량 */
   tx: number;
+
   /** y축 평행 이동량 */
   ty: number;
 }
@@ -226,6 +271,7 @@ export type Matrix = Readonly<MatrixWritable>;
 export interface GridCellWritable {
   /** 열 인덱스 */
   col: number;
+
   /** 행 인덱스 */
   row: number;
 }
@@ -236,6 +282,7 @@ export type GridCell = Readonly<GridCellWritable>;
 export interface HexAxialWritable {
   /** axial 좌표의 q축 성분 */
   q: number;
+
   /** axial 좌표의 r축 성분 */
   r: number;
 }
@@ -247,8 +294,10 @@ export type HexAxial = Readonly<HexAxialWritable>;
 export interface HexCubeWritable {
   /** cube 좌표의 q축 성분 */
   q: number;
+
   /** cube 좌표의 r축 성분 */
   r: number;
+
   /** cube 좌표의 s축 성분 */
   s: number;
 }
@@ -259,6 +308,7 @@ export type HexCube = Readonly<HexCubeWritable>;
 export interface HexOffsetWritable {
   /** offset 좌표의 열 인덱스 */
   col: number;
+
   /** offset 좌표의 행 인덱스 */
   row: number;
 }
@@ -270,10 +320,13 @@ export type HexOffset = Readonly<HexOffsetWritable>;
 export interface GridSpec {
   /** 격자 원점의 x 좌표 */
   readonly originX: number;
+
   /** 격자 원점의 y 좌표 */
   readonly originY: number;
+
   /** 한 셀의 x축 너비 */
   readonly cellWidth: number;
+
   /** 한 셀의 y축 높이 */
   readonly cellHeight: number;
 }
@@ -282,10 +335,13 @@ export interface GridSpec {
 export interface HexLayout {
   /** 육각 셀 좌표 (0, 0)의 중심 x 좌표 */
   readonly originX: number;
+
   /** 육각 셀 좌표 (0, 0)의 중심 y 좌표 */
   readonly originY: number;
+
   /** 셀 중심에서 꼭짓점까지의 거리 */
   readonly size: number;
+
   /** 꼭짓점이 위를 향하는지 변이 위를 향하는지 정한다. */
   readonly orientation: HexOrientation;
 }
@@ -294,10 +350,13 @@ export interface HexLayout {
 export interface BoundsPadding {
   /** y축 하한 쪽 확장량 */
   readonly top: number;
+
   /** x축 상한 쪽 확장량 */
   readonly right: number;
+
   /** y축 상한 쪽 확장량 */
   readonly bottom: number;
+
   /** x축 하한 쪽 확장량 */
   readonly left: number;
 }
@@ -305,16 +364,22 @@ export interface BoundsPadding {
 export interface QuadraticCurveWritable {
   /** 2차 Bézier를 구분한다. */
   kind: 'quadratic';
+
   /** 시작점의 x 좌표 */
   x0: number;
+
   /** 시작점의 y 좌표 */
   y0: number;
+
   /** 제어점의 x 좌표 */
   x1: number;
+
   /** 제어점의 y 좌표 */
   y1: number;
+
   /** 끝점의 x 좌표 */
   x2: number;
+
   /** 끝점의 y 좌표 */
   y2: number;
 }
@@ -322,20 +387,28 @@ export interface QuadraticCurveWritable {
 export interface CubicCurveWritable {
   /** 3차 Bézier를 구분한다. */
   kind: 'cubic';
+
   /** 시작점의 x 좌표 */
   x0: number;
+
   /** 시작점의 y 좌표 */
   y0: number;
+
   /** 첫 제어점의 x 좌표 */
   x1: number;
+
   /** 첫 제어점의 y 좌표 */
   y1: number;
+
   /** 둘째 제어점의 x 좌표 */
   x2: number;
+
   /** 둘째 제어점의 y 좌표 */
   y2: number;
+
   /** 끝점의 x 좌표 */
   x3: number;
+
   /** 끝점의 y 좌표 */
   y3: number;
 }

@@ -1119,7 +1119,7 @@
   (`ray-bounds-hit`·`ellipse-rect-overlap` 선례). diagnostics는 inside(yes/no)·point(x,y)·
   drag 안내 3개만 표시한다. boolean 반환이라 `*Into` companion이 없어 그대로 호출하고 render
   hot path에 vectra 할당이 없다. rect⊇rect 완전 포함 `rect-contains-rect`(`containsRect`,
-  RectLike vs RectLike), 삼각형 포함 `triangle-contains-point`, 점을 box로 가두는
+  Rect vs Rect), 삼각형 포함 `triangle-contains-point`, 점을 box로 가두는
   `vec-clamp-region`(`clampInto`), shape-shape overlap 패밀리(`circle-rect-overlap`·
   `ellipse-rect-overlap`·`bounds-bounds-overlap`)와 분리한 "점 ∈ 사각 영역 hit-test boolean"
   단일 개념 예제로, `rect/containsPoint` leaf의 첫 연결이다. diagnostics는 `PIXI.Text`로만
