@@ -1,4 +1,7 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
+/**
+ * polygon isSelfIntersecting과 isSimple의 자기 교차 판정을 확인하는 테스트.
+ * epsilon 임계값과 zero-length edge 판정 분리를 함께 다룬다.
+ */
 import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { isSelfIntersecting } from '../../../src/polygon/is-self-intersecting';

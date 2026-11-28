@@ -1,4 +1,7 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
+/**
+ * polygon boundingCircleInto와 boundingCircle의 외접원 출력을 확인하는 테스트.
+ * empty와 degenerate 입력, 결과 정확도, out 기록 방식을 다룬다.
+ */
 import type { CircleWritable, Polygon, PointWritable } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { boundingCircle } from '../../../src/polygon/bounding-circle';
@@ -18,7 +21,10 @@ const UNIT_SQUARE: Polygon = [0, 0, 1, 0, 1, 1, 0, 1];
 // 정삼각형 (변 길이 2, 중심 원점)
 const EQ_TRIANGLE: Polygon = [0, 2, -Math.sqrt(3), -1, Math.sqrt(3), -1];
 
-/** 모든 점이 원 안에 있는지 검증하는 helper */
+/**
+ * polygon의 모든 vertex가 허용 오차 안에서 원 안에 있는지 확인한다.
+ * 근사 외접원의 정확한 반지름 대신 포함 조건을 검증할 때 쓴다.
+ */
 function allPointsInCircle(polygon: Polygon, cx: number, cy: number, r: number, tol = 1e-9): boolean {
   for (let i = 0; i < polygon.length; i += 2) {
     const px = polygon[i];
@@ -30,6 +36,10 @@ function allPointsInCircle(polygon: Polygon, cx: number, cy: number, r: number, 
   return true;
 }
 
+/**
+ * boundingCircleInto에 넘길 0 circle seed를 만든다.
+ * 테스트마다 새 객체를 써서 이전 기록이 섞이지 않게 한다.
+ */
 function makeCircleOut(): CircleWritable {
   return { cx: 0, cy: 0, r: 0 };
 }

@@ -1,4 +1,7 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
+/**
+ * polygon classifyPoint의 inside, boundary, outside 분류를 확인하는 테스트.
+ * empty와 degenerate 입력, epsilon 검증과 경계 허용 오차를 함께 다룬다.
+ */
 import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { classifyPoint } from '../../../src/polygon/classify-point';

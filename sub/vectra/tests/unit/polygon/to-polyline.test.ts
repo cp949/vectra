@@ -1,9 +1,8 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
-import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 /**
  * polygon toPolyline* bridge helper unit test.
  */
 
+import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { toPolyline } from '../../../src/polygon/to-polyline';
 import { toPolylineInto } from '../../../src/polygon/to-polyline-into';

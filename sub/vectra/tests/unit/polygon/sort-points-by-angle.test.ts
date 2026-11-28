@@ -1,9 +1,8 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
-import type { Polygon } from '../../../src/types/flat-shapes.internal';
 /**
  * polygon sortPointsByAngle* adapter helper unit test.
  */
 
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { sortPointsByAngle } from '../../../src/polygon/sort-points-by-angle';
 import { sortPointsByAngleInto } from '../../../src/polygon/sort-points-by-angle-into';

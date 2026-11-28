@@ -222,7 +222,11 @@ export type CubicCurve = Readonly<CubicCurveWritable>;
 export type Curve = QuadraticCurve | CubicCurve;
 export type CurveWritable = QuadraticCurveWritable | CubicCurveWritable;
 
-/** 닫힌 ring의 좌표를 x, y 순으로 번갈아 저장한다. */
+/**
+ * 닫힌 ring의 좌표를 x, y 순으로 번갈아 저장한다.
+ *
+ * 길이는 짝수다. 홀수 길이는 검사하지 않으며 결과를 정의하지 않는다.
+ */
 export type Polygon = readonly number[];
 export type PolygonWritable = number[];
 

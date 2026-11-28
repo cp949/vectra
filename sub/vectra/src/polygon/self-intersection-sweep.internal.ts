@@ -78,7 +78,7 @@ const LENGTH_PAD_RATE = DEFAULT_EPSILON + (CROSSING_PAD_FACTOR * Number.EPSILON)
 /**
  * 넓힌 AABB를 x로 정렬해 후보 쌍만 `lineFamilyIntersects`로 판정한다.
  *
- * `edges[i]`는 `pts[i]` → `pts[(i + 1) % n]` segment다. 인접 edge 쌍은 건너뛴다(첫 edge와 마지막 edge 포함).
+ * `edges[i]`는 ring의 vertex i → vertex `(i + 1) % n` segment다. 인접 edge 쌍은 건너뛴다(첫 edge와 마지막 edge 포함).
  * 반환값이 `undefined`이면 sweep을 쓸 수 없는 입력이다. caller가 전수 비교로 폴백한다.
  *
  * @param edges ring의 edge param. 길이 4 이상

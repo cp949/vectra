@@ -1,4 +1,6 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
+/**
+ * polygon 변환 테스트가 함께 쓰는 삼각형과 정사각형 fixture를 모은다.
+ */
 import type { Polygon } from '../../../src/types/flat-shapes.internal';
 
 export const TRIANGLE: Polygon = [0, 0, 4, 0, 0, 3];

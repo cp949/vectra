@@ -1,9 +1,8 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
-import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 /**
  * polygon pointsAlongEdges* bridge helper unit test.
  */
 
+import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { pointsAlongEdges } from '../../../src/polygon/points-along-edges';
 import { pointsAlongEdgesInto } from '../../../src/polygon/points-along-edges-into';

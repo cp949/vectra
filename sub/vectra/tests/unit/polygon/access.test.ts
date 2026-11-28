@@ -1,9 +1,8 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
-import type { SegmentWritable } from '../../../src/types/flat-shapes.internal';
 /**
  * polygon access 함수를 검증하는 테스트.
  * bounds, centroid, edgeAt, pointAtIndex 그리고 각 Into 변형의 정상 동작, 경계값, 실패 경로를 다룬다.
  */
+import type { SegmentWritable } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { bounds } from '../../../src/polygon/bounds';
 import { centroid } from '../../../src/polygon/centroid';

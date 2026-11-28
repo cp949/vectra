@@ -1,11 +1,10 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
-import type { Polygon } from '../../../src/types/flat-shapes.internal';
 /**
  * polygon light query unit test.
  *
  * `polygonWindingNumber`(signed fill-rule scalar)와 `isConvex`(light boolean)의
  * inside/outside/boundary, CW/CCW sign, repeated/collinear/tiny/self-intersecting 정책을 고정한다.
  */
+import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { isConvex } from '../../../src/polygon/is-convex';
 import { polygonWindingNumber } from '../../../src/polygon/polygon-winding-number';

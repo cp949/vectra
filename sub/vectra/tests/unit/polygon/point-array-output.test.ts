@@ -1,4 +1,7 @@
-/** 다각형 계산과 출력 계약을 검증한다. */
+/**
+ * polygon translatePointsInto, transformPointsInto, reversePointsInto의 좌표 배열 출력을 확인하는 테스트.
+ * 같은 배열을 입력과 출력으로 쓰는 경우를 함께 다룬다.
+ */
 import type { Matrix, Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { reversePointsInto } from '../../../src/polygon/reverse-points-into';

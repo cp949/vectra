@@ -5,7 +5,7 @@ import { SWEEP_MIN_VERTEX_COUNT, sweepRingSelfIntersects } from './self-intersec
 /**
  * closed ring의 non-adjacent edge pair가 교차/접촉/overlap하는지 판정한다.
  *
- * edge i는 `polygon[i]` → `polygon[(i + 1) % n]` segment다(implicit closed ring). ring에서 인접한 edge
+ * edge i는 vertex i `(polygon[2i], polygon[2i + 1])` → vertex `(i + 1) % n` segment다(implicit closed ring). ring에서 인접한 edge
  * pair는 정상적으로 한 vertex를 공유하므로 검사에서 제외한다. 첫 edge와 마지막 edge도 첫 vertex를
  * 공유하는 인접 edge다. non-adjacent edge pair는 단일 교점, endpoint touch, collinear overlap을
  * 모두 self-intersection으로 본다. repair나 normalize는 하지 않으므로, vertex가 4개 이상인 ring에서
@@ -58,7 +58,7 @@ export function ringSelfIntersects(polygon: Polygon, epsilon: number | undefined
 /**
  * implicit closed ring에 zero-length edge가 있는지 판정한다.
  *
- * edge i는 `polygon[i]` → `polygon[(i + 1) % n]` segment다. epsilon은 길이(거리) 단위 임계값이며,
+ * edge i는 vertex i `(polygon[2i], polygon[2i + 1])` → vertex `(i + 1) % n` segment다. epsilon은 길이(거리) 단위 임계값이며,
  * edge length squared가 `epsilon * epsilon` 이하면 zero-length로 본다. caller는 cross product
  * 단위 epsilon을 그대로 넘기지 않는다. `isSimple`은 segment domain의 `isZeroLength`처럼 고정
  * DEFAULT_EPSILON 길이 임계값으로 호출한다.
