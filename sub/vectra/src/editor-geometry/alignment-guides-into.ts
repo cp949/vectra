@@ -2,9 +2,7 @@
  * alignmentGuidesInto — bounds 배열에 대한 alignment guide line 산출.
  */
 
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import type { AlignmentGuideResult, AlignmentKind } from './types';
 
 /**
@@ -16,14 +14,14 @@ import type { AlignmentGuideResult, AlignmentKind } from './types';
  * itemIndices는 insertion order(원본 bounds 배열 index 오름차순).
  * NaN/Infinity 좌표는 silent propagation(IEEE-754 동작).
  *
- * @param out guide 결과를 기록할 writable 배열. 호출 시 초기화한다.
+ * @param out guide 결과를 기록할 출력 배열 { axis, value, kind, itemIndices }[]. 호출 시 초기화한다.
  * @param bounds alignment 대상 bounds 배열
  * @param kind alignment 종류
  * @returns 기록된 guide 수
  */
 export function alignmentGuidesInto(
   out: AlignmentGuideResult[],
-  bounds: readonly BoundsLike[],
+  bounds: readonly Bounds[],
   kind: AlignmentKind
 ): number {
   out.length = 0;
@@ -42,12 +40,10 @@ export function alignmentGuidesInto(
 
   for (let i = 0; i < bounds.length; i++) {
     const b = bounds[i];
-    const minPt = readBoundsMin(b);
-    const maxPt = readBoundsMax(b);
-    const minX = readX(minPt);
-    const minY = readY(minPt);
-    const maxX = readX(maxPt);
-    const maxY = readY(maxPt);
+    const minX = b.minX;
+    const minY = b.minY;
+    const maxX = b.maxX;
+    const maxY = b.maxY;
 
     let value: number;
     if (kind === 'left') {

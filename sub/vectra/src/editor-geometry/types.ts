@@ -1,10 +1,10 @@
 /**
  * editor-geometry domain 공용 타입.
  *
- * barrel(index.ts)에서 re-export하지 않는다. 각 leaf module이 직접 import한다.
+ * 공개 함수가 공유하는 핸들, 스냅, 정렬 및 제약 타입을 정의한다.
  */
 
-import type { BoundsLike, XYInput, XYObjectWritable, XYWritable } from '../types';
+import type { Bounds, Point, PointWritable } from '../types/flat-shapes.internal';
 
 // ---------------------------------------------------------------------------
 // Handle / Anchor 타입
@@ -32,14 +32,12 @@ export type AnchorKind =
  * handle id와 좌표를 묶은 collection 원소.
  *
  * resizeHandlesInto / rotateHandlesInto가 caller writable 배열에 push하는 단위.
- * Point는 caller-side object 다형성을 보존하기 위해 generic으로 둔다.
- * handleAtPoint 같은 read-only consumer를 위해 constraint를 XYInput으로 열어 둔다.
  */
-export interface HandlePoint<Point extends XYInput = XYObjectWritable> {
+export interface HandlePoint {
   /** handle 식별자 */
   id: HandleId;
   /** handle 좌표를 기록한 caller-side writable point */
-  point: Point;
+  point: PointWritable;
 }
 
 /** snap이 발생한 원인 출처 */
@@ -125,11 +123,11 @@ export interface DistributionGuideResult {
  * distributeEqually 결과 1건. caller가 그대로 bounds 이동에 사용할 수 있도록
  * item index와 target top-left 좌표를 기록한다. offset이 아니라 absolute target position이다.
  */
-export interface DistributeTarget<Point extends XYWritable = XYObjectWritable> {
+export interface DistributeTarget {
   /** 원본 bounds 배열에서의 index */
   index: number;
   /** distribution 결과로 이동해야 할 bounds의 새 min(top-left) 좌표 */
-  point: Point;
+  point: PointWritable;
 }
 
 // ---------------------------------------------------------------------------
@@ -143,15 +141,15 @@ export interface DistributeTarget<Point extends XYWritable = XYObjectWritable> {
  *   `'auto'` → |dx| vs |dy|를 비교해 우세 축을 자동 결정한다. dx===dy===0이면 to를 그대로 기록한다.
  * - `containIn`: 이 bounds 밖으로 나가지 않도록 to 좌표를 클램프한다.
  * - `size`: containIn 클램프 시 드래그 대상의 크기를 고려한다.
- *   제공 시 `to.x + size.width <= containIn.max.x` 등 전체 영역이 bounds 안에 들어오도록 보정.
+ *   제공 시 `to.x + size.width <= containIn.maxX` 등 전체 영역이 bounds 안에 들어오도록 보정.
  */
 export interface DragConstraintOptions {
-  /** 이동 축 잠금. 'horizontal' | 'vertical' | 'auto' */
-  axisLock?: 'horizontal' | 'vertical' | 'auto';
-  /** to 좌표를 클램프할 bounds */
-  containIn?: BoundsLike;
-  /** containIn 클램프 시 드래그 대상 크기 */
-  size?: { width: number; height: number };
+  /** 이동 축 잠금. undefined면 잠그지 않는다. 'horizontal' | 'vertical' | 'auto' */
+  axisLock: 'horizontal' | 'vertical' | 'auto' | undefined;
+  /** to 좌표를 클램프할 경계. undefined면 클램프하지 않는다. */
+  containIn: Bounds | undefined;
+  /** containIn 클램프 시 드래그 대상 크기. undefined면 크기를 고려하지 않는다. */
+  size: { width: number; height: number } | undefined;
 }
 
 /**
@@ -164,25 +162,25 @@ export interface DragConstraintOptions {
  * - `maxWidth` / `maxHeight`: 각 축 최댓값. 기본값 Infinity.
  */
 export interface ResizeConstraintOptions {
-  aspectLocked?: boolean;
-  minWidth?: number;
-  minHeight?: number;
-  maxWidth?: number;
-  maxHeight?: number;
+  aspectLocked: boolean;
+  minWidth: number;
+  minHeight: number;
+  maxWidth: number;
+  maxHeight: number;
 }
 
 /**
  * constrainRotate 옵션.
  *
- * - `step`: 지정 step 단위로 snap한다 (radian). 미지정 시 step snap 비활성.
- * - `snapAngles`: 특정 각도 목록 중 tolerance 이내 가장 가까운 값으로 snap한다 (radian).
+ * - `step`: 지정 step 단위로 snap한다 (radian). undefined면 step snap 비활성.
+ * - `snapAngles`: 빈 목록이면 건너뛰고, 특정 각도 목록 중 tolerance 이내 가장 가까운 값으로 snap한다 (radian).
  *   `step`과 함께 지정하면 둘 중 더 가까운 후보를 반환한다.
  * - `tolerance`: snap 발동 최대 거리 (absolute radian). caller 제공 필수.
- *   미지정 또는 양의 유한수가 아니면 snap 없이 입력 각도를 그대로 반환한다.
+ *   양의 유한수가 아니면 snap 없이 입력 각도를 그대로 반환한다.
  */
 export interface RotateConstraintOptions {
-  step?: number;
-  snapAngles?: readonly number[];
+  step: number | undefined;
+  snapAngles: readonly number[];
   /** caller가 제공하는 필수 tolerance. 라이브러리 기본값 없음 */
   tolerance: number;
 }
@@ -198,13 +196,13 @@ export interface RotateConstraintOptions {
  */
 export interface DrawingBoundsOptions {
   /** call-site 의미 태그. 산식에 영향을 주지 않는 no-op이다. */
-  shape?: 'rect' | 'ellipse';
+  shape: 'rect' | 'ellipse' | undefined;
 
   /** true면 square bounds로 보정한다. 기본값 false. */
-  aspectLocked?: boolean;
+  aspectLocked: boolean;
 
   /** true면 origin을 center로, false면 corner로 본다. 기본값 false. */
-  fromCenter?: boolean;
+  fromCenter: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -221,11 +219,11 @@ export interface DrawingBoundsOptions {
  */
 export interface TransformFromHandlesInput {
   /** 원본 unrotated AABB */
-  bounds: BoundsLike;
+  bounds: Bounds;
   /** 드래그한 resize handle 식별자 */
   handle: ResizeHandleId;
   /** handle이 이동한 새 위치 (world 좌표) */
-  to: XYInput;
+  to: Point;
 }
 
 /**
@@ -237,7 +235,7 @@ export interface TransformFromHandlesInput {
  */
 export interface TransformFromHandlesOptions {
   /** true면 corner handle을 등비례로 보정 (edge handle은 무시) */
-  aspectLocked?: boolean;
-  /** anchor override. 미지정이면 handle 대각 위치를 사용 */
-  fromAnchor?: AnchorKind;
+  aspectLocked: boolean;
+  /** anchor override. undefined면 handle 대각 위치를 사용 */
+  fromAnchor: AnchorKind | undefined;
 }

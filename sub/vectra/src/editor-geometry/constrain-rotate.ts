@@ -49,7 +49,7 @@ export function constrainRotate(angle: number, options: RotateConstraintOptions)
   }
 
   // snapAngles 후보 계산
-  if (snapAngles !== undefined && snapAngles.length > 0) {
+  if (snapAngles.length > 0) {
     for (const sa of snapAngles) {
       const dist = Math.abs(angle - sa);
       if (dist <= tolerance && dist < bestDistance) {

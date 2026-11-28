@@ -1,4 +1,4 @@
-import type { BoundsLike, BoundsWritable } from '../types';
+import type { Bounds, BoundsWritable } from '../types/flat-shapes.internal';
 import { aggregateBoundsInto } from './bounds-aggregate.internal';
 
 /**
@@ -9,9 +9,9 @@ import { aggregateBoundsInto } from './bounds-aggregate.internal';
  * inverted bounds(min > max)는 그대로 사용한다. caller가 사전 정규화한다고 가정한다.
  * NaN/Infinity 좌표는 silent propagation(IEEE-754 동작).
  *
- * @param out union bounds를 기록할 writable output
+ * @param out 결과 경계를 기록할 출력 { minX, minY, maxX, maxY }
  * @param bounds union을 계산할 bounds 입력 배열
  */
-export function groupBoundsInto<Out extends BoundsWritable>(out: Out, bounds: readonly BoundsLike[]): boolean {
+export function groupBoundsInto(out: BoundsWritable, bounds: readonly Bounds[]): boolean {
   return aggregateBoundsInto(out, bounds);
 }

@@ -2,7 +2,7 @@
  * distributeEqually — bounds 배열의 균등 분배 target collection을 새 배열로 반환하는 companion.
  */
 
-import type { BoundsLike, XYObjectWritable } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import { distributeEquallyInto } from './distribute-equally-into';
 import type { DistributeTarget, DistributionKind } from './types';
 
@@ -23,11 +23,8 @@ import type { DistributeTarget, DistributionKind } from './types';
  * @param kind distribution 종류
  * @returns 중간 item target 배열
  */
-export function distributeEqually(
-  bounds: readonly BoundsLike[],
-  kind: DistributionKind
-): DistributeTarget<XYObjectWritable>[] {
-  const out: DistributeTarget<XYObjectWritable>[] = [];
+export function distributeEqually(bounds: readonly Bounds[], kind: DistributionKind): DistributeTarget[] {
+  const out: DistributeTarget[] = [];
   distributeEquallyInto(out, bounds, kind, () => ({ x: 0, y: 0 }));
   return out;
 }

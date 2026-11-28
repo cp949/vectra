@@ -1,45 +1,36 @@
+/** 두 경계의 중심을 평평한 선분으로 연결하는지 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { connectorLine, connectorLineInto } from '../../../src/editor-geometry';
 
 describe('connectorLineInto', () => {
   test('두 bounds 중심을 잇는 segment를 기록한다', () => {
-    const out = { a: { x: 0, y: 0 }, b: { x: 0, y: 0 } };
+    const out = { x1: 0, y1: 0, x2: 0, y2: 0 };
 
     const result = connectorLineInto(
       out,
-      { min: { x: 0, y: 2 }, max: { x: 10, y: 8 } },
-      { min: { x: -4, y: -6 }, max: { x: 0, y: 2 } }
+      { minX: 0, minY: 2, maxX: 10, maxY: 8 },
+      { minX: -4, minY: -6, maxX: 0, maxY: 2 }
     );
 
     expect(result).toBe(out);
     expect(out).toEqual({
-      a: { x: 5, y: 5 },
-      b: { x: -2, y: -2 },
+      x1: 5,
+      y1: 5,
+      x2: -2,
+      y2: -2,
     });
-  });
-
-  test('tuple endpoint output과 input aliasing을 보존한다', () => {
-    const from = { min: [0, 0] as [number, number], max: [4, 8] as [number, number] };
-    const to = { min: from.min, max: [10, 10] as [number, number] };
-    const out = { a: from.min, b: to.max };
-
-    connectorLineInto(out, from, to);
-
-    expect(out.a).toEqual([2, 4]);
-    expect(out.b).toEqual([5, 5]);
   });
 });
 
 describe('connectorLine', () => {
   test('plain segment object를 새로 반환한다', () => {
-    const result = connectorLine(
-      { min: { x: 0, y: 0 }, max: { x: 2, y: 2 } },
-      { min: { x: 4, y: 6 }, max: { x: 8, y: 10 } }
-    );
+    const result = connectorLine({ minX: 0, minY: 0, maxX: 2, maxY: 2 }, { minX: 4, minY: 6, maxX: 8, maxY: 10 });
 
     expect(result).toEqual({
-      a: { x: 1, y: 1 },
-      b: { x: 6, y: 8 },
+      x1: 1,
+      y1: 1,
+      x2: 6,
+      y2: 8,
     });
   });
 });

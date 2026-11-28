@@ -2,7 +2,7 @@
  * resizeHandles — bounds의 8개 resize handle 좌표 collection을 새 배열로 반환하는 companion.
  */
 
-import type { BoundsLike, XYObjectWritable } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import { resizeHandlesInto } from './resize-handles-into';
 import type { HandlePoint } from './types';
 
@@ -20,8 +20,8 @@ import type { HandlePoint } from './types';
  * @param bounds 대상 unrotated AABB
  * @returns handle 좌표 배열 (항상 8개)
  */
-export function resizeHandles(bounds: BoundsLike): HandlePoint<XYObjectWritable>[] {
-  const out: HandlePoint<XYObjectWritable>[] = [];
+export function resizeHandles(bounds: Bounds): HandlePoint[] {
+  const out: HandlePoint[] = [];
   resizeHandlesInto(out, bounds, () => ({ x: 0, y: 0 }));
   return out;
 }

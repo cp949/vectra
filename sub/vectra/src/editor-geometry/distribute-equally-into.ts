@@ -2,9 +2,7 @@
  * distributeEquallyInto — bounds 배열을 균등 분배한 target top-left 산출.
  */
 
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BoundsLike, XYWritable } from '../types';
+import type { Bounds, PointWritable } from '../types/flat-shapes.internal';
 import type { DistributeTarget, DistributionKind } from './types';
 
 /**
@@ -20,17 +18,17 @@ import type { DistributeTarget, DistributionKind } from './types';
  * degenerate bounds와 NaN/Infinity 좌표는 silent propagation(IEEE-754 동작).
  * gap-x/y에서 items가 겹치면 equalGap이 음수가 될 수 있다.
  *
- * @param out target 결과를 기록할 writable 배열. 호출 시 초기화한다.
+ * @param out 목표 위치를 기록할 출력 배열 { index, point }[]. 호출 시 초기화한다.
  * @param bounds distribution 대상 bounds 배열
  * @param kind distribution 종류
  * @param factory 각 result point storage를 생성하는 caller-provided factory
  * @returns 기록된 target 수
  */
-export function distributeEquallyInto<Point extends XYWritable>(
-  out: DistributeTarget<Point>[],
-  bounds: readonly BoundsLike[],
+export function distributeEquallyInto(
+  out: DistributeTarget[],
+  bounds: readonly Bounds[],
   kind: DistributionKind,
-  factory: () => Point
+  factory: () => PointWritable
 ): number {
   out.length = 0;
 
@@ -45,12 +43,10 @@ export function distributeEquallyInto<Point extends XYWritable>(
 
   for (let i = 0; i < bounds.length; i++) {
     const b = bounds[i];
-    const minPt = readBoundsMin(b);
-    const maxPt = readBoundsMax(b);
-    const minVal = isX ? readX(minPt) : readY(minPt);
-    const maxVal = isX ? readX(maxPt) : readY(maxPt);
+    const minVal = isX ? b.minX : b.minY;
+    const maxVal = isX ? b.maxX : b.maxY;
     // 이동하지 않는 축 좌표(x축 분배 시 min.y, y축 분배 시 min.x)
-    const otherMin = isX ? readY(minPt) : readX(minPt);
+    const otherMin = isX ? b.minY : b.minX;
     entries.push({ idx: i, minVal, maxVal, otherMin });
   }
 
@@ -110,11 +106,8 @@ export function distributeEquallyInto<Point extends XYWritable>(
     const point = factory();
 
     // 분배 축에 target 좌표를 기록하고, 나머지 축은 원래 min 좌표를 유지한다
-    if (isX) {
-      writeXY(point, targetAxis, e.otherMin);
-    } else {
-      writeXY(point, e.otherMin, targetAxis);
-    }
+    point.x = isX ? targetAxis : e.otherMin;
+    point.y = isX ? e.otherMin : targetAxis;
 
     out.push({ index: e.idx, point });
   }

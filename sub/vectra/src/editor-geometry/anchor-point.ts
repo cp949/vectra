@@ -2,8 +2,8 @@
  * anchorPoint — bounds의 anchor 좌표를 plain object로 반환한다.
  */
 
-import type { BoundsLike } from '../types';
-import { anchorX, anchorY, readBoundsCoords } from './handle-position.internal';
+import type { Bounds } from '../types/flat-shapes.internal';
+import { anchorX, anchorY, boundsWithMidpoint } from './handle-position.internal';
 import type { AnchorKind } from './types';
 
 /**
@@ -18,8 +18,8 @@ import type { AnchorKind } from './types';
  * @param anchor 9-point anchor 식별자
  * @returns anchor 좌표 object. 현재 정책에서 항상 정의됨.
  */
-export function anchorPoint(bounds: BoundsLike, anchor: AnchorKind): { x: number; y: number } | undefined {
-  const { minX, minY, maxX, maxY, midX, midY } = readBoundsCoords(bounds);
+export function anchorPoint(bounds: Bounds, anchor: AnchorKind): { x: number; y: number } | undefined {
+  const { minX, minY, maxX, maxY, midX, midY } = boundsWithMidpoint(bounds);
   return {
     x: anchorX(anchor, minX, maxX, midX),
     y: anchorY(anchor, minY, maxY, midY),

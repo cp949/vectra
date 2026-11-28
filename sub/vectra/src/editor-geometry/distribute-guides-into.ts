@@ -2,9 +2,7 @@
  * distributeGuidesInto — bounds 배열에 대한 distribution guide line 산출.
  */
 
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import type { DistributionGuideResult, DistributionKind } from './types';
 
 /**
@@ -16,14 +14,14 @@ import type { DistributionGuideResult, DistributionKind } from './types';
  * 빈 입력 또는 item이 2개 미만이면 0 반환 + 빈 out.
  * NaN/Infinity 좌표는 silent propagation(IEEE-754 동작).
  *
- * @param out guide 결과를 기록할 writable 배열. 호출 시 초기화한다.
+ * @param out guide 결과를 기록할 출력 배열 { axis, value, kind, itemIndices }[]. 호출 시 초기화한다.
  * @param bounds distribution 대상 bounds 배열
  * @param kind distribution 종류
  * @returns 기록된 guide 수
  */
 export function distributeGuidesInto(
   out: DistributionGuideResult[],
-  bounds: readonly BoundsLike[],
+  bounds: readonly Bounds[],
   kind: DistributionKind
 ): number {
   out.length = 0;
@@ -40,10 +38,8 @@ export function distributeGuidesInto(
 
   for (let i = 0; i < bounds.length; i++) {
     const b = bounds[i];
-    const minPt = readBoundsMin(b);
-    const maxPt = readBoundsMax(b);
-    const minVal = isX ? readX(minPt) : readY(minPt);
-    const maxVal = isX ? readX(maxPt) : readY(maxPt);
+    const minVal = isX ? b.minX : b.minY;
+    const maxVal = isX ? b.maxX : b.maxY;
     entries.push({ idx: i, minVal, maxVal });
   }
 

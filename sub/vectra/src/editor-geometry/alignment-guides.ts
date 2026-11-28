@@ -2,7 +2,7 @@
  * alignmentGuides — bounds 배열의 alignment guide line collection을 새 배열로 반환하는 companion.
  */
 
-import type { BoundsLike } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import { alignmentGuidesInto } from './alignment-guides-into';
 import type { AlignmentGuideResult, AlignmentKind } from './types';
 
@@ -20,7 +20,7 @@ import type { AlignmentGuideResult, AlignmentKind } from './types';
  * @param kind alignment 종류
  * @returns alignment guide 결과 배열
  */
-export function alignmentGuides(bounds: readonly BoundsLike[], kind: AlignmentKind): AlignmentGuideResult[] {
+export function alignmentGuides(bounds: readonly Bounds[], kind: AlignmentKind): AlignmentGuideResult[] {
   const out: AlignmentGuideResult[] = [];
   alignmentGuidesInto(out, bounds, kind);
   return out;

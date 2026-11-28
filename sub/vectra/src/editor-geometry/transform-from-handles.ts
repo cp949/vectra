@@ -1,12 +1,12 @@
 /**
- * transformFromHandles — handle drag 결과를 plain MatrixLike object로 반환하는 companion.
+ * transformFromHandles — handle drag 결과를 plain Matrix object로 반환하는 companion.
  */
 
 import { transformFromHandlesInto } from './transform-from-handles-into';
 import type { TransformFromHandlesInput, TransformFromHandlesOptions } from './types';
 
 /**
- * handle drag 결과를 plain MatrixLike object로 반환한다.
+ * handle drag 결과를 plain Matrix object로 반환한다.
  *
  * `transformFromHandlesInto`의 allocation companion이다.
  * 실패(degenerate bounds, NaN 입력) 시 `undefined`를 반환한다.

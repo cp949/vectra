@@ -2,7 +2,7 @@
  * rotateHandles — bounds의 rotate handle 좌표 collection을 새 배열로 반환하는 companion.
  */
 
-import type { BoundsLike, XYObjectWritable } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import { type RotateHandlesOptions, rotateHandlesInto } from './rotate-handles-into';
 import type { HandlePoint } from './types';
 
@@ -21,8 +21,8 @@ import type { HandlePoint } from './types';
  * @param options rotate handle 위치 옵션
  * @returns rotate handle 좌표 배열 (항상 1개)
  */
-export function rotateHandles(bounds: BoundsLike, options?: RotateHandlesOptions): HandlePoint<XYObjectWritable>[] {
-  const out: HandlePoint<XYObjectWritable>[] = [];
+export function rotateHandles(bounds: Bounds, options?: RotateHandlesOptions): HandlePoint[] {
+  const out: HandlePoint[] = [];
   rotateHandlesInto(out, bounds, () => ({ x: 0, y: 0 }), options);
   return out;
 }

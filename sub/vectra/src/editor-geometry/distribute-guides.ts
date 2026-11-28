@@ -2,7 +2,7 @@
  * distributeGuides — bounds 배열의 distribution guide line collection을 새 배열로 반환하는 companion.
  */
 
-import type { BoundsLike } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import { distributeGuidesInto } from './distribute-guides-into';
 import type { DistributionGuideResult, DistributionKind } from './types';
 
@@ -20,7 +20,7 @@ import type { DistributionGuideResult, DistributionKind } from './types';
  * @param kind distribution 종류
  * @returns distribution guide 결과 배열
  */
-export function distributeGuides(bounds: readonly BoundsLike[], kind: DistributionKind): DistributionGuideResult[] {
+export function distributeGuides(bounds: readonly Bounds[], kind: DistributionKind): DistributionGuideResult[] {
   const out: DistributionGuideResult[] = [];
   distributeGuidesInto(out, bounds, kind);
   return out;

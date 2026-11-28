@@ -2,37 +2,35 @@
  * constrainDrawingBoundsInto — drag origin과 pointer에서 drawing bounds를 산출해 out에 기록한다.
  */
 
-import { readX, readY, writeXY } from '../internal/xy';
-import type { BoundsWritable, XYInput, XYWritable } from '../types';
+import type { BoundsWritable, Point } from '../types/flat-shapes.internal';
 import type { DrawingBoundsOptions } from './types';
 
 /**
  * drag 시작점 origin과 현재 pointer에서 drawing bounds를 산출해 out에 기록하고 out을 반환한다.
  *
- * 결과는 항상 normalized bounds(`min.x <= max.x`, `min.y <= max.y`)다.
+ * 결과는 항상 normalized bounds(`minX <= maxX`, `minY <= maxY`)다.
  * `fromCenter` 기본값 false: origin은 corner, pointer는 opposite corner.
  * `fromCenter` true: origin은 center, pointer는 half-extent 방향을 정한다.
  * `aspectLocked` 기본값 false: true면 size를 `max(abs(dx), abs(dy))`로 맞춰 square로 보정하고
  * pointer 방향 sign을 유지한다. `Math.sign(0) === 0`이므로 해당 축 delta가 0이면 그 축은 origin으로 collapse한다.
  * `shape`는 call-site 의미 태그일 뿐 산식에 영향을 주지 않는다.
  * NaN/Infinity 입력은 silent propagation. throw 없음.
- * out.min / out.max가 origin / pointer와 같은 object여도 안전하다. 입력 x/y를 모두 읽은 뒤 기록한다.
  *
- * @param out bounds를 기록할 writable output
+ * @param out 결과 경계를 기록할 출력 { minX, minY, maxX, maxY }
  * @param origin drag 시작 좌표. fromCenter=false면 corner, true면 center
  * @param pointer 현재 pointer 좌표. opposite corner 또는 half-extent 방향
  * @param options shape, aspectLocked, fromCenter 옵션
  */
-export function constrainDrawingBoundsInto<Out extends BoundsWritable<XYWritable, XYWritable>>(
+export function constrainDrawingBoundsInto<Out extends BoundsWritable>(
   out: Out,
-  origin: XYInput,
-  pointer: XYInput,
+  origin: Point,
+  pointer: Point,
   options?: DrawingBoundsOptions
 ): Out {
-  const ox = readX(origin);
-  const oy = readY(origin);
-  const px = readX(pointer);
-  const py = readY(pointer);
+  const ox = origin.x;
+  const oy = origin.y;
+  const px = pointer.x;
+  const py = pointer.y;
 
   const dx = px - ox;
   const dy = py - oy;
@@ -70,7 +68,9 @@ export function constrainDrawingBoundsInto<Out extends BoundsWritable<XYWritable
     maxY = Math.max(oy, oppY);
   }
 
-  writeXY(out.min, minX, minY);
-  writeXY(out.max, maxX, maxY);
+  out.minX = minX;
+  out.minY = minY;
+  out.maxX = maxX;
+  out.maxY = maxY;
   return out;
 }

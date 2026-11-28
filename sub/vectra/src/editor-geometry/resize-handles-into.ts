@@ -2,9 +2,8 @@
  * resizeHandlesInto — bounds의 8개 resize handle 좌표를 out 배열에 기록한다.
  */
 
-import { writeXY } from '../internal/xy';
-import type { BoundsLike, XYWritable } from '../types';
-import { RESIZE_HANDLE_ORDER, readBoundsCoords, resizeHandleX, resizeHandleY } from './handle-position.internal';
+import type { Bounds, PointWritable } from '../types/flat-shapes.internal';
+import { RESIZE_HANDLE_ORDER, boundsWithMidpoint, resizeHandleX, resizeHandleY } from './handle-position.internal';
 import type { HandlePoint } from './types';
 
 /**
@@ -16,23 +15,20 @@ import type { HandlePoint } from './types';
  * width/height = 0인 degenerate bounds에서도 8개를 기록한다(좌표는 동일점).
  * NaN/Infinity 좌표는 IEEE-754 propagation으로 그대로 기록한다.
  *
- * @param out handle 좌표를 push할 caller-provided writable 배열
+ * @param out handle 좌표를 기록할 출력 배열 { id, point }[]
  * @param bounds 대상 unrotated AABB
  * @param factory caller가 공급하는 Point 인스턴스 생성 함수
  * @returns 기록된 handle 수 (항상 8)
  */
-export function resizeHandlesInto<Point extends XYWritable>(
-  out: HandlePoint<Point>[],
-  bounds: BoundsLike,
-  factory: () => Point
-): number {
+export function resizeHandlesInto(out: HandlePoint[], bounds: Bounds, factory: () => PointWritable): number {
   out.length = 0;
 
-  const { minX, minY, maxX, maxY, midX, midY } = readBoundsCoords(bounds);
+  const { minX, minY, maxX, maxY, midX, midY } = boundsWithMidpoint(bounds);
 
   for (const id of RESIZE_HANDLE_ORDER) {
     const point = factory();
-    writeXY(point, resizeHandleX(id, minX, maxX, midX), resizeHandleY(id, minY, maxY, midY));
+    point.x = resizeHandleX(id, minX, maxX, midX);
+    point.y = resizeHandleY(id, minY, maxY, midY);
     out.push({ id, point });
   }
 

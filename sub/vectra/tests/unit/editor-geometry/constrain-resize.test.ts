@@ -45,7 +45,12 @@ describe('aspectLock', () => {
     // current: 100×80 → ratio = 100/80 = 1.25
     // proposed: 200×80 → 200/ratio = 160 이어야 함
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 200, height: 80 }, { aspectLocked: true });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 200, height: 80 },
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBeCloseTo(200);
     expect(out.height).toBeCloseTo(160);
   });
@@ -54,21 +59,36 @@ describe('aspectLock', () => {
     // current: 100×80 → ratio = 1.25
     // proposed: 100×200 → width는 200*1.25 = 250 이어야 함
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 100, height: 200 }, { aspectLocked: true });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 100, height: 200 },
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBeCloseTo(250);
     expect(out.height).toBeCloseTo(200);
   });
 
   test('proposed가 이미 ratio에 맞으면 변경 없음', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 150, height: 120 }, { aspectLocked: true });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 150, height: 120 },
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBeCloseTo(150);
     expect(out.height).toBeCloseTo(120);
   });
 
   test('aspectLock: false이면 proposed 그대로', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 200, height: 80 }, { aspectLocked: false });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 200, height: 80 },
+      { aspectLocked: false, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBe(200);
     expect(out.height).toBe(80);
   });
@@ -81,35 +101,60 @@ describe('aspectLock', () => {
 describe('minWidth / maxWidth clamp', () => {
   test('proposed width가 minWidth보다 작으면 minWidth로 clamp', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 10, height: 80 }, { minWidth: 50 });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 10, height: 80 },
+      { aspectLocked: false, minWidth: 50, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBe(50);
     expect(out.height).toBe(80);
   });
 
   test('proposed width가 maxWidth보다 크면 maxWidth로 clamp', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 300, height: 80 }, { maxWidth: 200 });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 300, height: 80 },
+      { aspectLocked: false, minWidth: 0, minHeight: 0, maxWidth: 200, maxHeight: Infinity }
+    );
     expect(out.width).toBe(200);
     expect(out.height).toBe(80);
   });
 
   test('proposed height가 minHeight보다 작으면 minHeight로 clamp', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 100, height: 10 }, { minHeight: 40 });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 100, height: 10 },
+      { aspectLocked: false, minWidth: 0, minHeight: 40, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBe(100);
     expect(out.height).toBe(40);
   });
 
   test('proposed height가 maxHeight보다 크면 maxHeight로 clamp', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 100, height: 300 }, { maxHeight: 200 });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 100, height: 300 },
+      { aspectLocked: false, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: 200 }
+    );
     expect(out.width).toBe(100);
     expect(out.height).toBe(200);
   });
 
   test('min > max이면 min 우선', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: 150, height: 80 }, { minWidth: 100, maxWidth: 50 });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: 150, height: 80 },
+      { aspectLocked: false, minWidth: 100, minHeight: 0, maxWidth: 50, maxHeight: Infinity }
+    );
     expect(out.width).toBe(100);
   });
 });
@@ -129,7 +174,7 @@ describe('aspectLock + min/max 조합', () => {
       out,
       { width: 100, height: 80 },
       { width: 200, height: 80 },
-      { aspectLocked: true, minWidth: 50, minHeight: 50 }
+      { aspectLocked: true, minWidth: 50, minHeight: 50, maxWidth: Infinity, maxHeight: Infinity }
     );
     expect(out.width).toBeCloseTo(200);
     expect(out.height).toBeCloseTo(160);
@@ -144,7 +189,7 @@ describe('aspectLock + min/max 조합', () => {
       out,
       { width: 100, height: 80 },
       { width: 200, height: 80 },
-      { aspectLocked: true, maxWidth: 150 }
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: 150, maxHeight: Infinity }
     );
     expect(out.width).toBe(150);
     expect(out.height).toBeCloseTo(160); // height clamp는 없으므로 그대로
@@ -158,14 +203,24 @@ describe('aspectLock + min/max 조합', () => {
 describe('degenerate current', () => {
   test('current.width === 0: NaN propagation', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 0, height: 80 }, { width: 100, height: 80 }, { aspectLocked: true });
+    constrainResizeInto(
+      out,
+      { width: 0, height: 80 },
+      { width: 100, height: 80 },
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBeNaN();
     expect(out.height).toBeNaN();
   });
 
   test('current.height === 0: NaN propagation', () => {
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 0 }, { width: 100, height: 80 }, { aspectLocked: true });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 0 },
+      { width: 100, height: 80 },
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBeNaN();
     expect(out.height).toBeNaN();
   });
@@ -202,13 +257,21 @@ describe('NaN propagation', () => {
 
 describe('companion constrainResize', () => {
   test('aspectLock 보정값 반환', () => {
-    const result = constrainResize({ width: 100, height: 80 }, { width: 200, height: 80 }, { aspectLocked: true });
+    const result = constrainResize(
+      { width: 100, height: 80 },
+      { width: 200, height: 80 },
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(result.width).toBeCloseTo(200);
     expect(result.height).toBeCloseTo(160);
   });
 
   test('minWidth clamp 반환', () => {
-    const result = constrainResize({ width: 100, height: 80 }, { width: 10, height: 80 }, { minWidth: 50 });
+    const result = constrainResize(
+      { width: 100, height: 80 },
+      { width: 10, height: 80 },
+      { aspectLocked: false, minWidth: 50, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(result.width).toBe(50);
   });
 });
@@ -222,7 +285,12 @@ describe('음수 proposed size', () => {
     // current: 100×80, ratio = 1.25
     // proposed: -50×80 → scaleW = -0.5, scaleH = 1.0 → height dominant → w = 80*1.25 = 100
     const out = makeSize();
-    constrainResizeInto(out, { width: 100, height: 80 }, { width: -50, height: 80 }, { aspectLocked: true });
+    constrainResizeInto(
+      out,
+      { width: 100, height: 80 },
+      { width: -50, height: 80 },
+      { aspectLocked: true, minWidth: 0, minHeight: 0, maxWidth: Infinity, maxHeight: Infinity }
+    );
     expect(out.width).toBe(100);
     expect(out.height).toBe(80);
   });

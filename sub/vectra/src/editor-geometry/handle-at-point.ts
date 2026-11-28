@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import type { HandleId, HandlePoint } from './types';
 
 /**
@@ -11,13 +10,9 @@ import type { HandleId, HandlePoint } from './types';
  * @param cursor 커서 위치 (world 좌표)
  * @param tolerance world 좌표 단위 최대 허용 거리. 양의 유한수가 아니면 miss.
  */
-export function handleAtPoint(
-  handles: HandlePoint<XYInput>[],
-  cursor: XYInput,
-  tolerance: number
-): HandleId | undefined {
-  const cx = readX(cursor);
-  const cy = readY(cursor);
+export function handleAtPoint(handles: HandlePoint[], cursor: Point, tolerance: number): HandleId | undefined {
+  const cx = cursor.x;
+  const cy = cursor.y;
   if (!(tolerance > 0 && Number.isFinite(tolerance))) {
     return undefined;
   }
@@ -26,8 +21,8 @@ export function handleAtPoint(
   let bestId: HandleId | undefined;
 
   for (const h of handles) {
-    const hx = readX(h.point);
-    const hy = readY(h.point);
+    const hx = h.point.x;
+    const hy = h.point.y;
     const dx = hx - cx;
     const dy = hy - cy;
     const distSq = dx * dx + dy * dy;

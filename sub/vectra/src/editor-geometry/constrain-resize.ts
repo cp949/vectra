@@ -8,7 +8,7 @@ import type { ResizeConstraintOptions } from './types';
 /**
  * proposed { width, height }를 constraint 규칙으로 보정해 plain object로 반환한다.
  *
- * options 미지정 시 proposed의 { width, height }를 그대로 반환한다.
+ * options를 생략하면 각 축을 기본 범위 [0, Infinity]로 클램프한다.
  * aspectLocked 시 current 기준 ratio를 유지한다. shorter axis를 longer axis scale에 맞춰 보정한다.
  * ratio 보정 먼저, 그다음 min/max clamp. min > max이면 min 우선.
  * current.width === 0 또는 current.height === 0에서 aspectLocked: true면 NaN propagation.

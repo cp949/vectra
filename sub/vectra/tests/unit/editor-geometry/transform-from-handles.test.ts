@@ -1,8 +1,9 @@
+/** 핸들 이동으로 만든 행렬의 고정점, 실패 조건과 companion 결과를 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { transformFromHandles } from '../../../src/editor-geometry/transform-from-handles';
 import { transformFromHandlesInto } from '../../../src/editor-geometry/transform-from-handles-into';
 import type { TransformFromHandlesInput, TransformFromHandlesOptions } from '../../../src/editor-geometry/types';
-import type { MatrixObjectLike, MatrixWritable } from '../../../src/types';
+import type { Matrix, MatrixWritable } from '../../../src/types/flat-shapes.internal';
 
 type MatrixExpectation = Partial<Pick<MatrixWritable, 'a' | 'b' | 'c' | 'd' | 'tx' | 'ty'>>;
 
@@ -20,17 +21,17 @@ interface FailureCase {
   sentinel: MatrixWritable;
 }
 
-const DEFAULT_BOUNDS = { min: { x: 0, y: 0 }, max: { x: 100, y: 80 } };
+const DEFAULT_BOUNDS = { minX: 0, minY: 0, maxX: 100, maxY: 80 };
 
 function makeMatrix(values: MatrixExpectation = {}): MatrixWritable {
   return { a: 0, b: 0, c: 0, d: 0, tx: 0, ty: 0, ...values };
 }
 
-function applyPoint(matrix: MatrixObjectLike, x: number, y: number): readonly [x: number, y: number] {
+function applyPoint(matrix: Matrix, x: number, y: number): readonly [x: number, y: number] {
   return [matrix.a * x + matrix.c * y + matrix.tx, matrix.b * x + matrix.d * y + matrix.ty];
 }
 
-function expectMatrix(matrix: MatrixObjectLike, expected: MatrixExpectation): void {
+function expectMatrix(matrix: Matrix, expected: MatrixExpectation): void {
   for (const key of ['a', 'b', 'c', 'd', 'tx', 'ty'] as const) {
     const value = expected[key];
     if (value !== undefined) {
@@ -39,7 +40,7 @@ function expectMatrix(matrix: MatrixObjectLike, expected: MatrixExpectation): vo
   }
 }
 
-function expectFixedPoint(matrix: MatrixObjectLike, point: readonly [x: number, y: number]): void {
+function expectFixedPoint(matrix: Matrix, point: readonly [x: number, y: number]): void {
   const [x, y] = applyPoint(matrix, point[0], point[1]);
 
   expect(x).toBeCloseTo(point[0]);
@@ -125,7 +126,7 @@ describe('비원점 bounds에서의 anchor 고정', () => {
   test('se handle: 비원점 bounds에서 anchor top-left 고정', () => {
     expectIntoSuccess({
       input: {
-        bounds: { min: { x: 20, y: 30 }, max: { x: 120, y: 130 } },
+        bounds: { minX: 20, minY: 30, maxX: 120, maxY: 130 },
         handle: 'se',
         to: { x: 170, y: 180 },
       },
@@ -140,7 +141,7 @@ describe('zero-size bounds degenerate', () => {
     {
       name: 'width=0에서 x축 handle(e): false + out 미수정',
       input: {
-        bounds: { min: { x: 0, y: 0 }, max: { x: 0, y: 80 } },
+        bounds: { minX: 0, minY: 0, maxX: 0, maxY: 80 },
         handle: 'e',
         to: { x: 50, y: 40 },
       },
@@ -149,7 +150,7 @@ describe('zero-size bounds degenerate', () => {
     {
       name: 'height=0에서 y축 handle(s): false + out 미수정',
       input: {
-        bounds: { min: { x: 0, y: 0 }, max: { x: 100, y: 0 } },
+        bounds: { minX: 0, minY: 0, maxX: 100, maxY: 0 },
         handle: 's',
         to: { x: 50, y: 50 },
       },
@@ -158,7 +159,7 @@ describe('zero-size bounds degenerate', () => {
     {
       name: 'width=0에서 corner handle(se): false + out 미수정',
       input: {
-        bounds: { min: { x: 0, y: 0 }, max: { x: 0, y: 80 } },
+        bounds: { minX: 0, minY: 0, maxX: 0, maxY: 80 },
         handle: 'se',
         to: { x: 50, y: 120 },
       },
@@ -167,7 +168,7 @@ describe('zero-size bounds degenerate', () => {
     {
       name: 'edge handle n: height=0이어도 false',
       input: {
-        bounds: { min: { x: 0, y: 0 }, max: { x: 100, y: 0 } },
+        bounds: { minX: 0, minY: 0, maxX: 100, maxY: 0 },
         handle: 'n',
         to: { x: 50, y: -10 },
       },
@@ -176,7 +177,7 @@ describe('zero-size bounds degenerate', () => {
     {
       name: 'edge handle w: width=0이어도 false',
       input: {
-        bounds: { min: { x: 0, y: 0 }, max: { x: 0, y: 80 } },
+        bounds: { minX: 0, minY: 0, maxX: 0, maxY: 80 },
         handle: 'w',
         to: { x: -10, y: 40 },
       },
@@ -205,7 +206,7 @@ describe('NaN 입력', () => {
     {
       name: 'bounds NaN minX: false + out 미수정',
       input: {
-        bounds: { min: { x: Number.NaN, y: 0 }, max: { x: 100, y: 80 } },
+        bounds: { minX: Number.NaN, minY: 0, maxX: 100, maxY: 80 },
         handle: 'se',
         to: { x: 150, y: 120 },
       },
@@ -232,7 +233,7 @@ describe('options.fromAnchor 명시', () => {
   test('fromAnchor center 명시: center 기준 scale', () => {
     expectIntoSuccess({
       input: { bounds: DEFAULT_BOUNDS, handle: 'se', to: { x: 150, y: 120 } },
-      options: { fromAnchor: 'center' },
+      options: { aspectLocked: false, fromAnchor: 'center' },
       expected: { a: 1.5, d: 1.5 },
       fixedPoint: [50, 40],
     });
@@ -244,40 +245,24 @@ describe('aspectLocked', () => {
     {
       name: 'se handle aspectLocked: min scale로 두 축 보정',
       input: { bounds: DEFAULT_BOUNDS, handle: 'se', to: { x: 150, y: 200 } },
-      options: { aspectLocked: true },
+      options: { aspectLocked: true, fromAnchor: undefined },
       expected: { a: 1.5, d: 1.5 },
     },
     {
       name: 'nw handle aspectLocked: 음수 scale 부호 보존',
       input: { bounds: DEFAULT_BOUNDS, handle: 'nw', to: { x: 200, y: 120 } },
-      options: { aspectLocked: true },
+      options: { aspectLocked: true, fromAnchor: undefined },
       expected: { a: -0.5, d: -0.5 },
       fixedPoint: [100, 80],
     },
     {
       name: 'e handle aspectLocked 무시: x축만 scale',
       input: { bounds: DEFAULT_BOUNDS, handle: 'e', to: { x: 150, y: 40 } },
-      options: { aspectLocked: true },
+      options: { aspectLocked: true, fromAnchor: undefined },
       expected: { a: 1.5, d: 1 },
     },
   ] satisfies readonly TransformCase[])('$name', (testCase) => {
     expectIntoSuccess(testCase);
-  });
-});
-
-describe('BoundsLike tuple 입력', () => {
-  test('bounds tuple: se handle 정상 작동', () => {
-    expectIntoSuccess({
-      input: {
-        bounds: [
-          { x: 0, y: 0 },
-          { x: 100, y: 80 },
-        ],
-        handle: 'se',
-        to: [150, 120],
-      },
-      expected: { a: 1.5, d: 1.5 },
-    });
   });
 });
 
@@ -296,7 +281,7 @@ describe('companion transformFromHandles', () => {
 
   test('실패 (zero-size): undefined 반환', () => {
     const result = transformFromHandles({
-      bounds: { min: { x: 0, y: 0 }, max: { x: 0, y: 80 } },
+      bounds: { minX: 0, minY: 0, maxX: 0, maxY: 80 },
       handle: 'e',
       to: { x: 50, y: 40 },
     });
@@ -321,7 +306,7 @@ describe('companion transformFromHandles', () => {
         handle: 'se',
         to: { x: 150, y: 120 },
       },
-      { fromAnchor: 'center' }
+      { aspectLocked: false, fromAnchor: 'center' }
     );
 
     expect(result).toBeDefined();

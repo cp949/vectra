@@ -19,14 +19,6 @@ describe('editor-geometry - constrainDragInto', () => {
     expect(out.y).toBe(3);
   });
 
-  test('tuple out에 결과를 기록하고 out을 반환한다', () => {
-    const out: [number, number] = [0, 0];
-    const result = constrainDragInto(out, { x: 0, y: 0 }, { x: 5, y: 3 });
-    expect(result).toBe(out);
-    expect(out[0]).toBe(5);
-    expect(out[1]).toBe(3);
-  });
-
   // --- options 없음 ---
 
   test('options 미지정 시 to를 그대로 기록한다', () => {
@@ -36,9 +28,14 @@ describe('editor-geometry - constrainDragInto', () => {
     expect(out.y).toBe(9);
   });
 
-  test('빈 options 객체 시 to를 그대로 기록한다', () => {
+  test('기본 옵션 값을 모두 넘기면 to를 그대로 기록한다', () => {
     const out = { x: 0, y: 0 };
-    constrainDragInto(out, { x: 1, y: 2 }, { x: 7, y: 9 }, {});
+    constrainDragInto(
+      out,
+      { x: 1, y: 2 },
+      { x: 7, y: 9 },
+      { axisLock: undefined, containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(7);
     expect(out.y).toBe(9);
   });
@@ -47,14 +44,24 @@ describe('editor-geometry - constrainDragInto', () => {
 
   test("axisLock='horizontal': to.y → from.y로 강제", () => {
     const out = { x: 0, y: 0 };
-    constrainDragInto(out, { x: 1, y: 2 }, { x: 7, y: 9 }, { axisLock: 'horizontal' });
+    constrainDragInto(
+      out,
+      { x: 1, y: 2 },
+      { x: 7, y: 9 },
+      { axisLock: 'horizontal', containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(7);
     expect(out.y).toBe(2);
   });
 
   test("axisLock='horizontal': from.y가 음수여도 올바르게 강제한다", () => {
     const out = { x: 0, y: 0 };
-    constrainDragInto(out, { x: 0, y: -5 }, { x: 10, y: 3 }, { axisLock: 'horizontal' });
+    constrainDragInto(
+      out,
+      { x: 0, y: -5 },
+      { x: 10, y: 3 },
+      { axisLock: 'horizontal', containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(10);
     expect(out.y).toBe(-5);
   });
@@ -63,14 +70,24 @@ describe('editor-geometry - constrainDragInto', () => {
 
   test("axisLock='vertical': to.x → from.x로 강제", () => {
     const out = { x: 0, y: 0 };
-    constrainDragInto(out, { x: 1, y: 2 }, { x: 7, y: 9 }, { axisLock: 'vertical' });
+    constrainDragInto(
+      out,
+      { x: 1, y: 2 },
+      { x: 7, y: 9 },
+      { axisLock: 'vertical', containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(1);
     expect(out.y).toBe(9);
   });
 
   test("axisLock='vertical': from.x가 음수여도 올바르게 강제한다", () => {
     const out = { x: 0, y: 0 };
-    constrainDragInto(out, { x: -3, y: 0 }, { x: 10, y: 8 }, { axisLock: 'vertical' });
+    constrainDragInto(
+      out,
+      { x: -3, y: 0 },
+      { x: 10, y: 8 },
+      { axisLock: 'vertical', containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(-3);
     expect(out.y).toBe(8);
   });
@@ -80,7 +97,12 @@ describe('editor-geometry - constrainDragInto', () => {
   test("axisLock='auto': |dx|>|dy| → y 고정(horizontal lock)", () => {
     const out = { x: 0, y: 0 };
     // dx=10, dy=3 → |dx|>|dy| → y를 from.y로 고정
-    constrainDragInto(out, { x: 0, y: 0 }, { x: 10, y: 3 }, { axisLock: 'auto' });
+    constrainDragInto(
+      out,
+      { x: 0, y: 0 },
+      { x: 10, y: 3 },
+      { axisLock: 'auto', containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(10);
     expect(out.y).toBe(0);
   });
@@ -88,7 +110,12 @@ describe('editor-geometry - constrainDragInto', () => {
   test("axisLock='auto': |dy|>|dx| → x 고정(vertical lock)", () => {
     const out = { x: 0, y: 0 };
     // dx=3, dy=10 → |dy|>|dx| → x를 from.x로 고정
-    constrainDragInto(out, { x: 0, y: 0 }, { x: 3, y: 10 }, { axisLock: 'auto' });
+    constrainDragInto(
+      out,
+      { x: 0, y: 0 },
+      { x: 3, y: 10 },
+      { axisLock: 'auto', containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(0);
     expect(out.y).toBe(10);
   });
@@ -96,14 +123,14 @@ describe('editor-geometry - constrainDragInto', () => {
   test("axisLock='auto': |dy|===|dx|, 비영값 → x 고정(vertical lock, dy>=dx 조건)", () => {
     const out = { x: 0, y: 0 };
     // dx=5, dy=5 → |dy|>=|dx| → x를 from.x로 고정
-    constrainDragInto(out, { x: 0, y: 0 }, { x: 5, y: 5 }, { axisLock: 'auto' });
+    constrainDragInto(out, { x: 0, y: 0 }, { x: 5, y: 5 }, { axisLock: 'auto', containIn: undefined, size: undefined });
     expect(out.x).toBe(0);
     expect(out.y).toBe(5);
   });
 
   test("axisLock='auto': dx===dy===0 → to를 그대로 기록", () => {
     const out = { x: 0, y: 0 };
-    constrainDragInto(out, { x: 3, y: 4 }, { x: 3, y: 4 }, { axisLock: 'auto' });
+    constrainDragInto(out, { x: 3, y: 4 }, { x: 3, y: 4 }, { axisLock: 'auto', containIn: undefined, size: undefined });
     expect(out.x).toBe(3);
     expect(out.y).toBe(4);
   });
@@ -111,7 +138,12 @@ describe('editor-geometry - constrainDragInto', () => {
   test("axisLock='auto': from과 to가 다른 위치, dx===dy===0 아님, 음수 delta 처리", () => {
     const out = { x: 0, y: 0 };
     // dx=-10, dy=-2 → |dx|>|dy| → y 고정
-    constrainDragInto(out, { x: 5, y: 5 }, { x: -5, y: 3 }, { axisLock: 'auto' });
+    constrainDragInto(
+      out,
+      { x: 5, y: 5 },
+      { x: -5, y: 3 },
+      { axisLock: 'auto', containIn: undefined, size: undefined }
+    );
     expect(out.x).toBe(-5);
     expect(out.y).toBe(5);
   });
@@ -124,55 +156,55 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 0, y: 0 },
       { x: 5, y: 5 },
-      { containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } } }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(5);
     expect(out.y).toBe(5);
   });
 
-  test('containIn: to.x가 max.x를 초과하면 max.x로 클램프한다', () => {
+  test('containIn: to.x가 maxX를 초과하면 maxX로 클램프한다', () => {
     const out = { x: 0, y: 0 };
     constrainDragInto(
       out,
       { x: 0, y: 0 },
       { x: 15, y: 5 },
-      { containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } } }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(10);
     expect(out.y).toBe(5);
   });
 
-  test('containIn: to.x가 min.x 미만이면 min.x로 클램프한다', () => {
+  test('containIn: to.x가 minX 미만이면 minX로 클램프한다', () => {
     const out = { x: 0, y: 0 };
     constrainDragInto(
       out,
       { x: 0, y: 0 },
       { x: -5, y: 5 },
-      { containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } } }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(0);
     expect(out.y).toBe(5);
   });
 
-  test('containIn: to.y가 max.y를 초과하면 max.y로 클램프한다', () => {
+  test('containIn: to.y가 maxY를 초과하면 maxY로 클램프한다', () => {
     const out = { x: 0, y: 0 };
     constrainDragInto(
       out,
       { x: 0, y: 0 },
       { x: 5, y: 20 },
-      { containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } } }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(5);
     expect(out.y).toBe(10);
   });
 
-  test('containIn: to.y가 min.y 미만이면 min.y로 클램프한다', () => {
+  test('containIn: to.y가 minY 미만이면 minY로 클램프한다', () => {
     const out = { x: 0, y: 0 };
     constrainDragInto(
       out,
       { x: 0, y: 0 },
       { x: 5, y: -3 },
-      { containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } } }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(5);
     expect(out.y).toBe(0);
@@ -188,10 +220,7 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 0, y: 0 },
       { x: 80, y: 5 },
-      {
-        containIn: { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } },
-        size: { width: 30, height: 20 },
-      }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, size: { width: 30, height: 20 } }
     );
     expect(out.x).toBe(70);
     expect(out.y).toBe(5);
@@ -205,10 +234,7 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 0, y: 0 },
       { x: 5, y: 85 },
-      {
-        containIn: { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } },
-        size: { width: 30, height: 20 },
-      }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, size: { width: 30, height: 20 } }
     );
     expect(out.x).toBe(5);
     expect(out.y).toBe(80);
@@ -216,15 +242,12 @@ describe('editor-geometry - constrainDragInto', () => {
 
   test('containIn + size: 좌측/상단 min 클램프에는 size가 영향을 주지 않는다', () => {
     const out = { x: 0, y: 0 };
-    // to.x=-5 < min.x=0 → x=0 (min 클램프는 size 무관)
+    // to.x=-5 < minX=0 → x=0 (min 클램프는 size 무관)
     constrainDragInto(
       out,
       { x: 0, y: 0 },
       { x: -5, y: -3 },
-      {
-        containIn: { min: { x: 0, y: 0 }, max: { x: 100, y: 100 } },
-        size: { width: 30, height: 20 },
-      }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, size: { width: 30, height: 20 } }
     );
     expect(out.x).toBe(0);
     expect(out.y).toBe(0);
@@ -240,10 +263,7 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 5, y: 5 },
       { x: 5, y: 5 },
-      {
-        containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } },
-        size: { width: 20, height: 5 },
-      }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: { width: 20, height: 5 } }
     );
     expect(out.x).toBe(0);
     expect(out.y).toBe(5);
@@ -257,33 +277,10 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 5, y: 5 },
       { x: 5, y: 5 },
-      {
-        containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } },
-        size: { width: 5, height: 20 },
-      }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: { width: 5, height: 20 } }
     );
     expect(out.x).toBe(5);
     expect(out.y).toBe(0);
-  });
-
-  // --- containIn: BoundsTuple 형태 ---
-
-  test('containIn tuple: BoundsTuple 형태로 bounds를 지정해도 클램프가 적용된다', () => {
-    const out = { x: 0, y: 0 };
-    // containIn을 [min, max] tuple로 전달
-    constrainDragInto(
-      out,
-      { x: 0, y: 0 },
-      { x: 15, y: 20 },
-      {
-        containIn: [
-          { x: 0, y: 0 },
-          { x: 10, y: 10 },
-        ],
-      }
-    );
-    expect(out.x).toBe(10);
-    expect(out.y).toBe(10);
   });
 
   // --- axisLock + containIn 조합 ---
@@ -296,10 +293,7 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 0, y: 2 },
       { x: 15, y: 9 },
-      {
-        axisLock: 'horizontal',
-        containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } },
-      }
+      { axisLock: 'horizontal', containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(10);
     expect(out.y).toBe(2);
@@ -313,10 +307,7 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 1, y: 0 },
       { x: 7, y: 15 },
-      {
-        axisLock: 'vertical',
-        containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } },
-      }
+      { axisLock: 'vertical', containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(1);
     expect(out.y).toBe(10);
@@ -330,10 +321,7 @@ describe('editor-geometry - constrainDragInto', () => {
       out,
       { x: 0, y: 0 },
       { x: 15, y: 5 },
-      {
-        axisLock: 'auto',
-        containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } },
-      }
+      { axisLock: 'auto', containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(out.x).toBe(10);
     expect(out.y).toBe(0);
@@ -343,7 +331,12 @@ describe('editor-geometry - constrainDragInto', () => {
 
   test('NaN from: NaN이 결과에 propagate된다', () => {
     const out = { x: 0, y: 0 };
-    constrainDragInto(out, { x: Number.NaN, y: 0 }, { x: 5, y: 5 }, { axisLock: 'auto' });
+    constrainDragInto(
+      out,
+      { x: Number.NaN, y: 0 },
+      { x: 5, y: 5 },
+      { axisLock: 'auto', containIn: undefined, size: undefined }
+    );
     // dx = 5-NaN = NaN, dy = 5-0 = 5; dx > dy → false → y dominant → toX = fromX = NaN
     expect(out.x).toBeNaN();
     expect(out.y).toBe(5);
@@ -373,22 +366,38 @@ describe('editor-geometry - constrainDrag', () => {
   });
 
   test("axisLock='horizontal': to.y → from.y로 강제한 { x, y }를 반환한다", () => {
-    const result = constrainDrag({ x: 1, y: 2 }, { x: 7, y: 9 }, { axisLock: 'horizontal' });
+    const result = constrainDrag(
+      { x: 1, y: 2 },
+      { x: 7, y: 9 },
+      { axisLock: 'horizontal', containIn: undefined, size: undefined }
+    );
     expect(result).toEqual({ x: 7, y: 2 });
   });
 
   test("axisLock='vertical': to.x → from.x로 강제한 { x, y }를 반환한다", () => {
-    const result = constrainDrag({ x: 1, y: 2 }, { x: 7, y: 9 }, { axisLock: 'vertical' });
+    const result = constrainDrag(
+      { x: 1, y: 2 },
+      { x: 7, y: 9 },
+      { axisLock: 'vertical', containIn: undefined, size: undefined }
+    );
     expect(result).toEqual({ x: 1, y: 9 });
   });
 
   test("axisLock='auto': |dx|>|dy| → y 고정한 결과를 반환한다", () => {
-    const result = constrainDrag({ x: 0, y: 0 }, { x: 10, y: 3 }, { axisLock: 'auto' });
+    const result = constrainDrag(
+      { x: 0, y: 0 },
+      { x: 10, y: 3 },
+      { axisLock: 'auto', containIn: undefined, size: undefined }
+    );
     expect(result).toEqual({ x: 10, y: 0 });
   });
 
   test("axisLock='auto': |dy|>|dx| → x 고정한 결과를 반환한다", () => {
-    const result = constrainDrag({ x: 0, y: 0 }, { x: 3, y: 10 }, { axisLock: 'auto' });
+    const result = constrainDrag(
+      { x: 0, y: 0 },
+      { x: 3, y: 10 },
+      { axisLock: 'auto', containIn: undefined, size: undefined }
+    );
     expect(result).toEqual({ x: 0, y: 10 });
   });
 
@@ -396,7 +405,7 @@ describe('editor-geometry - constrainDrag', () => {
     const result = constrainDrag(
       { x: 0, y: 0 },
       { x: 15, y: 20 },
-      { containIn: { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } } }
+      { axisLock: undefined, containIn: { minX: 0, minY: 0, maxX: 10, maxY: 10 }, size: undefined }
     );
     expect(result).toEqual({ x: 10, y: 10 });
   });

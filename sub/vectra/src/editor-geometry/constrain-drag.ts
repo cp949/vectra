@@ -2,7 +2,7 @@
  * constrainDrag — drag 목적지를 constraint 규칙으로 보정한 plain { x, y }를 반환한다.
  */
 
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import { constrainDragInto } from './constrain-drag-into';
 import type { DragConstraintOptions } from './types';
 
@@ -17,6 +17,6 @@ import type { DragConstraintOptions } from './types';
  * @param to proposed drag 목적지 좌표
  * @param options axisLock, containIn, size 옵션
  */
-export function constrainDrag(from: XYInput, to: XYInput, options?: DragConstraintOptions): { x: number; y: number } {
+export function constrainDrag(from: Point, to: Point, options?: DragConstraintOptions): { x: number; y: number } {
   return constrainDragInto({ x: 0, y: 0 }, from, to, options);
 }

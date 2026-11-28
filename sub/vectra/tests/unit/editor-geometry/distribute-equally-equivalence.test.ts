@@ -2,23 +2,22 @@
  * distributeEquallyInto — gap 분배의 누적 target을 이어 가며 계산하는 구현이 이전 구현과 비트 단위로
  * 같은지 고정한다.
  *
- * 검증: 객체·tuple bounds 0~40개(드물게 수백 개), 겹침·역전·동좌표·±0·NaN·±Infinity·1e308 좌표,
+ * 검증: 평평한 bounds 0~40개(드물게 수백 개), 겹침·역전·동좌표·±0·NaN·±Infinity·1e308 좌표,
  * 여섯 분배 kind에서 반환 개수, 각 target의 index와 point가 이전 구현과 `Object.is` 수준으로 같다.
  */
 import { describe, expect, test } from 'vitest';
 import { distributeEquallyInto } from '../../../src/editor-geometry/distribute-equally-into';
 import type { DistributeTarget, DistributionKind } from '../../../src/editor-geometry/types';
-import { readBoundsMax, readBoundsMin } from '../../../src/internal/bounds';
-import { readX, readY, writeXY } from '../../../src/internal/xy';
+import { writeXY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
-import type { BoundsLike, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { Bounds, PointWritable } from '../../../src/types/flat-shapes.internal';
 
-// 이전 구현. gap 분배는 item마다 target을 처음부터 다시 더한다. 새 구현의 비교 기준으로만 쓴다.
-function referenceDistributeEquallyInto<Point extends XYWritable>(
-  out: DistributeTarget<Point>[],
-  bounds: readonly BoundsLike[],
+/** 기존 gap 분배는 항목마다 목표 좌표를 처음부터 다시 더한다. */
+function referenceDistributeEquallyInto(
+  out: DistributeTarget[],
+  bounds: readonly Bounds[],
   kind: DistributionKind,
-  factory: () => Point
+  factory: () => PointWritable
 ): number {
   out.length = 0;
 
@@ -31,11 +30,9 @@ function referenceDistributeEquallyInto<Point extends XYWritable>(
 
   for (let i = 0; i < bounds.length; i++) {
     const b = bounds[i];
-    const minPt = readBoundsMin(b);
-    const maxPt = readBoundsMax(b);
-    const minVal = isX ? readX(minPt) : readY(minPt);
-    const maxVal = isX ? readX(maxPt) : readY(maxPt);
-    const otherMin = isX ? readY(minPt) : readX(minPt);
+    const minVal = isX ? b.minX : b.minY;
+    const maxVal = isX ? b.maxX : b.maxY;
+    const otherMin = isX ? b.minY : b.minX;
     entries.push({ idx: i, minVal, maxVal, otherMin });
   }
 
@@ -99,6 +96,7 @@ type Rng = () => number;
 const KINDS: DistributionKind[] = ['edge-x', 'center-x', 'gap-x', 'edge-y', 'center-y', 'gap-y'];
 const SPECIAL = [0, -0, 1, -1, 0.5, 1e-300, 1e150, -1e150, 1e308, -1e308, Number.MAX_VALUE, NaN, Infinity, -Infinity];
 
+/** 좌표 분포와 비유한 값을 섞어 비교 입력을 만든다. */
 function coord(rng: Rng, kind: number, special: number): number {
   const r = rng();
   if (r < special) return SPECIAL[Math.floor(rng() * SPECIAL.length)];
@@ -108,14 +106,15 @@ function coord(rng: Rng, kind: number, special: number): number {
   return 1e6 + rng() * 1e-3;
 }
 
-function makeBounds(rng: Rng): BoundsLike[] {
+/** 주어진 시드에서 경계의 개수와 좌표를 고른다. */
+function makeBounds(rng: Rng): Bounds[] {
   const kind = Math.floor(rng() * 4);
   const special = rng() < 0.6 ? 0 : 0.04;
   const r = rng();
   // 0, 1, 2, 3개 경계를 자주 만들고, 드물게 수백 개를 만든다.
   const n = r < 0.3 ? Math.floor(rng() * 5) : r < 0.97 ? Math.floor(rng() * 41) : 100 + Math.floor(rng() * 300);
   const mode = rng();
-  const result: BoundsLike[] = [];
+  const result: Bounds[] = [];
   for (let i = 0; i < n; i++) {
     let minX: number;
     let minY: number;
@@ -140,22 +139,14 @@ function makeBounds(rng: Rng): BoundsLike[] {
       maxX = minX + coord(rng, kind, special);
       maxY = minY + coord(rng, kind, special);
     }
-    result.push(
-      rng() < 0.3
-        ? [
-            [minX, minY],
-            [maxX, maxY],
-          ]
-        : { min: { x: minX, y: minY }, max: { x: maxX, y: maxY } }
-    );
+    rng(); // 기존 비교 시험의 RNG 진행을 유지한다.
+    result.push({ minX, minY, maxX, maxY });
   }
   return result;
 }
 
-function sameTargets(
-  a: readonly DistributeTarget<XYObjectWritable>[],
-  b: readonly DistributeTarget<XYObjectWritable>[]
-): boolean {
+/** 부호 있는 0과 NaN을 포함해 개별 목표 좌표를 비교한다. */
+function sameTargets(a: readonly DistributeTarget[], b: readonly DistributeTarget[]): boolean {
   if (a.length !== b.length) return false;
   for (let i = 0; i < a.length; i++) {
     if (a[i].index !== b[i].index) return false;
@@ -164,7 +155,8 @@ function sameTargets(
   return true;
 }
 
-const factory = (): XYObjectWritable => ({ x: -1, y: -1 });
+/** 출력 좌표가 실제로 덮어쓰이는지 확인할 점을 만든다. */
+const factory = (): PointWritable => ({ x: -1, y: -1 });
 
 describe('distributeEquallyInto — 이전 구현과 출력 동일성', () => {
   test('무작위 bounds 목록 2만 개: 여섯 kind의 결과가 이전 구현과 비트 단위로 같다', () => {
@@ -173,8 +165,8 @@ describe('distributeEquallyInto — 이전 구현과 출력 동일성', () => {
     for (let i = 0; i < 20_000 && mismatch === ''; i++) {
       const bounds = makeBounds(rng);
       const kind = KINDS[Math.floor(rng() * KINDS.length)];
-      const actual: DistributeTarget<XYObjectWritable>[] = [{ index: 9, point: { x: 9, y: 9 } }];
-      const expected: DistributeTarget<XYObjectWritable>[] = [{ index: 9, point: { x: 9, y: 9 } }];
+      const actual: DistributeTarget[] = [{ index: 9, point: { x: 9, y: 9 } }];
+      const expected: DistributeTarget[] = [{ index: 9, point: { x: 9, y: 9 } }];
       const countA = distributeEquallyInto(actual, bounds, kind, factory);
       const countB = referenceDistributeEquallyInto(expected, bounds, kind, factory);
       if (countA !== countB || !sameTargets(actual, expected)) mismatch = `#${i} n=${bounds.length} kind=${kind}`;
@@ -185,12 +177,12 @@ describe('distributeEquallyInto — 이전 구현과 출력 동일성', () => {
 
   test('gap 분배는 같은 간격으로 놓고 양 끝 item은 움직이지 않는다', () => {
     const bounds = [
-      { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } },
-      { min: { x: 14, y: 0 }, max: { x: 24, y: 10 } },
-      { min: { x: 25, y: 0 }, max: { x: 40, y: 10 } },
-      { min: { x: 60, y: 0 }, max: { x: 70, y: 10 } },
+      { minX: 0, minY: 0, maxX: 10, maxY: 10 },
+      { minX: 14, minY: 0, maxX: 24, maxY: 10 },
+      { minX: 25, minY: 0, maxX: 40, maxY: 10 },
+      { minX: 60, minY: 0, maxX: 70, maxY: 10 },
     ];
-    const out: DistributeTarget<XYObjectWritable>[] = [];
+    const out: DistributeTarget[] = [];
 
     expect(distributeEquallyInto(out, bounds, 'gap-x', factory)).toBe(2);
     expect(out.map((t) => t.index)).toEqual([1, 2]);

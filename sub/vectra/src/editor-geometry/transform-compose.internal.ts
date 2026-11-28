@@ -5,9 +5,8 @@
  * src/internal/matrix.ts kernel을 사용한다.
  */
 
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, MatrixWritable, XYInput } from '../types';
-import { anchorX, anchorY, readBoundsCoords, resizeHandleX, resizeHandleY } from './handle-position.internal';
+import type { Bounds, MatrixWritable, Point } from '../types/flat-shapes.internal';
+import { anchorX, anchorY, boundsWithMidpoint, resizeHandleX, resizeHandleY } from './handle-position.internal';
 import type { AnchorKind, ResizeHandleId } from './types';
 
 // ---------------------------------------------------------------------------
@@ -98,27 +97,27 @@ function isCornerHandle(handle: ResizeHandleId): boolean {
  * - 영향 있는 축의 기존 extent가 0 (scale 정의 불가)
  * - 산출된 scale 또는 translate 값이 finite하지 않음 (NaN/Infinity propagation)
  *
- * @param out matrix를 기록할 writable output
+ * @param out 변환을 기록할 출력 { a, b, c, d, tx, ty }
  * @param bounds 원본 unrotated AABB
  * @param handle 드래그한 resize handle 식별자
  * @param to handle이 이동한 새 위치
  * @param anchor 고정 기준점 kind
  * @param aspectLocked corner handle에서 등비례 보정 여부
  */
-export function composeTransformFromHandles<Out extends MatrixWritable>(
-  out: Out,
-  bounds: BoundsLike,
+export function composeTransformFromHandles(
+  out: MatrixWritable,
+  bounds: Bounds,
   handle: ResizeHandleId,
-  to: XYInput,
+  to: Point,
   anchor: AnchorKind,
   aspectLocked: boolean
 ): boolean {
-  const { minX, minY, maxX, maxY, midX, midY } = readBoundsCoords(bounds);
+  const { minX, minY, maxX, maxY, midX, midY } = boundsWithMidpoint(bounds);
   const oldWidth = maxX - minX;
   const oldHeight = maxY - minY;
 
-  const toX = readX(to);
-  const toY = readY(to);
+  const toX = to.x;
+  const toY = to.y;
 
   const affectsX = handleAffectsX(handle);
   const affectsY = handleAffectsY(handle);

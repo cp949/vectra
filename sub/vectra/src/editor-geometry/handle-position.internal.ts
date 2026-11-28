@@ -9,9 +9,7 @@
  * - NaN/Infinity 좌표는 IEEE-754 propagation으로 그대로 전달된다.
  */
 
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import type { AnchorKind, ResizeHandleId } from './types';
 
 // ---------------------------------------------------------------------------
@@ -23,7 +21,7 @@ import type { AnchorKind, ResizeHandleId } from './types';
  *
  * @param bounds 좌표를 추출할 bounds 입력
  */
-export function readBoundsCoords(bounds: BoundsLike): {
+export function boundsWithMidpoint(bounds: Bounds): {
   minX: number;
   minY: number;
   maxX: number;
@@ -31,12 +29,7 @@ export function readBoundsCoords(bounds: BoundsLike): {
   midX: number;
   midY: number;
 } {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const minX = readX(min);
-  const minY = readY(min);
-  const maxX = readX(max);
-  const maxY = readY(max);
+  const { minX, minY, maxX, maxY } = bounds;
   return {
     minX,
     minY,

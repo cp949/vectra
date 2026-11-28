@@ -18,23 +18,23 @@ const DEG15 = PI / 12;
 describe('tolerance 비정상', () => {
   test('tolerance === 0: snap 없음, angle 그대로', () => {
     const angle = DEG45 * 0.4;
-    expect(constrainRotate(angle, { step: DEG45, tolerance: 0 })).toBe(angle);
+    expect(constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: 0 })).toBe(angle);
   });
 
   test('tolerance 음수: snap 없음, angle 그대로', () => {
     const angle = DEG45 * 0.4;
-    expect(constrainRotate(angle, { step: DEG45, tolerance: -0.1 })).toBe(angle);
+    expect(constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: -0.1 })).toBe(angle);
   });
 
   test('tolerance Infinity: snap 항상 발동', () => {
     // Infinity도 양의 유한수가 아니므로 snap 없음
     const angle = DEG45 * 0.4;
-    expect(constrainRotate(angle, { step: DEG45, tolerance: Infinity })).toBe(angle);
+    expect(constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: Infinity })).toBe(angle);
   });
 
   test('tolerance NaN: snap 없음', () => {
     const angle = DEG45 * 0.4;
-    expect(constrainRotate(angle, { step: DEG45, tolerance: Number.NaN })).toBe(angle);
+    expect(constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: Number.NaN })).toBe(angle);
   });
 });
 
@@ -47,7 +47,7 @@ describe('step snap', () => {
     // angle = 45° * 0.3 = 13.5°, step = 45°, tolerance = 20°
     // 가장 가까운 step: 0
     const angle = DEG45 * 0.3;
-    const result = constrainRotate(angle, { step: DEG45, tolerance: DEG45 * 0.5 });
+    const result = constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: DEG45 * 0.5 });
     expect(result).toBeCloseTo(0, 10);
   });
 
@@ -55,32 +55,32 @@ describe('step snap', () => {
     // angle = 45° * 0.4 = 18°, step = 45°, tolerance = 10°
     // 가장 가까운 step: 0 (거리 = 18°), tolerance = 10° 미만 → snap 없음
     const angle = DEG45 * 0.4;
-    const result = constrainRotate(angle, { step: DEG45, tolerance: DEG45 * 0.2 });
+    const result = constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: DEG45 * 0.2 });
     expect(result).toBe(angle);
   });
 
   test('step snap: PI/4 단위로 PI/2에 snap', () => {
     const angle = PI / 2 + DEG45 * 0.1;
-    const result = constrainRotate(angle, { step: DEG45, tolerance: DEG45 * 0.3 });
+    const result = constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: DEG45 * 0.3 });
     expect(result).toBeCloseTo(PI / 2, 10);
   });
 
   test('음수 angle: 음수 step 배수로 snap', () => {
     const angle = -DEG45 * 0.3;
-    const result = constrainRotate(angle, { step: DEG45, tolerance: DEG45 * 0.5 });
+    const result = constrainRotate(angle, { step: DEG45, snapAngles: [], tolerance: DEG45 * 0.5 });
     expect(result).toBeCloseTo(0, 10);
   });
 
   test('invalid step (0): NaN propagation', () => {
-    expect(constrainRotate(1.0, { step: 0, tolerance: 1.0 })).toBeNaN();
+    expect(constrainRotate(1.0, { step: 0, snapAngles: [], tolerance: 1.0 })).toBeNaN();
   });
 
   test('invalid step (음수): NaN propagation', () => {
-    expect(constrainRotate(1.0, { step: -1, tolerance: 1.0 })).toBeNaN();
+    expect(constrainRotate(1.0, { step: -1, snapAngles: [], tolerance: 1.0 })).toBeNaN();
   });
 
   test('invalid step (NaN): NaN propagation', () => {
-    expect(constrainRotate(1.0, { step: Number.NaN, tolerance: 1.0 })).toBeNaN();
+    expect(constrainRotate(1.0, { step: Number.NaN, snapAngles: [], tolerance: 1.0 })).toBeNaN();
   });
 });
 
@@ -92,20 +92,20 @@ describe('snapAngles', () => {
   test('가장 가까운 snapAngle로 snap (tolerance 이내)', () => {
     const snapAngles = [0, PI / 2, PI];
     const angle = PI / 2 + 0.05;
-    const result = constrainRotate(angle, { snapAngles, tolerance: 0.1 });
+    const result = constrainRotate(angle, { step: undefined, snapAngles, tolerance: 0.1 });
     expect(result).toBeCloseTo(PI / 2, 10);
   });
 
   test('tolerance 밖이면 snap 없음', () => {
     const snapAngles = [0, PI / 2, PI];
     const angle = PI / 2 + 0.2;
-    const result = constrainRotate(angle, { snapAngles, tolerance: 0.1 });
+    const result = constrainRotate(angle, { step: undefined, snapAngles, tolerance: 0.1 });
     expect(result).toBe(angle);
   });
 
   test('빈 snapAngles: step 없으면 snap 없음', () => {
     const angle = DEG45 * 0.3;
-    const result = constrainRotate(angle, { snapAngles: [], tolerance: 1.0 });
+    const result = constrainRotate(angle, { step: undefined, snapAngles: [], tolerance: 1.0 });
     expect(result).toBe(angle);
   });
 
@@ -113,7 +113,7 @@ describe('snapAngles', () => {
     const snapAngles = [0, DEG45, PI / 2];
     // angle = DEG45 + 0.05 → DEG45에 더 가깝다
     const angle = DEG45 + 0.05;
-    const result = constrainRotate(angle, { snapAngles, tolerance: 0.1 });
+    const result = constrainRotate(angle, { step: undefined, snapAngles, tolerance: 0.1 });
     expect(result).toBeCloseTo(DEG45, 10);
   });
 });
@@ -130,7 +130,7 @@ describe('step + snapAngles 조합', () => {
     const step = DEG45;
     const snapAngles = [DEG15 * 2]; // 30°
     const angle = DEG45 - DEG15 * 0.07; // ~44°
-    const result = constrainRotate(angle, { step, snapAngles, tolerance: 0.1 });
+    const result = constrainRotate(angle, { step: step, snapAngles, tolerance: 0.1 });
     expect(result).toBeCloseTo(DEG45, 10);
   });
 
@@ -141,7 +141,7 @@ describe('step + snapAngles 조합', () => {
     const step = DEG45;
     const targetSnap = (43 * PI) / 180;
     const angle = (43.5 * PI) / 180;
-    const result = constrainRotate(angle, { step, snapAngles: [targetSnap], tolerance: 0.1 });
+    const result = constrainRotate(angle, { step: step, snapAngles: [targetSnap], tolerance: 0.1 });
     expect(result).toBeCloseTo(targetSnap, 10);
   });
 
@@ -152,7 +152,7 @@ describe('step + snapAngles 조합', () => {
     const delta = 0.01;
     const snapTarget = DEG45 - delta;
     const angle = DEG45 - delta / 2; // 정확히 중간
-    const result = constrainRotate(angle, { step, snapAngles: [snapTarget], tolerance: 0.1 });
+    const result = constrainRotate(angle, { step: step, snapAngles: [snapTarget], tolerance: 0.1 });
     // step 후보: DEG45 (거리 delta/2), snapAngle: snapTarget (거리 delta/2)
     // 동일 거리 → step 우선
     expect(result).toBeCloseTo(DEG45, 10);
@@ -166,7 +166,7 @@ describe('step + snapAngles 조합', () => {
 describe('signed-zero', () => {
   test('angle = -0: step snap 결과가 NaN이 아님', () => {
     // -0 입력이 NaN을 유발하지 않아야 한다
-    const result = constrainRotate(-0, { step: DEG45, tolerance: DEG45 * 0.5 });
+    const result = constrainRotate(-0, { step: DEG45, snapAngles: [], tolerance: DEG45 * 0.5 });
     expect(result).not.toBeNaN();
     expect(result).toBeCloseTo(0, 10);
   });
@@ -178,6 +178,6 @@ describe('signed-zero', () => {
 
 describe('NaN propagation', () => {
   test('angle NaN: NaN 반환', () => {
-    expect(constrainRotate(Number.NaN, { step: DEG45, tolerance: 0.1 })).toBeNaN();
+    expect(constrainRotate(Number.NaN, { step: DEG45, snapAngles: [], tolerance: 0.1 })).toBeNaN();
   });
 });
