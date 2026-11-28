@@ -25,12 +25,7 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
   const circle = { cx: 2, cy: 2, r: 1 };
   const ellipse = { cx: 2, cy: 2, rx: 2, ry: 1 };
   const triangle = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 4 } };
-  const polygon = [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 4 },
-    { x: 0, y: 4 },
-  ];
+  const polygon = [0, 0, 4, 0, 4, 4, 0, 4];
 
   test('closed area canonical pair leaves return true for overlap/touch cases', () => {
     expect(intersectsBoundsBounds(bounds, { min: { x: 4, y: 4 }, max: { x: 5, y: 5 } })).toBe(true);
@@ -41,7 +36,7 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
     expect(intersectsEllipseCircle(ellipse, circle)).toBe(true);
     expect(intersectsEllipseRect(ellipse, rect)).toBe(true);
     expect(intersectsEllipseTriangle(ellipse, { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 })).toBe(true);
-    expect(intersectsPolygonBounds(polygon, bounds)).toBe(true);
+    expect(intersectsPolygonBounds(polygon, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
     expect(intersectsPolygonRect(polygon, rect)).toBe(true);
     expect(intersectsRectBounds(rect, bounds)).toBe(true);
     expect(intersectsRectRect(rect, { x: 4, y: 4, width: 2, height: 2 })).toBe(true);

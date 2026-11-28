@@ -1,8 +1,6 @@
-import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
-import { boundsContainsPointXY, readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from '../internal/polygon';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, PolygonLike } from '../types';
+import { boundsContainsPointXY } from '../internal/bounds';
+import { polygonContainsPoint, segmentsIntersect } from '../internal/polygon';
+import type { Bounds, Polygon } from '../types/flat-shapes.internal';
 
 /**
  * polygon과 bounds가 교차하면 true를 반환한다.
@@ -13,30 +11,29 @@ import type { BoundsLike, PolygonLike } from '../types';
  *   3. polygon edge와 bounds edge가 교차한다.
  * - collinear 꼭짓점, self-intersecting polygon도 동일한 규칙으로 판정한다.
  * - inverted bounds (min > max): false.
- * - empty polygon (points.length < 3): false.
+ * - empty polygon (좌표 수 < 6): false.
  *
  * @param polygon polygon 꼭짓점 목록
  * @param bounds  교차를 검사할 bounds
  */
-export function intersectsPolygonBounds(polygon: PolygonLike, bounds: BoundsLike): boolean {
-  const pts = readPolygonPoints(polygon);
-  if (pts.length < 3) return false;
+export function intersectsPolygonBounds(polygon: Polygon, bounds: Bounds): boolean {
+  const pts = polygon;
+  if (pts.length < 6) return false;
 
-  const minX = readX(readBoundsMin(bounds));
-  const minY = readY(readBoundsMin(bounds));
-  const maxX = readX(readBoundsMax(bounds));
-  const maxY = readY(readBoundsMax(bounds));
+  const minX = bounds.minX;
+  const minY = bounds.minY;
+  const maxX = bounds.maxX;
+  const maxY = bounds.maxY;
   if (maxX < minX || maxY < minY) return false;
 
-  const flatPolygon = flatPolygonFromLegacyPoints(pts);
-  if (polygonContainsPoint(flatPolygon, minX, minY, 0)) return true;
-  if (polygonContainsPoint(flatPolygon, maxX, minY, 0)) return true;
-  if (polygonContainsPoint(flatPolygon, maxX, maxY, 0)) return true;
-  if (polygonContainsPoint(flatPolygon, minX, maxY, 0)) return true;
+  if (polygonContainsPoint(pts, minX, minY, 0)) return true;
+  if (polygonContainsPoint(pts, maxX, minY, 0)) return true;
+  if (polygonContainsPoint(pts, maxX, maxY, 0)) return true;
+  if (polygonContainsPoint(pts, minX, maxY, 0)) return true;
 
   const n = pts.length;
-  for (let i = 0; i < n; i++) {
-    if (boundsContainsPointXY(minX, minY, maxX, maxY, readX(pts[i]), readY(pts[i]))) return true;
+  for (let i = 0; i < n; i += 2) {
+    if (boundsContainsPointXY(minX, minY, maxX, maxY, pts[i], pts[i + 1])) return true;
   }
 
   const boundsEdges: [number, number, number, number][] = [
@@ -46,12 +43,12 @@ export function intersectsPolygonBounds(polygon: PolygonLike, bounds: BoundsLike
     [minX, maxY, minX, minY],
   ];
 
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    const eax = readX(pts[i]);
-    const eay = readY(pts[i]);
-    const ebx = readX(pts[j]);
-    const eby = readY(pts[j]);
+  for (let i = 0; i < n; i += 2) {
+    const j = (i + 2) % n;
+    const eax = pts[i];
+    const eay = pts[i + 1];
+    const ebx = pts[j];
+    const eby = pts[j + 1];
     for (const [cax, cay, cbx, cby] of boundsEdges) {
       if (segmentsIntersect(eax, eay, ebx, eby, cax, cay, cbx, cby)) return true;
     }

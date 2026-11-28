@@ -1,8 +1,6 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolygonIntersects } from '../internal/polygon-line-family-hit.internal';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, PolygonLike } from '../types';
+import type { InfiniteLine, Polygon } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 polygon이 교차하면 true를 반환한다.
@@ -10,20 +8,14 @@ import type { InfiniteLineLike, PolygonLike } from '../types';
  * - infinite-line은 양방향으로 무한히 뻗는다.
  * - polygon edge와 infinite-line의 교차 여부로 판정한다.
  * - collinear 꼭짓점, self-intersecting polygon도 동일한 규칙으로 판정한다.
- * - empty polygon (points.length < 3): false.
+ * - empty polygon (좌표 수 < 6): false.
  *
  * @param polygon      교차를 검사할 polygon
  * @param infiniteLine 교차를 검사할 infinite-line
  * @param epsilon      교차 판정 허용 오차
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsPolygonInfiniteLine(
-  polygon: PolygonLike,
-  infiniteLine: InfiniteLineLike,
-  epsilon?: number
-): boolean {
-  const o = readInfiniteLineOrigin(infiniteLine);
-  const d = readInfiniteLineDirection(infiniteLine);
-  const lineParam = infiniteLineToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
+export function intersectsPolygonInfiniteLine(polygon: Polygon, infiniteLine: InfiniteLine, epsilon?: number): boolean {
+  const lineParam = infiniteLineToLineFamilyParam(infiniteLine.ox, infiniteLine.oy, infiniteLine.dx, infiniteLine.dy);
   return lineFamilyPolygonIntersects(lineParam, polygon, epsilon);
 }

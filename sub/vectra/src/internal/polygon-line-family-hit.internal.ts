@@ -2,14 +2,12 @@
  * polygon과 line-family(segment, ray, infinite-line)의 boolean 교차 판정.
  *
  * `intersectsPolygonSegment`, `intersectsPolygonRay`, `intersectsPolygonInfiniteLine`만 호출한다.
- * 공유 `readX`/`readY`와 `polygonContainsPoint`는 라이브러리 전체가 쓰므로 입력 모양이 섞인 프로세스에서는 느리다.
- * 이 module은 `line-hit-read.internal`의 전용 reader로 점 좌표를 읽어, 캐시에 이 판정이 받는 입력 모양만 남긴다.
+ * 다각형의 좌표 배열을 순회하며 edge마다 교차를 판정한다.
  */
 
-import type { PolygonLike, XYInput } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import { lineFamilyIntersects } from './line-family-core.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
-import { lineHitX, lineHitY } from './line-hit-read.internal';
 import { DEFAULT_EPSILON, hypot2 } from './numeric';
 
 /** edge마다 새 record를 만들지 않으려고 재사용하는 segment param이다. `lineFamilyIntersects`는 param을 보관하지 않는다. */
@@ -20,7 +18,7 @@ const edgeParam: LineFamilyParam = { ox: 0, oy: 0, dx: 0, dy: 0, kind: 'finite' 
  *
  * polygon의 모든 edge를 segment로 순회해 line-family와 교차하는지 확인한다.
  * edge 교차가 없고 segment인 경우 origin이 polygon 내부에 있으면 true(완전 포함).
- * pts.length < 3이면 empty polygon으로 false를 반환한다.
+ * pts.length < 6이면 empty polygon으로 false를 반환한다.
  *
  * @param line 교차를 검사할 line-family
  * @param polygon 교차를 검사할 polygon
@@ -28,27 +26,23 @@ const edgeParam: LineFamilyParam = { ox: 0, oy: 0, dx: 0, dy: 0, kind: 'finite' 
  */
 export function lineFamilyPolygonIntersects(
   line: LineFamilyParam,
-  polygon: PolygonLike,
+  polygon: Polygon,
   epsilon: number | undefined
 ): boolean {
-  const pts = Array.isArray(polygon)
-    ? (polygon as readonly XYInput[])
-    : (polygon as { points: readonly XYInput[] }).points;
+  const pts = polygon;
   const n = pts.length;
-  if (n < 3) return false;
+  if (n < 6) return false;
 
-  const first = pts[0];
-  const x0 = lineHitX(first);
-  const y0 = lineHitY(first);
+  const x0 = pts[0];
+  const y0 = pts[1];
   let ax = x0;
   let ay = y0;
-  for (let i = 1; i <= n; i++) {
+  for (let i = 2; i <= n; i += 2) {
     let bx = x0;
     let by = y0;
     if (i < n) {
-      const p = pts[i];
-      bx = lineHitX(p);
-      by = lineHitY(p);
+      bx = pts[i];
+      by = pts[i + 1];
     }
     edgeParam.ox = ax;
     edgeParam.oy = ay;
@@ -74,20 +68,18 @@ export function lineFamilyPolygonIntersects(
  * 이 여유는 closest 좌표 보간과 Euclidean 거리의 반올림 오차보다 충분히 크다.
  * NaN 거리인 edge는 최소 거리 계산이 무시하므로 여기서도 무시한다.
  */
-function boundaryWithin(pts: readonly XYInput[], n: number, px: number, py: number, epsilon: number): boolean {
+function boundaryWithin(pts: Polygon, n: number, px: number, py: number, epsilon: number): boolean {
   const slack = epsilon > 0 ? 2 * epsilon : 0;
-  const first = pts[0];
-  const x0 = lineHitX(first);
-  const y0 = lineHitY(first);
+  const x0 = pts[0];
+  const y0 = pts[1];
   let ax = x0;
   let ay = y0;
-  for (let i = 1; i <= n; i++) {
+  for (let i = 2; i <= n; i += 2) {
     let bx = x0;
     let by = y0;
     if (i < n) {
-      const p = pts[i];
-      bx = lineHitX(p);
-      by = lineHitY(p);
+      bx = pts[i];
+      by = pts[i + 1];
     }
     const xLo = ax < bx ? ax : bx;
     const xHi = ax < bx ? bx : ax;
@@ -131,24 +123,22 @@ function boundaryWithin(pts: readonly XYInput[], n: number, px: number, py: numb
 /**
  * ray casting으로 (px, py)가 polygon 내부(boundary 포함)에 있는지 판정한다.
  *
- * `polygonContainsPoint`와 같은 값을 반환한다. 호출자가 `n >= 3`을 보장해야 한다.
+ * `polygonContainsPoint`와 같은 값을 반환한다. 호출자가 `n >= 6`을 보장해야 한다.
  */
-function containsPoint(pts: readonly XYInput[], n: number, px: number, py: number, epsilon: number): boolean {
+function containsPoint(pts: Polygon, n: number, px: number, py: number, epsilon: number): boolean {
   if (boundaryWithin(pts, n, px, py, epsilon)) return true;
 
-  const first = pts[0];
-  const x0 = lineHitX(first);
-  const y0 = lineHitY(first);
+  const x0 = pts[0];
+  const y0 = pts[1];
   let ax = x0;
   let ay = y0;
   let inside = false;
-  for (let i = 1; i <= n; i++) {
+  for (let i = 2; i <= n; i += 2) {
     let bx = x0;
     let by = y0;
     if (i < n) {
-      const p = pts[i];
-      bx = lineHitX(p);
-      by = lineHitY(p);
+      bx = pts[i];
+      by = pts[i + 1];
     }
     // lower-left rule: y 범위에서 py를 포함하고, 교점이 px보다 오른쪽이면 crossing
     if ((ay <= py && by > py) || (by <= py && ay > py)) {

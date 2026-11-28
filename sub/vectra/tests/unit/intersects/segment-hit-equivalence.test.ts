@@ -236,6 +236,13 @@ function makeSegment(rng: Rng, scene: Scene): SegmentLike {
   return { a, b } as SegmentLike;
 }
 
+/** 이전 형식으로 생성한 입력의 끝점을 평평하게 읽는다. */
+function flatSegment(segment: SegmentLike) {
+  const a = readSegmentA(segment);
+  const b = readSegmentB(segment);
+  return { x1: readX(a), y1: readY(a), x2: readX(b), y2: readY(b) };
+}
+
 const N = 150_000;
 
 describe('polygon×segment/ray/infinite-line 교차 판정 — 이전 구현과 반환값 동일성', () => {
@@ -247,7 +254,7 @@ describe('polygon×segment/ray/infinite-line 교차 판정 — 이전 구현과 
       const segment = makeSegment(rng, scene);
       const epsilon = pick(rng, EPSILONS);
       if (
-        intersectsPolygonSegment(scene.polygon, segment, epsilon) !==
+        intersectsPolygonSegment(scene.xy.flat(), flatSegment(segment), epsilon) !==
         referencePolygonSegment(scene.polygon, segment, epsilon)
       ) {
         mismatch = `#${i} epsilon=${String(epsilon)}`;
@@ -276,10 +283,13 @@ describe('polygon×segment/ray/infinite-line 교차 판정 — 이전 구현과 
       const ray: RayLike = { origin, direction } as RayLike;
       const line: InfiniteLineLike = { origin, direction } as InfiniteLineLike;
       const epsilon = pick(rng, EPSILONS);
-      if (intersectsPolygonRay(scene.polygon, ray, epsilon) !== referencePolygonRay(scene.polygon, ray, epsilon)) {
+      if (
+        intersectsPolygonRay(scene.xy.flat(), { ox, oy, dx: dir[0], dy: dir[1] }, epsilon) !==
+        referencePolygonRay(scene.polygon, ray, epsilon)
+      ) {
         mismatch = `ray #${i} epsilon=${String(epsilon)}`;
       } else if (
-        intersectsPolygonInfiniteLine(scene.polygon, line, epsilon) !==
+        intersectsPolygonInfiniteLine(scene.xy.flat(), { ox, oy, dx: dir[0], dy: dir[1] }, epsilon) !==
         referencePolygonInfiniteLine(scene.polygon, line, epsilon)
       ) {
         mismatch = `infinite-line #${i} epsilon=${String(epsilon)}`;
@@ -342,7 +352,13 @@ describe('polygon×segment/ray/infinite-line 교차 판정 — 이전 구현과 
             b: { x: 2 + shift, y: shift - sign * offset + away.y },
           };
           for (const epsilon of [undefined, 1e-9, 2e-9, 1e-12]) {
-            if (intersectsPolygonSegment(poly, segment, epsilon) !== referencePolygonSegment(poly, segment, epsilon)) {
+            if (
+              intersectsPolygonSegment(
+                poly.flatMap(({ x, y }) => [x, y]),
+                flatSegment(segment),
+                epsilon
+              ) !== referencePolygonSegment(poly, segment, epsilon)
+            ) {
               mismatch = `offset=${offset} shift=${shift} sign=${sign} epsilon=${String(epsilon)}`;
             }
           }
@@ -354,19 +370,10 @@ describe('polygon×segment/ray/infinite-line 교차 판정 — 이전 구현과 
   });
 
   test('segment가 polygon 안에 완전히 들어가면 true이고, 밖에서 멀면 false이다', () => {
-    const triangle = [
-      { x: 0, y: 0 },
-      { x: 10, y: 0 },
-      { x: 0, y: 10 },
-    ];
+    const triangle = [0, 0, 10, 0, 0, 10];
 
-    expect(intersectsPolygonSegment(triangle, { a: { x: 1, y: 1 }, b: { x: 2, y: 2 } })).toBe(true);
-    expect(intersectsPolygonSegment(triangle, { a: { x: 20, y: 20 }, b: { x: 30, y: 20 } })).toBe(false);
-    expect(
-      intersectsPolygonSegment(triangle, [
-        [-5, 5],
-        [5, 5],
-      ])
-    ).toBe(true);
+    expect(intersectsPolygonSegment(triangle, { x1: 1, y1: 1, x2: 2, y2: 2 })).toBe(true);
+    expect(intersectsPolygonSegment(triangle, { x1: 20, y1: 20, x2: 30, y2: 20 })).toBe(false);
+    expect(intersectsPolygonSegment(triangle, { x1: -5, y1: 5, x2: 5, y2: 5 })).toBe(true);
   });
 });

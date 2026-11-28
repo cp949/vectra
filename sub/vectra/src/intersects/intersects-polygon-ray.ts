@@ -1,8 +1,6 @@
 import { rayToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolygonIntersects } from '../internal/polygon-line-family-hit.internal';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike, RayLike } from '../types';
+import type { Polygon, Ray } from '../types/flat-shapes.internal';
 
 /**
  * ray와 polygon이 교차하면 true를 반환한다.
@@ -13,16 +11,14 @@ import type { PolygonLike, RayLike } from '../types';
  * - degenerate direction (zero vector) ray: 점으로 환원된다. origin이 boundary 위에 있으면 true,
  *   내부에만 있으면 edge crossing이 없으므로 false.
  * - collinear 꼭짓점, self-intersecting polygon도 동일한 규칙으로 판정한다.
- * - empty polygon (points.length < 3): false.
+ * - empty polygon (좌표 수 < 6): false.
  *
  * @param polygon  교차를 검사할 polygon
  * @param ray      교차를 검사할 ray
  * @param epsilon  교차 판정 허용 오차
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsPolygonRay(polygon: PolygonLike, ray: RayLike, epsilon?: number): boolean {
-  const o = readRayOrigin(ray);
-  const d = readRayDirection(ray);
-  const lineParam = rayToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
+export function intersectsPolygonRay(polygon: Polygon, ray: Ray, epsilon?: number): boolean {
+  const lineParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
   return lineFamilyPolygonIntersects(lineParam, polygon, epsilon);
 }

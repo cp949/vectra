@@ -6,7 +6,7 @@ import { describe, expect, test } from 'vitest';
 import { intersectsPolygonBounds } from '../../../src/intersects/intersects-polygon-bounds';
 import { intersectsPolygonRect } from '../../../src/intersects/intersects-polygon-rect';
 
-const bounds = { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } };
+const bounds = { minX: 0, minY: 0, maxX: 10, maxY: 10 };
 const rect = { x: 0, y: 0, width: 10, height: 10 };
 
 /**
@@ -14,21 +14,11 @@ const rect = { x: 0, y: 0, width: 10, height: 10 };
  * 한 모서리만 감싸고 나머지 모서리는 포함하지 않는 위치에서 쓴다.
  */
 function squareAround(cx: number, cy: number) {
-  return [
-    { x: cx - 2, y: cy - 2 },
-    { x: cx + 2, y: cy - 2 },
-    { x: cx + 2, y: cy + 2 },
-    { x: cx - 2, y: cy + 2 },
-  ];
+  return [cx - 2, cy - 2, cx + 2, cy - 2, cx + 2, cy + 2, cx - 2, cy + 2];
 }
 
 // 폭이 좁고 긴 띠. bounds·rect의 어떤 모서리도 감싸지 않고 어떤 vertex도 안에 없지만 edge가 가로지른다.
-const crossingBand = [
-  { x: -5, y: 4 },
-  { x: 15, y: 4 },
-  { x: 15, y: 6 },
-  { x: -5, y: 6 },
-];
+const crossingBand = [-5, 4, 15, 4, 15, 6, -5, 6];
 
 describe('intersectsPolygonBounds', () => {
   test('(maxX, minY) 모서리만 감싸는 polygon이면 true를 반환한다', () => {

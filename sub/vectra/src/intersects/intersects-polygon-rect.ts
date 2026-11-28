@@ -1,8 +1,6 @@
-import { flatPolygonFromLegacyPoints } from '../internal/legacy-polygon.internal';
-import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from '../internal/polygon';
-import { readRectHeight, readRectWidth, readRectX, readRectY, rectContainsPointXY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { PolygonLike, RectLike } from '../types';
+import { polygonContainsPoint, segmentsIntersect } from '../internal/polygon';
+import { rectContainsPointXY } from '../internal/rect';
+import type { Polygon, Rect } from '../types/flat-shapes.internal';
 
 /**
  * polygon과 rect가 교차하면 true를 반환한다.
@@ -13,32 +11,31 @@ import type { PolygonLike, RectLike } from '../types';
  *   3. polygon edge와 rect edge가 교차한다.
  * - collinear 꼭짓점, self-intersecting polygon도 동일한 규칙으로 판정한다.
  * - empty rect (width ≤ 0 또는 height ≤ 0): false.
- * - empty polygon (points.length < 3): false.
+ * - empty polygon (좌표 수 < 6): false.
  *
  * @param polygon 교차를 검사할 polygon
  * @param rect    교차를 검사할 rect
  */
-export function intersectsPolygonRect(polygon: PolygonLike, rect: RectLike): boolean {
-  const pts = readPolygonPoints(polygon);
-  if (pts.length < 3) return false;
+export function intersectsPolygonRect(polygon: Polygon, rect: Rect): boolean {
+  const pts = polygon;
+  if (pts.length < 6) return false;
 
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+  const rx = rect.x;
+  const ry = rect.y;
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return false;
 
   const rx2 = rx + rw;
   const ry2 = ry + rh;
-  const flatPolygon = flatPolygonFromLegacyPoints(pts);
-  if (polygonContainsPoint(flatPolygon, rx, ry, 0)) return true;
-  if (polygonContainsPoint(flatPolygon, rx2, ry, 0)) return true;
-  if (polygonContainsPoint(flatPolygon, rx2, ry2, 0)) return true;
-  if (polygonContainsPoint(flatPolygon, rx, ry2, 0)) return true;
+  if (polygonContainsPoint(pts, rx, ry, 0)) return true;
+  if (polygonContainsPoint(pts, rx2, ry, 0)) return true;
+  if (polygonContainsPoint(pts, rx2, ry2, 0)) return true;
+  if (polygonContainsPoint(pts, rx, ry2, 0)) return true;
 
   const n = pts.length;
-  for (let i = 0; i < n; i++) {
-    if (rectContainsPointXY(rx, ry, rw, rh, readX(pts[i]), readY(pts[i]))) return true;
+  for (let i = 0; i < n; i += 2) {
+    if (rectContainsPointXY(rx, ry, rw, rh, pts[i], pts[i + 1])) return true;
   }
 
   const rectEdges: [number, number, number, number][] = [
@@ -48,12 +45,12 @@ export function intersectsPolygonRect(polygon: PolygonLike, rect: RectLike): boo
     [rx, ry2, rx, ry],
   ];
 
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    const eax = readX(pts[i]);
-    const eay = readY(pts[i]);
-    const ebx = readX(pts[j]);
-    const eby = readY(pts[j]);
+  for (let i = 0; i < n; i += 2) {
+    const j = (i + 2) % n;
+    const eax = pts[i];
+    const eay = pts[i + 1];
+    const ebx = pts[j];
+    const eby = pts[j + 1];
     for (const [cax, cay, cbx, cby] of rectEdges) {
       if (segmentsIntersect(eax, eay, ebx, eby, cax, cay, cbx, cby)) return true;
     }
