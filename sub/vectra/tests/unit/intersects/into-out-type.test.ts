@@ -2,20 +2,16 @@
  * 교차 결과를 기록하는 Into 함수의 입력·출력 타입과 참조를 검증한다.
  * 새 원소를 push하는 출력 배열은 원소 타입을 함수가 만드는 타입으로 고정한다.
  * 좁은 원소 타입 배열을 넘겨도 반환 타입이 넓어진 실제 원소 타입인지 확인한다.
+ * 기존 객체에 덮어쓰는 sweep 결과는 호출자의 결과 타입과 내부 점 참조를 보존한다.
  */
 import { expect, expectTypeOf, test } from 'vitest';
 import { boundsSweepBoundsInto } from '../../../src/intersects/bounds-sweep-bounds-into';
 import { boundsSweepPointInto } from '../../../src/intersects/bounds-sweep-point-into';
 import { infiniteLineBoundsIntersectionsInto } from '../../../src/intersects/infinite-line-bounds-intersections-into';
-
 import { infiniteLineRectIntersectionsInto } from '../../../src/intersects/infinite-line-rect-intersections-into';
-
 import { rayBoundsIntersectionsInto } from '../../../src/intersects/ray-bounds-intersections-into';
-
 import { rayRectIntersectionsInto } from '../../../src/intersects/ray-rect-intersections-into';
-
 import { segmentBoundsIntersectionsInto } from '../../../src/intersects/segment-bounds-intersections-into';
-
 import { segmentRectIntersectionsInto } from '../../../src/intersects/segment-rect-intersections-into';
 import { rayPolygonIntersectionsInto } from '../../../src/intersects/ray-polygon-intersections-into';
 import { infiniteLinePolygonIntersectionsInto } from '../../../src/intersects/infinite-line-polygon-intersections-into';
@@ -260,6 +256,8 @@ test('직선 계열과 사각 경계의 교점 배열 타입을 고정한다', (
   const segmentRectIntersectionsIntoResult = segmentRectIntersectionsInto(out, segment, rect);
   expectTypeOf(segmentRectIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
   expect(segmentRectIntersectionsIntoResult).toBe(out);
+  expect(out).toHaveLength(2);
+  expect(out[0]).not.toBeInstanceOf(TaggedPoint);
 });
 
 /** 호출자가 sweep 결과에 표지를 추가한 클래스다. */

@@ -21,12 +21,12 @@ describe('intersectsBoundsSegment', () => {
       expect(intersectsBoundsSegment(bounds, line)).toBe(false);
     });
 
-    test('inverted bounds (min.x > max.x): false를 반환한다', () => {
+    test('inverted bounds (minX > maxX): false를 반환한다', () => {
       const line = { x1: 0, y1: 3, x2: 10, y2: 3 };
       expect(intersectsBoundsSegment({ minX: 5, minY: 1, maxX: 1, maxY: 5 }, line)).toBe(false);
     });
 
-    test('inverted bounds (min.y > max.y): false를 반환한다', () => {
+    test('inverted bounds (minY > maxY): false를 반환한다', () => {
       const line = { x1: 0, y1: 3, x2: 10, y2: 3 };
       expect(intersectsBoundsSegment({ minX: 1, minY: 5, maxX: 5, maxY: 1 }, line)).toBe(false);
     });

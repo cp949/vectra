@@ -287,7 +287,7 @@ describe('rayPolygonHitT', () => {
  *
  * @param name describe 이름
  * @param hitT 검증할 함수
- * @param box 객체 형태의 [0, 4] × [0, 4] box
+ * @param box [0, 4] × [0, 4] 범위의 box
  */
 function describeBoxHitT<Box>(name: string, hitT: (ray: Ray, box: Box, tMin?: number) => number, box: Box): void {
   describe(name, () => {
@@ -296,11 +296,11 @@ function describeBoxHitT<Box>(name: string, hitT: (ray: Ray, box: Box, tMin?: nu
       expect(hitT({ ox: 2, oy: 8, dx: 0, dy: -1 }, box)).toBe(4);
     });
 
-    test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
+    test('(dx, dy)를 정규화하지 않으므로 t는 (dx, dy) 길이 단위다', () => {
       expect(hitT({ ox: -2, oy: 2, dx: 4, dy: 0 }, box)).toBe(0.5);
     });
 
-    test('origin이 안쪽이면 exit 교점의 t를 반환한다', () => {
+    test('시작점 (ox, oy)가 안쪽이면 exit 교점의 t를 반환한다', () => {
       expect(hitT({ ox: 2, oy: 2, dx: 1, dy: 0 }, box)).toBe(2);
       expect(hitT({ ox: 1, oy: 2, dx: -1, dy: 0 }, box)).toBe(1);
       expect(hitT({ ox: 2, oy: 2, dx: 1, dy: 1 }, box)).toBe(2);
@@ -343,7 +343,7 @@ function describeBoxHitT<Box>(name: string, hitT: (ray: Ray, box: Box, tMin?: nu
       expect(hitT({ ox: -2, oy: 12, dx: 1, dy: -1 }, box)).toBe(Infinity);
     });
 
-    test('zero direction은 Infinity를 반환한다', () => {
+    test('dx = dy = 0이면 Infinity를 반환한다', () => {
       expect(hitT({ ox: 2, oy: 2, dx: 0, dy: 0 }, box)).toBe(Infinity);
     });
 

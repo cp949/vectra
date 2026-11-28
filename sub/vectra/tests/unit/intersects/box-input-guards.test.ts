@@ -37,11 +37,11 @@ const horizontalRay = { ox: 0, oy: 3, dx: 1, dy: 0 };
 const horizontalInfinite = { ox: 0, oy: 3, dx: 1, dy: 0 };
 
 describe('뒤집힌 bounds 가드', () => {
-  test('singleIntersectionSegmentBounds는 min.x가 max.x보다 크면 undefined를 반환한다', () => {
+  test('singleIntersectionSegmentBounds는 minX가 maxX보다 크면 undefined를 반환한다', () => {
     expect(singleIntersectionSegmentBounds(horizontalLine, invertedX)).toBeUndefined();
   });
 
-  test('singleIntersectionSegmentBounds는 min.y가 max.y보다 크면 undefined를 반환한다', () => {
+  test('singleIntersectionSegmentBounds는 minY가 maxY보다 크면 undefined를 반환한다', () => {
     expect(singleIntersectionSegmentBounds(horizontalLine, invertedY)).toBeUndefined();
   });
 

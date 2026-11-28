@@ -6,8 +6,8 @@ import type { Ray, Rect, PointWritable } from '../types/flat-shapes.internal';
  *
  * rect boundary 4개 edge와의 교점을 모으고 corner/edge 중복을 dedupe한다.
  * - transversal crossing, corner touch 1점(dedupe), edge collinear overlap은 start/end 2점이다.
- * - ray origin이 rect 내부면 t ≥ 0 exit 교점만 반환한다. boundary 교점이 없으면 빈 배열이다.
- * - empty rect(width ≤ 0 또는 height ≤ 0), zero direction(degenerate)은 빈 배열을 남긴다.
+ * - ray 시작점 (ox, oy)가 rect 내부면 t ≥ 0 exit 교점만 반환한다. boundary 교점이 없으면 빈 배열이다.
+ * - empty rect(width ≤ 0 또는 height ≤ 0), degenerate direction(`dx = dy = 0`)은 빈 배열을 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object이며
  * 입력 point object를 재사용하지 않는다. 반환 순서는 ray parameter `t` 오름차순이다.

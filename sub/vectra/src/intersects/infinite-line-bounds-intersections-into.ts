@@ -9,7 +9,7 @@ import type { Bounds, InfiniteLine, PointWritable } from '../types/flat-shapes.i
  * 보아 zero-extent(점·선) bounds도 유효 입력으로 처리한다.
  * - 양방향 transversal crossing 2점, corner touch 1점(dedupe), edge collinear overlap은 start/end
  *   2점이다.
- * - inverted bounds(max < min), zero direction(degenerate)은 빈 배열을 남긴다.
+ * - inverted bounds(max < min), degenerate direction(`dx = dy = 0`)은 빈 배열을 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object이며
  * 입력 point object를 재사용하지 않는다. 반환 순서는 line parameter `t` 오름차순이다.

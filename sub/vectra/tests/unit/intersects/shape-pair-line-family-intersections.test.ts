@@ -49,7 +49,7 @@ describe('line-family × circle 교점 collection (S10-RM-007)', () => {
     expect(points).toEqual([]);
   });
 
-  test('infinite-line은 direction이 음수여도 t 오름차순으로 반환한다', () => {
+  test('infinite-line은 dx가 음수여도 t 오름차순으로 반환한다', () => {
     const points = infiniteLineCircleIntersections({ ox: 0, oy: 0, dx: -1, dy: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 5, 0);
@@ -77,7 +77,7 @@ describe('line-family × rect/bounds 교점 collection (S10-RM-007)', () => {
     expectPointClose(points[1], 10, 5);
   });
 
-  test('ray origin이 rect 내부면 exit 한 점만 반환한다', () => {
+  test('ray 시작점 (ox, oy)가 rect 내부면 exit 한 점만 반환한다', () => {
     const points = rayRectIntersections({ ox: 5, oy: 5, dx: 1, dy: 0 }, rect);
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 10, 5);
@@ -113,7 +113,7 @@ describe('line-family × rect/bounds 교점 collection (S10-RM-007)', () => {
     expect(points).toEqual([]);
   });
 
-  test('zero direction(degenerate)은 빈 배열이다', () => {
+  test('dx = dy = 0인 degenerate 입력은 빈 배열이다', () => {
     const points = infiniteLineRectIntersections({ ox: 5, oy: 5, dx: 0, dy: 0 }, rect);
     expect(points).toEqual([]);
   });
