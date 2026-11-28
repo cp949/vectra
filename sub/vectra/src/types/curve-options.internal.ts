@@ -14,7 +14,11 @@ export interface BezierDegreeReductionOptions {
   tolerance?: number;
 }
 
-/** quadratic Bezier flatten 연산의 허용 오차와 재귀 깊이 상한을 담는 옵션 object. */
+/**
+ * 곡선을 점 목록으로 근사할 때 쓰는 허용 오차와 재귀 깊이 상한이다.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 두 필드를 모두 지정한다.
+ */
 export interface FlattenOptions {
   /** 선형 근사 허용 geometric error. 기본값: 0.5 */
   flatness?: number;
@@ -99,7 +103,7 @@ export interface ClosestPointOptions {
 /**
  * cubicToArcsInto / cubicToArcs 근사 option type.
  *
- * 생략된 option은 각각의 기본값이 적용된다.
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
  * finite positive가 아닌 값을 지정하면 RangeError로 실패한다.
  */
 export interface CubicToArcsOptions {
@@ -159,7 +163,11 @@ export interface CatmullRomOptions {
   closed?: boolean;
 }
 
-/** Catmull-Rom polyline sampling option. */
+/**
+ * Catmull-Rom 곡선을 점 목록으로 샘플링할 때 쓰는 옵션이다.
+ *
+ * 옵션 객체를 생략하면 기본값을 쓴다. 객체를 넘기면 모든 필드를 지정한다.
+ */
 export interface CatmullRomPolylineOptions {
   /** 전체 샘플 수. 기본값 32 */
   steps?: number;
