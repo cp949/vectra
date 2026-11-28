@@ -26,15 +26,15 @@ import { singleIntersectionSegmentRect } from '../../../src/intersects/single-in
 import { singleIntersectionSegmentRectInto } from '../../../src/intersects/single-intersection-segment-rect-into';
 import { triangleTriangleIntersectionsInto } from '../../../src/intersects/triangle-triangle-intersections-into';
 
-const bounds = { min: { x: 1, y: 1 }, max: { x: 5, y: 5 } };
-const invertedX = { min: { x: 5, y: 1 }, max: { x: 1, y: 5 } };
-const invertedY = { min: { x: 1, y: 5 }, max: { x: 5, y: 1 } };
+const bounds = { minX: 1, minY: 1, maxX: 5, maxY: 5 };
+const invertedX = { minX: 5, minY: 1, maxX: 1, maxY: 5 };
+const invertedY = { minX: 1, minY: 5, maxX: 5, maxY: 1 };
 const rect = { x: 1, y: 1, width: 4, height: 4 };
 const zeroWidthRect = { x: 1, y: 1, width: 0, height: 4 };
 const zeroHeightRect = { x: 1, y: 1, width: 4, height: 0 };
-const horizontalLine = { a: { x: 0, y: 3 }, b: { x: 10, y: 3 } };
-const horizontalRay = { origin: { x: 0, y: 3 }, direction: { x: 1, y: 0 } };
-const horizontalInfinite = { origin: { x: 0, y: 3 }, direction: { x: 1, y: 0 } };
+const horizontalLine = { x1: 0, y1: 3, x2: 10, y2: 3 };
+const horizontalRay = { ox: 0, oy: 3, dx: 1, dy: 0 };
+const horizontalInfinite = { ox: 0, oy: 3, dx: 1, dy: 0 };
 
 describe('뒤집힌 bounds 가드', () => {
   test('singleIntersectionSegmentBounds는 min.x가 max.x보다 크면 undefined를 반환한다', () => {
@@ -98,8 +98,12 @@ describe('뒤집힌 bounds 가드', () => {
   });
 
   test('intersectsBoundsBounds는 두 번째 인자가 뒤집힌 bounds이면 false를 반환한다', () => {
-    expect(intersectsBoundsBounds(bounds, invertedX)).toBe(false);
-    expect(intersectsBoundsBounds(bounds, invertedY)).toBe(false);
+    expect(
+      intersectsBoundsBounds({ min: { x: 1, y: 1 }, max: { x: 5, y: 5 } }, { min: { x: 5, y: 1 }, max: { x: 1, y: 5 } })
+    ).toBe(false);
+    expect(
+      intersectsBoundsBounds({ min: { x: 1, y: 1 }, max: { x: 5, y: 5 } }, { min: { x: 1, y: 5 }, max: { x: 5, y: 1 } })
+    ).toBe(false);
   });
 });
 
@@ -156,7 +160,7 @@ describe('너비·높이 0 이하 rect 가드', () => {
 
 describe('직선 계열 단일 교점 companion의 hit 경로', () => {
   // 단일 교점은 교점이 정확히 하나일 때만 반환한다. 모서리나 꼭짓점에 스치는 직선을 쓴다.
-  const cornerGrazing = { origin: { x: 0, y: 2 }, direction: { x: 1, y: -1 } };
+  const cornerGrazing = { ox: 0, oy: 2, dx: 1, dy: -1 };
 
   test('singleIntersectionInfiniteLineBounds는 bounds 모서리에 스치면 그 교점을 반환한다', () => {
     const hit = singleIntersectionInfiniteLineBounds(cornerGrazing, bounds);

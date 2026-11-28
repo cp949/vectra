@@ -1,8 +1,5 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { lineFamilyBoxIntersectionPoints } from '../internal/line-family-box';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, Rect, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 rect boundary의 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -23,25 +20,23 @@ import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function infiniteLineRectIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  line: InfiniteLineLike,
-  rect: RectLike,
+  outPoints: PointWritable[],
+  line: InfiniteLine,
+  rect: Rect,
   epsilon?: number
-): XYObjectWritable[] {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+): PointWritable[] {
+  const rw = rect.width;
+  const rh = rect.height;
   outPoints.length = 0;
   if (rw <= 0 || rh <= 0) return outPoints;
-  const origin = readInfiniteLineOrigin(line);
-  const direction = readInfiniteLineDirection(line);
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
+  const rx = rect.x;
+  const ry = rect.y;
   return lineFamilyBoxIntersectionPoints(
     outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    line.ox,
+    line.oy,
+    line.dx,
+    line.dy,
     'inf',
     rx,
     ry,

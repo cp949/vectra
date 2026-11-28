@@ -8,7 +8,7 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { type LinePolygonHitRecord, lineFamilyPolygonIntersectionHits } from './polygon-line-intersections';
 
@@ -36,7 +36,7 @@ import { type LinePolygonHitRecord, lineFamilyPolygonIntersectionHits } from './
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function lineFamilyBoxIntersectionPoints(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   ox: number,
   oy: number,
   dx: number,
@@ -47,7 +47,7 @@ export function lineFamilyBoxIntersectionPoints(
   x1: number,
   y1: number,
   epsilon: number | undefined
-): XYObjectWritable[] {
+): PointWritable[] {
   outPoints.length = 0;
 
   // box boundary를 CCW polygon edge로 순회한다.

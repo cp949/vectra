@@ -1,8 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { lineFamilyBoxIntersectionPoints } from '../internal/line-family-box';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, InfiniteLineLike, XYObjectWritable } from '../types';
+import type { Bounds, InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 bounds boundary의 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -25,32 +22,16 @@ import type { BoundsLike, InfiniteLineLike, XYObjectWritable } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function infiniteLineBoundsIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  line: InfiniteLineLike,
-  bounds: BoundsLike,
+  outPoints: PointWritable[],
+  line: InfiniteLine,
+  bounds: Bounds,
   epsilon?: number
-): XYObjectWritable[] {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const x0 = readX(min);
-  const y0 = readY(min);
-  const x1 = readX(max);
-  const y1 = readY(max);
+): PointWritable[] {
+  const x0 = bounds.minX;
+  const y0 = bounds.minY;
+  const x1 = bounds.maxX;
+  const y1 = bounds.maxY;
   outPoints.length = 0;
   if (x1 < x0 || y1 < y0) return outPoints;
-  const origin = readInfiniteLineOrigin(line);
-  const direction = readInfiniteLineDirection(line);
-  return lineFamilyBoxIntersectionPoints(
-    outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
-    'inf',
-    x0,
-    y0,
-    x1,
-    y1,
-    epsilon
-  );
+  return lineFamilyBoxIntersectionPoints(outPoints, line.ox, line.oy, line.dx, line.dy, 'inf', x0, y0, x1, y1, epsilon);
 }

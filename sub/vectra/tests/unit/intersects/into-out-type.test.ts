@@ -4,6 +4,17 @@
  * 좁은 원소 타입 배열을 넘겨도 반환 타입이 넓어진 실제 원소 타입인지 확인한다.
  */
 import { expect, expectTypeOf, test } from 'vitest';
+import { infiniteLineBoundsIntersectionsInto } from '../../../src/intersects/infinite-line-bounds-intersections-into';
+
+import { infiniteLineRectIntersectionsInto } from '../../../src/intersects/infinite-line-rect-intersections-into';
+
+import { rayBoundsIntersectionsInto } from '../../../src/intersects/ray-bounds-intersections-into';
+
+import { rayRectIntersectionsInto } from '../../../src/intersects/ray-rect-intersections-into';
+
+import { segmentBoundsIntersectionsInto } from '../../../src/intersects/segment-bounds-intersections-into';
+
+import { segmentRectIntersectionsInto } from '../../../src/intersects/segment-rect-intersections-into';
 import { rayPolygonIntersectionsInto } from '../../../src/intersects/ray-polygon-intersections-into';
 import { infiniteLinePolygonIntersectionsInto } from '../../../src/intersects/infinite-line-polygon-intersections-into';
 import { segmentPolygonIntersectionsInto } from '../../../src/intersects/segment-polygon-intersections-into';
@@ -221,4 +232,30 @@ test('visibilityPolygonInto는 좌표 배열을 받아 PolygonWritable로 반환
   expectTypeOf(result).toEqualTypeOf<PolygonWritable>();
   expect(result).toBe(out);
   expect(out.length).toBeGreaterThan(0);
+});
+
+test('직선 계열과 사각 경계의 교점 배열 타입을 고정한다', () => {
+  const out: TaggedPoint[] = [];
+  const bounds = { minX: 0, minY: 0, maxX: 2, maxY: 2 };
+  const rect = { x: 0, y: 0, width: 2, height: 2 };
+  const line = { ox: -1, oy: 1, dx: 1, dy: 0 };
+  const segment = { x1: -1, y1: 1, x2: 3, y2: 1 };
+  const infiniteLineBoundsIntersectionsIntoResult = infiniteLineBoundsIntersectionsInto(out, line, bounds);
+  expectTypeOf(infiniteLineBoundsIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
+  expect(infiniteLineBoundsIntersectionsIntoResult).toBe(out);
+  const infiniteLineRectIntersectionsIntoResult = infiniteLineRectIntersectionsInto(out, line, rect);
+  expectTypeOf(infiniteLineRectIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
+  expect(infiniteLineRectIntersectionsIntoResult).toBe(out);
+  const rayBoundsIntersectionsIntoResult = rayBoundsIntersectionsInto(out, line, bounds);
+  expectTypeOf(rayBoundsIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
+  expect(rayBoundsIntersectionsIntoResult).toBe(out);
+  const rayRectIntersectionsIntoResult = rayRectIntersectionsInto(out, line, rect);
+  expectTypeOf(rayRectIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
+  expect(rayRectIntersectionsIntoResult).toBe(out);
+  const segmentBoundsIntersectionsIntoResult = segmentBoundsIntersectionsInto(out, segment, bounds);
+  expectTypeOf(segmentBoundsIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
+  expect(segmentBoundsIntersectionsIntoResult).toBe(out);
+  const segmentRectIntersectionsIntoResult = segmentRectIntersectionsInto(out, segment, rect);
+  expectTypeOf(segmentRectIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
+  expect(segmentRectIntersectionsIntoResult).toBe(out);
 });

@@ -1,8 +1,5 @@
 import { lineFamilyBoxIntersectionPoint, segmentToLineFamilyParam } from '../internal/line-family';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { RectLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Rect, Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 rect의 단일 교점을 새 object로 반환한다.
@@ -16,19 +13,13 @@ import type { RectLike, SegmentLike, XYObjectWritable } from '../types';
  * @param epsilon 수치 비교 tolerance
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function singleIntersectionSegmentRect(
-  line: SegmentLike,
-  rect: RectLike,
-  epsilon?: number
-): XYObjectWritable | undefined {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+export function singleIntersectionSegmentRect(line: Segment, rect: Rect, epsilon?: number): PointWritable | undefined {
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return undefined;
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const rx = rect.x;
+  const ry = rect.y;
+  const out: PointWritable = { x: 0, y: 0 };
   return lineFamilyBoxIntersectionPoint(out, lineParam, rx, ry, rx + rw, ry + rh, epsilon) ? out : undefined;
 }

@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { RayLike, RectLike, XYObjectWritable } from '../types';
+import type { Ray, Rect, PointWritable } from '../types/flat-shapes.internal';
 import { rayRectIntersectionsInto } from './ray-rect-intersections-into';
 
 /**
@@ -16,8 +16,8 @@ import { rayRectIntersectionsInto } from './ray-rect-intersections-into';
  * @param rect 교점을 구할 rect (axis-aligned)
  * @param epsilon collinear/dedupe 판정 임계값
  */
-export function rayRectIntersections(ray: RayLike, rect: RectLike, epsilon = DEFAULT_EPSILON): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+export function rayRectIntersections(ray: Ray, rect: Rect, epsilon = DEFAULT_EPSILON): PointWritable[] {
+  const out: PointWritable[] = [];
   rayRectIntersectionsInto(out, ray, rect, epsilon);
   return out;
 }

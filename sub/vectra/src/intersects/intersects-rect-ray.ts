@@ -1,8 +1,5 @@
 import { lineFamilyBoxIntersects, rayToLineFamilyParam } from '../internal/line-family';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { RayLike, RectLike } from '../types';
+import type { Ray, Rect } from '../types/flat-shapes.internal';
 
 /**
  * rect와 ray가 교차하거나 접하면 true를 반환한다.
@@ -15,14 +12,12 @@ import type { RayLike, RectLike } from '../types';
  * @param epsilon 수치 비교 tolerance
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsRectRay(rect: RectLike, ray: RayLike, epsilon?: number): boolean {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+export function intersectsRectRay(rect: Rect, ray: Ray, epsilon?: number): boolean {
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return false;
-  const origin = readRayOrigin(ray);
-  const dir = readRayDirection(ray);
-  const lineParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
+  const lineParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
+  const rx = rect.x;
+  const ry = rect.y;
   return lineFamilyBoxIntersects(lineParam, rx, ry, rx + rw, ry + rh, epsilon);
 }

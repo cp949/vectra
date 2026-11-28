@@ -1,8 +1,5 @@
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { RectLike, SegmentLike } from '../types';
+import type { Rect, Segment } from '../types/flat-shapes.internal';
 
 /**
  * rect와 segment가 교차하거나 접하면 true를 반환한다.
@@ -15,14 +12,12 @@ import type { RectLike, SegmentLike } from '../types';
  * @param epsilon 수치 비교 tolerance
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsRectSegment(rect: RectLike, line: SegmentLike, epsilon?: number): boolean {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+export function intersectsRectSegment(rect: Rect, line: Segment, epsilon?: number): boolean {
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return false;
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const rx = rect.x;
+  const ry = rect.y;
   return lineFamilyBoxIntersects(lineParam, rx, ry, rx + rw, ry + rh, epsilon);
 }

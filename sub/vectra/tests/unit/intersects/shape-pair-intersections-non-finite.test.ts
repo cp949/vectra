@@ -27,7 +27,7 @@ import type { XYObjectWritable } from '../../../src/types';
 
 describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', () => {
   const rect = { x: 0, y: 0, width: 10, height: 10 };
-  const bounds = { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } };
+  const bounds = { minX: 0, minY: 0, maxX: 10, maxY: 10 };
 
   const cases: Array<[string, (v: number) => XYObjectWritable[]]> = [
     [
@@ -54,23 +54,14 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
       'infiniteLineEllipse',
       (v) => infiniteLineEllipseIntersections({ ox: v, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, rx: 5, ry: 3 }),
     ],
-    ['segmentRect', (v) => segmentRectIntersections({ a: { x: v, y: 5 }, b: { x: 15, y: 5 } }, rect)],
-    ['rayRect', (v) => rayRectIntersections({ origin: { x: v, y: 5 }, direction: { x: 1, y: 0 } }, rect)],
-    [
-      'infiniteLineRect',
-      (v) => infiniteLineRectIntersections({ origin: { x: v, y: 5 }, direction: { x: 1, y: 0 } }, rect),
-    ],
-    ['segmentBounds', (v) => segmentBoundsIntersections({ a: { x: v, y: 5 }, b: { x: 15, y: 5 } }, bounds)],
-    ['rayBounds', (v) => rayBoundsIntersections({ origin: { x: v, y: 5 }, direction: { x: 1, y: 0 } }, bounds)],
-    [
-      'infiniteLineBounds',
-      (v) => infiniteLineBoundsIntersections({ origin: { x: v, y: 5 }, direction: { x: 1, y: 0 } }, bounds),
-    ],
+    ['segmentRect', (v) => segmentRectIntersections({ x1: v, y1: 5, x2: 15, y2: 5 }, rect)],
+    ['rayRect', (v) => rayRectIntersections({ ox: v, oy: 5, dx: 1, dy: 0 }, rect)],
+    ['infiniteLineRect', (v) => infiniteLineRectIntersections({ ox: v, oy: 5, dx: 1, dy: 0 }, rect)],
+    ['segmentBounds', (v) => segmentBoundsIntersections({ x1: v, y1: 5, x2: 15, y2: 5 }, bounds)],
+    ['rayBounds', (v) => rayBoundsIntersections({ ox: v, oy: 5, dx: 1, dy: 0 }, bounds)],
+    ['infiniteLineBounds', (v) => infiniteLineBoundsIntersections({ ox: v, oy: 5, dx: 1, dy: 0 }, bounds)],
     ['circleRect', (v) => circleRectIntersections({ cx: v, cy: 5, r: 3 }, rect)],
-    [
-      'circleBounds',
-      (v) => circleBoundsIntersections({ cx: v, cy: 5, r: 3 }, { minX: 0, minY: 0, maxX: 10, maxY: 10 }),
-    ],
+    ['circleBounds', (v) => circleBoundsIntersections({ cx: v, cy: 5, r: 3 }, bounds)],
     [
       'circleTriangle',
       (v) => circleTriangleIntersections({ cx: v, cy: 0, r: 2 }, { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 }),

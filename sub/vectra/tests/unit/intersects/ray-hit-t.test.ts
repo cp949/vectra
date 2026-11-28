@@ -24,12 +24,11 @@ import { rayEllipseHitT } from '../../../src/intersects/ray-ellipse-hit-t';
 import { rayPolygonHitT } from '../../../src/intersects/ray-polygon-hit-t';
 import { rayRectHitT } from '../../../src/intersects/ray-rect-hit-t';
 import { raySegmentHitT } from '../../../src/intersects/ray-segment-hit-t';
-import type { RayLike } from '../../../src/types';
 import type { Ray, Segment } from '../../../src/types/flat-shapes.internal';
 import { reflectInto } from '../../../src/vec/reflect-into';
 
 // 원점에서 +x로 가는 ray. 대부분의 시험이 이 ray를 쓴다.
-const RIGHT = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
+const RIGHT = { ox: 0, oy: 0, dx: 1, dy: 0 };
 
 describe('rayCircleHitT', () => {
   const right = { ox: 0, oy: 0, dx: 1, dy: 0 };
@@ -289,113 +288,99 @@ describe('rayPolygonHitT', () => {
  * @param name describe 이름
  * @param hitT 검증할 함수
  * @param box 객체 형태의 [0, 4] × [0, 4] box
- * @param tupleBox tuple 형태의 같은 box
  */
-function describeBoxHitT<Box>(
-  name: string,
-  hitT: (ray: RayLike, box: Box, tMin?: number) => number,
-  box: Box,
-  tupleBox: Box
-): void {
+function describeBoxHitT<Box>(name: string, hitT: (ray: Ray, box: Box, tMin?: number) => number, box: Box): void {
   describe(name, () => {
     test('밖에서 들어오는 ray는 진입 교점의 t를 반환한다', () => {
-      expect(hitT([-2, 2, 1, 0], box)).toBe(2);
-      expect(hitT([2, 8, 0, -1], box)).toBe(4);
-    });
-
-    test('tuple 입력도 같은 t를 반환한다', () => {
-      expect(hitT([-2, 2, 1, 0], tupleBox)).toBe(2);
-      expect(hitT({ origin: { x: -2, y: 2 }, direction: [1, 0] }, tupleBox)).toBe(2);
+      expect(hitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, box)).toBe(2);
+      expect(hitT({ ox: 2, oy: 8, dx: 0, dy: -1 }, box)).toBe(4);
     });
 
     test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
-      expect(hitT([-2, 2, 4, 0], box)).toBe(0.5);
+      expect(hitT({ ox: -2, oy: 2, dx: 4, dy: 0 }, box)).toBe(0.5);
     });
 
     test('origin이 안쪽이면 exit 교점의 t를 반환한다', () => {
-      expect(hitT([2, 2, 1, 0], box)).toBe(2);
-      expect(hitT([1, 2, -1, 0], box)).toBe(1);
-      expect(hitT([2, 2, 1, 1], box)).toBe(2);
+      expect(hitT({ ox: 2, oy: 2, dx: 1, dy: 0 }, box)).toBe(2);
+      expect(hitT({ ox: 1, oy: 2, dx: -1, dy: 0 }, box)).toBe(1);
+      expect(hitT({ ox: 2, oy: 2, dx: 1, dy: 1 }, box)).toBe(2);
     });
 
     test('tMin은 inclusive이고 진입을 건너뛰면 exit을 반환한다', () => {
-      expect(hitT([-2, 2, 1, 0], box, 2)).toBe(2);
-      expect(hitT([-2, 2, 1, 0], box, 3)).toBe(6);
-      expect(hitT([-2, 2, 1, 0], box, 6)).toBe(6);
-      expect(hitT([-2, 2, 1, 0], box, 6.5)).toBe(Infinity);
+      expect(hitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, box, 2)).toBe(2);
+      expect(hitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, box, 3)).toBe(6);
+      expect(hitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, box, 6)).toBe(6);
+      expect(hitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, box, 6.5)).toBe(Infinity);
     });
 
     test('tMin으로 출발 면을 거른다', () => {
       // 왼쪽 면 위에서 바깥으로 떠난다.
-      expect(hitT([0, 2, -1, 0], box)).toBeCloseTo(0, 12);
-      expect(hitT([0, 2, -1, 0], box, 1e-9)).toBe(Infinity);
+      expect(hitT({ ox: 0, oy: 2, dx: -1, dy: 0 }, box)).toBeCloseTo(0, 12);
+      expect(hitT({ ox: 0, oy: 2, dx: -1, dy: 0 }, box, 1e-9)).toBe(Infinity);
       // 왼쪽 면 위에서 안쪽으로 들어간다.
-      expect(hitT([0, 2, 1, 0], box)).toBeCloseTo(0, 12);
-      expect(hitT([0, 2, 1, 0], box, 1e-9)).toBe(4);
+      expect(hitT({ ox: 0, oy: 2, dx: 1, dy: 0 }, box)).toBeCloseTo(0, 12);
+      expect(hitT({ ox: 0, oy: 2, dx: 1, dy: 0 }, box, 1e-9)).toBe(4);
     });
 
     test('모서리 접촉은 hit이다', () => {
-      expect(hitT([-1, 3, 1, 1], box)).toBe(1);
-      expect(hitT([-1, 3, 1, 1], box, 2)).toBe(Infinity);
+      expect(hitT({ ox: -1, oy: 3, dx: 1, dy: 1 }, box)).toBe(1);
+      expect(hitT({ ox: -1, oy: 3, dx: 1, dy: 1 }, box, 2)).toBe(Infinity);
     });
 
     test('변을 따라 달리는 ray는 box에 들어서는 모서리의 t를 반환한다', () => {
-      expect(hitT([-2, 0, 1, 0], box)).toBe(2);
-      expect(hitT([0, -2, 0, 1], box)).toBe(2);
+      expect(hitT({ ox: -2, oy: 0, dx: 1, dy: 0 }, box)).toBe(2);
+      expect(hitT({ ox: 0, oy: -2, dx: 0, dy: 1 }, box)).toBe(2);
     });
 
     test('축에 평행한 ray가 slab 밖에 있으면 Infinity를 반환한다', () => {
-      expect(hitT([-1, 2, 0, 1], box)).toBe(Infinity);
-      expect(hitT([2, 5, 1, 0], box)).toBe(Infinity);
+      expect(hitT({ ox: -1, oy: 2, dx: 0, dy: 1 }, box)).toBe(Infinity);
+      expect(hitT({ ox: 2, oy: 5, dx: 1, dy: 0 }, box)).toBe(Infinity);
     });
 
     test('빗나가거나 box 뒤쪽에 있으면 Infinity를 반환한다', () => {
-      expect(hitT([-2, 6, 1, 0], box)).toBe(Infinity);
-      expect(hitT([-2, 2, -1, 0], box)).toBe(Infinity);
-      expect(hitT([-2, 12, 1, -1], box)).toBe(Infinity);
+      expect(hitT({ ox: -2, oy: 6, dx: 1, dy: 0 }, box)).toBe(Infinity);
+      expect(hitT({ ox: -2, oy: 2, dx: -1, dy: 0 }, box)).toBe(Infinity);
+      expect(hitT({ ox: -2, oy: 12, dx: 1, dy: -1 }, box)).toBe(Infinity);
     });
 
     test('zero direction은 Infinity를 반환한다', () => {
-      expect(hitT([2, 2, 0, 0], box)).toBe(Infinity);
+      expect(hitT({ ox: 2, oy: 2, dx: 0, dy: 0 }, box)).toBe(Infinity);
     });
 
     test('non-finite 입력은 hit 없음으로 처리한다', () => {
-      expect(hitT([Number.NaN, 2, 1, 0], box)).toBe(Infinity);
-      expect(hitT([Number.NaN, 2, 0, 1], box)).toBe(Infinity);
-      expect(hitT([-2, 2, Number.NaN, 0], box)).toBe(Infinity);
-      expect(hitT([2, Number.NaN, 1, 0], box)).toBe(Infinity);
-      expect(hitT([-2, 2, 1, 0], box, Number.NaN)).toBe(Infinity);
+      expect(hitT({ ox: Number.NaN, oy: 2, dx: 1, dy: 0 }, box)).toBe(Infinity);
+      expect(hitT({ ox: Number.NaN, oy: 2, dx: 0, dy: 1 }, box)).toBe(Infinity);
+      expect(hitT({ ox: -2, oy: 2, dx: Number.NaN, dy: 0 }, box)).toBe(Infinity);
+      expect(hitT({ ox: 2, oy: Number.NaN, dx: 1, dy: 0 }, box)).toBe(Infinity);
+      expect(hitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, box, Number.NaN)).toBe(Infinity);
     });
   });
 }
 
-describeBoxHitT('rayRectHitT', rayRectHitT, { x: 0, y: 0, width: 4, height: 4 }, [0, 0, 4, 4]);
-describeBoxHitT('rayBoundsHitT', rayBoundsHitT, { min: { x: 0, y: 0 }, max: { x: 4, y: 4 } }, [
-  [0, 0],
-  [4, 4],
-]);
+describeBoxHitT('rayRectHitT', rayRectHitT, { x: 0, y: 0, width: 4, height: 4 });
+describeBoxHitT('rayBoundsHitT', rayBoundsHitT, { minX: 0, minY: 0, maxX: 4, maxY: 4 });
 
 describe('rayRectHitT empty 입력', () => {
   test('width 또는 height가 0 이하면 Infinity를 반환한다', () => {
-    expect(rayRectHitT([-2, 2, 1, 0], { x: 0, y: 0, width: 0, height: 4 })).toBe(Infinity);
-    expect(rayRectHitT([-2, 2, 1, 0], { x: 0, y: 0, width: 4, height: -1 })).toBe(Infinity);
+    expect(rayRectHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, { x: 0, y: 0, width: 0, height: 4 })).toBe(Infinity);
+    expect(rayRectHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, { x: 0, y: 0, width: 4, height: -1 })).toBe(Infinity);
   });
 });
 
 describe('rayBoundsHitT empty·zero-extent 입력', () => {
   test('inverted bounds는 Infinity를 반환한다', () => {
-    expect(rayBoundsHitT([-2, 2, 1, 0], { min: { x: 4, y: 0 }, max: { x: 0, y: 4 } })).toBe(Infinity);
-    expect(rayBoundsHitT([-2, 2, 1, 0], { min: { x: 0, y: 4 }, max: { x: 4, y: 0 } })).toBe(Infinity);
+    expect(rayBoundsHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, { minX: 4, minY: 0, maxX: 0, maxY: 4 })).toBe(Infinity);
+    expect(rayBoundsHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, { minX: 0, minY: 4, maxX: 4, maxY: 0 })).toBe(Infinity);
   });
 
   test('zero-extent bounds는 유효하다. 점을 지나는 ray만 hit이다', () => {
-    const point = { min: { x: 5, y: 0 }, max: { x: 5, y: 0 } };
+    const point = { minX: 5, minY: 0, maxX: 5, maxY: 0 };
     expect(rayBoundsHitT(RIGHT, point)).toBe(5);
-    expect(rayBoundsHitT([0, 0, 1, 1], point)).toBe(Infinity);
+    expect(rayBoundsHitT({ ox: 0, oy: 0, dx: 1, dy: 1 }, point)).toBe(Infinity);
   });
 
   test('zero-extent bounds가 선이면 가로지르는 ray의 t를 반환한다', () => {
-    const line = { min: { x: 5, y: -1 }, max: { x: 5, y: 1 } };
+    const line = { minX: 5, minY: -1, maxX: 5, maxY: 1 };
     expect(rayBoundsHitT(RIGHT, line)).toBe(5);
   });
 });

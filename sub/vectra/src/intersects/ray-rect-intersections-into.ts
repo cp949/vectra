@@ -1,8 +1,5 @@
 import { lineFamilyBoxIntersectionPoints } from '../internal/line-family-box';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { RayLike, RectLike, XYObjectWritable } from '../types';
+import type { Ray, Rect, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray와 rect boundary의 range 안 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -17,31 +14,29 @@ import type { RayLike, RectLike, XYObjectWritable } from '../types';
  * `epsilon`은 collinear/dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
  * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
- * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
+ * @param ray (ox, oy)에서 (dx, dy) 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param rect 교점을 구할 rect (axis-aligned)
  * @param epsilon collinear/dedupe 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function rayRectIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  ray: RayLike,
-  rect: RectLike,
+  outPoints: PointWritable[],
+  ray: Ray,
+  rect: Rect,
   epsilon?: number
-): XYObjectWritable[] {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+): PointWritable[] {
+  const rw = rect.width;
+  const rh = rect.height;
   outPoints.length = 0;
   if (rw <= 0 || rh <= 0) return outPoints;
-  const origin = readRayOrigin(ray);
-  const direction = readRayDirection(ray);
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
+  const rx = rect.x;
+  const ry = rect.y;
   return lineFamilyBoxIntersectionPoints(
     outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    ray.ox,
+    ray.oy,
+    ray.dx,
+    ray.dy,
     'ray',
     rx,
     ry,

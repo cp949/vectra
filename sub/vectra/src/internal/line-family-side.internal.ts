@@ -1,4 +1,5 @@
-import type { XYObjectWritable, XYWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
+import type { XYWritable } from '../types';
 import { lineFamilyIntersectionPoint } from './line-family-core.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
 import { DEFAULT_EPSILON } from './numeric';
@@ -16,8 +17,20 @@ export function findSingleLineFamilySideIntersectionPoint(
   sides: readonly LineFamilyParam[],
   epsilon: number | undefined
 ): boolean {
+  const point = findSingleLineFamilySidePoint(line, sides, epsilon);
+  if (point === undefined) return false;
+  writeXY(out, point.x, point.y);
+  return true;
+}
+
+/** side 목록에서 중복을 제거한 교점이 하나뿐이면 그 점을 반환한다. */
+export function findSingleLineFamilySidePoint(
+  line: LineFamilyParam,
+  sides: readonly LineFamilyParam[],
+  epsilon: number | undefined
+): PointWritable | undefined {
   const eps = epsilon ?? DEFAULT_EPSILON;
-  const tmp: XYObjectWritable = { x: 0, y: 0 };
+  const tmp: PointWritable = { x: 0, y: 0 };
   let px0 = 0;
   let py0 = 0;
   let count = 0;
@@ -33,12 +46,11 @@ export function findSingleLineFamilySideIntersectionPoint(
 
     const dx = tmp.x - px0;
     const dy = tmp.y - py0;
-    if (dx * dx + dy * dy > eps * eps) return false;
+    if (dx * dx + dy * dy > eps * eps) return undefined;
   }
 
-  if (count === 1) {
-    writeXY(out, px0, py0);
-    return true;
-  }
-  return false;
+  if (count === 0) return undefined;
+  tmp.x = px0;
+  tmp.y = py0;
+  return tmp;
 }

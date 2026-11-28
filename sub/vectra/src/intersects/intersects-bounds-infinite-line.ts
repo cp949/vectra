@@ -1,8 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyBoxIntersects } from '../internal/line-family';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, InfiniteLineLike } from '../types';
+import type { Bounds, InfiniteLine } from '../types/flat-shapes.internal';
 
 /**
  * bounds와 infinite-line이 교차하거나 접하면 true를 반환한다.
@@ -16,20 +13,12 @@ import type { BoundsLike, InfiniteLineLike } from '../types';
  * @param epsilon 부동소수점 비교에 사용할 tolerance
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsBoundsInfiniteLine(
-  bounds: BoundsLike,
-  infiniteLine: InfiniteLineLike,
-  epsilon?: number
-): boolean {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const x0 = readX(min);
-  const y0 = readY(min);
-  const x1 = readX(max);
-  const y1 = readY(max);
+export function intersectsBoundsInfiniteLine(bounds: Bounds, infiniteLine: InfiniteLine, epsilon?: number): boolean {
+  const x0 = bounds.minX;
+  const y0 = bounds.minY;
+  const x1 = bounds.maxX;
+  const y1 = bounds.maxY;
   if (x1 < x0 || y1 < y0) return false;
-  const origin = readInfiniteLineOrigin(infiniteLine);
-  const dir = readInfiniteLineDirection(infiniteLine);
-  const lineParam = infiniteLineToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
+  const lineParam = infiniteLineToLineFamilyParam(infiniteLine.ox, infiniteLine.oy, infiniteLine.dx, infiniteLine.dy);
   return lineFamilyBoxIntersects(lineParam, x0, y0, x1, y1, epsilon);
 }

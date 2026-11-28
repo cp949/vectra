@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { BoundsLike, RayLike, XYObjectWritable } from '../types';
+import type { Bounds, Ray, PointWritable } from '../types/flat-shapes.internal';
 import { rayBoundsIntersectionsInto } from './ray-bounds-intersections-into';
 
 /**
@@ -16,12 +16,8 @@ import { rayBoundsIntersectionsInto } from './ray-bounds-intersections-into';
  * @param bounds 교점을 구할 bounds (axis-aligned)
  * @param epsilon collinear/dedupe 판정 임계값
  */
-export function rayBoundsIntersections(
-  ray: RayLike,
-  bounds: BoundsLike,
-  epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+export function rayBoundsIntersections(ray: Ray, bounds: Bounds, epsilon = DEFAULT_EPSILON): PointWritable[] {
+  const out: PointWritable[] = [];
   rayBoundsIntersectionsInto(out, ray, bounds, epsilon);
   return out;
 }

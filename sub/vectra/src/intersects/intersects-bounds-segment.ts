@@ -1,8 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, SegmentLike } from '../types';
+import type { Bounds, Segment } from '../types/flat-shapes.internal';
 
 /**
  * bounds와 segment가 교차하거나 접하면 true를 반환한다.
@@ -16,16 +13,12 @@ import type { BoundsLike, SegmentLike } from '../types';
  * @param epsilon 부동소수점 비교에 사용할 tolerance
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsBoundsSegment(bounds: BoundsLike, line: SegmentLike, epsilon?: number): boolean {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const x0 = readX(min);
-  const y0 = readY(min);
-  const x1 = readX(max);
-  const y1 = readY(max);
+export function intersectsBoundsSegment(bounds: Bounds, line: Segment, epsilon?: number): boolean {
+  const x0 = bounds.minX;
+  const y0 = bounds.minY;
+  const x1 = bounds.maxX;
+  const y1 = bounds.maxY;
   if (x1 < x0 || y1 < y0) return false;
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
   return lineFamilyBoxIntersects(lineParam, x0, y0, x1, y1, epsilon);
 }

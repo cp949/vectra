@@ -1,8 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersectionPoints } from '../internal/line-family-box';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Bounds, Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 bounds boundary의 range 안 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -25,29 +22,25 @@ import type { BoundsLike, SegmentLike, XYObjectWritable } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function segmentBoundsIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  segment: SegmentLike,
-  bounds: BoundsLike,
+  outPoints: PointWritable[],
+  segment: Segment,
+  bounds: Bounds,
   epsilon?: number
-): XYObjectWritable[] {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const x0 = readX(min);
-  const y0 = readY(min);
-  const x1 = readX(max);
-  const y1 = readY(max);
+): PointWritable[] {
+  const x0 = bounds.minX;
+  const y0 = bounds.minY;
+  const x1 = bounds.maxX;
+  const y1 = bounds.maxY;
   outPoints.length = 0;
   if (x1 < x0 || y1 < y0) return outPoints;
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const ax = readX(a);
-  const ay = readY(a);
+  const ax = segment.x1;
+  const ay = segment.y1;
   return lineFamilyBoxIntersectionPoints(
     outPoints,
     ax,
     ay,
-    readX(b) - ax,
-    readY(b) - ay,
+    segment.x2 - ax,
+    segment.y2 - ay,
     'finite',
     x0,
     y0,

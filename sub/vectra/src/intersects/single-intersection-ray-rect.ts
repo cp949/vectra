@@ -1,8 +1,5 @@
 import { lineFamilyBoxIntersectionPoint, rayToLineFamilyParam } from '../internal/line-family';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { RayLike, RectLike, XYObjectWritable } from '../types';
+import type { Ray, Rect, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray와 rect의 단일 교점을 새 object로 반환한다.
@@ -11,24 +8,18 @@ import type { RayLike, RectLike, XYObjectWritable } from '../types';
  * empty rect (width ≤ 0 또는 height ≤ 0): undefined.
  * allocating companion — internal helper를 직접 호출한다.
  *
- * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
+ * @param ray (ox, oy)에서 (dx, dy) 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param rect 교점을 구할 rect
  * @param epsilon 수치 비교 tolerance
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function singleIntersectionRayRect(
-  ray: RayLike,
-  rect: RectLike,
-  epsilon?: number
-): XYObjectWritable | undefined {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+export function singleIntersectionRayRect(ray: Ray, rect: Rect, epsilon?: number): PointWritable | undefined {
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return undefined;
-  const origin = readRayOrigin(ray);
-  const dir = readRayDirection(ray);
-  const lineParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  const lineParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
+  const rx = rect.x;
+  const ry = rect.y;
+  const out: PointWritable = { x: 0, y: 0 };
   return lineFamilyBoxIntersectionPoint(out, lineParam, rx, ry, rx + rw, ry + rh, epsilon) ? out : undefined;
 }

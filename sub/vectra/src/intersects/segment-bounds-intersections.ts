@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { BoundsLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Bounds, Segment, PointWritable } from '../types/flat-shapes.internal';
 import { segmentBoundsIntersectionsInto } from './segment-bounds-intersections-into';
 
 /**
@@ -17,11 +17,11 @@ import { segmentBoundsIntersectionsInto } from './segment-bounds-intersections-i
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function segmentBoundsIntersections(
-  segment: SegmentLike,
-  bounds: BoundsLike,
+  segment: Segment,
+  bounds: Bounds,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   segmentBoundsIntersectionsInto(out, segment, bounds, epsilon);
   return out;
 }

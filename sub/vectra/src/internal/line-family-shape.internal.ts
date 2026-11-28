@@ -1,9 +1,10 @@
+import type { PointWritable } from '../types/flat-shapes.internal';
 import type { XYWritable } from '../types';
 import { lineFamilyIntersects } from './line-family-core.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
 import { segmentToLineFamilyParam } from './line-family-param-builders.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';
-import { findSingleLineFamilySideIntersectionPoint } from './line-family-side.internal';
+import { findSingleLineFamilySideIntersectionPoint, findSingleLineFamilySidePoint } from './line-family-side.internal';
 import { writeXY } from './xy';
 import { hypot2 } from './numeric';
 
@@ -38,7 +39,7 @@ export function lineFamilyBoxIntersects(
  * corner 공유로 인한 중복 점은 거리 ≤ epsilon으로 제거한다.
  */
 export function lineFamilyBoxIntersectionPoint(
-  out: XYWritable,
+  out: PointWritable,
   line: LineFamilyParam,
   x0: number,
   y0: number,
@@ -52,7 +53,11 @@ export function lineFamilyBoxIntersectionPoint(
     segmentToLineFamilyParam(x1, y1, x0, y1),
     segmentToLineFamilyParam(x0, y1, x0, y0),
   ];
-  return findSingleLineFamilySideIntersectionPoint(out, line, sides, epsilon);
+  const point = findSingleLineFamilySidePoint(line, sides, epsilon);
+  if (point === undefined) return false;
+  out.x = point.x;
+  out.y = point.y;
+  return true;
 }
 
 /**

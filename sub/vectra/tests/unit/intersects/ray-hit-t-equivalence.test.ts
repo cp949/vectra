@@ -31,14 +31,7 @@ import { rayRectIntersectionsInto } from '../../../src/intersects/ray-rect-inter
 import { raySegmentHitT } from '../../../src/intersects/ray-segment-hit-t';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
 import { createRng } from '../../../src/random/create-rng';
-import type {
-  BoundsLike,
-  LinePolygonIntersectionHit,
-  RayLike,
-  RectLike,
-  XYInput,
-  XYObjectWritable,
-} from '../../../src/types';
+import type { LinePolygonIntersectionHit, XYInput, XYObjectWritable } from '../../../src/types';
 
 const CASES = 4000;
 const TOLERANCE = 1e-9;
@@ -51,11 +44,6 @@ function range(rng: () => number, min: number, max: number): number {
 /** 객체나 tuple 중 하나로 점을 만든다. */
 function point(rng: () => number, x: number, y: number): XYInput {
   return rng() < 0.5 ? { x, y } : [x, y];
-}
-
-/** 객체나 tuple 중 하나로 ray를 만든다. direction은 정규화하지 않는다. */
-function makeRay(rng: () => number, ox: number, oy: number, dx: number, dy: number): RayLike {
-  return rng() < 0.5 ? [ox, oy, dx, dy] : { origin: point(rng, ox, oy), direction: point(rng, dx, dy) };
 }
 
 /** 난수 ray의 좌표를 만든다. direction 길이는 약 0.1에서 4 사이다. */
@@ -232,12 +220,13 @@ describe('rayRectHitT — rayRectIntersectionsInto와 같은 교점', () => {
 
     for (let i = 0; i < CASES; i++) {
       const coords = randomRayCoords(rng);
-      const ray = makeRay(rng, ...coords);
+      const [ox, oy, dx, dy] = coords;
+      const ray = { ox, oy, dx, dy };
       const x = range(rng, -15, 10);
       const y = range(rng, -15, 10);
       const width = range(rng, 0.5, 12);
       const height = range(rng, 0.5, 12);
-      const rect: RectLike = rng() < 0.5 ? { x, y, width, height } : [x, y, width, height];
+      const rect = { x, y, width, height };
 
       const t = rayRectHitT(ray, rect);
       rayRectIntersectionsInto(points, ray, rect);
@@ -261,12 +250,11 @@ describe('rayBoundsHitT — rayBoundsIntersectionsInto와 같은 교점', () => 
 
     for (let i = 0; i < CASES; i++) {
       const coords = randomRayCoords(rng);
-      const ray = makeRay(rng, ...coords);
+      const [ox, oy, dx, dy] = coords;
+      const ray = { ox, oy, dx, dy };
       const x = range(rng, -15, 10);
       const y = range(rng, -15, 10);
-      const min = point(rng, x, y);
-      const max = point(rng, x + range(rng, 0.5, 12), y + range(rng, 0.5, 12));
-      const bounds: BoundsLike = rng() < 0.5 ? { min, max } : [min, max];
+      const bounds = { minX: x, minY: y, maxX: x + range(rng, 0.5, 12), maxY: y + range(rng, 0.5, 12) };
 
       const t = rayBoundsHitT(ray, bounds);
       rayBoundsIntersectionsInto(points, ray, bounds);

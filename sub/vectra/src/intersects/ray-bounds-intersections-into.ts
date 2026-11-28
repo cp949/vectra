@@ -1,8 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { lineFamilyBoxIntersectionPoints } from '../internal/line-family-box';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, RayLike, XYObjectWritable } from '../types';
+import type { Bounds, Ray, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray와 bounds boundary의 range 안 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -19,38 +16,22 @@ import type { BoundsLike, RayLike, XYObjectWritable } from '../types';
  * `epsilon`은 collinear/dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
  * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
- * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
+ * @param ray (ox, oy)에서 (dx, dy) 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param bounds 교점을 구할 bounds (axis-aligned)
  * @param epsilon collinear/dedupe 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function rayBoundsIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  ray: RayLike,
-  bounds: BoundsLike,
+  outPoints: PointWritable[],
+  ray: Ray,
+  bounds: Bounds,
   epsilon?: number
-): XYObjectWritable[] {
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const x0 = readX(min);
-  const y0 = readY(min);
-  const x1 = readX(max);
-  const y1 = readY(max);
+): PointWritable[] {
+  const x0 = bounds.minX;
+  const y0 = bounds.minY;
+  const x1 = bounds.maxX;
+  const y1 = bounds.maxY;
   outPoints.length = 0;
   if (x1 < x0 || y1 < y0) return outPoints;
-  const origin = readRayOrigin(ray);
-  const direction = readRayDirection(ray);
-  return lineFamilyBoxIntersectionPoints(
-    outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
-    'ray',
-    x0,
-    y0,
-    x1,
-    y1,
-    epsilon
-  );
+  return lineFamilyBoxIntersectionPoints(outPoints, ray.ox, ray.oy, ray.dx, ray.dy, 'ray', x0, y0, x1, y1, epsilon);
 }

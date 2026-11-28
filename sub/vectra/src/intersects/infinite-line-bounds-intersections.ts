@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { BoundsLike, InfiniteLineLike, XYObjectWritable } from '../types';
+import type { Bounds, InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 import { infiniteLineBoundsIntersectionsInto } from './infinite-line-bounds-intersections-into';
 
 /**
@@ -17,11 +17,11 @@ import { infiniteLineBoundsIntersectionsInto } from './infinite-line-bounds-inte
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function infiniteLineBoundsIntersections(
-  line: InfiniteLineLike,
-  bounds: BoundsLike,
+  line: InfiniteLine,
+  bounds: Bounds,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   infiniteLineBoundsIntersectionsInto(out, line, bounds, epsilon);
   return out;
 }

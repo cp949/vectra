@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { RectLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Rect, Segment, PointWritable } from '../types/flat-shapes.internal';
 import { segmentRectIntersectionsInto } from './segment-rect-intersections-into';
 
 /**
@@ -16,12 +16,8 @@ import { segmentRectIntersectionsInto } from './segment-rect-intersections-into'
  * @param rect 교점을 구할 rect (axis-aligned)
  * @param epsilon collinear/dedupe 판정 임계값
  */
-export function segmentRectIntersections(
-  segment: SegmentLike,
-  rect: RectLike,
-  epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+export function segmentRectIntersections(segment: Segment, rect: Rect, epsilon = DEFAULT_EPSILON): PointWritable[] {
+  const out: PointWritable[] = [];
   segmentRectIntersectionsInto(out, segment, rect, epsilon);
   return out;
 }

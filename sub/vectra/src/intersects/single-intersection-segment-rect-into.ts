@@ -1,8 +1,5 @@
 import { lineFamilyBoxIntersectionPoint, segmentToLineFamilyParam } from '../internal/line-family';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { RectLike, SegmentLike, XYWritable } from '../types';
+import type { Rect, Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 rect의 단일 교점을 out에 기록하고 true를 반환한다.
@@ -10,25 +7,23 @@ import type { RectLike, SegmentLike, XYWritable } from '../types';
  * 교점이 2개 이상이거나 collinear이면 false를 반환하고 out을 수정하지 않는다.
  * empty rect (width ≤ 0 또는 height ≤ 0) 또는 zero-length segment이면 false.
  *
- * @param out 교점 좌표를 기록할 writable output
+ * @param out 교점 좌표를 기록할 변경 가능한 점 `{ x, y }`
  * @param line 교점을 구할 segment
  * @param rect 교점을 구할 rect
  * @param epsilon 수치 비교 tolerance
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionSegmentRectInto(
-  out: XYWritable,
-  line: SegmentLike,
-  rect: RectLike,
+  out: PointWritable,
+  line: Segment,
+  rect: Rect,
   epsilon?: number
 ): boolean {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return false;
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const rx = rect.x;
+  const ry = rect.y;
   return lineFamilyBoxIntersectionPoint(out, lineParam, rx, ry, rx + rw, ry + rh, epsilon);
 }

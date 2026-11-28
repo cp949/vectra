@@ -1,8 +1,5 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyBoxIntersectionPoint } from '../internal/line-family';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, Rect, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 rect의 단일 교점을 새 object로 반환한다.
@@ -11,18 +8,16 @@ import type { InfiniteLineLike, RectLike, XYObjectWritable } from '../types';
  * allocating companion — internal helper를 직접 호출한다.
  */
 export function singleIntersectionInfiniteLineRect(
-  infiniteLine: InfiniteLineLike,
-  rect: RectLike,
+  infiniteLine: InfiniteLine,
+  rect: Rect,
   epsilon?: number
-): XYObjectWritable | undefined {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+): PointWritable | undefined {
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return undefined;
-  const origin = readInfiniteLineOrigin(infiniteLine);
-  const dir = readInfiniteLineDirection(infiniteLine);
-  const lineParam = infiniteLineToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  const lineParam = infiniteLineToLineFamilyParam(infiniteLine.ox, infiniteLine.oy, infiniteLine.dx, infiniteLine.dy);
+  const rx = rect.x;
+  const ry = rect.y;
+  const out: PointWritable = { x: 0, y: 0 };
   return lineFamilyBoxIntersectionPoint(out, lineParam, rx, ry, rx + rw, ry + rh, epsilon) ? out : undefined;
 }
