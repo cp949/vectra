@@ -8,13 +8,12 @@ import {
 } from '../../../src/internal/line-family';
 import { findSingleLineFamilySideIntersectionPoint } from '../../../src/internal/line-family-side.internal';
 import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
-import type { XYWritable } from '../../../src/types';
 
 // out 미수정 검증용 sentinel 좌표
 const SENTINEL_X = 9999;
 const SENTINEL_Y = -7777;
 
-function makeOut(): XYWritable {
+function makeOut() {
   return { x: SENTINEL_X, y: SENTINEL_Y };
 }
 

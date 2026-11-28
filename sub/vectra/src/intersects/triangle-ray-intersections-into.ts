@@ -1,8 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { RayLike, TriangleLike, XYObjectWritable } from '../types';
+import type { Ray, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-intersections.internal';
 
 /**
@@ -10,7 +7,7 @@ import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-inte
  *
  * triangle 3개 edge(A-B, B-C, C-A)와의 교점을 모으고 vertex/edge 중복을 dedupe한다.
  * - transversal crossing, vertex touch 1점(dedupe), edge collinear overlap은 clipped start/end 2점이다.
- * - ray origin이 triangle 내부면 t ≥ 0 exit 교점만 반환한다. boundary 교점이 없으면 빈 배열이다.
+ * - ray 시작점 (ox, oy)가 triangle 내부면 t ≥ 0 exit 교점만 반환한다. boundary 교점이 없으면 빈 배열이다.
  * - degenerate triangle(signed area 2× === 0), non-finite vertex, zero-vector direction, non-finite
  *   coordinate는 빈 배열이다. degenerate triangle을 segment/point relation으로 환원하지 않는다.
  *
@@ -21,24 +18,22 @@ import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-inte
  *
  * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
  * @param triangle 교점을 구할 triangle. point ordering의 기준은 ray parameter다.
- * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
+ * @param ray (ox, oy)에서 (dx, dy) 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function triangleRayIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  triangle: TriangleLike,
-  ray: RayLike,
+  outPoints: PointWritable[],
+  triangle: Triangle,
+  ray: Ray,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const origin = readRayOrigin(ray);
-  const direction = readRayDirection(ray);
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+): PointWritable[] {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   return triangleLineFamilyIntersectionsInto(
     outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    ray.ox,
+    ray.oy,
+    ray.dx,
+    ray.dy,
     'ray',
     ax,
     ay,

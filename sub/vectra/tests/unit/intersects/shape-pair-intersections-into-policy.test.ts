@@ -40,8 +40,8 @@ describe('Into out array clear/reference 보존 (S10-RM-007)', () => {
     const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
     const result = triangleTriangleIntersectionsInto(
       out,
-      { a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, c: { x: 0, y: 10 } },
-      { a: { x: 1, y: 1 }, b: { x: 2, y: 1 }, c: { x: 1, y: 2 } }
+      { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 },
+      { x1: 1, y1: 1, x2: 2, y2: 1, x3: 1, y3: 2 }
     );
     expect(result).toBe(out);
     expect(out).toEqual([]);

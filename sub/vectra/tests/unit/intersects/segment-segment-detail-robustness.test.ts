@@ -13,8 +13,8 @@ describe('segmentSegmentDetail — non-finite input', () => {
     ['Infinity endpoint', Number.POSITIVE_INFINITY],
     ['-Infinity endpoint', Number.NEGATIVE_INFINITY],
   ])('%s는 false positive detail을 만들지 않는다', (_label, x) => {
-    const a = { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } };
-    const b = { a: { x, y: 0 }, b: { x, y: 0 } };
+    const a = { x1: 0, y1: 0, x2: 1, y2: 0 };
+    const b = { x1: x, y1: 0, x2: x, y2: 0 };
 
     expect(intersectsSegmentSegment(a, b)).toBe(false);
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
@@ -44,10 +44,12 @@ describe('segmentSegmentDetail — non-finite input', () => {
   });
 
   test('overflow fallback parameter가 서로 다른 좌표를 가리키면 false positive point를 만들지 않는다', () => {
-    const a = { a: { x: -1e300, y: 1e300 }, b: { x: -1, y: -8.608876899816096 } };
+    const a = { x1: -1e300, y1: 1e300, x2: -1, y2: -8.608876899816096 };
     const b = {
-      a: { x: 0.0005643832152709365, y: 1.897205092245713e150 },
-      b: { x: -4.538800939917564, y: -9.461288852617144e-13 },
+      x1: 0.0005643832152709365,
+      y1: 1.897205092245713e150,
+      x2: -4.538800939917564,
+      y2: -9.461288852617144e-13,
     };
 
     expect(intersectsSegmentSegment(a, b)).toBe(false);
@@ -56,12 +58,16 @@ describe('segmentSegmentDetail — non-finite input', () => {
 
   test('finite raw parameter가 endpoint로 반올림돼도 좌표가 맞지 않으면 point를 만들지 않는다', () => {
     const a = {
-      a: { x: -924336153.5482109, y: -1.1904823965000841e-177 },
-      b: { x: 0.13754264637827873, y: 7.316391812637448e149 },
+      x1: -924336153.5482109,
+      y1: -1.1904823965000841e-177,
+      x2: 0.13754264637827873,
+      y2: 7.316391812637448e149,
     };
     const b = {
-      a: { x: -117800693.30678642, y: 6.383964766911274e149 },
-      b: { x: -594992512.2769618, y: 2.6068515344044037e149 },
+      x1: -117800693.30678642,
+      y1: 6.383964766911274e149,
+      x2: -594992512.2769618,
+      y2: 2.6068515344044037e149,
     };
 
     expect(intersectsSegmentSegment(a, b)).toBe(true);
@@ -70,13 +76,12 @@ describe('segmentSegmentDetail — non-finite input', () => {
 
   test('반대 segment parameter가 endpoint로 반올림돼도 실제 교점이 내부에 있으면 point를 유지한다', () => {
     const a = {
-      a: { x: 0.08086641319096088, y: -7.871134574525059e-301 },
-      b: { x: 3.997393101453781, y: -5.993853555992246e-97 },
+      x1: 0.08086641319096088,
+      y1: -7.871134574525059e-301,
+      x2: 3.997393101453781,
+      y2: -5.993853555992246e-97,
     };
-    const b = {
-      a: { x: -1.1864615697413683, y: 1e150 },
-      b: { x: 0.748881776817143, y: -1.5541316056624055 },
-    };
+    const b = { x1: -1.1864615697413683, y1: 1e150, x2: 0.748881776817143, y2: -1.5541316056624055 };
 
     expect(intersectsSegmentSegment(a, b)).toBe(true);
     const result = segmentSegmentDetail(a, b);
@@ -87,26 +92,24 @@ describe('segmentSegmentDetail — non-finite input', () => {
   });
 
   test('보간 좌표가 자기 segment 직선에서도 epsilon 밖이면 point를 만들지 않는다', () => {
-    const a = {
-      a: { x: -8.717312589287757e149, y: 0 },
-      b: { x: -3.7816940667107703e-10, y: -5.682831492740661e149 },
-    };
-    const b = {
-      a: { x: 581359851.6397178, y: -4.288322012871504 },
-      b: { x: -3.786518750712276e299, y: 6.558268936350942 },
-    };
+    const a = { x1: -8.717312589287757e149, y1: 0, x2: -3.7816940667107703e-10, y2: -5.682831492740661e149 };
+    const b = { x1: 581359851.6397178, y1: -4.288322012871504, x2: -3.786518750712276e299, y2: 6.558268936350942 };
 
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
   });
 
   test('scale-normalized line distance가 이탈을 잃어도 dominant-axis residual로 point를 차단한다', () => {
     const a = {
-      a: { x: -0.9783775592498536, y: 1.4844428292876604 },
-      b: { x: -9.390949509131703e228, y: 9.733463372740316e-169 },
+      x1: -0.9783775592498536,
+      y1: 1.4844428292876604,
+      x2: -9.390949509131703e228,
+      y2: 9.733463372740316e-169,
     };
     const b = {
-      a: { x: -4.360909422166593, y: 521100236047642460000 },
-      b: { x: -9.546393670572151e277, y: -7.16209111340393e190 },
+      x1: -4.360909422166593,
+      y1: 521100236047642460000,
+      x2: -9.546393670572151e277,
+      y2: -7.16209111340393e190,
     };
 
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
@@ -158,8 +161,8 @@ describe('segmentSegmentDetail — non-finite input', () => {
   });
 
   test('epsilon-parallel shared endpoint와 먼 non-collinear endpoint는 point를 반환한다', () => {
-    const a = { a: { x: 0, y: 0 }, b: { x: 1e-20, y: 0 } };
-    const b = { a: { x: 0, y: 0 }, b: { x: 0, y: 1e9 } };
+    const a = { x1: 0, y1: 0, x2: 1e-20, y2: 0 };
+    const b = { x1: 0, y1: 0, x2: 0, y2: 1e9 };
 
     expect(segmentSegmentDetail(a, b, 1e-9)).toEqual({
       kind: 'point',
@@ -171,12 +174,16 @@ describe('segmentSegmentDetail — non-finite input', () => {
 
   test('epsilon-parallel mapped interval overlap은 boolean과 같은 hit 판정을 유지한다 (epsilon 명시)', () => {
     const a = {
-      a: { x: -2.5237740622833373e-11, y: 0.08640966904349626 },
-      b: { x: -6.586415157653392e-11, y: -4.40322199370712e-9 },
+      x1: -2.5237740622833373e-11,
+      y1: 0.08640966904349626,
+      x2: -6.586415157653392e-11,
+      y2: -4.40322199370712e-9,
     };
     const b = {
-      a: { x: -7.566656586714089e-10, y: -0.000008751176367513836 },
-      b: { x: 9.67600171919912e-9, y: 8.992325747385621e-11 },
+      x1: -7.566656586714089e-10,
+      y1: -0.000008751176367513836,
+      x2: 9.67600171919912e-9,
+      y2: 8.992325747385621e-11,
     };
 
     // epsilon을 명시하면 |cross| = 9e-10 <= 1e-9라 parallel로 보고 mapped interval 허용 오차를 쓴다.
@@ -186,12 +193,16 @@ describe('segmentSegmentDetail — non-finite input', () => {
 
   test('epsilon을 생략하면 sin θ가 큰 두 segment는 끝점 간격이 임계값을 넘는 한 교차하지 않는다', () => {
     const a = {
-      a: { x: -2.5237740622833373e-11, y: 0.08640966904349626 },
-      b: { x: -6.586415157653392e-11, y: -4.40322199370712e-9 },
+      x1: -2.5237740622833373e-11,
+      y1: 0.08640966904349626,
+      x2: -6.586415157653392e-11,
+      y2: -4.40322199370712e-9,
     };
     const b = {
-      a: { x: -7.566656586714089e-10, y: -0.000008751176367513836 },
-      b: { x: 9.67600171919912e-9, y: 8.992325747385621e-11 },
+      x1: -7.566656586714089e-10,
+      y1: -0.000008751176367513836,
+      x2: 9.67600171919912e-9,
+      y2: 8.992325747385621e-11,
     };
 
     // sin θ ≈ 1.2e-3이라 non-parallel이다. 교점은 a의 끝점에서 약 8e-6 밖이라 boolean과 detail 모두 none이다.
@@ -201,12 +212,16 @@ describe('segmentSegmentDetail — non-finite input', () => {
 
   test('epsilon-parallel mapped interval이 겹치지 않으면 endpoint 후보가 가까워도 none이다', () => {
     const a = {
-      a: { x: 6.294321967288852e-11, y: 7.685119332745671e-12 },
-      b: { x: -7.293909029103816e-9, y: -3.193471669219434e-11 },
+      x1: 6.294321967288852e-11,
+      y1: 7.685119332745671e-12,
+      x2: -7.293909029103816e-9,
+      y2: -3.193471669219434e-11,
     };
     const b = {
-      a: { x: 9.467665585689248e-10, y: -5.173049787990749e-11 },
-      b: { x: 5.713469586335123e-7, y: 0.0006846383907832206 },
+      x1: 9.467665585689248e-10,
+      y1: -5.173049787990749e-11,
+      x2: 5.713469586335123e-7,
+      y2: 0.0006846383907832206,
     };
 
     expect(intersectsSegmentSegment(a, b)).toBe(false);
@@ -214,39 +229,36 @@ describe('segmentSegmentDetail — non-finite input', () => {
   });
 
   test('collinear endpoint 후보가 실제 endpoint 좌표와 맞지 않으면 point를 만들지 않는다', () => {
-    const a = {
-      a: { x: 0, y: 7.080750132445247e-10 },
-      b: { x: 0, y: 6.404709205962718e-10 },
-    };
+    const a = { x1: 0, y1: 7.080750132445247e-10, x2: 0, y2: 6.404709205962718e-10 };
     const b = {
-      a: { x: 4.4482588744722307e-10, y: -6.646515568718314e148 },
-      b: { x: 5.307970580179244, y: -9.754092535004021e-10 },
+      x1: 4.4482588744722307e-10,
+      y1: -6.646515568718314e148,
+      x2: 5.307970580179244,
+      y2: -9.754092535004021e-10,
     };
 
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
   });
 
   test('mapped interval overlap의 반대 segment parameter가 같은 좌표로 붕괴하면 overlap을 만들지 않는다', () => {
-    const a = {
-      a: { x: -8.978927857242525e-151, y: 9.009085739962756e-201 },
-      b: { x: 0, y: -0.9624478206969798 },
-    };
+    const a = { x1: -8.978927857242525e-151, y1: 9.009085739962756e-201, x2: 0, y2: -0.9624478206969798 };
     const b = {
-      a: { x: 9.703185171820223e-11, y: -9.482283112592995e199 },
-      b: { x: -0.9327996741048992, y: 6.919921091757715e199 },
+      x1: 9.703185171820223e-11,
+      y1: -9.482283112592995e199,
+      x2: -0.9327996741048992,
+      y2: 6.919921091757715e199,
     };
 
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
   });
 
   test('mapped interval point가 반대 segment 직선에서 epsilon 밖이면 point를 만들지 않는다', () => {
-    const a = {
-      a: { x: -4.071920267306268e-301, y: 8.253314117901028e-301 },
-      b: { x: -8.245623442344367e-21, y: 0 },
-    };
+    const a = { x1: -4.071920267306268e-301, y1: 8.253314117901028e-301, x2: -8.245623442344367e-21, y2: 0 };
     const b = {
-      a: { x: 8.104162202216684e149, y: 3.961042421869934e-11 },
-      b: { x: -6.648306245915591e-201, y: 2600343651.138246 },
+      x1: 8.104162202216684e149,
+      y1: 3.961042421869934e-11,
+      x2: -6.648306245915591e-201,
+      y2: 2600343651.138246,
     };
 
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
@@ -254,13 +266,12 @@ describe('segmentSegmentDetail — non-finite input', () => {
 
   test('collinear 후보 point의 parameter가 endpoint로 붕괴해도 endpoint 좌표가 다르면 point를 만들지 않는다', () => {
     const a = {
-      a: { x: 3.726211105433739e-261, y: 9.649314866992846e185 },
-      b: { x: -9.222892240824521e-57, y: -1.4229811268956993e253 },
+      x1: 3.726211105433739e-261,
+      y1: 9.649314866992846e185,
+      x2: -9.222892240824521e-57,
+      y2: -1.4229811268956993e253,
     };
-    const b = {
-      a: { x: -8.511049291252587e210, y: 3.0619683507104956 },
-      b: { x: 5.876815338934399, y: 5.33815744176588e32 },
-    };
+    const b = { x1: -8.511049291252587e210, y1: 3.0619683507104956, x2: 5.876815338934399, y2: 5.33815744176588e32 };
 
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
   });

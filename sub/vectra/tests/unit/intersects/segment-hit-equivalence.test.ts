@@ -321,18 +321,20 @@ describe('polygon×segment/ray/infinite-line 교차 판정 — 이전 구현과 
       const circle: CircleLike = rng() < 0.4 ? ([center, radius] as unknown as CircleLike) : { center, radius };
       const a = readSegmentA(segment);
       const b = readSegmentB(segment);
-      const flatSegment = { x1: readX(a), y1: readY(a), x2: readX(b), y2: readY(b) };
+      const currentSegment = { x1: readX(a), y1: readY(a), x2: readX(b), y2: readY(b) };
       const flatCircle = { cx, cy, r: radius };
       const epsilon = pick(rng, EPSILONS);
-      if (intersectsCircleSegment(flatCircle, flatSegment) !== referenceCircleSegment(circle, segment)) {
+      if (intersectsCircleSegment(flatCircle, currentSegment) !== referenceCircleSegment(circle, segment)) {
         mismatch = `circle #${i}`;
       } else if (
         epsilon !== undefined &&
-        intersectsCircleSegment(flatCircle, flatSegment, epsilon) !== referenceCircleSegment(circle, segment, epsilon)
+        intersectsCircleSegment(flatCircle, currentSegment, epsilon) !==
+          referenceCircleSegment(circle, segment, epsilon)
       ) {
         mismatch = `circle #${i} epsilon=${String(epsilon)}`;
       } else if (
-        intersectsSegmentSegment(segment, other, epsilon) !== referenceSegmentSegment(segment, other, epsilon)
+        intersectsSegmentSegment(currentSegment, flatSegment(other), epsilon) !==
+        referenceSegmentSegment(segment, other, epsilon)
       ) {
         mismatch = `segment-segment #${i} epsilon=${String(epsilon)}`;
       }

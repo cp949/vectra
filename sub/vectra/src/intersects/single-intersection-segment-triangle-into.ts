@@ -1,8 +1,5 @@
 import { lineFamilyTriangleIntersectionPoint, segmentToLineFamilyParam } from '../internal/line-family';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, TriangleLike, XYWritable } from '../types';
+import type { Segment, Triangle, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 triangle의 단일 교점을 out에 기록하고 true를 반환한다.
@@ -17,14 +14,12 @@ import type { SegmentLike, TriangleLike, XYWritable } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionSegmentTriangleInto(
-  out: XYWritable,
-  line: SegmentLike,
-  triangle: TriangleLike,
+  out: PointWritable,
+  line: Segment,
+  triangle: Triangle,
   epsilon?: number
 ): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   return lineFamilyTriangleIntersectionPoint(out, lineParam, ax, ay, bx, by, cx, cy, epsilon);
 }

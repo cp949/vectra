@@ -1,9 +1,7 @@
 import type { PointWritable } from '../types/flat-shapes.internal';
-import type { XYWritable } from '../types';
 import { lineFamilyIntersectionPoint } from './line-family-core.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
 import { DEFAULT_EPSILON } from './numeric';
-import { writeXY } from './xy';
 
 /**
  * side 목록에서 line-family와 단일 distinct 교점만 있으면 out에 기록하고 true를 반환한다.
@@ -12,14 +10,15 @@ import { writeXY } from './xy';
  * corner 공유로 인한 중복 점은 거리 ≤ epsilon으로 제거한다.
  */
 export function findSingleLineFamilySideIntersectionPoint(
-  out: XYWritable,
+  out: PointWritable,
   line: LineFamilyParam,
   sides: readonly LineFamilyParam[],
   epsilon: number | undefined
 ): boolean {
   const point = findSingleLineFamilySidePoint(line, sides, epsilon);
   if (point === undefined) return false;
-  writeXY(out, point.x, point.y);
+  out.x = point.x;
+  out.y = point.y;
   return true;
 }
 

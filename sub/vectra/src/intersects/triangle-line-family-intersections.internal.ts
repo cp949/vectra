@@ -10,7 +10,7 @@
 
 import type { LineFamilyRangeKind } from '../internal/line-family-param.internal';
 import { type LinePolygonHitRecord, lineFamilyPolygonIntersectionHits } from '../internal/polygon-line-intersections';
-import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * line-family와 triangle boundary의 range 안 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -43,7 +43,7 @@ import type { XYObjectWritable } from '../types';
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function triangleLineFamilyIntersectionsInto(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   ox: number,
   oy: number,
   dx: number,
@@ -56,7 +56,7 @@ export function triangleLineFamilyIntersectionsInto(
   cx: number,
   cy: number,
   epsilon: number | undefined
-): XYObjectWritable[] {
+): PointWritable[] {
   outPoints.length = 0;
 
   // non-finite vertex: segment/point로 환원하지 않고 빈 collection.

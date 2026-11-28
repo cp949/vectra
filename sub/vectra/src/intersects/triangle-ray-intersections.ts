@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { RayLike, TriangleLike, XYObjectWritable } from '../types';
+import type { Ray, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { triangleRayIntersectionsInto } from './triangle-ray-intersections-into';
 
 /**
@@ -7,7 +7,7 @@ import { triangleRayIntersectionsInto } from './triangle-ray-intersections-into'
  *
  * `triangleRayIntersectionsInto`의 allocating companion이다. boundary 교점만 노출한다.
  * - transversal crossing, vertex touch 1점(dedupe), edge collinear overlap은 clipped start/end 2점이다.
- * - ray origin이 triangle 내부면 t ≥ 0 exit 교점만 반환한다. boundary 교점이 없으면 빈 배열이다.
+ * - ray 시작점 (ox, oy)가 triangle 내부면 t ≥ 0 exit 교점만 반환한다. boundary 교점이 없으면 빈 배열이다.
  * - degenerate triangle(signed area 2× === 0), non-finite vertex, zero-vector direction, non-finite
  *   coordinate는 빈 배열이다. degenerate triangle을 segment/point relation으로 환원하지 않는다.
  *
@@ -16,15 +16,11 @@ import { triangleRayIntersectionsInto } from './triangle-ray-intersections-into'
  * parameter의 정확 비교를 따른다. finite validation에는 쓰지 않는다.
  *
  * @param triangle 교점을 구할 triangle. point ordering의 기준은 ray parameter다.
- * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
+ * @param ray (ox, oy)에서 (dx, dy) 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param epsilon collinear/dedupe 판정 임계값
  */
-export function triangleRayIntersections(
-  triangle: TriangleLike,
-  ray: RayLike,
-  epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+export function triangleRayIntersections(triangle: Triangle, ray: Ray, epsilon = DEFAULT_EPSILON): PointWritable[] {
+  const out: PointWritable[] = [];
   triangleRayIntersectionsInto(out, triangle, ray, epsilon);
   return out;
 }

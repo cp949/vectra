@@ -1,14 +1,6 @@
 import { lineFamilyIntersects } from '../internal/line-family';
-import {
-  fillSegmentParam,
-  lineHitParamA,
-  lineHitParamB,
-  lineHitSegmentA,
-  lineHitSegmentB,
-  lineHitX,
-  lineHitY,
-} from '../internal/line-hit-read.internal';
-import type { SegmentLike } from '../types';
+import { fillSegmentParam, lineHitParamA, lineHitParamB } from '../internal/line-hit-read.internal';
+import type { Segment } from '../types/flat-shapes.internal';
 
 /**
  * 두 segment가 교차하면 true를 반환한다.
@@ -22,14 +14,10 @@ import type { SegmentLike } from '../types';
  * @param epsilon 평행 판정 및 거리 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsSegmentSegment(a: SegmentLike, b: SegmentLike, epsilon?: number): boolean {
-  const aa = lineHitSegmentA(a);
-  const ab = lineHitSegmentB(a);
-  const ba = lineHitSegmentA(b);
-  const bb = lineHitSegmentB(b);
+export function intersectsSegmentSegment(a: Segment, b: Segment, epsilon?: number): boolean {
   return lineFamilyIntersects(
-    fillSegmentParam(lineHitParamA, lineHitX(aa), lineHitY(aa), lineHitX(ab), lineHitY(ab)),
-    fillSegmentParam(lineHitParamB, lineHitX(ba), lineHitY(ba), lineHitX(bb), lineHitY(bb)),
+    fillSegmentParam(lineHitParamA, a.x1, a.y1, a.x2, a.y2),
+    fillSegmentParam(lineHitParamB, b.x1, b.y1, b.x2, b.y2),
     epsilon
   );
 }

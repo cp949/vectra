@@ -1,8 +1,5 @@
 import { lineFamilyTriangleIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, TriangleLike } from '../types';
+import type { Segment, Triangle } from '../types/flat-shapes.internal';
 
 /**
  * triangle과 segment가 교차하면 true를 반환한다.
@@ -16,10 +13,8 @@ import type { SegmentLike, TriangleLike } from '../types';
  * @param epsilon 평행 판정 및 거리 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsTriangleSegment(triangle: TriangleLike, line: SegmentLike, epsilon?: number): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+export function intersectsTriangleSegment(triangle: Triangle, line: Segment, epsilon?: number): boolean {
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   return lineFamilyTriangleIntersects(lineParam, ax, ay, bx, by, cx, cy, epsilon);
 }

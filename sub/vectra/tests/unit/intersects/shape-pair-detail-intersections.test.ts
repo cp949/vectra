@@ -16,37 +16,25 @@ function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9)
 
 describe('segmentSegmentIntersections — point/overlap/none 분기', () => {
   test('proper crossing은 교점 한 점이다', () => {
-    const points = segmentSegmentIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 4, y: 4 } },
-      { a: { x: 0, y: 4 }, b: { x: 4, y: 0 } }
-    );
+    const points = segmentSegmentIntersections({ x1: 0, y1: 0, x2: 4, y2: 4 }, { x1: 0, y1: 4, x2: 4, y2: 0 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 2, 2);
   });
 
   test('collinear overlap은 start/end 두 점을 segment a 기준 오름차순으로 반환한다', () => {
-    const points = segmentSegmentIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 4, y: 0 } },
-      { a: { x: 2, y: 0 }, b: { x: 6, y: 0 } }
-    );
+    const points = segmentSegmentIntersections({ x1: 0, y1: 0, x2: 4, y2: 0 }, { x1: 2, y1: 0, x2: 6, y2: 0 });
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 2, 0);
     expectPointClose(points[1], 4, 0);
   });
 
   test('disjoint segment는 빈 배열이다', () => {
-    const points = segmentSegmentIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 1, y: 0 } },
-      { a: { x: 0, y: 5 }, b: { x: 1, y: 5 } }
-    );
+    const points = segmentSegmentIntersections({ x1: 0, y1: 0, x2: 1, y2: 0 }, { x1: 0, y1: 5, x2: 1, y2: 5 });
     expect(points).toEqual([]);
   });
 
   test('shared endpoint touch는 한 점이다', () => {
-    const points = segmentSegmentIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 2, y: 0 } },
-      { a: { x: 2, y: 0 }, b: { x: 2, y: 2 } }
-    );
+    const points = segmentSegmentIntersections({ x1: 0, y1: 0, x2: 2, y2: 0 }, { x1: 2, y1: 0, x2: 2, y2: 2 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 2, 0);
   });
@@ -56,40 +44,18 @@ describe('segmentSegmentIntersections — point/overlap/none 분기', () => {
       { x: 99, y: 99 },
       { x: 88, y: 88 },
     ];
-    const result = segmentSegmentIntersectionsInto(
-      out,
-      { a: { x: 0, y: 0 }, b: { x: 4, y: 4 } },
-      { a: { x: 0, y: 4 }, b: { x: 4, y: 0 } }
-    );
+    const result = segmentSegmentIntersectionsInto(out, { x1: 0, y1: 0, x2: 4, y2: 4 }, { x1: 0, y1: 4, x2: 4, y2: 0 });
     expect(result).toBe(out);
     expect(out).toHaveLength(1);
     expectPointClose(out[0], 2, 2);
   });
 
   test('companion은 매 호출 새 point object를 만든다', () => {
-    const a = { a: { x: 0, y: 0 }, b: { x: 4, y: 4 } };
-    const b = { a: { x: 0, y: 4 }, b: { x: 4, y: 0 } };
+    const a = { x1: 0, y1: 0, x2: 4, y2: 4 };
+    const b = { x1: 0, y1: 4, x2: 4, y2: 0 };
     const first = segmentSegmentIntersections(a, b);
     const second = segmentSegmentIntersections(a, b);
     expect(first[0]).not.toBe(second[0]);
-  });
-
-  test('tuple 입력과 object 입력 결과가 같다', () => {
-    const objs = segmentSegmentIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 4, y: 4 } },
-      { a: { x: 0, y: 4 }, b: { x: 4, y: 0 } }
-    );
-    const tuples = segmentSegmentIntersections(
-      [
-        [0, 0],
-        [4, 4],
-      ],
-      [
-        [0, 4],
-        [4, 0],
-      ]
-    );
-    expect(tuples).toEqual(objs);
   });
 });
 

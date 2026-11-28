@@ -1,8 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, TriangleLike, XYObjectWritable } from '../types';
+import type { Segment, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-intersections.internal';
 
 /**
@@ -25,22 +22,20 @@ import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-inte
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function triangleSegmentIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  triangle: TriangleLike,
-  segment: SegmentLike,
+  outPoints: PointWritable[],
+  triangle: Triangle,
+  segment: Segment,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const ox = readX(a);
-  const oy = readY(a);
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+): PointWritable[] {
+  const ox = segment.x1;
+  const oy = segment.y1;
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   return triangleLineFamilyIntersectionsInto(
     outPoints,
     ox,
     oy,
-    readX(b) - ox,
-    readY(b) - oy,
+    segment.x2 - ox,
+    segment.y2 - oy,
     'finite',
     ax,
     ay,

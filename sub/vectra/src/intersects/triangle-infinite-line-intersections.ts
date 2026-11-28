@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { InfiniteLineLike, TriangleLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { triangleInfiniteLineIntersectionsInto } from './triangle-infinite-line-intersections-into';
 
 /**
@@ -16,15 +16,15 @@ import { triangleInfiniteLineIntersectionsInto } from './triangle-infinite-line-
  * parameter의 정확 비교를 따른다. finite validation에는 쓰지 않는다.
  *
  * @param triangle 교점을 구할 triangle. point ordering의 기준은 line parameter다.
- * @param infiniteLine origin을 지나 direction 양방향으로 무한히 뻗는 직선
+ * @param infiniteLine (ox, oy)를 지나 (dx, dy) 양방향으로 무한히 뻗는 직선
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function triangleInfiniteLineIntersections(
-  triangle: TriangleLike,
-  infiniteLine: InfiniteLineLike,
+  triangle: Triangle,
+  infiniteLine: InfiniteLine,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   triangleInfiniteLineIntersectionsInto(out, triangle, infiniteLine, epsilon);
   return out;
 }

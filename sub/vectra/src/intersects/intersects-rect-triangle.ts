@@ -1,7 +1,6 @@
 import { hasSeparatingEdgeNormal } from '../internal/convex-separating-axis';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import type { RectLike, TriangleLike } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Rect, Triangle } from '../types/flat-shapes.internal';
 
 /**
  * rect와 triangle이 교차하거나 접하면 true를 반환한다.
@@ -14,18 +13,18 @@ import type { RectLike, TriangleLike } from '../types';
  * @param rect 교차를 검사할 rect
  * @param triangle 교차를 검사할 triangle
  */
-export function intersectsRectTriangle(rect: RectLike, triangle: TriangleLike): boolean {
-  if (hasNonFiniteVertex(triangle) || triangleSignedArea2x(triangle) === 0) return false;
+export function intersectsRectTriangle(rect: Rect, triangle: Triangle): boolean {
+  if (hasNonFiniteTriangleVertex(triangle) || flatTriangleSignedArea2x(triangle) === 0) return false;
 
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return false;
 
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
+  const rx = rect.x;
+  const ry = rect.y;
   const rx2 = rx + rw;
   const ry2 = ry + rh;
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
 
   const triMinX = Math.min(ax, bx, cx);
   const triMaxX = Math.max(ax, bx, cx);

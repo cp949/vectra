@@ -24,7 +24,7 @@ const BIG = Number.MAX_VALUE;
 
 /** 끝점 두 개로 segment 입력을 만든다. */
 function seg(ax: number, ay: number, bx: number, by: number) {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
+  return { x1: ax, y1: ay, x2: bx, y2: by };
 }
 
 describe('segmentSegmentDetail의 수치 한계', () => {

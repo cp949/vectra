@@ -61,8 +61,8 @@ describe('circle × rect/bounds 교점 collection (S10-RM-007)', () => {
 describe('triangle × triangle 교점 collection (S10-RM-007)', () => {
   test('edge crossing은 triangle a boundary traversal 순서로 반환한다', () => {
     const points = triangleTriangleIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 6, y: 0 }, c: { x: 0, y: 6 } },
-      { a: { x: 2, y: 2 }, b: { x: 8, y: 2 }, c: { x: 2, y: 8 } }
+      { x1: 0, y1: 0, x2: 6, y2: 0, x3: 0, y3: 6 },
+      { x1: 2, y1: 2, x2: 8, y2: 2, x3: 2, y3: 8 }
     );
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 4, 2);
@@ -71,8 +71,8 @@ describe('triangle × triangle 교점 collection (S10-RM-007)', () => {
 
   test('shared vertex는 한 점으로 dedupe된다', () => {
     const points = triangleTriangleIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 0, y: 2 } },
-      { a: { x: 0, y: 0 }, b: { x: -2, y: 0 }, c: { x: 0, y: -2 } }
+      { x1: 0, y1: 0, x2: 2, y2: 0, x3: 0, y3: 2 },
+      { x1: 0, y1: 0, x2: -2, y2: 0, x3: 0, y3: -2 }
     );
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 0, 0);
@@ -80,8 +80,8 @@ describe('triangle × triangle 교점 collection (S10-RM-007)', () => {
 
   test('shared edge overlap은 triangle a edge ab 진행 순서(start→end)로 두 점을 반환한다', () => {
     const points = triangleTriangleIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 4 } },
-      { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: -3 } }
+      { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 },
+      { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: -3 }
     );
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 0, 0, 6);
@@ -90,38 +90,18 @@ describe('triangle × triangle 교점 collection (S10-RM-007)', () => {
 
   test('한 triangle이 다른 triangle 내부에 있으면 빈 배열이다', () => {
     const points = triangleTriangleIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, c: { x: 0, y: 10 } },
-      { a: { x: 1, y: 1 }, b: { x: 2, y: 1 }, c: { x: 1, y: 2 } }
+      { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 },
+      { x1: 1, y1: 1, x2: 2, y2: 1, x3: 1, y3: 2 }
     );
     expect(points).toEqual([]);
   });
 
   test('degenerate triangle은 빈 배열이다', () => {
     const points = triangleTriangleIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } },
-      { a: { x: 0, y: -1 }, b: { x: 4, y: -1 }, c: { x: 2, y: 3 } }
+      { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 },
+      { x1: 0, y1: -1, x2: 4, y2: -1, x3: 2, y3: 3 }
     );
     expect(points).toEqual([]);
-  });
-
-  test('tuple 입력과 object 입력 결과가 같다', () => {
-    const objs = triangleTriangleIntersections(
-      { a: { x: 0, y: 0 }, b: { x: 6, y: 0 }, c: { x: 0, y: 6 } },
-      { a: { x: 2, y: 2 }, b: { x: 8, y: 2 }, c: { x: 2, y: 8 } }
-    );
-    const tuples = triangleTriangleIntersections(
-      [
-        [0, 0],
-        [6, 0],
-        [0, 6],
-      ],
-      [
-        [2, 2],
-        [8, 2],
-        [2, 8],
-      ]
-    );
-    expect(tuples).toEqual(objs);
   });
 });
 

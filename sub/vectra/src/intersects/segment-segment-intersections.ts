@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { Segment, PointWritable } from '../types/flat-shapes.internal';
 import { segmentSegmentIntersectionsInto } from './segment-segment-intersections-into';
 
 /**
@@ -19,12 +19,8 @@ import { segmentSegmentIntersectionsInto } from './segment-segment-intersections
  * @param b 두 번째 segment
  * @param epsilon 평행 판정 및 거리 임계값
  */
-export function segmentSegmentIntersections(
-  a: SegmentLike,
-  b: SegmentLike,
-  epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+export function segmentSegmentIntersections(a: Segment, b: Segment, epsilon = DEFAULT_EPSILON): PointWritable[] {
+  const out: PointWritable[] = [];
   segmentSegmentIntersectionsInto(out, a, b, epsilon);
   return out;
 }

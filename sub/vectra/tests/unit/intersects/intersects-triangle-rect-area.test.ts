@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { intersectsRectTriangle } from '../../../src/intersects/intersects-rect-triangle';
 
 // 기준 삼각형: a(0,0) b(4,0) c(0,4) — CCW
-const tri = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 4 } };
+const tri = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 };
 
 describe('intersectsRect', () => {
   describe('miss', () => {
@@ -12,7 +12,7 @@ describe('intersectsRect', () => {
     });
 
     test('degenerate triangle은 false를 반환한다', () => {
-      const degenerate = { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } };
+      const degenerate = { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 };
       const rect = { x: 0, y: 0, width: 5, height: 5 };
       expect(intersectsRectTriangle(rect, degenerate)).toBe(false);
     });
@@ -69,22 +69,6 @@ describe('intersectsRect', () => {
     test('triangle edge가 rect를 가로지르면 true를 반환한다', () => {
       const rect = { x: 1, y: 1, width: 3, height: 3 };
       expect(intersectsRectTriangle(rect, tri)).toBe(true);
-    });
-  });
-
-  describe('input forms', () => {
-    test('tuple TriangleLike에서도 동작한다', () => {
-      const t = [
-        { x: 0, y: 0 },
-        { x: 4, y: 0 },
-        { x: 0, y: 4 },
-      ] as const;
-      const rect = { x: 1, y: 1, width: 3, height: 3 };
-      expect(intersectsRectTriangle(rect, t)).toBe(true);
-    });
-
-    test('tuple RectLike에서도 동작한다', () => {
-      expect(intersectsRectTriangle([1, 1, 3, 3], tri)).toBe(true);
     });
   });
 });

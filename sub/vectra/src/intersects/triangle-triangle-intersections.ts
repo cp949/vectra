@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { TriangleLike, XYObjectWritable } from '../types';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { triangleTriangleIntersectionsInto } from './triangle-triangle-intersections-into';
 
 /**
@@ -19,12 +19,8 @@ import { triangleTriangleIntersectionsInto } from './triangle-triangle-intersect
  * @param b 두 번째 triangle
  * @param epsilon 평행/거리/dedupe 판정 임계값
  */
-export function triangleTriangleIntersections(
-  a: TriangleLike,
-  b: TriangleLike,
-  epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+export function triangleTriangleIntersections(a: Triangle, b: Triangle, epsilon = DEFAULT_EPSILON): PointWritable[] {
+  const out: PointWritable[] = [];
   triangleTriangleIntersectionsInto(out, a, b, epsilon);
   return out;
 }

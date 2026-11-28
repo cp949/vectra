@@ -1,6 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike, XYObjectWritable } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { segmentSegmentDetailXY } from './segment-segment-detail.internal';
 
 interface LocalHit {
@@ -32,26 +32,24 @@ interface LocalHit {
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function triangleTriangleIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  a: TriangleLike,
-  b: TriangleLike,
+  outPoints: PointWritable[],
+  a: Triangle,
+  b: Triangle,
   epsilon?: number
-): XYObjectWritable[] {
+): PointWritable[] {
   outPoints.length = 0;
-  if (hasNonFiniteVertex(a) || triangleSignedArea2x(a) === 0) return outPoints;
-  if (hasNonFiniteVertex(b) || triangleSignedArea2x(b) === 0) return outPoints;
+  if (hasNonFiniteTriangleVertex(a) || flatTriangleSignedArea2x(a) === 0) return outPoints;
+  if (hasNonFiniteTriangleVertex(b) || flatTriangleSignedArea2x(b) === 0) return outPoints;
 
-  const A = readTriangleRawCoords(a);
-  const B = readTriangleRawCoords(b);
   const aEdges: readonly [number, number, number, number][] = [
-    [A.ax, A.ay, A.bx, A.by],
-    [A.bx, A.by, A.cx, A.cy],
-    [A.cx, A.cy, A.ax, A.ay],
+    [a.x1, a.y1, a.x2, a.y2],
+    [a.x2, a.y2, a.x3, a.y3],
+    [a.x3, a.y3, a.x1, a.y1],
   ];
   const bEdges: readonly [number, number, number, number][] = [
-    [B.ax, B.ay, B.bx, B.by],
-    [B.bx, B.by, B.cx, B.cy],
-    [B.cx, B.cy, B.ax, B.ay],
+    [b.x1, b.y1, b.x2, b.y2],
+    [b.x2, b.y2, b.x3, b.y3],
+    [b.x3, b.y3, b.x1, b.y1],
   ];
 
   const distEpsilon = epsilon ?? DEFAULT_EPSILON;
@@ -82,7 +80,7 @@ export function triangleTriangleIntersectionsInto(
 }
 
 /** 이미 수집한 point 중 (px, py)와 epsilon² 이내가 있으면 true. */
-function hasNearbyPoint(points: readonly XYObjectWritable[], px: number, py: number, epsSq: number): boolean {
+function hasNearbyPoint(points: readonly PointWritable[], px: number, py: number, epsSq: number): boolean {
   for (let i = 0; i < points.length; i++) {
     const ddx = points[i].x - px;
     const ddy = points[i].y - py;

@@ -48,14 +48,8 @@ describe('segmentSegmentDetail — zero-length segment', () => {
 
   test('epsilon 경계 안쪽 두 zero-length point는 boolean과 같게 point다', () => {
     // 거리 ≈ 9.9999e-10 < epsilon 1e-9. 정규화 차분이 정밀도를 잃으면 false none이 됐다.
-    const a = {
-      a: { x: 771.7703618109226, y: -466.37072833254933 },
-      b: { x: 771.7703618109226, y: -466.37072833254933 },
-    };
-    const b = {
-      a: { x: 771.7703618099226, y: -466.37072833254933 },
-      b: { x: 771.7703618099226, y: -466.37072833254933 },
-    };
+    const a = { x1: 771.7703618109226, y1: -466.37072833254933, x2: 771.7703618109226, y2: -466.37072833254933 };
+    const b = { x1: 771.7703618099226, y1: -466.37072833254933, x2: 771.7703618099226, y2: -466.37072833254933 };
     expect(intersectsSegmentSegment(a, b)).toBe(true);
     expect(segmentSegmentDetail(a, b).kind).toBe('point');
   });
@@ -95,11 +89,8 @@ describe('segmentSegmentDetail — zero-length segment', () => {
   });
 
   test('zero-length point의 parameter가 endpoint로 붕괴해도 endpoint 좌표가 다르면 none이다', () => {
-    const a = { a: { x: 0, y: 5.33815744176588e32 }, b: { x: 0, y: 5.33815744176588e32 } };
-    const b = {
-      a: { x: -8.511049291252587e210, y: 3.0619683507104956 },
-      b: { x: 5.876815338934399, y: 5.33815744176588e32 },
-    };
+    const a = { x1: 0, y1: 5.33815744176588e32, x2: 0, y2: 5.33815744176588e32 };
+    const b = { x1: -8.511049291252587e210, y1: 3.0619683507104956, x2: 5.876815338934399, y2: 5.33815744176588e32 };
 
     expect(segmentSegmentDetail(a, b)).toEqual({ kind: 'none' });
     expect(segmentSegmentDetail(b, a)).toEqual({ kind: 'none' });

@@ -1,6 +1,4 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, XYObjectWritable } from '../types';
+import type { Segment, PointWritable } from '../types/flat-shapes.internal';
 import { segmentSegmentDetailXY } from './segment-segment-detail.internal';
 
 /**
@@ -24,26 +22,12 @@ import { segmentSegmentDetailXY } from './segment-segment-detail.internal';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function segmentSegmentIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  a: SegmentLike,
-  b: SegmentLike,
+  outPoints: PointWritable[],
+  a: Segment,
+  b: Segment,
   epsilon?: number
-): XYObjectWritable[] {
-  const aa = readSegmentA(a);
-  const ab = readSegmentB(a);
-  const ba = readSegmentA(b);
-  const bb = readSegmentB(b);
-  const detail = segmentSegmentDetailXY(
-    readX(aa),
-    readY(aa),
-    readX(ab),
-    readY(ab),
-    readX(ba),
-    readY(ba),
-    readX(bb),
-    readY(bb),
-    epsilon
-  );
+): PointWritable[] {
+  const detail = segmentSegmentDetailXY(a.x1, a.y1, a.x2, a.y2, b.x1, b.y1, b.x2, b.y2, epsilon);
 
   outPoints.length = 0;
   if (detail.kind === 'point') {

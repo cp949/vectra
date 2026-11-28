@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { SegmentLike, TriangleLike, XYObjectWritable } from '../types';
+import type { Segment, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { triangleSegmentIntersectionsInto } from './triangle-segment-intersections-into';
 
 /**
@@ -20,11 +20,11 @@ import { triangleSegmentIntersectionsInto } from './triangle-segment-intersectio
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function triangleSegmentIntersections(
-  triangle: TriangleLike,
-  segment: SegmentLike,
+  triangle: Triangle,
+  segment: Segment,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   triangleSegmentIntersectionsInto(out, triangle, segment, epsilon);
   return out;
 }

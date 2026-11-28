@@ -171,8 +171,8 @@ describe('직선 계열 단일 교점 companion의 hit 경로', () => {
   });
 
   test('singleIntersectionInfiniteLineTriangle은 꼭짓점에 스치면 그 교점을 반환한다', () => {
-    const triangle = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 4 } };
-    const apexGrazing = { origin: { x: 0, y: 4 }, direction: { x: 1, y: 0 } };
+    const triangle = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 4 };
+    const apexGrazing = { ox: 0, oy: 4, dx: 1, dy: 0 };
     const hit = singleIntersectionInfiniteLineTriangle(apexGrazing, triangle);
     expect(hit?.x).toBeCloseTo(2, 12);
     expect(hit?.y).toBeCloseTo(4, 12);
@@ -181,29 +181,29 @@ describe('직선 계열 단일 교점 companion의 hit 경로', () => {
 
 describe('삼각형 입력 가드', () => {
   test('intersectsBoundsTriangle은 삼각형이 bounds 아래에 있으면 false를 반환한다', () => {
-    const below = { a: { x: 0, y: -5 }, b: { x: 4, y: -5 }, c: { x: 2, y: -1 } };
-    expect(intersectsBoundsTriangle({ min: { x: 0, y: 0 }, max: { x: 5, y: 5 } }, below)).toBe(false);
+    const below = { x1: 0, y1: -5, x2: 4, y2: -5, x3: 2, y3: -1 };
+    expect(intersectsBoundsTriangle({ minX: 0, minY: 0, maxX: 5, maxY: 5 }, below)).toBe(false);
   });
 
   test('intersectsBoundsTriangle은 삼각형이 bounds 위에 있으면 false를 반환한다', () => {
-    const above = { a: { x: 0, y: 8 }, b: { x: 4, y: 8 }, c: { x: 2, y: 12 } };
-    expect(intersectsBoundsTriangle({ min: { x: 0, y: 0 }, max: { x: 5, y: 5 } }, above)).toBe(false);
+    const above = { x1: 0, y1: 8, x2: 4, y2: 8, x3: 2, y3: 12 };
+    expect(intersectsBoundsTriangle({ minX: 0, minY: 0, maxX: 5, maxY: 5 }, above)).toBe(false);
   });
 
   test('intersectsRectTriangle은 삼각형이 rect 아래에 있으면 false를 반환한다', () => {
-    const below = { a: { x: 0, y: -5 }, b: { x: 4, y: -5 }, c: { x: 2, y: -1 } };
+    const below = { x1: 0, y1: -5, x2: 4, y2: -5, x3: 2, y3: -1 };
     expect(intersectsRectTriangle({ x: 0, y: 0, width: 5, height: 5 }, below)).toBe(false);
   });
 
   test('intersectsRectTriangle은 삼각형이 rect 위에 있으면 false를 반환한다', () => {
-    const above = { a: { x: 0, y: 8 }, b: { x: 4, y: 8 }, c: { x: 2, y: 12 } };
+    const above = { x1: 0, y1: 8, x2: 4, y2: 8, x3: 2, y3: 12 };
     expect(intersectsRectTriangle({ x: 0, y: 0, width: 5, height: 5 }, above)).toBe(false);
   });
 
   test('triangleTriangleIntersectionsInto는 두 번째 삼각형이 퇴화이면 기존 출력을 비운다', () => {
-    const valid = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 2, y: 4 } };
-    const collinear = { a: { x: 0, y: 0 }, b: { x: 1, y: 1 }, c: { x: 2, y: 2 } };
-    const nonFinite = { a: { x: 0, y: 0 }, b: { x: Number.NaN, y: 1 }, c: { x: 2, y: 2 } };
+    const valid = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 2, y3: 4 };
+    const collinear = { x1: 0, y1: 0, x2: 1, y2: 1, x3: 2, y3: 2 };
+    const nonFinite = { x1: 0, y1: 0, x2: Number.NaN, y2: 1, x3: 2, y3: 2 };
     const out = [{ x: 9, y: 9 }];
     expect(triangleTriangleIntersectionsInto(out, valid, collinear)).toBe(out);
     expect(out).toEqual([]);

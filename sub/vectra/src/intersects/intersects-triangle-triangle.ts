@@ -1,6 +1,6 @@
 import { hasSeparatingEdgeNormal } from '../internal/convex-separating-axis';
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import type { TriangleLike } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Triangle } from '../types/flat-shapes.internal';
 
 /**
  * 두 triangle이 교차하면 true를 반환한다.
@@ -15,12 +15,12 @@ import type { TriangleLike } from '../types';
  * @param a 첫 번째 triangle
  * @param b 두 번째 triangle
  */
-export function intersectsTriangleTriangle(a: TriangleLike, b: TriangleLike): boolean {
-  if (hasNonFiniteVertex(a) || triangleSignedArea2x(a) === 0) return false;
-  if (hasNonFiniteVertex(b) || triangleSignedArea2x(b) === 0) return false;
+export function intersectsTriangleTriangle(a: Triangle, b: Triangle): boolean {
+  if (hasNonFiniteTriangleVertex(a) || flatTriangleSignedArea2x(a) === 0) return false;
+  if (hasNonFiniteTriangleVertex(b) || flatTriangleSignedArea2x(b) === 0) return false;
 
-  const { ax: ax1, ay: ay1, bx: bx1, by: by1, cx: cx1, cy: cy1 } = readTriangleRawCoords(a);
-  const { ax: ax2, ay: ay2, bx: bx2, by: by2, cx: cx2, cy: cy2 } = readTriangleRawCoords(b);
+  const { x1: ax1, y1: ay1, x2: bx1, y2: by1, x3: cx1, y3: cy1 } = a;
+  const { x1: ax2, y1: ay2, x2: bx2, y2: by2, x3: cx2, y3: cy2 } = b;
   const aVerts = [ax1, ay1, bx1, by1, cx1, cy1];
   const bVerts = [ax2, ay2, bx2, by2, cx2, cy2];
 

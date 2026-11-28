@@ -203,7 +203,7 @@ export function lineFamilyTriangleIntersects(
  * degenerate triangle: false.
  */
 export function lineFamilyTriangleIntersectionPoint(
-  out: XYWritable,
+  out: PointWritable,
   line: LineFamilyParam,
   ax: number,
   ay: number,

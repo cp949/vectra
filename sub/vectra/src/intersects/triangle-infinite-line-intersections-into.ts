@@ -1,8 +1,5 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readTriangleRawCoords } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, TriangleLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-intersections.internal';
 
 /**
@@ -21,24 +18,22 @@ import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-inte
  *
  * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
  * @param triangle 교점을 구할 triangle. point ordering의 기준은 line parameter다.
- * @param infiniteLine origin을 지나 direction 양방향으로 무한히 뻗는 직선
+ * @param infiniteLine (ox, oy)를 지나 (dx, dy) 양방향으로 무한히 뻗는 직선
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function triangleInfiniteLineIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  triangle: TriangleLike,
-  infiniteLine: InfiniteLineLike,
+  outPoints: PointWritable[],
+  triangle: Triangle,
+  infiniteLine: InfiniteLine,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const origin = readInfiniteLineOrigin(infiniteLine);
-  const direction = readInfiniteLineDirection(infiniteLine);
-  const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
+): PointWritable[] {
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   return triangleLineFamilyIntersectionsInto(
     outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    infiniteLine.ox,
+    infiniteLine.oy,
+    infiniteLine.dx,
+    infiniteLine.dy,
     'inf',
     ax,
     ay,

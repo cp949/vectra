@@ -1,10 +1,11 @@
 import { expect } from 'vitest';
-import type { SegmentLike, SegmentSegmentDetail } from '../../../../src/types';
+import type { SegmentSegmentDetail } from '../../../../src/types';
+import type { Segment } from '../../../../src/types/flat-shapes.internal';
 
 export const EXPECTED_PRECISION = 12;
 
-export function segment(ax: number, ay: number, bx: number, by: number): SegmentLike {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
+export function segment(ax: number, ay: number, bx: number, by: number): Segment {
+  return { x1: ax, y1: ay, x2: bx, y2: by };
 }
 
 export function expectPointDetail(

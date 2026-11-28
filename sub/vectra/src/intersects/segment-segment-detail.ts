@@ -1,6 +1,5 @@
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { SegmentLike, SegmentSegmentDetail } from '../types';
+import type { SegmentSegmentDetail } from '../types';
+import type { Segment } from '../types/flat-shapes.internal';
 import { segmentSegmentDetailXY } from './segment-segment-detail.internal';
 
 /**
@@ -24,20 +23,6 @@ import { segmentSegmentDetailXY } from './segment-segment-detail.internal';
  * @param epsilon 평행 판정 및 거리 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function segmentSegmentDetail(a: SegmentLike, b: SegmentLike, epsilon?: number): SegmentSegmentDetail {
-  const aa = readSegmentA(a);
-  const ab = readSegmentB(a);
-  const ba = readSegmentA(b);
-  const bb = readSegmentB(b);
-  return segmentSegmentDetailXY(
-    readX(aa),
-    readY(aa),
-    readX(ab),
-    readY(ab),
-    readX(ba),
-    readY(ba),
-    readX(bb),
-    readY(bb),
-    epsilon
-  );
+export function segmentSegmentDetail(a: Segment, b: Segment, epsilon?: number): SegmentSegmentDetail {
+  return segmentSegmentDetailXY(a.x1, a.y1, a.x2, a.y2, b.x1, b.y1, b.x2, b.y2, epsilon);
 }

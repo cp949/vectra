@@ -5,6 +5,8 @@
  * 기존 객체에 덮어쓰는 sweep 결과는 호출자의 결과 타입과 내부 점 참조를 보존한다.
  */
 import { expect, expectTypeOf, test } from 'vitest';
+import { segmentSegmentIntersectionsInto } from '../../../src/intersects/segment-segment-intersections-into';
+import { triangleSegmentIntersectionsInto } from '../../../src/intersects/triangle-segment-intersections-into';
 import { boundsSweepBoundsInto } from '../../../src/intersects/bounds-sweep-bounds-into';
 import { boundsSweepPointInto } from '../../../src/intersects/bounds-sweep-point-into';
 import { infiniteLineBoundsIntersectionsInto } from '../../../src/intersects/infinite-line-bounds-intersections-into';
@@ -294,4 +296,23 @@ test('boundsSweepBoundsInto는 외부 클래스의 타입과 결과 참조를 �
   expect(result).toBe(out);
   expect(result.contact).toEqual({ x: 10, y: 5 });
   expect(result.time).toBe(0.5);
+});
+
+test('선분 쌍과 삼각형·선분 교점 배열의 원소 타입을 고정한다', () => {
+  expectTypeOf(segmentSegmentIntersectionsInto).parameter(1).toEqualTypeOf<Segment>();
+  const segment: Segment = { x1: -1, y1: 1, x2: 3, y2: 1 };
+  const out: TaggedPoint[] = [new TaggedPoint()];
+  const pair = segmentSegmentIntersectionsInto(out, segment, { x1: 0, y1: 0, x2: 0, y2: 2 });
+  expectTypeOf(pair).toEqualTypeOf<PointWritable[]>();
+  expect(pair).toBe(out);
+  expect(pair).toEqual([{ x: 0, y: 1 }]);
+
+  const triangle = triangleSegmentIntersectionsInto(out, { x1: 0, y1: 0, x2: 2, y2: 0, x3: 0, y3: 2 }, segment);
+  expectTypeOf(triangle).toEqualTypeOf<PointWritable[]>();
+  expect(triangle).toBe(out);
+  expect(triangle).toEqual([
+    { x: 0, y: 1 },
+    { x: 1, y: 1 },
+  ]);
+  expect(triangle[0]).not.toBeInstanceOf(TaggedPoint);
 });

@@ -1,12 +1,5 @@
-import type { OrientedRectLike } from '../types';
 import type { OrientedRect, PointWritable } from '../types/flat-shapes.internal';
-import {
-  readOrientedRectAngle,
-  readOrientedRectCenter,
-  readOrientedRectSize,
-  validateOrientedRectSizeAndAngle,
-} from './oriented-rect';
-import { readX, readY } from './xy';
+import { validateOrientedRectSizeAndAngle } from './oriented-rect';
 
 /**
  * oriented-rect local-space query에 필요한 값을 미리 계산한 frame.
@@ -38,28 +31,6 @@ export interface OrientedRectQueryFrame {
 
   /** `Math.sin(angle)` */
   sin: number;
-}
-
-/**
- * oriented rect input을 읽어 local-space query frame을 만든다.
- *
- * center/size/angle을 모두 먼저 읽으므로 caller가 frame을 받은 뒤 같은 input을 mutate해도 frame
- * 값은 영향을 받지 않는다 (aliasing 안전 기반). size 두 성분이나 angle이 non-finite이면
- * `RangeError`다. `width <= 0 || height <= 0` empty 판정은 caller가 `width`/`height`로 한다.
- * center 좌표 non-finite는 검증하지 않고 frame에 그대로 담는다.
- *
- * @param rect query frame을 만들 oriented rect
- */
-// v2-migration: intersects의 회전 사각형 관계가 전환되면 제거한다.
-export function readLegacyOrientedRectQueryFrame(rect: OrientedRectLike): OrientedRectQueryFrame {
-  const center = readOrientedRectCenter(rect);
-  const cx = readX(center);
-  const cy = readY(center);
-  const size = readOrientedRectSize(rect);
-  const width = readX(size);
-  const height = readY(size);
-  const angle = readOrientedRectAngle(rect);
-  return createOrientedRectQueryFrame({ cx, cy, width, height, angle });
 }
 
 /** 평평한 회전 사각형의 치수와 각도를 검증하고 local-space query frame을 만든다. */

@@ -32,8 +32,7 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
   const cases: Array<[string, (v: number) => XYObjectWritable[]]> = [
     [
       'segmentSegment',
-      (v) =>
-        segmentSegmentIntersections({ a: { x: v, y: 0 }, b: { x: 4, y: 4 } }, { a: { x: 0, y: 4 }, b: { x: 4, y: 0 } }),
+      (v) => segmentSegmentIntersections({ x1: v, y1: 0, x2: 4, y2: 4 }, { x1: 0, y1: 4, x2: 4, y2: 0 }),
     ],
     [
       'ellipseEllipse',
@@ -70,8 +69,8 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
       'triangleTriangle',
       (v) =>
         triangleTriangleIntersections(
-          { a: { x: v, y: 0 }, b: { x: 6, y: 0 }, c: { x: 0, y: 6 } },
-          { a: { x: 2, y: 2 }, b: { x: 8, y: 2 }, c: { x: 2, y: 8 } }
+          { x1: v, y1: 0, x2: 6, y2: 0, x3: 0, y3: 6 },
+          { x1: 2, y1: 2, x2: 8, y2: 2, x3: 2, y3: 8 }
         ),
     ],
     ['ellipseCircle', (v) => ellipseCircleIntersections({ cx: v, cy: 0, rx: 2, ry: 2 }, { cx: 2, cy: 0, r: 2 })],
