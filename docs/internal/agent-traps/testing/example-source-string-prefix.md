@@ -35,7 +35,3 @@ expect(code).toContain('Curvex.quadraticBoundsInto(');
 expect(code).toContain('Segmentx.pointAt(');
 expect(code).toContain('Segmentx.pointAtInto(');
 ```
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260524-27-quadratic-curve-analysis-lab-example/`

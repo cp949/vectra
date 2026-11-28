@@ -55,9 +55,3 @@ test('rng가 0을 반환하면 key=-Infinity로 해당 항목이 positive 항목
   expect(result).toEqual(['b', 'a']);
 });
 ```
-
-## 관련 작업
-
-- `_works/S1-RM-015/20260524-01-random-permutation-secure-source/` — `weightedShuffle`
-  구현 후 사후 리뷰에서 `rng=0` 경계 테스트 누락 발견 → `5a199e6 test: weightedShuffle
-  rng=0 엣지케이스 추가` commit으로 보강.

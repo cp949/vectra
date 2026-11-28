@@ -2,21 +2,24 @@
 
 ## 증상
 
-`pointAtIndexInto(out, container, 1.5)` 또는 `edgeAtInto(out, container, 2.999)` 같은
-비정수 index 호출에서 `Cannot read properties of undefined` TypeError가 발생한다.
+비정수 index 호출에서 container 종류에 따라 다른 방식으로 깨진다.
 
-contract는 invalid index에서 `false` 반환과 `out` 미수정을 요구하는데 실제로는 throw한다.
+- `Polyline` 같은 점 객체 배열: `polyline[1.5]`가 `undefined`라 `.x`에서 `Cannot read properties of undefined` TypeError가 난다.
+- `Polygon` 같은 평평한 좌표 배열: `polygon[2 * 1.5]`는 vertex 1의 y다. 다른 vertex의 좌표를 섞어 읽고 `true`를 반환한다. 오류가 나지 않아 늦게 드러난다.
+
+contract는 invalid index에서 `false` 반환과 `out` 미수정을 요구한다.
 
 ## 원인
 
 ```ts
 // 잘못된 가드: NaN만 잡고 finite non-integer를 흘려보낸다
-if (index >= 0 && index < n) { ... }  // 1.5, 2.999 통과 → container[index] === undefined
+if (index >= 0 && index < n) { ... }  // 1.5, 2.999 통과
 ```
 
-`index >= 0 && index < n`은 `NaN`은 비교 결과가 `false`라 안전하게 막히지만,
-`1.5`, `2.999`, `±Infinity` 같은 값은 통과시켜 `container[index]`가 `undefined`가 되고
-이후 `readX(undefined)` 등에서 crash한다.
+`index >= 0 && index < n`은 `NaN`은 비교 결과가 `false`라 안전하게 막는다.
+`1.5`, `2.999` 같은 값은 통과시킨다.
+점 객체 배열은 `polyline[index].x`에서 crash한다.
+평평한 좌표 배열은 `2 * index`가 홀수가 되어 다른 vertex의 좌표를 조용히 읽는다.
 
 ## 방지
 

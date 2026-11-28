@@ -10,12 +10,11 @@
 
 ## TypeScript
 
-- [readonly tuple narrowing](./typescript/readonly-tuple-narrowing.md)
 - [integer index guard: `Number.isInteger` 없이 `>= 0 && < n`만으로 가드하면 비정수 index가 통과한다](./typescript/integer-index-guard.md)
 - [JS 비트 연산자 int32 강제 변환: safe integer 전체 범위에서 비트 트릭 금지](./typescript/js-bitwise-int32-coercion.md)
 - [Math.atan2 signed zero 경계: `-0` 입력에서 `-π` 반환 — `(-π, π]` 범위 위반](./typescript/atan2-signed-zero-boundary.md)
 - [float64 합산 overflow: 개별 finite 값도 합산하면 Infinity — aggregation 함수에서 누적 합계도 검증](./typescript/float64-sum-overflow.md)
-- [Euclidean 거리/길이는 `Math.sqrt(dx * dx + dy * dy)` 대신 `Math.hypot(dx, dy)`를 쓴다](./typescript/euclidean-distance-hypot.md)
+- [2D Euclidean 거리/길이는 `Math.sqrt(dx * dx + dy * dy)` 대신 `hypot2(dx, dy)`를 쓴다](./typescript/euclidean-distance-hypot.md)
 - [absolute coordinate를 normalize한 뒤 빼면 local offset이 사라진다](./typescript/scale-normalized-difference-precision-loss.md)
 - [literal union 반환 타입 함수의 NaN 입력 처리 정책 누락: `-1 | 0 | 1` 타입에 NaN을 반환할 수 없으므로 정책을 명시한다](./typescript/literal-union-return-nan-input.md)
 - [NaN 자기비교(`x !== x`)는 oxlint `eslint/no-self-compare` 오류: `Number.isNaN(x)` 사용](./typescript/nan-self-comparison-oxlint.md)

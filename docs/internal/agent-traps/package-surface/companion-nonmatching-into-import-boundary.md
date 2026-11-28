@@ -47,9 +47,3 @@ focused `typecheck` / `lint` / `test`는 모두 통과하므로 개발 중에는
 - 개발 중 focused 검증만으로는 안 잡히므로, companion을 다수 추가했다면 closeout 전에
   `pnpm verify`(또는 `pnpm --filter ... build && node scripts/check-public-import-boundary.mjs`)로
   미리 확인한다.
-
-## 관련 작업
-
-- `_works/S10-RM-001/20260529-01-matrix-companion-export-audit/함정.md` — matrix companion 8개 추가 시 발견.
-  `translation`/`scaling`/`translate`/`scale`/`rotate` 5개가 비일치 위임이라
-  `companionDelegationAliases` 명시 예외에 추가.

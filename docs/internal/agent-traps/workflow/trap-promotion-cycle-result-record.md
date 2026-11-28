@@ -64,9 +64,3 @@ trap promotion 갯수 검증: 결과 문서에 적힌 trap 갯수와 `git log --
 3. `docs/internal/agent-traps/domain/signed-distance-formula-absolute-value.md` — TASK-01 검토에서 발견.
 4. `docs/internal/agent-traps/workflow/plan-domain-survey-barrel-check.md` — 01-계획.md 초안에서 발견.
 ```
-
-## 관련 작업
-
-- `_works/S3-RM-027/20260522-01-circle-line-follow-up/` 사후 리뷰 Round 1에서 발견.
-  closeout 커밋에는 trap 4건이 모두 등록되었으나 `02-작업결과.md`와
-  과거 상태 대시보드에는 1건만 기재되어 있던 것을 Round 1 수정 사이클에서 정합화.

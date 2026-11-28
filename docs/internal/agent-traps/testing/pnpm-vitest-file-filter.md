@@ -13,7 +13,7 @@
 다음 명령을 실행했을 때 특정 파일 하나만 실행되기를 기대한다.
 
 ```sh
-pnpm --filter @cp949/vectra test -- tests/unit/vec/measurement.test.ts
+pnpm --filter @cp949/vectra test -- tests/unit/vec/measurement-magnitude.test.ts
 ```
 
 하지만 결과가 여러 검증 항목에서 모두 같은 파일 수와 테스트 수로 반복된다.
@@ -29,7 +29,7 @@ pnpm --filter @cp949/vectra test -- tests/unit/vec/measurement.test.ts
 focused 실행이 목적이면 test script 뒤에 파일 경로를 바로 붙인다.
 
 ```sh
-pnpm --filter @cp949/vectra test tests/unit/vec/measurement.test.ts
+pnpm --filter @cp949/vectra test tests/unit/vec/measurement-magnitude.test.ts
 ```
 
 workspace package에 `--filter`를 붙인 경우 파일 경로는 package root 기준으로 적는다. 예를 들어
@@ -42,8 +42,3 @@ pnpm --filter @repo/pixi-demo test src/examples/example-sources.test.ts
 
 검증 결과 문서에 focused test 항목이 여러 개 있는데 모두 동일한 file/test 수가 나오면,
 파일 필터가 실제로 적용되었는지 다시 확인한다.
-
-## 관련 작업
-
-- `_works/S1-RM-003/20260516-01-vec-measurement/함정.md`
-- `_works/S1-RM-013/20260524-29-bezier-intersection-workbench-example/함정.md`

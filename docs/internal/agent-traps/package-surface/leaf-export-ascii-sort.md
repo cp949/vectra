@@ -37,7 +37,3 @@ ASCII에서 대문자 `A`-`Z` (65-90)는 모두 소문자 `a`-`z` (97-122)보다
   - 같은 prefix까지는 한 글자씩 ASCII 코드로 비교.
   - 한 쪽에 글자가 부족하면 짧은 쪽이 앞 (예: `fit` < `fitInside`).
   - 대소문자 섞일 때만 ASCII 트랩이 작동. 둘 다 lowercase면 직관과 ASCII가 일치.
-
-## 관련 작업
-
-- `_works/S3-RM-025/20260522-01-bounds-rect-follow-up/함정.md` — `rect/index.ts`에 `toSquare`/`toSquareInto` 추가 시 발견.

@@ -12,8 +12,8 @@ JavaScript 런타임에서 `NaN`을 그대로 반환하면 타입 위반이 된�
 
 ```ts
 // 함정: NaN 입력 시 cross product 계산이 NaN이 되어 비교가 실패
-function side(line: InfiniteLineLike, point: XYInput): -1 | 0 | 1 {
-  const d = signedDistance(line, point);
+function side(line: InfiniteLine, point: Point): -1 | 0 | 1 {
+  const d = signedDistanceToPoint(line, point);
   // d가 NaN이면 어떤 branch도 타지 않고 undefined처럼 동작
   if (d > 0) return 1;
   if (d < 0) return -1;
@@ -41,14 +41,11 @@ literal union을 반환하는 query 함수를 설계할 때:
 
 ```ts
 // NaN 입력 → 0 반환 (degenerate 취급). JSDoc에 명시.
-function side(line: InfiniteLineLike, point: XYInput, epsilon = 1e-9): -1 | 0 | 1 {
+function side(line: InfiniteLine, point: Point, epsilon = DEFAULT_EPSILON): -1 | 0 | 1 {
   const d = signedDistanceToPoint(line, point);
+  if (Number.isNaN(d)) return 0; // 의도적 정책. 분기로 드러낸다.
   if (d > epsilon) return 1;
   if (d < -epsilon) return -1;
-  return 0; // NaN이면 여기로 떨어짐 — 의도적 정책
+  return 0;
 }
 ```
-
-## 관련 작업
-
-- `_works/S3-RM-027/20260522-01-circle-line-follow-up/` (TASK-01/TASK-03 계획서 리뷰)

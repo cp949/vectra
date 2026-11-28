@@ -41,7 +41,3 @@ signedDistanceToPoint(line, leftPoint)   // 양수
 signedDistanceToPoint(line, rightPoint)  // 음수
 signedDistanceToPoint(line, onLine)      // 0 근방
 ```
-
-## 관련 작업
-
-- `_works/S3-RM-027/20260522-01-circle-line-follow-up/` (TASK-03 계획서 리뷰)

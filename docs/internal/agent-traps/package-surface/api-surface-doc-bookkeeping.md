@@ -92,16 +92,3 @@ Matrix output (반환 타입 `{ a; b; c; d; tx; ty }`):
    (`XYObjectWritable | undefined`)이 다르다. "companion 반환 타입" 열에 Into 반환 타입인
    `boolean`을 오기재하지 않는다. companion(`average`)의 반환 타입을 기재하고 비고에
    "boolean-primary Into 예외" 설명을 추가한다.
-
-## 관련 작업
-
-- `_works/S3-RM-026/20260522-01-matrix-follow-up/` Round 1 review에서 발견.
-  - `matrix2d.md` "보류 / 추가 / 삭제" 표에 `implemented` 행 3개 중복 누적 → 제거
-  - `matrix2d.md` "Companion 함수 분류"의 Matrix output 표에 `toArray*Into` array output 행이
-    섞임 → 별도 "Array output" 소단원 분리
-  - `matrix2d.md` "후속 후보 상세 근거" code block에 구현된 함수가 후보로 남음 → canonical 위치
-    안내 메모 추가
-- `_works/S1-RM-015/20260524-01-random-permutation-secure-source/` 사후 리뷰 4·5라운드에서
-  발견. `random2.md` 본문 plain-text barrel re-export block에 신규 4개 leaf
-  (`secureRandomSource`, `randomUint32`, `permutation`, `weightedShuffle`) 누락 →
-  4·5라운드에서 추가. 이전 TASK 누적분 4개도 누락 상태로 follow-up cleanup으로 분리.

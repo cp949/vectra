@@ -42,10 +42,3 @@ iframe runner가 실제로 주입하는 `window.__modules__` barrel map을 갱�
   - `apps/pixi-demo/src/sandbox/pixi-runner-html.test.ts`의 `PIXI_RUNTIME_MODULE_SPECIFIERS`
     `toEqual([...])` exact 배열. (`PIXI_ALLOWED_SPECIFIERS`는 같은 테스트에서 `arrayContaining`이라
     갱신 불필요하지만, runtime 배열은 exact match라 누락 시 테스트가 실패한다.)
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260522-02-point-list-curve-comparison/`
-  - `canvas-demo:point-list-curve-comparison` 추가 중 `@cp949/vectra/curve/*` allowlist만 먼저 갱신해 blank canvas가 발생했다.
-- `_works/S1-RM-013/20260525-69-bounds-union-box-example/`
-  - `pixi-demo:bounds-union-box`로 `@cp949/vectra/bounds`를 신규 추가하며 `pixi-module-specifiers.ts` 2배열은 갱신했으나 `pixi-runner-html.test.ts`의 `PIXI_RUNTIME_MODULE_SPECIFIERS` exact 배열을 빠뜨려 테스트가 실패했다.

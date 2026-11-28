@@ -7,7 +7,7 @@
 triangle circumcenter 계열 함수에서 degenerate guard와 circumcenter denominator `D`를
 **다른 float 전개**로 쓰는 실수.
 
-- guard: `triangleSignedArea2x` = `(bx-ax)*(cy-ay) - (by-ay)*(cx-ax)` (좌표 차 전개)
+- guard: `flatTriangleSignedArea2x` = `(bx-ax)*(cy-ay) - (by-ay)*(cx-ax)` (좌표 차 전개)
 - denominator: `D = 2*(ax*(by-cy) + bx*(cy-ay) + cx*(ay-by))` (raw 좌표 전개)
 
 둘은 수학적으로 같다(`D === 2 × signedArea2x`). 하지만 float64 반올림이 달라, near-collinear
@@ -18,14 +18,14 @@ triangle circumcenter 계열 함수에서 degenerate guard와 circumcenter denom
 
 ```ts
 const t = {
-  a: { x: 3.8400211035452747, y: 17.281933327867037 },
-  b: { x: 8.156115648087077, y: 31.91817240438104 },
-  c: { x: 9.039683586890016, y: 34.91442548901669 },
+  x1: 3.8400211035452747, y1: 17.281933327867037,
+  x2: 8.156115648087077, y2: 31.91817240438104,
+  x3: 9.039683586890016, y3: 34.91442548901669,
 };
 // signedArea2x = -1.42e-14 (≠0, guard 통과), raw D = 0
-eulerLineInto(out, t);   // out.b = { x: Infinity, y: -Infinity }, 반환은 out (success)
+eulerLineInto(out, t);   // (out.x2, out.y2) = (Infinity, -Infinity), 반환은 out (success)
 orthocenterInto(out, t); // Infinity, success
-circumcircleInto(out, t);// center = (-Infinity, Infinity), radius = Infinity, success
+circumcircleInto(out, t);// (cx, cy) = (-Infinity, Infinity), r = Infinity, success
 ```
 
 ## 방지
@@ -34,11 +34,11 @@ guard에 쓰인 signed area 값을 denominator에 그대로 묶는다. `2 * area
 조정하므로 `area2x ≠ 0 ⇒ D ≠ 0`이 보장되고, 정상 입력의 circumcenter 값은 불변이다.
 
 ```ts
-if (hasNonFiniteVertex(triangle)) return false;   // non-finite 먼저: area2x가 NaN이면 ===0 미검출
-const area2x = triangleSignedArea2x(triangle);
+if (hasNonFiniteTriangleVertex(triangle)) return false; // non-finite 먼저: area2x가 NaN이면 ===0 미검출
+const area2x = flatTriangleSignedArea2x(triangle);
 if (area2x === 0) return false;
-const { ax, ay, bx, by, cx, cy } = readTriangleRawCoords(triangle);
-const D = 2 * area2x;   // raw 좌표 전개 2*(ax*(by-cy)+...) 금지
+const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
+const D = 2 * area2x; // raw 좌표 전개 2*(ax*(by-cy)+...) 금지
 ```
 
 - circumcenter numerator(`a2*(by-cy)+...`)는 그대로 둔다. 분모만 guard 값에 묶는다.
@@ -52,7 +52,3 @@ const D = 2 * area2x;   // raw 좌표 전개 2*(ax*(by-cy)+...) 금지
   (`circle/from-three-points-into.ts`). 이 패턴은 그대로 둔다. kernel로 옮기지 않는다.
 - near-collinear(`signedArea2x ≈ 1e-14`이지만 ≠0) 회귀 테스트는 kernel 테스트가 소유한다
   (`tests/unit/internal/triangle-circumcenter.test.ts`): `result === true` 단언 + 외심 유한 단언.
-
-## 관련 작업
-
-- `_works/S12-RM-013/20260604-01-triangle-remaining-policy-helpers/함정.md`

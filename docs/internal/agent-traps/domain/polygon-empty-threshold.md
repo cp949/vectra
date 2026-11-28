@@ -26,7 +26,3 @@ polygon domain 함수마다 "빈 polygon" 기준이 다르다.
 - **단순 데이터 유무**: `points.length === 0`
 
 결정을 함수 주석에 명시한다. cross-domain wrapper에서 사용할 때도 wrapper 내 기준을 명시한다.
-
-## 관련 작업
-
-- `_works/S3-RM-004D/20260518-01-polygon-polyline-relation-boundary/함정.md`

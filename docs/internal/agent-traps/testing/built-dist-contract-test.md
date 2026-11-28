@@ -73,8 +73,3 @@ turbo cache가 살아 있거나 dist가 이미 빌드된 상태에서만 우연�
 
    같은 함수 목록을 여러 파일에 직접 적지 말고 `tests/contract/_fixtures/` 같은 공유 fixture에
    두고 import한다.
-
-## 관련 작업
-
-- `_works/S1-RM-004/20260516-01-vec-docs-contract/함정.md`
-- `_works/S1-RM-004/20260516-01-vec-docs-contract/TASK-03-package-export-contract.md`

@@ -31,9 +31,3 @@ expect(Math.hypot(spaced[2].x - uniformMid.x, spaced[2].y - uniformMid.y)).toBeG
   않으므로 distinguishing test fixture로는 쓰지 않는다.
 - arc-length 기반 helper(spaced points, length-parametrized sampling 등)의 contract는 endpoint
   고정 + 직선 균등 + 비대칭 곡선에서 기존 `*TAtLength` mapping 동치로 검증한다.
-
-## 관련 작업
-
-- `_works/S2-RM-029/20260528-01-curve-spaced-sampling-lookup/함정.md` TASK-01.
-  `quadraticSpacedPoints` distinguishing test가 대칭 곡선 `(0,0),(0,4),(4,4)`에서 실패 →
-  비대칭 `(0,0),(2,0),(2,6)`으로 교체.

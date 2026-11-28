@@ -16,10 +16,10 @@ point를 계산해야 하는 함수에서, `P1 = from + (through - from) * 2/3`,
 
 ```ts
 const out: PathCommand[] = [];
-cubicThroughCommandsInto(out, [0, 0], [3, 6], [6, 0]);
+cubicThroughCommandsInto(out, { x: 0, y: 0 }, { x: 3, y: 6 }, { x: 6, y: 0 });
 const sample = evaluateCubicAt(out, 0.5);
-// 기대: [3, 6]
-// 실제: [3, 3] (through y가 절반으로 줄어듦)
+// 기대: { x: 3, y: 6 }
+// 실제: { x: 3, y: 3 } (through y가 절반으로 줄어듦)
 ```
 
 대표 회귀 시나리오:
@@ -40,9 +40,3 @@ const sample = evaluateCubicAt(out, 0.5);
 - `t = 0.5`에서 두 계수는 `4/3`으로 같아진다. `2/3`은 잘못된 단순화다.
 - caller intent가 "through 정확 통과"가 아닌 경우(예: shape 근사용)에도 contract test로
   `controlScale = 1` 통과 여부를 별도 검증한다.
-
-## 관련 작업
-
-- `_works/S3-RM-028/20260522-01-path-follow-up/` TASK-05 리뷰-수정 B1.
-  기존 `2/3` symmetric 계수를 `((1 + 2t) / (3t))`, `((3 - 2t) / (3(1 - t)))`로 수정하고 실패
-  테스트 2건 추가.

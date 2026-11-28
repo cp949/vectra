@@ -41,8 +41,8 @@ JSDoc에 "non-finite pass-through" 또는 "수식 결과를 그대로 반환"이
 /**
  * NaN/Infinity는 pass-through한다. radius = ±Infinity이면 수식 결과를 그대로 반환한다.
  */
-export function sagitta(circle: CircleLike, centralAngle: number): number {
-  const r = readCircleRadius(circle);
+export function sagitta(circle: Circle, centralAngle: number): number {
+  const r = circle.r;
   if (r <= 0) return 0;
   return r * (1 - Math.cos(Math.abs(centralAngle) / 2));
 }
@@ -61,16 +61,10 @@ export function sagitta(circle: CircleLike, centralAngle: number): number {
 회귀 방지 테스트:
 ```ts
 test('radius = +Infinity, angle = 0이면 Infinity * 0 = NaN', () => {
-  expect(sagitta({ ..., radius: Infinity }, 0)).toBeNaN();
+  expect(sagitta({ cx: 0, cy: 0, r: Infinity }, 0)).toBeNaN();
 });
 
 test('radius = +Infinity, angle = 4π이면 cos(2π) = 1 → Infinity * 0 = NaN', () => {
-  expect(sagitta({ ..., radius: Infinity }, 4 * Math.PI)).toBeNaN();
+  expect(sagitta({ cx: 0, cy: 0, r: Infinity }, 4 * Math.PI)).toBeNaN();
 });
 ```
-
-## 관련 작업
-
-- `_works/S3-RM-027/20260522-01-circle-line-follow-up/` 사후 리뷰 Round 2 → Round 3에서
-  발견. Round 2가 sagitta JSDoc에 "(centralAngle = 0이면 0, 그 외 angle에서는 Infinity)"
-  표현을 도입했으나 실제는 `Infinity * (1 - cos(0)) = NaN`이라 Round 3가 회귀로 잡음.

@@ -31,7 +31,3 @@ push로 단순 처리하면 두 가지 케이스가 깨진다.
   ```
 
 - 외접/내접 collapse case regression test를 추가한다(예: 두 원이 한 점에서만 만나는 구성).
-
-## 관련 작업
-
-- `_works/S3-RM-019/20260520-01-lightweight-construction-query-followups/함정.md`

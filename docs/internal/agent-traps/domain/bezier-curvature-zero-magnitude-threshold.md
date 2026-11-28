@@ -45,9 +45,3 @@ return (dx * ddy - dy * ddx) / denom;
   서로 다른 두 도메인을 결합할 때마다 둘 중 어느 contract가 public 표면인지 확정한다.
 - 작은 좌표 scale + 비퇴화 input에서 expected curvature를 계산한 회귀 테스트를 둔다. 입력 scale은
   `1e-2`, `1e-4`, `1e-6` 정도까지 늘리고 결과 magnitude의 reciprocal scale을 검증한다.
-
-## 관련 작업
-
-- `_works/S3-RM-028/20260522-01-path-follow-up/` TASK-04 리뷰-수정 B1 / B3.
-  `curvatureAtLength`가 zero `|B′|`에서 `0`을 반환한 회귀와, 이후 `|B′|^3 < 1e-10` 절대
-  threshold로 작은 비퇴화 curve를 NaN으로 잘못 분류한 회귀를 분리해 수정.

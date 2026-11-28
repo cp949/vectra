@@ -25,7 +25,3 @@ if (x !== x) return 0; // NaN 자기비교 → oxlint 오류
 ```typescript
 if (Number.isNaN(x)) return 0;
 ```
-
-## 관련 작업
-
-- `_works/S3-RM-027/20260522-01-circle-line-follow-up/02-작업결과.md` — `side.ts` NaN guard 구현 시 발견

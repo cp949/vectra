@@ -34,9 +34,3 @@ detail 반환 직전에 coordinate agreement를 검증한다.
 - mapped interval fallback에서는 반대 segment의 보간 `start`/`end`가 같은 좌표로 붕괴하면
   길이 있는 `overlap`을 반환하지 않는다.
 - fuzz invariant는 parity뿐 아니라 반환 좌표의 line distance / endpoint agreement를 검사한다.
-
-## 관련 작업
-
-- `_works/S10-RM-003/20260529-01-intersects-relation-detail-result-types/02-작업결과.md`
-  - F5~F13, F15: `segmentSegmentDetail`의 endpoint 반올림, mapped interval, zero-length containment,
-    line-distance agreement false positive/false negative 수정.

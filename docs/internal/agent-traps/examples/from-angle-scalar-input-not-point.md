@@ -43,10 +43,3 @@ dir = fromAngle(θ)
 - 입력 각의 출처가 스칼라(슬라이더/다이얼/위상)임을 명시한다.
 - 시연 함수를 두 점 함수(`directionTo` 등)로 바꿨을 때 화면이 달라지는지 확인한다. 안 달라지면 입력
   설계를 다시 한다.
-
-## 발견 맥락
-
-- `_works/S1-RM-013/20260525-113-vec-from-angle-example/`:
-  `vec/fromAngle` 예제 설계 시 다이얼 핸들(atan2)을 쓰면 `directionTo(center, handle)`과 동치가 됨을
-  확인하고, 입력을 1-DOF 각도 슬라이더(위치 → θ)로 바꿔 fromAngle의 "스칼라 각 → 단위 방향" 고유
-  개념을 화면에 드러냈다.

@@ -45,13 +45,3 @@ import * as InfiniteLinex from '@cp949/vectra/infinite-line';
 pnpm --filter @repo/pixi-demo test src/sandbox/pixi-runner-html.test.ts
 pnpm --filter @repo/pixi-demo build
 ```
-
-## 관련 작업
-
-- `pixi-demo:infinite-line-diagnostics-lab`
-  - `@cp949/vectra/infinite-line` import를 추가했지만 Pixi sandbox specifier 등록과 compile regression test가 누락되어 빈 canvas가 발생했다.
-
-## 관련 함정
-
-- [Sandbox 예제 source의 barrel import allowlist 누락](./sandbox-example-barrel-import.md)
-- [Sandbox allowlist와 module map 분리 갱신](./sandbox-allowlist-module-map.md)

@@ -38,7 +38,3 @@ decomposeInto(out, { a: 0, b: 0, c: Number.MIN_VALUE, d: 0, tx: 0, ty: 0 });
 expect(decomposeInto(out, { a: Number.MIN_VALUE, b: 0, c: 1, d: 0, tx: 0, ty: 0 }).scaling.x).toBe(0);
 expect(decomposeInto(out, { a: 0, b: 0, c: Number.MIN_VALUE, d: 0, tx: 0, ty: 0 }).scaling.y).toBe(0);
 ```
-
-## 관련 작업
-
-- `_works/S11-RM-031/20260603-01-matrix-compose/함정.md`

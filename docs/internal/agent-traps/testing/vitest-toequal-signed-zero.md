@@ -9,27 +9,30 @@ builder/Into 함수가 `-b`, `-c/b`, `-component` 같은 부호 반전 산술을
 
 ```ts
 // fromCoefficientsInto: direction = (-b, a)
-writeXY(out.direction, -b, a); // b=0이면 direction.x = -0
+out.dx = -b; // b=0이면 out.dx = -0
+out.dy = a;
 
 // fromNormalInto: direction = (-normal.y, normal.x)
-writeXY(out.direction, -ny, nx); // ny=0이면 direction.x = -0
+out.dx = -ny; // ny=0이면 out.dx = -0
+out.dy = nx;
 
 // fromCoefficientsInto: origin = (0, -c/b)
-writeXY(out.origin, 0, -c / b); // c=0이면 origin.y = -0
+out.ox = 0;
+out.oy = -c / b; // c=0이면 out.oy = -0
 ```
 
 `vitest`의 `toEqual`은 primitive 비교에 `Object.is`를 사용하므로 `-0`과 `+0`을 다른 값으로 본다.
 `Object.is(-0, 0) === false`. 따라서 다음은 실패한다.
 
 ```ts
-expect(out.direction).toEqual({ x: 0, y: 1 });
-// Expected: { x: 0, y: 1 }
-// Received: { x: -0, y: 1 }
+expect(out).toEqual({ ox: 0, oy: 0, dx: 0, dy: 1 });
+// Expected: { ox: 0, oy: 0, dx: 0, dy: 1 }
+// Received: { ox: 0, oy: 0, dx: -0, dy: 1 }
 ```
 
 ## 증상
 
-- builder unit test가 명백히 의도된 값으로 `toEqual`을 적었는데 `Received: { x: -0 }`으로 실패한다.
+- builder unit test가 명백히 의도된 값으로 `toEqual`을 적었는데 `Received: { dx: -0 }`으로 실패한다.
 - 실패 메시지의 expected와 received가 시각적으로 동일해 보여 (`+0` 표시가 없으면) 원인 파악이
   어렵다.
 - 같은 함수의 다른 분기는 통과해 회귀를 의심하기 쉽지만 실제로는 처음부터 signed-zero가 발생하는
@@ -43,12 +46,13 @@ signed-zero도 의도된 결과다. source를 normalize하지 말고 (`+ 0` tric
 
 ```ts
 // 권장: component별 assert로 분해하고 Object.is로 -0을 명시
-expect(out.origin).toEqual({ x: 0, y: 0 });
-expect(Object.is(out.direction.x, -0)).toBe(true);
-expect(out.direction.y).toBe(1);
+expect(out.ox).toBe(0);
+expect(out.oy).toBe(0);
+expect(Object.is(out.dx, -0)).toBe(true);
+expect(out.dy).toBe(1);
 
 // 피할: toEqual 한 줄로 묶기
-expect(out).toEqual({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 1 } });
+expect(out).toEqual({ ox: 0, oy: 0, dx: 0, dy: 1 });
 ```
 
 signed-zero가 발생할 수 있는 builder 패턴:
@@ -64,8 +68,3 @@ API surface 문서도 마찬가지다.
 이 경우 테스트는 `Object.is(..., -0)` pin으로 고정한다.
 
 `-0` 출력 정책 전반은 [ADR 0008](../../adr/0008-negative-zero-output-policy.md)을 따른다.
-
-## 관련 작업
-
-- `_works/S3-RM-044/20260525-01-infinite-line-builder-follow-up/함정.md` (TASK-01).
-  `fromNormalInto`, `fromCoefficientsInto`에서 7건 발견 → 테스트 분해와 `Object.is` 명시로 해결.

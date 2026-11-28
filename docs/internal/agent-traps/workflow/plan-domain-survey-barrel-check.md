@@ -38,7 +38,3 @@ cat sub/vectra/src/infinite-line/index.ts
 동시에, 계획서 범위 표와 "구현/조사 방향" 섹션에 같은 함수 시그니처를 적는 경우 두 섹션이
 서로 일치하는지 작성 직후 교차 확인한다 (예: 범위 표에 `sagitta(circle, chordLength)`, 구현
 방향에 `centralAngle` 추천이 공존하면 모순).
-
-## 관련 작업
-
-- `_works/S3-RM-027/20260522-01-circle-line-follow-up/` (01-계획.md 사전 검토 리뷰)

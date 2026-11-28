@@ -39,7 +39,3 @@ for (const w of weights) {
 ```
 
 회귀 테스트에 `[Number.MAX_VALUE, Number.MAX_VALUE]` 케이스를 포함한다.
-
-## 관련 작업
-
-- `_works/S3-RM-020/20260520-01-defer-policy-decisions-and-completion/함정.md`

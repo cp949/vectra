@@ -37,7 +37,3 @@ unit test에 signed zero 케이스를 반드시 포함한다.
 toPolarInto(out, { x: -1, y: -0 })  // theta → Math.PI
 toPolarInto(out, { x: -1, y: 0 })   // theta → Math.PI
 ```
-
-## 관련 작업
-
-- `_works/S3-RM-020/20260520-01-defer-policy-decisions-and-completion/함정.md`

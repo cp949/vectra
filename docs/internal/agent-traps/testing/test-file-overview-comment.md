@@ -32,9 +32,3 @@ leaf 단위로 새 테스트 파일을 추가할 때 파일 상단의 `/** ... *
 **기존 파일 수정 시에도 동일하게 적용한다.** 기존 테스트 파일에 테스트를 추가하거나 내용을
 변경할 때 파일 개요 주석이 없으면 같은 커밋에서 추가한다. "신규 파일을 만들 때만" 해당하는
 규칙이 아니다.
-
-## 관련 작업
-
-- `_works/S3-RM-034/20260524-01-vec-component-simple-follow-up/` Round 1 review에서 발견.
-  - `arithmetic.test.ts`(기존 파일): `directionToInto`/`normalLeftInto`/`normalRightInto` 테스트
-    추가 시 파일 개요 주석이 없었음 → 파일 수정 시에도 없으면 추가로 확장.

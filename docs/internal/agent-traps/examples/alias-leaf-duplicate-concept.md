@@ -46,9 +46,3 @@ coverage gap은 backlog 신호일 뿐 중복 예제를 정당화하지 않는다
 
 `01-계획.md`의 "기존 예제와 분리" 항목에 geometry 관계 차이를 한 문장으로 적을 수 있어야 한다.
 차이가 namespace/import 경로뿐이면 중복이므로 다른 leaf를 고른다.
-
-## 발견 맥락
-
-- `_works/S1-RM-013/20260525-82-segment-point-at-length-example/`:
-  처음 `vec/moveToward`를 후보로 잡았으나 `cursor-chase`가 이미 `interpolation/moveTowardPoint`를
-  시연 중임을 확인하고 폐기, `segment/pointAtLength`(어느 예제도 쓰지 않는 빈 개념)로 전환했다.

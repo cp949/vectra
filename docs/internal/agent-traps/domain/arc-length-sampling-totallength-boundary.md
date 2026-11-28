@@ -63,9 +63,3 @@ return endAnchor(); // distance >= totalLength fallback
 - trailing zero-length close segment가 있는 path에서 `distance === totalLength` 케이스.
 - consecutive zero-length segment 중간 boundary 케이스.
 - empty path / Move-only path에서 `distance === 0`.
-
-## 관련 작업
-
-- `_works/S3-RM-028/20260522-01-path-follow-up/` TASK-04 리뷰-수정 B2.
-  `propertiesAtLength`, `locationAtLength`, `curvatureAtLength`의 내부 범위 판정을
-  `distance <= 0 || distance < cumulativeLen + segLen`로 수정.

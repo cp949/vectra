@@ -41,9 +41,3 @@ line distance에서는 normalized cross 하나만 믿지 않는다.
 - overflow나 non-finite가 날 때만 absolute-coordinate scale fallback을 쓴다.
 - dominant-axis projection residual 같은 독립 검사를 추가해 cancellation을 잡는다.
 - 회귀 테스트는 `base ± epsilon`, huge segment + small offset, endpoint parameter `0/1` 반올림을 포함한다.
-
-## 관련 작업
-
-- `_works/S10-RM-003/20260529-01-intersects-relation-detail-result-types/02-작업결과.md`
-  - F9, F13: scale-normalized line distance / mapped interval이 local residual을 잃어 false positive 발생.
-  - F16: `pointPointDist` normalize-first 경로가 epsilon 경계에서 boolean parity를 깨뜨림.

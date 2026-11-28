@@ -53,7 +53,3 @@ d.polygon(ctx, transformedRect, { stroke: '#38bdf8' });
 
 회귀 테스트는 `rect` 호출 여부만 보지 말고, `polygon` 또는 `polyline`에 기록된 transformed corner
 좌표가 실제 회전 성분을 포함하는지 확인한다.
-
-## 관련 작업
-
-- `apps/canvas-demo/src/examples/matrix-transform/source.exam.ts`

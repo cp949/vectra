@@ -39,7 +39,7 @@ test('NaN은 pass through한다', () => {
 5. **input parameter 위치 다양성**: 같은 함수가 여러 input parameter(`line, point` /
    `circle, amount` / `out, source, ratio` 등)를 받는다면 각 input 위치별로 NaN/Infinity
    pass-through를 검증한다. 한 input(예: `point.x = NaN`)만 테스트하고 다른 input
-   위치(예: `line.direction.x = NaN`, `line.origin.y = NaN`)를 빼먹지 않는다.
+   위치(예: `line.dx = NaN`, `line.oy = NaN`)를 빼먹지 않는다.
 
 trig 함수(`Math.cos(Infinity) → NaN`)를 거치는 함수에서는 Infinity 입력의 실제 출력(NaN)을
 test 주석으로 명시한다. caller가 "Infinity가 그대로 component에 박힌다"고 오해하지 않도록.
@@ -75,7 +75,7 @@ pass-through를 검증할 때 결과를 `Infinity`로 단정하면 실패한다.
 
 ```ts
 // 함정: 차분/누적 경로의 Infinity는 NaN이 된다
-quadraticLookupTableInto(out, P0, P1, { x: Infinity, y: 0 }, 3);
+quadraticLookupTableInto(out, { kind: 'quadratic', x0: 0, y0: 0, x1: 1, y1: 1, x2: Infinity, y2: 0 }, 3);
 expect(out[2].length).toBe(Infinity); // 실패 — 실제로는 NaN
 
 // 권장: non-finite로 단정하고 실제 결과를 주석으로 명시
@@ -84,15 +84,3 @@ expect(Number.isFinite(out[2].length)).toBe(false); // 0*Inf / Inf-Inf → NaN
 
 좌표 위치(start/end)에 따라 어느 항이 `0*Inf`가 되는지 달라지므로, 차분 helper의 non-finite
 검증은 `toBe(Infinity)`가 아니라 `Number.isFinite(...) === false`로 둔다.
-
-## 관련 작업
-
-- `_works/S3-RM-026/20260522-01-matrix-follow-up/` Round 1/2 review에서 발견.
-- `_works/S2-RM-029/20260528-01-curve-spaced-sampling-lookup/함정.md` TASK-02. lookup table chord
-  차분 helper의 Infinity pass-through가 NaN이 되는 시나리오 추가.
-  - Round 1: `array-serialization.test.ts`가 NaN만 있고 Infinity / zero matrix 누락 → 8건 추가
-  - Round 2: `reflection.test.ts`가 NaN axisAngle만 있고 Infinity 누락 → 1건 추가
-- `_works/S3-RM-027/20260522-01-circle-line-follow-up/` 사후 리뷰 Round 1에서 input
-  parameter 위치 다양성 누락 발견. `signedDistanceToPoint`/`side` 테스트가 `point`의
-  NaN/Infinity만 검증하고 `line.direction` / `line.origin` 위치는 미검증 → 7건 추가.
-  방지 5번 항목으로 승격.

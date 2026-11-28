@@ -35,7 +35,3 @@ ULP를 사용한다.
 // 올바른 테스트: 수 2의 다음 float64는 2 + 2 * Number.EPSILON
 expect(equals({ x: 1, y: 2 }, { x: 1, y: 2 + 2 * Number.EPSILON })).toBe(false);
 ```
-
-## 관련 작업
-
-- `_works/S1-RM-003/20260516-01-vec-measurement/함정.md`

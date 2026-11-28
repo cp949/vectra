@@ -51,10 +51,3 @@ const atVertex = tEdge <= edgeTol || tEdge >= 1 - edgeTol;
   non-parallel branch의 `edgeLen > 0` fallback은 dead-but-safe다.
 - 테스트는 큰 좌표(`1e9` 규모) fixture로 거리 환산을 강제 검증한다. polygon 밖/내부 양쪽,
   cross/touch 분류 양쪽을 고정한다.
-
-## 관련 작업
-
-- `_works/S10-RM-006/20260530-01-line-polygon-visibility/02-작업결과.md`
-  - 사후 리뷰 수정 1: `polygon-line-intersections.ts`의 `edgeTol = epsilon`을
-    `epsilon / sqrt(edgeLenSq)`로 환산. 긴 edge polygon 밖 가짜 touch hit, 내부 cross→touch
-    오분류 수정. 회귀 테스트 `line/polygon kernel edge cases`(큰 edge 밖/내부) 추가.

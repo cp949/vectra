@@ -59,7 +59,3 @@ pass-through 계약 함수는 `NaN`만 보지 말고 `Infinity` / `-Infinity` / 
 
 거리 제곱 자체가 필요한 함수(`distanceSq`, 비교 최적화 등)는 이름과 계약을 squared distance로
 명시하고, overflow가 의미 있는지 별도 테스트한다.
-
-## 관련 작업
-
-- unstaged `Math.sqrt(dx * dx + dy * dy)` → `Math.hypot(dx, dy)` 변경 리뷰에서 발견.

@@ -53,11 +53,3 @@ triangle/bounds) 계열을 "선이 도형에 부딪치는 첫 번째 점(nearest
   화면이 비는 설계 결함이다.
 - `internal/line-family-*.ts`의 case 표(no hit / tangent / 2-point / 1-point / contained)로 동작을
   교차 검증했는가.
-
-## 발견 맥락
-
-- `_works/S1-RM-013/20260526-148-segment-ellipse-exit-example/`:
-  `singleIntersectionSegmentEllipse`를 "선분이 타원을 통과하는 단일 exit point"로 다루면서, A를 타원
-  내부에 고정해 "B 바깥 ⇒ exit 1개 / B 안쪽 ⇒ contained" binary로 유도했다. 만약 양 끝을 모두 바깥에
-  두고 "선분이 타원을 가로지르는 점"을 보이려 했다면 2점 crossing이라 항상 undefined가 되어 예제가
-  깨졌을 것이다.

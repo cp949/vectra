@@ -32,7 +32,3 @@ Triangles.solveSssInto(out, a, b, c);
   증거가 아니다.
 - 특정 public type을 예제에서 직접 보여줘야 하는 요구가 있으면 source에서 `import type`이나 명시적
   type annotation을 별도로 확인한다.
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260524-24-triangle-solver-excircles-lab-example/`

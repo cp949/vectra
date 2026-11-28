@@ -30,9 +30,3 @@ expect(constrainDragAxisLockCode).not.toContain('containIn'); // ← 주석 때�
   매칭하고 일반 단어 매칭을 피한다. 옵션 키처럼 namespace prefix가 없는 토큰을 막을 때는
   설명 주석에서 그 토큰을 한글 의미어로 바꿔 쓴다(예: `containIn` → "영역 클램프 옵션").
 - 가드를 쓴 뒤 반드시 focused 테스트로 자기 source를 한 번 돌려 자기 주석 충돌을 잡는다.
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260524-62-constrain-drag-axis-lock-example/`에서 발견(1회차).
-  `not.toContain('containIn')` 가드가 source 주석의 `containIn` 단어와 충돌 → 주석을
-  "영역 클램프 옵션"으로 바꿔 통과.

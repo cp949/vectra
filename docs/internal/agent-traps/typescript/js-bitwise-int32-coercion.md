@@ -46,7 +46,3 @@ const SAFE_RANGE_CASES = [
 
 같은 함정이 한 함수에 적용되면 동일 의미의 모든 분기(예: "이미 거듭제곱이면 그대로 반환")에도
 해당된다. 함정 메모에 "X에도 같은 케이스가 해당된다"고 적었다면 X 구현도 같은 커밋에서 수정한다.
-
-## 관련 작업
-
-- `_works/S3-RM-019/20260520-01-lightweight-construction-query-followups/함정.md`

@@ -39,8 +39,3 @@
   잃지 않았는지 추가 후 해당 구간을 다시 읽어 확인한다.
 - 2개 초과 시 가장 오래된 항목은 헤더 + 그 detail 줄 전체를 함께 제거한다(헤더만 지워 detail orphan
   금지).
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260526-145-rect-cover-fit-example/`: 추가 직후 144 star-polygon 헤더가
-  사라져 detail이 orphan → 145 검증 줄 추가 + 144 헤더 복원으로 정정.

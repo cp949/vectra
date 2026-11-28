@@ -34,9 +34,3 @@ Plugin: vite:oxc
   잔존을 확인한다. 한 번 새면 같은 turn에 만든 다른 파일에도 함께 들어갔을 가능성이 높으므로
   생성한 파일 전부를 한 번에 grep한다.
 - `.md` 계획서는 TS 오류로 드러나지 않으니 따로 확인한다.
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260525-77-circle-rect-overlap-example/`에서 발견(1회차).
-  `index.ts`·`source.exam.ts`·`01-계획.md` 3개 모두 끝에 `</content>`가 박혀 oxc transform
-  실패 → 세 파일에서 제거 후 통과.

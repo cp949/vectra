@@ -32,7 +32,3 @@ const seed: PixiRuntimeSeed = {
 
 필드 값은 예제 화면의 초기 state와 맞춰 의미 있는 값으로 둔다. 타입을 우회하려고 `as PixiRuntimeSeed`를
 붙이지 않는다.
-
-## 관련 작업
-
-- `pixi-demo:cubic-curve-analysis-lab` 신규 예제에서 `segment`, `circle` 누락으로 build가 실패했다.

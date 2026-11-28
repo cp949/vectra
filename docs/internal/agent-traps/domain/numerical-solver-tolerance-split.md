@@ -27,7 +27,3 @@ solveCubic(1, 0, -0.001, 0)
 - root dedupe tolerance는 root 값 사이 거리에만 적용한다.
 - 작은 계수 + 3실근 regression test를 반드시 추가한다.
 - 같은 원칙이 quartic, quintic, generic numeric kernel에도 적용된다.
-
-## 관련 작업
-
-- `_works/S3-RM-019/20260520-01-lightweight-construction-query-followups/함정.md`

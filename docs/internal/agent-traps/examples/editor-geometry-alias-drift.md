@@ -22,8 +22,3 @@
 - 새 예제 alias는 canonical 규칙을 따른다 → `EditorGeometryx`. 기존 drift를 근거로 삼지 않는다.
 - alias 형태는 sibling grep이 아니라 Namespace import 컨벤션에서 확정한다.
 - 기존 8개 `EditorGeometry`는 별도 정리 작업으로 일괄 rename 대상이다(예제 추가 작업 범위에 끼우지 않는다).
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260526-149-pixel-grid-align-example/`:
-  `editor-geometry/pixelAlign` 예제에서 canonical `EditorGeometryx`를 채택하고 drift를 함정으로 승격했다.

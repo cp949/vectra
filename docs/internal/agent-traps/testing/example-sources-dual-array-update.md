@@ -44,8 +44,3 @@
 
 두 배열은 `circle-circle-overlap` 같은 직전 예제를 grep해 추가 위치를 함께 찾으면 한쪽을 빠뜨리지
 않는다.
-
-## 관련 작업
-
-- `_works/S1-RM-013/20260525-73-segment-segment-cross-example/`에서 발견. `assertUniqueExampleIds`
-  목록만 갱신하고 `[id, categoryId]` 순서 목록을 놓쳐 test 1건 실패 → 순서 목록에 항목 추가 후 통과.

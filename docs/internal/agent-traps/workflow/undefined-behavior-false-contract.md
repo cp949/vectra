@@ -35,9 +35,3 @@ caller가 `min <= max` 순서로 전달해야 한다. `min > max`이면 결과�
 
 패턴: JSDoc에 "결과는 정의되지 않는다" / "caller 책임"이라고 적혀 있으면
 API surface 문서도 동일 정책으로 기술한다.
-
-## 관련 작업
-
-- `_works/S3-RM-034/20260524-01-vec-component-simple-follow-up/` Round 2 review에서 발견.
-  - 과거 API surface `vec2` 문서: `clampInto` "min > max이면 min이 우선" → caller-ordered 표현으로 교체.
-  - 실제 구현은 `hi`를 반환했으므로 기술된 동작도 틀린 상태였음.

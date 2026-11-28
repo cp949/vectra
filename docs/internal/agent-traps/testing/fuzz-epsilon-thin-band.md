@@ -27,9 +27,3 @@ geometry relation helper를 fuzz할 때 broad fuzz와 stratified fuzz를 분리�
 - parity fuzz만 믿지 않는다. 반환 detail이 있으면 좌표 invariant(line distance, endpoint agreement,
   overlap endpoint distinctness)를 같이 검증한다.
 - 허용 divergence가 있으면 필터 조건을 문서화한다. 예: ill-conditioned near-parallel boundary.
-
-## 관련 작업
-
-- `_works/S10-RM-003/20260529-01-intersects-relation-detail-result-types/02-작업결과.md`
-  - F14: broad fuzz가 놓친 scale 1 epsilon-thin band에서 false positive 94,584건/2,000,000 재현.
-  - F12~F16: near-parallel / near-endpoint / epsilon boundary divergence triage.

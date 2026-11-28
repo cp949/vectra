@@ -59,10 +59,3 @@ export function fromArray6Into(out, array) { ... }
  */
 export function fromArray6(array) { ... }
 ```
-
-## 관련 작업
-
-- `_works/S3-RM-026/20260522-01-matrix-follow-up/` Round 1/2 review에서 발견.
-  - Round 1: `from-array-6.ts` / `from-array-9.ts` companion JSDoc 메모 누락 → 보강
-  - Round 2: `to-array-6/9.ts`, `to-array-6/9-into.ts` write 방향 JSDoc 메모 누락 → 보강
-  - Round 2: `reflection.ts` / `lerp.ts` companion JSDoc NaN/Infinity 메모 누락 → 보강

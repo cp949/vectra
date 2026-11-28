@@ -50,7 +50,3 @@ export {
 ```
 
 새 `Into` + companion 쌍을 추가할 때 기존 `barycentric` 패턴을 참고 모델로 둔다.
-
-## 관련 작업
-
-- `_works/S3-RM-019/20260520-01-lightweight-construction-query-followups/함정.md`
