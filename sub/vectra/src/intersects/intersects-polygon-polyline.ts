@@ -1,6 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonPolylineIntersects } from '../internal/polygon-relation';
-import type { PolygonLike, PolylineLike } from '../types';
+import type { Polygon, Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polygon과 polyline이 교차하면 true를 반환한다.
@@ -11,7 +11,7 @@ import type { PolygonLike, PolylineLike } from '../types';
  *   2. polyline segment와 polygon edge가 교차한다.
  * - polyline 전체가 polygon 내부에 완전히 포함된 경우: 첫 point containment로 true.
  * - collinear 꼭짓점, self-intersecting polygon도 동일한 규칙으로 판정한다.
- * - empty polygon (points.length < 3): false.
+ * - empty polygon (좌표 수 < 6): false.
  * - empty polyline (points.length === 0): false.
  * - single-point polyline: point containment만 판정한다.
  *
@@ -19,10 +19,6 @@ import type { PolygonLike, PolylineLike } from '../types';
  * @param polyline 교차를 검사할 polyline
  * @param epsilon  교차 판정 허용 오차
  */
-export function intersectsPolygonPolyline(
-  polygon: PolygonLike,
-  polyline: PolylineLike,
-  epsilon = DEFAULT_EPSILON
-): boolean {
+export function intersectsPolygonPolyline(polygon: Polygon, polyline: Polyline, epsilon = DEFAULT_EPSILON): boolean {
   return polygonPolylineIntersects(polygon, polyline, epsilon);
 }

@@ -9,6 +9,8 @@ import { segmentEllipseIntersectionsInto } from '../../../src/intersects/segment
 import { ellipseCircleIntersectionsInto } from '../../../src/intersects/ellipse-circle-intersections-into';
 import { ellipseEllipseIntersectionsInto } from '../../../src/intersects/ellipse-ellipse-intersections-into';
 import { ellipseTriangleIntersectionsInto } from '../../../src/intersects/ellipse-triangle-intersections-into';
+import { circlePolylineIntersectionsInto } from '../../../src/intersects/circle-polyline-intersections-into';
+import { polylinePolylineIntersectionsInto } from '../../../src/intersects/polyline-polyline-intersections-into';
 import { intersectsRayRay } from '../../../src/intersects/intersects-ray-ray';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
 import { circleBoundsIntersectionsInto } from '../../../src/intersects/circle-bounds-intersections-into';
@@ -119,4 +121,25 @@ test('타원 경계의 교점 함수는 출력 배열 서브클래스를 그대�
     expect(result).toBe(out);
   }
   expect(out).toHaveLength(2);
+});
+
+test('polyline 교점 함수는 출력 배열 서브클래스를 그대로 반환한다', () => {
+  const out = new IntersectionPoints();
+  const horizontal = [
+    { x: -3, y: 0 },
+    { x: 3, y: 0 },
+  ];
+  const vertical = [
+    { x: 0, y: -3 },
+    { x: 0, y: 3 },
+  ];
+  const circleResult = circlePolylineIntersectionsInto(out, { cx: 0, cy: 0, r: 2 }, horizontal);
+  expectTypeOf(circleResult).toEqualTypeOf<IntersectionPoints>();
+  expect(circleResult).toBe(out);
+  expect(out).toHaveLength(2);
+
+  const polylineResult = polylinePolylineIntersectionsInto(out, horizontal, vertical);
+  expectTypeOf(polylineResult).toEqualTypeOf<IntersectionPoints>();
+  expect(polylineResult).toBe(out);
+  expect(out[0]).toEqual({ x: 0, y: 0 });
 });

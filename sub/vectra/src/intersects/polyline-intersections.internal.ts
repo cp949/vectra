@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput, XYObjectWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * polyline 교점 collection helper가 공유하는 internal 유틸.
@@ -16,10 +15,10 @@ import type { XYInput, XYObjectWritable } from '../types';
  *
  * @param points snapshot할 polyline vertex 목록
  */
-export function snapshotPolylinePoints(points: readonly XYInput[]): XYObjectWritable[] {
-  const snapshot: XYObjectWritable[] = new Array(points.length);
+export function snapshotPolylinePoints(points: readonly Point[]): PointWritable[] {
+  const snapshot: PointWritable[] = new Array(points.length);
   for (let i = 0; i < points.length; i++) {
-    snapshot[i] = { x: readX(points[i]), y: readY(points[i]) };
+    snapshot[i] = { x: points[i].x, y: points[i].y };
   }
   return snapshot;
 }
@@ -32,9 +31,9 @@ export function snapshotPolylinePoints(points: readonly XYInput[]): XYObjectWrit
  *
  * @param points 검사할 polyline vertex 목록
  */
-export function hasNonFinitePolylinePoint(points: readonly XYInput[]): boolean {
+export function hasNonFinitePolylinePoint(points: readonly Point[]): boolean {
   for (let i = 0; i < points.length; i++) {
-    if (!Number.isFinite(readX(points[i])) || !Number.isFinite(readY(points[i]))) return true;
+    if (!Number.isFinite(points[i].x) || !Number.isFinite(points[i].y)) return true;
   }
   return false;
 }
@@ -49,7 +48,7 @@ export function hasNonFinitePolylinePoint(points: readonly XYInput[]): boolean {
  * @param py 검사 대상 y 좌표
  * @param epsSq dedupe 임계값의 제곱(epsilon²)
  */
-export function hasNearbyPoint(points: readonly XYObjectWritable[], px: number, py: number, epsSq: number): boolean {
+export function hasNearbyPoint(points: readonly PointWritable[], px: number, py: number, epsSq: number): boolean {
   for (let i = 0; i < points.length; i++) {
     const ddx = points[i].x - px;
     const ddy = points[i].y - py;

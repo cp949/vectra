@@ -1,6 +1,5 @@
 import { crossExceeds, DEFAULT_EPSILON } from '../internal/numeric';
-import { readPolylinePoints } from '../internal/polyline';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { hasNearbyPoint, hasNonFinitePolylinePoint, snapshotPolylinePoints } from './polyline-intersections.internal';
 import { rawCrossParams, segmentSegmentDetailXY } from './segment-segment-detail.internal';
 
@@ -31,20 +30,20 @@ interface LocalHit {
  * `epsilon`은 평행/거리/dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다. range 판정은
  * segment-local parameter의 정확 비교를 따른다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param subject 첫 번째 polyline. point ordering의 기준이다.
  * @param target 두 번째 polyline
  * @param epsilon 평행/거리/dedupe 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function polylinePolylineIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  subject: PolylineLike,
-  target: PolylineLike,
+export function polylinePolylineIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  subject: Polyline,
+  target: Polyline,
   epsilon?: number
-): XYObjectWritable[] {
-  const subPts = snapshotPolylinePoints(readPolylinePoints(subject));
-  const tgtPts = snapshotPolylinePoints(readPolylinePoints(target));
+): Out {
+  const subPts = snapshotPolylinePoints(subject);
+  const tgtPts = snapshotPolylinePoints(target);
   outPoints.length = 0;
   if (subPts.length < 2 || tgtPts.length < 2) return outPoints;
   if (hasNonFinitePolylinePoint(subPts) || hasNonFinitePolylinePoint(tgtPts)) return outPoints;

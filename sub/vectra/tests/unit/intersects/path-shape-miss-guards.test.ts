@@ -45,11 +45,7 @@ describe('그릴 선분이 없는 path', () => {
   });
 
   test('intersectsPathPolygon은 move만 있는 path에서 false를 반환한다', () => {
-    const polygon = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: 2, y: 4 },
-    ];
+    const polygon = [0, 0, 4, 0, 2, 4];
     expect(intersectsPathPolygon(moveOnlyPath, polygon)).toBe(false);
   });
 });

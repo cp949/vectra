@@ -1,7 +1,8 @@
 import { segmentToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
 import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathMeasurementOptions, PolylineLike } from '../types';
+import type { PathCommand, PathMeasurementOptions } from '../types';
+import type { Polyline } from '../types/flat-shapes.internal';
 
 /**
  * polyline과 path가 교차하면 true를 반환한다.
@@ -17,7 +18,7 @@ import type { PathCommand, PathMeasurementOptions, PolylineLike } from '../types
  */
 export function intersectsPathPolyline(
   commands: readonly PathCommand[],
-  polyline: PolylineLike,
+  polyline: Polyline,
   options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;

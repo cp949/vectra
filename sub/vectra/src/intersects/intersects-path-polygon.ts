@@ -1,7 +1,8 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { polygonPolylineIntersects } from '../internal/polygon-relation';
 import { fillLegacyFlattenOptions, flattenPathInto } from '../path/flatten.internal';
-import type { PathCommand, PathMeasurementOptions, PolygonLike } from '../types';
+import type { PathCommand, PathMeasurementOptions } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 
 /**
  * polygon과 path가 교차하면 true를 반환한다.
@@ -12,7 +13,7 @@ import type { PathCommand, PathMeasurementOptions, PolygonLike } from '../types'
  *   2. flattened polyline의 임의 segment와 polygon edge가 교차한다.
  * - path가 polygon 내부에 완전히 포함된 경우: flattened 첫 point가 polygon 내부에 있어 true.
  * - polygon이 closed path 내부에 완전히 포함된 경우: edge 교차 없이 모든 path 점이 polygon 외부이므로 false. 이 경우 별도 containment 판정이 필요하다.
- * - empty polygon(points.length < 3) 또는 empty path(commands.length === 0): false.
+ * - empty polygon(좌표 수 < 6) 또는 empty path(commands.length === 0): false.
  *
  * @param polygon  교차를 검사할 polygon
  * @param commands flatten할 path command sequence
@@ -20,7 +21,7 @@ import type { PathCommand, PathMeasurementOptions, PolygonLike } from '../types'
  */
 export function intersectsPathPolygon(
   commands: readonly PathCommand[],
-  polygon: PolygonLike,
+  polygon: Polygon,
   options?: Partial<PathMeasurementOptions>
 ): boolean {
   if (commands.length === 0) return false;

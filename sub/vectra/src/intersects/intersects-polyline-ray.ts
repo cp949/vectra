@@ -1,8 +1,6 @@
 import { rayToLineFamilyParam } from '../internal/line-family';
 import { lineFamilyPolylineIntersects } from '../internal/polyline-relation';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { PolylineLike, RayLike } from '../types';
+import type { Polyline, Ray } from '../types/flat-shapes.internal';
 
 /**
  * ray와 polyline이 교차하면 true를 반환한다.
@@ -15,9 +13,7 @@ import type { PolylineLike, RayLike } from '../types';
  * @param epsilon  교차 판정 허용 오차
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsPolylineRay(polyline: PolylineLike, ray: RayLike, epsilon?: number): boolean {
-  const o = readRayOrigin(ray);
-  const d = readRayDirection(ray);
-  const lineParam = rayToLineFamilyParam(readX(o), readY(o), readX(d), readY(d));
+export function intersectsPolylineRay(polyline: Polyline, ray: Ray, epsilon?: number): boolean {
+  const lineParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
   return lineFamilyPolylineIntersects(lineParam, polyline, epsilon);
 }

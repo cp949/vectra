@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { PolylineLike, XYObjectWritable } from '../types';
+import type { Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { polylinePolylineIntersectionsInto } from './polyline-polyline-intersections-into';
 
 /**
@@ -27,11 +27,11 @@ import { polylinePolylineIntersectionsInto } from './polyline-polyline-intersect
  * @param epsilon 평행/거리/dedupe 판정 임계값
  */
 export function polylinePolylineIntersections(
-  subject: PolylineLike,
-  target: PolylineLike,
+  subject: Polyline,
+  target: Polyline,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   polylinePolylineIntersectionsInto(out, subject, target, epsilon);
   return out;
 }

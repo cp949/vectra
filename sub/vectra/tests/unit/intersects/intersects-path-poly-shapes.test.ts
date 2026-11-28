@@ -7,22 +7,13 @@ import { intersectsPathPolyline } from '../../../src/intersects/intersects-path-
 import type { PathCommand } from '../../../src/types';
 
 // 정사각형 polygon (0,0)-(8,0)-(8,8)-(0,8)
-const squarePolygon = {
-  points: [
-    { x: 0, y: 0 },
-    { x: 8, y: 0 },
-    { x: 8, y: 8 },
-    { x: 0, y: 8 },
-  ],
-};
+const squarePolygon = [0, 0, 8, 0, 8, 8, 0, 8];
 
 // 수직 polyline (5,0)->(5,8)
-const verticalPolyline = {
-  points: [
-    { x: 5, y: 0 },
-    { x: 5, y: 8 },
-  ],
-};
+const verticalPolyline = [
+  { x: 5, y: 0 },
+  { x: 5, y: 8 },
+];
 
 describe('intersectsPathPolygon', () => {
   describe('path가 polygon으로 들어가는 경우', () => {
@@ -63,13 +54,8 @@ describe('intersectsPathPolygon', () => {
       expect(intersectsPathPolygon([], squarePolygon)).toBe(false);
     });
 
-    test('empty polygon(points.length < 3)은 false를 반환한다', () => {
-      const emptyPoly = {
-        points: [
-          { x: 0, y: 0 },
-          { x: 1, y: 0 },
-        ],
-      };
+    test('좌표 수가 6개 미만인 polygon은 false를 반환한다', () => {
+      const emptyPoly = [0, 0, 1, 0];
       const cmd: PathCommand[] = [
         { kind: 'move', x: 0, y: 0 },
         { kind: 'line', x: 4, y: 0 },
@@ -108,7 +94,7 @@ describe('intersectsPathPolyline', () => {
     });
 
     test('empty polyline(points.length < 2)은 false를 반환한다', () => {
-      const emptyPolyline = { points: [{ x: 5, y: 4 }] };
+      const emptyPolyline = [{ x: 5, y: 4 }];
       const cmd: PathCommand[] = [
         { kind: 'move', x: 0, y: 4 },
         { kind: 'line', x: 10, y: 4 },

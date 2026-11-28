@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { CircleLike, PolylineLike, XYObjectWritable } from '../types';
+import type { Circle, Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { circlePolylineIntersectionsInto } from './circle-polyline-intersections-into';
 
 /**
@@ -27,11 +27,11 @@ import { circlePolylineIntersectionsInto } from './circle-polyline-intersections
  * @param epsilon discriminant tangent/dedupe 판정 임계값
  */
 export function circlePolylineIntersections(
-  circle: CircleLike,
-  polyline: PolylineLike,
+  circle: Circle,
+  polyline: Polyline,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   circlePolylineIntersectionsInto(out, circle, polyline, epsilon);
   return out;
 }

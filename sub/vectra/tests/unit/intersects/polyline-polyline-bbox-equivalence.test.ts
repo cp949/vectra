@@ -6,9 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import { polylinePolylineIntersections, polylinePolylineIntersectionsInto } from '../../../src/intersects';
 import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
-import { readPolylinePoints } from '../../../src/internal/polyline';
 import { readX, readY } from '../../../src/internal/xy';
-import type { PolylineLike, XYInput, XYObjectWritable } from '../../../src/types';
+import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 import {
   hasNearbyPoint,
   hasNonFinitePolylinePoint,
@@ -24,13 +23,13 @@ interface LocalHit {
 
 /** bbox 거절 전 구현을 고정해 좌표와 순서의 기준으로 쓴다. */
 function referenceIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  subject: PolylineLike,
-  target: PolylineLike,
+  outPoints: PointWritable[],
+  subject: Polyline,
+  target: Polyline,
   epsilon?: number
-): XYObjectWritable[] {
-  const subPts = snapshotPolylinePoints(readPolylinePoints(subject));
-  const tgtPts = snapshotPolylinePoints(readPolylinePoints(target));
+): PointWritable[] {
+  const subPts = snapshotPolylinePoints(subject);
+  const tgtPts = snapshotPolylinePoints(target);
   outPoints.length = 0;
   if (subPts.length < 2 || tgtPts.length < 2) return outPoints;
   if (hasNonFinitePolylinePoint(subPts) || hasNonFinitePolylinePoint(tgtPts)) return outPoints;
@@ -79,7 +78,7 @@ function referenceIntersectionsInto(
 const EPSILONS = [undefined, 0, -0, -1e-9, 1e-12, 1e-9, 1e-4, 0.5, 1e12, 1e300, NaN, Infinity, -Infinity];
 
 /** 값의 부호와 배열 순서를 유지했는지 검사하고, 실패하면 입력을 표시한다. */
-function expectSame(actual: XYObjectWritable[], expected: XYObjectWritable[], context: string): void {
+function expectSame(actual: PointWritable[], expected: PointWritable[], context: string): void {
   if (
     actual.length !== expected.length ||
     actual.some((point, i) => !Object.is(point.x, expected[i].x) || !Object.is(point.y, expected[i].y))
@@ -89,7 +88,7 @@ function expectSame(actual: XYObjectWritable[], expected: XYObjectWritable[], co
 }
 
 /** 두 공개 함수의 기본 epsilon 차이까지 포함해 기준 구현과 비교한다. */
-function checkPair(subject: PolylineLike, target: PolylineLike, epsilon: number | undefined, context: string): void {
+function checkPair(subject: Polyline, target: Polyline, epsilon: number | undefined, context: string): void {
   const out = [{ x: NaN, y: NaN }];
   const actual = polylinePolylineIntersectionsInto(out, subject, target, epsilon);
   if (actual !== out) throw new Error(context);
@@ -101,12 +100,9 @@ function checkPair(subject: PolylineLike, target: PolylineLike, epsilon: number 
   );
 }
 
-/** 좌표 형식과 polyline wrapper의 모양을 입력마다 바꾼다. */
-function makePolyline(points: readonly (readonly [number, number])[], shape: number): PolylineLike {
-  const vertices: XYInput[] = points.map(([x, y], i) =>
-    shape % 3 === 0 || (shape % 3 === 2 && i % 2 === 0) ? { x, y } : [x, y]
-  );
-  return shape % 2 === 0 ? { points: vertices } : vertices;
+/** 기준 데이터의 좌표 쌍을 점 배열로 바꾼다. */
+function makePolyline(points: readonly (readonly [number, number])[]): Polyline {
+  return points.map(([x, y]) => ({ x, y }));
 }
 
 describe('polyline 교차 bbox 거절의 비트 단위 동등성', () => {
@@ -127,26 +123,26 @@ describe('polyline 교차 bbox 거절의 비트 단위 동등성', () => {
       [-0.1, -0.1],
       [0.1, -0.1],
     ] as const;
-    expect(referenceIntersectionsInto([], nearSubject, nearTarget, 0.5)).toHaveLength(1);
-    expect(referenceIntersectionsInto([], mappedSubject, mappedTarget, 3e-6)).toHaveLength(2);
+    expect(referenceIntersectionsInto([], makePolyline(nearSubject), makePolyline(nearTarget), 0.5)).toHaveLength(1);
+    expect(referenceIntersectionsInto([], makePolyline(mappedSubject), makePolyline(mappedTarget), 3e-6)).toHaveLength(
+      2
+    );
 
-    for (let shape = 0; shape < 6; shape++) {
-      checkPair(makePolyline(nearSubject, shape), makePolyline(nearTarget, shape + 1), 0.5, '공선 거리');
-      checkPair(makePolyline(mappedSubject, shape), makePolyline(mappedTarget, shape + 1), 3e-6, '투영 구간');
-    }
+    checkPair(makePolyline(nearSubject), makePolyline(nearTarget), 0.5, '공선 거리');
+    checkPair(makePolyline(mappedSubject), makePolyline(mappedTarget), 3e-6, '투영 구간');
   });
 
   it('같은 매개변수의 교점은 대상 선분 순서대로 중복을 제거한다', () => {
     const subject = [
-      [0, 0],
-      [10, 0],
+      { x: 0, y: 0 },
+      { x: 10, y: 0 },
     ] as const;
     const target = [
-      [2, 0.25],
-      [4, 0.25],
-      [20, 20],
-      [2, -0.25],
-      [4, -0.25],
+      { x: 2, y: 0.25 },
+      { x: 4, y: 0.25 },
+      { x: 20, y: 20 },
+      { x: 2, y: -0.25 },
+      { x: 4, y: -0.25 },
     ] as const;
     const expected = referenceIntersectionsInto([], subject, target, 0.5);
     expect(expected[0]).toStrictEqual({ x: 2, y: 0.25 });
@@ -154,177 +150,177 @@ describe('polyline 교차 bbox 거절의 비트 단위 동등성', () => {
   });
 
   it('끝점 접촉, 공선 겹침, 퇴화 입력과 극단값에서 기존 결과를 보존한다', () => {
-    const fixtures: readonly (readonly [PolylineLike, PolylineLike])[] = [
+    const fixtures: readonly (readonly [Polyline, Polyline])[] = [
       [
         [
-          [0, 0],
-          [3, 0],
+          { x: 0, y: 0 },
+          { x: 3, y: 0 },
         ],
         [
-          [3, 0],
-          [4, 2],
+          { x: 3, y: 0 },
+          { x: 4, y: 2 },
         ],
       ],
       [
         [
-          [0, 0],
-          [3, 0],
+          { x: 0, y: 0 },
+          { x: 3, y: 0 },
         ],
         [
-          [2, 0],
-          [4, 0],
-        ],
-      ],
-      [
-        [
-          [0, 0],
-          [3, 0],
-        ],
-        [
-          [4, 0],
-          [5, 0],
+          { x: 2, y: 0 },
+          { x: 4, y: 0 },
         ],
       ],
       [
         [
-          [0, 0],
-          [3, 0],
+          { x: 0, y: 0 },
+          { x: 3, y: 0 },
         ],
         [
-          [1, 8e-10],
-          [2, 8e-10],
-        ],
-      ],
-      [
-        [
-          [0, 0],
-          [0, 0],
-          [3, 0],
-        ],
-        [
-          [0, -0],
-          [0, -0],
-          [0, 2],
+          { x: 4, y: 0 },
+          { x: 5, y: 0 },
         ],
       ],
       [
         [
-          [0, 0],
-          [4, 0],
-          [4, 4],
+          { x: 0, y: 0 },
+          { x: 3, y: 0 },
         ],
         [
-          [1, 2],
-          [3, 2],
-        ],
-      ],
-      [
-        [
-          [0, 0],
-          [4, 4],
-        ],
-        [
-          [0, 4],
-          [4, 0],
-          [4, 2],
-          [0, 2],
+          { x: 1, y: 8e-10 },
+          { x: 2, y: 8e-10 },
         ],
       ],
       [
         [
-          [1e9, 1e9],
-          [1e9 + 2, 1e9],
+          { x: 0, y: 0 },
+          { x: 0, y: 0 },
+          { x: 3, y: 0 },
         ],
         [
-          [1e9 + 1, 1e9 + 2e-7],
-          [1e9 + 2, 1e9 + 2e-7],
-        ],
-      ],
-      [
-        [
-          [-1e300, -1e300],
-          [1e300, 1e300],
-        ],
-        [
-          [-1e300, 1e300],
-          [1e300, -1e300],
+          { x: 0, y: -0 },
+          { x: 0, y: -0 },
+          { x: 0, y: 2 },
         ],
       ],
       [
         [
-          [-1e308, 0],
-          [1e308, 0],
+          { x: 0, y: 0 },
+          { x: 4, y: 0 },
+          { x: 4, y: 4 },
         ],
         [
-          [0, -1e308],
-          [0, 1e308],
-        ],
-      ],
-      [
-        [
-          [0, 0],
-          [1e-300, 1e-300],
-        ],
-        [
-          [0, 1e-300],
-          [1e-300, 0],
+          { x: 1, y: 2 },
+          { x: 3, y: 2 },
         ],
       ],
       [
         [
-          [0, 0],
-          [Number.MIN_VALUE, Number.MIN_VALUE],
+          { x: 0, y: 0 },
+          { x: 4, y: 4 },
         ],
         [
-          [0, Number.MIN_VALUE],
-          [Number.MIN_VALUE, 0],
-        ],
-      ],
-      [
-        [
-          [0, 0],
-          [2, 2],
-          [NaN, 0],
-        ],
-        [
-          [0, 2],
-          [2, 0],
+          { x: 0, y: 4 },
+          { x: 4, y: 0 },
+          { x: 4, y: 2 },
+          { x: 0, y: 2 },
         ],
       ],
       [
         [
-          [0, 0],
-          [2, 2],
+          { x: 1e9, y: 1e9 },
+          { x: 1e9 + 2, y: 1e9 },
         ],
         [
-          [0, 2],
-          [2, 0],
-          [0, Infinity],
+          { x: 1e9 + 1, y: 1e9 + 2e-7 },
+          { x: 1e9 + 2, y: 1e9 + 2e-7 },
         ],
       ],
       [
         [
-          [0, 0],
-          [2, -Infinity],
+          { x: -1e300, y: -1e300 },
+          { x: 1e300, y: 1e300 },
         ],
         [
-          [0, 2],
-          [2, 0],
+          { x: -1e300, y: 1e300 },
+          { x: 1e300, y: -1e300 },
+        ],
+      ],
+      [
+        [
+          { x: -1e308, y: 0 },
+          { x: 1e308, y: 0 },
+        ],
+        [
+          { x: 0, y: -1e308 },
+          { x: 0, y: 1e308 },
+        ],
+      ],
+      [
+        [
+          { x: 0, y: 0 },
+          { x: 1e-300, y: 1e-300 },
+        ],
+        [
+          { x: 0, y: 1e-300 },
+          { x: 1e-300, y: 0 },
+        ],
+      ],
+      [
+        [
+          { x: 0, y: 0 },
+          { x: Number.MIN_VALUE, y: Number.MIN_VALUE },
+        ],
+        [
+          { x: 0, y: Number.MIN_VALUE },
+          { x: Number.MIN_VALUE, y: 0 },
+        ],
+      ],
+      [
+        [
+          { x: 0, y: 0 },
+          { x: 2, y: 2 },
+          { x: NaN, y: 0 },
+        ],
+        [
+          { x: 0, y: 2 },
+          { x: 2, y: 0 },
+        ],
+      ],
+      [
+        [
+          { x: 0, y: 0 },
+          { x: 2, y: 2 },
+        ],
+        [
+          { x: 0, y: 2 },
+          { x: 2, y: 0 },
+          { x: 0, y: Infinity },
+        ],
+      ],
+      [
+        [
+          { x: 0, y: 0 },
+          { x: 2, y: -Infinity },
+        ],
+        [
+          { x: 0, y: 2 },
+          { x: 2, y: 0 },
         ],
       ],
       [
         [],
         [
-          [0, 2],
-          [2, 0],
+          { x: 0, y: 2 },
+          { x: 2, y: 0 },
         ],
       ],
       [
         [
-          [0, 0],
-          [2, 2],
+          { x: 0, y: 0 },
+          { x: 2, y: 2 },
         ],
-        [[0, 0]],
+        [{ x: 0, y: 0 }],
       ],
     ];
 
@@ -348,7 +344,7 @@ describe('polyline 교차 bbox 거절의 비트 단위 동등성', () => {
       ];
       const expected = referenceIntersectionsInto([], subject, target);
       const out = aliasTarget ? target : subject;
-      expect(polylinePolylineIntersectionsInto(out, { points: subject }, { points: target })).toBe(out);
+      expect(polylinePolylineIntersectionsInto(out, subject, target)).toBe(out);
       expectSame(out, expected, '입출력 배열 공유');
     }
   });
@@ -381,7 +377,7 @@ describe('polyline 교차 bbox 거절의 비트 단위 동등성', () => {
                   : (random() - 0.5) * 16;
           result.push(j > 0 && random() < 0.14 ? result[j - 1] : [x * scale + offset, y * scale - offset]);
         }
-        return makePolyline(result, i + side * 5);
+        return makePolyline(result);
       });
       const epsilon = i % 4 === 0 ? undefined : EPSILONS[Math.floor(random() * EPSILONS.length)];
       checkPair(points[0], points[1], epsilon, `시드 0xf7a2c1ab, 반복 ${i}, epsilon=${epsilon}`);

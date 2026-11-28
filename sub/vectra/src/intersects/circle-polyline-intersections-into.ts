@@ -1,9 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { lineFamilyEllipseIntersectionPoints } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readPolylinePoints } from '../internal/polyline';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, PolylineLike, XYObjectWritable } from '../types';
+import type { Circle, Polyline, PointWritable } from '../types/flat-shapes.internal';
 import { hasNearbyPoint, hasNonFinitePolylinePoint, snapshotPolylinePoints } from './polyline-intersections.internal';
 
 /**
@@ -28,22 +25,21 @@ import { hasNearbyPoint, hasNonFinitePolylinePoint, snapshotPolylinePoints } fro
  * `epsilon`은 discriminant tangent/dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다. range
  * 판정은 segment-local parameter의 정확 비교를 따른다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param circle 교점을 구할 circle
  * @param polyline 교점을 구할 polyline. point ordering의 기준이다.
  * @param epsilon discriminant tangent/dedupe 판정 임계값
  */
-export function circlePolylineIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  circle: CircleLike,
-  polyline: PolylineLike,
+export function circlePolylineIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  circle: Circle,
+  polyline: Polyline,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const center = readCircleCenter(circle);
-  const cx = readX(center);
-  const cy = readY(center);
-  const radius = readCircleRadius(circle);
-  const pts = snapshotPolylinePoints(readPolylinePoints(polyline));
+): Out {
+  const cx = circle.cx;
+  const cy = circle.cy;
+  const radius = circle.r;
+  const pts = snapshotPolylinePoints(polyline);
 
   outPoints.length = 0;
   if (!Number.isFinite(cx) || !Number.isFinite(cy) || !Number.isFinite(radius)) return outPoints;
@@ -53,7 +49,7 @@ export function circlePolylineIntersectionsInto(
 
   const epsSq = epsilon * epsilon;
   // segment별 root를 받는 재사용 버퍼. lineFamilyEllipseIntersectionPoints가 매 호출 clear한다.
-  const local: XYObjectWritable[] = [];
+  const local: PointWritable[] = [];
   for (let i = 0; i < pts.length - 1; i++) {
     const ax = pts[i].x;
     const ay = pts[i].y;

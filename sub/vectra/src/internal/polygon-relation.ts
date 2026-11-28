@@ -1,8 +1,5 @@
-import { flatPolygonFromLegacyPoints } from './legacy-polygon.internal';
-import type { PolygonLike, PolylineLike } from '../types';
-import { polygonContainsPoint, readPolygonPoints, segmentsIntersect } from './polygon';
-import { readPolylinePoints } from './polyline';
-import { readX, readY } from './xy';
+import type { Polygon, Polyline } from '../types/flat-shapes.internal';
+import { polygonContainsPoint, segmentsIntersect } from './polygon';
 
 /**
  * polygon과 polyline이 교차하면 true를 반환한다.
@@ -11,44 +8,41 @@ import { readX, readY } from './xy';
  * 1. 모든 polyline point가 polygon 내부(boundary 포함)에 있으면 true.
  * 2. polyline segment와 polygon edge가 교차(collinear overlap 포함)하면 true.
  *
- * empty polygon(pts_poly.length < 3) 또는 empty polyline(pts_line.length === 0)은 false.
+ * empty polygon(좌표 수 < 6) 또는 empty polyline(pts_line.length === 0)은 false.
  * single-point polyline(pts_line.length === 1)은 point containment만 판정한다.
  * polygon이 polyline path에 둘러싸이는 경우(polyline이 open path이고 polygon vertex가 polyline 내부에 없음)는
  * false를 반환한다. polyline은 open path이므로 면적을 정의하지 않는다.
  * epsilon은 containment 판정에만 적용된다. segment crossing 판정(segmentsIntersect)은 epsilon 없이
  * exact 교차 검사를 수행한다.
  */
-export function polygonPolylineIntersects(polygon: PolygonLike, polyline: PolylineLike, epsilon: number): boolean {
-  const ptsPoly = readPolygonPoints(polygon);
-  const ptsLine = readPolylinePoints(polyline);
+export function polygonPolylineIntersects(ptsPoly: Polygon, ptsLine: Polyline, epsilon: number): boolean {
   const nPoly = ptsPoly.length;
   const nLine = ptsLine.length;
 
-  if (nPoly < 3 || nLine === 0) return false;
+  if (nPoly < 6 || nLine === 0) return false;
 
   // single-point polyline은 point containment만 판정한다.
-  const flatPolygon = flatPolygonFromLegacyPoints(ptsPoly);
   if (nLine === 1) {
-    return polygonContainsPoint(flatPolygon, readX(ptsLine[0]), readY(ptsLine[0]), epsilon);
+    return polygonContainsPoint(ptsPoly, ptsLine[0].x, ptsLine[0].y, epsilon);
   }
 
   // polyline point가 polygon 내부에 있으면 true (완전 포함 케이스 포함)
   for (let i = 0; i < nLine; i++) {
-    if (polygonContainsPoint(flatPolygon, readX(ptsLine[i]), readY(ptsLine[i]), epsilon)) return true;
+    if (polygonContainsPoint(ptsPoly, ptsLine[i].x, ptsLine[i].y, epsilon)) return true;
   }
 
   // polyline segment와 polygon edge crossing 확인
   for (let i = 0; i < nLine - 1; i++) {
-    const ax = readX(ptsLine[i]);
-    const ay = readY(ptsLine[i]);
-    const bx = readX(ptsLine[i + 1]);
-    const by = readY(ptsLine[i + 1]);
-    for (let j = 0; j < nPoly; j++) {
-      const k = (j + 1) % nPoly;
-      const eax = readX(ptsPoly[j]);
-      const eay = readY(ptsPoly[j]);
-      const ebx = readX(ptsPoly[k]);
-      const eby = readY(ptsPoly[k]);
+    const ax = ptsLine[i].x;
+    const ay = ptsLine[i].y;
+    const bx = ptsLine[i + 1].x;
+    const by = ptsLine[i + 1].y;
+    for (let j = 0; j < nPoly; j += 2) {
+      const k = (j + 2) % nPoly;
+      const eax = ptsPoly[j];
+      const eay = ptsPoly[j + 1];
+      const ebx = ptsPoly[k];
+      const eby = ptsPoly[k + 1];
       if (segmentsIntersect(ax, ay, bx, by, eax, eay, ebx, eby)) return true;
     }
   }
@@ -69,37 +63,35 @@ export function polygonPolylineIntersects(polygon: PolygonLike, polyline: Polyli
  * 대표 vertex containment만으로 충분하다. self-intersecting polygon은 repair하지 않고 기존
  * `polygonContainsPoint`/`segmentsIntersect` 정책을 그대로 따른다.
  *
- * empty polygon(points.length < 3)은 false다. epsilon은 containment/boundary 판정에만 쓰고 finite
+ * empty polygon(좌표 수 < 6)은 false다. epsilon은 containment/boundary 판정에만 쓰고 finite
  * validation을 완화하지 않는다. segment crossing(`segmentsIntersect`)은 epsilon 없는 exact 검사다.
  *
- * @param a 첫 번째 polygon
- * @param b 두 번째 polygon
+ * @param ptsA 첫 번째 polygon
+ * @param ptsB 두 번째 polygon
  * @param epsilon containment/boundary 판정 임계값
  */
-export function polygonPolygonIntersects(a: PolygonLike, b: PolygonLike, epsilon: number): boolean {
-  const ptsA = readPolygonPoints(a);
-  const ptsB = readPolygonPoints(b);
+export function polygonPolygonIntersects(ptsA: Polygon, ptsB: Polygon, epsilon: number): boolean {
   const nA = ptsA.length;
   const nB = ptsB.length;
-  if (nA < 3 || nB < 3) return false;
+  if (nA < 6 || nB < 6) return false;
 
   // edge crossing 확인
-  for (let i = 0; i < nA; i++) {
-    const i2 = (i + 1) % nA;
-    const ax = readX(ptsA[i]);
-    const ay = readY(ptsA[i]);
-    const bx = readX(ptsA[i2]);
-    const by = readY(ptsA[i2]);
-    for (let j = 0; j < nB; j++) {
-      const j2 = (j + 1) % nB;
-      if (segmentsIntersect(ax, ay, bx, by, readX(ptsB[j]), readY(ptsB[j]), readX(ptsB[j2]), readY(ptsB[j2]))) {
+  for (let i = 0; i < nA; i += 2) {
+    const i2 = (i + 2) % nA;
+    const ax = ptsA[i];
+    const ay = ptsA[i + 1];
+    const bx = ptsA[i2];
+    const by = ptsA[i2 + 1];
+    for (let j = 0; j < nB; j += 2) {
+      const j2 = (j + 2) % nB;
+      if (segmentsIntersect(ax, ay, bx, by, ptsB[j], ptsB[j + 1], ptsB[j2], ptsB[j2 + 1])) {
         return true;
       }
     }
   }
 
   // edge 교차 없음: 대표 vertex containment로 전체 포함/분리를 가른다
-  if (polygonContainsPoint(flatPolygonFromLegacyPoints(ptsB), readX(ptsA[0]), readY(ptsA[0]), epsilon)) return true;
-  if (polygonContainsPoint(flatPolygonFromLegacyPoints(ptsA), readX(ptsB[0]), readY(ptsB[0]), epsilon)) return true;
+  if (polygonContainsPoint(ptsB, ptsA[0], ptsA[1], epsilon)) return true;
+  if (polygonContainsPoint(ptsA, ptsB[0], ptsB[1], epsilon)) return true;
   return false;
 }
