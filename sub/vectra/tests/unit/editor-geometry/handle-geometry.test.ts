@@ -328,3 +328,13 @@ describe('anchorPoint', () => {
     });
   });
 });
+
+describe('rotateHandles - 옵션 필드', () => {
+  test('offset이 빠진 옵션 객체에 0을 쓰지 않고 y를 NaN으로 기록한다', () => {
+    const bounds = { minX: 0, minY: 10, maxX: 20, maxY: 30 };
+    // @ts-expect-error offset은 필수 필드다.
+    const [handle] = rotateHandles(bounds, {});
+    expect(handle.point.x).toBe(10);
+    expect(handle.point.y).toBeNaN();
+  });
+});

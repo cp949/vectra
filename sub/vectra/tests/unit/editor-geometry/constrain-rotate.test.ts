@@ -181,3 +181,11 @@ describe('NaN propagation', () => {
     expect(constrainRotate(Number.NaN, { step: DEG45, snapAngles: [], tolerance: 0.1 })).toBeNaN();
   });
 });
+
+describe('옵션 필드', () => {
+  test('snapAngles가 빠진 옵션 객체는 빈 목록으로 보지 않고 TypeError를 던진다', () => {
+    const options = { step: undefined, tolerance: 0.1 };
+    // @ts-expect-error snapAngles는 필수 필드다.
+    expect(() => constrainRotate(DEG45, options)).toThrow(TypeError);
+  });
+});

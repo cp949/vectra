@@ -163,6 +163,16 @@ describe('alignmentGuidesInto', () => {
       expect(out[0]).toMatchObject({ axis: 'y', kind: 'center-y', value: 50 });
     });
   });
+});
+
+// ---------------------------------------------------------------------------
+// alignmentGuides (companion)
+// ---------------------------------------------------------------------------
+
+describe('alignmentGuides', () => {
+  test('빈 입력이면 새 빈 배열을 반환한다', () => {
+    expect(alignmentGuides([], 'left')).toEqual([]);
+  });
 
   test('단일 item이면 새 빈 배열을 반환한다', () => {
     expect(alignmentGuides([b(10, 20, 100, 60)], 'left')).toEqual([]);

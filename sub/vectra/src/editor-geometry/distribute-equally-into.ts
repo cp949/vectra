@@ -45,7 +45,7 @@ export function distributeEquallyInto(
     const b = bounds[i];
     const minVal = isX ? b.minX : b.minY;
     const maxVal = isX ? b.maxX : b.maxY;
-    // 이동하지 않는 축 좌표(x축 분배 시 min.y, y축 분배 시 min.x)
+    // 이동하지 않는 축 좌표(x축 분배 시 minY, y축 분배 시 minX)
     const otherMin = isX ? b.minY : b.minX;
     entries.push({ idx: i, minVal, maxVal, otherMin });
   }

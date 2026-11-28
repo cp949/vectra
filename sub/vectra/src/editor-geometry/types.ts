@@ -157,9 +157,10 @@ export interface DragConstraintOptions {
  *
  * - `aspectLocked`: true면 current 기준 aspect ratio를 유지한다.
  *   shorter axis를 longer axis에 맞춰 보정한다.
- * - `minWidth` / `minHeight`: 각 축 최솟값. 기본값 0.
- *   0보다 작으면 0으로 처리한다.
- * - `maxWidth` / `maxHeight`: 각 축 최댓값. 기본값 Infinity.
+ * - `minWidth` / `minHeight`: 각 축 최솟값. 0보다 작으면 0으로 처리한다.
+ * - `maxWidth` / `maxHeight`: 각 축 최댓값.
+ *
+ * 옵션 객체를 생략하면 비율을 고정하지 않고 각 축을 [0, Infinity]로 클램프한다.
  */
 export interface ResizeConstraintOptions {
   aspectLocked: boolean;
@@ -190,18 +191,20 @@ export interface RotateConstraintOptions {
  *
  * - `shape`: call-site 의미 태그(`'rect'` | `'ellipse'`)다. 반환 geometry는 항상 bounds이며
  *   산식에 영향을 주지 않는다. invalid string도 throw하지 않는다.
- * - `aspectLocked`: 기본값 `false`. `true`면 size를 `max(abs(dx), abs(dy))`로 맞춰 square bounds로
+ * - `aspectLocked`: `true`면 size를 `max(abs(dx), abs(dy))`로 맞춰 square bounds로
  *   보정하고 pointer 방향 sign을 유지한다.
- * - `fromCenter`: 기본값 `false`. `false`면 `origin`이 corner, `true`면 `origin`이 center다.
+ * - `fromCenter`: `false`면 `origin`이 corner, `true`면 `origin`이 center다.
+ *
+ * 옵션 객체를 생략하면 `aspectLocked`와 `fromCenter`를 `false`로 본다.
  */
 export interface DrawingBoundsOptions {
   /** call-site 의미 태그. 산식에 영향을 주지 않는 no-op이다. */
   shape: 'rect' | 'ellipse' | undefined;
 
-  /** true면 square bounds로 보정한다. 기본값 false. */
+  /** true면 square bounds로 보정한다. */
   aspectLocked: boolean;
 
-  /** true면 origin을 center로, false면 corner로 본다. 기본값 false. */
+  /** true면 origin을 center로, false면 corner로 본다. */
   fromCenter: boolean;
 }
 
@@ -231,7 +234,9 @@ export interface TransformFromHandlesInput {
  *
  * - `aspectLocked`: true면 corner handle 드래그를 등비례(min scale)로 보정.
  *   edge handle에서는 무시된다.
- * - `fromAnchor`: 기본값은 handle의 대각 anchor. 명시하면 해당 anchor 기준으로 scale한다.
+ * - `fromAnchor`: undefined면 handle의 대각 anchor를 쓴다. 지정하면 해당 anchor 기준으로 scale한다.
+ *
+ * 옵션 객체를 생략하면 등비례 보정 없이 handle의 대각 anchor를 쓴다.
  */
 export interface TransformFromHandlesOptions {
   /** true면 corner handle을 등비례로 보정 (edge handle은 무시) */

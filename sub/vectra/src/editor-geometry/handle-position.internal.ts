@@ -17,7 +17,7 @@ import type { AnchorKind, ResizeHandleId } from './types';
 // ---------------------------------------------------------------------------
 
 /**
- * BoundsLike에서 min/max x/y 좌표를 추출해 반환한다.
+ * 경계의 min/max 좌표와 중점 좌표를 반환한다.
  *
  * @param bounds 좌표를 추출할 bounds 입력
  */

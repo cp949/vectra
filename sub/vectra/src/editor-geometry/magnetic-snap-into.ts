@@ -12,7 +12,7 @@ import type { SnapCandidate } from './types';
  * @param point 기준 point
  * @param candidates snap 후보 목록
  * @param radius 최대 허용 거리 (exclusive)
- * @returns snap 성공 시 true. 후보가 없으면 false를 반환하고 out을 유지한다.
+ * @returns snap 성공 시 true. radius 안에 후보가 없으면 false를 반환하고 out을 유지한다.
  */
 export function magneticSnapInto(
   out: PointWritable,

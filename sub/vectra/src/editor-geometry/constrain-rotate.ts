@@ -9,7 +9,7 @@ import type { RotateConstraintOptions } from './types';
  * angle(radian)을 constraint 규칙으로 보정한 값을 반환한다.
  *
  * - step이 지정되면 step 단위 격자에서 가장 가까운 후보를 계산한다.
- * - snapAngles가 지정되면 목록 중 가장 가까운 후보를 계산한다.
+ * - snapAngles가 비어 있지 않으면 목록 중 가장 가까운 후보를 계산한다.
  * - 둘 다 지정되면 tolerance 이내 더 가까운 후보를 반환한다.
  * - tolerance 범위 밖이면 입력 angle을 그대로 반환한다.
  * - tolerance가 양의 유한수가 아니면 항상 입력 angle을 그대로 반환한다.

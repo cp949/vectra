@@ -12,7 +12,7 @@ import type { HandlePoint } from './types';
  * `rotateHandlesInto`의 allocating companion이다. default factory가 새 plain
  * `{ x, y }` object를 만든다.
  * 단일 `{ id: 'rotate', point }` 원소를 반환한다(future multi-rotate handle 확장을 위해 배열).
- * 위치: top-center 위 `offset`만큼 떨어진 점. offset 기본값 0.
+ * 위치: top-center 위 `offset`만큼 떨어진 점. 옵션을 생략하면 offset은 0이다.
  * unrotated AABB 기준 좌표만 산출한다. rotation 합성은 caller 책임.
  * NaN/Infinity 좌표는 IEEE-754 propagation으로 그대로 담는다.
  * 호출마다 새 배열을 반환한다.

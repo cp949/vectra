@@ -317,3 +317,13 @@ describe('Out 다형성', () => {
     expect(returned.height).toBe(160);
   });
 });
+
+describe('constrainResize - 옵션 필드', () => {
+  test('maxWidth가 빠진 옵션 객체에 Infinity를 쓰지 않고 width를 NaN으로 기록한다', () => {
+    const options = { aspectLocked: false, minWidth: 0, minHeight: 0, maxHeight: 500 };
+    // @ts-expect-error maxWidth는 필수 필드다.
+    const result = constrainResize({ width: 100, height: 100 }, { width: 200, height: 150 }, options);
+    expect(result.width).toBeNaN();
+    expect(result.height).toBe(150);
+  });
+});

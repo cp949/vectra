@@ -85,3 +85,13 @@ describe('editor-geometry - snapPoint', () => {
     expect(result.y).toBe(3);
   });
 });
+
+describe('editor-geometry - snapPoint 옵션 필드', () => {
+  test('tolerance가 빠진 옵션 객체에 Infinity를 쓰지 않고 miss로 처리한다', () => {
+    const candidates: SnapCandidate[] = [{ x: 1, y: 1, source: 'grid' }];
+    // @ts-expect-error tolerance는 필수 필드다.
+    const result = snapPoint({ x: 0, y: 0 }, candidates, {});
+    expect(result.snapped).toBe(false);
+    expect(result.source).toBe('none');
+  });
+});

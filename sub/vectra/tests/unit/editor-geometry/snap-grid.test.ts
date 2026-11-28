@@ -145,3 +145,18 @@ describe('editor-geometry - snapPointToGrid', () => {
     expect(result.y).toBeNaN();
   });
 });
+
+describe('editor-geometry - snapPointToGrid 간격과 옵션', () => {
+  test('간격이 Infinity인 축은 NaN이 된다', () => {
+    const result = snapPointToGrid({ x: 5, y: 5 }, { x: Infinity, y: 2 });
+    expect(result.x).toBeNaN();
+    expect(result.y).toBe(6);
+  });
+
+  test('offsetY가 빠진 옵션 객체에 0을 쓰지 않고 y를 NaN으로 기록한다', () => {
+    // @ts-expect-error offsetY는 필수 필드다.
+    const result = snapPointToGrid({ x: 5, y: 5 }, { x: 2, y: 2 }, { offsetX: 1 });
+    expect(result.x).toBe(5);
+    expect(result.y).toBeNaN();
+  });
+});

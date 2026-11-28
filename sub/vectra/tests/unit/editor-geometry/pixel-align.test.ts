@@ -102,3 +102,18 @@ describe('editor-geometry - pixelAlign', () => {
     expect(result).not.toBe(point);
   });
 });
+
+describe('editor-geometry - pixelAlign 옵션', () => {
+  test('devicePixelRatio가 Infinity면 NaN을 기록한다', () => {
+    const result = pixelAlign({ x: 3.2, y: 0 }, { devicePixelRatio: Infinity });
+    expect(result.x).toBeNaN();
+    expect(result.y).toBeNaN();
+  });
+
+  test('devicePixelRatio가 빠진 옵션 객체에 1을 쓰지 않고 NaN을 기록한다', () => {
+    // @ts-expect-error devicePixelRatio는 필수 필드다.
+    const result = pixelAlign({ x: 3.2, y: 4.7 }, {});
+    expect(result.x).toBeNaN();
+    expect(result.y).toBeNaN();
+  });
+});

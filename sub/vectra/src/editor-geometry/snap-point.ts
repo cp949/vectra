@@ -11,11 +11,11 @@ import type { SnapCandidate, SnapResult } from './types';
 /**
  * candidate 목록에서 tolerance 이내 가장 가까운 후보로 snap한다.
  *
- * tolerance 미지정 시 Infinity (항상 snap). tie-break: insertion order 우선이다.
+ * 옵션을 생략하면 tolerance는 Infinity다(항상 snap). tie-break: insertion order 우선이다.
  *
  * @param point 기준 point
  * @param candidates snap 후보 목록
- * @param options.tolerance 최대 허용 거리. 미지정 시 Infinity
+ * @param options.tolerance 최대 허용 거리. 양수가 아니면 모든 후보가 miss다
  * @returns snap 성공 시 snapped: true, 가장 가까운 candidate의 좌표와 distance. miss 시 snapped: false, 입력 좌표, distance: Infinity.
  */
 export function snapPoint(point: Point, candidates: SnapCandidate[], options?: { tolerance: number }): SnapResult {

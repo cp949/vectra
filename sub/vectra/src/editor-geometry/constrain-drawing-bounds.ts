@@ -12,10 +12,11 @@ import type { DrawingBoundsOptions } from './types';
  *
  * allocating companion. 매 호출 새 평평한 경계 객체를 반환한다.
  * 결과는 항상 normalized bounds(`minX <= maxX`, `minY <= maxY`)다.
- * `fromCenter` 기본값 false: origin은 corner, pointer는 opposite corner.
+ * `fromCenter` false: origin은 corner, pointer는 opposite corner.
  * `fromCenter` true: origin은 center, pointer는 half-extent 방향을 정한다.
- * `aspectLocked` 기본값 false: true면 size를 `max(abs(dx), abs(dy))`로 맞춰 square로 보정하고
+ * `aspectLocked` true면 size를 `max(abs(dx), abs(dy))`로 맞춰 square로 보정하고
  * pointer 방향 sign을 유지한다. `Math.sign(0) === 0`이므로 해당 축 delta가 0이면 그 축은 origin으로 collapse한다.
+ * 옵션을 생략하면 `fromCenter`와 `aspectLocked`를 false로 본다.
  * `shape`는 call-site 의미 태그일 뿐 산식에 영향을 주지 않는다.
  * NaN/Infinity 입력은 silent propagation. throw 없음.
  *

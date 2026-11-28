@@ -7,7 +7,7 @@ import type { Point, PointWritable } from '../types/flat-shapes.internal';
  * `out === point` aliasing은 안전하다. point의 x/y를 모두 읽은 뒤 기록하므로
  * 중간 상태 오염이 발생하지 않는다.
  *
- * gridSize의 x 또는 y가 양수가 아니면(0, 음수, NaN 등) 해당 축에 NaN을 기록한다.
+ * gridSize의 x 또는 y가 양의 유한수가 아니면(0, 음수, NaN, Infinity) 해당 축에 NaN을 기록한다.
  * throw하지 않는다 (editor hot path에서 호출되므로 silent NaN 정책).
  *
  * @param out 결과 좌표를 기록할 출력 { x, y }
