@@ -16,7 +16,7 @@ import type {
   Polyline,
   PolylineWritable,
   Pose2,
-} from '../../../src/types/flat-shapes.internal';
+} from '../../../src/index';
 
 test('좌표와 도형 입력은 읽기 전용 필드를 사용한다', () => {
   expectTypeOf<Point>().toEqualTypeOf<{ readonly x: number; readonly y: number }>();

@@ -13,9 +13,8 @@ import { centroidInto } from '../../../src/polygon/centroid-into';
 import { isClockwise } from '../../../src/polygon/is-clockwise';
 import { isCounterClockwise } from '../../../src/polygon/is-counter-clockwise';
 import { signedArea } from '../../../src/polygon/signed-area';
-import { readPolygonPoints } from '../../../src/internal/polygon';
-import { readX, readY, writeXY } from '../../../src/internal/xy';
-import type { PolygonLike, XYInput, XYWritable } from '../../../src/types';
+import { readPolygonPoints, readX, readY, writeXY } from '../_helpers/v1-geometry-reference';
+import type { PolygonLike, XYInput, XYWritable } from '../_helpers/v1-geometry-reference';
 
 // 이전 구현. 공유 readX/readY와 `(i + 1) % n` 순회를 그대로 쓴다. 새 구현의 비교 기준으로만 쓴다.
 

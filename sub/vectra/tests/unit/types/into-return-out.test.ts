@@ -40,7 +40,7 @@ import { segmentCurveIntersectionsInto } from '../../../src/intersects/segment-c
 import { segmentQuadraticIntersectionsInto } from '../../../src/intersects/segment-quadratic-intersections-into';
 import { cornersInto as rectCornersInto } from '../../../src/rect/corners-into';
 import { perimeterPointsInto } from '../../../src/rect/perimeter-points-into';
-import type { CurveIntersectionHit, IntersectionHit, XYObjectWritable, XYTupleWritable } from '../../../src/types';
+import type { CurveIntersectionHit, IntersectionHit, PointWritable } from '../../../src/types';
 
 // y = 0.5 직선은 이 곡선들을 가로지른다. y = 10 직선은 만나지 않는다.
 const crossing = { ox: 0, oy: 0.5, dx: 1, dy: 0 } as const;
@@ -55,7 +55,7 @@ const loop = { kind: 'cubic', x0: 0, y0: 0, x1: 3, y1: 3, x2: -1, y2: 3, x3: 2, 
 
 type HitCase = [name: string, call: (out: IntersectionHit[]) => IntersectionHit[]];
 type FacadeCase = [name: string, call: (out: CurveIntersectionHit[]) => CurveIntersectionHit[]];
-type PolylineCase = [name: string, call: (out: XYObjectWritable[]) => XYObjectWritable[]];
+type PolylineCase = [name: string, call: (out: PointWritable[]) => PointWritable[]];
 
 const controlPoints = [
   { x: 0, y: 0 },
@@ -262,9 +262,9 @@ describe('spline polyline Into는 out을 반환한다', () => {
   ];
 
   test.each(polylineCases)('%s', (_name, call) => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     const result = call(out);
-    expectTypeOf(result).toEqualTypeOf<XYObjectWritable[]>();
+    expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
     expect(result).toBe(out);
     expect(result.length).toBeGreaterThan(0);
   });
@@ -274,7 +274,7 @@ describe('spline polyline Into는 out을 반환한다', () => {
     ['cardinal', cardinalPolylineInto],
     ['catmullRom', catmullRomPolylineInto],
   ] as const)('%s steps가 1이면 out을 반환한다', (_name, into) => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     expect(into(out, controlPoints, { steps: 1, tension: 0, alpha: 0.5, closed: false })).toBe(out);
     expect(out.length).toBeGreaterThan(0);
   });
@@ -284,7 +284,7 @@ describe('spline polyline Into는 out을 반환한다', () => {
     ['cardinal', cardinalPolylineInto],
     ['catmullRom', catmullRomPolylineInto],
   ] as const)('%s steps가 0이면 비운 out을 반환한다', (_name, into) => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
+    const out: PointWritable[] = [{ x: 9, y: 9 }];
     const result = into(out, controlPoints, { steps: 0, tension: 0, alpha: 0.5, closed: false });
     expect(result).toBe(out);
     expect(result).toHaveLength(0);
@@ -295,7 +295,7 @@ describe('spline polyline Into는 out을 반환한다', () => {
     ['cardinal', cardinalPolylineInto],
     ['catmullRom', catmullRomPolylineInto],
   ] as const)('%s control point가 부족하면 비운 out을 반환한다', (_name, into) => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
+    const out: PointWritable[] = [{ x: 9, y: 9 }];
     const result = into(out, [{ x: 0, y: 0 }], { steps: 4, tension: 0, alpha: 0.5, closed: false });
     expect(result).toBe(out);
     expect(result).toHaveLength(0);
@@ -312,11 +312,11 @@ describe('adapter·shape 배열 Into는 out을 반환한다', () => {
   const matrix = { a: 2, b: 0, c: 0, d: 2, tx: 1, ty: 1 };
 
   test('decodeFlatCoordsInto, fromFloat32ArrayInto는 point 배열을 반환한다', () => {
-    const decoded: XYObjectWritable[] = [];
+    const decoded: PointWritable[] = [];
     expect(decodeFlatCoordsInto(decoded, [0, 0, 1, 2])).toBe(decoded);
     expect(decoded).toHaveLength(2);
 
-    const fromFloat: XYObjectWritable[] = [];
+    const fromFloat: PointWritable[] = [];
     expect(fromFloat32ArrayInto(fromFloat, new Float32Array([0, 0, 1, 2]))).toBe(fromFloat);
     expect(fromFloat).toHaveLength(2);
   });
@@ -345,22 +345,22 @@ describe('adapter·shape 배열 Into는 out을 반환한다', () => {
     expect(fromRect).toHaveLength(4);
   });
 
-  test('perimeterPointsInto는 XYObjectWritable[]을 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+  test('perimeterPointsInto는 PointWritable[]을 반환한다', () => {
+    const out: PointWritable[] = [];
     const result = perimeterPointsInto(out, rect, { count: 4 });
-    expectTypeOf(result).toEqualTypeOf<XYObjectWritable[]>();
+    expectTypeOf(result).toEqualTypeOf<PointWritable[]>();
     expect(result).toBe(out);
     expect(result).toHaveLength(4);
   });
 
   test('perimeterPointsInto는 empty rect에서도 out을 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     expect(perimeterPointsInto(out, { x: 0, y: 0, width: 0, height: 2 }, { count: 4 })).toBe(out);
     expect(out).toHaveLength(0);
   });
 
   test('perimeterPointsInto는 tuple 배열을 받지 않는다', () => {
-    const tuples: XYTupleWritable[] = [];
+    const tuples: [number, number][] = [];
     // @ts-expect-error 항상 object를 push하므로 tuple 배열은 거짓이 된다
     perimeterPointsInto(tuples, rect, { count: 4 });
     expect(tuples.every((p) => !Array.isArray(p))).toBe(true);

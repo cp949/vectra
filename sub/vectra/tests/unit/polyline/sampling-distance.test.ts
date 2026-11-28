@@ -77,7 +77,7 @@ describe('polyline allocating companions', () => {
     expect(segmentAt(L_SHAPE, Infinity)).toBeUndefined();
   });
 
-  test('pointAtIndex는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
+  test('pointAtIndex는 성공 시 새 PointWritable을 반환하고 실패 시 undefined를 반환한다', () => {
     expect(pointAtIndex(L_SHAPE, 2)).toEqual({ x: 4, y: 3 });
     expect(pointAtIndex(EMPTY, 0)).toBeUndefined();
   });
@@ -88,21 +88,21 @@ describe('polyline allocating companions', () => {
     expect(pointAtIndex(L_SHAPE, Infinity)).toBeUndefined();
   });
 
-  test('pointAtLengthRatio은 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
+  test('pointAtLengthRatio은 성공 시 새 PointWritable을 반환하고 실패 시 undefined를 반환한다', () => {
     const result = pointAtLengthRatio(TWO_PT, 0.5);
     expect(result?.x).toBeCloseTo(1.5, 10);
     expect(result?.y).toBeCloseTo(2, 10);
     expect(pointAtLengthRatio(EMPTY, 0.5)).toBeUndefined();
   });
 
-  test('pointAtLength는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
+  test('pointAtLength는 성공 시 새 PointWritable을 반환하고 실패 시 undefined를 반환한다', () => {
     const result = pointAtLength(TWO_PT, 2.5);
     expect(result?.x).toBeCloseTo(1.5, 10);
     expect(result?.y).toBeCloseTo(2, 10);
     expect(pointAtLength(EMPTY, 0)).toBeUndefined();
   });
 
-  test('closestPoint는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
+  test('closestPoint는 성공 시 새 PointWritable을 반환하고 실패 시 undefined를 반환한다', () => {
     const result = closestPoint(TWO_PT, { x: 0, y: 4 });
     expect(result?.x).toBeCloseTo(1.92, 10);
     expect(result?.y).toBeCloseTo(2.56, 10);

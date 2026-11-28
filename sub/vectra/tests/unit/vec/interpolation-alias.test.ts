@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import { lerpInto } from '../../../src/vec/lerp-into';
 import { midpointInto } from '../../../src/vec/midpoint-into';
 import { moveToward } from '../../../src/vec/move-toward';
@@ -15,7 +15,7 @@ import { moveTowardInto } from '../../../src/vec/move-toward-into';
 
 describe('vec interpolation alias - lerpInto', () => {
   test('a와 b 사이를 t로 보간한 벡터를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const result = lerpInto(out, { x: 0, y: 0 }, { x: 4, y: 6 }, 0.5);
     expect(result).toBe(out);
     expect(out).toEqual({ x: 2, y: 3 });
@@ -28,7 +28,7 @@ describe('vec interpolation alias - lerpInto', () => {
   });
 
   test('t를 clamp하지 않고 extrapolation을 허용한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     lerpInto(out, { x: 0, y: 0 }, { x: 4, y: 6 }, 2);
     expect(out).toEqual({ x: 8, y: 12 });
   });
@@ -41,7 +41,7 @@ describe('vec interpolation alias - lerpInto', () => {
 
 describe('vec interpolation alias - midpointInto', () => {
   test('a와 b의 중점을 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const result = midpointInto(out, { x: 0, y: 0 }, { x: 4, y: 6 });
     expect(result).toBe(out);
     expect(out).toEqual({ x: 2, y: 3 });
@@ -54,7 +54,7 @@ describe('vec interpolation alias - midpointInto', () => {
 
 describe('vec interpolation alias - moveTowardInto', () => {
   test('current를 target 방향으로 maxDistance만큼 이동한 결과를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     // distance = 5 (3-4-5 삼각형), maxDistance = 10 → target 도달
     const result = moveTowardInto(out, { x: 0, y: 0 }, { x: 3, y: 4 }, 10);
     expect(result).toBe(out);
@@ -62,7 +62,7 @@ describe('vec interpolation alias - moveTowardInto', () => {
   });
 
   test('maxDistance만큼만 이동한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     moveTowardInto(out, { x: 0, y: 0 }, { x: 10, y: 0 }, 5);
     expect(out.x).toBeCloseTo(5, 10);
     expect(out.y).toBeCloseTo(0, 10);

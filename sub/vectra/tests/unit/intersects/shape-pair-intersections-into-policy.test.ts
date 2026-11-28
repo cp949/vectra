@@ -6,16 +6,16 @@ import { describe, expect, test } from 'vitest';
 import { circleRectIntersectionsInto } from '../../../src/intersects/circle-rect-intersections-into';
 import { segmentCircleIntersectionsInto } from '../../../src/intersects/segment-circle-intersections-into';
 import { triangleTriangleIntersectionsInto } from '../../../src/intersects/triangle-triangle-intersections-into';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
-function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9): void {
+function expectPointClose(p: PointWritable, x: number, y: number, digits = 9): void {
   expect(p.x).toBeCloseTo(x, digits);
   expect(p.y).toBeCloseTo(y, digits);
 }
 
 describe('Into out array clear/reference 보존 (S10-RM-007)', () => {
   test('circleRectIntersectionsInto는 stale 항목을 비우고 같은 reference를 반환한다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 99, y: 99 },
       { x: 88, y: 88 },
       { x: 77, y: 77 },
@@ -37,7 +37,7 @@ describe('Into out array clear/reference 보존 (S10-RM-007)', () => {
   });
 
   test('triangleTriangleIntersectionsInto는 빈 결과에서도 out array를 clear한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     const result = triangleTriangleIntersectionsInto(
       out,
       { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 },
@@ -48,7 +48,7 @@ describe('Into out array clear/reference 보존 (S10-RM-007)', () => {
   });
 
   test('segmentCircleIntersectionsInto는 매 호출 새 point object를 push한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     const seg = { x1: -10, y1: 0, x2: 10, y2: 0 };
     const circle = { cx: 0, cy: 0, r: 5 };
     const first = segmentCircleIntersectionsInto(out, seg, circle)[0];

@@ -1,5 +1,4 @@
 import type { PointWritable } from './flat-shapes.internal';
-import type { XYInput } from './xy.internal';
 
 /** curve 교차 종류. cross=관통, touch=접촉, overlap=구간 중첩, parallel=평행, coincident=완전 일치. */
 export type IntersectionKind = 'cross' | 'touch' | 'overlap' | 'parallel' | 'coincident';
@@ -18,16 +17,6 @@ export interface IntersectionHit {
   /** curve B 위 parameter (0–1) */
   tB: number;
 }
-
-/**
- * generic curve relation facade의 public Bezier curve input union.
- *
- * `kind` discriminant로 quadratic/cubic을 구분한다. 좌표 field는 모두 `XYInput`이다.
- * arc/path union은 포함하지 않는다.
- */
-export type CurveLike =
-  | { kind: 'quadratic'; p0: XYInput; p1: XYInput; p2: XYInput }
-  | { kind: 'cubic'; p0: XYInput; p1: XYInput; p2: XYInput; p3: XYInput };
 
 /** generic curve relation facade 교차 종류. `cross`=관통, `touch`=접촉, `overlap`=구간 중첩의 양 끝점. */
 export type CurveIntersectionKind = 'cross' | 'touch' | 'overlap';

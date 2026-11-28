@@ -14,7 +14,7 @@ import { quadraticFlattenInto } from '../../../src/curve/quadratic-flatten-into'
 import type { DrawSegment } from '../../../src/path/path-segments.internal';
 import { forEachDrawSegment } from '../../../src/path/path-segments.internal';
 import { createSegmentFlattener } from '../../../src/path/segment-flattener.internal';
-import type { CenterArcWritable, PathCommand, XYObjectWritable } from '../../../src/types/index';
+import type { CenterArcWritable, PathCommand, PointWritable } from '../../../src/types/index';
 
 /**
  * commands를 순회해 drawing segment를 순서대로 모은다.
@@ -37,7 +37,7 @@ function firstSegment(commands: readonly PathCommand[]): DrawSegment {
 }
 
 /** 반환 배열을 값 비교용 plain 배열로 복사한다. 재사용 buffer가 덮어써져도 이 사본은 유지된다. */
-function snapshotOf(points: readonly XYObjectWritable[]): Array<{ x: number; y: number }> {
+function snapshotOf(points: readonly PointWritable[]): Array<{ x: number; y: number }> {
   return points.map((p) => ({ x: p.x, y: p.y }));
 }
 
@@ -53,7 +53,7 @@ describe('createSegmentFlattener 옵션 기본값', () => {
 
   /** 기대값을 만든다. curve 함수에 옵션을 명시해서 직접 호출한 결과다. */
   function expectedCubic(flatness: number, maxRecursion: number): Array<{ x: number; y: number }> {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     cubicFlattenInto(
       out,
       {
@@ -157,7 +157,7 @@ describe('createSegmentFlattener segment 분기', () => {
       { kind: 'move', x: 0, y: 0 },
       { kind: 'quadratic', x1: 50, y1: 100, x: 100, y: 0 },
     ]);
-    const expected: XYObjectWritable[] = [];
+    const expected: PointWritable[] = [];
     quadraticFlattenInto(
       expected,
       { kind: 'quadratic', x0: 0, y0: 0, x1: 50, y1: 100, x2: 100, y2: 0 },
@@ -172,7 +172,7 @@ describe('createSegmentFlattener segment 분기', () => {
 
   test('cubic은 cubicFlattenInto와 같은 polyline을 낸다', () => {
     const seg = firstSegment(CUBIC_PATH);
-    const expected: XYObjectWritable[] = [];
+    const expected: PointWritable[] = [];
     cubicFlattenInto(
       expected,
       { kind: 'cubic', x0: 0, y0: 0, x1: 30, y1: 120, x2: 70, y2: -80, x3: 100, y3: 20 },
@@ -208,7 +208,7 @@ describe('createSegmentFlattener segment 분기', () => {
       sweep: false,
     };
     endpointArcToCenterInto(expectedCenter, { x: 0, y: 0 }, arcCommand);
-    const expected: XYObjectWritable[] = [];
+    const expected: PointWritable[] = [];
     arcFlattenInto(expected, expectedCenter, { flatness: 0.5, maxRecursion: 32 });
 
     const result = createSegmentFlattener().flatten(seg);

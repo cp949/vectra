@@ -12,9 +12,9 @@ import { rayRectIntersections } from '../../../src/intersects/ray-rect-intersect
 import { segmentBoundsIntersections } from '../../../src/intersects/segment-bounds-intersections';
 import { segmentCircleIntersections } from '../../../src/intersects/segment-circle-intersections';
 import { segmentRectIntersections } from '../../../src/intersects/segment-rect-intersections';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
-function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9): void {
+function expectPointClose(p: PointWritable, x: number, y: number, digits = 9): void {
   expect(p.x).toBeCloseTo(x, digits);
   expect(p.y).toBeCloseTo(y, digits);
 }

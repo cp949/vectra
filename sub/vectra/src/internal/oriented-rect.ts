@@ -1,24 +1,3 @@
-import type { OrientedRectLike, OrientedRectTuple, XYInput } from '../types';
-
-function isOrientedRectTuple(rect: OrientedRectLike): rect is OrientedRectTuple {
-  return Array.isArray(rect);
-}
-
-/** oriented-rect input에서 center 좌표를 읽는다. */
-export function readOrientedRectCenter(rect: OrientedRectLike): XYInput {
-  return isOrientedRectTuple(rect) ? rect[0] : rect.center;
-}
-
-/** oriented-rect input에서 size pair를 읽는다. `x`는 width, `y`는 height다. */
-export function readOrientedRectSize(rect: OrientedRectLike): XYInput {
-  return isOrientedRectTuple(rect) ? rect[1] : rect.size;
-}
-
-/** oriented-rect input에서 angle을 읽는다. 단위는 radian. */
-export function readOrientedRectAngle(rect: OrientedRectLike): number {
-  return isOrientedRectTuple(rect) ? rect[2] : rect.angle;
-}
-
 /**
  * oriented-rect의 size 두 성분과 angle이 finite인지 검증한다.
  *

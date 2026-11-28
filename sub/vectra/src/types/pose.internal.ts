@@ -1,29 +1,3 @@
-import type { XYInput, XYObjectWritable, XYWritable } from './xy.internal';
-
-/** position + angle로 표현하는 structural 2D rigid pose object input. */
-export interface Pose2ObjectLike {
-  /** pose의 translation 위치 */
-  readonly position: XYInput;
-
-  /** local frame 회전각. 단위는 radian. */
-  readonly angle: number;
-}
-
-/** tuple 형태의 structural 2D rigid pose input. */
-export type Pose2Tuple = readonly [position: XYInput, angle: number];
-
-/** position/angle object 또는 tuple로 표현하는 structural 2D rigid pose input. */
-export type Pose2Like = Pose2ObjectLike | Pose2Tuple;
-
-/** position/angle에 결과를 기록할 수 있는 structural 2D rigid pose output. */
-export interface Pose2Writable<Position extends XYWritable = XYObjectWritable> {
-  /** 기록 가능한 translation 위치 storage */
-  position: Position;
-
-  /** 기록 가능한 local frame 회전각. 단위는 radian. */
-  angle: number;
-}
-
 /** `matrixToPose*`의 rigid 판정 옵션. 옵션을 생략하면 `epsilon`은 `1e-9`다. */
 export interface MatrixToPoseOptions {
   /**

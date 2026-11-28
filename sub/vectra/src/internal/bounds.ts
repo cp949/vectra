@@ -1,19 +1,4 @@
-import type { BoundsLike, BoundsTuple, XYInput } from '../types';
-import type { BoundsWritable as FlatBoundsWritable } from '../types/flat-shapes.internal';
-
-function isBoundsTuple(bounds: BoundsLike): bounds is BoundsTuple {
-  return Array.isArray(bounds);
-}
-
-/** bounds input에서 최솟값 corner를 읽는다. */
-export function readBoundsMin(bounds: BoundsLike): XYInput {
-  return isBoundsTuple(bounds) ? bounds[0] : bounds.min;
-}
-
-/** bounds input에서 최댓값 corner를 읽는다. */
-export function readBoundsMax(bounds: BoundsLike): XYInput {
-  return isBoundsTuple(bounds) ? bounds[1] : bounds.max;
-}
+import type { BoundsWritable } from '../types/flat-shapes.internal';
 
 /**
  * point (px, py)가 axis-aligned bounds 안에 있는지 판정한다.
@@ -39,6 +24,6 @@ export function boundsContainsPointXY(
 }
 
 /** 네 경계 좌표가 0인 평평한 경계 상자를 만든다. */
-export function createZeroBounds(): FlatBoundsWritable {
+export function createZeroBounds(): BoundsWritable {
   return { minX: 0, minY: 0, maxX: 0, maxY: 0 };
 }

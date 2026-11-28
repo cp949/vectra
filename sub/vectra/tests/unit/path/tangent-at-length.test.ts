@@ -7,7 +7,7 @@ import { length } from '../../../src/path/length';
 import { pointAtLengthRatio } from '../../../src/path/point-at-length-ratio';
 import { tangentAtLength } from '../../../src/path/tangent-at-length';
 import { tangentAtLengthInto } from '../../../src/path/tangent-at-length-into';
-import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
+import type { PathCommand, PointWritable } from '../../../src/types/index';
 
 /**
  * (0,0) → (100, 0) 단일 수평 직선 path.
@@ -144,14 +144,14 @@ describe('tangentAtLength / Into', () => {
 
   test('tangentAtLengthInto: 성공 시 true 반환', () => {
     const cmds = makeHorizontalLine();
-    const out: XYObjectWritable = { x: -1, y: -1 };
+    const out: PointWritable = { x: -1, y: -1 };
     expect(tangentAtLengthInto(out, cmds, 50)).toBe(true);
     expect(out.x).toBeCloseTo(1, 10);
     expect(out.y).toBeCloseTo(0, 10);
   });
 
   test('tangentAtLengthInto: empty → false 반환, out 미수정', () => {
-    const out: XYObjectWritable = { x: 7, y: 8 };
+    const out: PointWritable = { x: 7, y: 8 };
     expect(tangentAtLengthInto(out, [], 0)).toBe(false);
     expect(out).toEqual({ x: 7, y: 8 });
   });
@@ -161,7 +161,7 @@ describe('tangentAtLength / Into', () => {
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 0, y: 0 },
     ];
-    const out: XYObjectWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     expect(tangentAtLengthInto(out, cmds, 0)).toBe(true);
     expect(out).toEqual({ x: 0, y: 0 });
   });

@@ -1,25 +1,5 @@
-import type { CapsuleLike, CapsuleTuple, XYInput } from '../types';
 import { segmentClosestPointXY } from './segment';
 import { hypot2 } from './numeric';
-
-function isCapsuleTuple(capsule: CapsuleLike): capsule is CapsuleTuple {
-  return Array.isArray(capsule);
-}
-
-/** capsule input에서 axis 시작 endpoint를 읽는다. */
-export function readCapsuleA(capsule: CapsuleLike): XYInput {
-  return isCapsuleTuple(capsule) ? capsule[0] : capsule.a;
-}
-
-/** capsule input에서 axis 끝 endpoint를 읽는다. */
-export function readCapsuleB(capsule: CapsuleLike): XYInput {
-  return isCapsuleTuple(capsule) ? capsule[1] : capsule.b;
-}
-
-/** capsule input에서 radius를 읽는다. */
-export function readCapsuleRadius(capsule: CapsuleLike): number {
-  return isCapsuleTuple(capsule) ? capsule[2] : capsule.radius;
-}
 
 /**
  * capsule radius가 finite non-negative인지 검증하고 그대로 반환한다.

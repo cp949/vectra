@@ -15,7 +15,6 @@ import { rayCircleIntersections } from '../../../src/intersects/ray-circle-inter
 import { rayCircleIntersectionsInto } from '../../../src/intersects/ray-circle-intersections-into';
 import { singleIntersectionSegmentRay } from '../../../src/intersects/single-intersection-segment-ray';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
-import { readCircleCenter, readCircleRadius } from '../../../src/internal/circle';
 import {
   lineFamilyIntersectionPoint,
   rayToLineFamilyParam,
@@ -23,15 +22,23 @@ import {
 } from '../../../src/internal/line-family';
 import { lineFamilyEllipseIntersectionPoints } from '../../../src/internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
-import { readRayDirection, readRayOrigin } from '../../../src/internal/ray';
-import { readSegmentA, readSegmentB } from '../../../src/internal/segment';
-import { readX, readY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
-import type { CircleLike, RayLike, SegmentLike, XYInput, XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
+import {
+  readCircleCenter,
+  readCircleRadius,
+  readRayDirection,
+  readRayOrigin,
+  readSegmentA,
+  readSegmentB,
+  readX,
+  readY,
+} from '../_helpers/v1-geometry-reference';
+import type { CircleLike, RayLike, SegmentLike, XYInput } from '../_helpers/v1-geometry-reference';
 
 // 이전 구현. 공유 reader와 `LineFamilyParam` record, `solveLineFamilyEllipse` buffer를 그대로 쓴다.
 
-function referenceSegmentRayInto(out: XYObjectWritable, line: SegmentLike, ray: RayLike, epsilon?: number): boolean {
+function referenceSegmentRayInto(out: PointWritable, line: SegmentLike, ray: RayLike, epsilon?: number): boolean {
   const a = readSegmentA(line);
   const b = readSegmentB(line);
   const origin = readRayOrigin(ray);
@@ -42,11 +49,11 @@ function referenceSegmentRayInto(out: XYObjectWritable, line: SegmentLike, ray: 
 }
 
 function referenceRayCircleInto(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   ray: RayLike,
   circle: CircleLike,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
+): PointWritable[] {
   const origin = readRayOrigin(ray);
   const direction = readRayDirection(ray);
   const center = readCircleCenter(circle);
@@ -259,9 +266,9 @@ describe('ray 점 반환 함수 — 이전 구현과 비트 단위 동일성', (
       const circle = circleSpec(rng, bias);
       const epsilon = rng() < 0.5 ? undefined : pick(rng, EPSILONS);
       const eps = epsilon === undefined ? DEFAULT_EPSILON : epsilon;
-      const stale: XYObjectWritable[] = [{ x: 5, y: 5 }];
+      const stale: PointWritable[] = [{ x: 5, y: 5 }];
       const expected = referenceRayCircleInto(stale.slice(), makeRay(ray), makeCircle(circle), epsilon);
-      const staleActual: XYObjectWritable[] = [{ x: 5, y: 5 }];
+      const staleActual: PointWritable[] = [{ x: 5, y: 5 }];
       const flatCircle = { cx: circle.center.x, cy: circle.center.y, r: circle.radius };
       const actual = rayCircleIntersectionsInto(staleActual, flatRay(ray), flatCircle, epsilon);
       const companion = rayCircleIntersections(flatRay(ray), flatCircle, eps);
@@ -281,7 +288,7 @@ describe('ray 점 반환 함수 — 이전 구현과 비트 단위 동일성', (
   });
 
   test('교점마다 새 object를 만들고 호출 전 내용은 비운다', () => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
+    const out: PointWritable[] = [{ x: 9, y: 9 }];
     const ray = { ox: -5, oy: 0, dx: 1, dy: 0 };
     const circle = { cx: 0, cy: 0, r: 2 };
     const first = rayCircleIntersectionsInto(out, ray, circle);

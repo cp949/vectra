@@ -6,7 +6,7 @@
 import { describe, expect, test } from 'vitest';
 import { flattenInto } from '../../../src/path/flatten-into';
 import type { PointWritable } from '../../../src/types/flat-shapes.internal';
-import type { PathCommand, PathFlattenOptions, XYTupleWritable } from '../../../src/types/index';
+import type { PathCommand, PathFlattenOptions } from '../../../src/types/index';
 
 // ──────────────────────────────────────────────
 // 공통 helper
@@ -23,7 +23,7 @@ function pt(x: number, y: number): PointWritable {
 }
 
 const assertFlattenIntoRejectsTupleOutput = (): void => {
-  const tupleOut: XYTupleWritable[] = [];
+  const tupleOut: [number, number][] = [];
   // @ts-expect-error flattenInto는 새 object point를 push하므로 tuple point 배열 output을 허용하지 않는다.
   flattenInto(tupleOut, [{ kind: 'line', x: 1, y: 2 }]);
 };

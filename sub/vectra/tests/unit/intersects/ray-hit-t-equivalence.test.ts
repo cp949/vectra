@@ -17,7 +17,6 @@
  * 도형 입력이 퇴화하는 경계 조건은 ray-hit-t.test.ts가 고정한다. 여기서는 일반 위치만 본다.
  */
 import { describe, expect, test } from 'vitest';
-import { readX, readY } from '../../../src/internal/xy';
 import { closestRayPolygonIntersectionInto } from '../../../src/intersects/closest-ray-polygon-intersection-into';
 import { rayBoundsHitT } from '../../../src/intersects/ray-bounds-hit-t';
 import { rayBoundsIntersectionsInto } from '../../../src/intersects/ray-bounds-intersections-into';
@@ -31,7 +30,9 @@ import { rayRectIntersectionsInto } from '../../../src/intersects/ray-rect-inter
 import { raySegmentHitT } from '../../../src/intersects/ray-segment-hit-t';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
 import { createRng } from '../../../src/random/create-rng';
-import type { LinePolygonIntersectionHit, XYInput, XYObjectWritable } from '../../../src/types';
+import type { LinePolygonIntersectionHit, PointWritable } from '../../../src/types';
+import { readX, readY } from '../_helpers/v1-geometry-reference';
+import type { XYInput } from '../_helpers/v1-geometry-reference';
 
 const CASES = 4000;
 const TOLERANCE = 1e-9;
@@ -66,7 +67,7 @@ function expectEnoughHits(hits: number): void {
  * @param t 확인할 ray parameter
  * @param expected 기존 함수가 기록한 교점
  */
-function expectSamePoint(coords: readonly number[], t: number, expected: XYObjectWritable): void {
+function expectSamePoint(coords: readonly number[], t: number, expected: PointWritable): void {
   const [ox, oy, dx, dy] = coords;
   expect(Math.abs(ox + t * dx - expected.x)).toBeLessThanOrEqual(TOLERANCE);
   expect(Math.abs(oy + t * dy - expected.y)).toBeLessThanOrEqual(TOLERANCE);
@@ -75,7 +76,7 @@ function expectSamePoint(coords: readonly number[], t: number, expected: XYObjec
 describe('rayCircleHitT — rayCircleIntersectionsInto와 같은 교점', () => {
   test('난수 입력 4000개에서 첫 교점과 같고, 교점이 없으면 Infinity다', () => {
     const rng = createRng('ray-circle-hit-t');
-    const points: XYObjectWritable[] = [];
+    const points: PointWritable[] = [];
     let hits = 0;
     let twoPoints = 0;
 
@@ -114,7 +115,7 @@ describe('rayCircleHitT — rayCircleIntersectionsInto와 같은 교점', () => 
 describe('rayEllipseHitT — rayEllipseIntersectionsInto와 같은 교점', () => {
   test('난수 입력 4000개에서 첫 교점과 같고, 교점이 없으면 Infinity다', () => {
     const rng = createRng('ray-ellipse-hit-t');
-    const points: XYObjectWritable[] = [];
+    const points: PointWritable[] = [];
     let hits = 0;
     let twoPoints = 0;
 
@@ -153,7 +154,7 @@ describe('rayEllipseHitT — rayEllipseIntersectionsInto와 같은 교점', () =
 describe('raySegmentHitT — singleIntersectionSegmentRayInto와 같은 교점', () => {
   test('난수 입력 4000개에서 단일 교점과 같고, 교점이 없으면 Infinity다', () => {
     const rng = createRng('ray-segment-hit-t');
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     let hits = 0;
 
     for (let i = 0; i < CASES; i++) {
@@ -215,7 +216,7 @@ describe('rayPolygonHitT — closestRayPolygonIntersectionInto와 같은 교점'
 describe('rayRectHitT — rayRectIntersectionsInto와 같은 교점', () => {
   test('난수 입력 4000개에서 첫 교점과 같고, 교점이 없으면 Infinity다', () => {
     const rng = createRng('ray-rect-hit-t');
-    const points: XYObjectWritable[] = [];
+    const points: PointWritable[] = [];
     let hits = 0;
 
     for (let i = 0; i < CASES; i++) {
@@ -245,7 +246,7 @@ describe('rayRectHitT — rayRectIntersectionsInto와 같은 교점', () => {
 describe('rayBoundsHitT — rayBoundsIntersectionsInto와 같은 교점', () => {
   test('난수 입력 4000개에서 첫 교점과 같고, 교점이 없으면 Infinity다', () => {
     const rng = createRng('ray-bounds-hit-t');
-    const points: XYObjectWritable[] = [];
+    const points: PointWritable[] = [];
     let hits = 0;
 
     for (let i = 0; i < CASES; i++) {

@@ -9,9 +9,9 @@ import { circleTriangleIntersections } from '../../../src/intersects/circle-tria
 import { ellipseCircleIntersections } from '../../../src/intersects/ellipse-circle-intersections';
 import { ellipseTriangleIntersections } from '../../../src/intersects/ellipse-triangle-intersections';
 import { triangleTriangleIntersections } from '../../../src/intersects/triangle-triangle-intersections';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
-function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9): void {
+function expectPointClose(p: PointWritable, x: number, y: number, digits = 9): void {
   expect(p.x).toBeCloseTo(x, digits);
   expect(p.y).toBeCloseTo(y, digits);
 }

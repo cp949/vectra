@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYObjectWritable, XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import { ceil } from '../../../src/vec/ceil';
 import { ceilInto } from '../../../src/vec/ceil-into';
 import { chebyshevDistance } from '../../../src/vec/chebyshev-distance';
@@ -30,7 +30,7 @@ import {
 describe('vec constants - zero and one', () => {
   const cases: ReadonlyArray<{
     name: string;
-    into: (out: XYObjectWritable) => XYObjectWritable;
+    into: (out: PointWritable) => PointWritable;
     companion: ConstantCompanion;
     expected: readonly [number, number];
   }> = [
@@ -98,7 +98,7 @@ describe('vec component-wise - rounding helpers', () => {
     UnaryBehaviorCase & {
       name: string;
       exampleTitle: string;
-      input: XYObjectWritable;
+      input: PointWritable;
       expected: readonly [number, number];
       integerExpected: readonly [number, number];
     }
@@ -151,14 +151,14 @@ describe('vec component-wise - rounding helpers', () => {
       testUnaryBehavior(helper);
 
       test('NaN 입력은 NaN으로 통과된다', () => {
-        const out: XYWritable = { x: 0, y: 0 };
+        const out: PointWritable = { x: 0, y: 0 };
         helper.into(out, { x: NaN, y: NaN });
 
         expectNaNComponents(out);
       });
 
       test('Infinity/-Infinity 입력은 그대로 통과된다', () => {
-        const out: XYWritable = { x: 0, y: 0 };
+        const out: PointWritable = { x: 0, y: 0 };
         helper.into(out, { x: Infinity, y: -Infinity });
 
         expect(out.x).toBe(Infinity);
@@ -172,7 +172,7 @@ describe('vec component-wise - rounding helpers', () => {
   }
 
   test('roundInto는 0.5를 양의 무한대 방향으로 올림한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     roundInto(out, { x: 0.5, y: 1.5 });
 
     expect(out.x).toBe(1);

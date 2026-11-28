@@ -1,29 +1,4 @@
-import type { SegmentWritable as FlatSegmentWritable } from './flat-shapes.internal';
-import type { XYInput, XYObjectWritable, XYWritable } from './xy.internal';
-
-/** tuple 형태의 structural segment input. */
-export type SegmentTuple = readonly [a: XYInput, b: XYInput];
-
-/** 두 endpoint로 표현하는 structural segment object input. */
-export interface SegmentObjectLike {
-  /** segment 시작점 */
-  readonly a: XYInput;
-
-  /** segment 끝점 */
-  readonly b: XYInput;
-}
-
-/** 두 endpoint로 표현하는 structural segment input. */
-export type SegmentLike = SegmentObjectLike | SegmentTuple;
-
-/** 두 writable endpoint에 결과를 기록할 수 있는 structural segment output. */
-export interface SegmentWritable<A extends XYWritable = XYObjectWritable, B extends XYWritable = XYObjectWritable> {
-  /** 기록 가능한 segment 시작점 */
-  a: A;
-
-  /** 기록 가능한 segment 끝점 */
-  b: B;
-}
+import type { SegmentWritable } from './flat-shapes.internal';
 
 /**
  * 단일 segment를 `t` 기준으로 나눈 left/right segment를 기록할 수 있는 multi-output writable.
@@ -32,8 +7,8 @@ export interface SegmentWritable<A extends XYWritable = XYObjectWritable, B exte
  * 두 출력 선분의 구체 타입을 보존한다.
  */
 export interface SegmentSplitWritable<
-  Left extends FlatSegmentWritable = FlatSegmentWritable,
-  Right extends FlatSegmentWritable = FlatSegmentWritable,
+  Left extends SegmentWritable = SegmentWritable,
+  Right extends SegmentWritable = SegmentWritable,
 > {
   /** 분할 결과 앞쪽 선분. 원본 시작점에서 분할점까지다. */
   left: Left;

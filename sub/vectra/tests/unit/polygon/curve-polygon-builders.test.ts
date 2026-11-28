@@ -11,7 +11,7 @@ import { fromCircleApproximation } from '../../../src/polygon/from-circle-approx
 import { fromCircleApproximationInto } from '../../../src/polygon/from-circle-approximation-into';
 import { fromEllipseApproximation } from '../../../src/polygon/from-ellipse-approximation';
 import { fromEllipseApproximationInto } from '../../../src/polygon/from-ellipse-approximation-into';
-import type { XYObjectWritable } from '../../../src/types/index';
+import type { PointWritable } from '../../../src/types/index';
 import { expectClose } from './_polygon-test-helpers';
 
 // ──────────────────────────────────────────────

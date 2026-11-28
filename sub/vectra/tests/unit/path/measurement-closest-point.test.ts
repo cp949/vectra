@@ -6,7 +6,7 @@
 import { describe, expect, test } from 'vitest';
 import { closestPointInto } from '../../../src/path/closest-point-into';
 import { distanceToPoint } from '../../../src/path/distance-to-point';
-import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
+import type { PathCommand, PointWritable } from '../../../src/types/index';
 
 // ──────────────────────────────────────────────
 // closestPointInto
@@ -15,7 +15,7 @@ import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
 describe('closestPointInto', () => {
   test('line-only path에서 segment projection 결과', () => {
     // (0,0)→(100,0) segment에서 point (40, 30)의 closest는 (40, 0)
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 100, y: 0 },
@@ -28,7 +28,7 @@ describe('closestPointInto', () => {
 
   test('point가 endpoint에 가장 가까운 경우', () => {
     // (0,0)→(100,0) segment에서 point (120, 5)의 closest는 segment 끝 (100, 0)
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 100, y: 0 },
@@ -47,7 +47,7 @@ describe('closestPointInto', () => {
     //   close (10,10)→(0,0): t=((6-10)*(-10)+(5-10)*(-10))/(100+100)=0.45
     //     → cx=10+0.45*(-10)=5.5, cy=10+0.45*(-10)=5.5, distSq=0.5
     // close segment의 distSq(0.5)가 가장 작으므로 closest ≈ (5.5, 5.5)
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -66,7 +66,7 @@ describe('closestPointInto', () => {
   test('다중 subpath에서 올바른 closest point 탐지', () => {
     // subpath1: (0,0)→(10,0), subpath2: (100,0)→(110,0)
     // point (5, 1): subpath1의 (5,0)에 가깝다
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -82,7 +82,7 @@ describe('closestPointInto', () => {
   test('quadratic/cubic path에서 flatten 후 closest point 근사 검증', () => {
     // quadratic path: (0,0)→ ctrl(cx=50, cy=100) →(100,0) (좌우 대칭 curve)
     // point (50, 200): curve 위쪽 바깥 — closest는 곡선 상단(t=0.5, 대칭) 근방이어야 한다
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'quadratic', x1: 50, y1: 100, x: 100, y: 0 },
@@ -103,7 +103,7 @@ describe('closestPointInto', () => {
   test('arc path에서 flatten 후 closest point 근사 검증', () => {
     // arc: (0,0)→(100,0), rx=ry=50
     // sweep=true인 아래쪽 반원에서 point (50, -60)의 closest는 최저점 (50, -50) 근방
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'arc', rx: 50, ry: 50, xRotation: 0, largeArc: false, sweep: true, x: 100, y: 0 },
@@ -118,7 +118,7 @@ describe('closestPointInto', () => {
   });
 
   test('empty path → false, out 미수정', () => {
-    const out: XYObjectWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     const result = closestPointInto(out, [], { x: 0, y: 0 });
     expect(result).toBe(false);
     expect(out.x).toBe(99);
@@ -126,7 +126,7 @@ describe('closestPointInto', () => {
   });
 
   test('invalid numeric path → throw 없이 NaN closest point 전파', () => {
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: Number.NaN, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -137,7 +137,7 @@ describe('closestPointInto', () => {
   });
 
   test('move-only path → 첫 번째 move 위치 기록, true', () => {
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [{ kind: 'move', x: 7, y: 13 }];
     const result = closestPointInto(out, cmds, { x: 0, y: 0 });
     expect(result).toBe(true);
@@ -148,7 +148,7 @@ describe('closestPointInto', () => {
   test('move-only path이며 첫 command가 move가 아닌 implicit origin 케이스', () => {
     // move가 없는 path (예: close만) → implicit origin (0,0) 기록
     // 실제로는 CloseCommand만 있을 경우 첫 command가 move가 아니므로 (0,0)을 기록한다
-    const out: XYObjectWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     const cmds: PathCommand[] = [{ kind: 'close' }];
     const result = closestPointInto(out, cmds, { x: 5, y: 5 });
     expect(result).toBe(true);
@@ -162,7 +162,7 @@ describe('closestPointInto', () => {
     //   seg1 (0,0)→(10,0): closest = (10,0), distSq = 25
     //   seg2 (10,0)→(20,0): closest = (10,0), distSq = 25
     // 동거리이므로 앞쪽 seg1의 결과 (10,0)이 남아야 한다 (strict < → 뒤쪽 seg2는 갱신 안 됨)
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -181,7 +181,7 @@ describe('closestPointInto', () => {
     //   subpath1 segment (0,0)→(10,0): closest = (10,0), distSq = 25
     //   subpath2 segment (20,0)→(30,0): closest = (20,0), distSq = 25 (동거리)
     // 동거리 시 앞쪽 segment 우선 → subpath1의 (10,0)이 선택된다
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'line', x: 10, y: 0 },
@@ -211,7 +211,7 @@ describe('closestPointInto', () => {
     expect(dist).toBeCloseTo(20, 10);
 
     // closest point는 subpath1 끝점 (10,0) 또는 subpath2 시작점 (50,0)이어야 한다
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     closestPointInto(out, cmds, { x: 30, y: 0 });
     // (10,0)과 (50,0)이 동거리이므로 앞쪽 subpath1의 (10,0)이 선택된다
     expect(out.x).toBeCloseTo(10, 10);
@@ -222,7 +222,7 @@ describe('closestPointInto', () => {
     // cubic path: (0,0)→ ctrl1(0,100) ctrl2(100,100) →(100,0)
     // query point (50, 200): path 위쪽 바깥
     // closest는 curve 어딘가에 있어야 하며 x∈[0,100], y > 0이어야 한다
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const cmds: PathCommand[] = [
       { kind: 'move', x: 0, y: 0 },
       { kind: 'cubic', x1: 0, y1: 100, x2: 100, y2: 100, x: 100, y: 0 },
@@ -250,10 +250,10 @@ describe('closestPointInto', () => {
     const qy = 60;
     const queryPt = { x: qx, y: qy };
 
-    const outCoarse: XYObjectWritable = { x: 0, y: 0 };
+    const outCoarse: PointWritable = { x: 0, y: 0 };
     closestPointInto(outCoarse, cmds, queryPt, { flatness: 20, maxRecursion: 32 });
 
-    const outFine: XYObjectWritable = { x: 0, y: 0 };
+    const outFine: PointWritable = { x: 0, y: 0 };
     closestPointInto(outFine, cmds, queryPt, { flatness: 0.1, maxRecursion: 32 });
 
     // 두 결과 모두 유효한 수여야 한다

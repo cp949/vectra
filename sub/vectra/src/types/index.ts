@@ -4,14 +4,11 @@ export type {
   CenterArcWritable,
   EndpointArcCorrectionWritable,
 } from './arc.internal';
-export type { BoundsLike, BoundsObjectLike, BoundsTuple, BoundsWritable } from './bounds.internal';
-export type { CapsuleLike, CapsuleObjectLike, CapsuleTuple, CapsuleWritable } from './capsule.internal';
-export type { CircleLike, CircleObjectLike, CircleTuple, CircleWritable } from './circle.internal';
 export type {
   ArcToCubicOptions,
-  BezierDegreeReductionOptions,
   BSplineOptions,
   BSplinePolylineOptions,
+  BezierDegreeReductionOptions,
   CardinalOptions,
   CardinalPolylineOptions,
   CardinalTangentOptions,
@@ -20,7 +17,6 @@ export type {
   ClosestPointOptions,
   ControlPointsOptions,
   CubicCurveType,
-  CubicCurveWritable,
   CubicThroughOptions,
   CubicToArcsOptions,
   CurveControlPoints,
@@ -30,7 +26,6 @@ export type {
   CurveIntersectionHit,
   CurveIntersectionKind,
   CurveIntersectionOptions,
-  CurveLike,
   CurveLocationResult,
   CurveLookupEntry,
   CurveSampleOptions,
@@ -41,44 +36,13 @@ export type {
   LengthOptions,
   MonotonePolylineOptions,
   NaturalSplinePolylineOptions,
-  QuadraticCurveWritable,
   QuadraticThroughOptions,
   SampleTableOptions,
   StepCurveMode,
   StepCurveOptions,
   TAtLengthOptions,
 } from './curve.internal';
-export type {
-  EllipseLike,
-  EllipseObjectLike,
-  EllipseTuple,
-  EllipseWritable,
-  RotatedEllipseLike,
-  RotatedEllipseObjectLike,
-  RotatedEllipseTuple,
-  RotatedEllipseWritable,
-} from './ellipse.internal';
-export type { GridCellLike, GridCellObjectLike, GridCellTuple, GridCellWritable, GridSpecLike } from './grid.internal';
-export type {
-  HexAxialLike,
-  HexAxialTuple,
-  HexAxialWritable,
-  HexCubeLike,
-  HexCubeTuple,
-  HexCubeWritable,
-  HexLayoutLike,
-  HexOffsetLayout,
-  HexOffsetLike,
-  HexOffsetTuple,
-  HexOffsetWritable,
-  HexOrientation,
-} from './hex-grid.internal';
-export type {
-  InfiniteLineLike,
-  InfiniteLineObjectLike,
-  InfiniteLineTuple,
-  InfiniteLineWritable,
-} from './infinite-line.internal';
+export type { HexOffsetLayout, HexOrientation } from './hex-grid.internal';
 export type {
   AreaOverlapDetail,
   BoundsSweepDetail,
@@ -95,20 +59,7 @@ export type {
   VisibilityOptions,
   VisibilityRayHit,
 } from './intersection.internal';
-export type {
-  MatrixDecompositionWritable,
-  MatrixLike,
-  MatrixObjectLike,
-  MatrixTuple,
-  MatrixWritable,
-  OrientedBoundsWritable,
-} from './matrix.internal';
-export type {
-  OrientedRectLike,
-  OrientedRectObjectLike,
-  OrientedRectTuple,
-  OrientedRectWritable,
-} from './oriented-rect.internal';
+export type { MatrixDecompositionWritable, OrientedBoundsWritable } from './matrix.internal';
 export type {
   ArcCommand,
   ClassifyPointOptions,
@@ -126,51 +77,21 @@ export type {
   PointAtLengthOptions,
   QuadraticCommand,
 } from './path.internal';
-export type {
-  PointContainment,
-  PolygonLike,
-  PolygonObjectLike,
-  PolygonWritable,
-  RegularPolygonOptions,
-  StarOptions,
-} from './polygon.internal';
+export type { PointContainment, RegularPolygonOptions, StarOptions } from './polygon.internal';
 export type {
   PolylineConcatOptions,
   PolylineFrameWritable,
-  PolylineLike,
   PolylineMonotonicAxis,
   PolylineMonotonicAxisOptions,
-  PolylineObjectLike,
   PolylineSubdivideOptions,
-  PolylineWritable,
 } from './polyline.internal';
+export type { MatrixToPoseOptions, PoseApproxEqualsOptions, PoseDistanceOptions } from './pose.internal';
+export type { RectAlignAnchor, RectAlignOptions } from './rect.internal';
 export type {
-  MatrixToPoseOptions,
-  Pose2Like,
-  Pose2ObjectLike,
-  Pose2Tuple,
-  Pose2Writable,
-  PoseApproxEqualsOptions,
-  PoseDistanceOptions,
-} from './pose.internal';
-export type { RayLike, RayObjectLike, RayTuple, RayWritable } from './ray.internal';
-export type {
-  RectAlignAnchor,
-  RectAlignOptions,
-  RectLike,
-  RectObjectLike,
-  RectTuple,
-  RectWritable,
-} from './rect.internal';
-export type {
-  SegmentLike,
   SegmentMarkerOptions,
-  SegmentObjectLike,
   SegmentSplit,
   SegmentSplitWritable,
   SegmentSubdivideOptions,
-  SegmentTuple,
-  SegmentWritable,
 } from './segment.internal';
 export type {
   SvgCircleShapeLike,
@@ -182,12 +103,57 @@ export type {
   SvgRectShapeLike,
   SvgShapeLike,
 } from './svg-shape.internal';
+export type { BarycentricLike, BarycentricWritable } from './triangle.internal';
+
 export type {
-  BarycentricLike,
-  BarycentricWritable,
-  TriangleLike,
-  TriangleObjectLike,
-  TriangleTuple,
+  Bounds,
+  BoundsPadding,
+  BoundsWritable,
+  Capsule,
+  CapsuleWritable,
+  CenterArc,
+  Circle,
+  CircleWritable,
+  CubicCurve,
+  CubicCurveWritable,
+  Curve,
+  CurveWritable,
+  Ellipse,
+  EllipseWritable,
+  GridCell,
+  GridCellWritable,
+  GridSpec,
+  HexAxial,
+  HexAxialWritable,
+  HexCube,
+  HexCubeWritable,
+  HexLayout,
+  HexOffset,
+  HexOffsetWritable,
+  InfiniteLine,
+  InfiniteLineWritable,
+  Matrix,
+  MatrixWritable,
+  OrientedRect,
+  OrientedRectWritable,
+  Point,
+  PointWritable,
+  Polygon,
+  PolygonWritable,
+  Polyline,
+  PolylineWritable,
+  Pose2,
+  Pose2Writable,
+  QuadraticCurve,
+  QuadraticCurveWritable,
+  Ray,
+  RayWritable,
+  Rect,
+  RectWritable,
+  RotatedEllipse,
+  RotatedEllipseWritable,
+  Segment,
+  SegmentWritable,
+  Triangle,
   TriangleWritable,
-} from './triangle.internal';
-export type { XYInput, XYLike, XYObjectWritable, XYTuple, XYTupleWritable, XYWritable } from './xy.internal';
+} from './flat-shapes.internal';

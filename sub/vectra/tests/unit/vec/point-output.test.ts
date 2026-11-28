@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import { fromAngle } from '../../../src/vec/from-angle';
 import { fromAngleInto } from '../../../src/vec/from-angle-into';
 import { normalize } from '../../../src/vec/normalize';
@@ -18,7 +18,7 @@ import { rotateInto } from '../../../src/vec/rotate-into';
 
 describe('vec point-output - perpendicularInto', () => {
   test('object 입력에서 CCW 90도 수직 벡터 (-y, x)를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = perpendicularInto(out, { x: 3, y: 4 });
 
@@ -28,7 +28,7 @@ describe('vec point-output - perpendicularInto', () => {
 
   test('양의 x축 입력에서 CCW 90도 수직 벡터를 out에 기록한다', () => {
     // { x: 1, y: 0 } → (-0, 1)인데 -0과 +0은 수학적으로 동일하므로 toBeCloseTo로 검증한다
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = perpendicularInto(out, { x: 1, y: 0 });
 
@@ -39,7 +39,7 @@ describe('vec point-output - perpendicularInto', () => {
 
   test('zero vector 입력에서 (0, 0)을 out에 기록하고 throw하지 않는다', () => {
     // 영 벡터 입력: (-0, 0)이 나올 수 있으므로 toBeCloseTo로 검증한다
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
 
     const result = perpendicularInto(out, { x: 0, y: 0 });
 
@@ -50,7 +50,7 @@ describe('vec point-output - perpendicularInto', () => {
 
   test('out === input self-aliasing에서도 올바른 결과를 반환한다', () => {
     // self-aliasing: out과 input이 같은 object일 때 잘못된 결과가 나오면 안 된다
-    const vec: XYWritable = { x: 3, y: 4 };
+    const vec: PointWritable = { x: 3, y: 4 };
 
     perpendicularInto(vec, vec);
 
@@ -60,7 +60,7 @@ describe('vec point-output - perpendicularInto', () => {
 
 describe('vec point-output - fromAngleInto', () => {
   test('angle=0에서 (1, 0) unit vector를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = fromAngleInto(out, 0);
 
@@ -70,7 +70,7 @@ describe('vec point-output - fromAngleInto', () => {
   });
 
   test('angle=π/2에서 (0, 1) unit vector를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     fromAngleInto(out, Math.PI / 2);
 
@@ -79,7 +79,7 @@ describe('vec point-output - fromAngleInto', () => {
   });
 
   test('angle=π에서 (-1, 0) unit vector를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     fromAngleInto(out, Math.PI);
 
@@ -90,7 +90,7 @@ describe('vec point-output - fromAngleInto', () => {
 
 describe('vec point-output - rotateInto', () => {
   test('(1, 0) 벡터를 90도 CCW 회전하면 (0, 1)이 된다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = rotateInto(out, { x: 1, y: 0 }, Math.PI / 2);
 
@@ -100,7 +100,7 @@ describe('vec point-output - rotateInto', () => {
   });
 
   test('(1, 0) 벡터를 180도 회전하면 (-1, 0)이 된다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     rotateInto(out, { x: 1, y: 0 }, Math.PI);
 
@@ -110,7 +110,7 @@ describe('vec point-output - rotateInto', () => {
 
   test('out === input self-aliasing에서도 올바른 결과를 반환한다', () => {
     // self-aliasing: 회전 전 x를 읽어두지 않으면 y 계산에서 오염된 값이 사용된다
-    const vec: XYWritable = { x: 1, y: 0 };
+    const vec: PointWritable = { x: 1, y: 0 };
 
     rotateInto(vec, vec, Math.PI / 2);
 
@@ -122,7 +122,7 @@ describe('vec point-output - rotateInto', () => {
 describe('vec point-output - rotateAroundInto', () => {
   test('center=(2,2) 기준으로 (3,2)를 90도 CCW 회전하면 (2,3)이 된다', () => {
     // (3,2)는 center에서 (1,0) 방향이므로 90도 회전하면 center에서 (0,1) 방향인 (2,3)
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = rotateAroundInto(out, { x: 3, y: 2 }, { x: 2, y: 2 }, Math.PI / 2);
 
@@ -132,7 +132,7 @@ describe('vec point-output - rotateAroundInto', () => {
   });
 
   test('out === input self-aliasing에서도 올바른 결과를 반환한다', () => {
-    const vec: XYWritable = { x: 3, y: 2 };
+    const vec: PointWritable = { x: 3, y: 2 };
 
     rotateAroundInto(vec, vec, { x: 2, y: 2 }, Math.PI / 2);
 
@@ -142,8 +142,8 @@ describe('vec point-output - rotateAroundInto', () => {
 
   test('center object는 mutate되지 않는다', () => {
     // center는 XYInput이므로 읽기만 해야 하고 변경되면 안 된다
-    const out: XYWritable = { x: 0, y: 0 };
-    const center: XYWritable = { x: 2, y: 2 };
+    const out: PointWritable = { x: 0, y: 0 };
+    const center: PointWritable = { x: 2, y: 2 };
 
     rotateAroundInto(out, { x: 3, y: 2 }, center, Math.PI / 2);
 

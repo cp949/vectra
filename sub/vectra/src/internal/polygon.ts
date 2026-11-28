@@ -9,4 +9,3 @@ export { shoelace2x } from './polygon-area.internal';
 export type { PolygonClosestScratch } from './polygon-boundary-closest.internal';
 export { polygonBoundaryClosest, polygonBoundaryDistance } from './polygon-boundary-closest.internal';
 export { polygonContainsPoint, segmentsIntersect } from './polygon-contains.internal';
-export { readPolygonPoints } from './polygon-read.internal';

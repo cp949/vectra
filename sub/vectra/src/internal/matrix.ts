@@ -1,43 +1,4 @@
-import type { MatrixLike, MatrixObjectLike, MatrixTuple } from '../types';
 import type { Matrix, MatrixWritable } from '../types/flat-shapes.internal';
-
-function isMatrixTuple(matrix: MatrixLike): matrix is MatrixTuple {
-  return Array.isArray(matrix);
-}
-
-function readComponent(matrix: MatrixLike, index: 0 | 1 | 2 | 3 | 4 | 5, key: keyof MatrixObjectLike): number {
-  return isMatrixTuple(matrix) ? matrix[index] : matrix[key];
-}
-
-/** matrix input의 a component를 읽는다. */
-export function readMatrixA(matrix: MatrixLike): number {
-  return readComponent(matrix, 0, 'a');
-}
-
-/** matrix input의 b component를 읽는다. */
-export function readMatrixB(matrix: MatrixLike): number {
-  return readComponent(matrix, 1, 'b');
-}
-
-/** matrix input의 c component를 읽는다. */
-export function readMatrixC(matrix: MatrixLike): number {
-  return readComponent(matrix, 2, 'c');
-}
-
-/** matrix input의 d component를 읽는다. */
-export function readMatrixD(matrix: MatrixLike): number {
-  return readComponent(matrix, 3, 'd');
-}
-
-/** matrix input의 tx component를 읽는다. */
-export function readMatrixTx(matrix: MatrixLike): number {
-  return readComponent(matrix, 4, 'tx');
-}
-
-/** matrix input의 ty component를 읽는다. */
-export function readMatrixTy(matrix: MatrixLike): number {
-  return readComponent(matrix, 5, 'ty');
-}
 
 /**
  * `left * right`를 `out`에 기록한다. matrix `Into` 함수의 공통 multiply 식.

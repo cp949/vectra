@@ -8,7 +8,7 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import { lineFamilyEllipseIntersectionPoints } from './line-family-ellipse';
 import { hypot2 } from './numeric';
 
@@ -43,19 +43,19 @@ export interface BoundaryEdge {
  * @param epsilon tangent/dedupe 판정 임계값
  */
 export function closedEllipseBoundaryIntersectionPoints(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   edges: readonly BoundaryEdge[],
   cx: number,
   cy: number,
   rx: number,
   ry: number,
   epsilon: number
-): XYObjectWritable[] {
+): PointWritable[] {
   outPoints.length = 0;
   if (rx <= 0 || ry <= 0) return outPoints;
 
   const epsSq = epsilon * epsilon;
-  const scratch: XYObjectWritable[] = [];
+  const scratch: PointWritable[] = [];
   for (let i = 0; i < edges.length; i++) {
     const e = edges[i];
     if (e.x0 === e.x1 && e.y0 === e.y1) {
@@ -95,7 +95,7 @@ export function closedEllipseBoundaryIntersectionPoints(
 }
 
 /** 이미 수집한 point 중 (px, py)와 epsilon² 이내가 있으면 true. */
-function hasNearbyPoint(points: readonly XYObjectWritable[], px: number, py: number, epsSq: number): boolean {
+function hasNearbyPoint(points: readonly PointWritable[], px: number, py: number, epsSq: number): boolean {
   for (let i = 0; i < points.length; i++) {
     const ddx = points[i].x - px;
     const ddy = points[i].y - py;

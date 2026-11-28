@@ -11,10 +11,10 @@ import { gridCellBounds } from '../../../src/grid/grid-cell-bounds';
 import { gridCellBoundsInto } from '../../../src/grid/grid-cell-bounds-into';
 import { gridCellCenter } from '../../../src/grid/grid-cell-center';
 import { gridCellCenterInto } from '../../../src/grid/grid-cell-center-into';
-import type { RectWritable, XYObjectWritable } from '../../../src/types';
+import type { RectWritable, PointWritable } from '../../../src/types';
 
-/** x/y object storage를 가진 새 XYObjectWritable seed를 만든다. */
-function makeXY(): XYObjectWritable {
+/** x/y object storage를 가진 새 PointWritable seed를 만든다. */
+function makeXY(): PointWritable {
   return { x: 0, y: 0 };
 }
 
@@ -73,7 +73,7 @@ describe('gridCellCenterInto - cell coordinate를 world center로 변환', () =>
   });
 
   test('계산된 center coordinate가 non-finite이면 RangeError이고 out을 수정하지 않는다', () => {
-    const out: XYObjectWritable = { x: -7, y: -9 };
+    const out: PointWritable = { x: -7, y: -9 };
     expect(() =>
       gridCellCenterInto(
         out,

@@ -6,7 +6,7 @@
  * 결과 buffer(`solveLineFamilyEllipse`의 scratch)를 거치지 않고 root에서 바로 점을 만든다.
  */
 
-import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray (ox, oy, dx, dy)와 circle 둘레의 range(`t ≥ 0`) 안 교점을 `t` 오름차순으로 outPoints에 push한다.
@@ -25,7 +25,7 @@ import type { XYObjectWritable } from '../types';
  * @param epsilon discriminant tangent 판정 임계값
  */
 export function rayCirclePointsInto(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   ox: number,
   oy: number,
   dx: number,
@@ -34,7 +34,7 @@ export function rayCirclePointsInto(
   cy: number,
   r: number,
   epsilon: number
-): XYObjectWritable[] {
+): PointWritable[] {
   outPoints.length = 0;
   if (r <= 0) return outPoints;
 

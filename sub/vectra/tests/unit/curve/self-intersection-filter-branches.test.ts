@@ -12,8 +12,9 @@
  */
 import { describe, expect, test } from 'vitest';
 import { cubicSelfIntersectionsInto } from '../../../src/curve/cubic-self-intersections-into';
-import type { IntersectionHit, XYInput } from '../../../src/types';
+import type { IntersectionHit } from '../../../src/types';
 import { flatCubicFromLegacyPoints, flatIntersectionOptions } from '../_helpers/curve-fixtures';
+import type { XYInput } from '../_helpers/v1-geometry-reference';
 
 /** [x, y] 쌍 네 개로 cubic 제어점을 만든다. */
 function controlPoints(coords: readonly (readonly [number, number])[]): XYInput[] {

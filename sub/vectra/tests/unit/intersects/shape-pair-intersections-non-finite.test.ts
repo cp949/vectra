@@ -23,13 +23,13 @@ import { segmentEllipseIntersections } from '../../../src/intersects/segment-ell
 import { segmentRectIntersections } from '../../../src/intersects/segment-rect-intersections';
 import { segmentSegmentIntersections } from '../../../src/intersects/segment-segment-intersections';
 import { triangleTriangleIntersections } from '../../../src/intersects/triangle-triangle-intersections';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
 describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', () => {
   const rect = { x: 0, y: 0, width: 10, height: 10 };
   const bounds = { minX: 0, minY: 0, maxX: 10, maxY: 10 };
 
-  const cases: Array<[string, (v: number) => XYObjectWritable[]]> = [
+  const cases: Array<[string, (v: number) => PointWritable[]]> = [
     [
       'segmentSegment',
       (v) => segmentSegmentIntersections({ x1: v, y1: 0, x2: 4, y2: 4 }, { x1: 0, y1: 4, x2: 4, y2: 0 }),

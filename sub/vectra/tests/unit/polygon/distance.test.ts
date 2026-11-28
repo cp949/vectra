@@ -9,7 +9,7 @@ import { distanceToPoint } from '../../../src/polygon/distance-to-point';
 import { CCW_TRI, EMPTY, makePoint, REPEATED_PT, SINGLE, TWO_PT, UNIT_SQUARE } from './_access-distance-test-helpers';
 
 describe('polygon distance allocating companions', () => {
-  test('closestPoint는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
+  test('closestPoint는 성공 시 새 PointWritable을 반환하고 실패 시 undefined를 반환한다', () => {
     expect(closestPoint(CCW_TRI, { x: 2, y: -1 })).toEqual({ x: 2, y: 0 });
     expect(closestPoint(EMPTY, { x: 0, y: 0 })).toBeUndefined();
   });

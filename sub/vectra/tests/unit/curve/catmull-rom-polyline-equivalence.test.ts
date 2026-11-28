@@ -15,10 +15,10 @@ import {
   catmullRomSegmentAt,
   catmullRomSegmentCount,
 } from '../../../src/curve/catmull-rom.internal';
-import { readX, readY, writeXY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
 import type { CatmullRomOptions, CatmullRomPolylineOptions } from '../../../src/types';
 import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
+import { readX, readY, writeXY } from '../_helpers/v1-geometry-reference';
 
 // 이전 구현. 점을 샘플할 때마다 knot 표를 새로 만든다. 새 구현의 비교 기준으로만 쓴다.
 function referencePointAtTInto<Out extends PointWritable>(

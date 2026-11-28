@@ -12,7 +12,7 @@ import { fromRect } from '../../../src/polygon/from-rect';
 import { fromRectInto } from '../../../src/polygon/from-rect-into';
 import { fromTriangle } from '../../../src/polygon/from-triangle';
 import { fromTriangleInto } from '../../../src/polygon/from-triangle-into';
-import type { XYObjectWritable } from '../../../src/types/index';
+import type { PointWritable } from '../../../src/types/index';
 
 // ──────────────────────────────────────────────
 // fromBoundsInto

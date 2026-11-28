@@ -1,49 +1,4 @@
 import type { PointWritable } from './flat-shapes.internal';
-import type { XYObjectWritable, XYWritable } from './xy.internal';
-
-/**
- * 세 개의 writable control point에 결과를 기록할 수 있는 structural quadratic Bezier curve output.
- *
- * `p0`은 시작점, `p1`은 제어점, `p2`는 끝점이다.
- */
-export interface QuadraticCurveWritable<
-  P0 extends XYWritable = XYObjectWritable,
-  P1 extends XYWritable = XYObjectWritable,
-  P2 extends XYWritable = XYObjectWritable,
-> {
-  /** 기록 가능한 시작점 */
-  p0: P0;
-
-  /** 기록 가능한 제어점 */
-  p1: P1;
-
-  /** 기록 가능한 끝점 */
-  p2: P2;
-}
-
-/**
- * 네 개의 writable control point에 결과를 기록할 수 있는 structural cubic Bezier curve output.
- *
- * `p0`은 시작점, `p1`은 첫 번째 제어점, `p2`는 두 번째 제어점, `p3`는 끝점이다.
- */
-export interface CubicCurveWritable<
-  P0 extends XYWritable = XYObjectWritable,
-  P1 extends XYWritable = XYObjectWritable,
-  P2 extends XYWritable = XYObjectWritable,
-  P3 extends XYWritable = XYObjectWritable,
-> {
-  /** 기록 가능한 시작점 */
-  p0: P0;
-
-  /** 기록 가능한 첫 번째 제어점 */
-  p1: P1;
-
-  /** 기록 가능한 두 번째 제어점 */
-  p2: P2;
-
-  /** 기록 가능한 끝점 */
-  p3: P3;
-}
 
 /** cubic Bezier 형태 분류 결과. */
 export type CubicCurveType = 'line' | 'quadratic' | 'cusp' | 'loop' | 'serpentine';

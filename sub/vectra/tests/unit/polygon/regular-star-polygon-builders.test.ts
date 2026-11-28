@@ -11,7 +11,7 @@ import { regularPolygon } from '../../../src/polygon/regular-polygon';
 import { regularPolygonInto } from '../../../src/polygon/regular-polygon-into';
 import { starPolygon } from '../../../src/polygon/star-polygon';
 import { starPolygonInto } from '../../../src/polygon/star-polygon-into';
-import type { XYObjectWritable } from '../../../src/types/index';
+import type { PointWritable } from '../../../src/types/index';
 import { expectClose } from './_polygon-test-helpers';
 
 // ──────────────────────────────────────────────

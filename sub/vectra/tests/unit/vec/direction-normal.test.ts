@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import { directionTo } from '../../../src/vec/direction-to';
 import { directionToInto } from '../../../src/vec/direction-to-into';
 import { normalLeft } from '../../../src/vec/normal-left';
@@ -18,7 +18,7 @@ import { normalRightInto } from '../../../src/vec/normal-right-into';
 describe('vec direction - directionToInto', () => {
   test('object input: (0,0)→(3,4) 방향 단위 벡터 (0.6, 0.8)을 out에 기록한다', () => {
     // 3-4-5 직각삼각형: dx=3, dy=4, len=5 → (0.6, 0.8)
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = directionToInto(out, { x: 0, y: 0 }, { x: 3, y: 4 });
 
@@ -28,7 +28,7 @@ describe('vec direction - directionToInto', () => {
   });
 
   test('같은 점 (from === to 값)에서 (0, 0)을 기록하고 throw하지 않는다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
 
     const result = directionToInto(out, { x: 5, y: 3 }, { x: 5, y: 3 });
 
@@ -39,7 +39,7 @@ describe('vec direction - directionToInto', () => {
 
   test('origin이 아닌 non-zero from에서 방향 단위 벡터를 올바르게 기록한다', () => {
     // from=(1,1), to=(4,5): dx=3, dy=4, len=5 → (0.6, 0.8)
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     directionToInto(out, { x: 1, y: 1 }, { x: 4, y: 5 });
 
@@ -49,7 +49,7 @@ describe('vec direction - directionToInto', () => {
 
   test('out === from self-aliasing에서도 올바른 결과를 반환한다', () => {
     // from과 out이 같은 object이면 dx/dy를 미리 읽어야 올바른 결과가 나온다
-    const vec: XYWritable = { x: 0, y: 0 };
+    const vec: PointWritable = { x: 0, y: 0 };
 
     directionToInto(vec, vec, { x: 3, y: 4 });
 
@@ -59,7 +59,7 @@ describe('vec direction - directionToInto', () => {
 
   test('NaN 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
     // NaN을 포함한 산술은 NaN을 전파한다
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     directionToInto(out, { x: NaN, y: 0 }, { x: 3, y: 4 });
 
@@ -68,7 +68,7 @@ describe('vec direction - directionToInto', () => {
 
   test('Infinity 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
     // dx=Infinity, len=hypot(Infinity,0)=Infinity → dx/len=NaN, dy/len=0
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     directionToInto(out, { x: 0, y: 0 }, { x: Infinity, y: 0 });
 
@@ -78,7 +78,7 @@ describe('vec direction - directionToInto', () => {
 
   test('out === to self-aliasing에서도 올바른 결과를 반환한다', () => {
     // to와 out이 같은 object이면 to 값을 먼저 읽어야 올바른 결과가 나온다
-    const vec: XYWritable = { x: 3, y: 4 };
+    const vec: PointWritable = { x: 3, y: 4 };
 
     directionToInto(vec, { x: 0, y: 0 }, vec);
 
@@ -95,7 +95,7 @@ describe('vec companion - directionTo', () => {
   });
 
   test('directionToInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     directionToInto(out, { x: 1, y: 2 }, { x: 4, y: 6 });
     const result = directionTo({ x: 1, y: 2 }, { x: 4, y: 6 });
 
@@ -126,7 +126,7 @@ describe('vec companion - directionTo', () => {
 describe('vec direction - normalLeftInto', () => {
   test('object input: (3,4) CCW normal (-0.8, 0.6)을 out에 기록한다', () => {
     // (-y, x) = (-4, 3), len=5 → (-0.8, 0.6)
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = normalLeftInto(out, { x: 3, y: 4 });
 
@@ -136,7 +136,7 @@ describe('vec direction - normalLeftInto', () => {
   });
 
   test('zero vector 입력에서 (0, 0)을 기록하고 throw하지 않는다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
 
     const result = normalLeftInto(out, { x: 0, y: 0 });
 
@@ -146,7 +146,7 @@ describe('vec direction - normalLeftInto', () => {
   });
 
   test('out === input self-aliasing에서도 올바른 결과를 반환한다', () => {
-    const vec: XYWritable = { x: 3, y: 4 };
+    const vec: PointWritable = { x: 3, y: 4 };
 
     normalLeftInto(vec, vec);
 
@@ -156,7 +156,7 @@ describe('vec direction - normalLeftInto', () => {
 
   test('NaN 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
     // x=NaN, y=0 → nx=-0, ny=NaN, len=NaN → out.x=NaN, out.y=NaN
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     normalLeftInto(out, { x: NaN, y: 0 });
 
@@ -166,7 +166,7 @@ describe('vec direction - normalLeftInto', () => {
 
   test('Infinity 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
     // x=Infinity, y=0 → nx=-0, ny=Infinity, len=Infinity → out.x=-0/Infinity=-0, out.y=Infinity/Infinity=NaN
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     normalLeftInto(out, { x: Infinity, y: 0 });
 
@@ -184,7 +184,7 @@ describe('vec companion - normalLeft', () => {
   });
 
   test('normalLeftInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     normalLeftInto(out, { x: 5, y: 12 });
     const result = normalLeft({ x: 5, y: 12 });
 
@@ -212,7 +212,7 @@ describe('vec companion - normalLeft', () => {
 describe('vec direction - normalRightInto', () => {
   test('object input: (3,4) CW normal (0.8, -0.6)을 out에 기록한다', () => {
     // (y, -x) = (4, -3), len=5 → (0.8, -0.6)
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = normalRightInto(out, { x: 3, y: 4 });
 
@@ -222,7 +222,7 @@ describe('vec direction - normalRightInto', () => {
   });
 
   test('zero vector 입력에서 (0, 0)을 기록하고 throw하지 않는다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
 
     const result = normalRightInto(out, { x: 0, y: 0 });
 
@@ -232,7 +232,7 @@ describe('vec direction - normalRightInto', () => {
   });
 
   test('out === input self-aliasing에서도 올바른 결과를 반환한다', () => {
-    const vec: XYWritable = { x: 3, y: 4 };
+    const vec: PointWritable = { x: 3, y: 4 };
 
     normalRightInto(vec, vec);
 
@@ -242,7 +242,7 @@ describe('vec direction - normalRightInto', () => {
 
   test('NaN 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
     // x=NaN, y=0 → nx=0, ny=-NaN=NaN, len=NaN → out.x=NaN, out.y=NaN
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     normalRightInto(out, { x: NaN, y: 0 });
 
@@ -252,7 +252,7 @@ describe('vec direction - normalRightInto', () => {
 
   test('Infinity 입력은 JavaScript 산술 결과를 out에 기록한다', () => {
     // x=Infinity, y=0 → nx=0, ny=-Infinity, len=Infinity → out.x=0/Infinity=0, out.y=-Infinity/Infinity=NaN
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     normalRightInto(out, { x: Infinity, y: 0 });
 
@@ -270,7 +270,7 @@ describe('vec companion - normalRight', () => {
   });
 
   test('normalRightInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     normalRightInto(out, { x: 5, y: 12 });
     const result = normalRight({ x: 5, y: 12 });
 

@@ -17,7 +17,7 @@ import { closestPointInto } from '../../../src/path/closest-point-into';
 import { pointAtLength } from '../../../src/path/point-at-length';
 import { pointAtLengthInto } from '../../../src/path/point-at-length-into';
 import { propertiesAtLength } from '../../../src/path/properties-at-length';
-import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
+import type { PathCommand, PointWritable } from '../../../src/types/index';
 
 describe('bounds (boundsInto companion)', () => {
   test('rect path bounds는 boundsInto 결과와 동일하다', () => {
@@ -64,7 +64,7 @@ describe('closestPoint (closestPointInto companion)', () => {
   ];
 
   test('성공 시 closestPointInto와 동일한 좌표를 새 object로 반환', () => {
-    const into: XYObjectWritable = { x: 0, y: 0 };
+    const into: PointWritable = { x: 0, y: 0 };
     const ok = closestPointInto(into, square, { x: 50, y: -10 });
     expect(ok).toBe(true);
     const result = closestPoint(square, { x: 50, y: -10 });
@@ -92,7 +92,7 @@ describe('pointAtLength (pointAtLengthInto companion)', () => {
   ];
 
   test('성공 시 pointAtLengthInto와 동일한 좌표를 새 object로 반환', () => {
-    const into: XYObjectWritable = { x: 0, y: 0 };
+    const into: PointWritable = { x: 0, y: 0 };
     pointAtLengthInto(into, line, 40);
     const result = pointAtLength(line, 40);
     expect(result).toBeDefined();

@@ -16,7 +16,7 @@ import { cubicSplit } from '../../../src/curve/cubic-split';
 import { quadraticCubicIntersectionsInto } from '../../../src/curve/quadratic-cubic-intersections-into';
 import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to-cubic';
 import { quadraticQuadraticIntersectionsInto } from '../../../src/curve/quadratic-quadratic-intersections-into';
-import type { IntersectionHit, XYObjectWritable } from '../../../src/types';
+import type { IntersectionHit, PointWritable } from '../../../src/types';
 import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 const TOL = 1e-9;
@@ -33,7 +33,7 @@ function sortByTA(hits: readonly IntersectionHit[]): IntersectionHit[] {
  * 점을 center 기준으로 degrees만큼 회전한 좌표를 반환한다.
  * 곡선 위 한 점을 중심으로 돌린 복사본은 그 점에서 원본과 얕은 각도로 교차한다.
  */
-function rotateAbout(point: XYObjectWritable, center: XYObjectWritable, degrees: number): XYObjectWritable {
+function rotateAbout(point: PointWritable, center: PointWritable, degrees: number): PointWritable {
   const theta = (degrees * Math.PI) / 180;
   const dx = point.x - center.x;
   const dy = point.y - center.y;

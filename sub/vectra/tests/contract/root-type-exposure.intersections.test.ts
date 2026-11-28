@@ -9,7 +9,7 @@ import type {
   CircleCircleDetail,
   CurveIntersectionHit,
   CurveIntersectionKind,
-  CurveLike,
+  Curve,
   EllipseEllipseDetail,
   LinePolygonIntersectionHit,
   LinePolygonOverlapIntervalDetail,
@@ -29,18 +29,25 @@ function expectAssignable<T>(value: T): T {
 
 describe('root intersection type exposure 계약', () => {
   test('root entry가 curve intersection type을 노출한다', () => {
-    expectAssignable<CurveLike>({
+    expectAssignable<Curve>({
       kind: 'quadratic',
-      p0: { x: 0, y: 0 },
-      p1: { x: 50, y: 100 },
-      p2: { x: 100, y: 0 },
+      x0: 0,
+      y0: 0,
+      x1: 50,
+      y1: 100,
+      x2: 100,
+      y2: 0,
     });
-    expectAssignable<CurveLike>({
+    expectAssignable<Curve>({
       kind: 'cubic',
-      p0: { x: 0, y: 0 },
-      p1: [10, 20] as const,
-      p2: { x: 30, y: 40 },
-      p3: { x: 100, y: 0 },
+      x0: 0,
+      y0: 0,
+      x1: 10,
+      y1: 20,
+      x2: 30,
+      y2: 40,
+      x3: 100,
+      y3: 0,
     });
     expectAssignable<CurveIntersectionKind>('cross');
     expectAssignable<CurveIntersectionKind>('touch');

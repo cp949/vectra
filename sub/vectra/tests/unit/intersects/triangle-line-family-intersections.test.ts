@@ -13,12 +13,12 @@ import { triangleRayIntersections } from '../../../src/intersects/triangle-ray-i
 import { triangleRayIntersectionsInto } from '../../../src/intersects/triangle-ray-intersections-into';
 import { triangleSegmentIntersections } from '../../../src/intersects/triangle-segment-intersections';
 import { triangleSegmentIntersectionsInto } from '../../../src/intersects/triangle-segment-intersections-into';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import type {} from '../../../src/types/flat-shapes.internal';
 import type { Triangle } from '../../../src/types/flat-shapes.internal';
 
 /** point가 (x, y)와 근사적으로 같은지 확인한다. */
-function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9): void {
+function expectPointClose(p: PointWritable, x: number, y: number, digits = 9): void {
   expect(p.x).toBeCloseTo(x, digits);
   expect(p.y).toBeCloseTo(y, digits);
 }
@@ -158,7 +158,7 @@ describe('triangle line-family degenerate / non-finite (S12-RM-009)', () => {
 
 describe('triangle line-family 입력/출력 정책 (S12-RM-009)', () => {
   test('Into는 기존 out을 clear하고 같은 array reference를 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 99, y: 99 }];
+    const out: PointWritable[] = [{ x: 99, y: 99 }];
     const returned = triangleSegmentIntersectionsInto(out, TRI, { x1: -5, y1: 5, x2: 15, y2: 5 });
     expect(returned).toBe(out);
     expect(out).toHaveLength(2);
@@ -182,9 +182,9 @@ describe('triangle line-family 입력/출력 정책 (S12-RM-009)', () => {
   });
 
   test('ray/infinite-line Into도 같은 array reference를 반환한다', () => {
-    const rayOut: XYObjectWritable[] = [];
+    const rayOut: PointWritable[] = [];
     expect(triangleRayIntersectionsInto(rayOut, TRI, { ox: 1, oy: 1, dx: 1, dy: 0 })).toBe(rayOut);
-    const lineOut: XYObjectWritable[] = [];
+    const lineOut: PointWritable[] = [];
     expect(triangleInfiniteLineIntersectionsInto(lineOut, TRI, { ox: 0, oy: 5, dx: -1, dy: 0 })).toBe(lineOut);
   });
 });

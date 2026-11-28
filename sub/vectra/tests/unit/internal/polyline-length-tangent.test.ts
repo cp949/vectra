@@ -10,13 +10,13 @@ import {
   polylineSegmentTangentAtLengthInto,
   polylineVertexTangentInto,
 } from '../../../src/internal/polyline-length-tangent.internal';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
 const SENTINEL_X = 9999;
 const SENTINEL_Y = -7777;
 
 /** 분기별 쓰기 결과를 확인할 초기 좌표를 만든다. */
-function makeOut(): XYObjectWritable {
+function makeOut(): PointWritable {
   return { x: SENTINEL_X, y: SENTINEL_Y };
 }
 

@@ -10,7 +10,7 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { LinePolygonOverlapIntervalDetail, XYObjectWritable } from '../types';
+import type { LinePolygonOverlapIntervalDetail, PointWritable } from '../types';
 import type { Polygon } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { DEFAULT_EPSILON, hypot2 } from './numeric';

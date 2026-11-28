@@ -2,7 +2,7 @@
 import { describe, expect, test } from 'vitest';
 import { intersectsSegmentSegment } from '../../../src/intersects/intersects-segment-segment';
 import { singleIntersectionInto } from '../../../src/segment/single-intersection-into';
-import type { XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
 describe('intersectsSegment — X자 교차', () => {
   test('X자 교차 segment는 true를 반환한다', () => {
@@ -108,7 +108,7 @@ describe('intersectsSegment — zero-length segment', () => {
 
 describe('intersectsSegment vs singleIntersectionInto 정책 일관성', () => {
   test('intersectsSegment === true인 일반 교차는 singleIntersectionInto도 true이다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const a = { x1: 0, y1: 0, x2: 10, y2: 10 };
     const b = { x1: 0, y1: 10, x2: 10, y2: 0 };
     expect(intersectsSegmentSegment(a, b)).toBe(true);
@@ -116,7 +116,7 @@ describe('intersectsSegment vs singleIntersectionInto 정책 일관성', () => {
   });
 
   test('collinear overlap은 intersectsSegment === true, singleIntersectionInto === false이다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     const a = { x1: 0, y1: 0, x2: 10, y2: 0 };
     const b = { x1: 5, y1: 0, x2: 15, y2: 0 };
     expect(intersectsSegmentSegment(a, b)).toBe(true);

@@ -6,139 +6,99 @@ import { describe, test } from 'vitest';
 import type {
   BarycentricLike,
   BarycentricWritable,
-  BoundsLike,
-  BoundsObjectLike,
-  BoundsTuple,
-  CapsuleLike,
-  CapsuleObjectLike,
-  CapsuleTuple,
+  Bounds,
+  BoundsWritable,
+  Capsule,
   CapsuleWritable,
-  CircleLike,
-  CircleObjectLike,
-  CircleTuple,
+  Circle,
   CircleWritable,
-  EllipseLike,
-  EllipseObjectLike,
-  EllipseTuple,
+  Ellipse,
   EllipseWritable,
   FitOptions,
-  GridCellLike,
-  GridCellObjectLike,
-  GridCellTuple,
+  GridCell,
   GridCellWritable,
-  GridSpecLike,
-  InfiniteLineLike,
-  InfiniteLineObjectLike,
-  InfiniteLineTuple,
+  GridSpec,
+  InfiniteLine,
   InfiniteLineWritable,
+  Matrix,
   MatrixDecompositionWritable,
-  MatrixLike,
-  MatrixObjectLike,
   MatrixToPoseOptions,
-  MatrixTuple,
   MatrixWritable,
   OrientedBoundsWritable,
-  PolygonLike,
-  PolygonObjectLike,
+  Polygon,
   PolygonWritable,
+  Polyline,
   PolylineConcatOptions,
-  PolylineLike,
-  PolylineObjectLike,
   PolylineSubdivideOptions,
   PolylineWritable,
   PoseApproxEqualsOptions,
   PoseDistanceOptions,
   PrincipalDirections,
   PrincipalDirectionsWritable,
-  RayLike,
-  RayObjectLike,
-  RayTuple,
+  Ray,
   RayWritable,
   RectAlignAnchor,
   RectAlignOptions,
-  RotatedEllipseLike,
-  RotatedEllipseObjectLike,
-  RotatedEllipseTuple,
+  RotatedEllipse,
   RotatedEllipseWritable,
   Sdf2,
-  SegmentLike,
-  SegmentObjectLike,
+  Segment,
   SegmentSplit,
   SegmentSplitWritable,
-  SegmentTuple,
   SegmentWritable,
-  TriangleLike,
-  TriangleObjectLike,
-  TriangleTuple,
+  Triangle,
   TriangleWritable,
 } from '../../src/index';
 
+/** 공개 타입에 값을 할당할 수 있는지 확인한다. */
 function expectAssignable<T>(value: T): T {
   return value;
 }
 
 describe('root geometry type exposure 계약', () => {
   test('root entry가 circle type을 노출한다', () => {
-    const circleObject = expectAssignable<CircleObjectLike>({ center: { x: 0, y: 0 }, radius: 1 });
-    expectAssignable<CircleLike>(circleObject);
-    expectAssignable<CircleTuple>([[0, 0] as const, 1] as const);
-    expectAssignable<CircleWritable>({ center: { x: 0, y: 0 }, radius: 1 });
+    expectAssignable<Circle>({ cx: 0, cy: 0, r: 1 });
+    expectAssignable<CircleWritable>({ cx: 0, cy: 0, r: 1 });
   });
 
   test('root entry가 bounds type을 노출한다', () => {
-    const boundsObject = expectAssignable<BoundsObjectLike>({ min: { x: 0, y: 0 }, max: [1, 1] as const });
-    expectAssignable<BoundsLike>(boundsObject);
-    expectAssignable<BoundsTuple>([{ x: 0, y: 0 }, [1, 1] as const] as const);
+    expectAssignable<Bounds>({ minX: 0, minY: 0, maxX: 1, maxY: 1 });
+    expectAssignable<BoundsWritable>({ minX: 0, minY: 0, maxX: 1, maxY: 1 });
   });
 
   test('root entry가 capsule type을 노출한다', () => {
-    const capsuleObject = expectAssignable<CapsuleObjectLike>({
-      a: { x: 0, y: 0 },
-      b: [1, 1] as const,
-      radius: 2,
-    });
-    expectAssignable<CapsuleLike>(capsuleObject);
-    expectAssignable<CapsuleTuple>([{ x: 0, y: 0 }, [1, 1] as const, 2] as const);
-    expectAssignable<CapsuleWritable>({ a: { x: 0, y: 0 }, b: { x: 1, y: 1 }, radius: 2 });
-    expectAssignable<CapsuleWritable<[number, number], [number, number]>>({ a: [0, 0], b: [1, 1], radius: 2 });
+    expectAssignable<Capsule>({ x1: 0, y1: 0, x2: 1, y2: 1, r: 2 });
+    expectAssignable<CapsuleWritable>({ x1: 0, y1: 0, x2: 1, y2: 1, r: 2 });
   });
 
   test('root entry가 grid cell/spec type을 노출한다', () => {
-    const cellObject = expectAssignable<GridCellObjectLike>({ col: 1, row: 2 });
-    expectAssignable<GridCellLike>(cellObject);
-    expectAssignable<GridCellTuple>([1, 2] as const);
+    expectAssignable<GridCell>({ col: 1, row: 2 });
     expectAssignable<GridCellWritable>({ col: 0, row: 0 });
-    expectAssignable<GridSpecLike>({ cellSize: 10 });
-    expectAssignable<GridSpecLike>({ origin: [0, 0] as const, cellSize: { x: 10, y: 20 } });
+    expectAssignable<GridSpec>({ originX: 0, originY: 0, cellWidth: 10, cellHeight: 20 });
   });
 
   test('root entry가 polyline type을 노출한다', () => {
-    const points = [{ x: 0, y: 0 }, [1, 1] as const] as const;
-    const polylineObject = expectAssignable<PolylineObjectLike>({ points });
-    expectAssignable<PolylineLike>(polylineObject);
-    expectAssignable<PolylineLike>(points);
-    expectAssignable<PolylineWritable>({ points: [{ x: 0, y: 0 }] });
+    expectAssignable<Polyline>([
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+    ]);
+    expectAssignable<PolylineWritable>([
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+    ]);
     expectAssignable<PolylineSubdivideOptions>({ segmentsPerSegment: 2 });
     expectAssignable<PolylineConcatOptions>({ weldTolerance: 0.5 });
     expectAssignable<PolylineConcatOptions>({ weldTolerance: 0 });
   });
 
   test('root entry가 polygon type을 노출한다', () => {
-    const points = [{ x: 0, y: 0 }, [1, 1] as const] as const;
-    const polygonObject = expectAssignable<PolygonObjectLike>({ points });
-    expectAssignable<PolygonLike>(polygonObject);
-    expectAssignable<PolygonLike>(points);
-    expectAssignable<PolygonWritable>({ points: [{ x: 0, y: 0 }] });
+    expectAssignable<Polygon>([0, 0, 1, 1]);
+    expectAssignable<PolygonWritable>([0, 0, 1, 1]);
   });
 
   test('root entry가 segment type을 노출한다', () => {
-    const lineObject = expectAssignable<SegmentObjectLike>({ a: { x: 0, y: 0 }, b: [1, 1] as const });
-    expectAssignable<SegmentLike>(lineObject);
-    expectAssignable<SegmentTuple>([{ x: 0, y: 0 }, [1, 1] as const] as const);
-    expectAssignable<SegmentWritable<{ x: number; y: number }, [number, number]>>({
-      a: { x: 0, y: 0 },
-      b: [1, 1],
-    });
+    expectAssignable<Segment>({ x1: 0, y1: 0, x2: 1, y2: 1 });
+    expectAssignable<SegmentWritable>({ x1: 0, y1: 0, x2: 1, y2: 1 });
     expectAssignable<SegmentSplitWritable>({
       left: { x1: 0, y1: 0, x2: 1, y2: 1 },
       right: { x1: 1, y1: 1, x2: 2, y2: 2 },
@@ -150,18 +110,8 @@ describe('root geometry type exposure 계약', () => {
   });
 
   test('root entry가 triangle type을 노출한다', () => {
-    const triangleObject = expectAssignable<TriangleObjectLike>({
-      a: { x: 0, y: 0 },
-      b: { x: 1, y: 0 },
-      c: { x: 0, y: 1 },
-    });
-    expectAssignable<TriangleLike>(triangleObject);
-    expectAssignable<TriangleTuple>([{ x: 0, y: 0 }, [1, 0] as const, [0, 1] as const] as const);
-    expectAssignable<TriangleWritable>({
-      a: { x: 0, y: 0 },
-      b: { x: 1, y: 0 },
-      c: { x: 0, y: 1 },
-    });
+    expectAssignable<Triangle>({ x1: 0, y1: 0, x2: 1, y2: 0, x3: 0, y3: 1 });
+    expectAssignable<TriangleWritable>({ x1: 0, y1: 0, x2: 1, y2: 0, x3: 0, y3: 1 });
   });
 
   test('root entry가 barycentric type을 노출한다', () => {
@@ -173,36 +123,18 @@ describe('root geometry type exposure 계약', () => {
   });
 
   test('root entry가 ellipse type을 노출한다', () => {
-    const ellipseObject = expectAssignable<EllipseObjectLike>({
-      center: { x: 0, y: 0 },
-      radiusX: 2,
-      radiusY: 1,
-    });
-    expectAssignable<EllipseLike>(ellipseObject);
-    expectAssignable<EllipseTuple>([{ x: 0, y: 0 } as const, 2, 1] as const);
-    expectAssignable<EllipseWritable>({ center: { x: 0, y: 0 }, radiusX: 2, radiusY: 1 });
+    expectAssignable<Ellipse>({ cx: 0, cy: 0, rx: 2, ry: 1 });
+    expectAssignable<EllipseWritable>({ cx: 0, cy: 0, rx: 2, ry: 1 });
   });
 
   test('root entry가 rotated ellipse type을 노출한다', () => {
-    const rotatedObject = expectAssignable<RotatedEllipseObjectLike>({
-      center: { x: 0, y: 0 },
-      radiusX: 2,
-      radiusY: 1,
-      rotation: Math.PI / 4,
-    });
-    expectAssignable<RotatedEllipseLike>(rotatedObject);
-    expectAssignable<RotatedEllipseTuple>([{ x: 0, y: 0 } as const, 2, 1, Math.PI / 4] as const);
-    expectAssignable<RotatedEllipseWritable>({ center: { x: 0, y: 0 }, radiusX: 2, radiusY: 1, rotation: 0 });
+    expectAssignable<RotatedEllipse>({ cx: 0, cy: 0, rx: 2, ry: 1, rotation: 0 });
+    expectAssignable<RotatedEllipseWritable>({ cx: 0, cy: 0, rx: 2, ry: 1, rotation: 0 });
   });
 
   test('root entry가 ray type을 노출한다', () => {
-    const rayObject = expectAssignable<RayObjectLike>({
-      origin: { x: 0, y: 0 },
-      direction: { x: 1, y: 0 },
-    });
-    expectAssignable<RayLike>(rayObject);
-    expectAssignable<RayTuple>([0, 0, 1, 0] as const);
-    expectAssignable<RayWritable>({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } });
+    expectAssignable<Ray>({ ox: 0, oy: 0, dx: 1, dy: 0 });
+    expectAssignable<RayWritable>({ ox: 0, oy: 0, dx: 1, dy: 0 });
   });
 
   test('root entry가 rect alignment type을 노출한다', () => {
@@ -224,13 +156,8 @@ describe('root geometry type exposure 계약', () => {
   });
 
   test('root entry가 infinite-line type을 노출한다', () => {
-    const lineObject = expectAssignable<InfiniteLineObjectLike>({
-      origin: { x: 0, y: 0 },
-      direction: { x: 1, y: 0 },
-    });
-    expectAssignable<InfiniteLineLike>(lineObject);
-    expectAssignable<InfiniteLineTuple>([{ x: 0, y: 0 }, [1, 0] as const] as const);
-    expectAssignable<InfiniteLineWritable>({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } });
+    expectAssignable<InfiniteLine>({ ox: 0, oy: 0, dx: 1, dy: 0 });
+    expectAssignable<InfiniteLineWritable>({ ox: 0, oy: 0, dx: 1, dy: 0 });
   });
 
   test('root entry가 Sdf2 callable type을 노출한다', () => {
@@ -253,9 +180,7 @@ describe('root geometry type exposure 계약', () => {
   });
 
   test('root entry가 matrix shape helper type을 노출한다', () => {
-    const matrixObject = expectAssignable<MatrixObjectLike>({ a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 3 });
-    expectAssignable<MatrixLike>(matrixObject);
-    expectAssignable<MatrixTuple>([1, 0, 0, 1, 2, 3] as const);
+    expectAssignable<Matrix>({ a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 3 });
     expectAssignable<MatrixWritable>({ a: 1, b: 0, c: 0, d: 1, tx: 2, ty: 3 });
     expectAssignable<MatrixDecompositionWritable>({
       translation: { x: 2, y: 3 },

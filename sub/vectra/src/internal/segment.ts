@@ -1,20 +1,4 @@
-import type { Segment, SegmentWritable as FlatSegmentWritable } from '../types/flat-shapes.internal';
-import type { SegmentLike, SegmentTuple, XYInput } from '../types';
-import { readX, readY } from './xy';
-
-function isSegmentTuple(line: SegmentLike): line is SegmentTuple {
-  return Array.isArray(line);
-}
-
-/** segment input에서 시작 endpoint를 읽는다. */
-export function readSegmentA(line: SegmentLike): XYInput {
-  return isSegmentTuple(line) ? line[0] : line.a;
-}
-
-/** segment input에서 끝 endpoint를 읽는다. */
-export function readSegmentB(line: SegmentLike): XYInput {
-  return isSegmentTuple(line) ? line[1] : line.b;
-}
+import type { Segment, SegmentWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment 위 closest point를 scalar 좌표로 반환한다. zero-length segment는 시작점을 반환한다.
@@ -83,7 +67,7 @@ export function segmentContainsPoint(seg: Segment, px: number, py: number, epsil
 }
 
 /** 두 끝점이 원점인 선분을 만든다. */
-export function createZeroSegment(): FlatSegmentWritable {
+export function createZeroSegment(): SegmentWritable {
   return { x1: 0, y1: 0, x2: 0, y2: 0 };
 }
 

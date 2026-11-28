@@ -9,8 +9,8 @@
  *
  * 고정하는 계약:
  *  - path Into의 반환 타입은 caller의 좁은 원소 타입(MoveCommand[])을 따르지 않고 PathCommand[]다.
- *  - point 배열을 채우는 Into의 반환 타입은 caller의 좁은 원소 타입(`{ x, y, id }`)을 따르지 않고 `XYObjectWritable[]`이다.
- *  - point를 만드는 Into는 tuple point 배열(`XYTupleWritable[]`)을 받지 않는다.
+ *  - point 배열을 채우는 Into의 반환 타입은 caller의 좁은 원소 타입(`{ x, y, id }`)을 따르지 않고 `PointWritable[]`이다.
+ *  - point를 만드는 Into는 tuple point 배열(`[number, number][]`)을 받지 않는다.
  *
  * 거부 검사는 `@ts-expect-error`가 맡는다. 오류가 사라지면 `pnpm typecheck`가 실패한다.
  */
@@ -20,7 +20,7 @@ import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-inte
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';
 import { lineCommandsInto } from '../../../src/path/line-commands-into';
 import { transformCommandsInto } from '../../../src/path/transform-commands-into';
-import type { IntersectionHit, MoveCommand, PathCommand, XYObjectWritable, XYTupleWritable } from '../../../src/types';
+import type { IntersectionHit, MoveCommand, PathCommand, PointWritable } from '../../../src/types';
 import { flatLineFromLegacy } from '../_helpers/curve-fixtures';
 
 describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
@@ -44,7 +44,7 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
   });
 
   test('curve 교차 Into는 tuple point를 담는 hit 배열을 받지 않는다', () => {
-    const tupleHits: (Omit<IntersectionHit, 'point'> & { point: XYTupleWritable })[] = [];
+    const tupleHits: (Omit<IntersectionHit, 'point'> & { point: [number, number] })[] = [];
     quadraticLineIntersectionsInto(
       // @ts-expect-error hit.point는 항상 object이므로 tuple point 배열은 거짓이 된다
       tupleHits,
@@ -71,13 +71,13 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
     );
     expect(hits).toHaveLength(2);
     for (const hit of hits) {
-      expectTypeOf(hit.point).toEqualTypeOf<XYObjectWritable>();
+      expectTypeOf(hit.point).toEqualTypeOf<PointWritable>();
       expect(Array.isArray(hit.point)).toBe(false);
     }
   });
 
   test('circle 접선점 Into는 tuple 배열을 받지 않는다', () => {
-    const tuples: XYTupleWritable[] = [];
+    const tuples: [number, number][] = [];
     // @ts-expect-error 접선점은 항상 object이므로 tuple 배열은 거짓이 된다
     tangentPointsFromExternalInto(tuples, { center: [0, 0], radius: 1 }, [3, 0]);
     // 타입이 거짓이라도 런타임 값은 object다

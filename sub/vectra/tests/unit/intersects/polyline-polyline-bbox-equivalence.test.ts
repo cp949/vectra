@@ -6,7 +6,6 @@
 import { describe, expect, it } from 'vitest';
 import { polylinePolylineIntersections, polylinePolylineIntersectionsInto } from '../../../src/intersects';
 import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
-import { readX, readY } from '../../../src/internal/xy';
 import type { Polyline, PointWritable } from '../../../src/types/flat-shapes.internal';
 import {
   hasNearbyPoint,
@@ -14,6 +13,7 @@ import {
   snapshotPolylinePoints,
 } from '../../../src/intersects/polyline-intersections.internal';
 import { segmentSegmentDetailXY } from '../../../src/intersects/segment-segment-detail.internal';
+import { readX, readY } from '../_helpers/v1-geometry-reference';
 
 interface LocalHit {
   x: number;

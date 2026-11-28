@@ -5,7 +5,7 @@
 import { describe, expect, test } from 'vitest';
 import { pointAtLengthRatio } from '../../../src/path/point-at-length-ratio';
 import { pointAtLengthRatioInto } from '../../../src/path/point-at-length-ratio-into';
-import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
+import type { PathCommand, PointWritable } from '../../../src/types/index';
 
 /**
  * (0,0) → (100, 0) 단일 수평 직선 path.
@@ -81,14 +81,14 @@ describe('pointAtLengthRatio / pointAtLengthRatioInto', () => {
 
   test('pointAtLengthRatioInto: 성공 시 true 반환 후 out 기록', () => {
     const cmds = makeHorizontalLine();
-    const out: XYObjectWritable = { x: -1, y: -1 };
+    const out: PointWritable = { x: -1, y: -1 };
     expect(pointAtLengthRatioInto(out, cmds, 0.5)).toBe(true);
     expect(out.x).toBeCloseTo(50, 10);
     expect(out.y).toBeCloseTo(0, 10);
   });
 
   test('pointAtLengthRatioInto: empty path → false 반환, out 미수정', () => {
-    const out: XYObjectWritable = { x: 7, y: 8 };
+    const out: PointWritable = { x: 7, y: 8 };
     expect(pointAtLengthRatioInto(out, [], 0.5)).toBe(false);
     expect(out).toEqual({ x: 7, y: 8 });
   });

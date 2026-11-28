@@ -14,7 +14,7 @@ import { monotoneXPathInto } from '../../../src/curve/monotone-x-path-into';
 import { monotoneXPolylineInto } from '../../../src/curve/monotone-x-polyline-into';
 import { monotoneYPathInto } from '../../../src/curve/monotone-y-path-into';
 import { monotoneYPolylineInto } from '../../../src/curve/monotone-y-polyline-into';
-import type { CubicCommand, PathCommand, XYObjectWritable } from '../../../src/types';
+import type { CubicCommand, PathCommand, PointWritable } from '../../../src/types';
 import type { Point } from '../../../src/types/flat-shapes.internal';
 
 // x축이 strict 증가하는 표준 입력.
@@ -204,7 +204,7 @@ describe('monotoneYPathInto', () => {
 
 describe('monotoneXPolylineInto', () => {
   it('segment 끝점을 포함하고 join duplicate를 만들지 않는다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     monotoneXPolylineInto(out, X_INC, { steps: 3 });
     // 3 segment, steps=3: 3 + 2*(3-1) = 7 point
     expect(out).toHaveLength(7);
@@ -218,7 +218,7 @@ describe('monotoneXPolylineInto', () => {
   });
 
   it('local monotone(plateau) data에서 sampled y가 [0,1]을 벗어나지 않는다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     monotoneXPolylineInto(out, X_PLATEAU, { steps: 12 });
     for (const p of out) {
       expect(p.y).toBeLessThanOrEqual(1 + 1e-9);
@@ -227,7 +227,7 @@ describe('monotoneXPolylineInto', () => {
   });
 
   it('steps=1은 입력 vertex polyline을 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     monotoneXPolylineInto(out, X_INC, { steps: 1 });
     expect(out).toHaveLength(4);
     expect(out[0]).toEqual({ x: 0, y: 0 });
@@ -242,7 +242,7 @@ describe('monotoneXPolylineInto', () => {
   });
 
   it('invalid steps RangeError 시 out 내용을 변경하지 않는다', () => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
+    const out: PointWritable[] = [{ x: 9, y: 9 }];
     expect(() => monotoneXPolylineInto(out, X_INC, { steps: 0 })).toThrow(RangeError);
     expect(out).toEqual([{ x: 9, y: 9 }]);
   });
@@ -254,7 +254,7 @@ describe('monotoneXPolylineInto', () => {
 
 describe('monotoneYPolylineInto', () => {
   it('segment 끝점을 포함하고 sampled x/y가 단조성을 유지한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     monotoneYPolylineInto(out, Y_INC, { steps: 8 });
     expect(out[0]).toEqual({ x: 0, y: 0 });
     expect(out[out.length - 1].y).toBeCloseTo(3, 10);

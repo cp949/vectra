@@ -9,7 +9,7 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { IntersectionKind, LinePolygonIntersectionHit, XYObjectWritable } from '../types';
+import type { IntersectionKind, LinePolygonIntersectionHit } from '../types';
 import type { PointWritable, Polygon } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';

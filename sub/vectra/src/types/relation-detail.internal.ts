@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from './xy.internal';
+import type { PointWritable } from './flat-shapes.internal';
 
 /**
  * relation detail result의 discriminant 종류.
@@ -24,7 +24,7 @@ export interface PointRelationDetail {
   kind: 'point';
 
   /** 교차점 좌표 */
-  point: XYObjectWritable;
+  point: PointWritable;
 
   /** 첫 번째 입력의 normalized parameter */
   tA: number;
@@ -45,10 +45,10 @@ export interface OverlapIntervalDetail {
   kind: 'overlap';
 
   /** overlap 구간 시작점 좌표 */
-  start: XYObjectWritable;
+  start: PointWritable;
 
   /** overlap 구간 끝점 좌표 */
-  end: XYObjectWritable;
+  end: PointWritable;
 
   /** 첫 번째 입력의 overlap parameter interval. 오름차순 */
   tA: readonly [number, number];
@@ -77,7 +77,7 @@ export interface TwoPointRelationDetail {
   kind: 'two-point';
 
   /** 두 교점 좌표 */
-  points: readonly [XYObjectWritable, XYObjectWritable];
+  points: readonly [PointWritable, PointWritable];
 }
 
 /**
@@ -96,7 +96,7 @@ export interface MultiPointRelationDetail {
   kind: 'multi-point';
 
   /** 교점 좌표 배열. 길이 1~4, ordering 정책으로 정렬됨 */
-  points: readonly XYObjectWritable[];
+  points: readonly PointWritable[];
 }
 
 /**
@@ -155,6 +155,6 @@ export type EllipseEllipseDetail =
  */
 export type AreaOverlapDetail =
   | { kind: 'none' }
-  | { kind: 'touch'; points: readonly XYObjectWritable[] }
+  | { kind: 'touch'; points: readonly PointWritable[] }
   | { kind: 'overlap' }
   | { kind: 'contains' };

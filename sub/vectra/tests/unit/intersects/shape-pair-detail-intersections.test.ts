@@ -7,9 +7,9 @@ import { ellipseEllipseIntersections } from '../../../src/intersects/ellipse-ell
 import { ellipseEllipseIntersectionsInto } from '../../../src/intersects/ellipse-ellipse-intersections-into';
 import { segmentSegmentIntersections } from '../../../src/intersects/segment-segment-intersections';
 import { segmentSegmentIntersectionsInto } from '../../../src/intersects/segment-segment-intersections-into';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
-function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9): void {
+function expectPointClose(p: PointWritable, x: number, y: number, digits = 9): void {
   expect(p.x).toBeCloseTo(x, digits);
   expect(p.y).toBeCloseTo(y, digits);
 }
@@ -40,7 +40,7 @@ describe('segmentSegmentIntersections — point/overlap/none 분기', () => {
   });
 
   test('Into는 out array를 clear하고 같은 reference를 반환한다', () => {
-    const out: XYObjectWritable[] = [
+    const out: PointWritable[] = [
       { x: 99, y: 99 },
       { x: 88, y: 88 },
     ];
@@ -111,7 +111,7 @@ describe('ellipseEllipseIntersections — point/two-point/multi-point/empty 분�
   });
 
   test('Into는 out array를 clear하고 같은 reference를 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
+    const out: PointWritable[] = [{ x: 1, y: 1 }];
     const result = ellipseEllipseIntersectionsInto(
       out,
       { cx: 0, cy: 0, rx: 5, ry: 5 },

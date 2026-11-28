@@ -5,13 +5,13 @@
  * zero divisor / 음수 피제수 / non-finite 입력의 JavaScript % pass-through를 검증한다.
  */
 import { describe, expect, test } from 'vitest';
-import type { XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import { modulo } from '../../../src/vec/modulo';
 import { moduloInto } from '../../../src/vec/modulo-into';
 
 describe('vec modulo', () => {
   test('a와 b의 각 성분 나머지를 out에 기록하고 out을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const result = moduloInto(out, { x: 5, y: 7 }, { x: 3, y: 4 });
     expect(result).toBe(out);
     expect(out.x).toBe(2);
@@ -19,14 +19,14 @@ describe('vec modulo', () => {
   });
 
   test('out === a aliasing에서도 올바른 결과를 반환한다', () => {
-    const a: XYWritable = { x: 5, y: 7 };
+    const a: PointWritable = { x: 5, y: 7 };
     moduloInto(a, a, { x: 3, y: 4 });
     expect(a.x).toBe(2);
     expect(a.y).toBe(3);
   });
 
   test('out === b aliasing에서도 올바른 결과를 반환한다', () => {
-    const b: XYWritable = { x: 3, y: 4 };
+    const b: PointWritable = { x: 3, y: 4 };
     moduloInto(b, { x: 5, y: 7 }, b);
     expect(b.x).toBe(2);
     expect(b.y).toBe(3);
@@ -59,7 +59,7 @@ describe('vec modulo', () => {
   });
 
   test('-0 피제수는 -0 성분을 만든다(Object.is로 검증)', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     moduloInto(out, { x: -0, y: -6 }, { x: 5, y: 4 });
     expect(Object.is(out.x, -0)).toBe(true);
     expect(out.y).toBe(-2);
@@ -69,7 +69,7 @@ describe('vec modulo', () => {
   });
 
   test('companion은 Into와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     moduloInto(out, { x: 7, y: 11 }, { x: 4, y: 5 });
     const companion = modulo({ x: 7, y: 11 }, { x: 4, y: 5 });
     expect(companion.x).toBe(out.x);

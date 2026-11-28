@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 import { parsePointArrayInto } from '../../../src/adapter/parse-point-array-into';
 import { parseSvgPointsInto } from '../../../src/adapter/parse-svg-points-into';
 import { pointsToString } from '../../../src/adapter/points-to-string';
-import type { XYObjectWritable } from '../../../src/types/index';
+import type { PointWritable } from '../../../src/types/index';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // pointsToString — 직렬화
@@ -47,10 +47,10 @@ describe('pointsToString — 직렬화', () => {
 
 describe('parseSvgPointsInto + pointsToString — round-trip', () => {
   test('parse → toString → parse가 동치다 (정수 좌표)', () => {
-    const out1: XYObjectWritable[] = [];
+    const out1: PointWritable[] = [];
     parseSvgPointsInto(out1, '10,20 30,40 50,60');
     const str = pointsToString(out1);
-    const out2: XYObjectWritable[] = [];
+    const out2: PointWritable[] = [];
     parseSvgPointsInto(out2, str);
     expect(out2).toHaveLength(out1.length);
     for (let i = 0; i < out1.length; i++) {
@@ -60,10 +60,10 @@ describe('parseSvgPointsInto + pointsToString — round-trip', () => {
   });
 
   test('음수·소수 좌표 round-trip', () => {
-    const out1: XYObjectWritable[] = [];
+    const out1: PointWritable[] = [];
     parseSvgPointsInto(out1, '-1.5,2.5 -3.25,4.75');
     const str = pointsToString(out1);
-    const out2: XYObjectWritable[] = [];
+    const out2: PointWritable[] = [];
     parseSvgPointsInto(out2, str);
     expect(out2).toHaveLength(2);
     expect(out2[0].x).toBe(-1.5);
@@ -79,10 +79,10 @@ describe('parseSvgPointsInto + pointsToString — round-trip', () => {
 
 describe('parsePointArrayInto + pointsToString — round-trip', () => {
   test('parse → toString → parse가 동치다 (정수 좌표)', () => {
-    const out1: XYObjectWritable[] = [];
+    const out1: PointWritable[] = [];
     parsePointArrayInto(out1, '10,20 30,40 50,60');
     const str = pointsToString(out1);
-    const out2: XYObjectWritable[] = [];
+    const out2: PointWritable[] = [];
     parsePointArrayInto(out2, str);
     expect(out2).toHaveLength(out1.length);
     for (let i = 0; i < out1.length; i++) {

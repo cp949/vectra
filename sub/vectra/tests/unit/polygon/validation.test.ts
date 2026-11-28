@@ -6,7 +6,6 @@ import type { Polygon } from '../../../src/types/flat-shapes.internal';
 import { describe, expect, test } from 'vitest';
 import { isSelfIntersecting } from '../../../src/polygon/is-self-intersecting';
 import { isSimple } from '../../../src/polygon/is-simple';
-import type { XYInput } from '../../../src/types';
 
 // S10-RM-010 polygon lightweight validation helpers.
 // 정책 출처: _works/S10-RM-010/.../TASK-01-surface-policy.md.

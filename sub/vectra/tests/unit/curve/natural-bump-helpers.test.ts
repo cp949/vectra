@@ -13,7 +13,7 @@ import { bumpXPathInto } from '../../../src/curve/bump-x-path-into';
 import { bumpYPathInto } from '../../../src/curve/bump-y-path-into';
 import { naturalSplinePathInto } from '../../../src/curve/natural-spline-path-into';
 import { naturalSplinePolylineInto } from '../../../src/curve/natural-spline-polyline-into';
-import type { CubicCommand, XYObjectWritable } from '../../../src/types';
+import type { CubicCommand, PointWritable } from '../../../src/types';
 
 import type { Point } from '../../../src/types/flat-shapes.internal';
 
@@ -101,7 +101,7 @@ describe('naturalSplinePathInto', () => {
 
 describe('naturalSplinePolylineInto', () => {
   it('segment 끝점을 포함하고 join duplicate를 만들지 않는다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     naturalSplinePolylineInto(out, TRI, { steps: 4 });
     // 2 segment, steps=4: 4 + 1*(4-1) = 7 point
     expect(out).toHaveLength(7);
@@ -114,7 +114,7 @@ describe('naturalSplinePolylineInto', () => {
   });
 
   it('steps=1은 입력 vertex polyline을 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     naturalSplinePolylineInto(out, TRI, { steps: 1 });
     expect(out).toHaveLength(3);
     expect(out[0]).toEqual({ x: 0, y: 0 });

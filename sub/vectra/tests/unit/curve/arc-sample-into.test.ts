@@ -1,7 +1,7 @@
 /**
  * arcSampleInto unit test.
  *
- * center form arc를 균등 steps로 샘플링해 XYObjectWritable[] 배열에 push한다.
+ * center form arc를 균등 steps로 샘플링해 PointWritable[] 배열에 push한다.
  * sampling 위치: t = i / (steps - 1), i = 0..steps-1 (endpoint 포함).
  */
 import { describe, expect, it } from 'vitest';

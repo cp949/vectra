@@ -9,10 +9,10 @@
 import { describe, expect, test } from 'vitest';
 import { gridSnap } from '../../../src/grid/grid-snap';
 import { gridSnapInto } from '../../../src/grid/grid-snap-into';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
-/** x/y object storage를 가진 새 XYObjectWritable seed를 만든다. */
-function makeXY(): XYObjectWritable {
+/** x/y object storage를 가진 새 PointWritable seed를 만든다. */
+function makeXY(): PointWritable {
   return { x: 0, y: 0 };
 }
 
@@ -49,7 +49,7 @@ describe('gridSnapInto - world point를 nearest grid point로 snap', () => {
   });
 
   test('out === point aliasing은 안전하다', () => {
-    const point: XYObjectWritable = { x: 23, y: 7 };
+    const point: PointWritable = { x: 23, y: 7 };
     const result = gridSnapInto(point, point, { originX: 0, originY: 0, cellWidth: 10, cellHeight: 10 });
     expect(result).toBe(point);
     expect(point).toEqual({ x: 20, y: 10 });
@@ -74,7 +74,7 @@ describe('gridSnapInto - world point를 nearest grid point로 snap', () => {
   });
 
   test('계산된 snap coordinate가 non-finite이면 RangeError이고 out을 수정하지 않는다', () => {
-    const out: XYObjectWritable = { x: -7, y: -9 };
+    const out: PointWritable = { x: -7, y: -9 };
     expect(() =>
       gridSnapInto(
         out,

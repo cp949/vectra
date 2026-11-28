@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYObjectWritable, XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import { abs } from '../../../src/vec/abs';
 import { absInto } from '../../../src/vec/abs-into';
 import { addScaled } from '../../../src/vec/add-scaled';
@@ -35,7 +35,7 @@ describe('vec component-wise - unary helpers', () => {
   const cases: ReadonlyArray<
     UnaryBehaviorCase & {
       name: string;
-      examples: ReadonlyArray<{ title: string; input: XYObjectWritable; expected: readonly [number, number] }>;
+      examples: ReadonlyArray<{ title: string; input: PointWritable; expected: readonly [number, number] }>;
     }
   > = [
     {
@@ -88,7 +88,7 @@ describe('vec component-wise - unary helpers', () => {
   }
 
   test('negateInto는 영 벡터를 부정해도 throw하지 않는다', () => {
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     negateInto(out, { x: 0, y: 0 });
 
     expect(out.x).toBeCloseTo(0, 10);
@@ -160,7 +160,7 @@ describe('vec component-wise - binary helpers', () => {
   });
 
   test('divideInto는 b.x가 0이면 x 성분에 Infinity를 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     divideInto(out, { x: 1, y: 2 }, { x: 0, y: 1 });
 
     expect(out.x).toBe(Infinity);
@@ -168,7 +168,7 @@ describe('vec component-wise - binary helpers', () => {
   });
 
   test('divideInto는 a.x와 b.x가 모두 0이면 x 성분에 NaN을 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     divideInto(out, { x: 0, y: 2 }, { x: 0, y: 1 });
 
     expect(Number.isNaN(out.x)).toBe(true);
@@ -176,7 +176,7 @@ describe('vec component-wise - binary helpers', () => {
   });
 
   test('divideInto는 b.y가 0이면 y 성분에 Infinity를 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     divideInto(out, { x: 2, y: 1 }, { x: 1, y: 0 });
 
     expect(out.x).toBe(2);
@@ -184,22 +184,22 @@ describe('vec component-wise - binary helpers', () => {
   });
 
   test('minInto는 NaN 입력에서 Math.min 정책을 따른다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     minInto(out, { x: NaN, y: 1 }, { x: 2, y: NaN });
 
     expectNaNComponents(out);
   });
 
   test('maxInto는 NaN 입력에서 Math.max 정책을 따른다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     maxInto(out, { x: NaN, y: 1 }, { x: 2, y: NaN });
 
     expectNaNComponents(out);
   });
 
   test('minInto와 maxInto는 Infinity/-Infinity 입력을 처리한다', () => {
-    const minOut: XYWritable = { x: 0, y: 0 };
-    const maxOut: XYWritable = { x: 0, y: 0 };
+    const minOut: PointWritable = { x: 0, y: 0 };
+    const maxOut: PointWritable = { x: 0, y: 0 };
 
     minInto(minOut, { x: Infinity, y: -Infinity }, { x: 5, y: 5 });
     maxInto(maxOut, { x: Infinity, y: -Infinity }, { x: 5, y: 5 });
@@ -222,21 +222,21 @@ describe('vec component-wise - addScaled', () => {
   });
 
   test('out === a aliasing에서도 올바른 결과를 반환한다', () => {
-    const a: XYWritable = { x: 1, y: 2 };
+    const a: PointWritable = { x: 1, y: 2 };
     addScaledInto(a, a, { x: 3, y: 4 }, 2);
 
     expectXY(a, [7, 10]);
   });
 
   test('out === b aliasing에서도 올바른 결과를 반환한다', () => {
-    const b: XYWritable = { x: 3, y: 4 };
+    const b: PointWritable = { x: 3, y: 4 };
     addScaledInto(b, { x: 1, y: 2 }, b, 2);
 
     expectXY(b, [7, 10]);
   });
 
   test('out === a === b (트리플 aliasing)에서도 올바른 결과를 반환한다', () => {
-    const ab: XYWritable = { x: 2, y: 3 };
+    const ab: PointWritable = { x: 2, y: 3 };
     addScaledInto(ab, ab, ab, 2);
 
     expectXY(ab, [6, 9]);

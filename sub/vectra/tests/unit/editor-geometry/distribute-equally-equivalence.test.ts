@@ -8,9 +8,9 @@
 import { describe, expect, test } from 'vitest';
 import { distributeEquallyInto } from '../../../src/editor-geometry/distribute-equally-into';
 import type { DistributeTarget, DistributionKind } from '../../../src/editor-geometry/types';
-import { writeXY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
 import type { Bounds, PointWritable } from '../../../src/types/flat-shapes.internal';
+import { writeXY } from '../_helpers/v1-geometry-reference';
 
 /** 기존 gap 분배는 항목마다 목표 좌표를 처음부터 다시 더한다. */
 function referenceDistributeEquallyInto(

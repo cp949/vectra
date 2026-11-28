@@ -13,7 +13,7 @@ import { stepAfterPathInto } from '../../../src/curve/step-after-path-into';
 import { stepBeforePathInto } from '../../../src/curve/step-before-path-into';
 import { stepPathInto } from '../../../src/curve/step-path-into';
 import { stepPolylineInto } from '../../../src/curve/step-polyline-into';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import type { Point } from '../../../src/types/flat-shapes.internal';
 
 const SEG: Point[] = [
@@ -29,7 +29,7 @@ const TRI: Point[] = [
 
 describe('stepPolylineInto', () => {
   it('middle mode는 각 segment에서 midX elbow 두 개를 거쳐 끝점에 도달한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     expect(stepPolylineInto(out, SEG)).toBe(out);
     expect(out).toEqual([
       { x: 0, y: 0 },
@@ -40,7 +40,7 @@ describe('stepPolylineInto', () => {
   });
 
   it('before mode는 (x1,y0) elbow를 거친다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     stepPolylineInto(out, SEG, { mode: 'before' });
     expect(out).toEqual([
       { x: 0, y: 0 },
@@ -50,7 +50,7 @@ describe('stepPolylineInto', () => {
   });
 
   it('after mode는 (x0,y1) elbow를 거친다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     stepPolylineInto(out, SEG, { mode: 'after' });
     expect(out).toEqual([
       { x: 0, y: 0 },
@@ -60,7 +60,7 @@ describe('stepPolylineInto', () => {
   });
 
   it('multi-segment middle mode는 첫 시작점만 포함하고 segment마다 elbow를 잇는다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     stepPolylineInto(out, TRI);
     expect(out).toEqual([
       { x: 0, y: 0 },
@@ -74,19 +74,19 @@ describe('stepPolylineInto', () => {
   });
 
   it('빈 입력은 빈 배열을 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
+    const out: PointWritable[] = [{ x: 9, y: 9 }];
     expect(stepPolylineInto(out, [])).toBe(out);
     expect(out).toEqual([]);
   });
 
   it('single-point 입력은 빈 배열을 반환한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     stepPolylineInto(out, [{ x: 1, y: 2 }]);
     expect(out).toEqual([]);
   });
 
   it('consecutive duplicate point를 제거하지 않는다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     stepPolylineInto(out, [
       { x: 0, y: 0 },
       { x: 0, y: 0 },
@@ -100,7 +100,7 @@ describe('stepPolylineInto', () => {
   });
 
   it('NaN 좌표는 산술 결과 그대로 pass-through한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     stepPolylineInto(out, [
       { x: Number.NaN, y: 0 },
       { x: 10, y: 4 },
@@ -114,7 +114,7 @@ describe('stepPolylineInto', () => {
   });
 
   it('Infinity / -Infinity 좌표는 산술 결과 그대로 pass-through한다', () => {
-    const outPos: XYObjectWritable[] = [];
+    const outPos: PointWritable[] = [];
     stepPolylineInto(outPos, [
       { x: Number.POSITIVE_INFINITY, y: 0 },
       { x: 10, y: 4 },
@@ -122,7 +122,7 @@ describe('stepPolylineInto', () => {
     expect(outPos[0].x).toBe(Number.POSITIVE_INFINITY);
     expect(outPos[1].x).toBe(Number.POSITIVE_INFINITY);
 
-    const outNeg: XYObjectWritable[] = [];
+    const outNeg: PointWritable[] = [];
     stepPolylineInto(outNeg, [
       { x: Number.NEGATIVE_INFINITY, y: 0 },
       { x: 10, y: 4 },
@@ -132,7 +132,7 @@ describe('stepPolylineInto', () => {
   });
 
   it('Infinity + -Infinity midX는 NaN으로 pass-through한다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     stepPolylineInto(out, [
       { x: Number.POSITIVE_INFINITY, y: 0 },
       { x: Number.NEGATIVE_INFINITY, y: 4 },
@@ -145,7 +145,7 @@ describe('stepPolylineInto', () => {
   });
 
   it('invalid mode는 RangeError를 던진다', () => {
-    const out: XYObjectWritable[] = [];
+    const out: PointWritable[] = [];
     // @ts-expect-error invalid mode 런타임 검증
     expect(() => stepPolylineInto(out, SEG, { mode: 'diagonal' })).toThrow(RangeError);
   });

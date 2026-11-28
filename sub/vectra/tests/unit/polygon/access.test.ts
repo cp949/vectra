@@ -21,7 +21,7 @@ describe('polygon access allocating companions', () => {
     expect(bounds(CCW_TRI)).toEqual({ minX: 0, minY: 0, maxX: 4, maxY: 3 });
   });
 
-  test('centroid는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
+  test('centroid는 성공 시 새 PointWritable을 반환하고 실패 시 undefined를 반환한다', () => {
     const result = centroid(CCW_TRI);
     expect(result?.x).toBeCloseTo(4 / 3, 10);
     expect(result?.y).toBeCloseTo(1, 10);
@@ -33,7 +33,7 @@ describe('polygon access allocating companions', () => {
     expect(edgeAt(CCW_TRI, 3)).toBeUndefined();
   });
 
-  test('pointAtIndex는 성공 시 새 XYObjectWritable을 반환하고 실패 시 undefined를 반환한다', () => {
+  test('pointAtIndex는 성공 시 새 PointWritable을 반환하고 실패 시 undefined를 반환한다', () => {
     expect(pointAtIndex(CCW_TRI, 1)).toEqual({ x: 4, y: 0 });
     expect(pointAtIndex(CCW_TRI, -1)).toBeUndefined();
   });

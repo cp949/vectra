@@ -20,8 +20,6 @@ import { intersectsPolygonInfiniteLine } from '../../../src/intersects/intersect
 import { intersectsPolygonRay } from '../../../src/intersects/intersects-polygon-ray';
 import { intersectsPolygonSegment } from '../../../src/intersects/intersects-polygon-segment';
 import { intersectsSegmentSegment } from '../../../src/intersects/intersects-segment-segment';
-import { readCircleCenter, readCircleRadius } from '../../../src/internal/circle';
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../../../src/internal/infinite-line';
 import {
   infiniteLineToLineFamilyParam,
   lineFamilyCircleIntersects,
@@ -31,12 +29,29 @@ import {
 } from '../../../src/internal/line-family';
 import type { LineFamilyParam } from '../../../src/internal/line-family';
 import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
-import { polygonContainsPoint, readPolygonPoints } from '../../../src/internal/polygon';
-import { readRayDirection, readRayOrigin } from '../../../src/internal/ray';
-import { readSegmentA, readSegmentB } from '../../../src/internal/segment';
-import { readX, readY } from '../../../src/internal/xy';
+import { polygonContainsPoint } from '../../../src/internal/polygon';
 import { createRng } from '../../../src/random/create-rng';
-import type { CircleLike, InfiniteLineLike, PolygonLike, RayLike, SegmentLike, XYInput } from '../../../src/types';
+import {
+  readCircleCenter,
+  readCircleRadius,
+  readInfiniteLineDirection,
+  readInfiniteLineOrigin,
+  readPolygonPoints,
+  readRayDirection,
+  readRayOrigin,
+  readSegmentA,
+  readSegmentB,
+  readX,
+  readY,
+} from '../_helpers/v1-geometry-reference';
+import type {
+  CircleLike,
+  InfiniteLineLike,
+  PolygonLike,
+  RayLike,
+  SegmentLike,
+  XYInput,
+} from '../_helpers/v1-geometry-reference';
 
 // 이전 구현. 공유 reader, 매번 새로 만드는 param, `(i + 1) % n` 순회, `polygonContainsPoint`를 그대로 쓴다.
 // 새 구현의 비교 기준으로만 쓴다.

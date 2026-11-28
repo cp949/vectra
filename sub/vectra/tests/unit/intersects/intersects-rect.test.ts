@@ -8,7 +8,7 @@ import { singleIntersectionRayRect } from '../../../src/intersects/single-inters
 import { singleIntersectionRayRectInto } from '../../../src/intersects/single-intersection-ray-rect-into';
 import { singleIntersectionSegmentRect } from '../../../src/intersects/single-intersection-segment-rect';
 import { singleIntersectionSegmentRectInto } from '../../../src/intersects/single-intersection-segment-rect-into';
-import type { XYObjectWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 
 // rect: { x: 1, y: 1, width: 4, height: 4 } → 4변: (1,1)→(5,1), (5,1)→(5,5), (5,5)→(1,5), (1,5)→(1,1)
 
@@ -64,7 +64,7 @@ describe('intersectsRectSegment', () => {
 
 describe('singleIntersectionSegmentRectInto', () => {
   const rect = { x: 1, y: 1, width: 4, height: 4 };
-  let out: XYObjectWritable;
+  let out: PointWritable;
 
   beforeEach(() => {
     out = { x: 0, y: 0 };

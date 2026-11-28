@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { closestPointInto } from '../../../src/path/closest-point-into';
 import { distanceToPoint } from '../../../src/path/distance-to-point';
-import type { PathCommand, XYObjectWritable } from '../../../src/types/index';
+import type { PathCommand, PointWritable } from '../../../src/types/index';
 
 // ──────────────────────────────────────────────
 // distanceToPoint
@@ -78,7 +78,7 @@ describe('distanceToPoint', () => {
       { kind: 'line', x: 100, y: 100 },
     ];
     const queryPt = { x: 40, y: 30 };
-    const out: XYObjectWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     closestPointInto(out, cmds, queryPt);
     const dist = distanceToPoint(cmds, queryPt);
     const expectedDist = Math.hypot(out.x - queryPt.x, out.y - queryPt.y);

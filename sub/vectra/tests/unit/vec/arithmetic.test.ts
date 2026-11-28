@@ -6,7 +6,6 @@
 
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import type { Point, PointWritable } from '../../../src/types/flat-shapes.internal';
-import type { XYWritable } from '../../../src/types';
 import { add } from '../../../src/vec/add';
 import { addInto } from '../../../src/vec/add-into';
 import { copyInto } from '../../../src/vec/copy-into';
@@ -29,7 +28,7 @@ test('addInto는 x/y 벡터를 받아 구체 타입의 out을 그대로 반환�
 describe('vec arithmetic - addInto', () => {
   test('caller가 제공한 out 객체를 재사용하고 같은 객체를 반환한다', () => {
     // 동일 out에 두 번 기록하더라도 동일 reference를 반환해야 한다
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
 
     const first = addInto(out, { x: 10, y: 20 }, { x: 1, y: 2 });
     const second = addInto(out, { x: 5, y: -5 }, { x: 5, y: 5 });
@@ -64,7 +63,7 @@ describe('vec arithmetic - addInto', () => {
 
 describe('vec arithmetic - subInto', () => {
   test('두 점의 좌표 차를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = subInto(out, { x: 10, y: 5 }, { x: 3, y: 8 });
 
@@ -74,7 +73,7 @@ describe('vec arithmetic - subInto', () => {
 
   test('caller가 제공한 out 객체를 재사용하고 같은 객체를 반환한다', () => {
     // 두 번 연속 호출에서도 같은 out reference를 반환해야 한다
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
 
     const first = subInto(out, { x: 10, y: 10 }, { x: 4, y: 1 });
     const second = subInto(out, { x: 0, y: 0 }, { x: 2, y: -2 });
@@ -87,7 +86,7 @@ describe('vec arithmetic - subInto', () => {
 
 describe('vec arithmetic - scaleInto', () => {
   test('object 입력에 scalar를 곱해 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = scaleInto(out, { x: 3, y: -4 }, 2);
 
@@ -96,7 +95,7 @@ describe('vec arithmetic - scaleInto', () => {
   });
 
   test('소수 배율을 곱해 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
 
     const result = scaleInto(out, { x: 5, y: 10 }, 0.5);
 
@@ -106,7 +105,7 @@ describe('vec arithmetic - scaleInto', () => {
 
   test('caller가 제공한 out 객체를 재사용하고 같은 객체를 반환한다', () => {
     // 두 번 연속 호출에서도 같은 out reference를 반환해야 한다
-    const out: XYWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
 
     const first = scaleInto(out, { x: 4, y: 6 }, 2);
     const second = scaleInto(out, { x: 1, y: -1 }, -3);
@@ -129,7 +128,7 @@ describe('vec companion - vecFrom', () => {
   });
 
   test('copyInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const input = { x: 5, y: -2 };
 
     copyInto(out, input);
@@ -152,7 +151,7 @@ describe('vec companion - add', () => {
   });
 
   test('addInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     addInto(out, { x: 10, y: -3 }, { x: 2, y: 5 });
     const result = add({ x: 10, y: -3 }, { x: 2, y: 5 });
 
@@ -173,7 +172,7 @@ describe('vec companion - sub', () => {
   });
 
   test('subInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     subInto(out, { x: 9, y: 4 }, { x: 3, y: 8 });
     const result = sub({ x: 9, y: 4 }, { x: 3, y: 8 });
 
@@ -192,7 +191,7 @@ describe('vec companion - scale', () => {
   });
 
   test('scaleInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     scaleInto(out, { x: 5, y: 10 }, 0.5);
     const result = scale({ x: 5, y: 10 }, 0.5);
 

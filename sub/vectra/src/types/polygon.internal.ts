@@ -1,20 +1,3 @@
-import type { XYInput, XYObjectWritable } from './xy.internal';
-
-/** canonical object shape로 표현하는 structural polygon input. */
-export interface PolygonObjectLike {
-  /** polygon vertex 목록 */
-  readonly points: readonly XYInput[];
-}
-
-/** ordered point 배열 또는 canonical object shape로 표현하는 structural polygon input. */
-export type PolygonLike = readonly XYInput[] | PolygonObjectLike;
-
-/** writable point 배열에 결과를 기록할 수 있는 structural polygon output. */
-export interface PolygonWritable<Point extends XYInput = XYObjectWritable> {
-  /** 기록 가능한 polygon vertex 목록 */
-  points: Point[];
-}
-
 /** polygon 내 point 위치 분류. inside=내부, boundary=경계, outside=외부. */
 export type PointContainment = 'inside' | 'boundary' | 'outside';
 

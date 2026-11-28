@@ -1,53 +1,5 @@
 import type { PointWritable } from './flat-shapes.internal';
 
-/** tuple 형태의 2D affine transform matrix input. */
-export type MatrixTuple = readonly [a: number, b: number, c: number, d: number, tx: number, ty: number];
-
-/** 2D affine transform matrix object input. */
-export interface MatrixObjectLike {
-  /** x축 basis의 x 성분 */
-  readonly a: number;
-
-  /** x축 basis의 y 성분 */
-  readonly b: number;
-
-  /** y축 basis의 x 성분 */
-  readonly c: number;
-
-  /** y축 basis의 y 성분 */
-  readonly d: number;
-
-  /** x축 translation */
-  readonly tx: number;
-
-  /** y축 translation */
-  readonly ty: number;
-}
-
-/** object 또는 tuple 형태의 2D affine transform matrix input. */
-export type MatrixLike = MatrixObjectLike | MatrixTuple;
-
-/** 2D affine transform matrix output. */
-export interface MatrixWritable {
-  /** 기록 가능한 x축 basis의 x 성분 */
-  a: number;
-
-  /** 기록 가능한 x축 basis의 y 성분 */
-  b: number;
-
-  /** 기록 가능한 y축 basis의 x 성분 */
-  c: number;
-
-  /** 기록 가능한 y축 basis의 y 성분 */
-  d: number;
-
-  /** 기록 가능한 x축 translation */
-  tx: number;
-
-  /** 기록 가능한 y축 translation */
-  ty: number;
-}
-
 /**
  * matrix로 변환한 rect/bounds의 oriented outline corner를 기록하는 writable output type.
  *

@@ -14,7 +14,6 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { XYObjectWritable } from '../types';
 import type { PointWritable } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';
@@ -330,7 +329,7 @@ export function lineFamilyEllipseIntersectionPoint(
  * @param epsilon discriminant 0 근방 임계값
  */
 export function lineFamilyEllipseIntersectionPoints(
-  outPoints: XYObjectWritable[],
+  outPoints: PointWritable[],
   ox: number,
   oy: number,
   dx: number,
@@ -341,7 +340,7 @@ export function lineFamilyEllipseIntersectionPoints(
   rx: number,
   ry: number,
   epsilon: number
-): XYObjectWritable[] {
+): PointWritable[] {
   outPoints.length = 0;
 
   const sol = solveLineFamilyEllipse(ox, oy, dx, dy, cx, cy, rx, ry, epsilon, solutionScratch);

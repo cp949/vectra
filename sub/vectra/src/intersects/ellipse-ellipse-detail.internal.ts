@@ -1,4 +1,4 @@
-import type { EllipseEllipseDetail, PointRelationDetail, XYObjectWritable } from '../types';
+import type { EllipseEllipseDetail, PointRelationDetail, PointWritable } from '../types';
 import { canonTurn, ellipseResidual, type Hit, pointInEllipseClosedN } from './ellipse-ellipse-conic.internal';
 import { pushConicQuarticRootCandidates } from './ellipse-ellipse-solver.internal';
 
@@ -223,7 +223,7 @@ export function ellipseEllipseDetailXY(
 
   // 정규화 frame(ellipse a 원점) 좌표를 원래 좌표로 복원하며 non-finite 검사.
   // h.x*scale은 a 원점 기준 offset이므로 cax/cay를 직접 더한다(round-trip 정밀도 손실 회피).
-  const points: XYObjectWritable[] = [];
+  const points: PointWritable[] = [];
   for (const h of distinct) {
     const px = h.x * scale + cax;
     const py = h.y * scale + cay;
@@ -234,7 +234,7 @@ export function ellipseEllipseDetailXY(
   if (points.length === 1) {
     // C6 tangent — 단일 boundary 교점
     const h = distinct[0] as Hit;
-    const point = points[0] as XYObjectWritable;
+    const point = points[0] as PointWritable;
     const detail: PointRelationDetail = {
       kind: 'point',
       point,
@@ -245,7 +245,7 @@ export function ellipseEllipseDetailXY(
   }
   if (points.length === 2) {
     // C7 two-point
-    return { kind: 'two-point', points: [points[0] as XYObjectWritable, points[1] as XYObjectWritable] };
+    return { kind: 'two-point', points: [points[0] as PointWritable, points[1] as PointWritable] };
   }
   // C8 multi-point (3~4점)
   return { kind: 'multi-point', points };

@@ -31,10 +31,10 @@ import { subInto } from '../../../src/vec/sub-into';
 import { subtractScaled } from '../../../src/vec/subtract-scaled';
 import { subtractScaledInto } from '../../../src/vec/subtract-scaled-into';
 import { hypot2 } from '../../../src/internal/numeric';
-import { readX, readY, writeXY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
 import type { PointWritable } from '../../../src/types/flat-shapes.internal';
-import type { XYInput, XYObjectWritable, XYWritable } from '../../../src/types';
+import { readX, readY, writeXY } from '../_helpers/v1-geometry-reference';
+import type { XYInput, XYWritable } from '../_helpers/v1-geometry-reference';
 
 // 이전 구현. 공유 readX/readY/writeXY를 그대로 쓴다. 새 구현의 비교 기준으로만 쓴다.
 
@@ -136,7 +136,7 @@ function makePoint(rng: Rng): PointWritable {
 
 /** 이전 구현이 반환한 좌표를 비교용 쌍으로 읽는다. */
 function snapshot(v: XYWritable | XYInput): [number, number] {
-  return Array.isArray(v) ? [v[0], v[1]] : [(v as XYObjectWritable).x, (v as XYObjectWritable).y];
+  return Array.isArray(v) ? [v[0], v[1]] : [(v as PointWritable).x, (v as PointWritable).y];
 }
 
 /** NaN과 음의 영을 구분하는 좌표 비교를 수행한다. */
@@ -242,7 +242,7 @@ describe('vec 산술 함수 — 이전 구현과 비트 단위 동일성', () =>
       const s = coord(rng);
       const a = makePoint(rng);
       const b = makePoint(rng);
-      const cases: Array<[string, XYObjectWritable, XYWritable]> = [
+      const cases: Array<[string, PointWritable, XYWritable]> = [
         ['sub', sub(a, b), ref.subInto({ x: 0, y: 0 }, a, b)],
         ['scale', scale(a, s), ref.scaleInto({ x: 0, y: 0 }, a, s)],
         ['subtractScaled', subtractScaled(a, b, s), ref.subtractScaledInto({ x: 0, y: 0 }, a, b, s)],

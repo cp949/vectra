@@ -1,20 +1,4 @@
 import type { PointWritable } from './flat-shapes.internal';
-import type { XYInput, XYObjectWritable } from './xy.internal';
-
-/** canonical object shape로 표현하는 structural polyline input. */
-export interface PolylineObjectLike {
-  /** polyline vertex 목록 */
-  readonly points: readonly XYInput[];
-}
-
-/** ordered point 배열 또는 canonical object shape로 표현하는 structural polyline input. */
-export type PolylineLike = readonly XYInput[] | PolylineObjectLike;
-
-/** writable point 배열에 결과를 기록할 수 있는 structural polyline output. */
-export interface PolylineWritable<Point extends XYInput = XYObjectWritable> {
-  /** 기록 가능한 polyline vertex 목록 */
-  points: Point[];
-}
 
 /** `frameAtLengthInto` / `frameAtLength`의 arc-length point/tangent/normal frame output. */
 export interface PolylineFrameWritable<Point extends PointWritable = PointWritable> {

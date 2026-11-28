@@ -12,7 +12,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import type { XYWritable } from '../../../src/types';
+import type { PointWritable } from '../../../src/types';
 import { fromPolar } from '../../../src/vec/from-polar';
 import { fromPolarInto } from '../../../src/vec/from-polar-into';
 import { isCollinear } from '../../../src/vec/is-collinear';
@@ -30,21 +30,21 @@ import { toPolarInto } from '../../../src/vec/to-polar-into';
 
 describe('vec subtractScaled - subtractScaledInto', () => {
   test('object 입력으로 a - b * scalar를 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const result = subtractScaledInto(out, { x: 10, y: 8 }, { x: 2, y: 3 }, 2);
     expect(result).toBe(out);
     expect(out).toEqual({ x: 6, y: 2 });
   });
 
   test('scalar = 0이면 a를 그대로 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     subtractScaledInto(out, { x: 5, y: 7 }, { x: 99, y: 99 }, 0);
     expect(out).toEqual({ x: 5, y: 7 });
   });
 
   test('addScaledInto와 대칭: scalar를 음수로 바꾸면 같다', () => {
-    const out1: XYWritable = { x: 0, y: 0 };
-    const out2: XYWritable = { x: 0, y: 0 };
+    const out1: PointWritable = { x: 0, y: 0 };
+    const out2: PointWritable = { x: 0, y: 0 };
     const a = { x: 3, y: 5 };
     const b = { x: 1, y: 2 };
     // subtractScaled(a, b, s) == addScaled(a, b, -s)
@@ -59,13 +59,13 @@ describe('vec subtractScaled - subtractScaledInto', () => {
   });
 
   test('aliasing 안전 — out과 a가 같은 object여도 올바르게 계산한다', () => {
-    const v: XYWritable = { x: 10, y: 8 };
+    const v: PointWritable = { x: 10, y: 8 };
     subtractScaledInto(v, v, { x: 2, y: 3 }, 2);
     expect(v).toEqual({ x: 6, y: 2 });
   });
 
   test('aliasing 안전 — out과 b가 같은 object여도 올바르게 계산한다', () => {
-    const v: XYWritable = { x: 2, y: 3 };
+    const v: PointWritable = { x: 2, y: 3 };
     subtractScaledInto(v, { x: 10, y: 8 }, v, 2);
     expect(v).toEqual({ x: 6, y: 2 });
   });
@@ -78,7 +78,7 @@ describe('vec subtractScaled - subtractScaled (companion)', () => {
   });
 
   test('subtractScaledInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     subtractScaledInto(out, { x: 5, y: 9 }, { x: 1, y: 3 }, 3);
     const result = subtractScaled({ x: 5, y: 9 }, { x: 1, y: 3 }, 3);
     expect(result.x).toBe(out.x);
@@ -219,20 +219,20 @@ function expectXYClose(actual: { x: number; y: number }, expectedX: number, expe
 
 describe('vec interpolation - slerpInto', () => {
   test('t=0이면 a 방향을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const result = slerpInto(out, { x: 1, y: 0 }, { x: 0, y: 1 }, 0);
     expect(result).toBe(out);
     expectXYClose(out as { x: number; y: number }, 1, 0);
   });
 
   test('t=1이면 b 방향을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     slerpInto(out, { x: 1, y: 0 }, { x: 0, y: 1 }, 1);
     expectXYClose(out as { x: number; y: number }, 0, 1);
   });
 
   test('t=0.5이면 두 unit vector 사이 45도 방향을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     // (1,0)과 (0,1) 사이 45도 = (cos45, sin45) = (√2/2, √2/2)
     slerpInto(out, { x: 1, y: 0 }, { x: 0, y: 1 }, 0.5);
     const sqrt2over2 = Math.SQRT2 / 2;
@@ -240,7 +240,7 @@ describe('vec interpolation - slerpInto', () => {
   });
 
   test('같은 방향 벡터는 lerp fallback으로 a를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     slerpInto(out, { x: 1, y: 0 }, { x: 1, y: 0 }, 0.5);
     expectXYClose(out as { x: number; y: number }, 1, 0);
   });
@@ -254,7 +254,7 @@ describe('vec interpolation - slerpInto', () => {
   });
 
   test('정반대 방향 벡터 사이를 t=0.5로 보간하면 lerp fallback이 적용된다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     // (1, 0)과 (-1, 0)은 정반대 방향 — lerp fallback: 중간점이 (0, 0)에 수렴
     slerpInto(out, { x: 1, y: 0 }, { x: -1, y: 0 }, 0.5);
     // fallback이 적용되는지 확인 (RangeError 없이 완료)
@@ -263,14 +263,14 @@ describe('vec interpolation - slerpInto', () => {
   });
 
   test('정반대 방향 벡터에서 t=0이면 a와 같은 방향이다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     slerpInto(out, { x: 1, y: 0 }, { x: -1, y: 0 }, 0);
     expect(out.x).toBeCloseTo(1, 10);
     expect(out.y).toBeCloseTo(0, 10);
   });
 
   test('정반대 방향 벡터에서 t=1이면 b와 같은 방향이다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     slerpInto(out, { x: 1, y: 0 }, { x: -1, y: 0 }, 1);
     expect(out.x).toBeCloseTo(-1, 10);
     expect(out.y).toBeCloseTo(0, 10);
@@ -286,7 +286,7 @@ describe('vec interpolation - slerp (companion)', () => {
   });
 
   test('slerpInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     slerpInto(out, { x: 1, y: 0 }, { x: 0, y: 1 }, 0.3);
     const result = slerp({ x: 1, y: 0 }, { x: 0, y: 1 }, 0.3);
     expect(result.x).toBeCloseTo((out as { x: number }).x, 10);
@@ -356,7 +356,7 @@ describe('vec conversion - toPolarInto', () => {
 
 describe('vec conversion - fromPolarInto', () => {
   test('r=1, theta=0 → (1, 0)', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     const result = fromPolarInto(out, 1, 0);
     expect(result).toBe(out);
     expect((out as { x: number }).x).toBeCloseTo(1, 10);
@@ -364,21 +364,21 @@ describe('vec conversion - fromPolarInto', () => {
   });
 
   test('r=1, theta=π/2 → (0, 1)', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     fromPolarInto(out, 1, Math.PI / 2);
     expect((out as { x: number }).x).toBeCloseTo(0, 10);
     expect((out as { y: number }).y).toBeCloseTo(1, 10);
   });
 
   test('r=5, theta=atan2(4,3) → (3, 4)', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     fromPolarInto(out, 5, Math.atan2(4, 3));
     expect((out as { x: number }).x).toBeCloseTo(3, 10);
     expect((out as { y: number }).y).toBeCloseTo(4, 10);
   });
 
   test('r=0이면 (0, 0)을 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     fromPolarInto(out, 0, Math.PI / 4);
     expect((out as { x: number }).x).toBeCloseTo(0, 10);
     expect((out as { y: number }).y).toBeCloseTo(0, 10);
@@ -394,7 +394,7 @@ describe('vec conversion - fromPolar (companion)', () => {
   });
 
   test('fromPolarInto와 동일한 결과를 반환한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
+    const out: PointWritable = { x: 0, y: 0 };
     fromPolarInto(out, 3, Math.PI / 3);
     const result = fromPolar(3, Math.PI / 3);
     expect(result.x).toBeCloseTo((out as { x: number }).x, 10);
