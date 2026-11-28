@@ -20,7 +20,7 @@ function fixtureY(point: FixturePoint): number {
 }
 
 /** 제어점을 p0–p3 점으로 적은 곡선 시험 데이터. */
-type FixtureCurve =
+export type FixtureCurve =
   | { readonly kind: 'quadratic'; readonly p0: FixturePoint; readonly p1: FixturePoint; readonly p2: FixturePoint }
   | {
       readonly kind: 'cubic';

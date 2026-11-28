@@ -11,14 +11,14 @@ import { describe, expect, it } from 'vitest';
 import { arcMiddle } from '../../../src/curve/arc-middle';
 import { arcMiddleInto } from '../../../src/curve/arc-middle-into';
 import { arcPointAtTInto } from '../../../src/curve/arc-point-at-t-into';
-import type { CenterArcLike } from '../../../src/types';
+import type { CenterArc } from '../../../src/types';
 
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
 }
 
-const quarterCircle: CenterArcLike = {
+const quarterCircle: CenterArc = {
   cx: 0,
   cy: 0,
   rx: 1,
@@ -47,7 +47,7 @@ describe('arcMiddleInto', () => {
   });
 
   it('center가 이동된 ellipse에서도 정확하다', () => {
-    const ellipse: CenterArcLike = {
+    const ellipse: CenterArc = {
       cx: 10,
       cy: 5,
       rx: 2,

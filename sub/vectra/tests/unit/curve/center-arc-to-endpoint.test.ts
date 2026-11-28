@@ -12,7 +12,7 @@
 import { describe, expect, it } from 'vitest';
 import { centerArcToEndpoint } from '../../../src/curve/center-arc-to-endpoint';
 import { centerArcToEndpointInto } from '../../../src/curve/center-arc-to-endpoint-into';
-import type { ArcCommandWritable, CenterArcLike } from '../../../src/types';
+import type { ArcCommandWritable, CenterArc } from '../../../src/types';
 
 /**
  * Into 비교용 빈 output buffer를 만든다.
@@ -33,7 +33,7 @@ function makeOut(): ArcCommandWritable {
 
 describe('centerArcToEndpoint', () => {
   it('quarter arc(센터 0,0, sweep=true, 90°)에서 Into 결과와 일치한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -49,7 +49,7 @@ describe('centerArcToEndpoint', () => {
   });
 
   it('large arc(sweep >= π)에서 largeArc=true가 Into와 일치한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -66,7 +66,7 @@ describe('centerArcToEndpoint', () => {
   });
 
   it('xRotation, 비대칭 rx/ry, sweep=false 조합도 Into 결과와 일치한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: 2,
       cy: -3,
       rx: 4,
@@ -82,7 +82,7 @@ describe('centerArcToEndpoint', () => {
   });
 
   it('rx<=0 degenerate에서 Into와 동일하게 endpoint=center를 기록한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: 5,
       cy: 7,
       rx: 0,
@@ -101,7 +101,7 @@ describe('centerArcToEndpoint', () => {
   });
 
   it('ry<=0 degenerate에서도 Into와 동일하게 endpoint=center를 기록한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: -1,
       cy: 4,
       rx: 3,
@@ -119,7 +119,7 @@ describe('centerArcToEndpoint', () => {
   });
 
   it('endAngle=Infinity에서 Into와 동일한 endpoint NaN/Infinity를 전파한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -141,7 +141,7 @@ describe('centerArcToEndpoint', () => {
   });
 
   it('startAngle=NaN에서 Into와 동일하게 largeArc 비교 결과를 전파한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -158,7 +158,7 @@ describe('centerArcToEndpoint', () => {
   });
 
   it('호출 시마다 새 object reference를 반환한다', () => {
-    const center: CenterArcLike = {
+    const center: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,

@@ -31,7 +31,7 @@ export async function setup({ app, size }: Runtime) {
     const startAngle = -Math.PI / 2;
     const endAngle = startAngle + sweepAngle;
 
-    // center-form arc 정의 (vectra/curve CenterArcLike)
+    // center-form arc 정의 (vectra CenterArc)
     const centerArc = {
       cx,
       cy,

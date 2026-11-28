@@ -11,14 +11,14 @@ import { describe, expect, it } from 'vitest';
 import { arcNormalAt } from '../../../src/curve/arc-normal-at';
 import { arcNormalAtInto } from '../../../src/curve/arc-normal-at-into';
 import { arcTangentAtInto } from '../../../src/curve/arc-tangent-at-into';
-import type { CenterArcLike } from '../../../src/types';
+import type { CenterArc } from '../../../src/types';
 
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
 }
 
-const quarterCircle: CenterArcLike = {
+const quarterCircle: CenterArc = {
   cx: 0,
   cy: 0,
   rx: 1,
@@ -70,7 +70,7 @@ describe('arcNormalAtInto', () => {
   });
 
   it('degenerate (rx=0) arc에서 zero vector를 반환한다', () => {
-    const degenerate: CenterArcLike = {
+    const degenerate: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 0,

@@ -14,7 +14,7 @@
 import { describe, expect, it } from 'vitest';
 import { arcPointAtTInto } from '../../../src/curve/arc-point-at-t-into';
 import { arcToCubicInto } from '../../../src/curve/arc-to-cubic-into';
-import type { CenterArcLike } from '../../../src/types';
+import type { CenterArc } from '../../../src/types';
 
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
@@ -35,7 +35,7 @@ function cubicPointAt(
   };
 }
 
-const quarterCircle: CenterArcLike = {
+const quarterCircle: CenterArc = {
   cx: 0,
   cy: 0,
   rx: 1,
@@ -46,7 +46,7 @@ const quarterCircle: CenterArcLike = {
   sweep: true,
 };
 
-const halfCircle: CenterArcLike = {
+const halfCircle: CenterArc = {
   cx: 0,
   cy: 0,
   rx: 1,
@@ -114,7 +114,7 @@ describe('arcToCubicInto', () => {
   });
 
   it('zero-sweep arc는 빈 배열을 반환한다', () => {
-    const zeroSweep: CenterArcLike = {
+    const zeroSweep: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -130,7 +130,7 @@ describe('arcToCubicInto', () => {
   });
 
   it('degenerate (rx=0) arc는 빈 배열을 반환한다', () => {
-    const degenerate: CenterArcLike = {
+    const degenerate: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 0,
@@ -179,7 +179,7 @@ describe('arcToCubicInto', () => {
   });
 
   it('ellipse arc도 처리한다 (rx != ry)', () => {
-    const ellipseArc: CenterArcLike = {
+    const ellipseArc: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 2,

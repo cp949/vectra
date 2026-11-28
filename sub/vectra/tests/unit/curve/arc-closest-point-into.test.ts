@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest';
 import { arcClosestPoint } from '../../../src/curve/arc-closest-point';
 import { arcClosestPointInto } from '../../../src/curve/arc-closest-point-into';
 import { arcPointAtTInto } from '../../../src/curve/arc-point-at-t-into';
-import type { CenterArcLike } from '../../../src/types';
+import type { CenterArc } from '../../../src/types';
 
 const HALF_PI = Math.PI / 2;
 
@@ -24,7 +24,7 @@ function sq(x: number, y: number): number {
 describe('arcClosestPointInto', () => {
   describe('circular arc — span 내 projection', () => {
     // quarter circle: center=(0,0), r=1, 0..π/2
-    const arc: CenterArcLike = {
+    const arc: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -56,7 +56,7 @@ describe('arcClosestPointInto', () => {
 
   describe('circular arc — span 밖 endpoint clamp', () => {
     // arc: 0..π/4 (첫 octant)
-    const arc: CenterArcLike = {
+    const arc: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -79,7 +79,7 @@ describe('arcClosestPointInto', () => {
   describe('circular arc — tie-break (작은 t 선택)', () => {
     // 반원: 0..π, query (0,2) → 중점 (0,1)이 최근접
     it('대칭 query에서 arc 중점이 최근접점', () => {
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 0,
         cy: 0,
         rx: 1,
@@ -99,7 +99,7 @@ describe('arcClosestPointInto', () => {
       // arc: -π/4..π/4, query (10, 0)
       // start(cos -π/4, sin -π/4)와 end(cos π/4, sin π/4)는 같은 거리
       // Newton-Raphson이 내부 극값(1, 0)으로 수렴 → (1, 0) 반환
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 0,
         cy: 0,
         rx: 1,
@@ -117,7 +117,7 @@ describe('arcClosestPointInto', () => {
 
   describe('rotated ellipse arc', () => {
     it('결과가 전체 arc 위 sampling보다 query에 가깝거나 같음', () => {
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 0,
         cy: 0,
         rx: 2,
@@ -143,7 +143,7 @@ describe('arcClosestPointInto', () => {
     it('query가 arc 내부에 projection 있는 경우 내부 극값 반환', () => {
       // arc: center=(0,0), rx=2, ry=1, xRotation=0 (axis-aligned ellipse), 0..π
       // query (0, 2): arc 최고점 (0, 1) 근방이 가장 가까움
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 0,
         cy: 0,
         rx: 2,
@@ -163,7 +163,7 @@ describe('arcClosestPointInto', () => {
 
   describe('multi-turn arc', () => {
     it('1회전을 초과하는 rotated ellipse arc에서도 내부 최근접점을 찾는다', () => {
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 0.3530061028385034,
         cy: 3.758920038136507,
         rx: 17.135900831544014,
@@ -187,7 +187,7 @@ describe('arcClosestPointInto', () => {
   });
 
   describe('option fallback — invalid options는 기본값 사용', () => {
-    const arc: CenterArcLike = {
+    const arc: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -240,7 +240,7 @@ describe('arcClosestPointInto', () => {
 
   describe('degenerate', () => {
     it('rx=0 → center point 반환', () => {
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 3,
         cy: 4,
         rx: 0,
@@ -256,7 +256,7 @@ describe('arcClosestPointInto', () => {
     });
 
     it('zero-sweep (startAngle===endAngle) → start point 반환', () => {
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 0,
         cy: 0,
         rx: 1,
@@ -275,7 +275,7 @@ describe('arcClosestPointInto', () => {
 
   describe('out 반환 확인', () => {
     it('Into variant는 out 자체를 반환한다', () => {
-      const arc: CenterArcLike = {
+      const arc: CenterArc = {
         cx: 0,
         cy: 0,
         rx: 1,
@@ -294,7 +294,7 @@ describe('arcClosestPointInto', () => {
 
 describe('arcClosestPoint', () => {
   it('새 object를 반환하고 Into와 같은 좌표', () => {
-    const arc: CenterArcLike = {
+    const arc: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -312,7 +312,7 @@ describe('arcClosestPoint', () => {
   });
 
   it('반환된 object는 Into에 전달된 out과 다른 instance', () => {
-    const arc: CenterArcLike = {
+    const arc: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,

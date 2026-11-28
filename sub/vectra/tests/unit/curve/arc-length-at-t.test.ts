@@ -11,14 +11,14 @@
 
 import { describe, expect, it } from 'vitest';
 import { arcLengthAtT } from '../../../src/curve/arc-length-at-t';
-import type { CenterArcLike } from '../../../src/types';
+import type { CenterArc } from '../../../src/types';
 
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);
   return Math.abs(result - expected) / Math.abs(expected);
 }
 
-const quarterCircle: CenterArcLike = {
+const quarterCircle: CenterArc = {
   cx: 0,
   cy: 0,
   rx: 1,
@@ -37,7 +37,7 @@ describe('arcLengthAtT', () => {
   });
 
   it('degenerate (rx=0) arc는 0을 반환한다', () => {
-    const degenerate: CenterArcLike = {
+    const degenerate: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 0,
@@ -51,7 +51,7 @@ describe('arcLengthAtT', () => {
   });
 
   it('zero-sweep arc는 0을 반환한다', () => {
-    const zeroSweep: CenterArcLike = {
+    const zeroSweep: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 1,
@@ -65,7 +65,7 @@ describe('arcLengthAtT', () => {
   });
 
   it('r=5 반원에서 t=1 length가 5π에 근사한다', () => {
-    const halfCircle: CenterArcLike = {
+    const halfCircle: CenterArc = {
       cx: 0,
       cy: 0,
       rx: 5,

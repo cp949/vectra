@@ -79,7 +79,7 @@ describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
   test('circle 접선점 Into는 tuple 배열을 받지 않는다', () => {
     const tuples: [number, number][] = [];
     // @ts-expect-error 접선점은 항상 object이므로 tuple 배열은 거짓이 된다
-    tangentPointsFromExternalInto(tuples, { center: [0, 0], radius: 1 }, [3, 0]);
+    tangentPointsFromExternalInto(tuples, { cx: 0, cy: 0, r: 1 }, { x: 3, y: 0 });
     // 타입이 거짓이라도 런타임 값은 object다
     expect(tuples).toHaveLength(2);
     expect(tuples.every((p) => !Array.isArray(p))).toBe(true);

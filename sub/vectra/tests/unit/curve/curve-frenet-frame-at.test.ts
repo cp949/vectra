@@ -18,11 +18,13 @@ import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-i
 import { quadraticTangentAtInto } from '../../../src/curve/quadratic-tangent-at-into';
 import type { CurveFrenetFrameResult } from '../../../src/types';
 import {
+  type FixtureCurve,
+  flatCubicFromLegacyPoints,
   flatCurveFromLegacy,
   flatQuadraticFromLegacyPoints,
-  flatCubicFromLegacyPoints,
 } from '../_helpers/curve-fixtures';
 
+/** 매 시험이 새 frame 결과를 받도록 0으로 채운 out을 만든다. */
 function makeOut(): CurveFrenetFrameResult {
   return {
     point: { x: 0, y: 0 },
@@ -33,7 +35,7 @@ function makeOut(): CurveFrenetFrameResult {
 }
 
 describe('curveFrenetFrameAtInto - quadratic', () => {
-  const quad: Parameters<typeof flatCurveFromLegacy>[0] = {
+  const quad: FixtureCurve = {
     kind: 'quadratic',
     p0: { x: 0, y: 0 },
     p1: { x: 1, y: 1 },
@@ -61,7 +63,7 @@ describe('curveFrenetFrameAtInto - quadratic', () => {
   });
 
   it('straight quadratic은 curvature가 0이다', () => {
-    const straight: Parameters<typeof flatCurveFromLegacy>[0] = {
+    const straight: FixtureCurve = {
       kind: 'quadratic',
       p0: { x: 0, y: 0 },
       p1: { x: 1, y: 0 },
@@ -94,7 +96,7 @@ describe('curveFrenetFrameAtInto - quadratic', () => {
 });
 
 describe('curveFrenetFrameAtInto - cubic', () => {
-  const cubic: Parameters<typeof flatCurveFromLegacy>[0] = {
+  const cubic: FixtureCurve = {
     kind: 'cubic',
     p0: { x: 0, y: 0 },
     p1: { x: 1, y: 2 },
@@ -137,7 +139,7 @@ describe('curveFrenetFrameAtInto - cubic', () => {
 
 describe('curveFrenetFrameAtInto - degenerate', () => {
   it('모든 control point가 같은 quadratic은 point=p0, tangent/normal zero, curvature 0', () => {
-    const degen: Parameters<typeof flatCurveFromLegacy>[0] = {
+    const degen: FixtureCurve = {
       kind: 'quadratic',
       p0: { x: 5, y: 7 },
       p1: { x: 5, y: 7 },
@@ -158,7 +160,7 @@ describe('curveFrenetFrameAtInto - degenerate', () => {
   });
 
   it('모든 control point가 같은 cubic은 point=p0, tangent/normal zero, curvature 0', () => {
-    const degen: Parameters<typeof flatCurveFromLegacy>[0] = {
+    const degen: FixtureCurve = {
       kind: 'cubic',
       p0: { x: 5, y: 7 },
       p1: { x: 5, y: 7 },
@@ -178,7 +180,7 @@ describe('curveFrenetFrameAtInto - degenerate', () => {
 });
 
 describe('curveFrenetFrameAtInto - t 외삽', () => {
-  const cubic: Parameters<typeof flatCurveFromLegacy>[0] = {
+  const cubic: FixtureCurve = {
     kind: 'cubic',
     p0: { x: 0, y: 0 },
     p1: { x: 1, y: 2 },
@@ -204,7 +206,7 @@ describe('curveFrenetFrameAtInto - t 외삽', () => {
 describe('curveFrenetFrameAtInto - non-finite pass-through', () => {
   for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
     it(`p1.x=${bad}이면 산술 결과를 pass-through한다`, () => {
-      const curve: Parameters<typeof flatCurveFromLegacy>[0] = {
+      const curve: FixtureCurve = {
         kind: 'quadratic',
         p0: { x: 0, y: 0 },
         p1: { x: bad, y: 1 },
@@ -222,7 +224,7 @@ describe('curveFrenetFrameAtInto - non-finite pass-through', () => {
 
   for (const bad of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
     it(`cubic p3.y=${bad}이면 산술 결과를 pass-through한다`, () => {
-      const curve: Parameters<typeof flatCurveFromLegacy>[0] = {
+      const curve: FixtureCurve = {
         kind: 'cubic',
         p0: { x: 0, y: 0 },
         p1: { x: 1, y: 2 },
@@ -238,7 +240,7 @@ describe('curveFrenetFrameAtInto - non-finite pass-through', () => {
   }
 
   it('t=NaN이면 point가 NaN이다', () => {
-    const curve: Parameters<typeof flatCurveFromLegacy>[0] = {
+    const curve: FixtureCurve = {
       kind: 'quadratic',
       p0: { x: 0, y: 0 },
       p1: { x: 1, y: 1 },
@@ -284,7 +286,7 @@ describe('curveFrenetFrameAtInto - aliasing', () => {
 
   it('out을 반환한다', () => {
     const out = makeOut();
-    const curve: Parameters<typeof flatCurveFromLegacy>[0] = {
+    const curve: FixtureCurve = {
       kind: 'quadratic',
       p0: { x: 0, y: 0 },
       p1: { x: 1, y: 1 },
@@ -295,7 +297,7 @@ describe('curveFrenetFrameAtInto - aliasing', () => {
 });
 
 describe('curveFrenetFrameAt', () => {
-  const curve: Parameters<typeof flatCurveFromLegacy>[0] = {
+  const curve: FixtureCurve = {
     kind: 'cubic',
     p0: { x: 0, y: 0 },
     p1: { x: 1, y: 2 },

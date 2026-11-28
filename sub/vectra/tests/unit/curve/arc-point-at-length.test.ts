@@ -14,9 +14,9 @@
 import { describe, expect, it } from 'vitest';
 import { arcPointAtLength } from '../../../src/curve/arc-point-at-length';
 import { arcPointAtLengthInto } from '../../../src/curve/arc-point-at-length-into';
-import type { CenterArcLike } from '../../../src/types';
+import type { CenterArc } from '../../../src/types';
 
-const quarterCircle: CenterArcLike = {
+const quarterCircle: CenterArc = {
   cx: 0,
   cy: 0,
   rx: 1,
@@ -56,7 +56,7 @@ describe('arcPointAtLengthInto', () => {
   });
 
   it('degenerate arc (rx=0)는 center 좌표를 반환한다', () => {
-    const degenerate: CenterArcLike = {
+    const degenerate: CenterArc = {
       cx: 3,
       cy: 4,
       rx: 0,

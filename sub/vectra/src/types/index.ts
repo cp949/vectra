@@ -1,9 +1,4 @@
-export type {
-  ArcCommandWritable,
-  CenterArcLike,
-  CenterArcWritable,
-  EndpointArcCorrectionWritable,
-} from './arc.internal';
+export type { ArcCommandWritable, CenterArcWritable, EndpointArcCorrectionWritable } from './arc.internal';
 export type {
   ArcToCubicOptions,
   BSplineOptions,

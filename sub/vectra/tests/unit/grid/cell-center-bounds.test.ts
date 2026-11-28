@@ -11,7 +11,7 @@ import { gridCellBounds } from '../../../src/grid/grid-cell-bounds';
 import { gridCellBoundsInto } from '../../../src/grid/grid-cell-bounds-into';
 import { gridCellCenter } from '../../../src/grid/grid-cell-center';
 import { gridCellCenterInto } from '../../../src/grid/grid-cell-center-into';
-import type { RectWritable, PointWritable } from '../../../src/types';
+import type { PointWritable, RectWritable } from '../../../src/types';
 
 /** x/y object storage를 가진 새 PointWritable seed를 만든다. */
 function makeXY(): PointWritable {

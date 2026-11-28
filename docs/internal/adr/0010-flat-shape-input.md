@@ -21,7 +21,7 @@
 | `CircleLike` | `{ cx, cy, r }` |
 | `EllipseLike` | `{ cx, cy, rx, ry }` |
 | `RotatedEllipseLike` | `{ cx, cy, rx, ry, rotation }` |
-| `CenterArcLike` | 그대로. 이미 평평하다. |
+| `CenterArcLike` | `CenterArc`. 필드는 그대로다. 이미 평평하다. |
 | `SegmentLike` | `{ x1, y1, x2, y2 }` |
 | `CapsuleLike` | `{ x1, y1, x2, y2, r }` |
 | `TriangleLike` | `{ x1, y1, x2, y2, x3, y3 }` |

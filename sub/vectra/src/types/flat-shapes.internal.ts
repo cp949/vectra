@@ -1,11 +1,8 @@
 /** ADR 0010의 도형 입력과 출력 타입을 모은다. */
 
-import type { CenterArcLike } from './arc.internal';
 import type { HexOrientation } from './hex-grid.internal';
 
-export type { CenterArcWritable } from './arc.internal';
-
-export type CenterArc = CenterArcLike;
+export type { CenterArc, CenterArcWritable } from './arc.internal';
 
 export interface PointWritable {
   x: number;
@@ -101,6 +98,7 @@ export interface BoundsWritable {
 
 export type Bounds = Readonly<BoundsWritable>;
 
+/** (x, y)는 왼쪽 위 꼭짓점이다. */
 export interface RectWritable {
   x: number;
   y: number;
@@ -130,6 +128,11 @@ export interface Pose2Writable {
 
 export type Pose2 = Readonly<Pose2Writable>;
 
+/**
+ * 2D affine 변환이다.
+ *
+ * x축 basis는 (a, b), y축 basis는 (c, d), 평행 이동은 (tx, ty)다.
+ */
 export interface MatrixWritable {
   a: number;
   b: number;

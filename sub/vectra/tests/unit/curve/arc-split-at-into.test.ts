@@ -13,9 +13,9 @@
 
 import { describe, expect, it } from 'vitest';
 import { arcSplitAtInto } from '../../../src/curve/arc-split-at-into';
-import type { CenterArcLike, CenterArcWritable } from '../../../src/types';
+import type { CenterArc, CenterArcWritable } from '../../../src/types';
 
-const halfCircle: CenterArcLike = {
+const halfCircle: CenterArc = {
   cx: 0,
   cy: 0,
   rx: 1,
@@ -26,7 +26,7 @@ const halfCircle: CenterArcLike = {
   sweep: true,
 };
 
-const rotatedEllipse: CenterArcLike = {
+const rotatedEllipse: CenterArc = {
   cx: 5,
   cy: -3,
   rx: 4,
@@ -148,7 +148,7 @@ describe('arcSplitAtInto', () => {
   });
 
   it('degenerate radius(rx = 0)도 동일한 angle 분할 구조를 반환한다', () => {
-    const degenerate: CenterArcLike = { ...halfCircle, rx: 0 };
+    const degenerate: CenterArc = { ...halfCircle, rx: 0 };
     const out: CenterArcWritable[] = [];
     arcSplitAtInto(out, degenerate, 0.5);
     expect(out).toHaveLength(2);
@@ -158,7 +158,7 @@ describe('arcSplitAtInto', () => {
   });
 
   it('degenerate radius(ry = 0)도 동일한 angle 분할 구조를 반환한다', () => {
-    const degenerate: CenterArcLike = { ...halfCircle, ry: 0 };
+    const degenerate: CenterArc = { ...halfCircle, ry: 0 };
     const out: CenterArcWritable[] = [];
     arcSplitAtInto(out, degenerate, 0.5);
     expect(out).toHaveLength(2);
@@ -167,7 +167,7 @@ describe('arcSplitAtInto', () => {
   });
 
   it('negative radius(rx < 0)도 실패로 보지 않고 분할한다', () => {
-    const negativeRadius: CenterArcLike = { ...halfCircle, rx: -1 };
+    const negativeRadius: CenterArc = { ...halfCircle, rx: -1 };
     const out: CenterArcWritable[] = [];
     arcSplitAtInto(out, negativeRadius, 0.5);
     expect(out).toHaveLength(2);
@@ -178,7 +178,7 @@ describe('arcSplitAtInto', () => {
   });
 
   it('zero-sweep arc(startAngle === endAngle)도 분할한다', () => {
-    const zeroSweep: CenterArcLike = { ...halfCircle, startAngle: 1, endAngle: 1 };
+    const zeroSweep: CenterArc = { ...halfCircle, startAngle: 1, endAngle: 1 };
     const out: CenterArcWritable[] = [];
     arcSplitAtInto(out, zeroSweep, 0.5);
     expect(out).toHaveLength(2);
@@ -189,7 +189,7 @@ describe('arcSplitAtInto', () => {
   });
 
   it('negative sweep(endAngle < startAngle)도 동일하게 보간한다', () => {
-    const negative: CenterArcLike = {
+    const negative: CenterArc = {
       ...halfCircle,
       startAngle: Math.PI,
       endAngle: 0,
@@ -249,7 +249,7 @@ describe('arcSplitAtInto', () => {
   });
 
   it('반환 segment object는 입력 centerArc object와 같은 reference가 아니다', () => {
-    const input: CenterArcLike = { ...halfCircle };
+    const input: CenterArc = { ...halfCircle };
     const out: CenterArcWritable[] = [];
     arcSplitAtInto(out, input, 0.5);
     expect(out[0]).not.toBe(input);

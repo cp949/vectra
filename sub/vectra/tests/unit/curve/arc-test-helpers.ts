@@ -3,7 +3,7 @@
  * 시험 파일이 아니다. arc.test.ts가 import한다.
  */
 import { expect } from 'vitest';
-import type { ArcCommand, CenterArcLike } from '../../../src/types';
+import type { ArcCommand, CenterArc } from '../../../src/types';
 
 export const EPS = 1e-12;
 export const LOOSE_EPS = 1e-9;
@@ -75,7 +75,7 @@ export function makeArc(overrides: Partial<ArcCommand> = {}): ArcCommand {
  * 중심 형식 arc fixture를 만든다.
  * 기본값은 원점 중심 단위 원의 1사분면 sweep=true 호다.
  */
-export function makeCenterArc(overrides: Partial<CenterArcLike> = {}): CenterArcLike {
+export function makeCenterArc(overrides: Partial<CenterArc> = {}): CenterArc {
   return {
     cx: 0,
     cy: 0,
@@ -92,7 +92,7 @@ export function makeCenterArc(overrides: Partial<CenterArcLike> = {}): CenterArc
 /**
  * 중심 형식 out 인자로 넘길 0 초기값 객체를 만든다.
  */
-export function makeCenterOut(): CenterArcLike {
+export function makeCenterOut(): CenterArc {
   return makeCenterArc({ rx: 0, ry: 0, startAngle: 0, endAngle: 0, sweep: false });
 }
 

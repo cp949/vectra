@@ -12,10 +12,10 @@ import type {
   LinePolygonOverlapIntervalDetail,
   OverlapIntervalDetail,
   PointRelationDetail,
+  PointWritable,
   RelationDetailKind,
   SegmentSegmentDetail,
   TwoPointRelationDetail,
-  PointWritable,
 } from '../../src/types';
 
 describe('interpolation deterministic simulation types', () => {

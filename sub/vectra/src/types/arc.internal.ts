@@ -6,7 +6,7 @@
  * `sweep === true`는 시계 방향(clockwise) 진행을 뜻한다. 이 정책에서는
  * 각도가 증가하는 방향이 시계 방향이므로 `sweep === true`이면 `endAngle >= startAngle`이다.
  */
-export interface CenterArcLike {
+export interface CenterArc {
   /** 타원 중심 x */
   readonly cx: number;
 
@@ -33,7 +33,7 @@ export interface CenterArcLike {
 }
 
 /**
- * `CenterArcLike`의 모든 field를 mutable로 가진 output type.
+ * `CenterArc`의 모든 field를 mutable로 가진 output type.
  *
  * `endpointArcToCenterInto`, `centerArcToEndpointInto`(endpoint form은 아님)
  * 등 center form 결과를 기록할 때 사용한다.
