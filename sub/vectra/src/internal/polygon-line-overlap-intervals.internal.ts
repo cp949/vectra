@@ -10,7 +10,8 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { LinePolygonOverlapIntervalDetail, PolygonLike, XYObjectWritable } from '../types';
+import type { LinePolygonOverlapIntervalDetail, XYObjectWritable } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { DEFAULT_EPSILON, hypot2 } from './numeric';
 import {
@@ -66,7 +67,7 @@ export interface LinePolygonOverlapIntervalRecord {
  * | transversal crossing            | interval 없음                                 |
  * | vertex touch / containment-only | interval 없음                                 |
  * | 한 점으로 수렴(좌표계 길이 `<= epsilon`) | interval 없음                           |
- * | empty polygon(`n < 3`)          | 빈 배열                                       |
+ * | empty polygon(`n < 6`)          | 빈 배열                                       |
  * | degenerate direction(`|d| = 0`) | 빈 배열                                       |
  * | non-finite vertex/direction/origin | 해당 edge skip(가짜 interval 미생성)        |
  *
@@ -89,7 +90,7 @@ export function lineFamilyPolygonOverlapIntervals(
   dx: number,
   dy: number,
   kind: LineFamilyRangeKind,
-  polygon: PolygonLike,
+  polygon: Polygon,
   epsilonArg: number | undefined
 ): LinePolygonOverlapIntervalRecord[] {
   const epsilon = epsilonArg ?? DEFAULT_EPSILON;
@@ -149,7 +150,7 @@ export function lineFamilyPolygonOverlapIntervalsInto(
   dx: number,
   dy: number,
   kind: LineFamilyRangeKind,
-  polygon: PolygonLike,
+  polygon: Polygon,
   epsilon: number | undefined
 ): LinePolygonOverlapIntervalDetail[] {
   const records: LinePolygonOverlapIntervalRecord[] = [];

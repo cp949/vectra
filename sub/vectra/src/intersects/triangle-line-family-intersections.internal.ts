@@ -10,7 +10,7 @@
 
 import type { LineFamilyRangeKind } from '../internal/line-family-param.internal';
 import { type LinePolygonHitRecord, lineFamilyPolygonIntersectionHits } from '../internal/polygon-line-intersections';
-import type { XYInput, XYObjectWritable } from '../types';
+import type { XYObjectWritable } from '../types';
 
 /**
  * line-family와 triangle boundary의 range 안 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -73,11 +73,7 @@ export function triangleLineFamilyIntersectionsInto(
   // degenerate triangle(signed area 2× === 0): 빈 collection.
   if ((bx - ax) * (cy - ay) - (by - ay) * (cx - ax) === 0) return outPoints;
 
-  const corners: readonly XYInput[] = [
-    { x: ax, y: ay },
-    { x: bx, y: by },
-    { x: cx, y: cy },
-  ];
+  const corners = [ax, ay, bx, by, cx, cy];
   const records: LinePolygonHitRecord[] = [];
   lineFamilyPolygonIntersectionHits(records, ox, oy, dx, dy, kind, corners, epsilon);
   for (let i = 0; i < records.length; i++) {

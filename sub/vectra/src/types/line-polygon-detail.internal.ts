@@ -103,9 +103,9 @@ export interface VisibilityRayHit<P extends XYWritable = XYObjectWritable> {
  * edge를 잡기 위한 값이며, 기본값은 작은 양수다.
  */
 export interface VisibilityOptions {
-  /** line/edge intersection과 dedupe 임계값. 기본값 `DEFAULT_EPSILON` */
-  epsilon?: number;
+  /** line/edge intersection과 dedupe 임계값. */
+  epsilon: number;
 
-  /** vertex angle 양옆 추가 ray의 각 offset(radian). 기본값 작은 양수 */
-  angleOffset?: number;
+  /** vertex angle 양옆 추가 ray의 각 offset(radian). */
+  angleOffset: number;
 }

@@ -206,11 +206,11 @@ describe('rayPolygonHitT — closestRayPolygonIntersectionInto와 같은 교점'
 
     for (let i = 0; i < CASES; i++) {
       const coords = randomRayCoords(rng);
-      const ray = makeRay(rng, ...coords);
+      const [ox, oy, dx, dy] = coords;
+      const ray = { ox, oy, dx, dy };
       const count = 3 + Math.floor(rng() * 6);
-      const points: XYInput[] = [];
-      for (let k = 0; k < count; k++) points.push(point(rng, range(rng, -20, 20), range(rng, -20, 20)));
-      const polygon: PolygonLike = rng() < 0.5 ? points : { points };
+      const polygon: number[] = [];
+      for (let k = 0; k < count; k++) polygon.push(range(rng, -20, 20), range(rng, -20, 20));
 
       const t = rayPolygonHitT(ray, polygon);
       const found = closestRayPolygonIntersectionInto(hit, ray, polygon);

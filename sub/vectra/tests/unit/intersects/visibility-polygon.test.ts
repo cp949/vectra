@@ -1,24 +1,28 @@
+/** 가시성 ray의 교점 순서, 가림 및 다각형 좌표 출력을 확인한다. */
 import { describe, expect, test } from 'vitest';
 import { raysFromPointToPolygon } from '../../../src/intersects/rays-from-point-to-polygon';
 import { raysFromPointToPolygonInto } from '../../../src/intersects/rays-from-point-to-polygon-into';
 import { visibilityPolygon } from '../../../src/intersects/visibility-polygon';
 import { visibilityPolygonInto } from '../../../src/intersects/visibility-polygon-into';
-import type { PolygonLike, VisibilityRayHit, XYInput, XYObjectWritable } from '../../../src/types';
+import type { VisibilityRayHit } from '../../../src/types';
+import type { Point } from '../../../src/types/flat-shapes.internal';
 
-const p = (x: number, y: number): XYInput => ({ x, y });
-const polygon = (...pts: XYInput[]): PolygonLike => ({ points: pts });
+/** 시험에 쓸 점을 만든다. */
+const p = (x: number, y: number): Point => ({ x, y });
 
-const square = polygon(p(0, 0), p(4, 0), p(4, 4), p(0, 4));
+const square = [0, 0, 4, 0, 4, 4, 0, 4];
 // 가까운 obstacle (x∈[-2,-1]) / 먼 obstacle (x∈[3,4]). O=(-5,0)에서 near가 far를 완전히 가린다.
-const nearBox = polygon(p(-2, -1), p(-1, -1), p(-1, 1), p(-2, 1));
-const farBox = polygon(p(3, -1), p(4, -1), p(4, 1), p(3, 1));
+const nearBox = [-2, -1, -1, -1, -1, 1, -2, 1];
+const farBox = [3, -1, 4, -1, 4, 1, 3, 1];
 
+/** 점이 정사각형의 경계 위에 있는지 확인한다. */
 function onSquareBoundary(pt: { x: number; y: number }): boolean {
   const onX = (Math.abs(pt.x) < 1e-6 || Math.abs(pt.x - 4) < 1e-6) && pt.y >= -1e-6 && pt.y <= 4 + 1e-6;
   const onY = (Math.abs(pt.y) < 1e-6 || Math.abs(pt.y - 4) < 1e-6) && pt.x >= -1e-6 && pt.x <= 4 + 1e-6;
   return onX || onY;
 }
 
+/** 교점이 각도 오름차순인지 확인한다. */
 function isSorted(hits: VisibilityRayHit[]): boolean {
   for (let i = 1; i < hits.length; i++) {
     if (hits[i].angle < hits[i - 1].angle) return false;
@@ -26,6 +30,7 @@ function isSorted(hits: VisibilityRayHit[]): boolean {
   return true;
 }
 
+/** 지정한 좌표 근처의 교점이 있는지 확인한다. */
 function hasPoint(hits: VisibilityRayHit[], x: number, y: number): boolean {
   return hits.some((h) => Math.abs(h.point.x - x) < 1e-6 && Math.abs(h.point.y - y) < 1e-6);
 }
@@ -37,6 +42,7 @@ const SQUARE_CORNERS: Array<[number, number]> = [
   [0, 4],
 ];
 
+/** 네 모서리 교점의 순서를 확인한다. */
 function expectCornerOrder(pts: Array<{ x: number; y: number }>): void {
   expect(pts).toHaveLength(4);
   SQUARE_CORNERS.forEach(([x, y], i) => {
@@ -58,7 +64,7 @@ describe('raysFromPointToPolygon', () => {
   });
 
   test('angleOffset 0이면 vertex 방향 ray만 남아 4개 corner를 angle 순서로 반환한다', () => {
-    const hits = raysFromPointToPolygon(p(2, 2), [square], { angleOffset: 0 });
+    const hits = raysFromPointToPolygon(p(2, 2), [square], { epsilon: 1e-9, angleOffset: 0 });
     expectCornerOrder(hits.map((h) => h.point));
     expect(hits.every((h) => h.polygonIndex === 0)).toBe(true);
   });
@@ -71,7 +77,7 @@ describe('raysFromPointToPolygon', () => {
   });
 
   test('angleOffset이 vertex 뒤 edge hit을 만든다', () => {
-    const baseline = raysFromPointToPolygon(p(2, 2), [square], { angleOffset: 0 });
+    const baseline = raysFromPointToPolygon(p(2, 2), [square], { epsilon: 1e-9, angleOffset: 0 });
     const withOffset = raysFromPointToPolygon(p(2, 2), [square]);
     expect(withOffset.length).toBeGreaterThan(baseline.length);
   });
@@ -88,7 +94,7 @@ describe('raysFromPointToPolygon', () => {
   });
 
   test('origin이 boundary 위이고 첫 교점이 zero-distance여도 같은 ray의 뒤쪽 hit을 반환한다', () => {
-    const hits = raysFromPointToPolygon(p(0, 2), [square], { angleOffset: 0 });
+    const hits = raysFromPointToPolygon(p(0, 2), [square], { epsilon: 1e-9, angleOffset: 0 });
     expect(hits.every((h) => h.distance > 1e-6)).toBe(true);
     expect(hasPoint(hits, 4, 0)).toBe(true);
     expect(hasPoint(hits, 4, 4)).toBe(true);
@@ -96,7 +102,7 @@ describe('raysFromPointToPolygon', () => {
 
   test('Into는 기존 out 내용을 clear하고 같은 array reference를 반환한다', () => {
     const out: VisibilityRayHit[] = [{ point: { x: 9, y: 9 }, angle: 0, distance: 1, polygonIndex: 5, edgeIndex: 5 }];
-    const result = raysFromPointToPolygonInto(out, p(2, 2), [square], { angleOffset: 0 });
+    const result = raysFromPointToPolygonInto(out, p(2, 2), [square], { epsilon: 1e-9, angleOffset: 0 });
     expect(result).toBe(out);
     expectCornerOrder(out.map((h) => h.point));
   });
@@ -112,14 +118,15 @@ describe('visibilityPolygon', () => {
   test('hit point만 angle 순서로 반환하고 순서가 raysFromPointToPolygon과 같다', () => {
     const hits = raysFromPointToPolygon(p(2, 2), [square]);
     const poly = visibilityPolygon(p(2, 2), [square]);
-    expect(poly).toEqual(hits.map((h) => ({ x: h.point.x, y: h.point.y })));
+    expect(poly).toEqual(hits.flatMap((h) => [h.point.x, h.point.y]));
   });
 
   test('Into는 기존 out 내용을 clear하고 같은 array reference를 반환한다', () => {
-    const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
-    const result = visibilityPolygonInto(out, p(2, 2), [square], { angleOffset: 0 });
+    const out = [9, 9];
+    const result = visibilityPolygonInto(out, p(2, 2), [square], { epsilon: 1e-9, angleOffset: 0 });
     expect(result).toBe(out);
-    expectCornerOrder(out);
+    SQUARE_CORNERS.flat().forEach((coordinate, i) => expect(out[i]).toBeCloseTo(coordinate, 9));
+    expect(out).toHaveLength(8);
   });
 
   test('empty obstacle list는 빈 배열이다', () => {

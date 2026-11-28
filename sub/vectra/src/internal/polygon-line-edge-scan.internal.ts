@@ -14,12 +14,10 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { PolygonLike } from '../types';
+import type { Polygon } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { getLineFamilyOwnRangeInterval } from './line-family-range.internal';
 import { crossExceeds, DEFAULT_EPSILON } from './numeric';
-import { readPolygonPoints } from './polygon';
-import { readX, readY } from './xy';
 
 /**
  * `scanLineFamilyPolygonEdges`가 edge 판정 결과를 기록하도록 넘기는 recorder.
@@ -71,7 +69,7 @@ export interface LineFamilyPolygonEdgeScanRecorder {
  * | collinear edge, 비어 있지 않은 겹침(`lo <= hi`) | `recorder.collinear(...)` 호출 |
  * | collinear이지만 겹침 없음(`lo > hi`)      | 호출 없음                          |
  * | non-finite vertex/direction/origin        | 해당 edge skip(호출 없음)          |
- * | empty polygon(`n < 3`)                    | 호출 없음                          |
+ * | empty polygon(`n < 6`)                    | 호출 없음                          |
  * | degenerate direction(`|d| = 0`)           | 호출 없음                          |
  *
  * @param ox line-family origin x
@@ -90,25 +88,25 @@ export function scanLineFamilyPolygonEdges(
   dx: number,
   dy: number,
   kind: LineFamilyRangeKind,
-  polygon: PolygonLike,
+  polygon: Polygon,
   epsilonArg: number | undefined,
   recorder: LineFamilyPolygonEdgeScanRecorder
 ): void {
-  const pts = readPolygonPoints(polygon);
+  const pts = polygon;
   const n = pts.length;
-  if (n < 3) return;
+  if (n < 6) return;
 
   const epsilon = epsilonArg ?? DEFAULT_EPSILON;
   const lenSq = dx * dx + dy * dy;
   // degenerate direction: 판정 대상 자체가 없다
   if (lenSq === 0 && dx === 0 && dy === 0) return;
 
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n;
-    const ax = readX(pts[i]);
-    const ay = readY(pts[i]);
-    const bx = readX(pts[j]);
-    const by = readY(pts[j]);
+  for (let i = 0; i < n; i += 2) {
+    const j = (i + 2) % n;
+    const ax = pts[i];
+    const ay = pts[i + 1];
+    const bx = pts[j];
+    const by = pts[j + 1];
     const ex = bx - ax;
     const ey = by - ay;
     const cross = dx * ey - dy * ex;
@@ -120,7 +118,7 @@ export function scanLineFamilyPolygonEdges(
       const qy = ay - oy;
       // cross는 origin 독립이므로 q vector를 별도로 검증한다.
       if (!Number.isFinite(qx) || !Number.isFinite(qy)) continue;
-      recorder.crossing(i, ex, ey, qx, qy, cross);
+      recorder.crossing(i / 2, ex, ey, qx, qy, cross);
       continue;
     }
 
@@ -144,7 +142,7 @@ export function scanLineFamilyPolygonEdges(
     const hi = Math.min(hiEdgeT, range.hi);
     if (lo > hi) continue;
 
-    recorder.collinear(i, ax, ay, ex, ey, lo, hi);
+    recorder.collinear(i / 2, ax, ay, ex, ey, lo, hi);
   }
 }
 

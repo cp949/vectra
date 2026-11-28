@@ -1,5 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { InfiniteLineLike, LinePolygonIntersectionHit, PolygonLike } from '../types';
+import type { LinePolygonIntersectionHit } from '../types';
+import type { InfiniteLine, Polygon } from '../types/flat-shapes.internal';
 import { infiniteLinePolygonIntersectionsInto } from './infinite-line-polygon-intersections-into';
 
 /**
@@ -13,7 +14,7 @@ import { infiniteLinePolygonIntersectionsInto } from './infinite-line-polygon-in
  * - infinite-line은 range filter 없이 양방향 교점을 모두 포함한다.
  * - polygon vertex를 지나는 hit은 인접 edge 중복 없이 `kind: 'touch'` 하나로 dedupe된다.
  * - polygon edge와 collinear overlap이면 overlap 구간 양 끝점을 `kind: 'overlap'`으로 반환한다.
- * - empty polygon(`points.length < 3`)과 degenerate direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate direction(zero-length)은 빈 배열이다.
  *
  * 결과 hit은 infinite-line parameter `tLine` 오름차순이다. 반환 hit과 nested point는 매 호출 새
  * object이며 입력 point object를 재사용하지 않는다.
@@ -25,8 +26,8 @@ import { infiniteLinePolygonIntersectionsInto } from './infinite-line-polygon-in
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function infiniteLinePolygonIntersections(
-  infiniteLine: InfiniteLineLike,
-  polygon: PolygonLike,
+  infiniteLine: InfiniteLine,
+  polygon: Polygon,
   epsilon = DEFAULT_EPSILON
 ): LinePolygonIntersectionHit[] {
   const out: LinePolygonIntersectionHit[] = [];

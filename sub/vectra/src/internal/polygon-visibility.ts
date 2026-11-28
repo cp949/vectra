@@ -8,10 +8,8 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { PolygonLike } from '../types';
-import { readPolygonPoints } from './polygon';
+import type { Polygon } from '../types/flat-shapes.internal';
 import { type LinePolygonHitRecord, lineFamilyPolygonIntersectionHits } from './polygon-line-intersections';
-import { readX, readY } from './xy';
 
 /** visibility ray helper의 기본 angle offset(radian). vertex 뒤 edge를 잡을 만큼 작은 양수다. */
 export const DEFAULT_VISIBILITY_ANGLE_OFFSET = 1e-4;
@@ -64,7 +62,7 @@ export interface VisibilityRayHitRecord {
 export function computeVisibilityRayHits(
   ox: number,
   oy: number,
-  polygons: readonly PolygonLike[],
+  polygons: readonly Polygon[],
   epsilon: number,
   angleOffset: number
 ): VisibilityRayHitRecord[] {
@@ -73,11 +71,11 @@ export function computeVisibilityRayHits(
   // 후보 ray angle 수집 (각 obstacle vertex 방향 ± offset)
   const angles: number[] = [];
   for (let pi = 0; pi < polygons.length; pi++) {
-    const pts = readPolygonPoints(polygons[pi]);
-    if (pts.length < 3) continue;
-    for (let i = 0; i < pts.length; i++) {
-      const vx = readX(pts[i]) - ox;
-      const vy = readY(pts[i]) - oy;
+    const pts = polygons[pi];
+    if (pts.length < 6) continue;
+    for (let i = 0; i < pts.length; i += 2) {
+      const vx = pts[i] - ox;
+      const vy = pts[i + 1] - oy;
       if (vx * vx + vy * vy <= epsilon * epsilon) continue;
       const a = Math.atan2(vy, vx);
       angles.push(a - angleOffset, a, a + angleOffset);

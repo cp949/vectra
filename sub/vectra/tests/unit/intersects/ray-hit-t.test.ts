@@ -210,113 +210,74 @@ describe('raySegmentHitT', () => {
 });
 
 describe('rayPolygonHitT', () => {
-  const square = [
-    { x: 0, y: 0 },
-    { x: 4, y: 0 },
-    { x: 4, y: 4 },
-    { x: 0, y: 4 },
-  ];
+  const right = { ox: 0, oy: 0, dx: 1, dy: 0 };
+  const square = [0, 0, 4, 0, 4, 4, 0, 4];
 
   test('밖에서 들어오는 ray는 진입 edge의 t를 반환한다', () => {
-    expect(rayPolygonHitT([-2, 2, 1, 0], square)).toBe(2);
+    expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, square)).toBe(2);
   });
 
   test('origin이 안쪽이면 exit edge의 t를 반환한다', () => {
-    expect(rayPolygonHitT([2, 2, 1, 0], square)).toBe(2);
-    expect(rayPolygonHitT([2, 2, 0, -1], square)).toBe(2);
-  });
-
-  test('bare array와 { points }, tuple point를 같게 받는다', () => {
-    const tuplePoints: [number, number][] = [
-      [0, 0],
-      [4, 0],
-      [4, 4],
-      [0, 4],
-    ];
-    expect(rayPolygonHitT([-2, 2, 1, 0], { points: square })).toBe(2);
-    expect(rayPolygonHitT([-2, 2, 1, 0], tuplePoints)).toBe(2);
-    expect(rayPolygonHitT({ origin: { x: -2, y: 2 }, direction: [1, 0] }, tuplePoints)).toBe(2);
+    expect(rayPolygonHitT({ ox: 2, oy: 2, dx: 1, dy: 0 }, square)).toBe(2);
+    expect(rayPolygonHitT({ ox: 2, oy: 2, dx: 0, dy: -1 }, square)).toBe(2);
   });
 
   test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
-    expect(rayPolygonHitT([-2, 2, 4, 0], square)).toBe(0.5);
+    expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 4, dy: 0 }, square)).toBe(0.5);
   });
 
   test('여러 edge와 만나면 가장 작은 t를 반환한다', () => {
     // 오목 polygon: 위쪽에서 아래로 쏘면 가까운 윗면이 먼저다.
-    const notch = [
-      [0, 0],
-      [6, 0],
-      [6, 4],
-      [4, 4],
-      [4, 2],
-      [2, 2],
-      [2, 4],
-      [0, 4],
-    ] as const;
-    expect(rayPolygonHitT([3, 8, 0, -1], notch)).toBe(6);
-    expect(rayPolygonHitT([1, 8, 0, -1], notch)).toBe(4);
+    const notch = [0, 0, 6, 0, 6, 4, 4, 4, 4, 2, 2, 2, 2, 4, 0, 4] as const;
+    expect(rayPolygonHitT({ ox: 3, oy: 8, dx: 0, dy: -1 }, notch)).toBe(6);
+    expect(rayPolygonHitT({ ox: 1, oy: 8, dx: 0, dy: -1 }, notch)).toBe(4);
   });
 
   test('vertex를 지나는 ray는 이웃 edge가 hit으로 잡는다', () => {
-    expect(rayPolygonHitT([-2, -2, 1, 1], square)).toBe(2);
+    expect(rayPolygonHitT({ ox: -2, oy: -2, dx: 1, dy: 1 }, square)).toBe(2);
   });
 
   test('edge를 따라 달리는 ray는 edge 끝의 이웃 edge에서 hit한다', () => {
-    expect(rayPolygonHitT([-2, 0, 1, 0], square)).toBe(2);
+    expect(rayPolygonHitT({ ox: -2, oy: 0, dx: 1, dy: 0 }, square)).toBe(2);
   });
 
   test('tMin으로 출발 edge를 거른다', () => {
     // 아래 edge 위에서 위로 떠난다.
-    expect(rayPolygonHitT([2, 0, 0, 1], square)).toBeCloseTo(0, 12);
-    expect(rayPolygonHitT([2, 0, 0, 1], square, 1e-9)).toBe(4);
+    expect(rayPolygonHitT({ ox: 2, oy: 0, dx: 0, dy: 1 }, square)).toBeCloseTo(0, 12);
+    expect(rayPolygonHitT({ ox: 2, oy: 0, dx: 0, dy: 1 }, square, 1e-9)).toBe(4);
     // 아래 edge 위에서 바깥으로 떠나면 되돌아오지 않는다.
-    expect(rayPolygonHitT([2, 0, 0, -1], square)).toBeCloseTo(0, 12);
-    expect(rayPolygonHitT([2, 0, 0, -1], square, 1e-9)).toBe(Infinity);
+    expect(rayPolygonHitT({ ox: 2, oy: 0, dx: 0, dy: -1 }, square)).toBeCloseTo(0, 12);
+    expect(rayPolygonHitT({ ox: 2, oy: 0, dx: 0, dy: -1 }, square, 1e-9)).toBe(Infinity);
   });
 
   test('빗나가거나 ray 뒤쪽에 있으면 Infinity를 반환한다', () => {
-    expect(rayPolygonHitT([-2, 6, 1, 0], square)).toBe(Infinity);
-    expect(rayPolygonHitT([-2, 2, -1, 0], square)).toBe(Infinity);
+    expect(rayPolygonHitT({ ox: -2, oy: 6, dx: 1, dy: 0 }, square)).toBe(Infinity);
+    expect(rayPolygonHitT({ ox: -2, oy: 2, dx: -1, dy: 0 }, square)).toBe(Infinity);
   });
 
   test('3점 미만 polygon과 zero direction은 Infinity를 반환한다', () => {
-    expect(
-      rayPolygonHitT(RIGHT, [
-        [1, -1],
-        [1, 1],
-      ])
-    ).toBe(Infinity);
-    expect(rayPolygonHitT(RIGHT, [])).toBe(Infinity);
-    expect(rayPolygonHitT([-2, 2, 0, 0], square)).toBe(Infinity);
+    expect(rayPolygonHitT(right, [1, -1, 1, 1])).toBe(Infinity);
+    expect(rayPolygonHitT(right, [])).toBe(Infinity);
+    expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 0, dy: 0 }, square)).toBe(Infinity);
   });
 
   test('닫는 점을 반복해도 같은 t를 반환한다', () => {
-    expect(rayPolygonHitT([-2, 2, 1, 0], [...square, square[0]])).toBe(2);
+    expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, [...square, square[0], square[1]])).toBe(2);
   });
 
   test('non-finite 좌표를 가진 edge는 건너뛰고 나머지 edge로 판정한다', () => {
-    const broken = [
-      { x: 0, y: 0 },
-      { x: 4, y: 0 },
-      { x: Number.NaN, y: Number.NaN },
-      { x: 0, y: 4 },
-    ];
-    expect(rayPolygonHitT([-2, 2, 1, 0], broken)).toBe(2);
+    const broken = [0, 0, 4, 0, Number.NaN, Number.NaN, 0, 4];
+    expect(rayPolygonHitT({ ox: -2, oy: 2, dx: 1, dy: 0 }, broken)).toBe(2);
     // 오른쪽 edge는 NaN vertex 때문에 건너뛰므로 왼쪽 edge까지 지나간다.
-    expect(rayPolygonHitT([6, 2, -1, 0], broken)).toBe(6);
+    expect(rayPolygonHitT({ ox: 6, oy: 2, dx: -1, dy: 0 }, broken)).toBe(6);
   });
 
   test('epsilon을 명시하면 평행 판정이 cross 절대값 비교로 바뀐다', () => {
     // 아래쪽 edge는 ray와 거의 평행하다. |cross| = 2e-8이다.
-    const sliver = [
-      [1, -1e-8],
-      [3, 1e-8],
-      [3, -5],
-    ] as const;
-    expect(rayPolygonHitT(RIGHT, sliver)).toBeCloseTo(2, 6);
+    const sliver = [1, -1e-8, 3, 1e-8, 3, -5] as const;
+    expect(rayPolygonHitT(right, sliver)).toBeCloseTo(2, 6);
     // 거의 평행한 edge를 건너뛰고 x = 3 edge에서 hit한다.
-    expect(rayPolygonHitT(RIGHT, sliver, 0, 1e-6)).toBe(3);
+    expect(rayPolygonHitT(right, sliver, 0, 1e-6)).toBe(3);
   });
 });
 

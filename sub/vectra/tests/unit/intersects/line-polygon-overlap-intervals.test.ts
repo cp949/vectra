@@ -3,7 +3,7 @@
  *
  * S11-RM-025: segment/ray/infinite-line × polygon collinear overlap 구간을
  * rich interval detail collection으로 노출하는 helper의 interval 추출, range clipping,
- * ordering, empty/degenerate 처리, tuple 입력, Into clear/return을 검증한다.
+ * ordering, empty/degenerate 처리, Into clear/return을 검증한다.
  */
 
 import { describe, expect, test } from 'vitest';
@@ -14,26 +14,18 @@ import { rayPolygonOverlapIntervalsInto } from '../../../src/intersects/ray-poly
 import { segmentPolygonIntersections } from '../../../src/intersects/segment-polygon-intersections';
 import { segmentPolygonOverlapIntervals } from '../../../src/intersects/segment-polygon-overlap-intervals';
 import { segmentPolygonOverlapIntervalsInto } from '../../../src/intersects/segment-polygon-overlap-intervals-into';
-import type {
-  InfiniteLineLike,
-  LinePolygonOverlapIntervalDetail,
-  PolygonLike,
-  RayLike,
-  SegmentLike,
-  XYInput,
-} from '../../../src/types';
+import type { LinePolygonOverlapIntervalDetail } from '../../../src/types';
+import type { InfiniteLine, Ray, Segment } from '../../../src/types/flat-shapes.internal';
 
-const p = (x: number, y: number): XYInput => ({ x, y });
-const segment = (ax: number, ay: number, bx: number, by: number): SegmentLike => ({ a: p(ax, ay), b: p(bx, by) });
-const ray = (ox: number, oy: number, dx: number, dy: number): RayLike => ({ origin: p(ox, oy), direction: p(dx, dy) });
-const infiniteLine = (ox: number, oy: number, dx: number, dy: number): InfiniteLineLike => ({
-  origin: p(ox, oy),
-  direction: p(dx, dy),
-});
-const polygon = (...points: XYInput[]): PolygonLike => ({ points });
+/** 교점 시험에 쓸 선분을 만든다. */
+const segment = (x1: number, y1: number, x2: number, y2: number): Segment => ({ x1, y1, x2, y2 });
+/** 교점 시험에 쓸 반직선을 만든다. */
+const ray = (ox: number, oy: number, dx: number, dy: number): Ray => ({ ox, oy, dx, dy });
+/** 교점 시험에 쓸 직선을 만든다. */
+const infiniteLine = (ox: number, oy: number, dx: number, dy: number): InfiniteLine => ({ ox, oy, dx, dy });
 
 // 단위 사각형 (0,0)-(4,0)-(4,4)-(0,4): edge index 0=bottom, 1=right, 2=top, 3=left
-const square = polygon(p(0, 0), p(4, 0), p(4, 4), p(0, 4));
+const square = [0, 0, 4, 0, 4, 4, 0, 4];
 
 function intervalSpans(intervals: LinePolygonOverlapIntervalDetail[]): Array<[[number, number], [number, number]]> {
   return intervals.map((iv) => [
@@ -81,7 +73,7 @@ describe('segmentPolygonOverlapIntervals', () => {
   });
 
   test('큰 polygon edge에서도 edge parameter를 보존한다', () => {
-    const hugeEdgePolygon = polygon(p(0, 0), p(1e200, 0), p(1e200, 4), p(0, 4));
+    const hugeEdgePolygon = [0, 0, 1e200, 0, 1e200, 4, 0, 4];
     const intervals = segmentPolygonOverlapIntervals(segment(0, 0, 4, 0), hugeEdgePolygon);
     expect(intervalSpans(intervals)).toEqual([
       [
@@ -112,33 +104,11 @@ describe('segmentPolygonOverlapIntervals', () => {
   });
 
   test('empty polygon(points.length < 3)은 빈 배열이다', () => {
-    expect(segmentPolygonOverlapIntervals(segment(-1, 0, 5, 0), polygon(p(0, 0), p(4, 0)))).toEqual([]);
+    expect(segmentPolygonOverlapIntervals(segment(-1, 0, 5, 0), [0, 0, 4, 0])).toEqual([]);
   });
 
   test('zero-length segment는 빈 배열이다', () => {
     expect(segmentPolygonOverlapIntervals(segment(2, 0, 2, 0), square)).toEqual([]);
-  });
-
-  test('tuple segment/polygon 입력을 지원한다', () => {
-    const tupleSegment: SegmentLike = [
-      [-1, 0],
-      [5, 0],
-    ];
-    const tuplePolygon: PolygonLike = {
-      points: [
-        [0, 0],
-        [4, 0],
-        [4, 4],
-        [0, 4],
-      ],
-    };
-    const intervals = segmentPolygonOverlapIntervals(tupleSegment, tuplePolygon);
-    expect(intervalSpans(intervals)).toEqual([
-      [
-        [0, 0],
-        [4, 0],
-      ],
-    ]);
   });
 
   test('기존 endpoint collection도 큰 direction collinear overlap 끝점 2건을 유지한다', () => {
@@ -201,7 +171,7 @@ describe('rayPolygonOverlapIntervals', () => {
 
 describe('infiniteLinePolygonOverlapIntervals', () => {
   // y=0 위에 두 개의 collinear bottom edge를 가진 polygon
-  const notched = polygon(p(0, 0), p(4, 0), p(4, 2), p(6, 2), p(6, 0), p(10, 0), p(10, 4), p(0, 4));
+  const notched = [0, 0, 4, 0, 4, 2, 6, 2, 6, 0, 10, 0, 10, 4, 0, 4];
 
   test('양방향 edge overlap을 tLineStart 오름차순으로 반환한다', () => {
     const intervals = infiniteLinePolygonOverlapIntervals(infiniteLine(5, 0, 1, 0), notched);
@@ -276,7 +246,7 @@ describe('non-finite / degenerate pass-through', () => {
   test('non-finite vertex가 놓인 edge는 skip되어 빈 배열이다', () => {
     // 첫 edge((0,0)→(Infinity,0))는 y=0 line 위에 놓이지만 non-finite vertex 때문에 cross가 NaN이 되어
     // collinear 판정에 도달하기 전 finite guard에서 skip된다. 나머지 edge는 non-parallel이라 interval이 없다.
-    const broken = polygon(p(0, 0), p(Number.POSITIVE_INFINITY, 0), p(2, 4));
+    const broken = [0, 0, Number.POSITIVE_INFINITY, 0, 2, 4];
     expect(infiniteLinePolygonOverlapIntervals(infiniteLine(-1, 0, 1, 0), broken)).toEqual([]);
   });
 

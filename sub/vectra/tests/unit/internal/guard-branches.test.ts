@@ -167,17 +167,10 @@ describe('cropLineFamilyByRectInto 비교차', () => {
 });
 
 describe('polygon 교점·가시성 퇴화 입력', () => {
-  const triangle = [
-    { x: 3, y: -1 },
-    { x: 3, y: 2 },
-    { x: 5, y: 0.5 },
-  ];
+  const triangle = [3, -1, 3, 2, 5, 0.5];
 
   test('computeVisibilityRayHits는 꼭짓점이 3개 미만인 장애물에서는 ray를 쏘지 않는다', () => {
-    const segmentOnly = [
-      { x: 2, y: 1 },
-      { x: 6, y: 1 },
-    ];
+    const segmentOnly = [2, 1, 6, 1];
     const alone = computeVisibilityRayHits(0, 0, [triangle], 1e-9, 1e-4);
     expect(alone).toHaveLength(7);
     expect(computeVisibilityRayHits(0, 0, [triangle, segmentOnly], 1e-9, 1e-4)).toEqual(alone);
@@ -185,16 +178,8 @@ describe('polygon 교점·가시성 퇴화 입력', () => {
 
   test('computeVisibilityRayHits는 origin과 겹치는 꼭짓점으로는 ray를 쏘지 않는다', () => {
     // origin (0,0)이 corner의 꼭짓점이다. 방향이 없는 그 꼭짓점이 각도 0 ray를 만들면 가림막에 hit가 더 생긴다.
-    const corner = [
-      { x: 0, y: 0 },
-      { x: 3, y: 2 },
-      { x: 1, y: 4 },
-    ];
-    const blocker = [
-      { x: 5, y: -1 },
-      { x: 5, y: 2 },
-      { x: 7, y: 1 },
-    ];
+    const corner = [0, 0, 3, 2, 1, 4];
+    const blocker = [5, -1, 5, 2, 7, 1];
     const hits = computeVisibilityRayHits(0, 0, [corner, blocker], 1e-9, 1e-4);
     // corner의 다른 두 꼭짓점과 blocker의 세 꼭짓점이 만드는 ray 15개 중 11개가 닿는다.
     expect(hits).toHaveLength(11);

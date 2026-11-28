@@ -1,5 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { LinePolygonIntersectionHit, PolygonLike, RayLike, XYObjectWritable } from '../types';
+import type { LinePolygonIntersectionHit } from '../types';
+import type { PointWritable, Polygon, Ray } from '../types/flat-shapes.internal';
 import { closestRayPolygonIntersectionInto } from './closest-ray-polygon-intersection-into';
 
 /**
@@ -11,7 +12,7 @@ import { closestRayPolygonIntersectionInto } from './closest-ray-polygon-interse
  *
  * - ray는 `tLine >= 0` 구간만 본다. origin이 polygon 내부면 boundary exit hit을 반환한다.
  * - 교점이 없으면 `undefined`를 반환한다.
- * - empty polygon(`points.length < 3`)과 degenerate ray direction(zero-length)도 `undefined`다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate ray direction(zero-length)도 `undefined`다.
  *
  * 반환 hit과 nested point는 매 호출 새 object이며 입력 point object를 재사용하지 않는다.
  * `epsilon`은 collinear/vertex dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
@@ -21,11 +22,11 @@ import { closestRayPolygonIntersectionInto } from './closest-ray-polygon-interse
  * @param epsilon collinear/dedupe 판정 임계값
  */
 export function closestRayPolygonIntersection(
-  ray: RayLike,
-  polygon: PolygonLike,
+  ray: Ray,
+  polygon: Polygon,
   epsilon = DEFAULT_EPSILON
-): LinePolygonIntersectionHit<XYObjectWritable> | undefined {
-  const out: LinePolygonIntersectionHit<XYObjectWritable> = {
+): LinePolygonIntersectionHit<PointWritable> | undefined {
+  const out: LinePolygonIntersectionHit<PointWritable> = {
     point: { x: 0, y: 0 },
     kind: 'cross',
     tLine: 0,

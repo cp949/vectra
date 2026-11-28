@@ -1,7 +1,6 @@
 import { lineFamilyPolygonIntersectionHitsInto } from '../internal/polygon-line-intersections';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { LinePolygonIntersectionHit, PolygonLike, SegmentLike } from '../types';
+import type { LinePolygonIntersectionHit } from '../types';
+import type { Polygon, Segment } from '../types/flat-shapes.internal';
 
 /**
  * segment와 polygon edge의 모든 교점을 outHits에 기록하고 같은 outHits를 반환한다.
@@ -15,36 +14,26 @@ import type { LinePolygonIntersectionHit, PolygonLike, SegmentLike } from '../ty
  * - polygon vertex를 지나는 hit은 인접 edge 중복 없이 `kind: 'touch'` 하나로 dedupe된다.
  * - polygon edge와 collinear overlap이면 overlap 구간 양 끝점을 `kind: 'overlap'`으로 push한다.
  * - segment가 polygon 내부에 완전히 포함되면(edge 교점 없음) 빈 배열이다. boolean relation과 다르다.
- * - empty polygon(`points.length < 3`)과 degenerate segment direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate segment direction(zero-length)은 빈 배열이다.
  *
  * outHits는 먼저 clear되고 결과 hit이 segment parameter `tLine` 오름차순으로 push된다. push되는 hit과
  * nested point는 매 호출 새 object이며 입력 point object를 재사용하지 않는다.
  * `epsilon`은 collinear/vertex dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
- * @param outHits 교점 hit을 기록할 output array (호출 전 내용은 비워진다)
+ * @param outHits 교점을 기록할 배열. 기존 내용은 비우고 { point, kind, tLine, tEdge, edgeIndex }를 넣는다. point는 { x, y }다.
  * @param segment 교점을 구할 segment
  * @param polygon 교점을 구할 polygon
  * @param epsilon collinear/dedupe 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function segmentPolygonIntersectionsInto(
-  outHits: LinePolygonIntersectionHit[],
-  segment: SegmentLike,
-  polygon: PolygonLike,
+export function segmentPolygonIntersectionsInto<Out extends LinePolygonIntersectionHit[]>(
+  outHits: Out,
+  segment: Segment,
+  polygon: Polygon,
   epsilon?: number
-): LinePolygonIntersectionHit[] {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const ax = readX(a);
-  const ay = readY(a);
-  return lineFamilyPolygonIntersectionHitsInto(
-    outHits,
-    ax,
-    ay,
-    readX(b) - ax,
-    readY(b) - ay,
-    'finite',
-    polygon,
-    epsilon
-  );
+): Out {
+  const ax = segment.x1;
+  const ay = segment.y1;
+  lineFamilyPolygonIntersectionHitsInto(outHits, ax, ay, segment.x2 - ax, segment.y2 - ay, 'finite', polygon, epsilon);
+  return outHits;
 }

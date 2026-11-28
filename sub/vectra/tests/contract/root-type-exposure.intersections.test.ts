@@ -130,7 +130,6 @@ describe('root intersection type exposure 계약', () => {
       polygonIndex: 0,
       edgeIndex: 1,
     });
-    expectAssignable<VisibilityOptions>({});
     expectAssignable<VisibilityOptions>({ epsilon: 1e-9, angleOffset: 1e-4 });
   });
 });

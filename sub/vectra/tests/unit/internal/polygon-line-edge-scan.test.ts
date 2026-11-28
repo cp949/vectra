@@ -11,7 +11,6 @@ import {
   type LineFamilyPolygonEdgeScanRecorder,
   scanLineFamilyPolygonEdges,
 } from '../../../src/internal/polygon-line-edge-scan.internal';
-import type { PolygonLike, XYInput } from '../../../src/types';
 
 type CrossingCall = { edgeIndex: number; ex: number; ey: number; qx: number; qy: number; cross: number };
 type CollinearCall = { edgeIndex: number; ax: number; ay: number; ex: number; ey: number; lo: number; hi: number };
@@ -34,16 +33,13 @@ function makeSpyRecorder(): LineFamilyPolygonEdgeScanRecorder & {
   };
 }
 
-const p = (x: number, y: number): XYInput => ({ x, y });
-const polygon = (...points: XYInput[]): PolygonLike => ({ points });
-
 // 단위 사각형 (0,0)-(4,0)-(4,4)-(0,4): edge index 0=bottom, 1=right, 2=top, 3=left
-const square = polygon(p(0, 0), p(4, 0), p(4, 4), p(0, 4));
+const square = [0, 0, 4, 0, 4, 4, 0, 4];
 
 describe('scanLineFamilyPolygonEdges', () => {
   test('empty polygon(n < 3)이면 어떤 edge도 방문하지 않는다', () => {
     const recorder = makeSpyRecorder();
-    scanLineFamilyPolygonEdges(-1, 1, 1, 0, 'inf', polygon(p(0, 0), p(1, 1)), 1e-9, recorder);
+    scanLineFamilyPolygonEdges(-1, 1, 1, 0, 'inf', [0, 0, 1, 1], 1e-9, recorder);
     expect(recorder.crossings).toHaveLength(0);
     expect(recorder.collinears).toHaveLength(0);
   });
@@ -73,7 +69,7 @@ describe('scanLineFamilyPolygonEdges', () => {
     'non-finite polygon vertex(%s)와 연결된 edge만 skip한다',
     (nonFiniteCoordinate) => {
       const recorder = makeSpyRecorder();
-      const polygonWithNonFiniteVertex = polygon(p(0, 0), p(nonFiniteCoordinate, 0), p(4, 4), p(0, 4));
+      const polygonWithNonFiniteVertex = [0, 0, nonFiniteCoordinate, 0, 4, 4, 0, 4];
 
       scanLineFamilyPolygonEdges(-1, 2, 1, 0, 'inf', polygonWithNonFiniteVertex, 1e-9, recorder);
 

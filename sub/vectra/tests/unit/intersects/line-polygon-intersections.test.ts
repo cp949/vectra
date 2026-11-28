@@ -9,27 +9,19 @@ import { rayPolygonIntersections } from '../../../src/intersects/ray-polygon-int
 import { rayPolygonIntersectionsInto } from '../../../src/intersects/ray-polygon-intersections-into';
 import { segmentPolygonIntersections } from '../../../src/intersects/segment-polygon-intersections';
 import { segmentPolygonIntersectionsInto } from '../../../src/intersects/segment-polygon-intersections-into';
-import type {
-  InfiniteLineLike,
-  LinePolygonIntersectionHit,
-  PolygonLike,
-  RayLike,
-  SegmentLike,
-  XYInput,
-} from '../../../src/types';
+import type { LinePolygonIntersectionHit } from '../../../src/types';
+import type { InfiniteLine, Ray, Segment } from '../../../src/types/flat-shapes.internal';
 
-const p = (x: number, y: number): XYInput => ({ x, y });
-const segment = (ax: number, ay: number, bx: number, by: number): SegmentLike => ({ a: p(ax, ay), b: p(bx, by) });
-const ray = (ox: number, oy: number, dx: number, dy: number): RayLike => ({ origin: p(ox, oy), direction: p(dx, dy) });
-const infiniteLine = (ox: number, oy: number, dx: number, dy: number): InfiniteLineLike => ({
-  origin: p(ox, oy),
-  direction: p(dx, dy),
-});
-const polygon = (...points: XYInput[]): PolygonLike => ({ points });
+/** 교점 시험에 쓸 선분을 만든다. */
+const segment = (x1: number, y1: number, x2: number, y2: number): Segment => ({ x1, y1, x2, y2 });
+/** 교점 시험에 쓸 반직선을 만든다. */
+const ray = (ox: number, oy: number, dx: number, dy: number): Ray => ({ ox, oy, dx, dy });
+/** 교점 시험에 쓸 직선을 만든다. */
+const infiniteLine = (ox: number, oy: number, dx: number, dy: number): InfiniteLine => ({ ox, oy, dx, dy });
 
 // 단위 사각형 (0,0)-(4,0)-(4,4)-(0,4): edge index 0=bottom, 1=right, 2=top, 3=left
-const square = polygon(p(0, 0), p(4, 0), p(4, 4), p(0, 4));
-const wideSquare = polygon(p(0, 0), p(6, 0), p(6, 6), p(0, 6));
+const square = [0, 0, 4, 0, 4, 4, 0, 4];
+const wideSquare = [0, 0, 6, 0, 6, 6, 0, 6];
 
 function points(hits: LinePolygonIntersectionHit[]): Array<[number, number]> {
   return hits.map((h) => [h.point.x, h.point.y]);
@@ -74,7 +66,7 @@ describe('segmentPolygonIntersections', () => {
   });
 
   test('empty polygon(points.length < 3)은 빈 배열이다', () => {
-    expect(segmentPolygonIntersections(segment(2, -1, 2, 5), polygon(p(0, 0), p(4, 0)))).toEqual([]);
+    expect(segmentPolygonIntersections(segment(2, -1, 2, 5), [0, 0, 4, 0])).toEqual([]);
   });
 
   test('degenerate segment direction(zero-length)은 빈 배열이다', () => {
@@ -99,23 +91,6 @@ describe('segmentPolygonIntersections', () => {
     expect(a).not.toBe(b);
     expect(points(a)).toEqual(points(b));
   });
-
-  test('object/tuple input을 모두 통과시킨다', () => {
-    const tupleSegment: SegmentLike = [
-      [2, -1],
-      [2, 5],
-    ];
-    const tuplePolygon: PolygonLike = [
-      [0, 0],
-      [4, 0],
-      [4, 4],
-      [0, 4],
-    ];
-    expect(points(segmentPolygonIntersections(tupleSegment, tuplePolygon))).toEqual([
-      [2, 0],
-      [2, 4],
-    ]);
-  });
 });
 
 describe('rayPolygonIntersections', () => {
@@ -136,7 +111,7 @@ describe('rayPolygonIntersections', () => {
   });
 
   test('empty polygon과 degenerate ray direction은 빈 배열이다', () => {
-    expect(rayPolygonIntersections(ray(3, 3, 1, 0), polygon(p(0, 0), p(6, 0)))).toEqual([]);
+    expect(rayPolygonIntersections(ray(3, 3, 1, 0), [0, 0, 6, 0])).toEqual([]);
     expect(rayPolygonIntersections(ray(3, 3, 0, 0), wideSquare)).toEqual([]);
   });
 
@@ -147,17 +122,6 @@ describe('rayPolygonIntersections', () => {
     const result = rayPolygonIntersectionsInto(out, ray(3, 3, 1, 0), wideSquare);
     expect(result).toBe(out);
     expect(points(out)).toEqual([[6, 3]]);
-  });
-
-  test('object/tuple input을 모두 통과시킨다', () => {
-    const tupleRay: RayLike = [3, 3, 1, 0];
-    const tuplePolygon: PolygonLike = [
-      [0, 0],
-      [6, 0],
-      [6, 6],
-      [0, 6],
-    ];
-    expect(points(rayPolygonIntersections(tupleRay, tuplePolygon))).toEqual([[6, 3]]);
   });
 });
 
@@ -182,7 +146,7 @@ describe('infiniteLinePolygonIntersections', () => {
   });
 
   test('empty polygon과 degenerate direction은 빈 배열이다', () => {
-    expect(infiniteLinePolygonIntersections(infiniteLine(2, 2, 1, 0), polygon(p(0, 0), p(4, 0)))).toEqual([]);
+    expect(infiniteLinePolygonIntersections(infiniteLine(2, 2, 1, 0), [0, 0, 4, 0])).toEqual([]);
     expect(infiniteLinePolygonIntersections(infiniteLine(2, 2, 0, 0), square)).toEqual([]);
   });
 
@@ -203,23 +167,6 @@ describe('infiniteLinePolygonIntersections', () => {
     const b = infiniteLinePolygonIntersections(infiniteLine(2, 2, 1, 0), square);
     expect(a).not.toBe(b);
     expect(points(a)).toEqual(points(b));
-  });
-
-  test('object/tuple input을 모두 통과시킨다', () => {
-    const tupleLine: InfiniteLineLike = [
-      [2, 2],
-      [1, 0],
-    ];
-    const tuplePolygon: PolygonLike = [
-      [0, 0],
-      [4, 0],
-      [4, 4],
-      [0, 4],
-    ];
-    expect(points(infiniteLinePolygonIntersections(tupleLine, tuplePolygon))).toEqual([
-      [0, 2],
-      [4, 2],
-    ]);
   });
 });
 
@@ -269,7 +216,7 @@ describe('closestRayPolygonIntersection', () => {
 describe('line/polygon kernel edge cases', () => {
   // edge 길이가 큰 polygon. edge-local tolerance를 normalized [0,1] param에 epsilon을 그대로 쓰면
   // tolerance가 edge 길이만큼 거리로 부풀어 polygon 밖 점이 spurious touch로 잡힌다.
-  const bigBox = polygon(p(0, 0), p(1e9, 0), p(1e9, 10), p(0, 10));
+  const bigBox = [0, 0, 1e9, 0, 1e9, 10, 0, 10];
 
   test('큰 edge에서 polygon 밖(x=-0.5)을 지나는 line은 빈 배열이다', () => {
     expect(infiniteLinePolygonIntersections(infiniteLine(-0.5, -1, 0, 1), bigBox)).toEqual([]);
@@ -285,7 +232,7 @@ describe('line/polygon kernel edge cases', () => {
   });
 
   test('NaN vertex는 가짜 NaN overlap record를 만들지 않는다', () => {
-    const naNPoly = polygon(p(0, 0), p(4, 0), p(Number.NaN, 4), p(0, 4));
+    const naNPoly = [0, 0, 4, 0, Number.NaN, 4, 0, 4];
     const hits = segmentPolygonIntersections(segment(2, -1, 2, 5), naNPoly);
     expect(hits.every((h) => Number.isFinite(h.point.x) && Number.isFinite(h.point.y))).toBe(true);
     expect(hits.some((h) => h.kind === 'overlap')).toBe(false);

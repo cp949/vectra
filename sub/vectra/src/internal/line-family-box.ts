@@ -8,7 +8,7 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { XYInput, XYObjectWritable } from '../types';
+import type { XYObjectWritable } from '../types';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { type LinePolygonHitRecord, lineFamilyPolygonIntersectionHits } from './polygon-line-intersections';
 
@@ -51,12 +51,7 @@ export function lineFamilyBoxIntersectionPoints(
   outPoints.length = 0;
 
   // box boundary를 CCW polygon edge로 순회한다.
-  const corners: readonly XYInput[] = [
-    { x: x0, y: y0 },
-    { x: x1, y: y0 },
-    { x: x1, y: y1 },
-    { x: x0, y: y1 },
-  ];
+  const corners = [x0, y0, x1, y0, x1, y1, x0, y1];
   const records: LinePolygonHitRecord[] = [];
   lineFamilyPolygonIntersectionHits(records, ox, oy, dx, dy, kind, corners, epsilon);
   for (let i = 0; i < records.length; i++) {

@@ -1,7 +1,6 @@
 import { lineFamilyPolygonOverlapIntervalsInto } from '../internal/polygon-line-intersections';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { LinePolygonOverlapIntervalDetail, PolygonLike, SegmentLike } from '../types';
+import type { LinePolygonOverlapIntervalDetail } from '../types';
+import type { Polygon, Segment } from '../types/flat-shapes.internal';
 
 /**
  * segment와 polygon edge의 collinear overlap 구간을 outIntervals에 기록하고 같은 outIntervals를 반환한다.
@@ -14,36 +13,35 @@ import type { LinePolygonOverlapIntervalDetail, PolygonLike, SegmentLike } from 
  * - segment가 polygon edge와 collinear로 겹칠 때만 interval을 만든다.
  * - transversal crossing, vertex touch, polygon 내부 containment-only는 빈 배열이다.
  * - segment range 밖 구간은 clipping되고, 한 점으로 수렴하는 overlap은 빈 배열이다.
- * - empty polygon(`points.length < 3`)과 degenerate segment direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate segment direction(zero-length)은 빈 배열이다.
  *
  * outIntervals는 먼저 clear되고 결과 interval이 `tLineStart` 오름차순으로 push된다. push되는 interval과
  * nested `start`/`end` point는 매 호출 새 object이며 입력 point object를 재사용하지 않는다.
  * `epsilon`은 collinear/수렴 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
- * @param outIntervals overlap 구간을 기록할 output array (호출 전 내용은 비워진다)
+ * @param outIntervals 겹침 구간을 기록할 배열. 기존 내용은 비우고 LinePolygonOverlapIntervalDetail을 넣는다. start와 end는 { x, y }다.
  * @param segment 교차를 구할 segment
  * @param polygon 교차를 구할 polygon
  * @param epsilon collinear/수렴 판정 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function segmentPolygonOverlapIntervalsInto(
-  outIntervals: LinePolygonOverlapIntervalDetail[],
-  segment: SegmentLike,
-  polygon: PolygonLike,
+export function segmentPolygonOverlapIntervalsInto<Out extends LinePolygonOverlapIntervalDetail[]>(
+  outIntervals: Out,
+  segment: Segment,
+  polygon: Polygon,
   epsilon?: number
-): LinePolygonOverlapIntervalDetail[] {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const ax = readX(a);
-  const ay = readY(a);
-  return lineFamilyPolygonOverlapIntervalsInto(
+): Out {
+  const ax = segment.x1;
+  const ay = segment.y1;
+  lineFamilyPolygonOverlapIntervalsInto(
     outIntervals,
     ax,
     ay,
-    readX(b) - ax,
-    readY(b) - ay,
+    segment.x2 - ax,
+    segment.y2 - ay,
     'finite',
     polygon,
     epsilon
   );
+  return outIntervals;
 }

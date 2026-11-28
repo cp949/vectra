@@ -1,4 +1,5 @@
-import type { PolygonLike, VisibilityOptions, VisibilityRayHit, XYInput } from '../types';
+import type { VisibilityOptions, VisibilityRayHit } from '../types';
+import type { Point, Polygon } from '../types/flat-shapes.internal';
 import { raysFromPointToPolygonInto } from './rays-from-point-to-polygon-into';
 
 /**
@@ -16,15 +17,15 @@ import { raysFromPointToPolygonInto } from './rays-from-point-to-polygon-into';
  * 반환 hit과 nested point는 매 호출 새 object이며 입력 point object를 재사용하지 않는다.
  * `polygons` input은 readonly로 읽고 mutate하지 않는다. renderer mask나 scene graph는 해석하지 않는다.
  * `options.epsilon`은 line/edge intersection과 dedupe에만 쓰고 finite validation에는 쓰지 않는다.
- * `options.angleOffset` 기본값은 작은 양수(`1e-4`)다.
+ * 옵션을 생략하면 `epsilon`은 `DEFAULT_EPSILON`, `angleOffset`은 `1e-4`다.
  *
  * @param point ray origin
  * @param polygons obstacle polygon list
- * @param options epsilon / angleOffset 옵션. 미지정 시 기본값 사용
+ * @param options epsilon과 angleOffset을 지정하는 옵션.
  */
 export function raysFromPointToPolygon(
-  point: XYInput,
-  polygons: readonly PolygonLike[],
+  point: Point,
+  polygons: readonly Polygon[],
   options?: VisibilityOptions
 ): VisibilityRayHit[] {
   const out: VisibilityRayHit[] = [];

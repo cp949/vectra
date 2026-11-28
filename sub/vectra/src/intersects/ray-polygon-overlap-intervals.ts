@@ -1,5 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { LinePolygonOverlapIntervalDetail, PolygonLike, RayLike } from '../types';
+import type { LinePolygonOverlapIntervalDetail } from '../types';
+import type { Polygon, Ray } from '../types/flat-shapes.internal';
 import { rayPolygonOverlapIntervalsInto } from './ray-polygon-overlap-intervals-into';
 
 /**
@@ -14,7 +15,7 @@ import { rayPolygonOverlapIntervalsInto } from './ray-polygon-overlap-intervals-
  * - ray가 polygon edge와 collinear로 겹칠 때만 interval을 만든다.
  * - transversal crossing, vertex touch, containment-only는 빈 배열이다.
  * - 한 점으로 수렴하는 overlap은 빈 배열이다.
- * - empty polygon(`points.length < 3`)과 degenerate ray direction(zero-length)은 빈 배열이다.
+ * - empty polygon(`좌표 수 < 6`)과 degenerate ray direction(zero-length)은 빈 배열이다.
  *
  * 결과 interval은 `tLineStart` 오름차순이다. 반환 interval과 nested `start`/`end` point는 매 호출 새
  * object이며 입력 point object를 재사용하지 않는다.
@@ -25,8 +26,8 @@ import { rayPolygonOverlapIntervalsInto } from './ray-polygon-overlap-intervals-
  * @param epsilon collinear/수렴 판정 임계값
  */
 export function rayPolygonOverlapIntervals(
-  ray: RayLike,
-  polygon: PolygonLike,
+  ray: Ray,
+  polygon: Polygon,
   epsilon = DEFAULT_EPSILON
 ): LinePolygonOverlapIntervalDetail[] {
   const out: LinePolygonOverlapIntervalDetail[] = [];

@@ -9,7 +9,8 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { IntersectionKind, LinePolygonIntersectionHit, PolygonLike, XYObjectWritable, XYWritable } from '../types';
+import type { IntersectionKind, LinePolygonIntersectionHit, XYObjectWritable } from '../types';
+import type { PointWritable, Polygon } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';
 import { DEFAULT_EPSILON, hypot2 } from './numeric';
@@ -18,14 +19,13 @@ import {
   type LineFamilyPolygonEdgeScanRecorder,
   scanLineFamilyPolygonEdges,
 } from './polygon-line-edge-scan.internal';
-import { writeXY } from './xy';
 
 /**
  * line-family × polygon 교점 1건의 raw record.
  *
  * public `IntersectionHit`로 매핑하기 전 단계의 평면 record다.
  * `tLine`은 line-family parameter, `tEdge`는 edge-local parameter `[0, 1]`,
- * `edgeIndex`는 polygon edge index(`vertex[i] → vertex[(i + 1) % n]`)다.
+ * `edgeIndex`는 polygon edge index(`vertex[i] → vertex[(i + 2) % n]`)다.
  */
 export interface LinePolygonHitRecord {
   /** 교점 x 좌표 */
@@ -59,7 +59,7 @@ export interface LinePolygonHitRecord {
  * | vertex touch                   | `kind: 'touch'`, `tEdge ≈ 0` 또는 `≈ 1`, dedupe |
  * | collinear edge overlap         | `kind: 'overlap'` 구간 양 끝점 2건            |
  * | containment-only(교점 없음)     | 빈 배열                                       |
- * | empty polygon(`n < 3`)          | 빈 배열                                       |
+ * | empty polygon(`n < 6`)          | 빈 배열                                       |
  * | degenerate direction(`|d| = 0`) | 빈 배열                                       |
  * | non-finite vertex/direction/origin | 해당 edge skip(가짜 record 미생성)         |
  *
@@ -83,7 +83,7 @@ export function lineFamilyPolygonIntersectionHits(
   dx: number,
   dy: number,
   kind: LineFamilyRangeKind,
-  polygon: PolygonLike,
+  polygon: Polygon,
   epsilonArg: number | undefined
 ): LinePolygonHitRecord[] {
   const epsilon = epsilonArg ?? DEFAULT_EPSILON;
@@ -150,7 +150,7 @@ export function lineFamilyPolygonIntersectionHitsInto(
   dx: number,
   dy: number,
   kind: LineFamilyRangeKind,
-  polygon: PolygonLike,
+  polygon: Polygon,
   epsilon: number | undefined
 ): LinePolygonIntersectionHit[] {
   const records: LinePolygonHitRecord[] = [];
@@ -180,21 +180,22 @@ export function lineFamilyPolygonIntersectionHitsInto(
  * @param polygon 교점을 구할 polygon
  * @param epsilon collinear/dedupe 판정 임계값
  */
-export function closestLineFamilyPolygonIntersectionInto<P extends XYWritable>(
-  out: LinePolygonIntersectionHit<P>,
+export function closestLineFamilyPolygonIntersectionInto(
+  out: LinePolygonIntersectionHit<PointWritable>,
   ox: number,
   oy: number,
   dx: number,
   dy: number,
   kind: LineFamilyRangeKind,
-  polygon: PolygonLike,
+  polygon: Polygon,
   epsilon: number | undefined
 ): boolean {
   const records: LinePolygonHitRecord[] = [];
   lineFamilyPolygonIntersectionHits(records, ox, oy, dx, dy, kind, polygon, epsilon);
   if (records.length === 0) return false;
   const r = records[0];
-  writeXY(out.point, r.x, r.y);
+  out.point.x = r.x;
+  out.point.y = r.y;
   out.kind = r.kind;
   out.tLine = r.tLine;
   out.tEdge = r.tEdge;
