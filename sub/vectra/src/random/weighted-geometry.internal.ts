@@ -33,7 +33,7 @@ function nextRepresentableNumber(value: number): number {
  * number가 아니면 `RangeError`를 던진다. RNG를 소비하지 않는다.
  *
  * @param weights segment별 caller 가중치 배열
- * @param segmentCount geometry source segment count (polyline: points.length-1, path: drawing segment 수)
+ * @param segmentCount geometry source segment count (polyline: polyline.length-1, path: drawing segment 수)
  * @param fnName 에러 메시지 prefix로 쓸 호출 함수 이름
  */
 export function validateGeometryWeights(weights: readonly number[], segmentCount: number, fnName: string): void {

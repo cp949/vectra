@@ -8,7 +8,7 @@
  *  3. 누락 방지: pass-through 7개를 뺀 `RandomState`의 함수 키 집합이 표의 키 집합과 같다.
  *
  * 설계 메모:
- *  - 같은 타입 인자(min/max, mean/stddev, a/b/c 등)는 비대칭 값을 쓴다. 뒤바꿈이 결과에 드러나야 한다.
+ *  - 같은 타입 인자(min/max, mean/stddev, 삼각형 꼭짓점 등)는 비대칭 값을 쓴다. 뒤바꿈이 결과에 드러나야 한다.
  *  - rng는 `sequence`가 아니라 시드 `createRng` 두 개를 쓴다. gamma/beta/dirichlet의 rejection loop가 멈추지 않게 한다.
  *  - state seed와 override seed를 다르게 둔다. `pick`이 override를 무시하는 변이가 같은 값을 내서 통과하지 않게 한다.
  *  - 기존 `random domain wrapper completeness` 테스트는 이름 집합만 본다. 이 파일은 인자 순서와 rng 전달을 본다.

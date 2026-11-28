@@ -8,9 +8,9 @@ import type { RandomSource } from './random';
  * `rx <= 0` 또는 `ry <= 0`이면 undefined를 반환한다.
  *
  * area-uniform 보장을 위해 단위 원에서 sqrt(u)로 반지름을 뽑은 뒤 x/y 축에
- * radiusX/radiusY를 각각 적용한다. RNG를 정확히 2회 소비한다(theta 1회, r 1회).
+ * rx/ry를 각각 적용한다. RNG를 정확히 2회 소비한다(theta 1회, r 1회).
  *
- * NaN/Infinity radius는 NaN/Infinity 좌표를 담은 object를 반환한다(caller 책임).
+ * 양의 Infinity나 NaN인 반지름은 `<= 0` 검사에 걸리지 않아 NaN/Infinity 좌표를 담은 object를 반환한다.
  * RNG sequence는 same-version 한정 stable이며 알고리즘 변경 시 회귀가 아니다.
  *
  * @param ellipse - 대상 axis-aligned ellipse. `cx, cy, rx, ry`를 읽는다

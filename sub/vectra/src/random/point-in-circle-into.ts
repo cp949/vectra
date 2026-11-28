@@ -10,7 +10,7 @@ import { random } from './random';
  *
  * area-uniform 보장을 위해 반지름에 sqrt를 적용한다.
  *
- * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param out - 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param circle - 대상 circle. `cx, cy, r`을 읽는다
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */

@@ -5,7 +5,7 @@ import { random } from './random';
 /**
  * 균등 분포 angle로 무작위 방향 벡터를 기록하고 out을 반환한다.
  *
- * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param out - 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param length - 벡터 길이. 기본값 1
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */

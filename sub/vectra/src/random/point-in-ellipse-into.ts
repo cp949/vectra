@@ -9,13 +9,13 @@ import { random } from './random';
  * 성공 시 true를 반환한다.
  *
  * area-uniform 보장을 위해 단위 원에서 sqrt(u)로 반지름을 뽑은 뒤 x/y 축에
- * radiusX/radiusY를 각각 적용한다. RNG를 정확히 2회 소비한다(theta 1회, r 1회).
+ * rx/ry를 각각 적용한다. RNG를 정확히 2회 소비한다(theta 1회, r 1회).
  *
  * 양의 Infinity나 NaN인 반지름은 `<= 0` 검사에 걸리지 않아 out에
  * NaN/Infinity 좌표가 기록된 채 true를 반환한다.
  * RNG sequence는 same-version 한정 stable이며 알고리즘 변경 시 회귀가 아니다.
  *
- * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param out - 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param ellipse - 대상 axis-aligned ellipse. `cx, cy, rx, ry`를 읽는다
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */

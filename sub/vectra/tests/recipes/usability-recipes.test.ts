@@ -4,7 +4,7 @@
  * MVP usability recipe 테스트.
  * 단위 함수 정확성이 아니라 실제 사용 시나리오에서 API가 편리한지를 검증한다.
  * - subpath import가 자연스러운가
- * - tuple/object/class instance가 억지 캐스팅 없이 흐르는가
+ * - object/class instance가 억지 캐스팅 없이 흐르는가
  * - caller-owned output을 재사용할 수 있는가
  * - 여러 domain 조합에 glue code가 과하지 않은가
  * - README/docs 예제가 실제 API와 어긋나지 않는가

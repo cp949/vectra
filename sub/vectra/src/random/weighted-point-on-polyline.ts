@@ -11,7 +11,7 @@ import { weightedPointOnPolylineInto } from './weighted-point-on-polyline-into';
  * 선택 threshold 계산에 1회만 소비한다. open segment model을 따르며 closed polyline의 closing
  * edge는 포함하지 않는다.
  *
- * weight mapping: `weights.length`는 source segment count(`points.length - 1`)와 같아야 한다.
+ * weight mapping: `weights.length`는 source segment count(`polyline.length - 1`)와 같아야 한다.
  * zero-length segment는 weight가 양수여도 effective weight `0`으로 선택 대상이 아니다.
  *
  * 평가 순서(앞 단계에서 결정되면 이후는 평가하지 않는다):
@@ -24,8 +24,8 @@ import { weightedPointOnPolylineInto } from './weighted-point-on-polyline-into';
  * caller 책임: polyline vertex에 NaN/Infinity가 있으면 `undefined`를 반환한다. RNG가 `[0, 1)`
  * 범위를 벗어나는 값을 반환하면 결과는 정의되지 않는다.
  *
- * @param polyline 대상 polyline. source segment count는 `points.length - 1`
- * @param weights segment별 가중치 배열. 길이는 `points.length - 1`, 각 값은 finite `>= 0`
+ * @param polyline 대상 polyline. source segment count는 `polyline.length - 1`
+ * @param weights segment별 가중치 배열. 길이는 `polyline.length - 1`, 각 값은 finite `>= 0`
  * @param rng 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
 export function weightedPointOnPolyline(

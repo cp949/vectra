@@ -133,12 +133,12 @@ describe('random geometry companion 함수', () => {
   });
 
   describe('pointInCircle', () => {
-    test('pointInCircle는 radius=0인 circle에서 undefined를 반환한다', () => {
+    test('pointInCircle는 r=0인 circle에서 undefined를 반환한다', () => {
       const result = pointInCircle({ cx: 0, cy: 0, r: 0 }, sequence([0.5, 0.5]));
       expect(result).toBeUndefined();
     });
 
-    test('pointInCircle는 radius<0인 circle에서 undefined를 반환한다', () => {
+    test('pointInCircle는 r<0인 circle에서 undefined를 반환한다', () => {
       const result = pointInCircle({ cx: 0, cy: 0, r: -1 }, sequence([0.5, 0.5]));
       expect(result).toBeUndefined();
     });
@@ -156,7 +156,7 @@ describe('random geometry companion 함수', () => {
   });
 
   describe('pointOnCircle', () => {
-    test('pointOnCircle는 radius<=0인 circle에서 undefined를 반환한다', () => {
+    test('pointOnCircle는 r<=0인 circle에서 undefined를 반환한다', () => {
       const result = pointOnCircle({ cx: 0, cy: 0, r: -1 }, () => 0.5);
       expect(result).toBeUndefined();
     });
@@ -173,12 +173,12 @@ describe('random geometry companion 함수', () => {
   });
 
   describe('pointInEllipse', () => {
-    test('radiusX<=0 → undefined', () => {
+    test('rx<=0 → undefined', () => {
       const result = pointInEllipse({ cx: 0, cy: 0, rx: 0, ry: 5 }, () => 0.5);
       expect(result).toBeUndefined();
     });
 
-    test('radiusY<=0 → undefined', () => {
+    test('ry<=0 → undefined', () => {
       const result = pointInEllipse({ cx: 0, cy: 0, rx: 3, ry: 0 }, () => 0.5);
       expect(result).toBeUndefined();
     });

@@ -7,8 +7,8 @@ import { random } from './random';
  *
  * r + s > 1인 경우 삼각형 반대편 영역에 해당하므로 (1-r, 1-s)로 반사 처리한다.
  *
- * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
- * @param triangle 대상 삼각형
+ * @param out - 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param triangle - 대상 삼각형
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */
 export const pointInTriangleInto = <Out extends PointWritable>(

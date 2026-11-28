@@ -5,35 +5,35 @@ import { createRng } from '../../../src/random/create-rng';
 import { pointInEllipseInto } from '../../../src/random/point-in-ellipse-into';
 
 describe('pointInEllipseInto', () => {
-  test('radiusX<=0 → false, out 미수정', () => {
+  test('rx<=0 → false, out 미수정', () => {
     const out = { x: 7, y: 8 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: 0, ry: 5 }, () => 0.5);
     expect(result).toBe(false);
     expect(out).toEqual({ x: 7, y: 8 });
   });
 
-  test('radiusX<0 → false, out 미수정', () => {
+  test('rx<0 → false, out 미수정', () => {
     const out = { x: 7, y: 8 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: -1, ry: 5 }, () => 0.5);
     expect(result).toBe(false);
     expect(out).toEqual({ x: 7, y: 8 });
   });
 
-  test('radiusY<=0 → false, out 미수정', () => {
+  test('ry<=0 → false, out 미수정', () => {
     const out = { x: 3, y: 4 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: 3, ry: 0 }, () => 0.5);
     expect(result).toBe(false);
     expect(out).toEqual({ x: 3, y: 4 });
   });
 
-  test('radiusY<0 → false, out 미수정', () => {
+  test('ry<0 → false, out 미수정', () => {
     const out = { x: 3, y: 4 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: 3, ry: -2 }, () => 0.5);
     expect(result).toBe(false);
     expect(out).toEqual({ x: 3, y: 4 });
   });
 
-  test('NaN radiusX → pass-through (true 반환, out.x에 NaN 기록, out.y는 radiusY 정상 반영)', () => {
+  test('NaN rx → pass-through (true 반환, out.x에 NaN 기록, out.y는 ry 정상 반영)', () => {
     const out = { x: 0, y: 0 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: NaN, ry: 5 }, () => 0.5);
     expect(result).toBe(true);
@@ -42,14 +42,14 @@ describe('pointInEllipseInto', () => {
     expect(Number.isNaN(out.y)).toBe(false);
   });
 
-  test('Infinity radiusX → pass-through (true 반환, out에 Infinity 기록)', () => {
+  test('Infinity rx → pass-through (true 반환, out에 Infinity 기록)', () => {
     const out = { x: 0, y: 0 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: Infinity, ry: 5 }, () => 0.5);
     expect(result).toBe(true);
     expect(Number.isFinite(out.x)).toBe(false);
   });
 
-  test('-Infinity radiusX → false (degenerate), out 미수정', () => {
+  test('-Infinity rx → false (degenerate), out 미수정', () => {
     const out = { x: 0, y: 0 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: -Infinity, ry: 5 }, () => 0.5);
     // -Infinity <= 0 → degenerate 분기
@@ -57,28 +57,28 @@ describe('pointInEllipseInto', () => {
     expect(out).toEqual({ x: 0, y: 0 });
   });
 
-  test('NaN radiusY → pass-through (true 반환, out.y에 NaN 기록)', () => {
+  test('NaN ry → pass-through (true 반환, out.y에 NaN 기록)', () => {
     const out = { x: 0, y: 0 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: 3, ry: NaN }, () => 0.5);
     expect(result).toBe(true);
     expect(Number.isNaN(out.y)).toBe(true);
   });
 
-  test('Infinity radiusY → pass-through (true 반환, out에 Infinity 기록)', () => {
+  test('Infinity ry → pass-through (true 반환, out에 Infinity 기록)', () => {
     const out = { x: 0, y: 0 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: 3, ry: Infinity }, () => 0.5);
     expect(result).toBe(true);
     expect(Number.isFinite(out.y)).toBe(false);
   });
 
-  test('-Infinity radiusY → false (degenerate), out 미수정', () => {
+  test('-Infinity ry → false (degenerate), out 미수정', () => {
     const out = { x: 0, y: 0 };
     const result = pointInEllipseInto(out, { cx: 0, cy: 0, rx: 3, ry: -Infinity }, () => 0.5);
     expect(result).toBe(false);
     expect(out).toEqual({ x: 0, y: 0 });
   });
 
-  test('NaN center → pass-through (true 반환)', () => {
+  test('NaN 중심 좌표 → pass-through (true 반환)', () => {
     const out = { x: 0, y: 0 };
     const result = pointInEllipseInto(out, { cx: NaN, cy: NaN, rx: 3, ry: 5 }, () => 0.5);
     expect(result).toBe(true);

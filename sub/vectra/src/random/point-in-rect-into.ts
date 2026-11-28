@@ -8,7 +8,7 @@ import { random } from './random';
  * `width <= 0` 또는 `height <= 0`이면 false를 반환하고 out을 수정하지 않는다.
  * 성공 시 true를 반환한다.
  *
- * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param out - 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param rect - 대상 rect
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */

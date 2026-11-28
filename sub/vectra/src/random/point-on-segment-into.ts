@@ -5,9 +5,9 @@ import { random } from './random';
 /**
  * segment 위의 무작위 점을 균등 분포로 기록하고 out을 반환한다.
  *
- * degenerate segment(a === b)인 경우 endpoint를 기록한다.
+ * 시작점과 끝점이 같은 segment면 endpoint를 기록한다.
  *
- * @param out 샘플 좌표를 기록할 출력 객체 (`x, y`)
+ * @param out - 샘플 좌표를 기록할 출력 객체 (`x, y`)
  * @param segment - 대상 segment. 두 endpoint를 읽는다
  * @param rng - 난수 생성 함수. 생략하면 default entropy source를 사용한다
  */

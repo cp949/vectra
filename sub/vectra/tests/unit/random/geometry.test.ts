@@ -80,7 +80,7 @@ describe('random geometry sampling', () => {
     expect(out).toEqual({ x: 5, y: 5 });
   });
 
-  test('pointInCircleInto는 radius<=0인 circle에서 false를 반환하고 out을 유지한다', () => {
+  test('pointInCircleInto는 r<=0인 circle에서 false를 반환하고 out을 유지한다', () => {
     const out = { x: 3, y: 4 };
     const result = pointInCircleInto(out, { cx: 0, cy: 0, r: 0 }, sequence([0.5, 0.5]));
     expect(result).toBe(false);
@@ -99,7 +99,7 @@ describe('random geometry sampling', () => {
     expect(out.y).toBeCloseTo(2 + expectedR * Math.sin(Math.PI));
   });
 
-  test('pointOnCircleInto는 radius<=0에서 false를 반환하고 out을 유지한다', () => {
+  test('pointOnCircleInto는 r<=0에서 false를 반환하고 out을 유지한다', () => {
     const out = { x: 5, y: 6 };
     const result = pointOnCircleInto(out, { cx: 0, cy: 0, r: -1 }, sequence([0.5]));
     expect(result).toBe(false);
