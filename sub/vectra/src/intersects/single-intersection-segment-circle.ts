@@ -1,9 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { lineFamilyCircleIntersectionPoint, segmentToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Circle, Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 circle의 단일 교점을 새 object로 반환한다.
@@ -17,23 +14,11 @@ import type { CircleLike, SegmentLike, XYObjectWritable } from '../types';
  * @param epsilon 수치 비교 tolerance
  */
 export function singleIntersectionSegmentCircle(
-  line: SegmentLike,
-  circle: CircleLike,
+  line: Segment,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable | undefined {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const center = readCircleCenter(circle);
-  const out: XYObjectWritable = { x: 0, y: 0 };
-  return lineFamilyCircleIntersectionPoint(
-    out,
-    lineParam,
-    readX(center),
-    readY(center),
-    readCircleRadius(circle),
-    epsilon
-  )
-    ? out
-    : undefined;
+): PointWritable | undefined {
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const out: PointWritable = { x: 0, y: 0 };
+  return lineFamilyCircleIntersectionPoint(out, lineParam, circle.cx, circle.cy, circle.r, epsilon) ? out : undefined;
 }

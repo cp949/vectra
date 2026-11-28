@@ -1,10 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
 import { rayCirclePointsInto } from '../internal/ray-circle-points.internal';
-import { readX, readY } from '../internal/xy';
-import { isCircleObject, isRayObject, isXYObject } from '../internal/xy-object.internal';
-import type { CircleLike, RayLike, XYObjectWritable } from '../types';
+import type { Circle, Ray, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray와 circle circumference의 range 안 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -18,64 +14,20 @@ import type { CircleLike, RayLike, XYObjectWritable } from '../types';
  *   (zero-length), empty circle(radius ≤ 0)도 빈 배열을 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }`
- * object이며 입력 point object를 재사용하지 않는다.
+ * object다.
  * `epsilon`은 discriminant tangent 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param ray origin에서 direction 방향으로 뻗는 반직선 (t ≥ 0 범위)
  * @param circle 교점을 구할 circle
  * @param epsilon discriminant tangent 판정 임계값
  */
-export function rayCircleIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  ray: RayLike,
-  circle: CircleLike,
+export function rayCircleIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  ray: Ray,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  // 모두 object 입력이면 좌표를 이 함수에서 직접 읽는다
-  if (isRayObject(ray) && isCircleObject(circle)) {
-    const origin = ray.origin;
-    const direction = ray.direction;
-    const center = circle.center;
-    if (isXYObject(origin) && isXYObject(direction) && isXYObject(center)) {
-      const radius = circle.radius;
-      return rayCirclePointsInto(
-        outPoints,
-        origin.x,
-        origin.y,
-        direction.x,
-        direction.y,
-        center.x,
-        center.y,
-        radius,
-        epsilon
-      );
-    }
-  }
-
-  return rayCircleIntersectionsIntoShared(outPoints, ray, circle, epsilon);
-}
-
-/** tuple 입력이 있을 때 공유 reader로 읽는 경로. */
-function rayCircleIntersectionsIntoShared(
-  outPoints: XYObjectWritable[],
-  ray: RayLike,
-  circle: CircleLike,
-  epsilon: number
-): XYObjectWritable[] {
-  const origin = readRayOrigin(ray);
-  const direction = readRayDirection(ray);
-  const center = readCircleCenter(circle);
-  const radius = readCircleRadius(circle);
-  return rayCirclePointsInto(
-    outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
-    readX(center),
-    readY(center),
-    radius,
-    epsilon
-  );
+): Out {
+  rayCirclePointsInto(outPoints, ray.ox, ray.oy, ray.dx, ray.dy, circle.cx, circle.cy, circle.r, epsilon);
+  return outPoints;
 }

@@ -1,9 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { lineFamilyCircleIntersectionPoint, rayToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, RayLike, XYObjectWritable } from '../types';
+import type { Circle, Ray, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray와 circle의 단일 교점을 새 object로 반환한다.
@@ -18,23 +15,11 @@ import type { CircleLike, RayLike, XYObjectWritable } from '../types';
  * @param epsilon 수치 비교 tolerance
  */
 export function singleIntersectionRayCircle(
-  ray: RayLike,
-  circle: CircleLike,
+  ray: Ray,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable | undefined {
-  const origin = readRayOrigin(ray);
-  const dir = readRayDirection(ray);
-  const lineParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const center = readCircleCenter(circle);
-  const out: XYObjectWritable = { x: 0, y: 0 };
-  return lineFamilyCircleIntersectionPoint(
-    out,
-    lineParam,
-    readX(center),
-    readY(center),
-    readCircleRadius(circle),
-    epsilon
-  )
-    ? out
-    : undefined;
+): PointWritable | undefined {
+  const lineParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
+  const out: PointWritable = { x: 0, y: 0 };
+  return lineFamilyCircleIntersectionPoint(out, lineParam, circle.cx, circle.cy, circle.r, epsilon) ? out : undefined;
 }

@@ -1,9 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { lineFamilyEllipseIntersects } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, RayLike } from '../types';
+import type { Ellipse, Ray } from '../types/flat-shapes.internal';
 
 /**
  * ellipse와 ray가 교차하거나 접하면 true를 반환한다.
@@ -16,20 +13,17 @@ import type { EllipseLike, RayLike } from '../types';
  * @param ray 교차를 검사할 ray
  * @param epsilon 수치 비교 tolerance
  */
-export function intersectsEllipseRay(ellipse: EllipseLike, ray: RayLike, epsilon = DEFAULT_EPSILON): boolean {
-  const origin = readRayOrigin(ray);
-  const direction = readRayDirection(ray);
-  const center = readEllipseCenter(ellipse);
+export function intersectsEllipseRay(ellipse: Ellipse, ray: Ray, epsilon = DEFAULT_EPSILON): boolean {
   return lineFamilyEllipseIntersects(
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    ray.ox,
+    ray.oy,
+    ray.dx,
+    ray.dy,
     'ray',
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
     epsilon
   );
 }

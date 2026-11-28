@@ -30,123 +30,116 @@ import { reflectInto } from '../../../src/vec/reflect-into';
 const RIGHT = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
 
 describe('rayCircleHitT', () => {
-  const circle = { center: { x: 5, y: 0 }, radius: 1 };
+  const right = { ox: 0, oy: 0, dx: 1, dy: 0 };
+  const circle = { cx: 5, cy: 0, r: 1 };
 
   test('가까운 교점의 t를 반환한다', () => {
-    expect(rayCircleHitT(RIGHT, circle)).toBe(4);
-  });
-
-  test('tuple ray와 tuple circle도 같은 t를 반환한다', () => {
-    expect(rayCircleHitT([0, 0, 1, 0], [[5, 0], 1])).toBe(4);
-    expect(rayCircleHitT({ origin: [0, 0], direction: [1, 0] }, { center: [5, 0], radius: 1 })).toBe(4);
+    expect(rayCircleHitT(right, circle)).toBe(4);
   });
 
   test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
-    expect(rayCircleHitT([0, 0, 2, 0], circle)).toBe(2);
-    expect(rayCircleHitT([0, 0, 0.5, 0], circle)).toBe(8);
+    expect(rayCircleHitT({ ox: 0, oy: 0, dx: 2, dy: 0 }, circle)).toBe(2);
+    expect(rayCircleHitT({ ox: 0, oy: 0, dx: 0.5, dy: 0 }, circle)).toBe(8);
   });
 
   test('origin이 안쪽이면 exit 교점의 t를 반환한다', () => {
-    expect(rayCircleHitT([5, 0, 1, 0], [[5, 0], 2])).toBe(2);
-    expect(rayCircleHitT([5, 0, 2, 0], [[5, 0], 2])).toBe(1);
+    expect(rayCircleHitT({ ox: 5, oy: 0, dx: 1, dy: 0 }, { cx: 5, cy: 0, r: 2 })).toBe(2);
+    expect(rayCircleHitT({ ox: 5, oy: 0, dx: 2, dy: 0 }, { cx: 5, cy: 0, r: 2 })).toBe(1);
   });
 
   test('접선은 접점의 t를 반환한다', () => {
-    expect(rayCircleHitT(RIGHT, { center: { x: 5, y: 1 }, radius: 1 })).toBe(5);
+    expect(rayCircleHitT(right, { cx: 5, cy: 1, r: 1 })).toBe(5);
   });
 
   test('빗나가면 Infinity를 반환한다', () => {
-    expect(rayCircleHitT(RIGHT, { center: { x: 5, y: 3 }, radius: 1 })).toBe(Infinity);
+    expect(rayCircleHitT(right, { cx: 5, cy: 3, r: 1 })).toBe(Infinity);
   });
 
   test('circle이 ray 뒤쪽에 있으면 Infinity를 반환한다', () => {
-    expect(rayCircleHitT(RIGHT, { center: { x: -5, y: 0 }, radius: 1 })).toBe(Infinity);
+    expect(rayCircleHitT(right, { cx: -5, cy: 0, r: 1 })).toBe(Infinity);
   });
 
   test('tMin 이상인 root 중 작은 쪽을 고른다', () => {
-    expect(rayCircleHitT(RIGHT, circle, 3)).toBe(4);
-    expect(rayCircleHitT(RIGHT, circle, 4.5)).toBe(6);
-    expect(rayCircleHitT(RIGHT, circle, 6.5)).toBe(Infinity);
+    expect(rayCircleHitT(right, circle, 3)).toBe(4);
+    expect(rayCircleHitT(right, circle, 4.5)).toBe(6);
+    expect(rayCircleHitT(right, circle, 6.5)).toBe(Infinity);
   });
 
   test('tMin은 inclusive다', () => {
-    expect(rayCircleHitT(RIGHT, circle, 4)).toBe(4);
-    expect(rayCircleHitT(RIGHT, circle, 6)).toBe(6);
+    expect(rayCircleHitT(right, circle, 4)).toBe(4);
+    expect(rayCircleHitT(right, circle, 6)).toBe(6);
   });
 
   test('접점 t가 tMin보다 작으면 Infinity를 반환한다', () => {
-    const tangent = { center: { x: 5, y: 1 }, radius: 1 };
-    expect(rayCircleHitT(RIGHT, tangent, 5)).toBe(5);
-    expect(rayCircleHitT(RIGHT, tangent, 5.5)).toBe(Infinity);
+    const tangent = { cx: 5, cy: 1, r: 1 };
+    expect(rayCircleHitT(right, tangent, 5)).toBe(5);
+    expect(rayCircleHitT(right, tangent, 5.5)).toBe(Infinity);
   });
 
   test('출발점이 circumference 위면 tMin으로 출발 면을 거른다', () => {
     // 바깥으로 떠나는 ray: 출발점 t = 0만 맞고 되돌아오지 않는다.
-    expect(rayCircleHitT([6, 0, 1, 0], circle)).toBeCloseTo(0, 12);
-    expect(rayCircleHitT([6, 0, 1, 0], circle, 1e-9)).toBe(Infinity);
+    expect(rayCircleHitT({ ox: 6, oy: 0, dx: 1, dy: 0 }, circle)).toBeCloseTo(0, 12);
+    expect(rayCircleHitT({ ox: 6, oy: 0, dx: 1, dy: 0 }, circle, 1e-9)).toBe(Infinity);
     // 안쪽으로 들어가는 ray: 출발점을 거르면 반대편 exit이 남는다.
-    expect(rayCircleHitT([4, 0, 1, 0], circle)).toBeCloseTo(0, 12);
-    expect(rayCircleHitT([4, 0, 1, 0], circle, 1e-9)).toBe(2);
+    expect(rayCircleHitT({ ox: 4, oy: 0, dx: 1, dy: 0 }, circle)).toBeCloseTo(0, 12);
+    expect(rayCircleHitT({ ox: 4, oy: 0, dx: 1, dy: 0 }, circle, 1e-9)).toBe(2);
   });
 
   test('zero direction은 Infinity를 반환한다', () => {
-    expect(rayCircleHitT([5, 0, 0, 0], [[5, 0], 2])).toBe(Infinity);
+    expect(rayCircleHitT({ ox: 5, oy: 0, dx: 0, dy: 0 }, { cx: 5, cy: 0, r: 2 })).toBe(Infinity);
   });
 
   test('empty circle(radius ≤ 0)은 Infinity를 반환한다', () => {
-    expect(rayCircleHitT(RIGHT, { center: { x: 5, y: 0 }, radius: 0 })).toBe(Infinity);
-    expect(rayCircleHitT(RIGHT, { center: { x: 5, y: 0 }, radius: -1 })).toBe(Infinity);
+    expect(rayCircleHitT(right, { cx: 5, cy: 0, r: 0 })).toBe(Infinity);
+    expect(rayCircleHitT(right, { cx: 5, cy: 0, r: -1 })).toBe(Infinity);
   });
 
   test('epsilon을 키우면 접선에 가까운 빗나감도 접점으로 본다', () => {
-    const nearTangent = { center: { x: 5, y: 1 + 1e-10 }, radius: 1 };
-    expect(rayCircleHitT(RIGHT, nearTangent)).toBe(Infinity);
-    expect(rayCircleHitT(RIGHT, nearTangent, 0, 1e-3)).toBe(5);
+    const nearTangent = { cx: 5, cy: 1 + 1e-10, r: 1 };
+    expect(rayCircleHitT(right, nearTangent)).toBe(Infinity);
+    expect(rayCircleHitT(right, nearTangent, 0, 1e-3)).toBe(5);
   });
 
   test('non-finite 입력은 hit 없음으로 처리한다', () => {
-    expect(rayCircleHitT([Number.NaN, 0, 1, 0], circle)).toBe(Infinity);
-    expect(rayCircleHitT([0, 0, Number.NaN, 0], circle)).toBe(Infinity);
-    expect(rayCircleHitT(RIGHT, { center: { x: Number.NaN, y: 0 }, radius: 1 })).toBe(Infinity);
-    expect(rayCircleHitT(RIGHT, circle, Number.NaN)).toBe(Infinity);
+    expect(rayCircleHitT({ ox: Number.NaN, oy: 0, dx: 1, dy: 0 }, circle)).toBe(Infinity);
+    expect(rayCircleHitT({ ox: 0, oy: 0, dx: Number.NaN, dy: 0 }, circle)).toBe(Infinity);
+    expect(rayCircleHitT(right, { cx: Number.NaN, cy: 0, r: 1 })).toBe(Infinity);
+    expect(rayCircleHitT(right, circle, Number.NaN)).toBe(Infinity);
   });
 });
 
 describe('rayEllipseHitT', () => {
-  const ellipse = { center: { x: 5, y: 0 }, radiusX: 2, radiusY: 1 };
+  const right = { ox: 0, oy: 0, dx: 1, dy: 0 };
+  const ellipse = { cx: 5, cy: 0, rx: 2, ry: 1 };
 
   test('x축과 y축 반지름이 다른 ellipse의 교점 t를 반환한다', () => {
-    expect(rayEllipseHitT(RIGHT, ellipse)).toBe(3);
+    expect(rayEllipseHitT(right, ellipse)).toBe(3);
     // 위에서 아래로 쏘면 y 반지름이 적용된다.
-    expect(rayEllipseHitT([5, 4, 0, -1], ellipse)).toBe(3);
-  });
-
-  test('tuple 입력도 같은 t를 반환한다', () => {
-    expect(rayEllipseHitT([0, 0, 1, 0], [[5, 0], 2, 1])).toBe(3);
+    expect(rayEllipseHitT({ ox: 5, oy: 4, dx: 0, dy: -1 }, ellipse)).toBe(3);
   });
 
   test('origin이 안쪽이면 exit 교점의 t를 반환한다', () => {
-    expect(rayEllipseHitT([5, 0, 1, 0], ellipse)).toBe(2);
-    expect(rayEllipseHitT([5, 0, 0, 1], ellipse)).toBe(1);
+    expect(rayEllipseHitT({ ox: 5, oy: 0, dx: 1, dy: 0 }, ellipse)).toBe(2);
+    expect(rayEllipseHitT({ ox: 5, oy: 0, dx: 0, dy: 1 }, ellipse)).toBe(1);
   });
 
   test('접선은 접점의 t를 반환하고 tMin이 더 크면 Infinity를 반환한다', () => {
-    const tangent = { center: { x: 5, y: 1 }, radiusX: 2, radiusY: 1 };
-    expect(rayEllipseHitT(RIGHT, tangent)).toBe(5);
-    expect(rayEllipseHitT(RIGHT, tangent, 6)).toBe(Infinity);
+    const tangent = { cx: 5, cy: 1, rx: 2, ry: 1 };
+    expect(rayEllipseHitT(right, tangent)).toBe(5);
+    expect(rayEllipseHitT(right, tangent, 6)).toBe(Infinity);
   });
 
   test('tMin으로 가까운 교점을 건너뛴다', () => {
-    expect(rayEllipseHitT(RIGHT, ellipse, 3.5)).toBe(7);
-    expect(rayEllipseHitT(RIGHT, ellipse, 3)).toBe(3);
-    expect(rayEllipseHitT(RIGHT, ellipse, 7.5)).toBe(Infinity);
+    expect(rayEllipseHitT(right, ellipse, 3.5)).toBe(7);
+    expect(rayEllipseHitT(right, ellipse, 3)).toBe(3);
+    expect(rayEllipseHitT(right, ellipse, 7.5)).toBe(Infinity);
   });
 
   test('빗나감, zero direction, empty ellipse는 Infinity를 반환한다', () => {
-    expect(rayEllipseHitT(RIGHT, { center: { x: 5, y: 3 }, radiusX: 2, radiusY: 1 })).toBe(Infinity);
-    expect(rayEllipseHitT([0, 0, 0, 0], ellipse)).toBe(Infinity);
-    expect(rayEllipseHitT(RIGHT, { center: { x: 5, y: 0 }, radiusX: 0, radiusY: 1 })).toBe(Infinity);
-    expect(rayEllipseHitT(RIGHT, { center: { x: 5, y: 0 }, radiusX: 2, radiusY: -1 })).toBe(Infinity);
+    expect(rayEllipseHitT(right, { cx: 5, cy: 3, rx: 2, ry: 1 })).toBe(Infinity);
+    expect(rayEllipseHitT({ ox: 0, oy: 0, dx: 0, dy: 0 }, ellipse)).toBe(Infinity);
+    expect(rayEllipseHitT(right, { cx: 5, cy: 0, rx: 0, ry: 1 })).toBe(Infinity);
+    expect(rayEllipseHitT(right, { cx: 5, cy: 0, rx: 2, ry: -1 })).toBe(Infinity);
   });
 });
 
@@ -524,15 +517,15 @@ describe('광선 추적 소비 시나리오', () => {
   });
 
   test('원과 벽이 섞인 장면에서 가장 작은 t의 물체를 고른다', () => {
-    const circle = [[4, 0], 1] as const;
+    const circle = { cx: 4, cy: 0, r: 1 };
     const wall = { x1: 7, y1: -3, x2: 7, y2: 3 } as const;
     const ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
-    const tCircle = rayCircleHitT([0, 0, 1, 0], circle);
+    const tCircle = rayCircleHitT(ray, circle);
     const tWall = raySegmentHitT(ray, wall);
     expect(Math.min(tCircle, tWall)).toBe(tCircle);
     expect(tCircle).toBe(3);
     expect(tWall).toBe(7);
     // 원 안에서 출발한 ray는 exit을 먼저 맞힌다.
-    expect(rayCircleHitT([4, 0, 1, 0], circle, 1e-9)).toBe(1);
+    expect(rayCircleHitT({ ox: 4, oy: 0, dx: 1, dy: 0 }, circle, 1e-9)).toBe(1);
   });
 });

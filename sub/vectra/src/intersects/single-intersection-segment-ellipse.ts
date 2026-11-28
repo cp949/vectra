@@ -1,9 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { lineFamilyEllipseIntersectionPoint } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Ellipse, Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 ellipse의 단일 교점을 새 object로 반환한다.
@@ -18,25 +15,22 @@ import type { EllipseLike, SegmentLike, XYObjectWritable } from '../types';
  * @param epsilon 수치 비교 tolerance
  */
 export function singleIntersectionSegmentEllipse(
-  line: SegmentLike,
-  ellipse: EllipseLike,
+  line: Segment,
+  ellipse: Ellipse,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable | undefined {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const center = readEllipseCenter(ellipse);
-  const out: XYObjectWritable = { x: 0, y: 0 };
+): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return lineFamilyEllipseIntersectionPoint(
     out,
-    readX(a),
-    readY(a),
-    readX(b) - readX(a),
-    readY(b) - readY(a),
+    line.x1,
+    line.y1,
+    line.x2 - line.x1,
+    line.y2 - line.y1,
     'finite',
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
     epsilon
   )
     ? out

@@ -99,8 +99,9 @@ describe('rayCircleHitT — rayCircleIntersectionsInto와 같은 교점', () => 
       const radius = range(rng, 0.5, 8);
       const cx = range(rng, -15, 15);
       const cy = range(rng, -15, 15);
-      const ray = makeRay(rng, ...coords);
-      const circle: CircleLike = rng() < 0.5 ? { center: point(rng, cx, cy), radius } : [point(rng, cx, cy), radius];
+      const [ox, oy, dx, dy] = coords;
+      const ray = { ox, oy, dx, dy };
+      const circle = { cx, cy, r: radius };
 
       const t = rayCircleHitT(ray, circle);
       rayCircleIntersectionsInto(points, ray, circle);
@@ -138,9 +139,9 @@ describe('rayEllipseHitT — rayEllipseIntersectionsInto와 같은 교점', () =
       const radiusY = range(rng, 0.5, 8);
       const cx = range(rng, -15, 15);
       const cy = range(rng, -15, 15);
-      const ray = makeRay(rng, ...coords);
-      const ellipse: EllipseLike =
-        rng() < 0.5 ? { center: point(rng, cx, cy), radiusX, radiusY } : [point(rng, cx, cy), radiusX, radiusY];
+      const [ox, oy, dx, dy] = coords;
+      const ray = { ox, oy, dx, dy };
+      const ellipse = { cx, cy, rx: radiusX, ry: radiusY };
 
       const t = rayEllipseHitT(ray, ellipse);
       rayEllipseIntersectionsInto(points, ray, ellipse);

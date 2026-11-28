@@ -1,9 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { lineFamilyCircleIntersects, rayToLineFamilyParam } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, RayLike } from '../types';
+import type { Circle, Ray } from '../types/flat-shapes.internal';
 
 /**
  * circle과 ray가 교차하거나 접하면 true를 반환한다.
@@ -15,10 +12,7 @@ import type { CircleLike, RayLike } from '../types';
  * @param ray 교차를 판정할 ray
  * @param epsilon 부동소수점 비교에 사용할 tolerance
  */
-export function intersectsCircleRay(circle: CircleLike, ray: RayLike, epsilon = DEFAULT_EPSILON): boolean {
-  const origin = readRayOrigin(ray);
-  const dir = readRayDirection(ray);
-  const lineParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const center = readCircleCenter(circle);
-  return lineFamilyCircleIntersects(lineParam, readX(center), readY(center), readCircleRadius(circle), epsilon);
+export function intersectsCircleRay(circle: Circle, ray: Ray, epsilon = DEFAULT_EPSILON): boolean {
+  const lineParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
+  return lineFamilyCircleIntersects(lineParam, circle.cx, circle.cy, circle.r, epsilon);
 }

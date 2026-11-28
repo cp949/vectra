@@ -1,9 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { lineFamilyEllipseIntersectionPoint } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, InfiniteLineLike, XYWritable } from '../types';
+import type { Ellipse, InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 ellipse의 단일 교점을 out에 기록하고 true를 반환한다.
@@ -12,25 +9,22 @@ import type { EllipseLike, InfiniteLineLike, XYWritable } from '../types';
  * empty ellipse (radiusX ≤ 0 또는 radiusY ≤ 0): false.
  */
 export function singleIntersectionInfiniteLineEllipseInto(
-  out: XYWritable,
-  line: InfiniteLineLike,
-  ellipse: EllipseLike,
+  out: PointWritable,
+  line: InfiniteLine,
+  ellipse: Ellipse,
   epsilon = DEFAULT_EPSILON
 ): boolean {
-  const origin = readInfiniteLineOrigin(line);
-  const direction = readInfiniteLineDirection(line);
-  const center = readEllipseCenter(ellipse);
   return lineFamilyEllipseIntersectionPoint(
     out,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    line.ox,
+    line.oy,
+    line.dx,
+    line.dy,
     'inf',
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
     epsilon
   );
 }

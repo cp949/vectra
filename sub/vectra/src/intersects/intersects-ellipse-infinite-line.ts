@@ -1,9 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { lineFamilyEllipseIntersects } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, InfiniteLineLike } from '../types';
+import type { Ellipse, InfiniteLine } from '../types/flat-shapes.internal';
 
 /**
  * ellipse와 infinite-line이 교차하거나 접하면 true를 반환한다.
@@ -17,23 +14,20 @@ import type { EllipseLike, InfiniteLineLike } from '../types';
  * @param epsilon 수치 비교 tolerance
  */
 export function intersectsEllipseInfiniteLine(
-  ellipse: EllipseLike,
-  line: InfiniteLineLike,
+  ellipse: Ellipse,
+  line: InfiniteLine,
   epsilon = DEFAULT_EPSILON
 ): boolean {
-  const origin = readInfiniteLineOrigin(line);
-  const direction = readInfiniteLineDirection(line);
-  const center = readEllipseCenter(ellipse);
   return lineFamilyEllipseIntersects(
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    line.ox,
+    line.oy,
+    line.dx,
+    line.dy,
     'inf',
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
     epsilon
   );
 }

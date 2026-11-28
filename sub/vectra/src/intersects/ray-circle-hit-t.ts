@@ -1,8 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
 import { rayEllipseHitTXY } from '../internal/ray-hit-t.internal';
-import { readRayDirectionX, readRayDirectionY, readRayOriginX, readRayOriginY } from '../internal/ray-scalar.internal';
-import { hitX, hitY, hitCircleCenter, hitCircleRadius } from '../internal/ray-hit-t-read.internal';
-import type { CircleLike, RayLike } from '../types';
+import type { Circle, Ray } from '../types/flat-shapes.internal';
 
 /**
  * ray가 circle circumference와 처음 만나는 ray parameter `t`를 반환한다.
@@ -22,24 +20,12 @@ import type { CircleLike, RayLike } from '../types';
  * `rayCircleIntersectionsInto`와 같은 방정식을 푼다. `tMin`이 `0`이면 `origin + t * direction`이 그 함수가 첫 번째로 기록하는 교점과 같다.
  * non-finite 입력은 검증하지 않는다. 계산이 NaN이 되면 hit 없음(`Infinity`)으로 처리한다.
  *
- * @param ray origin에서 direction 방향으로 뻗는 반직선. tuple `[ox, oy, dx, dy]`도 받는다.
+ * @param ray origin에서 direction 방향으로 뻗는 반직선.
  * @param circle 교점을 구할 circle
  * @param tMin 허용하는 가장 작은 `t`. 생략하면 `0`이다.
  * @param epsilon discriminant tangent 판정 임계값. 생략하면 `1e-9`다.
  */
-export function rayCircleHitT(ray: RayLike, circle: CircleLike, tMin = 0, epsilon = DEFAULT_EPSILON): number {
-  const center = hitCircleCenter(circle);
-  const radius = hitCircleRadius(circle);
-  return rayEllipseHitTXY(
-    readRayOriginX(ray),
-    readRayOriginY(ray),
-    readRayDirectionX(ray),
-    readRayDirectionY(ray),
-    hitX(center),
-    hitY(center),
-    radius,
-    radius,
-    tMin,
-    epsilon
-  );
+export function rayCircleHitT(ray: Ray, circle: Circle, tMin = 0, epsilon = DEFAULT_EPSILON): number {
+  const radius = circle.r;
+  return rayEllipseHitTXY(ray.ox, ray.oy, ray.dx, ray.dy, circle.cx, circle.cy, radius, radius, tMin, epsilon);
 }

@@ -20,8 +20,6 @@ function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9)
 }
 
 describe('line-family × circle 교점 collection (S10-RM-007)', () => {
-  const circle = { center: { x: 0, y: 0 }, radius: 5 };
-
   test('segment crossing은 두 점을 segment parameter 오름차순으로 반환한다', () => {
     const points = segmentCircleIntersections({ x1: -10, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toHaveLength(2);
@@ -41,25 +39,25 @@ describe('line-family × circle 교점 collection (S10-RM-007)', () => {
   });
 
   test('ray origin이 circle 내부면 exit 한 점만 반환한다', () => {
-    const points = rayCircleIntersections({ origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } }, circle);
+    const points = rayCircleIntersections({ ox: 0, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 5, 0);
   });
 
   test('ray range 밖(circle이 ray 뒤)이면 빈 배열이다', () => {
-    const points = rayCircleIntersections({ origin: { x: 10, y: 0 }, direction: { x: 1, y: 0 } }, circle);
+    const points = rayCircleIntersections({ ox: 10, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toEqual([]);
   });
 
   test('infinite-line은 direction이 음수여도 t 오름차순으로 반환한다', () => {
-    const points = infiniteLineCircleIntersections({ origin: { x: 0, y: 0 }, direction: { x: -1, y: 0 } }, circle);
+    const points = infiniteLineCircleIntersections({ ox: 0, oy: 0, dx: -1, dy: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 5, 0);
     expectPointClose(points[1], -5, 0);
   });
 
   test('zero direction(degenerate)은 빈 배열이다', () => {
-    const points = infiniteLineCircleIntersections({ origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } }, circle);
+    const points = infiniteLineCircleIntersections({ ox: 0, oy: 0, dx: 0, dy: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toEqual([]);
   });
 

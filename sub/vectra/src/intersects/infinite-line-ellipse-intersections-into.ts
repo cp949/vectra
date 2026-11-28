@@ -1,9 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { lineFamilyEllipseIntersectionPoints } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, InfiniteLineLike, XYObjectWritable } from '../types';
+import type { Ellipse, InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 ellipse circumference의 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -14,34 +11,32 @@ import type { EllipseLike, InfiniteLineLike, XYObjectWritable } from '../types';
  *   빈 배열을 남긴다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }`
- * object이며 입력 point object를 재사용하지 않는다.
+ * object다.
  * `epsilon`은 discriminant tangent 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param line 교점을 구할 infinite-line (전체 finite t 범위)
  * @param ellipse 교점을 구할 ellipse
  * @param epsilon discriminant tangent 판정 임계값
  */
-export function infiniteLineEllipseIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  line: InfiniteLineLike,
-  ellipse: EllipseLike,
+export function infiniteLineEllipseIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  line: InfiniteLine,
+  ellipse: Ellipse,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const origin = readInfiniteLineOrigin(line);
-  const direction = readInfiniteLineDirection(line);
-  const center = readEllipseCenter(ellipse);
-  return lineFamilyEllipseIntersectionPoints(
+): Out {
+  lineFamilyEllipseIntersectionPoints(
     outPoints,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    line.ox,
+    line.oy,
+    line.dx,
+    line.dy,
     'inf',
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
     epsilon
   );
+  return outPoints;
 }

@@ -1,6 +1,11 @@
 /** 교차점 기록 함수의 출력 배열 반환 타입과 참조를 검증한다. */
 import { expect, expectTypeOf, test } from 'vitest';
 import { singleIntersectionSegmentInfiniteLineInto } from '../../../src/intersects/single-intersection-segment-infinite-line-into';
+import { rayCircleIntersectionsInto } from '../../../src/intersects/ray-circle-intersections-into';
+import { rayEllipseIntersectionsInto } from '../../../src/intersects/ray-ellipse-intersections-into';
+import { infiniteLineCircleIntersectionsInto } from '../../../src/intersects/infinite-line-circle-intersections-into';
+import { infiniteLineEllipseIntersectionsInto } from '../../../src/intersects/infinite-line-ellipse-intersections-into';
+import { segmentEllipseIntersectionsInto } from '../../../src/intersects/segment-ellipse-intersections-into';
 import { intersectsRayRay } from '../../../src/intersects/intersects-ray-ray';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
 import { circleBoundsIntersectionsInto } from '../../../src/intersects/circle-bounds-intersections-into';
@@ -71,4 +76,26 @@ test('선분과 직선의 교점은 평평한 입력과 점 출력을 받는다'
   expectTypeOf(singleIntersectionSegmentInfiniteLineInto).parameter(0).toEqualTypeOf<PointWritable>();
   expectTypeOf(singleIntersectionSegmentInfiniteLineInto).parameter(1).toEqualTypeOf<Segment>();
   expectTypeOf(singleIntersectionSegmentInfiniteLineInto).parameter(2).toEqualTypeOf<InfiniteLine>();
+});
+
+test('원과 타원의 직선 계열 교점 함수는 출력 배열 서브클래스를 그대로 반환한다', () => {
+  const out = new IntersectionPoints();
+  const ray = { ox: -3, oy: 0, dx: 1, dy: 0 };
+  const segment = { x1: -3, y1: 0, x2: 3, y2: 0 };
+  const circle = { cx: 0, cy: 0, r: 2 };
+  const ellipse = { cx: 0, cy: 0, rx: 2, ry: 1 };
+  const rayCircle = rayCircleIntersectionsInto(out, ray, circle);
+  const rayEllipse = rayEllipseIntersectionsInto(out, ray, ellipse);
+  const lineCircle = infiniteLineCircleIntersectionsInto(out, ray, circle);
+  const lineEllipse = infiniteLineEllipseIntersectionsInto(out, ray, ellipse);
+  const segmentEllipse = segmentEllipseIntersectionsInto(out, segment, ellipse);
+  expectTypeOf(rayCircle).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(rayEllipse).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(lineCircle).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(lineEllipse).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(segmentEllipse).toEqualTypeOf<IntersectionPoints>();
+  for (const result of [rayCircle, rayEllipse, lineCircle, lineEllipse, segmentEllipse]) {
+    expect(result).toBe(out);
+  }
+  expect(out).toHaveLength(2);
 });

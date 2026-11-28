@@ -1,9 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { lineFamilyEllipseIntersectionPoint } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, RayLike, XYObjectWritable } from '../types';
+import type { Ellipse, Ray, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray와 ellipse의 단일 교점을 새 object로 반환한다.
@@ -18,25 +15,22 @@ import type { EllipseLike, RayLike, XYObjectWritable } from '../types';
  * @param epsilon 수치 비교 tolerance
  */
 export function singleIntersectionRayEllipse(
-  ray: RayLike,
-  ellipse: EllipseLike,
+  ray: Ray,
+  ellipse: Ellipse,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable | undefined {
-  const origin = readRayOrigin(ray);
-  const direction = readRayDirection(ray);
-  const center = readEllipseCenter(ellipse);
-  const out: XYObjectWritable = { x: 0, y: 0 };
+): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return lineFamilyEllipseIntersectionPoint(
     out,
-    readX(origin),
-    readY(origin),
-    readX(direction),
-    readY(direction),
+    ray.ox,
+    ray.oy,
+    ray.dx,
+    ray.dy,
     'ray',
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
     epsilon
   )
     ? out

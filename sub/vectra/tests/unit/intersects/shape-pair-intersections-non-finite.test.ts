@@ -26,8 +26,6 @@ import { triangleTriangleIntersections } from '../../../src/intersects/triangle-
 import type { XYObjectWritable } from '../../../src/types';
 
 describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', () => {
-  const circle = { center: { x: 0, y: 0 }, radius: 5 };
-  const ellipse = { center: { x: 0, y: 0 }, radiusX: 5, radiusY: 3 };
   const rect = { x: 0, y: 0, width: 10, height: 10 };
   const bounds = { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } };
   const triangle = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, c: { x: 0, y: 10 } };
@@ -47,16 +45,19 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
         ),
     ],
     ['segmentCircle', (v) => segmentCircleIntersections({ x1: v, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: 5 })],
-    ['rayCircle', (v) => rayCircleIntersections({ origin: { x: v, y: 0 }, direction: { x: 1, y: 0 } }, circle)],
+    ['rayCircle', (v) => rayCircleIntersections({ ox: v, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, r: 5 })],
     [
       'infiniteLineCircle',
-      (v) => infiniteLineCircleIntersections({ origin: { x: v, y: 0 }, direction: { x: 1, y: 0 } }, circle),
+      (v) => infiniteLineCircleIntersections({ ox: v, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, r: 5 }),
     ],
-    ['segmentEllipse', (v) => segmentEllipseIntersections({ a: { x: v, y: 0 }, b: { x: 10, y: 0 } }, ellipse)],
-    ['rayEllipse', (v) => rayEllipseIntersections({ origin: { x: v, y: 0 }, direction: { x: 1, y: 0 } }, ellipse)],
+    [
+      'segmentEllipse',
+      (v) => segmentEllipseIntersections({ x1: v, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, rx: 5, ry: 3 }),
+    ],
+    ['rayEllipse', (v) => rayEllipseIntersections({ ox: v, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, rx: 5, ry: 3 })],
     [
       'infiniteLineEllipse',
-      (v) => infiniteLineEllipseIntersections({ origin: { x: v, y: 0 }, direction: { x: 1, y: 0 } }, ellipse),
+      (v) => infiniteLineEllipseIntersections({ ox: v, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, rx: 5, ry: 3 }),
     ],
     ['segmentRect', (v) => segmentRectIntersections({ a: { x: v, y: 5 }, b: { x: 15, y: 5 } }, rect)],
     ['rayRect', (v) => rayRectIntersections({ origin: { x: v, y: 5 }, direction: { x: 1, y: 0 } }, rect)],

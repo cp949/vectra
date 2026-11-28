@@ -1,9 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyCircleIntersectionPoint } from '../internal/line-family';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, InfiniteLineLike, XYObjectWritable } from '../types';
+import type { Circle, InfiniteLine, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 circle의 단일 교점을 새 object로 반환한다.
@@ -13,23 +10,11 @@ import type { CircleLike, InfiniteLineLike, XYObjectWritable } from '../types';
  * allocating companion — internal helper를 직접 호출한다.
  */
 export function singleIntersectionInfiniteLineCircle(
-  infiniteLine: InfiniteLineLike,
-  circle: CircleLike,
+  infiniteLine: InfiniteLine,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable | undefined {
-  const origin = readInfiniteLineOrigin(infiniteLine);
-  const dir = readInfiniteLineDirection(infiniteLine);
-  const lineParam = infiniteLineToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const center = readCircleCenter(circle);
-  const out: XYObjectWritable = { x: 0, y: 0 };
-  return lineFamilyCircleIntersectionPoint(
-    out,
-    lineParam,
-    readX(center),
-    readY(center),
-    readCircleRadius(circle),
-    epsilon
-  )
-    ? out
-    : undefined;
+): PointWritable | undefined {
+  const lineParam = infiniteLineToLineFamilyParam(infiniteLine.ox, infiniteLine.oy, infiniteLine.dx, infiniteLine.dy);
+  const out: PointWritable = { x: 0, y: 0 };
+  return lineFamilyCircleIntersectionPoint(out, lineParam, circle.cx, circle.cy, circle.r, epsilon) ? out : undefined;
 }

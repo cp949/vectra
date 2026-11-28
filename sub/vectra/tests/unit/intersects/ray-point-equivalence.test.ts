@@ -260,8 +260,9 @@ describe('ray 점 반환 함수 — 이전 구현과 비트 단위 동일성', (
       const stale: XYObjectWritable[] = [{ x: 5, y: 5 }];
       const expected = referenceRayCircleInto(stale.slice(), makeRay(ray), makeCircle(circle), epsilon);
       const staleActual: XYObjectWritable[] = [{ x: 5, y: 5 }];
-      const actual = rayCircleIntersectionsInto(staleActual, makeRay(ray), makeCircle(circle), epsilon);
-      const companion = rayCircleIntersections(makeRay(ray), makeCircle(circle), eps);
+      const flatCircle = { cx: circle.center.x, cy: circle.center.y, r: circle.radius };
+      const actual = rayCircleIntersectionsInto(staleActual, flatRay(ray), flatCircle, epsilon);
+      const companion = rayCircleIntersections(flatRay(ray), flatCircle, eps);
       expect(actual).toBe(staleActual);
       for (const got of [actual, companion]) {
         let ok = got.length === expected.length;
@@ -279,8 +280,8 @@ describe('ray 점 반환 함수 — 이전 구현과 비트 단위 동일성', (
 
   test('교점마다 새 object를 만들고 호출 전 내용은 비운다', () => {
     const out: XYObjectWritable[] = [{ x: 9, y: 9 }];
-    const ray = { origin: { x: -5, y: 0 }, direction: { x: 1, y: 0 } };
-    const circle = { center: { x: 0, y: 0 }, radius: 2 };
+    const ray = { ox: -5, oy: 0, dx: 1, dy: 0 };
+    const circle = { cx: 0, cy: 0, r: 2 };
     const first = rayCircleIntersectionsInto(out, ray, circle);
     expect(first).toEqual([
       { x: -2, y: 0 },

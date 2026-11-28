@@ -1,9 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { lineFamilyEllipseIntersects } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, SegmentLike } from '../types';
+import type { Ellipse, Segment } from '../types/flat-shapes.internal';
 
 /**
  * ellipse와 segment가 교차하거나 접하면 true를 반환한다.
@@ -16,20 +13,17 @@ import type { EllipseLike, SegmentLike } from '../types';
  * @param line 교차를 검사할 segment
  * @param epsilon 수치 비교 tolerance
  */
-export function intersectsEllipseSegment(ellipse: EllipseLike, line: SegmentLike, epsilon = DEFAULT_EPSILON): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const center = readEllipseCenter(ellipse);
+export function intersectsEllipseSegment(ellipse: Ellipse, line: Segment, epsilon = DEFAULT_EPSILON): boolean {
   return lineFamilyEllipseIntersects(
-    readX(a),
-    readY(a),
-    readX(b) - readX(a),
-    readY(b) - readY(a),
+    line.x1,
+    line.y1,
+    line.x2 - line.x1,
+    line.y2 - line.y1,
     'finite',
-    readX(center),
-    readY(center),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
     epsilon
   );
 }

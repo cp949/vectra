@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { EllipseLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Ellipse, Segment, PointWritable } from '../types/flat-shapes.internal';
 import { segmentEllipseIntersectionsInto } from './segment-ellipse-intersections-into';
 
 /**
@@ -11,7 +11,7 @@ import { segmentEllipseIntersectionsInto } from './segment-ellipse-intersections
  * - contained(segment 전체가 ellipse 내부, boundary root 없음), zero-length segment, empty ellipse
  *   (radiusX ≤ 0 또는 radiusY ≤ 0)는 빈 배열을 반환한다.
  *
- * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 point object를 재사용하지 않는다.
+ * 반환 point는 매 호출 새 `{ x, y }` object다.
  * `epsilon`은 discriminant tangent 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
  * @param segment 교점을 구할 segment
@@ -19,11 +19,11 @@ import { segmentEllipseIntersectionsInto } from './segment-ellipse-intersections
  * @param epsilon discriminant tangent 판정 임계값
  */
 export function segmentEllipseIntersections(
-  segment: SegmentLike,
-  ellipse: EllipseLike,
+  segment: Segment,
+  ellipse: Ellipse,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   segmentEllipseIntersectionsInto(out, segment, ellipse, epsilon);
   return out;
 }
