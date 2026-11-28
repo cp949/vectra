@@ -14,8 +14,6 @@
  *
  * 거부 검사는 `@ts-expect-error`가 맡는다. 오류가 사라지면 `pnpm typecheck`가 실패한다.
  */
-import { flatLineFromLegacy } from '../_helpers/curve-fixtures';
-
 import { describe, expect, expectTypeOf, test } from 'vitest';
 import { tangentPointsFromExternalInto } from '../../../src/circle/tangent-points-from-external-into';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
@@ -23,6 +21,7 @@ import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-lin
 import { lineCommandsInto } from '../../../src/path/line-commands-into';
 import { transformCommandsInto } from '../../../src/path/transform-commands-into';
 import type { IntersectionHit, MoveCommand, PathCommand, XYObjectWritable, XYTupleWritable } from '../../../src/types';
+import { flatLineFromLegacy } from '../_helpers/curve-fixtures';
 
 describe('새 원소를 만드는 Into의 출력 배열 타입', () => {
   test('path Into는 PathCommand[]를 받고 PathCommand[]를 반환한다', () => {

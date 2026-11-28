@@ -3,10 +3,10 @@
  * 단일 segment는 cubicFlattenInto와 같고, 연결점은 한 번만 기록한다.
  * 짧은 체인, 잘못된 길이의 RangeError, out 규약, non-finite 입력도 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicChainFlattenInto } from '../../../src/curve/cubic-chain-flatten-into';
 import { cubicFlattenInto } from '../../../src/curve/cubic-flatten-into';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 // p0=(0,0), c1=(1,2), c2=(2,2), p1=(3,0) — 첫 segment
 const SEG0 = [

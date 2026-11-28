@@ -5,8 +5,6 @@
  * 겹침 구간 양 끝점을 `kind: 'overlap'` hit 2건으로 기록해야 한다.
  * 대상: quadraticQuadratic / quadraticCubic / cubicCubic kernel과 curveCurve facade.
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
-
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
 import { cubicSplit } from '../../../src/curve/cubic-split';
@@ -15,6 +13,7 @@ import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to
 import { quadraticQuadraticIntersectionsInto } from '../../../src/curve/quadratic-quadratic-intersections-into';
 import { curveCurveIntersectionsInto } from '../../../src/intersects/curve-curve-intersections-into';
 import type { CurveIntersectionHit, IntersectionHit } from '../../../src/types';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 // y = x² parabola 위 quadratic. x 구간 [a, b]의 control point는 ((a+b)/2, a·b)다.
 const PARABOLA_0_2 = [

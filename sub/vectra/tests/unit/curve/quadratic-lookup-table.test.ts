@@ -4,11 +4,11 @@
  * 잘못된 steps의 RangeError와 out 보존, non-finite 좌표 전파도 다룬다.
  * quadraticLookupTable은 Into 결과와 같은 값을 돌려준다.
  */
-import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticLength } from '../../../src/curve/quadratic-length';
 import { quadraticLookupTable } from '../../../src/curve/quadratic-lookup-table';
 import { quadraticLookupTableInto } from '../../../src/curve/quadratic-lookup-table-into';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /** 등속 직선 quadratic: B(t) = (2t, 0), 단조 직선, totalLength = 2 */
 const LINE_P0 = { x: 0, y: 0 };

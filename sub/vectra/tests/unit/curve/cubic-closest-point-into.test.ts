@@ -7,12 +7,11 @@
  * - 대칭 case에서 curve 최고점이 최근접점.
  * - out을 반환한다 (Into variant).
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
-
 import { describe, expect, it } from 'vitest';
 import { cubicClosestLocation } from '../../../src/curve/cubic-closest-location';
 import { cubicClosestPoint } from '../../../src/curve/cubic-closest-point';
 import { cubicClosestPointInto } from '../../../src/curve/cubic-closest-point-into';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);

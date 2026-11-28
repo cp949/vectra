@@ -3,9 +3,9 @@
  * 기본 steps 32, 잘못된 steps의 RangeError, 오류 시 out 보존을 다룬다.
  * 출력 점이 매번 새 객체인지도 확인한다.
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicSampleInto } from '../../../src/curve/cubic-sample-into';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /** 직선 cubic 곡선: p0=(0,0), p1=(1,0), p2=(2,0), p3=(3,0) */
 const LINE_P0 = { x: 0, y: 0 };

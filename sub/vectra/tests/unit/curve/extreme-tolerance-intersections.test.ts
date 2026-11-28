@@ -10,13 +10,12 @@
  *  - 이 테스트는 분기 도달, 종료, 유한한 cross 결과를 고정한다.
  *  - 한 테스트가 1–2초 걸리므로 timeout을 늘려 둔다.
  */
-import { flatIntersectionOptions } from '../_helpers/curve-fixtures';
-
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
 import { quadraticCubicIntersectionsInto } from '../../../src/curve/quadratic-cubic-intersections-into';
 import { quadraticQuadraticIntersectionsInto } from '../../../src/curve/quadratic-quadratic-intersections-into';
 import type { IntersectionHit } from '../../../src/types';
+import { flatIntersectionOptions } from '../_helpers/curve-fixtures';
 
 const EXTREME = { epsilon: 1e-300, epsilonT: 0, maxDepth: 1000 };
 

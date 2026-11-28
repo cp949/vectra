@@ -1,11 +1,10 @@
 /**
  * cubicLineIntersectionsInto 단위 테스트.
  */
-import { flatLineFromLegacy, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
-
 import { describe, expect, test } from 'vitest';
 import { cubicLineIntersectionsInto } from '../../../src/curve/cubic-line-intersections-into';
 import type { IntersectionHit } from '../../../src/types';
+import { flatLineFromLegacy, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 describe('cubicLineIntersectionsInto', () => {
   test('horizontal line이 S-curve를 두 점 이상에서 교차한다', () => {

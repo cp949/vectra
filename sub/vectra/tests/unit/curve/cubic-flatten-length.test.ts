@@ -2,10 +2,10 @@
  * cubicFlattenInto의 flatness 단조성, maxRecursion 상한, out 규약을 검증한다.
  * cubicLength가 직선 길이에 근사하고 segments 옵션에 안정적인지 확인한다.
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicFlattenInto } from '../../../src/curve/cubic-flatten-into';
 import { cubicLength } from '../../../src/curve/cubic-length';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /**
  * 기대값 대비 상대 오차를 구한다.

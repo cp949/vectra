@@ -28,12 +28,12 @@ describe('intersectsPathEllipse', () => {
       expect(intersectsPathEllipse([], ellipse)).toBe(false);
     });
 
-    test('empty ellipse (rx ≤ 0)는 false를 반환한다', () => {
+    test('empty ellipse (rx ≤ 0)은 false를 반환한다', () => {
       const empty: Ellipse = { cx: 0, cy: 0, rx: 0, ry: 2 };
       expect(intersectsPathEllipse(crossingPath, empty)).toBe(false);
     });
 
-    test('empty ellipse (ry ≤ 0)는 false를 반환한다', () => {
+    test('empty ellipse (ry ≤ 0)은 false를 반환한다', () => {
       const empty: Ellipse = { cx: 0, cy: 0, rx: 4, ry: -1 };
       expect(intersectsPathEllipse(crossingPath, empty)).toBe(false);
     });
@@ -98,7 +98,7 @@ describe('intersectsPathEllipse', () => {
   });
 
   describe('non-finite 입력', () => {
-    test('ellipse center가 NaN이면 false를 반환한다', () => {
+    test('ellipse cx가 NaN이면 false를 반환한다', () => {
       const nan: Ellipse = { cx: Number.NaN, cy: 0, rx: 4, ry: 2 };
       expect(intersectsPathEllipse(crossingPath, nan)).toBe(false);
     });

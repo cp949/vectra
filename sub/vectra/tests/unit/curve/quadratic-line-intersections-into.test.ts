@@ -1,11 +1,10 @@
 /**
  * quadraticLineIntersectionsInto 단위 테스트.
  */
-import { flatLineFromLegacy, flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
-
 import { describe, expect, test } from 'vitest';
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';
 import type { IntersectionHit } from '../../../src/types';
+import { flatLineFromLegacy, flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 describe('quadraticLineIntersectionsInto', () => {
   test('대칭 quadratic이 horizontal line과 두 점에서 cross 교차한다', () => {

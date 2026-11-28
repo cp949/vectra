@@ -4,13 +4,13 @@
  * 비대칭 곡선에서 균등 t 표본과 달라지는지 확인한다.
  * 잘못된 count의 RangeError, out 보존, non-finite 좌표 전파도 다룬다.
  */
-import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticLength } from '../../../src/curve/quadratic-length';
 import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';
 import { quadraticSpacedPoints } from '../../../src/curve/quadratic-spaced-points';
 import { quadraticSpacedPointsInto } from '../../../src/curve/quadratic-spaced-points-into';
 import { quadraticTAtLength } from '../../../src/curve/quadratic-t-at-length';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /** 등속 직선 quadratic: B(t) = (2t, 0), totalLength = 2 */
 const LINE_P0 = { x: 0, y: 0 };

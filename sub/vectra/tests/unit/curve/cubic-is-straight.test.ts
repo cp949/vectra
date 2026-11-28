@@ -2,9 +2,9 @@
  * cubicIsStraight가 제어점 비율과 무관하게 현 위의 곡선을 직선으로 판정하는지 검증한다.
  * 미세하게 휜 곡선, 퇴화 곡선, epsilon 경계를 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicIsStraight } from '../../../src/curve/cubic-is-straight';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 describe('cubicIsStraight', () => {
   it('수직 거리 0인 직선에서 true를 반환한다 (편중 위치 포함)', () => {

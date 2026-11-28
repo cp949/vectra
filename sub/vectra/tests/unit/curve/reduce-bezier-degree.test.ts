@@ -4,11 +4,11 @@
  * tolerance 조정, 잘못된 tolerance의 RangeError, non-finite 좌표의 false 반환을 다룬다.
  * reduceBezierDegree는 성공하면 새 객체, 실패하면 undefined를 돌려준다.
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to-cubic';
 import { reduceBezierDegree } from '../../../src/curve/reduce-bezier-degree';
 import { reduceBezierDegreeInto } from '../../../src/curve/reduce-bezier-degree-into';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /**
  * out 인자로 넘길 0 초기값 평평한 quadratic 객체를 만든다.

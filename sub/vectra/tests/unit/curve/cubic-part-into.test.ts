@@ -3,12 +3,12 @@
  * 끝점 일치, fromT와 toT가 같은 경우, 역방향 구간, out 반환을 다룬다.
  * cubicPart는 Into와 같은 값을 새 객체로 돌려준다.
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicPart } from '../../../src/curve/cubic-part';
 import { cubicPartInto } from '../../../src/curve/cubic-part-into';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
 import { cubicSplitInto } from '../../../src/curve/cubic-split-into';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /**
  * 기대값 대비 상대 오차를 구한다.

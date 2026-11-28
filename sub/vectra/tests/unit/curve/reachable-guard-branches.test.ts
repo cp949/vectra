@@ -8,12 +8,6 @@
  *  4. quadraticLineIntersectionsInto의 선형·중근 경계.
  *  5. endpointArcToCenterInto의 반지름 퇴화와 수치 underflow.
  */
-import {
-  flatQuadraticFromLegacyPoints,
-  flatLineFromLegacy,
-  flatCubicFromLegacyPoints,
-} from '../_helpers/curve-fixtures';
-
 import { describe, expect, test } from 'vitest';
 import { cubicExtrema } from '../../../src/curve/cubic-extrema';
 import { cubicIsLinear } from '../../../src/curve/cubic-is-linear';
@@ -24,6 +18,11 @@ import { monotoneXPathInto } from '../../../src/curve/monotone-x-path-into';
 import { quadraticExtrema } from '../../../src/curve/quadratic-extrema';
 import { quadraticLineIntersectionsInto } from '../../../src/curve/quadratic-line-intersections-into';
 import type { CenterArcWritable, IntersectionHit, PathCommand } from '../../../src/types';
+import {
+  flatQuadraticFromLegacyPoints,
+  flatLineFromLegacy,
+  flatCubicFromLegacyPoints,
+} from '../_helpers/curve-fixtures';
 
 /**
  * x = 0, 1, 2에 y 값을 놓은 monotoneX path를 만들고 cubic command만 돌려준다.

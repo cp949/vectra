@@ -3,10 +3,10 @@
  * 평평한 곡선 리터럴과 점 기반 생성 결과가 같은 t를 내는지 확인한다.
  * 거리 경계, 길이 0, round-trip은 speed-length.test.ts가 검증한다.
  */
-import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticLengthAtT } from '../../../src/curve/quadratic-length-at-t';
 import { quadraticTAtLength } from '../../../src/curve/quadratic-t-at-length';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /**
  * 기대값 대비 상대 오차를 구한다.

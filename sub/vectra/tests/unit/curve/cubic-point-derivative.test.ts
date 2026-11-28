@@ -3,7 +3,6 @@
  * 단위 접선과 단위 법선의 길이, 직교성, 퇴화 곡선의 0 벡터를 검증한다.
  * cubicPointAtT가 clamp 없이 외삽한 값을 새 객체로 돌려주는지도 다룬다.
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicDerivativeAtInto } from '../../../src/curve/cubic-derivative-at-into';
 import { cubicNormalAtInto } from '../../../src/curve/cubic-normal-at-into';
@@ -11,6 +10,7 @@ import { cubicPointAtT } from '../../../src/curve/cubic-point-at-t';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
 import { cubicSecondDerivativeAtInto } from '../../../src/curve/cubic-second-derivative-at-into';
 import { cubicTangentAtInto } from '../../../src/curve/cubic-tangent-at-into';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /**
  * 기대값 대비 상대 오차를 구한다.

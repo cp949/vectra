@@ -4,11 +4,11 @@
  * 잘못된 옵션과 non-finite 좌표, 직선, 분할 한계의 RangeError를 확인한다.
  * sweep 방향과 atan2 -π 경계 교차 시 호 중점 위치도 검증한다.
  */
-import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, test } from 'vitest';
 import { arcPointAtTInto } from '../../../src/curve/arc-point-at-t-into';
 import { cubicToArcsInto } from '../../../src/curve/cubic-to-arcs-into';
 import type { CenterArcWritable } from '../../../src/types';
+import { flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 // cubic으로 근사한 quarter-circle (unit circle, 1사분면)
 const KAPPA = 0.5522847498;

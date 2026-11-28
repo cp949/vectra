@@ -5,12 +5,6 @@
  * - quadratic/cubic frame이 기존 point/tangent/normal/curvature leaf와 같은 값이다.
  * - degenerate, t 외삽, companion, non-finite pass-through를 검증한다.
  */
-import {
-  flatCurveFromLegacy,
-  flatQuadraticFromLegacyPoints,
-  flatCubicFromLegacyPoints,
-} from '../_helpers/curve-fixtures';
-
 import { describe, expect, it } from 'vitest';
 import { cubicCurvatureAt } from '../../../src/curve/cubic-curvature-at';
 import { cubicNormalAtInto } from '../../../src/curve/cubic-normal-at-into';
@@ -23,6 +17,11 @@ import { quadraticNormalAtInto } from '../../../src/curve/quadratic-normal-at-in
 import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';
 import { quadraticTangentAtInto } from '../../../src/curve/quadratic-tangent-at-into';
 import type { CurveFrenetFrameResult, CurveLike } from '../../../src/types';
+import {
+  flatCurveFromLegacy,
+  flatQuadraticFromLegacyPoints,
+  flatCubicFromLegacyPoints,
+} from '../_helpers/curve-fixtures';
 
 function makeOut(): CurveFrenetFrameResult {
   return {

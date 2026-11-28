@@ -9,8 +9,6 @@
  *
  * 기준 근은 원본 control point에서 double Newton을 60회 돌려 얻은 값이다.
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
-
 import { describe, expect, test } from 'vitest';
 import { cubicCubicIntersectionsInto } from '../../../src/curve/cubic-cubic-intersections-into';
 import { cubicSelfIntersectionsInto } from '../../../src/curve/cubic-self-intersections-into';
@@ -19,6 +17,7 @@ import { quadraticCubicIntersectionsInto } from '../../../src/curve/quadratic-cu
 import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to-cubic';
 import { quadraticQuadraticIntersectionsInto } from '../../../src/curve/quadratic-quadratic-intersections-into';
 import type { IntersectionHit, XYObjectWritable } from '../../../src/types';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 const TOL = 1e-9;
 

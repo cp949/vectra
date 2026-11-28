@@ -3,12 +3,12 @@
  * 변환한 cubic이 여러 t에서 원본 quadratic과 같은 점을 내는지 확인한다.
  * quadraticElevateToCubic은 Into와 같은 값을 돌려준다.
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { cubicPointAtTInto } from '../../../src/curve/cubic-point-at-t-into';
 import { quadraticElevateToCubic } from '../../../src/curve/quadratic-elevate-to-cubic';
 import { quadraticElevateToCubicInto } from '../../../src/curve/quadratic-elevate-to-cubic-into';
 import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 /**
  * 기대값 대비 상대 오차를 구한다.

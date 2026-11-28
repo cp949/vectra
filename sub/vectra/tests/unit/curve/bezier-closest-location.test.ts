@@ -13,13 +13,12 @@
  * - oversized finite 좌표에서 distanceSquared가 Infinity여도 result는 반환한다.
  * - 기존 quadraticClosestPointInto / cubicClosestPointInto와 회귀 일치 (S2-RM-020).
  */
-import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
-
 import { describe, expect, it } from 'vitest';
 import { cubicClosestLocation } from '../../../src/curve/cubic-closest-location';
 import { cubicClosestPointInto } from '../../../src/curve/cubic-closest-point-into';
 import { quadraticClosestLocation } from '../../../src/curve/quadratic-closest-location';
 import { quadraticClosestPointInto } from '../../../src/curve/quadratic-closest-point-into';
+import { flatQuadraticFromLegacyPoints, flatCubicFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 function relErr(result: number, expected: number): number {
   if (expected === 0) return Math.abs(result);

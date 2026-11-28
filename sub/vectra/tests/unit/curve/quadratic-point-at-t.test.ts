@@ -2,10 +2,10 @@
  * quadraticPointAtT가 quadraticPointAtTInto와 같은 점을 새 객체로 돌려주는지 검증한다.
  * t 0과 t 1의 끝점, 구간 밖 t의 외삽을 다룬다.
  */
-import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 import { describe, expect, it } from 'vitest';
 import { quadraticPointAtT } from '../../../src/curve/quadratic-point-at-t';
 import { quadraticPointAtTInto } from '../../../src/curve/quadratic-point-at-t-into';
+import { flatQuadraticFromLegacyPoints } from '../_helpers/curve-fixtures';
 
 describe('quadraticPointAtT', () => {
   const p0 = { x: 0, y: 0 };
