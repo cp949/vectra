@@ -1,5 +1,5 @@
-import { distanceSqXY, readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import { distanceSqXY } from '../internal/xy';
+import type { Point } from '../types/flat-shapes.internal';
 import type { SnapResult } from './types';
 
 /**
@@ -11,9 +11,9 @@ import type { SnapResult } from './types';
  * @param vertices snap 후보 vertex 배열
  * @param tolerance world 좌표 단위 최대 허용 거리
  */
-export function snapPointToVertices(point: XYInput, vertices: XYInput[], tolerance: number): SnapResult {
-  const px = readX(point);
-  const py = readY(point);
+export function snapPointToVertices(point: Point, vertices: Point[], tolerance: number): SnapResult {
+  const px = point.x;
+  const py = point.y;
   // tolerance가 양의 유한수가 아니면(0, 음수, NaN) 모두 miss. 음수가 제곱돼 false-hit가 되는 것을 막는다.
   if (!(tolerance > 0)) {
     return { snapped: false, x: px, y: py, distance: Infinity, source: 'none' };
@@ -25,8 +25,8 @@ export function snapPointToVertices(point: XYInput, vertices: XYInput[], toleran
   let found = false;
 
   for (const v of vertices) {
-    const vx = readX(v);
-    const vy = readY(v);
+    const vx = v.x;
+    const vy = v.y;
     const distSq = distanceSqXY(vx, vy, px, py);
     if (distSq < bestDistSq) {
       bestDistSq = distSq;

@@ -1,5 +1,4 @@
-import { readX, readY } from '../internal/xy';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import type { GuideInput, SnapResult } from './types';
 
 /**
@@ -12,9 +11,9 @@ import type { GuideInput, SnapResult } from './types';
  * @param guides snap 후보 guide 배열
  * @param tolerance world 좌표 단위 최대 허용 거리
  */
-export function snapPointToGuides(point: XYInput, guides: GuideInput[], tolerance: number): SnapResult {
-  const px = readX(point);
-  const py = readY(point);
+export function snapPointToGuides(point: Point, guides: GuideInput[], tolerance: number): SnapResult {
+  const px = point.x;
+  const py = point.y;
   let bestDist = tolerance;
   let bestX = px;
   let bestY = py;

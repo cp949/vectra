@@ -1,35 +1,36 @@
-import { readX, readY, writeXY } from '../internal/xy';
 import { snapScalar } from '../math/snap.internal';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * point를 grid에 snap하여 out에 기록하고 out을 반환한다.
  *
- * `out === point` aliasing은 안전하다. point의 x/y를 모두 읽은 뒤 writeXY로 기록하므로
+ * `out === point` aliasing은 안전하다. point의 x/y를 모두 읽은 뒤 기록하므로
  * 중간 상태 오염이 발생하지 않는다.
  *
- * gridSize의 x 또는 y가 양의 유한수가 아니면(0, 음수, NaN 등) 해당 축에 NaN을 기록한다.
+ * gridSize의 x 또는 y가 양수가 아니면(0, 음수, NaN 등) 해당 축에 NaN을 기록한다.
  * throw하지 않는다 (editor hot path에서 호출되므로 silent NaN 정책).
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과 좌표를 기록할 출력 { x, y }
  * @param point snap할 입력 좌표
- * @param gridSize grid 간격. number이면 x/y 동일, 객체이면 x/y 독립
- * @param options.offset grid origin 오프셋 (기본값 0,0)
+ * @param gridSize 축별 grid 간격 { x, y }
+ * @param options grid origin 오프셋 { offsetX, offsetY } (생략 시 0, 0)
  */
-export function snapPointToGridInto<Out extends XYWritable>(
+export function snapPointToGridInto<Out extends PointWritable>(
   out: Out,
-  point: XYInput,
-  gridSize: number | { x: number; y: number },
-  options?: { offset?: XYInput }
+  point: Point,
+  gridSize: Point,
+  options?: { offsetX: number; offsetY: number }
 ): Out {
-  const gx = typeof gridSize === 'number' ? gridSize : gridSize.x;
-  const gy = typeof gridSize === 'number' ? gridSize : gridSize.y;
+  const gx = gridSize.x;
+  const gy = gridSize.y;
 
-  const ox = options?.offset != null ? readX(options.offset) : 0;
-  const oy = options?.offset != null ? readY(options.offset) : 0;
+  const ox = options === undefined ? 0 : options.offsetX;
+  const oy = options === undefined ? 0 : options.offsetY;
 
-  const snapX = gx > 0 ? snapScalar(readX(point), gx, ox) : Number.NaN;
-  const snapY = gy > 0 ? snapScalar(readY(point), gy, oy) : Number.NaN;
+  const snapX = gx > 0 ? snapScalar(point.x, gx, ox) : Number.NaN;
+  const snapY = gy > 0 ? snapScalar(point.y, gy, oy) : Number.NaN;
 
-  return writeXY(out, snapX, snapY);
+  out.x = snapX;
+  out.y = snapY;
+  return out;
 }

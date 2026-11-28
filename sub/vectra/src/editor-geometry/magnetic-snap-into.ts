@@ -1,5 +1,4 @@
-import { readX, readY, writeXY } from '../internal/xy';
-import type { XYInput, XYWritable } from '../types';
+import type { Point, PointWritable } from '../types/flat-shapes.internal';
 import { findClosestCandidate } from './snap-candidate.internal';
 import type { SnapCandidate } from './types';
 
@@ -9,22 +8,23 @@ import type { SnapCandidate } from './types';
  * hit: out에 기록 후 true 반환. miss: out 미수정, false 반환.
  * tie-break: insertion order 우선. out === point aliasing 안전.
  *
- * @param out 결과를 기록할 writable output
+ * @param out 결과 좌표를 기록할 출력 { x, y }
  * @param point 기준 point
  * @param candidates snap 후보 목록
  * @param radius 최대 허용 거리 (exclusive)
- * @returns snap 성공 시 snapped: true, 가장 가까운 candidate 좌표. radius 밖이면 snapped: false.
+ * @returns snap 성공 시 true. 후보가 없으면 false를 반환하고 out을 유지한다.
  */
-export function magneticSnapInto<Out extends XYWritable>(
-  out: Out,
-  point: XYInput,
+export function magneticSnapInto(
+  out: PointWritable,
+  point: Point,
   candidates: SnapCandidate[],
   radius: number
 ): boolean {
-  const px = readX(point);
-  const py = readY(point);
+  const px = point.x;
+  const py = point.y;
   const result = findClosestCandidate(px, py, candidates, radius);
   if (!result) return false;
-  writeXY(out, result.x, result.y);
+  out.x = result.x;
+  out.y = result.y;
   return true;
 }

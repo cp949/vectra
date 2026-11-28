@@ -82,13 +82,6 @@ describe('editor-geometry - snapPointToVertices', () => {
     expect(result.distance).toBe(0);
   });
 
-  test('tuple 형식 vertex 입력을 처리한다', () => {
-    const result = snapPointToVertices([1, 0] as const, [[0, 0] as const, [5, 0] as const], 3);
-    expect(result.snapped).toBe(true);
-    expect(result.x).toBe(0);
-    expect(result.y).toBe(0);
-  });
-
   test('tolerance 경계값 정확히 닿는 vertex는 snapped: false를 반환한다', () => {
     // dist === tolerance → strictly less than이므로 miss
     const result = snapPointToVertices({ x: 5, y: 0 }, [{ x: 0, y: 0 }], 5);

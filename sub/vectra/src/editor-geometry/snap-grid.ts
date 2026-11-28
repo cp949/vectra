@@ -1,6 +1,5 @@
-import { readX, readY } from '../internal/xy';
 import { snapScalar } from '../math/snap.internal';
-import type { XYInput } from '../types';
+import type { Point } from '../types/flat-shapes.internal';
 import type { SnapResult } from './types';
 import { hypot2 } from '../internal/numeric';
 
@@ -9,26 +8,26 @@ import { hypot2 } from '../internal/numeric';
  *
  * 항상 `snapped: true`를 반환한다. allocating companion.
  *
- * gridSize의 x 또는 y가 양의 유한수가 아니면(0, 음수, NaN 등) 해당 축 좌표는 NaN이 되고
+ * gridSize의 x 또는 y가 양수가 아니면(0, 음수, NaN 등) 해당 축 좌표는 NaN이 되고
  * distance도 NaN이 된다. throw하지 않는다.
  *
  * @param point snap할 입력 좌표
- * @param gridSize grid 간격. number이면 x/y 동일, 객체이면 x/y 독립
- * @param options.offset grid origin 오프셋 (기본값 0,0)
+ * @param gridSize 축별 grid 간격 { x, y }
+ * @param options grid origin 오프셋 { offsetX, offsetY } (생략 시 0, 0)
  */
 export function snapPointToGrid(
-  point: XYInput,
-  gridSize: number | { x: number; y: number },
-  options?: { offset?: XYInput }
+  point: Point,
+  gridSize: Point,
+  options?: { offsetX: number; offsetY: number }
 ): SnapResult {
-  const gx = typeof gridSize === 'number' ? gridSize : gridSize.x;
-  const gy = typeof gridSize === 'number' ? gridSize : gridSize.y;
+  const gx = gridSize.x;
+  const gy = gridSize.y;
 
-  const ox = options?.offset != null ? readX(options.offset) : 0;
-  const oy = options?.offset != null ? readY(options.offset) : 0;
+  const ox = options === undefined ? 0 : options.offsetX;
+  const oy = options === undefined ? 0 : options.offsetY;
 
-  const origX = readX(point);
-  const origY = readY(point);
+  const origX = point.x;
+  const origY = point.y;
 
   const snapX = gx > 0 ? snapScalar(origX, gx, ox) : Number.NaN;
   const snapY = gy > 0 ? snapScalar(origY, gy, oy) : Number.NaN;

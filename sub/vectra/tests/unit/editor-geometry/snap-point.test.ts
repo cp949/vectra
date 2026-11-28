@@ -79,13 +79,6 @@ describe('editor-geometry - snapPoint', () => {
     expect(result.source).toBe('vertex');
   });
 
-  test('tuple 형식 point 입력을 처리한다', () => {
-    const candidates: SnapCandidate[] = [{ x: 2, y: 0, source: 'grid' }];
-    const result = snapPoint([0, 0] as const, candidates);
-    expect(result.snapped).toBe(true);
-    expect(result.x).toBe(2);
-  });
-
   test('miss 시 입력 좌표를 그대로 반환한다', () => {
     const result = snapPoint({ x: 7, y: 3 }, [], { tolerance: 5 });
     expect(result.x).toBe(7);

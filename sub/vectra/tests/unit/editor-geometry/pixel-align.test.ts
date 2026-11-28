@@ -48,13 +48,6 @@ describe('editor-geometry - pixelAlignInto', () => {
     expect(out.y).toBe(-21);
   });
 
-  test('tuple out에 기록한다', () => {
-    const out = [0, 0] as [number, number];
-    pixelAlignInto(out, [10.7, 20.3] as const);
-    expect(out[0]).toBe(11);
-    expect(out[1]).toBe(20);
-  });
-
   test('out을 반환한다', () => {
     const out = { x: 0, y: 0 };
     expect(pixelAlignInto(out, { x: 1, y: 2 })).toBe(out);

@@ -63,15 +63,6 @@ describe('editor-geometry - magneticSnapInto', () => {
     expect(out.y).toBe(4);
   });
 
-  test('tuple out에 기록한다', () => {
-    const candidates: SnapCandidate[] = [{ x: 2, y: 3, source: 'grid' }];
-    const out: [number, number] = [0, 0];
-    const hit = magneticSnapInto(out, { x: 0, y: 0 }, candidates, 10);
-    expect(hit).toBe(true);
-    expect(out[0]).toBe(2);
-    expect(out[1]).toBe(3);
-  });
-
   test('빈 candidates면 out을 수정하지 않고 false를 반환한다', () => {
     const out = { x: 1, y: 2 };
     const hit = magneticSnapInto(out, { x: 0, y: 0 }, [], 100);
@@ -140,13 +131,6 @@ describe('editor-geometry - magneticSnap', () => {
     expect(result.x).toBe(3);
     expect(result.y).toBe(4);
     expect(result.source).toBe('vertex');
-  });
-
-  test('tuple 형식 point 입력을 처리한다', () => {
-    const candidates: SnapCandidate[] = [{ x: 2, y: 0, source: 'segment' }];
-    const result = magneticSnap([0, 0] as const, candidates, 10);
-    expect(result.snapped).toBe(true);
-    expect(result.x).toBe(2);
   });
 
   test('radius 경계값 정확히 닿으면 miss다', () => {

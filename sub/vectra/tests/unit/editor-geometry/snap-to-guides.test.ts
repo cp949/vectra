@@ -92,13 +92,6 @@ describe('editor-geometry - snapPointToGuides', () => {
     expect(result.distance).toBeCloseTo(2);
   });
 
-  test('tuple 형식 point 입력을 처리한다', () => {
-    const result = snapPointToGuides([12, 5] as const, [{ axis: 'x', value: 10 }], 5);
-    expect(result.snapped).toBe(true);
-    expect(result.x).toBe(10);
-    expect(result.y).toBe(5);
-  });
-
   test('tolerance 경계값 정확히 닿는 guide는 snapped: false를 반환한다', () => {
     // dist === tolerance → strictly less than이므로 miss
     const result = snapPointToGuides({ x: 10, y: 0 }, [{ axis: 'x', value: 5 }], 5);

@@ -5,6 +5,8 @@ import {
   constrainDragInto,
   constrainDrawingBoundsInto,
   constrainResizeInto,
+  pixelAlignInto,
+  snapPointToGridInto,
 } from '../../../src/editor-geometry';
 import type { Bounds, Point } from '../../../src/types/flat-shapes.internal';
 
@@ -71,4 +73,19 @@ test('constrainResizeInto는 외부 크기 타입을 보존한다', () => {
   const result = constrainResizeInto(out, { width: 1, height: 1 }, { width: 2, height: 2 });
   expect(result).toBe(out);
   expectTypeOf(result).toEqualTypeOf<ExternalSize>();
+});
+
+test('pixelAlignInto는 외부 점 타입을 보존한다', () => {
+  const out = new ExternalPoint();
+  const result = pixelAlignInto(out, point);
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
+});
+
+test('snapPointToGridInto는 축별 간격을 받고 외부 점 타입을 보존한다', () => {
+  expectTypeOf(snapPointToGridInto).parameter(2).toEqualTypeOf<Point>();
+  const out = new ExternalPoint();
+  const result = snapPointToGridInto(out, point, { x: 2, y: 3 });
+  expect(result).toBe(out);
+  expectTypeOf(result).toEqualTypeOf<ExternalPoint>();
 });
