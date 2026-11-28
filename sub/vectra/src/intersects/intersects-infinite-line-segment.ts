@@ -1,8 +1,5 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyIntersects, segmentToLineFamilyParam } from '../internal/line-family';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, SegmentLike } from '../types';
+import type { InfiniteLine, Segment } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 segment가 교차하면 true를 반환한다.
@@ -16,14 +13,9 @@ import type { InfiniteLineLike, SegmentLike } from '../types';
  * @param epsilon 평행 판정 및 거리 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsInfiniteLineSegment(infLine: InfiniteLineLike, line: SegmentLike, epsilon?: number): boolean {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const origin = readInfiniteLineOrigin(infLine);
-  const dir = readInfiniteLineDirection(infLine);
-
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const infParam = infiniteLineToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
+export function intersectsInfiniteLineSegment(infLine: InfiniteLine, line: Segment, epsilon?: number): boolean {
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const infParam = infiniteLineToLineFamilyParam(infLine.ox, infLine.oy, infLine.dx, infLine.dy);
 
   return lineFamilyIntersects(lineParam, infParam, epsilon);
 }

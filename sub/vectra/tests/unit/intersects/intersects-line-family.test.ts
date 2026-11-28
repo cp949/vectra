@@ -9,13 +9,12 @@ import { singleIntersectionSegmentInfiniteLine } from '../../../src/intersects/s
 import { singleIntersectionSegmentInfiniteLineInto } from '../../../src/intersects/single-intersection-segment-infinite-line-into';
 import { singleIntersectionSegmentRay } from '../../../src/intersects/single-intersection-segment-ray';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
-import type { InfiniteLineLike, RayLike, SegmentLike } from '../../../src/types';
-import type { Ray, Segment, PointWritable } from '../../../src/types/flat-shapes.internal';
+import type { InfiniteLine, PointWritable, Ray, Segment } from '../../../src/types/flat-shapes.internal';
 
 type Point = { x: number; y: number };
 type SegmentRayArgs = [Segment, Ray];
-type SegmentInfiniteLineArgs = [SegmentLike, InfiniteLineLike];
-type RayInfiniteLineArgs = [RayLike, InfiniteLineLike];
+type SegmentInfiniteLineArgs = [Segment, InfiniteLine];
+type RayInfiniteLineArgs = [Ray, InfiniteLine];
 
 /** 교차 시험에 쓸 선분을 만든다. */
 function flatSegment(x1: number, y1: number, x2: number, y2: number): Segment {
@@ -27,24 +26,19 @@ function flatRay(ox: number, oy: number, dx: number, dy: number): Ray {
   return { ox, oy, dx, dy };
 }
 
-function segment(ax: number, ay: number, bx: number, by: number): SegmentLike {
-  return { a: { x: ax, y: ay }, b: { x: bx, y: by } };
+/** 교차 시험에 쓸 직선을 만든다. */
+function infiniteLine(ox: number, oy: number, dx: number, dy: number): InfiniteLine {
+  return { ox, oy, dx, dy };
 }
 
-function ray(ox: number, oy: number, dx: number, dy: number): RayLike {
-  return { origin: { x: ox, y: oy }, direction: { x: dx, y: dy } };
-}
-
-function infiniteLine(ox: number, oy: number, dx: number, dy: number): InfiniteLineLike {
-  return { origin: { x: ox, y: oy }, direction: { x: dx, y: dy } };
-}
-
+/** 반환된 점의 좌표를 비교한다. */
 function expectPointClose(actual: Point | undefined, expected: Point): void {
   expect(actual).not.toBeUndefined();
   expect(actual?.x).toBeCloseTo(expected.x, 10);
   expect(actual?.y).toBeCloseTo(expected.y, 10);
 }
 
+/** 교점이 있을 때 반환값과 출력 좌표를 확인한다. */
 function expectIntoHit<TArgs extends unknown[]>(
   fn: (out: PointWritable, ...args: TArgs) => boolean,
   args: TArgs,
@@ -58,6 +52,7 @@ function expectIntoHit<TArgs extends unknown[]>(
   expect(out.y).toBeCloseTo(expected.y, 10);
 }
 
+/** 교점이 없을 때 출력이 보존되는지 확인한다. */
 function expectIntoMiss<TArgs extends unknown[]>(
   fn: (out: PointWritable, ...args: TArgs) => boolean,
   args: TArgs
@@ -194,52 +189,36 @@ describe('intersectsInfiniteLineSegment', () => {
   test.each([
     {
       name: 'line (0,0)→(2,0)와 infinite-line origin(1,-1) dir(0,1)는 교차한다',
-      args: [infiniteLine(1, -1, 0, 1), segment(0, 0, 2, 0)] satisfies [InfiniteLineLike, SegmentLike],
+      args: [infiniteLine(1, -1, 0, 1), flatSegment(0, 0, 2, 0)] satisfies [InfiniteLine, Segment],
       expected: true,
     },
     {
       name: 'line (0,0)→(0.5,0)의 연장선에서만 만나면 false를 반환한다',
-      args: [infiniteLine(1, -1, 0, 1), segment(0, 0, 0.5, 0)] satisfies [InfiniteLineLike, SegmentLike],
+      args: [infiniteLine(1, -1, 0, 1), flatSegment(0, 0, 0.5, 0)] satisfies [InfiniteLine, Segment],
       expected: false,
     },
     {
       name: 'line (0,0)→(1,0)와 infinite-line origin(0,1) dir(1,0)는 평행하고 교차하지 않는다',
-      args: [infiniteLine(0, 1, 1, 0), segment(0, 0, 1, 0)] satisfies [InfiniteLineLike, SegmentLike],
+      args: [infiniteLine(0, 1, 1, 0), flatSegment(0, 0, 1, 0)] satisfies [InfiniteLine, Segment],
       expected: false,
     },
     {
       name: 'collinear infinite-line와 line은 true를 반환한다',
-      args: [infiniteLine(1, 0, 1, 0), segment(0, 0, 2, 0)] satisfies [InfiniteLineLike, SegmentLike],
+      args: [infiniteLine(1, 0, 1, 0), flatSegment(0, 0, 2, 0)] satisfies [InfiniteLine, Segment],
       expected: true,
     },
     {
       name: 'collinear이고 endpoint가 닿으면 true를 반환한다',
-      args: [infiniteLine(1, 0, 1, 0), segment(0, 0, 1, 0)] satisfies [InfiniteLineLike, SegmentLike],
+      args: [infiniteLine(1, 0, 1, 0), flatSegment(0, 0, 1, 0)] satisfies [InfiniteLine, Segment],
       expected: true,
     },
     {
       name: 'zero-length line이 infinite-line 위에 있으면 true를 반환한다',
-      args: [infiniteLine(0, 0, 1, 0), segment(1, 0, 1, 0)] satisfies [InfiniteLineLike, SegmentLike],
+      args: [infiniteLine(0, 0, 1, 0), flatSegment(1, 0, 1, 0)] satisfies [InfiniteLine, Segment],
       expected: true,
     },
   ])('$name', ({ args, expected }) => {
     expect(intersectsInfiniteLineSegment(...args)).toBe(expected);
-  });
-
-  describe('tuple/object input 혼합', () => {
-    test('tuple line과 tuple infinite-line 입력은 object 입력과 같은 결과를 반환한다', () => {
-      const lineTuple: [readonly [number, number], readonly [number, number]] = [
-        [0, 0],
-        [2, 0],
-      ];
-      const infTuple: [readonly [number, number], readonly [number, number]] = [
-        [1, -1],
-        [0, 1],
-      ];
-      const lineObj = segment(0, 0, 2, 0);
-      const infObj = infiniteLine(1, -1, 0, 1);
-      expect(intersectsInfiniteLineSegment(infTuple, lineTuple)).toBe(intersectsInfiniteLineSegment(infObj, lineObj));
-    });
   });
 });
 
@@ -247,12 +226,12 @@ describe('singleIntersectionSegmentInfiniteLineInto', () => {
   test.each([
     {
       name: '교점 (1,0)을 out에 기록하고 true를 반환한다',
-      args: [segment(0, 0, 2, 0), infiniteLine(1, -1, 0, 1)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 2, 0), infiniteLine(1, -1, 0, 1)] satisfies SegmentInfiniteLineArgs,
       expected: { x: 1, y: 0 },
     },
     {
       name: 'zero-length line이 infinite-line 위에 있으면 point를 기록하고 true를 반환한다',
-      args: [segment(1, 0, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(1, 0, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
       expected: { x: 1, y: 0 },
     },
   ])('$name', ({ args, expected }) => {
@@ -262,19 +241,19 @@ describe('singleIntersectionSegmentInfiniteLineInto', () => {
   test.each([
     {
       name: 'range 밖이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 0.5, 0), infiniteLine(1, -1, 0, 1)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 0.5, 0), infiniteLine(1, -1, 0, 1)] satisfies SegmentInfiniteLineArgs,
     },
     {
       name: '평행이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 1, 0), infiniteLine(0, 1, 1, 0)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 1, 0), infiniteLine(0, 1, 1, 0)] satisfies SegmentInfiniteLineArgs,
     },
     {
       name: 'collinear overlap이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 2, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 2, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
     },
     {
       name: 'collinear endpoint touch이면 false를 반환하고 out을 수정하지 않는다',
-      args: [segment(0, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
     },
   ])('$name', ({ args }) => {
     expectIntoMiss(singleIntersectionSegmentInfiniteLineInto, args);
@@ -283,7 +262,7 @@ describe('singleIntersectionSegmentInfiniteLineInto', () => {
 
 describe('singleIntersectionSegmentInfiniteLine (allocating companion)', () => {
   test('hit이면 Into와 같은 좌표를 가진 object를 반환한다', () => {
-    expectPointClose(singleIntersectionSegmentInfiniteLine(segment(0, 0, 2, 0), infiniteLine(1, -1, 0, 1)), {
+    expectPointClose(singleIntersectionSegmentInfiniteLine(flatSegment(0, 0, 2, 0), infiniteLine(1, -1, 0, 1)), {
       x: 1,
       y: 0,
     });
@@ -292,19 +271,19 @@ describe('singleIntersectionSegmentInfiniteLine (allocating companion)', () => {
   test.each([
     {
       name: 'miss이면 undefined를 반환한다',
-      args: [segment(0, 0, 0.5, 0), infiniteLine(1, -1, 0, 1)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 0.5, 0), infiniteLine(1, -1, 0, 1)] satisfies SegmentInfiniteLineArgs,
     },
     {
       name: 'collinear overlap이면 undefined를 반환한다',
-      args: [segment(0, 0, 2, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 2, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
     },
     {
       name: 'collinear endpoint touch이면 undefined를 반환한다',
-      args: [segment(0, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies SegmentInfiniteLineArgs,
     },
     {
       name: 'parallel disjoint이면 undefined를 반환한다',
-      args: [segment(0, 0, 1, 0), infiniteLine(0, 1, 1, 0)] satisfies SegmentInfiniteLineArgs,
+      args: [flatSegment(0, 0, 1, 0), infiniteLine(0, 1, 1, 0)] satisfies SegmentInfiniteLineArgs,
     },
   ])('$name', ({ args }) => {
     expect(singleIntersectionSegmentInfiniteLine(...args)).toBeUndefined();
@@ -319,50 +298,41 @@ describe('intersectsInfiniteLineRay', () => {
   test.each([
     {
       name: 'ray origin(0,0) dir(1,0)와 infinite-line origin(2,1) dir(0,-1)는 교차한다',
-      args: [infiniteLine(2, 1, 0, -1), ray(0, 0, 1, 0)] satisfies [InfiniteLineLike, RayLike],
+      args: [infiniteLine(2, 1, 0, -1), flatRay(0, 0, 1, 0)] satisfies [InfiniteLine, Ray],
       expected: true,
     },
     {
       name: '교점이 ray 역방향에 있으면 false를 반환한다',
-      args: [infiniteLine(-1, -1, 0, 1), ray(0, 0, 1, 0)] satisfies [InfiniteLineLike, RayLike],
+      args: [infiniteLine(-1, -1, 0, 1), flatRay(0, 0, 1, 0)] satisfies [InfiniteLine, Ray],
       expected: false,
     },
     {
       name: 'ray origin(0,1) dir(1,0)와 infinite-line origin(0,0) dir(1,0)는 평행하고 교차하지 않는다',
-      args: [infiniteLine(0, 0, 1, 0), ray(0, 1, 1, 0)] satisfies [InfiniteLineLike, RayLike],
+      args: [infiniteLine(0, 0, 1, 0), flatRay(0, 1, 1, 0)] satisfies [InfiniteLine, Ray],
       expected: false,
     },
     {
       name: 'collinear ray와 infinite-line은 true를 반환한다',
-      args: [infiniteLine(0, 0, 1, 0), ray(1, 0, 1, 0)] satisfies [InfiniteLineLike, RayLike],
+      args: [infiniteLine(0, 0, 1, 0), flatRay(1, 0, 1, 0)] satisfies [InfiniteLine, Ray],
       expected: true,
     },
     {
       name: 'collinear이고 ray origin이 infinite-line 위에 있으면 true를 반환한다',
-      args: [infiniteLine(1, 0, 1, 0), ray(1, 0, 1, 0)] satisfies [InfiniteLineLike, RayLike],
+      args: [infiniteLine(1, 0, 1, 0), flatRay(1, 0, 1, 0)] satisfies [InfiniteLine, Ray],
       expected: true,
     },
     {
       name: 'zero-direction ray가 infinite-line 위에 있으면 true를 반환한다',
-      args: [infiniteLine(0, 0, 1, 0), ray(1, 0, 0, 0)] satisfies [InfiniteLineLike, RayLike],
+      args: [infiniteLine(0, 0, 1, 0), flatRay(1, 0, 0, 0)] satisfies [InfiniteLine, Ray],
       expected: true,
     },
     {
       name: 'zero-direction ray가 infinite-line 밖에 있으면 false를 반환한다',
-      args: [infiniteLine(0, 0, 1, 0), ray(1, 1, 0, 0)] satisfies [InfiniteLineLike, RayLike],
+      args: [infiniteLine(0, 0, 1, 0), flatRay(1, 1, 0, 0)] satisfies [InfiniteLine, Ray],
       expected: false,
     },
   ])('$name', ({ args, expected }) => {
     expect(intersectsInfiniteLineRay(...args)).toBe(expected);
-  });
-
-  describe('tuple/object input 혼합', () => {
-    test('tuple ray와 object infinite-line 입력은 object 입력과 같은 결과를 반환한다', () => {
-      const rayTuple: readonly [number, number, number, number] = [0, 0, 1, 0];
-      const infObj = infiniteLine(2, 1, 0, -1);
-      const rayObj = ray(0, 0, 1, 0);
-      expect(intersectsInfiniteLineRay(infObj, rayTuple)).toBe(intersectsInfiniteLineRay(infObj, rayObj));
-    });
   });
 });
 
@@ -370,12 +340,12 @@ describe('singleIntersectionRayInfiniteLineInto', () => {
   test.each([
     {
       name: '교점을 out에 기록하고 true를 반환한다',
-      args: [ray(0, 0, 1, 0), infiniteLine(2, 0, 0, 1)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(0, 0, 1, 0), infiniteLine(2, 0, 0, 1)] satisfies RayInfiniteLineArgs,
       expected: { x: 2, y: 0 },
     },
     {
       name: 'zero-direction ray가 infinite-line 위에 있으면 point를 기록하고 true를 반환한다',
-      args: [ray(1, 0, 0, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(1, 0, 0, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
       expected: { x: 1, y: 0 },
     },
   ])('$name', ({ args, expected }) => {
@@ -385,19 +355,19 @@ describe('singleIntersectionRayInfiniteLineInto', () => {
   test.each([
     {
       name: 'range 밖이면 false를 반환하고 out을 수정하지 않는다',
-      args: [ray(0, 0, 1, 0), infiniteLine(-1, -1, 0, 1)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(0, 0, 1, 0), infiniteLine(-1, -1, 0, 1)] satisfies RayInfiniteLineArgs,
     },
     {
       name: '평행이면 false를 반환하고 out을 수정하지 않는다',
-      args: [ray(0, 1, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(0, 1, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
     },
     {
       name: 'collinear overlap이면 false를 반환하고 out을 수정하지 않는다',
-      args: [ray(1, 0, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(1, 0, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
     },
     {
       name: 'collinear이면 false를 반환하고 out을 수정하지 않는다',
-      args: [ray(1, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(1, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies RayInfiniteLineArgs,
     },
   ])('$name', ({ args }) => {
     expectIntoMiss(singleIntersectionRayInfiniteLineInto, args);
@@ -406,29 +376,29 @@ describe('singleIntersectionRayInfiniteLineInto', () => {
 
 describe('singleIntersectionRayInfiniteLine (allocating companion)', () => {
   test('hit이면 Into와 같은 좌표를 가진 object를 반환한다', () => {
-    expectPointClose(singleIntersectionRayInfiniteLine(ray(0, 0, 1, 0), infiniteLine(2, 0, 0, 1)), { x: 2, y: 0 });
+    expectPointClose(singleIntersectionRayInfiniteLine(flatRay(0, 0, 1, 0), infiniteLine(2, 0, 0, 1)), { x: 2, y: 0 });
   });
 
   test.each([
     {
       name: 'miss이면 undefined를 반환한다',
-      args: [ray(0, 0, 1, 0), infiniteLine(-1, -1, 0, 1)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(0, 0, 1, 0), infiniteLine(-1, -1, 0, 1)] satisfies RayInfiniteLineArgs,
     },
     {
       name: 'collinear overlap이면 undefined를 반환한다',
-      args: [ray(1, 0, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(1, 0, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
     },
     {
       name: 'collinear이면 undefined를 반환한다',
-      args: [ray(1, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(1, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies RayInfiniteLineArgs,
     },
     {
       name: 'parallel disjoint이면 undefined를 반환한다',
-      args: [ray(0, 1, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(0, 1, 1, 0), infiniteLine(0, 0, 1, 0)] satisfies RayInfiniteLineArgs,
     },
     {
       name: 'collinear endpoint touch이면 undefined를 반환한다',
-      args: [ray(1, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies RayInfiniteLineArgs,
+      args: [flatRay(1, 0, 1, 0), infiniteLine(1, 0, 1, 0)] satisfies RayInfiniteLineArgs,
     },
   ])('$name', ({ args }) => {
     expect(singleIntersectionRayInfiniteLine(...args)).toBeUndefined();

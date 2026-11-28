@@ -1,8 +1,5 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import { infiniteLineToLineFamilyParam, lineFamilyIntersects, rayToLineFamilyParam } from '../internal/line-family';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, RayLike } from '../types';
+import type { InfiniteLine, Ray } from '../types/flat-shapes.internal';
 
 /**
  * infinite-line과 ray가 교차하면 true를 반환한다.
@@ -16,14 +13,9 @@ import type { InfiniteLineLike, RayLike } from '../types';
  * @param epsilon 평행 판정 및 거리 임계값
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
-export function intersectsInfiniteLineRay(infLine: InfiniteLineLike, ray: RayLike, epsilon?: number): boolean {
-  const origin = readRayOrigin(ray);
-  const dir = readRayDirection(ray);
-  const infOrigin = readInfiniteLineOrigin(infLine);
-  const infDir = readInfiniteLineDirection(infLine);
-
-  const rayParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const infParam = infiniteLineToLineFamilyParam(readX(infOrigin), readY(infOrigin), readX(infDir), readY(infDir));
+export function intersectsInfiniteLineRay(infLine: InfiniteLine, ray: Ray, epsilon?: number): boolean {
+  const rayParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
+  const infParam = infiniteLineToLineFamilyParam(infLine.ox, infLine.oy, infLine.dx, infLine.dy);
 
   return lineFamilyIntersects(rayParam, infParam, epsilon);
 }

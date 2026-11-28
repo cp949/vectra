@@ -1,12 +1,9 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import {
   infiniteLineToLineFamilyParam,
   lineFamilyIntersectionPoint,
   segmentToLineFamilyParam,
 } from '../internal/line-family';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, SegmentLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 infinite-line의 단일 교점을 새 object로 반환한다.
@@ -21,18 +18,13 @@ import type { InfiniteLineLike, SegmentLike, XYObjectWritable } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionSegmentInfiniteLine(
-  line: SegmentLike,
-  infLine: InfiniteLineLike,
+  line: Segment,
+  infLine: InfiniteLine,
   epsilon?: number
-): XYObjectWritable | undefined {
-  const a = readSegmentA(line);
-  const b = readSegmentB(line);
-  const origin = readInfiniteLineOrigin(infLine);
-  const dir = readInfiniteLineDirection(infLine);
+): PointWritable | undefined {
+  const lineParam = segmentToLineFamilyParam(line.x1, line.y1, line.x2, line.y2);
+  const infParam = infiniteLineToLineFamilyParam(infLine.ox, infLine.oy, infLine.dx, infLine.dy);
 
-  const lineParam = segmentToLineFamilyParam(readX(a), readY(a), readX(b), readY(b));
-  const infParam = infiniteLineToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  const out: PointWritable = { x: 0, y: 0 };
   return lineFamilyIntersectionPoint(out, lineParam, infParam, epsilon) ? out : undefined;
 }

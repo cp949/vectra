@@ -1,13 +1,14 @@
+/** 두 무한 직선의 교차와 퇴화 분기를 확인한다. */
 import { describe, expect, test } from 'vitest';
 import { intersectsInfiniteLineInfiniteLine } from '../../../src/intersects/intersects-infinite-line-infinite-line';
 
-const horizA = { origin: { x: 0, y: 0 }, direction: { x: 1, y: 0 } };
-const horizB = { origin: { x: 0, y: 1 }, direction: { x: 1, y: 0 } };
-const vertA = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 1 } };
-const horizC = { origin: { x: 5, y: 0 }, direction: { x: 1, y: 0 } };
-const degA = { origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } };
-const degB = { origin: { x: 1, y: 2 }, direction: { x: 0, y: 0 } };
-const degC = { origin: { x: 3, y: 4 }, direction: { x: 0, y: 0 } };
+const horizA = { ox: 0, oy: 0, dx: 1, dy: 0 };
+const horizB = { ox: 0, oy: 1, dx: 1, dy: 0 };
+const vertA = { ox: 0, oy: 0, dx: 0, dy: 1 };
+const horizC = { ox: 5, oy: 0, dx: 1, dy: 0 };
+const degA = { ox: 1, oy: 2, dx: 0, dy: 0 };
+const degB = { ox: 1, oy: 2, dx: 0, dy: 0 };
+const degC = { ox: 3, oy: 4, dx: 0, dy: 0 };
 
 describe('intersectsInfiniteLine', () => {
   test('non-parallel → 항상 true', () => {
@@ -23,7 +24,7 @@ describe('intersectsInfiniteLine', () => {
   });
 
   test('degenerate a, a.origin이 b 위 → true', () => {
-    const degOnHoriz = { origin: { x: 3, y: 0 }, direction: { x: 0, y: 0 } };
+    const degOnHoriz = { ox: 3, oy: 0, dx: 0, dy: 0 };
     expect(intersectsInfiniteLineInfiniteLine(degOnHoriz, horizA)).toBe(true);
   });
 
@@ -33,7 +34,7 @@ describe('intersectsInfiniteLine', () => {
   });
 
   test('degenerate b, b.origin이 a 위 → true', () => {
-    const degOnHoriz = { origin: { x: 0, y: 0 }, direction: { x: 0, y: 0 } };
+    const degOnHoriz = { ox: 0, oy: 0, dx: 0, dy: 0 };
     expect(intersectsInfiniteLineInfiniteLine(horizA, degOnHoriz)).toBe(true);
   });
 

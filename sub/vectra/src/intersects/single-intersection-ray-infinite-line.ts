@@ -1,12 +1,9 @@
-import { readInfiniteLineDirection, readInfiniteLineOrigin } from '../internal/infinite-line';
 import {
   infiniteLineToLineFamilyParam,
   lineFamilyIntersectionPoint,
   rayToLineFamilyParam,
 } from '../internal/line-family';
-import { readRayDirection, readRayOrigin } from '../internal/ray';
-import { readX, readY } from '../internal/xy';
-import type { InfiniteLineLike, RayLike, XYObjectWritable } from '../types';
+import type { InfiniteLine, Ray, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * ray와 infinite-line의 단일 교점을 새 object로 반환한다.
@@ -21,18 +18,13 @@ import type { InfiniteLineLike, RayLike, XYObjectWritable } from '../types';
  *   생략하면 평행 판정이 `sin θ <= DEFAULT_EPSILON`(scale 불변)이다. 명시하면 `|cross| <= epsilon` 절대 비교다.
  */
 export function singleIntersectionRayInfiniteLine(
-  ray: RayLike,
-  infLine: InfiniteLineLike,
+  ray: Ray,
+  infLine: InfiniteLine,
   epsilon?: number
-): XYObjectWritable | undefined {
-  const origin = readRayOrigin(ray);
-  const dir = readRayDirection(ray);
-  const infOrigin = readInfiniteLineOrigin(infLine);
-  const infDir = readInfiniteLineDirection(infLine);
+): PointWritable | undefined {
+  const rayParam = rayToLineFamilyParam(ray.ox, ray.oy, ray.dx, ray.dy);
+  const infParam = infiniteLineToLineFamilyParam(infLine.ox, infLine.oy, infLine.dx, infLine.dy);
 
-  const rayParam = rayToLineFamilyParam(readX(origin), readY(origin), readX(dir), readY(dir));
-  const infParam = infiniteLineToLineFamilyParam(readX(infOrigin), readY(infOrigin), readX(infDir), readY(infDir));
-
-  const out: XYObjectWritable = { x: 0, y: 0 };
+  const out: PointWritable = { x: 0, y: 0 };
   return lineFamilyIntersectionPoint(out, rayParam, infParam, epsilon) ? out : undefined;
 }
