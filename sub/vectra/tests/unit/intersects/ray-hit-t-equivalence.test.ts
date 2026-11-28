@@ -16,6 +16,7 @@
  * 도형 입력이 퇴화하는 경계 조건은 ray-hit-t.test.ts가 고정한다. 여기서는 일반 위치만 본다.
  */
 import { describe, expect, test } from 'vitest';
+import { readX, readY } from '../../../src/internal/xy';
 import { closestRayPolygonIntersectionInto } from '../../../src/intersects/closest-ray-polygon-intersection-into';
 import { rayBoundsHitT } from '../../../src/intersects/ray-bounds-hit-t';
 import { rayBoundsIntersectionsInto } from '../../../src/intersects/ray-bounds-intersections-into';
@@ -176,7 +177,8 @@ describe('raySegmentHitT — singleIntersectionSegmentRayInto와 같은 교점',
       const b = point(rng, range(rng, -20, 20), range(rng, -20, 20));
       const segment: SegmentLike = rng() < 0.5 ? { a, b } : [a, b];
 
-      const t = raySegmentHitT(ray, segment);
+      const [ox, oy, dx, dy] = coords;
+      const t = raySegmentHitT({ ox, oy, dx, dy }, { x1: readX(a), y1: readY(a), x2: readX(b), y2: readY(b) });
       const found = singleIntersectionSegmentRayInto(out, segment, ray);
 
       if (!found) {

@@ -85,7 +85,6 @@ async function makeCase(name) {
   const intersects = await import(pathToFileURL(path.join(distRoot, 'intersects/index.js')).href);
   const segment = await import(pathToFileURL(path.join(distRoot, 'segment/index.js')).href);
   const { surfaces, rays, circles, points } = makeScene();
-  const segmentShapes = surfaces.map((s) => ({ a: { x: s.x1, y: s.y1 }, b: { x: s.x2, y: s.y2 } }));
   const circleShapes = circles.map((c) => ({ cx: c.x, cy: c.y, r: c.r }));
   const line = { x1: 100, y1: 100, x2: 900, y2: 700 };
 
@@ -102,8 +101,8 @@ async function makeCase(name) {
     'ray×segment raySegmentHitT': () => {
       let sum = 0;
       for (const r of rays) {
-        const ray = { origin: { x: r.x, y: r.y }, direction: { x: r.dx, y: r.dy } };
-        for (const s of segmentShapes) {
+        const ray = { ox: r.x, oy: r.y, dx: r.dx, dy: r.dy };
+        for (const s of surfaces) {
           const t = intersects.raySegmentHitT(ray, s);
           if (t < Infinity) sum += t;
         }

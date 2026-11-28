@@ -15,7 +15,7 @@
  *
  * 기존 점 반환 함수와의 동일성은 ray-hit-t-equivalence.test.ts가 난수 입력으로 확인한다.
  */
-import { describe, expect, test } from 'vitest';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 import { rayBoundsHitT } from '../../../src/intersects/ray-bounds-hit-t';
 import { rayCircleHitT } from '../../../src/intersects/ray-circle-hit-t';
 import { rayEllipseHitT } from '../../../src/intersects/ray-ellipse-hit-t';
@@ -23,6 +23,7 @@ import { rayPolygonHitT } from '../../../src/intersects/ray-polygon-hit-t';
 import { rayRectHitT } from '../../../src/intersects/ray-rect-hit-t';
 import { raySegmentHitT } from '../../../src/intersects/ray-segment-hit-t';
 import type { RayLike } from '../../../src/types';
+import type { Ray, Segment } from '../../../src/types/flat-shapes.internal';
 import { reflectInto } from '../../../src/vec/reflect-into';
 
 // 원점에서 +x로 가는 ray. 대부분의 시험이 이 ray를 쓴다.
@@ -150,140 +151,68 @@ describe('rayEllipseHitT', () => {
 });
 
 describe('raySegmentHitT', () => {
-  const wall = { a: { x: 3, y: -1 }, b: { x: 3, y: 1 } };
+  test('평평한 ray와 segment를 받는다', () => {
+    expectTypeOf(raySegmentHitT).parameter(0).toEqualTypeOf<Ray>();
+    expectTypeOf(raySegmentHitT).parameter(1).toEqualTypeOf<Segment>();
+  });
+  const wall = { x1: 3, y1: -1, x2: 3, y2: 1 };
+  const right = { ox: 0, oy: 0, dx: 1, dy: 0 };
 
   test('교점의 t를 반환한다', () => {
-    expect(raySegmentHitT(RIGHT, wall)).toBe(3);
-  });
-
-  test('tuple ray와 tuple segment, 섞은 입력도 같은 t를 반환한다', () => {
-    expect(
-      raySegmentHitT(
-        [0, 0, 1, 0],
-        [
-          [3, -1],
-          [3, 1],
-        ]
-      )
-    ).toBe(3);
-    expect(raySegmentHitT({ origin: [0, 0], direction: { x: 1, y: 0 } }, [{ x: 3, y: -1 }, [3, 1]])).toBe(3);
+    expect(raySegmentHitT(right, wall)).toBe(3);
   });
 
   test('direction을 정규화하지 않으므로 t는 direction 길이 단위다', () => {
-    expect(raySegmentHitT([0, 0, 2, 0], wall)).toBe(1.5);
-    expect(
-      raySegmentHitT(
-        [0, 0, 3, 4],
-        [
-          [3, 0],
-          [3, 8],
-        ]
-      )
-    ).toBeCloseTo(1, 12);
+    expect(raySegmentHitT({ ox: 0, oy: 0, dx: 2, dy: 0 }, wall)).toBe(1.5);
+    expect(raySegmentHitT({ ox: 0, oy: 0, dx: 3, dy: 4 }, { x1: 3, y1: 0, x2: 3, y2: 8 })).toBeCloseTo(1, 12);
   });
 
   test('segment 끝점 접촉은 hit이다', () => {
-    expect(
-      raySegmentHitT(RIGHT, [
-        [3, 0],
-        [3, 1],
-      ])
-    ).toBe(3);
-    expect(
-      raySegmentHitT(RIGHT, [
-        [3, -1],
-        [3, 0],
-      ])
-    ).toBe(3);
+    expect(raySegmentHitT(right, { x1: 3, y1: 0, x2: 3, y2: 1 })).toBe(3);
+    expect(raySegmentHitT(right, { x1: 3, y1: -1, x2: 3, y2: 0 })).toBe(3);
   });
 
   test('끝점을 조금만 벗어나도 miss다', () => {
-    expect(
-      raySegmentHitT(RIGHT, [
-        [3, 1e-9],
-        [3, 1],
-      ])
-    ).toBe(Infinity);
-    expect(
-      raySegmentHitT(RIGHT, [
-        [3, -1],
-        [3, -1e-9],
-      ])
-    ).toBe(Infinity);
+    expect(raySegmentHitT(right, { x1: 3, y1: 1e-9, x2: 3, y2: 1 })).toBe(Infinity);
+    expect(raySegmentHitT(right, { x1: 3, y1: -1, x2: 3, y2: -1e-9 })).toBe(Infinity);
   });
 
   test('segment가 ray 뒤쪽에 있으면 Infinity를 반환한다', () => {
-    expect(
-      raySegmentHitT(RIGHT, [
-        [-3, -1],
-        [-3, 1],
-      ])
-    ).toBe(Infinity);
+    expect(raySegmentHitT(right, { x1: -3, y1: -1, x2: -3, y2: 1 })).toBe(Infinity);
   });
 
   test('평행이면 Infinity를 반환한다', () => {
-    expect(
-      raySegmentHitT(RIGHT, [
-        [1, 1],
-        [5, 1],
-      ])
-    ).toBe(Infinity);
+    expect(raySegmentHitT(right, { x1: 1, y1: 1, x2: 5, y2: 1 })).toBe(Infinity);
   });
 
   test('공선 overlap도 hit으로 보지 않는다', () => {
-    expect(
-      raySegmentHitT(RIGHT, [
-        [2, 0],
-        [6, 0],
-      ])
-    ).toBe(Infinity);
-    expect(
-      raySegmentHitT(
-        [4, 0, 1, 0],
-        [
-          [2, 0],
-          [6, 0],
-        ]
-      )
-    ).toBe(Infinity);
+    expect(raySegmentHitT(right, { x1: 2, y1: 0, x2: 6, y2: 0 })).toBe(Infinity);
+    expect(raySegmentHitT({ ox: 4, oy: 0, dx: 1, dy: 0 }, { x1: 2, y1: 0, x2: 6, y2: 0 })).toBe(Infinity);
   });
 
   test('zero-length segment와 zero direction은 Infinity를 반환한다', () => {
-    expect(
-      raySegmentHitT(RIGHT, [
-        [3, 0],
-        [3, 0],
-      ])
-    ).toBe(Infinity);
-    expect(raySegmentHitT([0, 0, 0, 0], wall)).toBe(Infinity);
+    expect(raySegmentHitT(right, { x1: 3, y1: 0, x2: 3, y2: 0 })).toBe(Infinity);
+    expect(raySegmentHitT({ ox: 0, oy: 0, dx: 0, dy: 0 }, wall)).toBe(Infinity);
   });
 
   test('tMin은 inclusive이고 더 크면 Infinity를 반환한다', () => {
-    expect(raySegmentHitT(RIGHT, wall, 3)).toBe(3);
-    expect(raySegmentHitT(RIGHT, wall, 3.0001)).toBe(Infinity);
+    expect(raySegmentHitT(right, wall, 3)).toBe(3);
+    expect(raySegmentHitT(right, wall, 3.0001)).toBe(Infinity);
   });
 
   test('epsilon을 명시하면 평행 판정이 cross 절대값 비교로 바뀐다', () => {
-    const almostParallel: [[number, number], [number, number]] = [
-      [1, 0],
-      [2, 1e-7],
-    ];
+    const almostParallel = { x1: 1, y1: 0, x2: 2, y2: 1e-7 };
     // 기본값: sin θ가 1e-9보다 크므로 교차한다.
-    expect(raySegmentHitT(RIGHT, almostParallel)).toBeCloseTo(1, 9);
+    expect(raySegmentHitT(right, almostParallel)).toBeCloseTo(1, 9);
     // |cross| = 1e-7 ≤ 1e-6이면 평행이다.
-    expect(raySegmentHitT(RIGHT, almostParallel, 0, 1e-6)).toBe(Infinity);
+    expect(raySegmentHitT(right, almostParallel, 0, 1e-6)).toBe(Infinity);
   });
 
   test('non-finite 입력은 hit 없음으로 처리한다', () => {
-    expect(raySegmentHitT([Number.NaN, 0, 1, 0], wall)).toBe(Infinity);
-    expect(raySegmentHitT([0, 0, 1, Number.NaN], wall)).toBe(Infinity);
-    expect(
-      raySegmentHitT(RIGHT, [
-        [3, Number.NaN],
-        [3, 1],
-      ])
-    ).toBe(Infinity);
-    expect(raySegmentHitT(RIGHT, wall, Number.NaN)).toBe(Infinity);
+    expect(raySegmentHitT({ ox: Number.NaN, oy: 0, dx: 1, dy: 0 }, wall)).toBe(Infinity);
+    expect(raySegmentHitT({ ox: 0, oy: 0, dx: 1, dy: Number.NaN }, wall)).toBe(Infinity);
+    expect(raySegmentHitT(right, { x1: 3, y1: Number.NaN, x2: 3, y2: 1 })).toBe(Infinity);
+    expect(raySegmentHitT(right, wall, Number.NaN)).toBe(Infinity);
   });
 });
 
@@ -518,11 +447,7 @@ describe('rayBoundsHitT empty·zero-extent 입력', () => {
 // 반사 직후 출발 면 문제: tMin이 없으면 같은 면과 t = 0으로 다시 만난다.
 describe('광선 추적 소비 시나리오', () => {
   /** 가장 가까운 segment와 그 t를 찾는다. 같은 면을 건너뛰도록 tMin을 받는다. */
-  function nearestWall(
-    ray: readonly [number, number, number, number],
-    walls: ReadonlyArray<readonly [readonly [number, number], readonly [number, number]]>,
-    tMin: number
-  ): { index: number; t: number } {
+  function nearestWall(ray: Ray, walls: readonly Segment[], tMin: number): { index: number; t: number } {
     let best = Infinity;
     let index = -1;
     for (let i = 0; i < walls.length; i++) {
@@ -536,32 +461,26 @@ describe('광선 추적 소비 시나리오', () => {
   }
 
   const floorAndCeiling = [
-    [
-      [0, 0],
-      [20, 0],
-    ],
-    [
-      [0, 5],
-      [20, 5],
-    ],
+    { x1: 0, y1: 0, x2: 20, y2: 0 },
+    { x1: 0, y1: 5, x2: 20, y2: 5 },
   ] as const;
 
   test('반사한 위치에서 tMin 없이 다시 쏘면 출발한 면을 t = 0으로 맞힌다', () => {
     // (2, 5)에서 (1, -1) 방향: 바닥 (7, 0)에 t = 5로 닿는다.
-    const first = nearestWall([2, 5, 1, -1], [floorAndCeiling[0]], 0);
+    const first = nearestWall({ ox: 2, oy: 5, dx: 1, dy: -1 }, [floorAndCeiling[0]], 0);
     expect(first.t).toBe(5);
 
     const dir = reflectInto({ x: 0, y: 0 }, { x: 1, y: -1 }, { x: 0, y: 1 });
     expect(dir).toEqual({ x: 1, y: 1 });
 
-    const next: [number, number, number, number] = [7, 0, dir.x, dir.y];
+    const next = { ox: 7, oy: 0, dx: dir.x, dy: dir.y };
     const withoutTMin = nearestWall(next, floorAndCeiling, 0);
     expect(withoutTMin.index).toBe(0);
     expect(withoutTMin.t).toBeCloseTo(0, 12);
   });
 
   test('tMin으로 출발 면을 거르면 반대편 면을 맞힌다', () => {
-    const next: [number, number, number, number] = [7, 0, 1, 1];
+    const next = { ox: 7, oy: 0, dx: 1, dy: 1 };
     const withTMin = nearestWall(next, floorAndCeiling, 1e-9);
     expect(withTMin.index).toBe(1);
     expect(withTMin.t).toBe(5);
@@ -569,22 +488,10 @@ describe('광선 추적 소비 시나리오', () => {
 
   test('닫힌 방에서 20번 튕겨도 같은 면을 연속으로 맞히지 않는다', () => {
     const room = [
-      [
-        [0, 0],
-        [10, 0],
-      ],
-      [
-        [10, 0],
-        [10, 6],
-      ],
-      [
-        [10, 6],
-        [0, 6],
-      ],
-      [
-        [0, 6],
-        [0, 0],
-      ],
+      { x1: 0, y1: 0, x2: 10, y2: 0 },
+      { x1: 10, y1: 0, x2: 10, y2: 6 },
+      { x1: 10, y1: 6, x2: 0, y2: 6 },
+      { x1: 0, y1: 6, x2: 0, y2: 0 },
     ] as const;
     const normals = [
       [0, 1],
@@ -593,7 +500,7 @@ describe('광선 추적 소비 시나리오', () => {
       [1, 0],
     ] as const;
 
-    let ray: [number, number, number, number] = [3, 2, 0.8, 0.3];
+    let ray = { ox: 3, oy: 2, dx: 0.8, dy: 0.3 };
     let previous = -1;
     for (let bounce = 0; bounce < 20; bounce++) {
       const { index, t } = nearestWall(ray, room, 1e-9);
@@ -601,8 +508,8 @@ describe('광선 추적 소비 시나리오', () => {
       expect(t).toBeGreaterThan(0);
       expect(index).not.toBe(previous);
 
-      const hitX = ray[0] + t * ray[2];
-      const hitY = ray[1] + t * ray[3];
+      const hitX = ray.ox + t * ray.dx;
+      const hitY = ray.oy + t * ray.dy;
       // 부동소수점 오차가 있어도 hit 점은 방 안이다.
       expect(hitX).toBeGreaterThanOrEqual(-1e-9);
       expect(hitX).toBeLessThanOrEqual(10 + 1e-9);
@@ -610,20 +517,17 @@ describe('광선 추적 소비 시나리오', () => {
       expect(hitY).toBeLessThanOrEqual(6 + 1e-9);
 
       const [nx, ny] = normals[index];
-      const dir = reflectInto({ x: 0, y: 0 }, { x: ray[2], y: ray[3] }, { x: nx, y: ny });
-      ray = [hitX, hitY, dir.x, dir.y];
+      const dir = reflectInto({ x: 0, y: 0 }, { x: ray.dx, y: ray.dy }, { x: nx, y: ny });
+      ray = { ox: hitX, oy: hitY, dx: dir.x, dy: dir.y };
       previous = index;
     }
   });
 
   test('원과 벽이 섞인 장면에서 가장 작은 t의 물체를 고른다', () => {
     const circle = [[4, 0], 1] as const;
-    const wall = [
-      [7, -3],
-      [7, 3],
-    ] as const;
-    const ray = [0, 0, 1, 0] as const;
-    const tCircle = rayCircleHitT(ray, circle);
+    const wall = { x1: 7, y1: -3, x2: 7, y2: 3 } as const;
+    const ray = { ox: 0, oy: 0, dx: 1, dy: 0 };
+    const tCircle = rayCircleHitT([0, 0, 1, 0], circle);
     const tWall = raySegmentHitT(ray, wall);
     expect(Math.min(tCircle, tWall)).toBe(tCircle);
     expect(tCircle).toBe(3);
