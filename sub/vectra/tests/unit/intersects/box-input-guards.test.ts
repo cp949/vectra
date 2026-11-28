@@ -71,11 +71,11 @@ describe('뒤집힌 bounds 가드', () => {
 
   test('circleBoundsIntersectionsInto는 뒤집힌 bounds에서 기존 출력을 비우고 빈 배열을 반환한다', () => {
     const out = [{ x: 9, y: 9 }];
-    const circle = { center: { x: 3, y: 3 }, radius: 2 };
-    expect(circleBoundsIntersectionsInto(out, circle, invertedX)).toBe(out);
+    const circle = { cx: 3, cy: 3, r: 2 };
+    expect(circleBoundsIntersectionsInto(out, circle, { minX: 5, minY: 1, maxX: 1, maxY: 5 })).toBe(out);
     expect(out).toEqual([]);
     out.push({ x: 9, y: 9 });
-    circleBoundsIntersectionsInto(out, circle, invertedY);
+    circleBoundsIntersectionsInto(out, circle, { minX: 1, minY: 5, maxX: 5, maxY: 1 });
     expect(out).toEqual([]);
   });
 

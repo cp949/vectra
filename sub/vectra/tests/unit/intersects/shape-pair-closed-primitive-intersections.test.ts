@@ -18,74 +18,43 @@ function expectPointClose(p: XYObjectWritable, x: number, y: number, digits = 9)
 
 describe('circle × rect/bounds 교점 collection (S10-RM-007)', () => {
   test('edge crossing은 두 점을 circle center turn 오름차순으로 반환한다', () => {
-    const points = circleRectIntersections(
-      { center: { x: 0, y: 5 }, radius: 3 },
-      { x: 0, y: 0, width: 10, height: 10 }
-    );
+    const points = circleRectIntersections({ cx: 0, cy: 5, r: 3 }, { x: 0, y: 0, width: 10, height: 10 });
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 0, 8, 6);
     expectPointClose(points[1], 0, 2, 6);
   });
 
   test('corner tangent는 한 점으로 dedupe된다', () => {
-    const points = circleRectIntersections(
-      { center: { x: -1, y: -1 }, radius: Math.SQRT2 },
-      { x: 0, y: 0, width: 10, height: 10 }
-    );
+    const points = circleRectIntersections({ cx: -1, cy: -1, r: Math.SQRT2 }, { x: 0, y: 0, width: 10, height: 10 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 0, 0, 6);
   });
 
   test('circle이 rect 내부에 있고 boundary 교점이 없으면 빈 배열이다', () => {
-    const points = circleRectIntersections(
-      { center: { x: 5, y: 5 }, radius: 3 },
-      { x: 0, y: 0, width: 10, height: 10 }
-    );
+    const points = circleRectIntersections({ cx: 5, cy: 5, r: 3 }, { x: 0, y: 0, width: 10, height: 10 });
     expect(points).toEqual([]);
   });
 
   test('bounds는 rect와 동등한 결과를 반환한다', () => {
-    const viaRect = circleRectIntersections(
-      { center: { x: 0, y: 5 }, radius: 3 },
-      { x: 0, y: 0, width: 10, height: 10 }
-    );
-    const viaBounds = circleBoundsIntersections(
-      { center: { x: 0, y: 5 }, radius: 3 },
-      { min: { x: 0, y: 0 }, max: { x: 10, y: 10 } }
-    );
+    const viaRect = circleRectIntersections({ cx: 0, cy: 5, r: 3 }, { x: 0, y: 0, width: 10, height: 10 });
+    const viaBounds = circleBoundsIntersections({ cx: 0, cy: 5, r: 3 }, { minX: 0, minY: 0, maxX: 10, maxY: 10 });
     expect(viaBounds).toEqual(viaRect);
   });
 
   test('zero-extent point bounds가 circle boundary 위에 있으면 한 점을 반환한다', () => {
-    const points = circleBoundsIntersections(
-      { center: { x: 0, y: 0 }, radius: 5 },
-      { min: { x: 5, y: 0 }, max: { x: 5, y: 0 } }
-    );
+    const points = circleBoundsIntersections({ cx: 0, cy: 0, r: 5 }, { minX: 5, minY: 0, maxX: 5, maxY: 0 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 5, 0);
   });
 
   test('zero-extent point bounds가 circle boundary 밖이면 빈 배열이다', () => {
-    const points = circleBoundsIntersections(
-      { center: { x: 0, y: 0 }, radius: 5 },
-      { min: { x: 6, y: 0 }, max: { x: 6, y: 0 } }
-    );
+    const points = circleBoundsIntersections({ cx: 0, cy: 0, r: 5 }, { minX: 6, minY: 0, maxX: 6, maxY: 0 });
     expect(points).toEqual([]);
   });
 
   test('empty circle / empty rect은 빈 배열이다', () => {
-    expect(
-      circleRectIntersections({ center: { x: 0, y: 5 }, radius: 0 }, { x: 0, y: 0, width: 10, height: 10 })
-    ).toEqual([]);
-    expect(
-      circleRectIntersections({ center: { x: 0, y: 5 }, radius: 3 }, { x: 0, y: 0, width: 0, height: 10 })
-    ).toEqual([]);
-  });
-
-  test('tuple 입력과 object 입력 결과가 같다', () => {
-    const objs = circleRectIntersections({ center: { x: 0, y: 5 }, radius: 3 }, { x: 0, y: 0, width: 10, height: 10 });
-    const tuples = circleRectIntersections([[0, 5], 3], [0, 0, 10, 10]);
-    expect(tuples).toEqual(objs);
+    expect(circleRectIntersections({ cx: 0, cy: 5, r: 0 }, { x: 0, y: 0, width: 10, height: 10 })).toEqual([]);
+    expect(circleRectIntersections({ cx: 0, cy: 5, r: 3 }, { x: 0, y: 0, width: 0, height: 10 })).toEqual([]);
   });
 });
 

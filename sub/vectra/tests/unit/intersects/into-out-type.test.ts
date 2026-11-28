@@ -1,5 +1,7 @@
 /** 교차점 기록 함수의 출력 배열 반환 타입과 참조를 검증한다. */
 import { expect, expectTypeOf, test } from 'vitest';
+import { circleBoundsIntersectionsInto } from '../../../src/intersects/circle-bounds-intersections-into';
+import { circleRectIntersectionsInto } from '../../../src/intersects/circle-rect-intersections-into';
 import { circleCircleIntersectionsInto } from '../../../src/intersects/circle-circle-intersections-into';
 import type { Circle, PointWritable } from '../../../src/types/flat-shapes.internal';
 
@@ -16,4 +18,20 @@ test('circleCircleIntersectionsInto는 전달받은 배열 서브클래스를 �
   expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
   expect(result).toBe(out);
   expect(out[0]).toEqual({ x: 2, y: 0 });
+});
+
+test('circleBoundsIntersectionsInto는 전달받은 배열 서브클래스를 그대로 반환한다', () => {
+  const out = new IntersectionPoints();
+  const result = circleBoundsIntersectionsInto(out, { cx: 0, cy: 5, r: 3 }, { minX: 0, minY: 0, maxX: 10, maxY: 10 });
+  expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
+  expect(result).toBe(out);
+  expect(out).toHaveLength(2);
+});
+
+test('circleRectIntersectionsInto는 전달받은 배열 서브클래스를 그대로 반환한다', () => {
+  const out = new IntersectionPoints();
+  const result = circleRectIntersectionsInto(out, { cx: 0, cy: 5, r: 3 }, { x: 0, y: 0, width: 10, height: 10 });
+  expectTypeOf(result).toEqualTypeOf<IntersectionPoints>();
+  expect(result).toBe(out);
+  expect(out).toHaveLength(2);
 });

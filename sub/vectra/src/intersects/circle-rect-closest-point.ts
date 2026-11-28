@@ -1,4 +1,4 @@
-import type { CircleLike, RectLike, XYObjectWritable } from '../types';
+import type { Circle, Rect, PointWritable } from '../types/flat-shapes.internal';
 import { circleRectClosestPointInto } from './circle-rect-closest-point-into';
 
 /**
@@ -14,7 +14,7 @@ import { circleRectClosestPointInto } from './circle-rect-closest-point-into';
  * @param circle closest point 기준 circle. center만 위치 계산에 쓰고 radius는 validation에만 쓴다
  * @param rect closest point 대상 rect (axis-aligned)
  */
-export function circleRectClosestPoint(circle: CircleLike, rect: RectLike): XYObjectWritable | undefined {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+export function circleRectClosestPoint(circle: Circle, rect: Rect): PointWritable | undefined {
+  const out: PointWritable = { x: 0, y: 0 };
   return circleRectClosestPointInto(out, circle, rect) ? out : undefined;
 }

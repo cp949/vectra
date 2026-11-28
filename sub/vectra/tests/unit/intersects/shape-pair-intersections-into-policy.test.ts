@@ -22,7 +22,7 @@ describe('Into out array clear/reference 보존 (S10-RM-007)', () => {
     ];
     const result = circleRectIntersectionsInto(
       out,
-      { center: { x: 0, y: 5 }, radius: 3 },
+      { cx: 0, cy: 5, r: 3 },
       {
         x: 0,
         y: 0,

@@ -1,7 +1,4 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, RectLike } from '../types';
+import type { Circle, Rect } from '../types/flat-shapes.internal';
 
 /**
  * circle과 rect가 교차하거나 접하면 true를 반환한다.
@@ -14,17 +11,17 @@ import type { CircleLike, RectLike } from '../types';
  * @param circle 교차를 판정할 circle
  * @param rect 교차를 판정할 rect
  */
-export function intersectsCircleRect(circle: CircleLike, rect: RectLike): boolean {
-  const rectX = readRectX(rect);
-  const rectY = readRectY(rect);
-  const rectWidth = readRectWidth(rect);
-  const rectHeight = readRectHeight(rect);
-  const radius = readCircleRadius(circle);
+export function intersectsCircleRect(circle: Circle, rect: Rect): boolean {
+  const rectX = rect.x;
+  const rectY = rect.y;
+  const rectWidth = rect.width;
+  const rectHeight = rect.height;
+  const radius = circle.r;
   if (radius <= 0) return false;
   if (rectWidth <= 0 || rectHeight <= 0) return false;
 
-  const cx = readX(readCircleCenter(circle));
-  const cy = readY(readCircleCenter(circle));
+  const cx = circle.cx;
+  const cy = circle.cy;
   const nearX = Math.max(rectX, Math.min(cx, rectX + rectWidth));
   const nearY = Math.max(rectY, Math.min(cy, rectY + rectHeight));
   const dx = cx - nearX;

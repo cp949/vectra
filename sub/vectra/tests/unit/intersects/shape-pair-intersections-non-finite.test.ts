@@ -70,8 +70,11 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
       'infiniteLineBounds',
       (v) => infiniteLineBoundsIntersections({ origin: { x: v, y: 5 }, direction: { x: 1, y: 0 } }, bounds),
     ],
-    ['circleRect', (v) => circleRectIntersections({ center: { x: v, y: 5 }, radius: 3 }, rect)],
-    ['circleBounds', (v) => circleBoundsIntersections({ center: { x: v, y: 5 }, radius: 3 }, bounds)],
+    ['circleRect', (v) => circleRectIntersections({ cx: v, cy: 5, r: 3 }, rect)],
+    [
+      'circleBounds',
+      (v) => circleBoundsIntersections({ cx: v, cy: 5, r: 3 }, { minX: 0, minY: 0, maxX: 10, maxY: 10 }),
+    ],
     ['circleTriangle', (v) => circleTriangleIntersections({ center: { x: v, y: 0 }, radius: 2 }, triangle)],
     [
       'triangleTriangle',

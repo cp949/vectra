@@ -67,98 +67,81 @@ describe('circle boolean query - intersectsCircle', () => {
 
 describe('circle boolean query - intersectsRect', () => {
   test('rect 외부에서 완전히 분리되면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 2 };
+    const circle = { cx: 0, cy: 0, r: 2 };
     const rect = { x: 10, y: 10, width: 5, height: 5 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
   });
 
   test('rect edge에 tangent이면 true를 반환한다 (closest point = edge)', () => {
     // closest point = (5, 0), dist = 5 = radius
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     const rect = { x: 5, y: -3, width: 10, height: 6 };
     expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 
   test('rect corner zone에서 corner를 통과하면 true를 반환한다 (closest point = corner)', () => {
     // rect [0,0,5,5], center (-2,-2) → closest=(0,0), distSq=8 < r²=9
-    const circle = { center: { x: -2, y: -2 }, radius: 3 };
+    const circle = { cx: -2, cy: -2, r: 3 };
     const rect = { x: 0, y: 0, width: 5, height: 5 };
     expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 
   test('rect corner에 tangent이면 true를 반환한다 (corner zone, closed boundary)', () => {
     // rect [0,0,5,5], center (-3,-4) → closest=(0,0), distSq=25 = r²=25
-    const circle = { center: { x: -3, y: -4 }, radius: 5 };
+    const circle = { cx: -3, cy: -4, r: 5 };
     const rect = { x: 0, y: 0, width: 5, height: 5 };
     expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 
   test('rect corner zone에서 corner 밖에 머무르면 false를 반환한다', () => {
     // rect [0,0,5,5], center (-3,-4) → closest=(0,0), distSq=25 > r²=16
-    const circle = { center: { x: -3, y: -4 }, radius: 4 };
+    const circle = { cx: -3, cy: -4, r: 4 };
     const rect = { x: 0, y: 0, width: 5, height: 5 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
   });
 
   test('circle과 rect가 교차하면 true를 반환한다', () => {
     // closest point = (2, 0), dist = 2 < radius=5
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     const rect = { x: 2, y: -3, width: 10, height: 6 };
     expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 
-  test('circle과 tuple rect가 교차하면 true를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
-    expect(intersectsCircleRect(circle, [2, -3, 10, 6])).toBe(true);
-  });
-
   test('circle이 rect를 완전히 포함하면 true를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 20 };
+    const circle = { cx: 0, cy: 0, r: 20 };
     const rect = { x: -5, y: -5, width: 10, height: 10 };
     expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 
   test('rect가 circle을 완전히 포함하면 true를 반환한다', () => {
     // circle center가 rect 안에 있음 → closest point = center, dist = 0 < r
-    const circle = { center: { x: 0, y: 0 }, radius: 2 };
+    const circle = { cx: 0, cy: 0, r: 2 };
     const rect = { x: -10, y: -10, width: 20, height: 20 };
     expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 
   test('empty circle (radius=0)이면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 0 };
+    const circle = { cx: 0, cy: 0, r: 0 };
     const rect = { x: -5, y: -5, width: 10, height: 10 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
   });
 
   test('empty circle (radius < 0)이면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: -1 };
+    const circle = { cx: 0, cy: 0, r: -1 };
     const rect = { x: -5, y: -5, width: 10, height: 10 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
   });
 
   test('empty rect (width=0)이면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     const rect = { x: 0, y: -3, width: 0, height: 6 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
   });
 
   test('empty rect (height=0)이면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     const rect = { x: -3, y: 0, width: 6, height: 0 };
     expect(intersectsCircleRect(circle, rect)).toBe(false);
-  });
-
-  test('tuple center에서도 동작한다', () => {
-    const circle = { center: [0, 0] as const, radius: 5 };
-    const rect = { x: 2, y: -3, width: 10, height: 6 };
-    expect(intersectsCircleRect(circle, rect)).toBe(true);
-  });
-
-  test('tuple shorthand CircleLike에서도 동작한다', () => {
-    const circle = [[0, 0], 5] as const;
-    const rect = { x: 2, y: -3, width: 10, height: 6 };
-    expect(intersectsCircleRect(circle, rect)).toBe(true);
   });
 });
 

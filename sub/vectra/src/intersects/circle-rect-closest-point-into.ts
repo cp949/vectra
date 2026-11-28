@@ -1,7 +1,4 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY, writeXY } from '../internal/xy';
-import type { CircleLike, RectLike, XYWritable } from '../types';
+import type { Circle, Rect, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * circle center와 rect area 사이의 closest point를 out에 기록하고 true를 반환한다.
@@ -13,24 +10,23 @@ import type { CircleLike, RectLike, XYWritable } from '../types';
  * empty rect(width ≤ 0 또는 height ≤ 0), non-finite rect, non-finite circle center, negative/non-finite radius는
  * `false`를 반환하고 out을 수정하지 않는다.
  *
- * @param out closest point 좌표를 기록할 writable output. 실패 시 수정하지 않는다
+ * @param out 최근접점을 기록할 { x, y } 객체. 실패 시 수정하지 않는다.
  * @param circle closest point 기준 circle. center만 위치 계산에 쓰고 radius는 validation에만 쓴다
  * @param rect closest point 대상 rect (axis-aligned)
  */
-export function circleRectClosestPointInto(out: XYWritable, circle: CircleLike, rect: RectLike): boolean {
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+export function circleRectClosestPointInto(out: PointWritable, circle: Circle, rect: Rect): boolean {
+  const rw = rect.width;
+  const rh = rect.height;
   if (!(rw > 0 && rh > 0)) return false;
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
+  const rx = rect.x;
+  const ry = rect.y;
   if (!Number.isFinite(rx) || !Number.isFinite(ry)) return false;
 
-  const radius = readCircleRadius(circle);
+  const radius = circle.r;
   if (!Number.isFinite(radius) || radius < 0) return false;
 
-  const center = readCircleCenter(circle);
-  const cx = readX(center);
-  const cy = readY(center);
+  const cx = circle.cx;
+  const cy = circle.cy;
   if (!Number.isFinite(cx) || !Number.isFinite(cy)) return false;
 
   const minX = rx;
@@ -40,7 +36,8 @@ export function circleRectClosestPointInto(out: XYWritable, circle: CircleLike, 
 
   // boundary 포함 외부면 axis clamp가 closest point다. boundary 위 center도 이 분기로 자기 자신을 반환한다.
   if (cx <= minX || cx >= maxX || cy <= minY || cy >= maxY) {
-    writeXY(out, clamp(cx, minX, maxX), clamp(cy, minY, maxY));
+    out.x = clamp(cx, minX, maxX);
+    out.y = clamp(cy, minY, maxY);
     return true;
   }
 
@@ -69,7 +66,8 @@ export function circleRectClosestPointInto(out: XYWritable, circle: CircleLike, 
     py = maxY;
   }
 
-  writeXY(out, px, py);
+  out.x = px;
+  out.y = py;
   return true;
 }
 

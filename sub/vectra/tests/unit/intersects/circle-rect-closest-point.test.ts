@@ -3,20 +3,22 @@
  *
  * S11-RM-026: circleRectClosestPoint(Into)의 outside clamp / inside boundary projection /
  * boundary center / tie / failure(empty·non-finite rect, negative·non-finite radius) /
- * companion allocation / tuple input을 검증한다.
+ * companion allocation을 검증한다.
  */
 
 import { describe, expect, test } from 'vitest';
 import { circleRectClosestPoint } from '../../../src/intersects/circle-rect-closest-point';
 import { circleRectClosestPointInto } from '../../../src/intersects/circle-rect-closest-point-into';
-import type { CircleLike, RectLike, XYObjectWritable } from '../../../src/types';
+import type { Circle, PointWritable, Rect } from '../../../src/types/flat-shapes.internal';
 
-const circle = (cx: number, cy: number, radius: number): CircleLike => ({ center: { x: cx, y: cy }, radius });
-const rect = (x: number, y: number, width: number, height: number): RectLike => ({ x, y, width, height });
+/** 최근접점 계산에 쓸 원을 만든다. */
+const circle = (cx: number, cy: number, r: number): Circle => ({ cx, cy, r });
+/** 최근접점을 구할 직사각형을 만든다. */
+const rect = (x: number, y: number, width: number, height: number): Rect => ({ x, y, width, height });
 
 /** Into로 closest point를 구해 `[ok, x, y]` 형태로 반환한다. */
-function closest(c: CircleLike, r: RectLike): [boolean, number, number] {
-  const out: XYObjectWritable = { x: 0, y: 0 };
+function closest(c: Circle, r: Rect): [boolean, number, number] {
+  const out: PointWritable = { x: 0, y: 0 };
   const ok = circleRectClosestPointInto(out, c, r);
   return [ok, out.x, out.y];
 }
@@ -65,7 +67,7 @@ describe('circleRectClosestPoint boundary center', () => {
 
 describe('circleRectClosestPoint failure', () => {
   test('empty rect는 false + out 미수정이다', () => {
-    const out: XYObjectWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     expect(circleRectClosestPointInto(out, circle(5, 5, 1), rect(0, 0, 0, 10))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
     expect(circleRectClosestPointInto(out, circle(5, 5, 1), rect(0, 0, 10, -1))).toBe(false);
@@ -73,20 +75,20 @@ describe('circleRectClosestPoint failure', () => {
   });
 
   test('non-finite rect는 false + out 미수정이다', () => {
-    const out: XYObjectWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     expect(circleRectClosestPointInto(out, circle(5, 5, 1), rect(Number.NaN, 0, 10, 10))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
 
   test('non-finite center는 false + out 미수정이다', () => {
-    const out: XYObjectWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     expect(circleRectClosestPointInto(out, circle(Number.NaN, 5, 1), rect(0, 0, 10, 10))).toBe(false);
     expect(circleRectClosestPointInto(out, circle(5, Number.POSITIVE_INFINITY, 1), rect(0, 0, 10, 10))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
   });
 
   test('negative/non-finite radius는 false + out 미수정이다', () => {
-    const out: XYObjectWritable = { x: 99, y: 99 };
+    const out: PointWritable = { x: 99, y: 99 };
     expect(circleRectClosestPointInto(out, circle(5, 5, -1), rect(0, 0, 10, 10))).toBe(false);
     expect(out).toEqual({ x: 99, y: 99 });
     expect(circleRectClosestPointInto(out, circle(5, 5, Number.NaN), rect(0, 0, 10, 10))).toBe(false);
@@ -103,12 +105,5 @@ describe('circleRectClosestPoint companion / input', () => {
     const point = circleRectClosestPoint(circle(-5, 5, 1), rect(0, 0, 10, 10));
     expect(point).toEqual({ x: 0, y: 5 });
     expect(circleRectClosestPoint(circle(5, 5, 1), rect(0, 0, 0, 10))).toBeUndefined();
-  });
-
-  test('tuple circle/rect input을 지원한다', () => {
-    const out: XYObjectWritable = { x: 0, y: 0 };
-    const ok = circleRectClosestPointInto(out, [[-5, 5], 1], [0, 0, 10, 10]);
-    expect(ok).toBe(true);
-    expect(out).toEqual({ x: 0, y: 5 });
   });
 });

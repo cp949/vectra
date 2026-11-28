@@ -34,9 +34,9 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
 
   test('closed area canonical pair leaves return true for overlap/touch cases', () => {
     expect(intersectsBoundsBounds(bounds, { min: { x: 4, y: 4 }, max: { x: 5, y: 5 } })).toBe(true);
-    expect(intersectsCircleBounds(circle, bounds)).toBe(true);
+    expect(intersectsCircleBounds({ cx: 2, cy: 2, r: 1 }, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
     expect(intersectsCircleCircle({ cx: 2, cy: 2, r: 1 }, { cx: 3, cy: 2, r: 1 })).toBe(true);
-    expect(intersectsCircleRect(circle, rect)).toBe(true);
+    expect(intersectsCircleRect({ cx: 2, cy: 2, r: 1 }, rect)).toBe(true);
     expect(intersectsEllipseBounds(ellipse, bounds)).toBe(true);
     expect(intersectsEllipseCircle(ellipse, circle)).toBe(true);
     expect(intersectsEllipseRect(ellipse, rect)).toBe(true);
