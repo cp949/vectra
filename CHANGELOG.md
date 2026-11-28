@@ -7,6 +7,21 @@
 
 ## [Unreleased]
 
+## [2.0.0]
+
+### Breaking changes
+
+- 점 입력과 출력은 `Point`와 `PointWritable`의 `{ x, y }` 객체로 통일한다. 좌표 tuple, `XYInput`, `XYWritable`을 제거한다.
+- 스칼라 함수 `distanceToPointXY`, `intersectsCircleCircleXY`, `rayCircleHitTXY`, `raySegmentHitTXY`를 제거한다. 같은 이름에서 `XY`를 뺀 함수에 평평한 도형 객체를 넘긴다.
+- 도형의 중첩 점과 tuple을 평평한 필드로 바꾼다. 예를 들어 원은 `{ cx, cy, r }`, 선분은 `{ x1, y1, x2, y2 }`, 광선은 `{ ox, oy, dx, dy }`를 받는다. 곡선은 `kind`와 좌표 필드를 한 객체에 둔다. 공개 도형 타입의 `Like` 접미사를 제거한다. `CenterArc`와 `Barycentric`은 이름만 바뀐다.
+- `Polygon`은 `[x0, y0, x1, y1, …]`로 좌표를 번갈아 저장한다. `Polyline`은 `{ x, y }` 객체 배열을 받는다. SVG의 `polygon`과 `polyline`의 `points`도 이 규칙을 따른다.
+- 도형을 받는 옵션을 평평하게 바꾼다. `GridSpec`은 `originX`, `originY`, `cellWidth`, `cellHeight`를 모두 받는다. `HexLayout`은 `originX`, `originY`, `size`, `orientation`을 모두 받는다. 네 방향 확장량을 전달하려면 `BoundsPadding`의 `top`, `right`, `bottom`, `left`를 모두 지정한다.
+- 옵션 타입이 `Required<…>`인 함수는 옵션 객체를 생략하면 기존 기본값을 쓴다. 객체를 넘길 때는 모든 필드를 채운다. 예를 들어 `catmullRomPolyline`에 옵션을 넘길 때는 `steps`, `alpha`, `closed`를 모두 지정한다.
+- `*Into`의 도형 출력은 평평한 writable 타입을 쓴다. 호출자가 넘긴 출력 객체를 반환하는 함수는 해당 객체와 구체 타입을 유지한다. 라이브러리가 채우는 결과 안의 점은 `PointWritable`로 고정한다.
+- 전체 필드 대응표는 [ADR 0010](./docs/internal/adr/0010-flat-shape-input.md#결정)을, 호출 예는 [입력과 도형 가이드](./docs/guides/inputs-and-shapes.md)를 참조한다.
+
+### Performance
+
 - `intersectsCircleCircle`이 circle 반지름과 중심을 한 번씩만 읽는다. 결과는 그대로다. 원 163개의 모든 쌍 겹침이 약 170µs에서 약 121µs로 줄었다(같은 환경).
 - 동작 변경: 2D Euclidean 길이와 거리를 `Math.hypot` 대신 내부 `hypot2`로 계산한다. 제곱합 `x * x + y * y`가 `1e-290`보다 크고 finite이면 `Math.sqrt`를 쓰고, overflow·underflow·0·NaN이면 이전처럼 `Math.hypot`을 쓴다. V8의 `Math.hypot`은 `Math.sqrt` 경로보다 약 10–14배 느리다. 라이브러리 안의 호출 201곳(파일 125개)을 모두 바꿨다. `vec`의 `length`, `distance`, `normalizeInto`부터 segment·polyline·path·curve 길이, closest point, sdf, intersects, fitting, linalg의 Jacobi rotation까지 같은 경로다. 결과는 1.3.0과 마지막 비트가 최대 2 ulp 다를 수 있다. 무작위 `±100` 좌표의 약 38%가 다르다. 길이를 나누거나 비교하는 결과(normalize, closest point, epsilon 경계 판정)도 같은 크기로 달라진다. 정확도는 오히려 좋아진다. 무작위 30만 쌍에서 참값 대비 최대 오차는 `Math.hypot`이 약 1.97 ulp, `hypot2`가 약 1.21 ulp다. 큰 finite 좌표, subnormal 좌표, `±Infinity`와 `NaN`의 조합은 `Math.hypot`과 같은 값이다. 객체 입력 1만 개 기준으로 `length`는 약 202µs가 약 41µs로(4.8배), `distance`는 약 214µs가 약 55µs로(3.9배), `normalizeInto`는 약 229µs가 약 62µs로(3.6배), `segment/distanceToPoint`는 약 265µs가 약 119µs로(2.2배) 줄었다. 점 2018개 `polyline/length`는 약 58µs가 약 20µs다(2.8배). 엔티티 1만 개가 한 프레임에 `addScaledInto`, `clamp`, `length`를 부르는 장면은 약 301µs가 약 113µs다(Node.js 24.21, 변형마다 별도 프로세스 3회 중앙값). 3D 이상 길이는 `Math.hypot`을 그대로 쓴다. 정책은 `docs/internal/precision.md`의 `Euclidean 길이` 절에 적었다.
 

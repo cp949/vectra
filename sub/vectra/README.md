@@ -25,10 +25,7 @@ npm install @cp949/vectra
 | Dependencies | runtime dependency 없음 |
 | Package metadata | `sideEffects: false` |
 | Import | root, `types`, domain subpath export |
-| Coordinates | `{ x, y }` object 또는 readonly `[x, y]` tuple |
-
-`Float32Array` 같은 typed-array / array-like 좌표는 공식 `XYInput`이 아니다.
-필요하면 caller가 `{ x, y }` 또는 `[x, y]`로 변환한다.
+| Coordinates | `{ x, y }` 객체 |
 
 ## 빠른 시작
 
@@ -40,7 +37,7 @@ const a = { x: 0, y: 0 };
 const b = { x: 3, y: 4 };
 
 const sum = Vecx.add(a, b);
-const length = Segmentx.length([a, b]);
+const length = Segmentx.length({ x1: a.x, y1: a.y, x2: b.x, y2: b.y });
 
 console.log(sum); // { x: 3, y: 4 }
 console.log(length); // 5
@@ -120,8 +117,18 @@ const b = { x: 3, y: 4 };
 console.log(Vecx.distance(a, b));
 ```
 
-typed-array, mutable number array, array-like object는 공식 좌표 input이 아니다.
-외부 format은 caller가 `{ x, y }` 또는 readonly tuple로 변환한다.
+외부 좌표 배열은 호출자가 `{ x, y }` 객체로 변환한다.
+도형도 `Circle { cx, cy, r }`, `Segment { x1, y1, x2, y2 }`처럼 좌표를 같은 객체에 둔다.
+`Polygon`은 닫힌 링의 좌표를 `[x0, y0, x1, y1, …]` 순서로 저장한다.
+`Polyline`은 `{ x, y }` 점 객체의 배열이다.
+
+## 성능
+
+자주 호출하는 함수에는 같은 모양의 객체를 넘긴다.
+필드가 더 많거나 필드 순서가 다른 객체를 섞으면 V8의 속성 접근이 느려진다.
+예를 들어 `Rect`는 `Point`에 필요한 `x`, `y`가 있어 TypeScript에서 점으로 넘길 수 있다.
+점 함수에는 필요한 좌표만 같은 순서로 담은 `{ x, y }`를 넘긴다.
+출력 객체를 받는 `*Into`에도 같은 규칙을 적용한다.
 
 ## Degenerate geometry
 
@@ -132,9 +139,9 @@ typed-array, mutable number array, array-like object는 공식 좌표 input이 �
 import * as Trianglex from '@cp949/vectra/triangle';
 
 const lineTriangle = {
-  a: { x: 0, y: 0 },
-  b: { x: 1, y: 1 },
-  c: { x: 2, y: 2 },
+  x1: 0, y1: 0,
+  x2: 1, y2: 1,
+  x3: 2, y3: 2,
 };
 
 console.log(Trianglex.circumcenter(lineTriangle)); // undefined

@@ -68,15 +68,14 @@ sub/vectra/tests/
 ## Suite 구조
 
 ```ts
-import { describe, expect, expectTypeOf, test } from 'vitest';
-import type { XYWritable } from '../../../src/types';
-import { add } from '../../../src/vec/add';
+import { describe, expect, test } from 'vitest';
+import type { PointWritable } from '../../../src/types';
 import { addInto } from '../../../src/vec/add-into';
 
 describe('vec arithmetic - addInto', () => {
-  test('object 입력과 tuple 입력을 더해 out에 기록한다', () => {
-    const out: XYWritable = { x: 0, y: 0 };
-    const result = addInto(out, { x: 1, y: 2 }, [3, 4]);
+  test('두 점의 성분을 더해 out에 기록한다', () => {
+    const out: PointWritable = { x: 0, y: 0 };
+    const result = addInto(out, { x: 1, y: 2 }, { x: 3, y: 4 });
     expect(result).toBe(out);          // 같은 reference 반환 검증
     expect(out).toEqual({ x: 4, y: 6 });
   });
@@ -90,16 +89,14 @@ describe('vec arithmetic - addInto', () => {
 
 ## `*Into` 표준 검증 시나리오
 
-object 결과 `*Into` 함수는 다음 7개를 표준으로 검증한다.
+object 결과 `*Into` 함수는 다음 6개를 표준으로 검증한다.
 
-1. object 입력 / tuple 입력 / 혼합 입력 처리.
-2. `expect(result).toBe(out)` — 같은 reference 반환.
-3. mutable tuple out에 기록 후 tuple reference 보존
-   (`expectTypeOf(result).toEqualTypeOf<[number, number]>()`).
-4. 외부 class instance out 반환 타입 보존 + method chaining (ADR 0006).
-5. aliasing: `input === out` 안전성.
-6. degenerate / sentinel (실패 시 `false` / companion `undefined`).
-7. non-finite pass-through (NaN, Infinity, -Infinity).
+1. 도형의 고정 필드를 읽고 출력 필드에 기대값을 기록한다.
+2. out을 반환하는 함수는 `expect(result).toBe(out)`으로 같은 객체를 확인한다.
+3. 외부 class instance를 out에 쓰고 `expectTypeOf(result).toEqualTypeOf<클래스>()`로 구체 타입을 확인한다 (ADR 0010).
+4. aliasing: `input === out` 안전성.
+5. degenerate / sentinel (실패 시 `false` / companion `undefined`).
+6. non-finite pass-through (NaN, Infinity, -Infinity).
 
 ## Mocking
 
@@ -112,7 +109,7 @@ deterministic `RandomSource` 주입으로 검증한다: `rng?: RandomSource`에
 
 - contract leaf export 목록: `tests/contract/_fixtures/<domain>-leaf-exports.ts`.
 - 공유 helper: `tests/contract/_helpers/domain-subpath-contract.ts`, `source-surface.ts`.
-- 테스트 내부 inline fixture가 기본. 좌표는 의도가 드러나는 구체값 (`{ x: 1, y: 2 }`, `[3, 4]`).
+- 테스트 내부 inline fixture가 기본. 좌표는 의도가 드러나는 구체값 (`{ x: 1, y: 2 }`, `{ x: 3, y: 4 }`).
 
 ## Coverage
 

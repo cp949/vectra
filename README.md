@@ -21,8 +21,7 @@ npm install @cp949/vectra
 ```ts
 import * as Vecx from '@cp949/vectra/vec';
 
-console.log(Vecx.add({ x: 1, y: 2 }, [3, 4])); // {x: 4, y: 6}
-console.log(Vecx.add([3, 4], { x: 1, y: 2 })); // {x: 4, y: 6}
+console.log(Vecx.add({ x: 1, y: 2 }, { x: 3, y: 4 })); // { x: 4, y: 6 }
 ```
 
 ## Workspace

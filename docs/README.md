@@ -16,7 +16,7 @@
 | --- | --- |
 | [Import 방식](./guides/imports.md) | root(type·metadata)와 domain subpath를 구분할 때 |
 | [Output과 Into](./guides/outputs-and-into.md) | allocation과 caller-owned output 재사용을 선택할 때 |
-| [Input과 Shape](./guides/inputs-and-shapes.md) | `{ x, y }`, tuple, shape input 규칙을 확인할 때 |
+| [Input과 Shape](./guides/inputs-and-shapes.md) | `{ x, y }`와 평평한 도형 입력 규칙을 확인할 때 |
 | [Degenerate와 Numeric Policy](./guides/degen-and-numeric-policy.md) | sentinel, `RangeError`, epsilon 처리를 확인할 때 |
 | [Adapter](./guides/adapters.md) | SVG points/path 같은 외부 format 변환을 사용할 때 |
 

@@ -24,8 +24,8 @@
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │              Internal shared layer (non-public)                           │
-│  src/internal/*.ts        — structural read/write 헬퍼 (readX, ...)       │
-│  src/types/*.internal.ts  — structural 타입 (Like/Writable)               │
+│  src/internal/*.ts        — 좌표·수치 계산 공유 헬퍼       │
+│  src/types/*.internal.ts  — structural 입력·출력 타입               │
 │  src/<domain>/*.internal.ts — 도메인 비공개 hot-path 헬퍼                 │
 └───────────────────────────────────────────────────────────────────────────┘
                                     │
@@ -47,8 +47,8 @@ structural typing.
 - 도메인(`vec`, `segment`, `rect`, `circle`, ...)별 폴더 1개. 각 도메인은 subpath
   export(`@cp949/vectra/vec`)로 독립 import 가능하다.
 - public 함수 1개 = 파일 1개. 파일명 kebab-case, export camelCase.
-- 입력은 structural(`XYLike = {x,y} | [x,y]`). renderer/DOM/scene graph/editor state를
-  소유하지 않는다.
+- 입력은 도형마다 필드 구조가 고정된다. 예를 들어 점은 `Point { x, y }`다.
+  renderer/DOM/scene graph/editor state를 소유하지 않는다.
 - object 결과 연산은 allocating companion(`bounds`)과 mutating variant(`boundsInto(out, ...)`)를
   쌍으로 제공한다.
 
@@ -67,15 +67,15 @@ structural typing.
 - 사용처: tsdown entrypoint, subpath export, contract test
 
 **Internal shared layer:**
-- 목적: structural input 좌표 read/write, hot-path 공유 로직
+- 목적: 좌표·수치 계산, hot-path 공유 로직
 - 위치: `src/internal/*.ts`, `src/<domain>/*.internal.ts`
-- 구성: `readX`/`readY`/`writeXY`/`readSegmentA` 등, 도메인 내부 헬퍼
+- 구성: `distanceSqXY` 등 scalar 계산 헬퍼와 도메인 내부 헬퍼
 - **public으로 노출되지 않는다.** `.internal.` 또는 `src/internal/`은 entrypoint 제외 규칙.
 
 **Type contract layer:**
 - 목적: structural shape 타입 정의
 - 위치: `src/types/*.internal.ts`, 집약 barrel `src/types/index.ts`
-- 구성: `SegmentLike`/`SegmentWritable`/`SegmentTuple` 등 (`xy.internal.ts` 기반 합성)
+- 구성: `Segment`, `SegmentWritable` 등 (`flat-shapes.internal.ts`)
 
 ## 데이터 흐름
 
@@ -84,13 +84,13 @@ structural typing.
 1. consumer가 `import { length } from '@cp949/vectra/segment'`
 2. subpath export가 `dist/segment/index.js`로 해석 (`sub/vectra/package.json` exports)
 3. barrel이 leaf 함수 re-export (`src/segment/index.ts`)
-4. leaf 함수가 internal helper로 좌표 read (`readSegmentB`/`readX`)
+4. leaf 함수가 도형 필드에서 좌표를 직접 읽는다.
 5. 순수 계산 결과 number/object 반환
 
 ### Allocating vs Into 경로
 
 1. allocating companion 호출 → 새 object 할당 후 반환 (`src/segment/bounds.ts`)
-2. `*Into` variant 호출 → 호출자가 제공한 `out`에 `writeXY`로 기록 후 동일 `out` 반환
+2. `*Into` variant 호출 → 호출자가 제공한 `out` 필드에 직접 기록 후 동일 `out` 반환
    (`src/segment/bounds-into.ts`)
 3. companion은 내부에서 `*Into`에 위임한다. governance가 위임 관계를 추적한다
    (`scripts/check-public-import-boundary.mjs`의 `companionDelegationAliases`).
@@ -100,13 +100,13 @@ structural typing.
 
 ## 핵심 추상
 
-**Structural input (`*Like`):**
-- object와 tuple을 모두 받는 입력 계약. `type SegmentLike = SegmentObjectLike | SegmentTuple`.
-  `readX`/`readSegmentA`로 분기 흡수.
+**Structural input:**
+- 도형별 고정 입력 계약. `Segment`는 `x1`, `y1`, `x2`, `y2`를 읽는다.
+- 좌표 규격은 [ADR 0010](./adr/0010-flat-shape-input.md)을 따른다.
 
 **Writable output (`*Writable`):**
-- `*Into` 함수의 out 인자 계약. generic으로 storage shape 보존. `writeXY(out, x, y)`가
-  tuple/object 분기 후 동일 `out` 반환.
+- `*Into` 함수가 출력 필드에 직접 기록한다. `out`을 반환하는 함수는 generic으로
+  출력 객체의 구체 타입을 보존한다.
 
 **Domain namespace:**
 - 함수를 도메인별로 격리, subpath import 가능. 폴더 = 도메인 = subpath export.

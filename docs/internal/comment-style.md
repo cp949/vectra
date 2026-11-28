@@ -51,7 +51,7 @@ dash 없는 형식으로 작성한다.
  * @param polyline 거리를 측정할 polyline
  * @param point polyline까지의 거리를 측정할 point
  */
-export function distanceToPoint(polyline: PolylineLike, point: XYInput): number {
+export function distanceToPoint(polyline: Polyline, point: Point): number {
   // ...
 }
 ```

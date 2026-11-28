@@ -12,7 +12,7 @@ object 결과를 만드는 API는 보통 두 형태를 제공한다.
 ```ts
 import * as Vecx from '@cp949/vectra/vec';
 
-const sum = Vecx.add({ x: 1, y: 2 }, [3, 4]);
+const sum = Vecx.add({ x: 1, y: 2 }, { x: 3, y: 4 });
 
 console.log(sum); // { x: 4, y: 6 }
 ```
@@ -25,7 +25,7 @@ console.log(sum); // { x: 4, y: 6 }
 import * as Vecx from '@cp949/vectra/vec';
 
 const out = { x: 0, y: 0 };
-const returned = Vecx.addInto(out, { x: 1, y: 2 }, [3, 4]);
+const returned = Vecx.addInto(out, { x: 1, y: 2 }, { x: 3, y: 4 });
 
 console.log(out); // { x: 4, y: 6 }
 console.log(returned === out); // true
@@ -51,7 +51,7 @@ class Point {
 }
 
 const out = new Point(0, 0);
-Vecx.scaleInto(out, [3, 4], 2).translateX(10);
+Vecx.scaleInto(out, { x: 3, y: 4 }, 2).translateX(10);
 
 console.log(out); // Point { x: 16, y: 8 }
 ```

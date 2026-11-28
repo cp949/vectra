@@ -11,9 +11,9 @@
 import * as Trianglex from '@cp949/vectra/triangle';
 
 const triangle = {
-  a: { x: 0, y: 0 },
-  b: { x: 1, y: 0 },
-  c: { x: 0, y: 1 },
+  x1: 0, y1: 0,
+  x2: 1, y2: 0,
+  x3: 0, y3: 1,
 };
 
 try {
@@ -32,9 +32,9 @@ object-output `*Into`는 실패 시 `false`, allocating companion은 `undefined`
 import * as Trianglex from '@cp949/vectra/triangle';
 
 const lineTriangle = {
-  a: { x: 0, y: 0 },
-  b: { x: 1, y: 1 },
-  c: { x: 2, y: 2 },
+  x1: 0, y1: 0,
+  x2: 1, y2: 1,
+  x3: 2, y3: 2,
 };
 
 const out = { x: 0, y: 0 };
@@ -58,7 +58,7 @@ epsilon 기본값은 domain마다 다를 수 있다.
 ```ts
 import * as Vecx from '@cp949/vectra/vec';
 
-const equal = Vecx.nearEquals({ x: 0.1 + 0.2, y: 0 }, [0.3, 0], 1e-9);
+const equal = Vecx.nearEquals({ x: 0.1 + 0.2, y: 0 }, { x: 0.3, y: 0 }, 1e-9);
 
 console.log(equal); // true
 ```

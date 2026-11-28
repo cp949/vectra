@@ -5,6 +5,7 @@
  * `rx`, `ry`는 양수여야 한다. zero 또는 음수일 경우 degenerate로 취급한다.
  * `sweep === true`는 시계 방향(clockwise) 진행을 뜻한다. 이 정책에서는
  * 각도가 증가하는 방향이 시계 방향이므로 `sweep === true`이면 `endAngle >= startAngle`이다.
+ * 반복 호출에는 필드 구성과 순서가 같은 객체를 넘긴다.
  */
 export interface CenterArc {
   /** 타원 중심 x */
@@ -35,8 +36,7 @@ export interface CenterArc {
 /**
  * `CenterArc`의 모든 field를 mutable로 가진 output type.
  *
- * `endpointArcToCenterInto`, `centerArcToEndpointInto`(endpoint form은 아님)
- * 등 center form 결과를 기록할 때 사용한다.
+ * `endpointArcToCenterInto` 등에서 center form 결과를 기록할 때 사용한다.
  */
 export interface CenterArcWritable {
   /** 기록 가능한 타원 중심 x */

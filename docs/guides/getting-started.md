@@ -19,7 +19,7 @@ npm install @cp949/vectra
 | Module format | ESM. CJS는 `require(esm)`으로 불러온다 |
 | Dependencies | runtime dependency 없음 |
 | TypeScript | package가 제공하는 `.d.ts` 사용 |
-| Coordinates | `{ x, y }` object 또는 readonly `[x, y]` tuple |
+| Coordinates | `{ x, y }` 객체 |
 
 ## 첫 계산
 
@@ -28,10 +28,10 @@ import * as Vecx from '@cp949/vectra/vec';
 import * as Segmentx from '@cp949/vectra/segment';
 
 const a = { x: 0, y: 0 };
-const b = [3, 4] as const;
+const b = { x: 3, y: 4 };
 
 const sum = Vecx.add(a, b);
-const distance = Segmentx.length([a, b]);
+const distance = Segmentx.length({ x1: a.x, y1: a.y, x2: b.x, y2: b.y });
 
 console.log(sum); // { x: 3, y: 4 }
 console.log(distance); // 5
@@ -41,5 +41,5 @@ console.log(distance); // 5
 
 - [Import 방식](./imports.md): domain barrel import와 root import 차이를 확인한다.
 - [Output과 Into](./outputs-and-into.md): allocation과 caller-owned output 재사용을 선택한다.
-- [Input과 shape](./inputs-and-shapes.md): `{ x, y }`, tuple, `XxxLike` 규칙을 확인한다.
+- [Input과 shape](./inputs-and-shapes.md): `Point`와 평평한 도형의 입력 규칙을 확인한다.
 - [Domain 지도](../reference/domains.md): 필요한 기능이 어느 domain에 있는지 찾는다.

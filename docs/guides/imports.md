@@ -36,7 +36,7 @@ public import path는 `sub/vectra/package.json` `exports`에 있는 경로다.
 현재 문서는 root, `types`, domain subpath를 기준으로 설명한다.
 
 ```ts
-import type { XYInput } from '@cp949/vectra/types';
+import type { Point } from '@cp949/vectra/types';
 import * as Intersectx from '@cp949/vectra/intersects';
 import * as SvgPathx from '@cp949/vectra/svg-path';
 ```

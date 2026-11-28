@@ -11,7 +11,7 @@
 
 - 넓은 geometry/math function catalog를 제공한다.
 - 단일 package + subpath 기반으로 필요한 함수만 가져다 쓰게 한다.
-- caller object는 문서화된 `XYInput` 또는 shape별 `Like` structural contract와 맞아야 한다.
+- caller object는 문서화된 `Point` 또는 도형별 고정 필드를 갖춰야 한다.
 - 공개 API는 function catalog이다.
 - object result는 `Into` 함수가 caller-provided writable output에 기록한다.
 - scalar, boolean, enum result는 직접 반환한다.
