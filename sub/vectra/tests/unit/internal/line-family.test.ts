@@ -1,3 +1,7 @@
+/**
+ * line-family 내부 판정과 단일 교점 기록을 검증한다.
+ * segment·ray·infinite-line 조합, degenerate 입력, side 목록의 중복 교점 제거를 다룬다.
+ */
 import { describe, expect, test } from 'vitest';
 import {
   infiniteLineToLineFamilyParam,
@@ -8,12 +12,14 @@ import {
 } from '../../../src/internal/line-family';
 import { findSingleLineFamilySideIntersectionPoint } from '../../../src/internal/line-family-side.internal';
 import { DEFAULT_EPSILON } from '../../../src/internal/numeric';
+import type { PointWritable } from '../../../src/types/flat-shapes.internal';
 
 // out 미수정 검증용 sentinel 좌표
 const SENTINEL_X = 9999;
 const SENTINEL_Y = -7777;
 
-function makeOut() {
+/** 교점이 없을 때 out을 건드리지 않았는지 확인할 sentinel 점을 만든다. */
+function makeOut(): PointWritable {
   return { x: SENTINEL_X, y: SENTINEL_Y };
 }
 
@@ -448,35 +454,6 @@ describe('lineFamilyIntersectionPoint: degenerate 입력', () => {
 
     expect(result).toBe(false);
     expect(out).toEqual({ x: SENTINEL_X, y: SENTINEL_Y });
-  });
-});
-
-// ─────────────────────────────────────────────
-// output writable variant
-// ─────────────────────────────────────────────
-describe('lineFamilyIntersectionPoint: output type', () => {
-  test('mutable tuple output에도 교점 좌표를 기록한다', () => {
-    const out: [number, number] = [SENTINEL_X, SENTINEL_Y];
-    const a = segmentToLineFamilyParam(0, 0, 10, 0);
-    const b = rayToLineFamilyParam(5, -5, 0, 1);
-
-    const result = lineFamilyIntersectionPoint(out, a, b, DEFAULT_EPSILON);
-
-    expect(result).toBe(true);
-    expect(out[0]).toBe(5);
-    expect(out[1]).toBe(0);
-  });
-
-  test('mutable tuple output: false 케이스에서 tuple은 수정되지 않는다', () => {
-    const out: [number, number] = [SENTINEL_X, SENTINEL_Y];
-    const a = segmentToLineFamilyParam(0, 0, 10, 0);
-    const b = rayToLineFamilyParam(5, 5, 0, 1);
-
-    const result = lineFamilyIntersectionPoint(out, a, b, DEFAULT_EPSILON);
-
-    expect(result).toBe(false);
-    expect(out[0]).toBe(SENTINEL_X);
-    expect(out[1]).toBe(SENTINEL_Y);
   });
 });
 

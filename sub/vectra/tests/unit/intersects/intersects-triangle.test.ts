@@ -1,3 +1,7 @@
+/**
+ * 삼각형과 선분·ray·무한 직선의 교차 판정과 단일 교점 함수를 검증한다.
+ * Into 함수의 out 기록 정책과 allocating companion의 반환값을 함께 다룬다.
+ */
 import { describe, expect, test } from 'vitest';
 import { intersectsTriangleInfiniteLine } from '../../../src/intersects/intersects-triangle-infinite-line';
 import { intersectsTriangleRay } from '../../../src/intersects/intersects-triangle-ray';

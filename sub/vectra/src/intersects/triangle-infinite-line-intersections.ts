@@ -7,8 +7,8 @@ import { triangleInfiniteLineIntersectionsInto } from './triangle-infinite-line-
  *
  * `triangleInfiniteLineIntersectionsInto`의 allocating companion이다. boundary 교점만 노출한다.
  * - transversal crossing, vertex touch 1점(dedupe), edge collinear overlap은 clipped start/end 2점이다.
- * - line이 triangle을 가로지르면 양방향 2점이며 direction 부호와 무관하게 line parameter `t` 오름차순이다.
- * - degenerate triangle(signed area 2× === 0), non-finite vertex, zero-vector direction, non-finite
+ * - line이 triangle을 가로지르면 양방향 2점이며 `(dx, dy)` 부호와 무관하게 line parameter `t` 오름차순이다.
+ * - degenerate triangle(signed area 2× === 0), non-finite vertex, `dx = dy = 0`인 direction, non-finite
  *   coordinate는 빈 배열이다. degenerate triangle을 segment/point relation으로 환원하지 않는다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 point object를 재사용하지 않는다. 반환 순서는

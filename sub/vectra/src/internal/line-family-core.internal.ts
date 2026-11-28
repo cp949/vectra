@@ -1,4 +1,4 @@
-import type { XYWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
 import {
   getLineFamilyOwnRangeInterval,
@@ -6,7 +6,6 @@ import {
   lineFamilyRangeContains,
 } from './line-family-range.internal';
 import { crossExceeds, crossWithin, DEFAULT_EPSILON } from './numeric';
-import { writeXY } from './xy';
 
 /**
  * normal LineFamilyParam에 대해 외부 좌표 (px, py)가 line-family 위에 있는지 검사한다.
@@ -125,7 +124,7 @@ function lineFamilyParallelIntersects(
  *   명시하면 평행 판정도 `|cross| <= epsilon` 절대 비교를 쓴다.
  */
 export function lineFamilyIntersectionPoint(
-  out: XYWritable,
+  out: PointWritable,
   a: LineFamilyParam,
   b: LineFamilyParam,
   epsilonArg: number | undefined
@@ -141,20 +140,23 @@ export function lineFamilyIntersectionPoint(
       const dx = a.ox - b.ox;
       const dy = a.oy - b.oy;
       if (dx * dx + dy * dy <= epsilon * epsilon) {
-        writeXY(out, a.ox, a.oy);
+        out.x = a.ox;
+        out.y = a.oy;
         return true;
       }
       return false;
     }
     if (aDegen) {
       if (containsPointNormalized(b, a.ox, a.oy, epsilon)) {
-        writeXY(out, a.ox, a.oy);
+        out.x = a.ox;
+        out.y = a.oy;
         return true;
       }
       return false;
     }
     if (containsPointNormalized(a, b.ox, b.oy, epsilon)) {
-      writeXY(out, b.ox, b.oy);
+      out.x = b.ox;
+      out.y = b.oy;
       return true;
     }
     return false;
@@ -172,6 +174,7 @@ export function lineFamilyIntersectionPoint(
 
   if (!lineFamilyRangeContains(t, a.kind) || !lineFamilyRangeContains(u, b.kind)) return false;
 
-  writeXY(out, a.ox + t * a.dx, a.oy + t * a.dy);
+  out.x = a.ox + t * a.dx;
+  out.y = a.oy + t * a.dy;
   return true;
 }

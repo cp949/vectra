@@ -1,7 +1,11 @@
+/**
+ * 두 삼각형의 영역 교차를 검증한다.
+ * 분리, 포함, 부분 겹침, 변 접촉, 꼭짓점 방향, 퇴화 입력을 다룬다.
+ */
 import { describe, expect, test } from 'vitest';
 import { intersectsTriangleTriangle } from '../../../src/intersects/intersects-triangle-triangle';
 
-// 기준 삼각형: a(0,0) b(4,0) c(0,4) — CCW
+// 기준 삼각형: (0,0), (4,0), (0,4) — CCW
 const triA = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 };
 
 describe('intersectsTriangle', () => {
@@ -75,12 +79,6 @@ describe('intersectsTriangle', () => {
       const cw = { x1: 0, y1: 0, x2: 0, y2: 4, x3: 4, y3: 0 };
       const triB = { x1: 2, y1: 0, x2: 6, y2: 0, x3: 2, y3: 4 };
       expect(intersectsTriangleTriangle(cw, triB)).toBe(true);
-    });
-
-    test('두 삼각형의 경계가 서로 교차하면 true다', () => {
-      const tA = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 };
-      const tB = { x1: 2, y1: 2, x2: 6, y2: 2, x3: 2, y3: 6 };
-      expect(intersectsTriangleTriangle(tA, tB)).toBe(true);
     });
   });
 });

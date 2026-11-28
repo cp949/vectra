@@ -1,7 +1,11 @@
+/**
+ * 삼각형과 bounds 영역 교차를 검증한다.
+ * 분리, 포함, 경계 접촉, 변 교차, 퇴화 삼각형과 빈 영역을 다룬다.
+ */
 import { describe, expect, test } from 'vitest';
 import { intersectsBoundsTriangle } from '../../../src/intersects/intersects-bounds-triangle';
 
-// 기준 삼각형: a(0,0) b(4,0) c(0,4) — CCW
+// 기준 삼각형: (0,0), (4,0), (0,4) — CCW
 const tri = { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 };
 
 describe('intersectsBounds', () => {

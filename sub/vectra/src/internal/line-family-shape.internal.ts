@@ -1,11 +1,9 @@
 import type { PointWritable } from '../types/flat-shapes.internal';
-import type { XYWritable } from '../types';
 import { lineFamilyIntersects } from './line-family-core.internal';
 import type { LineFamilyParam } from './line-family-param.internal';
 import { segmentToLineFamilyParam } from './line-family-param-builders.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';
 import { findSingleLineFamilySideIntersectionPoint, findSingleLineFamilySidePoint } from './line-family-side.internal';
-import { writeXY } from './xy';
 import { hypot2 } from './numeric';
 
 /**
@@ -108,7 +106,7 @@ export function lineFamilyCircleIntersects(
  * degenerate direction: origin이 circle 경계 위 (|dist - r| <= epsilon)이면 origin 기록.
  */
 export function lineFamilyCircleIntersectionPoint(
-  out: XYWritable,
+  out: PointWritable,
   line: LineFamilyParam,
   cx: number,
   cy: number,
@@ -125,7 +123,8 @@ export function lineFamilyCircleIntersectionPoint(
   if (lenSq === 0) {
     // degenerate: origin이 circle 경계 위인지 확인
     if (Math.abs(hypot2(qx, qy) - r) <= epsilon) {
-      writeXY(out, line.ox, line.oy);
+      out.x = line.ox;
+      out.y = line.oy;
       return true;
     }
     return false;
@@ -139,7 +138,8 @@ export function lineFamilyCircleIntersectionPoint(
   if (disc === 0) {
     const t = -p / lenSq;
     if (!lineFamilyRangeContains(t, line.kind)) return false;
-    writeXY(out, line.ox + t * line.dx, line.oy + t * line.dy);
+    out.x = line.ox + t * line.dx;
+    out.y = line.oy + t * line.dy;
     return true;
   }
 
@@ -151,11 +151,13 @@ export function lineFamilyCircleIntersectionPoint(
 
   if (in1 && in2) return false; // 2-point crossing
   if (in1) {
-    writeXY(out, line.ox + t1 * line.dx, line.oy + t1 * line.dy);
+    out.x = line.ox + t1 * line.dx;
+    out.y = line.oy + t1 * line.dy;
     return true;
   }
   if (in2) {
-    writeXY(out, line.ox + t2 * line.dx, line.oy + t2 * line.dy);
+    out.x = line.ox + t2 * line.dx;
+    out.y = line.oy + t2 * line.dy;
     return true;
   }
   return false;

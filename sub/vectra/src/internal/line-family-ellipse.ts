@@ -14,10 +14,10 @@
  * 이 모듈은 internal 전용으로, public API에 노출되지 않는다.
  */
 
-import type { XYObjectWritable, XYWritable } from '../types';
+import type { XYObjectWritable } from '../types';
+import type { PointWritable } from '../types/flat-shapes.internal';
 import type { LineFamilyRangeKind } from './line-family-param.internal';
 import { lineFamilyRangeContains } from './line-family-range.internal';
-import { writeXY } from './xy';
 
 /**
  * {@link solveLineFamilyEllipse}의 결과. `kind`로 판별식 분기를 구분한다.
@@ -248,7 +248,7 @@ export function lineFamilyEllipseIntersects(
  * @param epsilon discriminant 0 근방 임계값
  */
 export function lineFamilyEllipseIntersectionPoint(
-  out: XYWritable,
+  out: PointWritable,
   ox: number,
   oy: number,
   dx: number,
@@ -266,7 +266,8 @@ export function lineFamilyEllipseIntersectionPoint(
 
   if (sol.kind === 'tangent') {
     if (!lineFamilyRangeContains(sol.t, kind)) return false;
-    writeXY(out, ox + sol.t * dx, oy + sol.t * dy);
+    out.x = ox + sol.t * dx;
+    out.y = oy + sol.t * dy;
     return true;
   }
 
@@ -278,11 +279,13 @@ export function lineFamilyEllipseIntersectionPoint(
   if (in1 && in2) return false;
 
   if (in1) {
-    writeXY(out, ox + sol.t1 * dx, oy + sol.t1 * dy);
+    out.x = ox + sol.t1 * dx;
+    out.y = oy + sol.t1 * dy;
     return true;
   }
   if (in2) {
-    writeXY(out, ox + sol.t2 * dx, oy + sol.t2 * dy);
+    out.x = ox + sol.t2 * dx;
+    out.y = oy + sol.t2 * dy;
     return true;
   }
 

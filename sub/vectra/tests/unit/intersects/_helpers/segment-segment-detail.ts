@@ -1,13 +1,22 @@
+/**
+ * segmentSegmentDetail 시험이 함께 쓰는 선분 생성 함수와 결과 단언 함수.
+ */
 import { expect } from 'vitest';
 import type { SegmentSegmentDetail } from '../../../../src/types';
 import type { Segment } from '../../../../src/types/flat-shapes.internal';
 
+/** 교차 parameter를 비교할 소수 자릿수. */
 export const EXPECTED_PRECISION = 12;
 
+/** 두 끝점 좌표로 평평한 선분을 만든다. */
 export function segment(ax: number, ay: number, bx: number, by: number): Segment {
   return { x1: ax, y1: ay, x2: bx, y2: by };
 }
 
+/**
+ * 결과가 `point`인지 확인하고, 주어진 필드만 기대값과 비교한다.
+ * 생략한 필드는 검사하지 않는다.
+ */
 export function expectPointDetail(
   result: SegmentSegmentDetail,
   expected: { point?: { x: number; y: number }; tA?: number; tB?: number },
@@ -29,6 +38,10 @@ export function expectPointDetail(
   }
 }
 
+/**
+ * 결과가 `overlap`인지 확인하고, 주어진 필드만 기대값과 비교한다.
+ * 생략한 필드는 검사하지 않는다.
+ */
 export function expectOverlapDetail(
   result: SegmentSegmentDetail,
   expected: {

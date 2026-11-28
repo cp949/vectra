@@ -7,8 +7,8 @@ import { triangleLineFamilyIntersectionsInto } from './triangle-line-family-inte
  *
  * triangle 3개 edge(A-B, B-C, C-A)와의 교점을 모으고 vertex/edge 중복을 dedupe한다.
  * - transversal crossing, vertex touch 1점(dedupe), edge collinear overlap은 clipped start/end 2점이다.
- * - line이 triangle을 가로지르면 양방향 2점이며 direction 부호와 무관하게 line parameter `t` 오름차순이다.
- * - degenerate triangle(signed area 2× === 0), non-finite vertex, zero-vector direction, non-finite
+ * - line이 triangle을 가로지르면 양방향 2점이며 `(dx, dy)` 부호와 무관하게 line parameter `t` 오름차순이다.
+ * - degenerate triangle(signed area 2× === 0), non-finite vertex, `dx = dy = 0`인 direction, non-finite
  *   coordinate는 빈 배열이다. degenerate triangle을 segment/point relation으로 환원하지 않는다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object이며

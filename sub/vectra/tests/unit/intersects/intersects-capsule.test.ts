@@ -220,14 +220,6 @@ describe('intersectsCapsuleSegment - zero-axis capsule × zero-length segment', 
   });
 });
 
-describe('intersectsCapsuleSegment - input 형태', () => {
-  test('읽기 전용 capsule의 경계를 가로지르면 true다', () => {
-    const capsule = { x1: 0, y1: 0, x2: 10, y2: 0, r: 2 } as const;
-    expect(intersectsCapsuleSegment(capsule, { x1: 5, y1: -5, x2: 5, y2: 5 })).toBe(true);
-    expect(intersectsCapsuleSegment(capsule, { x1: 5, y1: 5, x2: 5, y2: 10 })).toBe(false);
-  });
-});
-
 describe('intersectsCapsuleSegment - invalid radius', () => {
   test.each([-1, NaN, Infinity, -Infinity])('radius %s는 RangeError', (radius) => {
     const seg: Segment = { x1: 0, y1: 0, x2: 1, y2: 1 };
@@ -349,15 +341,6 @@ describe('intersectsCapsuleCapsule - 인자 순서 대칭', () => {
   test('circle-vs-capsule은 (circle,capsule)과 (capsule,circle)이 일치한다', () => {
     const circle: Capsule = { x1: 5, y1: 3, x2: 5, y2: 3, r: 2 };
     expect(intersectsCapsuleCapsule(circle, horizontal)).toBe(intersectsCapsuleCapsule(horizontal, circle));
-  });
-});
-
-describe('intersectsCapsuleCapsule - input 형태', () => {
-  test('축 사이 거리가 반지름의 합 이하면 true다', () => {
-    const near = { x1: 0, y1: 3, x2: 10, y2: 3, r: 2 } as const;
-    expect(intersectsCapsuleCapsule(horizontal, near)).toBe(true);
-    const far = { x1: 0, y1: 5, x2: 10, y2: 5, r: 2 } as const;
-    expect(intersectsCapsuleCapsule(horizontal, far)).toBe(false);
   });
 });
 

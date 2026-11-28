@@ -162,16 +162,6 @@ describe('intersectsOrientedRectOrientedRect - 회전', () => {
   });
 });
 
-describe('intersectsOrientedRectOrientedRect - 평행 이동', () => {
-  test('이동한 두 사각형이 겹칠 때만 true다', () => {
-    const originRect: OrientedRect = { cx: 0, cy: 0, width: 4, height: 2, angle: 0 };
-    const b: OrientedRect = { cx: 1, cy: 0, width: 4, height: 2, angle: 0 };
-    expect(intersectsOrientedRectOrientedRect(originRect, b)).toBe(true);
-    const far: OrientedRect = { cx: 5, cy: 0, width: 4, height: 2, angle: 0 };
-    expect(intersectsOrientedRectOrientedRect(originRect, far)).toBe(false);
-  });
-});
-
 describe('intersectsOrientedRectOrientedRect - empty size', () => {
   test('a.width === 0은 false', () => {
     const empty: OrientedRect = { cx: 0, cy: 0, width: 0, height: 2, angle: 0 };

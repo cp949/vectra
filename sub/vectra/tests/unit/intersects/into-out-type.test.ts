@@ -5,8 +5,6 @@
  * 기존 객체에 덮어쓰는 sweep 결과는 호출자의 결과 타입과 내부 점 참조를 보존한다.
  */
 import { expect, expectTypeOf, test } from 'vitest';
-import { segmentSegmentIntersectionsInto } from '../../../src/intersects/segment-segment-intersections-into';
-import { triangleSegmentIntersectionsInto } from '../../../src/intersects/triangle-segment-intersections-into';
 import { boundsSweepBoundsInto } from '../../../src/intersects/bounds-sweep-bounds-into';
 import { boundsSweepPointInto } from '../../../src/intersects/bounds-sweep-point-into';
 import { infiniteLineBoundsIntersectionsInto } from '../../../src/intersects/infinite-line-bounds-intersections-into';
@@ -23,6 +21,8 @@ import { infiniteLinePolygonOverlapIntervalsInto } from '../../../src/intersects
 import { segmentPolygonOverlapIntervalsInto } from '../../../src/intersects/segment-polygon-overlap-intervals-into';
 import { raysFromPointToPolygonInto } from '../../../src/intersects/rays-from-point-to-polygon-into';
 import { visibilityPolygonInto } from '../../../src/intersects/visibility-polygon-into';
+import { segmentSegmentIntersectionsInto } from '../../../src/intersects/segment-segment-intersections-into';
+import { triangleSegmentIntersectionsInto } from '../../../src/intersects/triangle-segment-intersections-into';
 import type {
   LinePolygonIntersectionHit,
   LinePolygonOverlapIntervalDetail,

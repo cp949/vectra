@@ -27,11 +27,11 @@ import { readRayDirection, readRayOrigin } from '../../../src/internal/ray';
 import { readSegmentA, readSegmentB } from '../../../src/internal/segment';
 import { readX, readY } from '../../../src/internal/xy';
 import { createRng } from '../../../src/random/create-rng';
-import type { CircleLike, RayLike, SegmentLike, XYInput, XYObjectWritable, XYWritable } from '../../../src/types';
+import type { CircleLike, RayLike, SegmentLike, XYInput, XYObjectWritable } from '../../../src/types';
 
 // 이전 구현. 공유 reader와 `LineFamilyParam` record, `solveLineFamilyEllipse` buffer를 그대로 쓴다.
 
-function referenceSegmentRayInto(out: XYWritable, line: SegmentLike, ray: RayLike, epsilon?: number): boolean {
+function referenceSegmentRayInto(out: XYObjectWritable, line: SegmentLike, ray: RayLike, epsilon?: number): boolean {
   const a = readSegmentA(line);
   const b = readSegmentB(line);
   const origin = readRayOrigin(ray);
@@ -211,12 +211,11 @@ describe('ray 점 반환 함수 — 이전 구현과 비트 단위 동일성', (
       const seg = segmentSpec(rng, bias);
       const ray = raySpec(rng, bias);
       const epsilon = pick(rng, EPSILONS);
-      const outTuple = rng() < 0.2;
-      const expectedOut: XYWritable = outTuple ? [77, 88] : { x: 77, y: 88 };
+      const expectedOut = { x: 77, y: 88 };
       const actualOut = { x: 77, y: 88 };
       const expected = referenceSegmentRayInto(expectedOut, makeSegment(seg), makeRay(ray), epsilon);
       const actual = singleIntersectionSegmentRayInto(actualOut, flatSegment(seg), flatRay(ray), epsilon);
-      const [ex, ey] = Array.isArray(expectedOut) ? expectedOut : [expectedOut.x, expectedOut.y];
+      const { x: ex, y: ey } = expectedOut;
       const { x: ax, y: ay } = actualOut;
       if (actual !== expected || !same(ex, ax) || !same(ey, ay)) {
         throw new Error(

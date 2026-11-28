@@ -8,7 +8,7 @@ import { triangleRayIntersectionsInto } from './triangle-ray-intersections-into'
  * `triangleRayIntersectionsInto`의 allocating companion이다. boundary 교점만 노출한다.
  * - transversal crossing, vertex touch 1점(dedupe), edge collinear overlap은 clipped start/end 2점이다.
  * - ray 시작점 (ox, oy)가 triangle 내부면 t ≥ 0 exit 교점만 반환한다. boundary 교점이 없으면 빈 배열이다.
- * - degenerate triangle(signed area 2× === 0), non-finite vertex, zero-vector direction, non-finite
+ * - degenerate triangle(signed area 2× === 0), non-finite vertex, `dx = dy = 0`인 direction, non-finite
  *   coordinate는 빈 배열이다. degenerate triangle을 segment/point relation으로 환원하지 않는다.
  *
  * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 point object를 재사용하지 않는다. 반환 순서는
