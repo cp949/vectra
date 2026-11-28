@@ -6,8 +6,8 @@ import {
   demoResolveAliases,
   pixiSandboxPlugin,
   vectraSandboxPlugin,
-} from '../../sub/playground/vite/index';
-import { SHOWCASE_RUNTIME_MODULE_SPECIFIERS } from './src/sandbox/pixi-module-specifiers';
+} from '../../sub/playground/vite/index.ts';
+import { SHOWCASE_RUNTIME_MODULE_SPECIFIERS } from './src/sandbox/pixi-module-specifiers.ts';
 
 const appDir = fileURLToPath(new URL('.', import.meta.url));
 
