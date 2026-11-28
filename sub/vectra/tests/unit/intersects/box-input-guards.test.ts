@@ -98,12 +98,8 @@ describe('뒤집힌 bounds 가드', () => {
   });
 
   test('intersectsBoundsBounds는 두 번째 인자가 뒤집힌 bounds이면 false를 반환한다', () => {
-    expect(
-      intersectsBoundsBounds({ min: { x: 1, y: 1 }, max: { x: 5, y: 5 } }, { min: { x: 5, y: 1 }, max: { x: 1, y: 5 } })
-    ).toBe(false);
-    expect(
-      intersectsBoundsBounds({ min: { x: 1, y: 1 }, max: { x: 5, y: 5 } }, { min: { x: 1, y: 5 }, max: { x: 5, y: 1 } })
-    ).toBe(false);
+    expect(intersectsBoundsBounds(bounds, invertedX)).toBe(false);
+    expect(intersectsBoundsBounds(bounds, invertedY)).toBe(false);
   });
 });
 

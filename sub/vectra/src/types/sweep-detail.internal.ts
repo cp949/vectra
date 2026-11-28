@@ -1,4 +1,4 @@
-import type { XYObjectWritable } from './xy.internal';
+import type { PointWritable } from './flat-shapes.internal';
 
 /**
  * axis-aligned bounds sweep time-of-impact 결과 detail.
@@ -13,7 +13,7 @@ import type { XYObjectWritable } from './xy.internal';
  * - proper hit: `hit: true`, `time` ∈ `[0, 1]` 정규화 sweep 비율, `normal`은 충돌 면의 axis-aligned
  *   outward normal, `contact`는 hit 시점의 representative point다.
  *
- * `normal`과 `contact`는 fixed plain object다. `Into` 함수가 이 nested object에 좌표를 기록하고
+ * `normal`과 `contact`는 기존 점 객체다. `Into` 함수가 이 nested object에 좌표를 기록하고
  * companion은 매 호출 새 nested object를 만든다. 면적/penetration depth/velocity 적분 상태는 담지 않는다.
  */
 export interface BoundsSweepDetail {
@@ -24,10 +24,10 @@ export interface BoundsSweepDetail {
   time: number;
 
   /** 충돌 면의 axis-aligned outward normal. no-hit과 start-overlap은 `(0, 0)` */
-  normal: XYObjectWritable;
+  normal: PointWritable;
 
   /** hit 시점의 representative contact point. no-hit은 `(NaN, NaN)` */
-  contact: XYObjectWritable;
+  contact: PointWritable;
 
   /** 시작 시 이미 overlap이면 true */
   startOverlap: boolean;

@@ -2,20 +2,20 @@
  * area overlap detail consumer helper 단위 테스트.
  *
  * S11-RM-025: rect/bounds/circle area overlap 분류를
- * none/touch/overlap/contains 분기, touch point 개수와 좌표, tuple 입력으로 검증한다.
+ * none/touch/overlap/contains 분기, touch point 개수와 좌표로 검증한다.
  */
 
 import { describe, expect, test } from 'vitest';
 import { boundsBoundsAreaOverlapDetail } from '../../../src/intersects/bounds-bounds-area-overlap-detail';
 import { circleCircleAreaOverlapDetail } from '../../../src/intersects/circle-circle-area-overlap-detail';
 import { rectRectAreaOverlapDetail } from '../../../src/intersects/rect-rect-area-overlap-detail';
-import type { AreaOverlapDetail, BoundsLike, RectLike } from '../../../src/types';
+import type { AreaOverlapDetail } from '../../../src/types';
+import type { Bounds, Rect } from '../../../src/types/flat-shapes.internal';
 
-const rect = (x: number, y: number, width: number, height: number): RectLike => ({ x, y, width, height });
-const bounds = (minX: number, minY: number, maxX: number, maxY: number): BoundsLike => ({
-  min: { x: minX, y: minY },
-  max: { x: maxX, y: maxY },
-});
+/** 위치와 크기로 직사각형을 만든다. */
+const rect = (x: number, y: number, width: number, height: number): Rect => ({ x, y, width, height });
+/** 최소·최대 좌표로 경계 상자를 만든다. */
+const bounds = (minX: number, minY: number, maxX: number, maxY: number): Bounds => ({ minX, minY, maxX, maxY });
 /** 원 교차 판정에 쓸 입력을 구성한다. */
 const circle = (cx: number, cy: number, r: number) => ({ cx, cy, r });
 
@@ -104,10 +104,6 @@ describe('rectRectAreaOverlapDetail', () => {
   test('완전히 같은 rect는 contains다', () => {
     expect(rectRectAreaOverlapDetail(rect(0, 0, 4, 4), rect(0, 0, 4, 4))).toEqual({ kind: 'contains' });
   });
-
-  test('tuple rect 입력을 지원한다', () => {
-    expect(rectRectAreaOverlapDetail([0, 0, 4, 4], [2, 2, 4, 4])).toEqual({ kind: 'overlap' });
-  });
 });
 
 describe('boundsBoundsAreaOverlapDetail', () => {
@@ -155,21 +151,6 @@ describe('boundsBoundsAreaOverlapDetail', () => {
 
   test('한쪽이 다른 쪽을 포함하면 contains다', () => {
     expect(boundsBoundsAreaOverlapDetail(bounds(0, 0, 10, 10), bounds(2, 2, 6, 6))).toEqual({ kind: 'contains' });
-  });
-
-  test('tuple bounds 입력을 지원한다', () => {
-    expect(
-      boundsBoundsAreaOverlapDetail(
-        [
-          [0, 0],
-          [4, 4],
-        ],
-        [
-          [2, 2],
-          [6, 6],
-        ]
-      )
-    ).toEqual({ kind: 'overlap' });
   });
 });
 

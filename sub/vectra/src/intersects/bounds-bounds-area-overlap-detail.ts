@@ -1,7 +1,6 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { AreaOverlapDetail, BoundsLike } from '../types';
+import type { AreaOverlapDetail } from '../types';
+import type { Bounds } from '../types/flat-shapes.internal';
 import { axisAlignedAreaOverlapDetail } from './area-overlap-detail.internal';
 
 /**
@@ -23,28 +22,20 @@ import { axisAlignedAreaOverlapDetail } from './area-overlap-detail.internal';
  * @param b 두 번째 bounds
  * @param epsilon touch/overlap/contains 경계 판정 임계값
  */
-export function boundsBoundsAreaOverlapDetail(
-  a: BoundsLike,
-  b: BoundsLike,
-  epsilon = DEFAULT_EPSILON
-): AreaOverlapDetail {
-  const aMin = readBoundsMin(a);
-  const aMax = readBoundsMax(a);
-  const bMin = readBoundsMin(b);
-  const bMax = readBoundsMax(b);
-  const aMinX = readX(aMin);
-  const aMinY = readY(aMin);
-  const bMinX = readX(bMin);
-  const bMinY = readY(bMin);
+export function boundsBoundsAreaOverlapDetail(a: Bounds, b: Bounds, epsilon = DEFAULT_EPSILON): AreaOverlapDetail {
+  const aMinX = a.minX;
+  const aMinY = a.minY;
+  const bMinX = b.minX;
+  const bMinY = b.minY;
   return axisAlignedAreaOverlapDetail(
     aMinX,
     aMinY,
-    readX(aMax) - aMinX,
-    readY(aMax) - aMinY,
+    a.maxX - aMinX,
+    a.maxY - aMinY,
     bMinX,
     bMinY,
-    readX(bMax) - bMinX,
-    readY(bMax) - bMinY,
+    b.maxX - bMinX,
+    b.maxY - bMinY,
     epsilon
   );
 }

@@ -1,4 +1,5 @@
-import type { BoundsLike, BoundsSweepDetail, XYInput } from '../types';
+import type { BoundsSweepDetail } from '../types';
+import type { Bounds, Point } from '../types/flat-shapes.internal';
 import { boundsSweepPointInto } from './bounds-sweep-point-into';
 
 /**
@@ -16,7 +17,7 @@ import { boundsSweepPointInto } from './bounds-sweep-point-into';
  * @param velocity sweep velocity. `t ∈ [0, 1]` 동안 point가 이동하는 변위
  * @param target sweep 대상 stationary bounds
  */
-export function boundsSweepPoint(point: XYInput, velocity: XYInput, target: BoundsLike): BoundsSweepDetail {
+export function boundsSweepPoint(point: Point, velocity: Point, target: Bounds): BoundsSweepDetail {
   return boundsSweepPointInto(
     { hit: false, time: 0, normal: { x: 0, y: 0 }, contact: { x: 0, y: 0 }, startOverlap: false },
     point,

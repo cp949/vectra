@@ -4,6 +4,8 @@
  * 좁은 원소 타입 배열을 넘겨도 반환 타입이 넓어진 실제 원소 타입인지 확인한다.
  */
 import { expect, expectTypeOf, test } from 'vitest';
+import { boundsSweepBoundsInto } from '../../../src/intersects/bounds-sweep-bounds-into';
+import { boundsSweepPointInto } from '../../../src/intersects/bounds-sweep-point-into';
 import { infiniteLineBoundsIntersectionsInto } from '../../../src/intersects/infinite-line-bounds-intersections-into';
 
 import { infiniteLineRectIntersectionsInto } from '../../../src/intersects/infinite-line-rect-intersections-into';
@@ -258,4 +260,40 @@ test('직선 계열과 사각 경계의 교점 배열 타입을 고정한다', (
   const segmentRectIntersectionsIntoResult = segmentRectIntersectionsInto(out, segment, rect);
   expectTypeOf(segmentRectIntersectionsIntoResult).toEqualTypeOf<PointWritable[]>();
   expect(segmentRectIntersectionsIntoResult).toBe(out);
+});
+
+/** 호출자가 sweep 결과에 표지를 추가한 클래스다. */
+class TaggedSweep {
+  hit = false;
+  time = Infinity;
+  normal = { x: 20, y: 0 };
+  contact = { x: 0, y: 5 };
+  startOverlap = false;
+  readonly tag = '호출자 결과';
+}
+
+test('boundsSweepPointInto는 입력이 출력의 점을 참조해도 좌표를 먼저 읽고 같은 out을 반환한다', () => {
+  const out = new TaggedSweep();
+  const target = { minX: 10, minY: 0, maxX: 20, maxY: 10 };
+  const { normal, contact } = out;
+  const result = boundsSweepPointInto(out, contact, normal, target);
+
+  expectTypeOf(result).toEqualTypeOf<TaggedSweep>();
+  expect(result).toBe(out);
+  expect(result.normal).toBe(normal);
+  expect(result.contact).toBe(contact);
+  expect(result.contact).toEqual({ x: 10, y: 5 });
+  expect(result.time).toBe(0.5);
+});
+
+test('boundsSweepBoundsInto는 외부 클래스의 타입과 결과 참조를 보존한다', () => {
+  const out = new TaggedSweep();
+  const moving = { minX: -1, minY: 4, maxX: 1, maxY: 6 };
+  const target = { minX: 11, minY: 0, maxX: 20, maxY: 10 };
+  const result = boundsSweepBoundsInto(out, moving, out.normal, target);
+
+  expectTypeOf(result).toEqualTypeOf<TaggedSweep>();
+  expect(result).toBe(out);
+  expect(result.contact).toEqual({ x: 10, y: 5 });
+  expect(result.time).toBe(0.5);
 });

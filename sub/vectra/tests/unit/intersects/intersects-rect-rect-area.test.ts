@@ -1,13 +1,10 @@
+/** 두 직사각형이 겹치거나 닿는 경우와 빈 입력의 교차 판정을 검증한다. */
 import { describe, expect, test } from 'vitest';
 import { intersectsRectRect } from '../../../src/intersects/intersects-rect-rect';
 
 describe('rect - intersectsRect (closed boundary, edge touch = true)', () => {
   test('겹치는 두 rect는 true', () => {
     expect(intersectsRectRect({ x: 0, y: 0, width: 5, height: 5 }, { x: 3, y: 3, width: 5, height: 5 })).toBe(true);
-  });
-
-  test('tuple rect끼리 겹치면 true를 반환한다', () => {
-    expect(intersectsRectRect([0, 0, 5, 5], [3, 3, 5, 5])).toBe(true);
   });
 
   test('edge 전체가 접하는 경우는 true (closed boundary)', () => {

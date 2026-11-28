@@ -11,12 +11,11 @@ import { boundsSweepBounds } from '../../../src/intersects/bounds-sweep-bounds';
 import { boundsSweepBoundsInto } from '../../../src/intersects/bounds-sweep-bounds-into';
 import { boundsSweepPoint } from '../../../src/intersects/bounds-sweep-point';
 import { boundsSweepPointInto } from '../../../src/intersects/bounds-sweep-point-into';
-import type { BoundsLike, BoundsSweepDetail } from '../../../src/types';
+import type { BoundsSweepDetail } from '../../../src/types';
+import type { Bounds } from '../../../src/types/flat-shapes.internal';
 
-const bounds = (minX: number, minY: number, maxX: number, maxY: number): BoundsLike => ({
-  min: { x: minX, y: minY },
-  max: { x: maxX, y: maxY },
-});
+/** 최소·최대 좌표로 경계 상자를 만든다. */
+const bounds = (minX: number, minY: number, maxX: number, maxY: number): Bounds => ({ minX, minY, maxX, maxY });
 
 /** 새 nested object를 가진 BoundsSweepDetail out을 만든다. */
 function freshOut(): BoundsSweepDetail {
@@ -110,12 +109,6 @@ describe('boundsSweepPoint', () => {
     expect(detail.hit).toBe(false);
   });
 
-  test('tuple point/velocity와 object bounds input을 지원한다', () => {
-    const detail = boundsSweepPoint([0, 5], [20, 0], bounds(10, 0, 20, 10));
-    expect(detail.hit).toBe(true);
-    expect(detail.time).toBeCloseTo(0.5, 12);
-  });
-
   test('non-finite input은 no-hit이다', () => {
     expect(boundsSweepPoint({ x: 0, y: 5 }, { x: Number.NaN, y: 0 }, bounds(10, 0, 20, 10)).hit).toBe(false);
     expect(boundsSweepPoint({ x: Number.POSITIVE_INFINITY, y: 5 }, { x: 20, y: 0 }, bounds(10, 0, 20, 10)).hit).toBe(
@@ -189,11 +182,6 @@ describe('boundsSweepBounds', () => {
 
   test('non-finite input은 no-hit이다', () => {
     expect(boundsSweepBounds(bounds(-1, -1, 1, 1), { x: Number.NaN, y: 0 }, bounds(9, -10, 19, 10)).hit).toBe(false);
-  });
-
-  test('tuple velocity input을 지원한다', () => {
-    const detail = boundsSweepBounds(bounds(-1, -1, 1, 1), [10, 0], bounds(9, -10, 19, 10));
-    expect(detail.time).toBeCloseTo(0.8, 12);
   });
 });
 

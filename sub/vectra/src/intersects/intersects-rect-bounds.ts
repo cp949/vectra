@@ -1,7 +1,4 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, RectLike } from '../types';
+import type { Bounds, Rect } from '../types/flat-shapes.internal';
 
 /**
  * rect와 bounds가 교차하거나 접하면 true를 반환한다.
@@ -13,19 +10,17 @@ import type { BoundsLike, RectLike } from '../types';
  * @param rect 교차를 검사할 rect
  * @param bounds 교차를 검사할 bounds
  */
-export function intersectsRectBounds(rect: RectLike, bounds: BoundsLike): boolean {
-  const rx = readRectX(rect);
-  const ry = readRectY(rect);
-  const rw = readRectWidth(rect);
-  const rh = readRectHeight(rect);
+export function intersectsRectBounds(rect: Rect, bounds: Bounds): boolean {
+  const rx = rect.x;
+  const ry = rect.y;
+  const rw = rect.width;
+  const rh = rect.height;
   if (rw <= 0 || rh <= 0) return false;
 
-  const min = readBoundsMin(bounds);
-  const max = readBoundsMax(bounds);
-  const minX = readX(min);
-  const minY = readY(min);
-  const maxX = readX(max);
-  const maxY = readY(max);
+  const minX = bounds.minX;
+  const minY = bounds.minY;
+  const maxX = bounds.maxX;
+  const maxY = bounds.maxY;
   if (maxX < minX || maxY < minY) return false;
 
   return rx <= maxX && minX <= rx + rw && ry <= maxY && minY <= ry + rh;

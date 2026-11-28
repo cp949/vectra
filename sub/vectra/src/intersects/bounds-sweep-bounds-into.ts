@@ -1,6 +1,5 @@
-import { readBoundsMax, readBoundsMin } from '../internal/bounds';
-import { readX, readY } from '../internal/xy';
-import type { BoundsLike, BoundsSweepDetail, XYInput } from '../types';
+import type { BoundsSweepDetail } from '../types';
+import type { Bounds, Point } from '../types/flat-shapes.internal';
 import { sweepPointAgainstBox, writeBoundsSweepNoHit } from './bounds-sweep.internal';
 
 /**
@@ -13,33 +12,29 @@ import { sweepPointAgainstBox, writeBoundsSweepNoHit } from './bounds-sweep.inte
  * `normal (0, 0)`)이고 contact는 moving bounds center다. proper hit의 contact는 expanded-space hit point가 아니라
  * hit 시점 moving bounds center다. zero velocity는 시작 overlap이면 start-overlap, 아니면 no-hit이다. x/y가 같은
  * time에 진입하는 corner는 x axis normal로 tie를 고정한다. non-finite 입력, empty/inverted moving·target bounds는
- * no-hit이다. out과 input은 별개 object를 권장한다. out의 nested `normal`/`contact` object에 좌표를 덮어쓴다.
+ * no-hit이다. 입력 좌표는 출력에 쓰기 전에 읽는다. out의 nested `normal`/`contact` object에 좌표를 덮어쓴다.
  *
- * @param out 결과를 기록할 BoundsSweepDetail output. nested normal/contact object에 좌표를 덮어쓴다
+ * @param out 충돌 여부와 시각을 기록할 BoundsSweepDetail. normal·contact의 `{ x, y }`에 좌표를 덮어쓴다
  * @param moving sweep 시작 위치의 moving bounds
  * @param velocity sweep velocity. `t ∈ [0, 1]` 동안 moving bounds가 이동하는 변위
  * @param target sweep 대상 stationary bounds
  */
-export function boundsSweepBoundsInto(
-  out: BoundsSweepDetail,
-  moving: BoundsLike,
-  velocity: XYInput,
-  target: BoundsLike
-): BoundsSweepDetail {
-  const mMin = readBoundsMin(moving);
-  const mMax = readBoundsMax(moving);
-  const mMinX = readX(mMin);
-  const mMinY = readY(mMin);
-  const mMaxX = readX(mMax);
-  const mMaxY = readY(mMax);
-  const vx = readX(velocity);
-  const vy = readY(velocity);
-  const tMin = readBoundsMin(target);
-  const tMax = readBoundsMax(target);
-  const tMinX = readX(tMin);
-  const tMinY = readY(tMin);
-  const tMaxX = readX(tMax);
-  const tMaxY = readY(tMax);
+export function boundsSweepBoundsInto<Out extends BoundsSweepDetail>(
+  out: Out,
+  moving: Bounds,
+  velocity: Point,
+  target: Bounds
+): Out {
+  const mMinX = moving.minX;
+  const mMinY = moving.minY;
+  const mMaxX = moving.maxX;
+  const mMaxY = moving.maxY;
+  const vx = velocity.x;
+  const vy = velocity.y;
+  const tMinX = target.minX;
+  const tMinY = target.minY;
+  const tMaxX = target.maxX;
+  const tMaxY = target.maxY;
 
   if (!Number.isFinite(mMinX) || !Number.isFinite(mMinY) || !Number.isFinite(mMaxX) || !Number.isFinite(mMaxY)) {
     return writeBoundsSweepNoHit(out);

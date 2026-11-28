@@ -29,7 +29,7 @@ import { intersectsSegmentSegment } from '../../../src/intersects/intersects-seg
 import { intersectsTriangleTriangle } from '../../../src/intersects/intersects-triangle-triangle';
 
 describe('S3-RM-014 canonical intersects owner cleanup', () => {
-  const bounds = { min: { x: 0, y: 0 }, max: { x: 4, y: 4 } };
+  const bounds = { minX: 0, minY: 0, maxX: 4, maxY: 4 };
   const rect = { x: 1, y: 1, width: 3, height: 3 };
   const circle = { cx: 2, cy: 2, r: 1 };
   const ellipse = { cx: 2, cy: 2, rx: 2, ry: 1 };
@@ -37,19 +37,19 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
   const polygon = [0, 0, 4, 0, 4, 4, 0, 4];
 
   test('닫힌 영역 canonical 쌍은 겹침과 접촉에서 true를 반환한다', () => {
-    expect(intersectsBoundsBounds(bounds, { min: { x: 4, y: 4 }, max: { x: 5, y: 5 } })).toBe(true);
-    expect(intersectsCircleBounds({ cx: 2, cy: 2, r: 1 }, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
+    expect(intersectsBoundsBounds(bounds, { minX: 4, minY: 4, maxX: 5, maxY: 5 })).toBe(true);
+    expect(intersectsCircleBounds({ cx: 2, cy: 2, r: 1 }, bounds)).toBe(true);
     expect(intersectsCircleCircle({ cx: 2, cy: 2, r: 1 }, { cx: 3, cy: 2, r: 1 })).toBe(true);
     expect(intersectsCircleRect({ cx: 2, cy: 2, r: 1 }, rect)).toBe(true);
-    expect(intersectsEllipseBounds(ellipse, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
+    expect(intersectsEllipseBounds(ellipse, bounds)).toBe(true);
     expect(intersectsEllipseCircle(ellipse, circle)).toBe(true);
     expect(intersectsEllipseRect(ellipse, rect)).toBe(true);
     expect(intersectsEllipseTriangle(ellipse, { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 })).toBe(true);
-    expect(intersectsPolygonBounds(polygon, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
+    expect(intersectsPolygonBounds(polygon, bounds)).toBe(true);
     expect(intersectsPolygonRect(polygon, rect)).toBe(true);
     expect(intersectsRectBounds(rect, bounds)).toBe(true);
     expect(intersectsRectRect(rect, { x: 4, y: 4, width: 2, height: 2 })).toBe(true);
-    expect(intersectsBoundsTriangle(bounds, triangle)).toBe(true);
+    expect(intersectsBoundsTriangle({ min: { x: 0, y: 0 }, max: { x: 4, y: 4 } }, triangle)).toBe(true);
     expect(intersectsCircleTriangle({ cx: 2, cy: 2, r: 1 }, { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 })).toBe(true);
     expect(intersectsRectTriangle(rect, triangle)).toBe(true);
     expect(intersectsTriangleTriangle(triangle, { a: { x: 4, y: 0 }, b: { x: 5, y: 0 }, c: { x: 4, y: 1 } })).toBe(

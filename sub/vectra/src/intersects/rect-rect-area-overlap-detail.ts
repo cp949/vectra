@@ -1,6 +1,6 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readRectHeight, readRectWidth, readRectX, readRectY } from '../internal/rect';
-import type { AreaOverlapDetail, RectLike } from '../types';
+import type { AreaOverlapDetail } from '../types';
+import type { Rect } from '../types/flat-shapes.internal';
 import { axisAlignedAreaOverlapDetail } from './area-overlap-detail.internal';
 
 /**
@@ -22,16 +22,6 @@ import { axisAlignedAreaOverlapDetail } from './area-overlap-detail.internal';
  * @param b 두 번째 rect
  * @param epsilon touch/overlap/contains 경계 판정 임계값
  */
-export function rectRectAreaOverlapDetail(a: RectLike, b: RectLike, epsilon = DEFAULT_EPSILON): AreaOverlapDetail {
-  return axisAlignedAreaOverlapDetail(
-    readRectX(a),
-    readRectY(a),
-    readRectWidth(a),
-    readRectHeight(a),
-    readRectX(b),
-    readRectY(b),
-    readRectWidth(b),
-    readRectHeight(b),
-    epsilon
-  );
+export function rectRectAreaOverlapDetail(a: Rect, b: Rect, epsilon = DEFAULT_EPSILON): AreaOverlapDetail {
+  return axisAlignedAreaOverlapDetail(a.x, a.y, a.width, a.height, b.x, b.y, b.width, b.height, epsilon);
 }

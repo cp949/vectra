@@ -8,7 +8,7 @@ import type { BoundsSweepDetail } from '../types';
  *
  * @param out 결과를 기록할 BoundsSweepDetail output
  */
-export function writeBoundsSweepNoHit(out: BoundsSweepDetail): BoundsSweepDetail {
+export function writeBoundsSweepNoHit<Out extends BoundsSweepDetail>(out: Out): Out {
   out.hit = false;
   out.time = Number.POSITIVE_INFINITY;
   out.normal.x = 0;
@@ -39,8 +39,8 @@ export function writeBoundsSweepNoHit(out: BoundsSweepDetail): BoundsSweepDetail
  * @param maxX box 최대 x
  * @param maxY box 최대 y
  */
-export function sweepPointAgainstBox(
-  out: BoundsSweepDetail,
+export function sweepPointAgainstBox<Out extends BoundsSweepDetail>(
+  out: Out,
   px: number,
   py: number,
   vx: number,
@@ -49,7 +49,7 @@ export function sweepPointAgainstBox(
   minY: number,
   maxX: number,
   maxY: number
-): BoundsSweepDetail {
+): Out {
   // 시작 시 closed box에 overlap이면 start-overlap. zero-velocity inside도 이 분기로 처리된다.
   if (px >= minX && px <= maxX && py >= minY && py <= maxY) {
     out.hit = true;
