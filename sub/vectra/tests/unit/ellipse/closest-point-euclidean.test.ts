@@ -354,12 +354,12 @@ describe('ellipse Euclidean 최근접점 - epsilon', () => {
 describe('intersectsEllipseCircle - Euclidean 최근접 거리', () => {
   test('최근접 거리 1.9640보다 큰 반지름 2 circle은 교차한다', () => {
     // 정규화 공간 투영점까지 거리는 2.163이라 이전에는 false였다
-    const ellipse = { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 1 };
-    expect(intersectsEllipseCircle(ellipse, { center: { x: 3, y: 2 }, radius: 2 })).toBe(true);
+    const ellipse = { cx: 0, cy: 0, rx: 2, ry: 1 };
+    expect(intersectsEllipseCircle(ellipse, { cx: 3, cy: 2, r: 2 })).toBe(true);
   });
 
   test('최근접 거리 1.9640보다 작은 반지름 1.95 circle은 교차하지 않는다', () => {
-    const ellipse = { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 1 };
-    expect(intersectsEllipseCircle(ellipse, { center: { x: 3, y: 2 }, radius: 1.95 })).toBe(false);
+    const ellipse = { cx: 0, cy: 0, rx: 2, ry: 1 };
+    expect(intersectsEllipseCircle(ellipse, { cx: 3, cy: 2, r: 1.95 })).toBe(false);
   });
 });

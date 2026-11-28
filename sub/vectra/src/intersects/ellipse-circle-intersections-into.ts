@@ -1,8 +1,5 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, EllipseLike, XYObjectWritable } from '../types';
+import type { Circle, Ellipse, PointWritable } from '../types/flat-shapes.internal';
 import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
 
 /**
@@ -15,31 +12,28 @@ import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
  * - 외부 분리(`none`), 한 쪽이 다른 쪽을 포함하는 containment(`contains`), coincident(`overlap`),
  *   empty ellipse/circle(radiusX/radiusY/radius ≤ 0), non-finite는 빈 배열을 남긴다.
  *
- * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object이며
- * 입력 center object를 재사용하지 않는다. `epsilon`은 coincident/tangent/containment 판정에만 쓰고
+ * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object다. `epsilon`은 coincident/tangent/containment 판정에만 쓰고
  * finite validation에는 쓰지 않는다. `epsilon`은 절대 임계값이며 radius보다 충분히 작다고 가정한다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param ellipse 교점을 구할 ellipse. point ordering의 기준이다.
  * @param circle 교점을 구할 circle
  * @param epsilon coincident / tangent / containment 판정 임계값
  */
-export function ellipseCircleIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  ellipse: EllipseLike,
-  circle: CircleLike,
+export function ellipseCircleIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  ellipse: Ellipse,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const ec = readEllipseCenter(ellipse);
-  const cc = readCircleCenter(circle);
-  const radius = readCircleRadius(circle);
+): Out {
+  const radius = circle.r;
   const detail = ellipseEllipseDetailXY(
-    readX(ec),
-    readY(ec),
-    readEllipseRadiusX(ellipse),
-    readEllipseRadiusY(ellipse),
-    readX(cc),
-    readY(cc),
+    ellipse.cx,
+    ellipse.cy,
+    ellipse.rx,
+    ellipse.ry,
+    circle.cx,
+    circle.cy,
     radius,
     radius,
     epsilon

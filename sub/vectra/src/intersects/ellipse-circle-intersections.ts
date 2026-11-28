@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { CircleLike, EllipseLike, XYObjectWritable } from '../types';
+import type { Circle, Ellipse, PointWritable } from '../types/flat-shapes.internal';
 import { ellipseCircleIntersectionsInto } from './ellipse-circle-intersections-into';
 
 /**
@@ -10,7 +10,7 @@ import { ellipseCircleIntersectionsInto } from './ellipse-circle-intersections-i
  * - 외부 분리, containment, coincident, empty ellipse/circle(radiusX/radiusY/radius ≤ 0), non-finite는
  *   빈 배열을 반환한다.
  *
- * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 center object를 재사용하지 않는다.
+ * 반환 point는 매 호출 새 `{ x, y }` object다.
  * `epsilon`은 coincident/tangent/containment 판정에만 쓰고 finite validation에는 쓰지 않는다.
  * `epsilon`은 절대 임계값이며 radius보다 충분히 작다고 가정한다.
  *
@@ -19,11 +19,11 @@ import { ellipseCircleIntersectionsInto } from './ellipse-circle-intersections-i
  * @param epsilon coincident / tangent / containment 판정 임계값
  */
 export function ellipseCircleIntersections(
-  ellipse: EllipseLike,
-  circle: CircleLike,
+  ellipse: Ellipse,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   ellipseCircleIntersectionsInto(out, ellipse, circle, epsilon);
   return out;
 }

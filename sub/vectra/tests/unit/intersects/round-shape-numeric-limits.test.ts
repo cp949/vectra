@@ -18,8 +18,8 @@ function circle(cx: number, cy: number, r: number) {
 }
 
 /** 중심과 두 반지름으로 ellipse 입력을 만든다. */
-function ellipse(x: number, y: number, radiusX: number, radiusY: number) {
-  return { center: { x, y }, radiusX, radiusY };
+function ellipse(cx: number, cy: number, rx: number, ry: number) {
+  return { cx, cy, rx, ry };
 }
 
 describe('circle 교점 좌표 복원 overflow', () => {
@@ -99,7 +99,7 @@ describe('ellipse 교차의 수치 한계 fallback', () => {
 
   test('ellipseCircleIntersectionsInto는 네 점에서 만나면 4개 교점을 모두 반환한다', () => {
     const out: { x: number; y: number }[] = [];
-    ellipseCircleIntersectionsInto(out, ellipse(0, 0, 5, 2), { center: { x: 0, y: 0 }, radius: 3 });
+    ellipseCircleIntersectionsInto(out, ellipse(0, 0, 5, 2), { cx: 0, cy: 0, r: 3 });
     expect(out).toHaveLength(4);
     for (const p of out) {
       expect(Math.hypot(p.x, p.y)).toBeCloseTo(3, 9);

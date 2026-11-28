@@ -150,51 +150,32 @@ describe('circle × triangle 교점 collection (S10-RM-007)', () => {
 
 describe('ellipse × circle/triangle 교점 collection (S10-RM-007)', () => {
   test('ellipse-circle two-point는 두 점을 ellipse center turn 오름차순으로 반환한다', () => {
-    const points = ellipseCircleIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 2 },
-      { center: { x: 2, y: 0 }, radius: 2 }
-    );
+    const points = ellipseCircleIntersections({ cx: 0, cy: 0, rx: 2, ry: 2 }, { cx: 2, cy: 0, r: 2 });
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 1, Math.sqrt(3), 6);
     expectPointClose(points[1], 1, -Math.sqrt(3), 6);
   });
 
   test('ellipse-circle external tangent는 한 점이다', () => {
-    const points = ellipseCircleIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 5, radiusY: 5 },
-      { center: { x: 10, y: 0 }, radius: 5 }
-    );
+    const points = ellipseCircleIntersections({ cx: 0, cy: 0, rx: 5, ry: 5 }, { cx: 10, cy: 0, r: 5 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 5, 0, 6);
   });
 
   test('ellipse-circle containment은 빈 배열이다', () => {
-    const points = ellipseCircleIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 5, radiusY: 5 },
-      { center: { x: 0, y: 0 }, radius: 2 }
-    );
+    const points = ellipseCircleIntersections({ cx: 0, cy: 0, rx: 5, ry: 5 }, { cx: 0, cy: 0, r: 2 });
     expect(points).toEqual([]);
   });
 
   test('empty ellipse / empty circle은 빈 배열이다', () => {
-    expect(
-      ellipseCircleIntersections(
-        { center: { x: 0, y: 0 }, radiusX: 0, radiusY: 5 },
-        { center: { x: 2, y: 0 }, radius: 2 }
-      )
-    ).toEqual([]);
-    expect(
-      ellipseCircleIntersections(
-        { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 2 },
-        { center: { x: 2, y: 0 }, radius: 0 }
-      )
-    ).toEqual([]);
+    expect(ellipseCircleIntersections({ cx: 0, cy: 0, rx: 0, ry: 5 }, { cx: 2, cy: 0, r: 2 })).toEqual([]);
+    expect(ellipseCircleIntersections({ cx: 0, cy: 0, rx: 2, ry: 2 }, { cx: 2, cy: 0, r: 0 })).toEqual([]);
   });
 
   test('ellipse-triangle edge crossing은 bottom edge 교점 두 점을 turn 오름차순으로 반환한다', () => {
     const points = ellipseTriangleIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 4, radiusY: 2 },
-      { a: { x: -10, y: 0 }, b: { x: 10, y: 0 }, c: { x: 0, y: 10 } }
+      { cx: 0, cy: 0, rx: 4, ry: 2 },
+      { x1: -10, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 }
     );
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 4, 0, 6);
@@ -203,16 +184,16 @@ describe('ellipse × circle/triangle 교점 collection (S10-RM-007)', () => {
 
   test('ellipse-triangle containment-only는 빈 배열이다', () => {
     const points = ellipseTriangleIntersections(
-      { center: { x: 5, y: 3 }, radiusX: 0.5, radiusY: 0.5 },
-      { a: { x: 0, y: 0 }, b: { x: 20, y: 0 }, c: { x: 0, y: 20 } }
+      { cx: 5, cy: 3, rx: 0.5, ry: 0.5 },
+      { x1: 0, y1: 0, x2: 20, y2: 0, x3: 0, y3: 20 }
     );
     expect(points).toEqual([]);
   });
 
   test('degenerate triangle은 빈 배열이다', () => {
     const points = ellipseTriangleIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 4, radiusY: 2 },
-      { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } }
+      { cx: 0, cy: 0, rx: 4, ry: 2 },
+      { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 }
     );
     expect(points).toEqual([]);
   });

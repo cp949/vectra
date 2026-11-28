@@ -1,8 +1,6 @@
 import { segmentCrossesEllipse } from '../ellipse/ellipse-arc-crossing.internal';
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, TriangleLike } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Ellipse, Triangle } from '../types/flat-shapes.internal';
 
 /**
  * ellipse와 triangle이 교차하거나 접하면 true를 반환한다.
@@ -14,19 +12,18 @@ import type { EllipseLike, TriangleLike } from '../types';
  * @param ellipse 교차를 검사할 ellipse
  * @param triangle 교차를 검사할 triangle
  */
-export function intersectsEllipseTriangle(ellipse: EllipseLike, triangle: TriangleLike): boolean {
-  const rx = readEllipseRadiusX(ellipse);
-  const ry = readEllipseRadiusY(ellipse);
+export function intersectsEllipseTriangle(ellipse: Ellipse, triangle: Triangle): boolean {
+  const rx = ellipse.rx;
+  const ry = ellipse.ry;
   if (rx <= 0 || ry <= 0) return false;
-  if (hasNonFiniteVertex(triangle)) return false;
+  if (hasNonFiniteTriangleVertex(triangle)) return false;
 
-  const area2x = triangleSignedArea2x(triangle);
+  const area2x = flatTriangleSignedArea2x(triangle);
   if (area2x === 0) return false;
 
-  const ecenter = readEllipseCenter(ellipse);
-  const ecx = readX(ecenter);
-  const ecy = readY(ecenter);
-  const { ax, ay, bx, by, cx: tcx, cy: tcy } = readTriangleRawCoords(triangle);
+  const ecx = ellipse.cx;
+  const ecy = ellipse.cy;
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: tcx, y3: tcy } = triangle;
 
   const sign = area2x > 0 ? 1 : -1;
   const d0 = sign * ((bx - ax) * (ecy - ay) - (by - ay) * (ecx - ax));

@@ -22,8 +22,8 @@ import { intersectsTriangleTriangle } from '../../../src/intersects/intersects-t
 describe('S3-RM-014 canonical intersects owner cleanup', () => {
   const bounds = { min: { x: 0, y: 0 }, max: { x: 4, y: 4 } };
   const rect = { x: 1, y: 1, width: 3, height: 3 };
-  const circle = { center: { x: 2, y: 2 }, radius: 1 };
-  const ellipse = { center: { x: 2, y: 2 }, radiusX: 2, radiusY: 1 };
+  const circle = { cx: 2, cy: 2, r: 1 };
+  const ellipse = { cx: 2, cy: 2, rx: 2, ry: 1 };
   const triangle = { a: { x: 0, y: 0 }, b: { x: 4, y: 0 }, c: { x: 0, y: 4 } };
   const polygon = [
     { x: 0, y: 0 },
@@ -37,10 +37,10 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
     expect(intersectsCircleBounds({ cx: 2, cy: 2, r: 1 }, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
     expect(intersectsCircleCircle({ cx: 2, cy: 2, r: 1 }, { cx: 3, cy: 2, r: 1 })).toBe(true);
     expect(intersectsCircleRect({ cx: 2, cy: 2, r: 1 }, rect)).toBe(true);
-    expect(intersectsEllipseBounds(ellipse, bounds)).toBe(true);
+    expect(intersectsEllipseBounds(ellipse, { minX: 0, minY: 0, maxX: 4, maxY: 4 })).toBe(true);
     expect(intersectsEllipseCircle(ellipse, circle)).toBe(true);
     expect(intersectsEllipseRect(ellipse, rect)).toBe(true);
-    expect(intersectsEllipseTriangle(ellipse, triangle)).toBe(true);
+    expect(intersectsEllipseTriangle(ellipse, { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 })).toBe(true);
     expect(intersectsPolygonBounds(polygon, bounds)).toBe(true);
     expect(intersectsPolygonRect(polygon, rect)).toBe(true);
     expect(intersectsRectBounds(rect, bounds)).toBe(true);

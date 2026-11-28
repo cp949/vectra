@@ -38,11 +38,7 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
     ],
     [
       'ellipseEllipse',
-      (v) =>
-        ellipseEllipseIntersections(
-          { center: { x: v, y: 0 }, radiusX: 2, radiusY: 2 },
-          { center: { x: 2, y: 0 }, radiusX: 2, radiusY: 2 }
-        ),
+      (v) => ellipseEllipseIntersections({ cx: v, cy: 0, rx: 2, ry: 2 }, { cx: 2, cy: 0, rx: 2, ry: 2 }),
     ],
     ['segmentCircle', (v) => segmentCircleIntersections({ x1: v, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: 5 })],
     ['rayCircle', (v) => rayCircleIntersections({ ox: v, oy: 0, dx: 1, dy: 0 }, { cx: 0, cy: 0, r: 5 })],
@@ -88,17 +84,11 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
           { a: { x: 2, y: 2 }, b: { x: 8, y: 2 }, c: { x: 2, y: 8 } }
         ),
     ],
-    [
-      'ellipseCircle',
-      (v) =>
-        ellipseCircleIntersections(
-          { center: { x: v, y: 0 }, radiusX: 2, radiusY: 2 },
-          { center: { x: 2, y: 0 }, radius: 2 }
-        ),
-    ],
+    ['ellipseCircle', (v) => ellipseCircleIntersections({ cx: v, cy: 0, rx: 2, ry: 2 }, { cx: 2, cy: 0, r: 2 })],
     [
       'ellipseTriangle',
-      (v) => ellipseTriangleIntersections({ center: { x: v, y: 0 }, radiusX: 4, radiusY: 2 }, triangle),
+      (v) =>
+        ellipseTriangleIntersections({ cx: v, cy: 0, rx: 4, ry: 2 }, { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 }),
     ],
   ];
 

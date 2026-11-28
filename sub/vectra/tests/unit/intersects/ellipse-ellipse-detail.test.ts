@@ -8,13 +8,14 @@
 
 import { describe, expect, test } from 'vitest';
 import { ellipseEllipseDetail } from '../../../src/intersects/ellipse-ellipse-detail';
-import type { EllipseEllipseDetail, EllipseLike } from '../../../src/types';
+import type { EllipseEllipseDetail } from '../../../src/types';
+import type { Ellipse } from '../../../src/types/flat-shapes.internal';
 
 const EPS = 1e-9;
 
 /** object ellipse helper */
-function E(cx: number, cy: number, rx: number, ry: number): EllipseLike {
-  return { center: { x: cx, y: cy }, radiusX: rx, radiusY: ry };
+function E(cx: number, cy: number, rx: number, ry: number): Ellipse {
+  return { cx, cy, rx, ry };
 }
 
 /** 정규화 ellipse 방정식 residual */
@@ -169,14 +170,6 @@ describe('ellipseEllipseDetail — multi-point 분기', () => {
   });
 });
 
-describe('ellipseEllipseDetail — 입력 형식', () => {
-  test('T13/T14 tuple 입력과 object 입력 결과가 동일하다', () => {
-    const objResult = ellipseEllipseDetail(E(0, 0, 3, 2), E(1, 0, 2, 2));
-    const tupResult = ellipseEllipseDetail([[0, 0], 3, 2], [[1, 0], 2, 2]);
-    expect(tupResult).toEqual(objResult);
-  });
-});
-
 describe('ellipseEllipseDetail — non-finite 입력', () => {
   test('T15 center.x가 NaN이면 none', () => {
     expect(ellipseEllipseDetail(E(Number.NaN, 0, 1, 1), E(0, 0, 1, 1))).toEqual({ kind: 'none' });
@@ -214,7 +207,7 @@ describe('ellipseEllipseDetail — near-tangent epsilon band', () => {
 
 describe('ellipseEllipseDetail — residual 가드 / ordering / 결과 신선도', () => {
   test('T20 모든 반환 점이 양쪽 ellipse residual 가드를 통과한다', () => {
-    const configs: ReadonlyArray<[EllipseLike, EllipseLike]> = [
+    const configs: ReadonlyArray<[Ellipse, Ellipse]> = [
       [E(0, 0, 2, 2), E(4, 0, 2, 2)],
       [E(0, 0, 2, 1), E(0, 0, 2, 3)],
       [E(0, 0, 3, 1), E(0, 0, 1, 3)],
@@ -223,13 +216,7 @@ describe('ellipseEllipseDetail — residual 가드 / ordering / 결과 신선도
     ];
     for (const [a, b] of configs) {
       const detail = ellipseEllipseDetail(a, b);
-      const ao = a as { center: { x: number; y: number }; radiusX: number; radiusY: number };
-      const bo = b as { center: { x: number; y: number }; radiusX: number; radiusY: number };
-      expectPointsOnBothBoundaries(
-        detail,
-        { cx: ao.center.x, cy: ao.center.y, rx: ao.radiusX, ry: ao.radiusY },
-        { cx: bo.center.x, cy: bo.center.y, rx: bo.radiusX, ry: bo.radiusY }
-      );
+      expectPointsOnBothBoundaries(detail, a, b);
     }
   });
 
@@ -241,13 +228,11 @@ describe('ellipseEllipseDetail — residual 가드 / ordering / 결과 신선도
   });
 
   test('T22 같은 입력 2회 호출이 매번 새 point object를 반환한다', () => {
-    const center = { x: 0, y: 0 };
-    const a: EllipseLike = { center, radiusX: 2, radiusY: 2 };
+    const a = E(0, 0, 2, 2);
     const r1 = ellipseEllipseDetail(a, E(2, 0, 2, 2));
     const r2 = ellipseEllipseDetail(a, E(2, 0, 2, 2));
     if (r1.kind !== 'two-point' || r2.kind !== 'two-point') throw new Error('two-point 아님');
     expect(r1.points[0]).not.toBe(r2.points[0]);
-    expect(r1.points[0]).not.toBe(center);
   });
 });
 
@@ -334,7 +319,7 @@ describe('ellipseEllipseDetail — Newton polish 2점/다점 분류 회귀', () 
   // 참 교점에서 ~1e-7 떨어진 채 멈춰 dedupe가 두 copy를 못 합치고 distinct=3 → multi-point로
   // 오분류된다. 일반 위치 2-point 교차가 정확히 two-point로 분류되는지 검증한다.
   test('일반 위치 2-point 교차가 two-point로 분류된다', () => {
-    const cases: ReadonlyArray<[EllipseLike, EllipseLike]> = [
+    const cases: ReadonlyArray<[Ellipse, Ellipse]> = [
       [E(0, 0, 2.4216, 0.5023), E(3.70117, -0.79243, 3.478, 0.5146)],
       [E(0, 0, 1.2564, 2.6471), E(2.76465, 2.99388, 2.6262, 1.1735)],
       [E(0, 0, 1.7108, 3.1214), E(-3.58704, 3.22338, 3.2531, 0.9065)],
@@ -342,15 +327,9 @@ describe('ellipseEllipseDetail — Newton polish 2점/다점 분류 회귀', () 
     ];
     for (const [a, b] of cases) {
       const detail = ellipseEllipseDetail(a, b, EPS);
-      const ao = a as { center: { x: number; y: number }; radiusX: number; radiusY: number };
-      const bo = b as { center: { x: number; y: number }; radiusX: number; radiusY: number };
-      const label = `a=${JSON.stringify(ao)} b=${JSON.stringify(bo)}`;
+      const label = `a=${JSON.stringify(a)} b=${JSON.stringify(b)}`;
       expect(detail.kind, label).toBe('two-point');
-      expectPointsOnBothBoundaries(
-        detail,
-        { cx: ao.center.x, cy: ao.center.y, rx: ao.radiusX, ry: ao.radiusY },
-        { cx: bo.center.x, cy: bo.center.y, rx: bo.radiusX, ry: bo.radiusY }
-      );
+      expectPointsOnBothBoundaries(detail, a, b);
     }
   });
 });

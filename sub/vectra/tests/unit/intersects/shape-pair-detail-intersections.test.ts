@@ -95,19 +95,13 @@ describe('segmentSegmentIntersections — point/overlap/none 분기', () => {
 
 describe('ellipseEllipseIntersections — point/two-point/multi-point/empty 분기', () => {
   test('external tangent는 접점 한 점이다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 5, radiusY: 5 },
-      { center: { x: 10, y: 0 }, radiusX: 5, radiusY: 5 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 5, ry: 5 }, { cx: 10, cy: 0, rx: 5, ry: 5 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 5, 0);
   });
 
   test('proper two-point는 두 점이다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 2 },
-      { center: { x: 2, y: 0 }, radiusX: 2, radiusY: 2 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 2, ry: 2 }, { cx: 2, cy: 0, rx: 2, ry: 2 });
     expect(points).toHaveLength(2);
     for (const p of points) {
       expect(Math.hypot(p.x, p.y)).toBeCloseTo(2, 9);
@@ -116,10 +110,7 @@ describe('ellipseEllipseIntersections — point/two-point/multi-point/empty 분�
   });
 
   test('4점 교차는 네 점을 ellipse a turn 오름차순으로 반환한다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 1 },
-      { center: { x: 0, y: 0 }, radiusX: 1, radiusY: 3 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 3, ry: 1 }, { cx: 0, cy: 0, rx: 1, ry: 3 });
     expect(points).toHaveLength(4);
     const turns = points.map((p) => {
       const t = Math.atan2(p.y, p.x / 3) / (2 * Math.PI);
@@ -129,42 +120,27 @@ describe('ellipseEllipseIntersections — point/two-point/multi-point/empty 분�
   });
 
   test('3점 교차는 세 점이다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 1, radiusY: 1 },
-      { center: { x: 0, y: 1 }, radiusX: 1, radiusY: 2 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 1, ry: 1 }, { cx: 0, cy: 1, rx: 1, ry: 2 });
     expect(points).toHaveLength(3);
   });
 
   test('containment은 빈 배열이다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 5, radiusY: 5 },
-      { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 2 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 5, ry: 5 }, { cx: 0, cy: 0, rx: 2, ry: 2 });
     expect(points).toEqual([]);
   });
 
   test('coincident overlap은 임의 점 없이 빈 배열이다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 2 },
-      { center: { x: 0, y: 0 }, radiusX: 3, radiusY: 2 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 3, ry: 2 }, { cx: 0, cy: 0, rx: 3, ry: 2 });
     expect(points).toEqual([]);
   });
 
   test('외부 분리(none)는 빈 배열이다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 1, radiusY: 1 },
-      { center: { x: 100, y: 0 }, radiusX: 1, radiusY: 1 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 1, ry: 1 }, { cx: 100, cy: 0, rx: 1, ry: 1 });
     expect(points).toEqual([]);
   });
 
   test('empty ellipse(radiusX ≤ 0)는 빈 배열이다', () => {
-    const points = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 0, radiusY: 5 },
-      { center: { x: 1, y: 0 }, radiusX: 2, radiusY: 2 }
-    );
+    const points = ellipseEllipseIntersections({ cx: 0, cy: 0, rx: 0, ry: 5 }, { cx: 1, cy: 0, rx: 2, ry: 2 });
     expect(points).toEqual([]);
   });
 
@@ -172,20 +148,11 @@ describe('ellipseEllipseIntersections — point/two-point/multi-point/empty 분�
     const out: XYObjectWritable[] = [{ x: 1, y: 1 }];
     const result = ellipseEllipseIntersectionsInto(
       out,
-      { center: { x: 0, y: 0 }, radiusX: 5, radiusY: 5 },
-      { center: { x: 10, y: 0 }, radiusX: 5, radiusY: 5 }
+      { cx: 0, cy: 0, rx: 5, ry: 5 },
+      { cx: 10, cy: 0, rx: 5, ry: 5 }
     );
     expect(result).toBe(out);
     expect(out).toHaveLength(1);
     expectPointClose(out[0], 5, 0);
-  });
-
-  test('tuple 입력과 object 입력 결과가 같다', () => {
-    const objs = ellipseEllipseIntersections(
-      { center: { x: 0, y: 0 }, radiusX: 2, radiusY: 2 },
-      { center: { x: 2, y: 0 }, radiusX: 2, radiusY: 2 }
-    );
-    const tuples = ellipseEllipseIntersections([[0, 0], 2, 2], [[2, 0], 2, 2]);
-    expect(tuples).toEqual(objs);
   });
 });

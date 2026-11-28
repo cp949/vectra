@@ -6,6 +6,9 @@ import { rayEllipseIntersectionsInto } from '../../../src/intersects/ray-ellipse
 import { infiniteLineCircleIntersectionsInto } from '../../../src/intersects/infinite-line-circle-intersections-into';
 import { infiniteLineEllipseIntersectionsInto } from '../../../src/intersects/infinite-line-ellipse-intersections-into';
 import { segmentEllipseIntersectionsInto } from '../../../src/intersects/segment-ellipse-intersections-into';
+import { ellipseCircleIntersectionsInto } from '../../../src/intersects/ellipse-circle-intersections-into';
+import { ellipseEllipseIntersectionsInto } from '../../../src/intersects/ellipse-ellipse-intersections-into';
+import { ellipseTriangleIntersectionsInto } from '../../../src/intersects/ellipse-triangle-intersections-into';
 import { intersectsRayRay } from '../../../src/intersects/intersects-ray-ray';
 import { singleIntersectionSegmentRayInto } from '../../../src/intersects/single-intersection-segment-ray-into';
 import { circleBoundsIntersectionsInto } from '../../../src/intersects/circle-bounds-intersections-into';
@@ -95,6 +98,24 @@ test('원과 타원의 직선 계열 교점 함수는 출력 배열 서브클래
   expectTypeOf(lineEllipse).toEqualTypeOf<IntersectionPoints>();
   expectTypeOf(segmentEllipse).toEqualTypeOf<IntersectionPoints>();
   for (const result of [rayCircle, rayEllipse, lineCircle, lineEllipse, segmentEllipse]) {
+    expect(result).toBe(out);
+  }
+  expect(out).toHaveLength(2);
+});
+
+test('타원 경계의 교점 함수는 출력 배열 서브클래스를 그대로 반환한다', () => {
+  const out = new IntersectionPoints();
+  const ellipse = { cx: 0, cy: 0, rx: 2, ry: 1 };
+  const circle = { cx: 2, cy: 0, r: 2 };
+  const other = { cx: 2, cy: 0, rx: 2, ry: 1 };
+  const triangle = { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 };
+  const circleResult = ellipseCircleIntersectionsInto(out, ellipse, circle);
+  const ellipseResult = ellipseEllipseIntersectionsInto(out, ellipse, other);
+  const triangleResult = ellipseTriangleIntersectionsInto(out, ellipse, triangle);
+  expectTypeOf(circleResult).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(ellipseResult).toEqualTypeOf<IntersectionPoints>();
+  expectTypeOf(triangleResult).toEqualTypeOf<IntersectionPoints>();
+  for (const result of [circleResult, ellipseResult, triangleResult]) {
     expect(result).toBe(out);
   }
   expect(out).toHaveLength(2);

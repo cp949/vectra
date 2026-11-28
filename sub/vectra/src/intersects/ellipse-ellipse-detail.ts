@@ -1,7 +1,6 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { EllipseEllipseDetail, EllipseLike } from '../types';
+import type { EllipseEllipseDetail } from '../types';
+import type { Ellipse } from '../types/flat-shapes.internal';
 import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
 
 /**
@@ -28,24 +27,12 @@ import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
  * 경계가 이 임계 안에 붙어 있는 구간의 점은 한 접점으로 합친다.
  * `epsilon`은 절대 임계값이며 두 radius보다 충분히 작다고 가정한다. radius가 `epsilon` 규모 이하면
  * 분리/접선 경계가 합쳐져 분류가 틀어질 수 있다.
- * 결과는 매 호출 새 plain object를 반환하며 입력 center object를 재사용하지 않는다.
+ * 결과는 매 호출 새 plain object를 반환한다.
  *
  * @param a 첫 번째 ellipse. point ordering과 `tA`의 기준이다.
  * @param b 두 번째 ellipse. `tB`의 기준이다.
  * @param epsilon coincident / tangent / containment 판정 임계값
  */
-export function ellipseEllipseDetail(a: EllipseLike, b: EllipseLike, epsilon = DEFAULT_EPSILON): EllipseEllipseDetail {
-  const ca = readEllipseCenter(a);
-  const cb = readEllipseCenter(b);
-  return ellipseEllipseDetailXY(
-    readX(ca),
-    readY(ca),
-    readEllipseRadiusX(a),
-    readEllipseRadiusY(a),
-    readX(cb),
-    readY(cb),
-    readEllipseRadiusX(b),
-    readEllipseRadiusY(b),
-    epsilon
-  );
+export function ellipseEllipseDetail(a: Ellipse, b: Ellipse, epsilon = DEFAULT_EPSILON): EllipseEllipseDetail {
+  return ellipseEllipseDetailXY(a.cx, a.cy, a.rx, a.ry, b.cx, b.cy, b.rx, b.ry, epsilon);
 }

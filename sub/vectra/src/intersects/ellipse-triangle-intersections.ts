@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { EllipseLike, TriangleLike, XYObjectWritable } from '../types';
+import type { Ellipse, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { ellipseTriangleIntersectionsInto } from './ellipse-triangle-intersections-into';
 
 /**
@@ -10,7 +10,7 @@ import { ellipseTriangleIntersectionsInto } from './ellipse-triangle-intersectio
  * boundary 교점이 없는 containment-only, empty ellipse(radiusX/radiusY ≤ 0), degenerate triangle(signed
  * area 2× === 0), non-finite vertex는 빈 배열을 반환한다. axis-aligned ellipse만 지원한다(rotated ellipse 비범위).
  *
- * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 center/vertex object를 재사용하지 않는다.
+ * 반환 point는 매 호출 새 `{ x, y }` object다.
  * `epsilon`은 tangent/dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
  * @param ellipse 교점을 구할 ellipse (axis-aligned). point ordering의 기준이다.
@@ -18,11 +18,11 @@ import { ellipseTriangleIntersectionsInto } from './ellipse-triangle-intersectio
  * @param epsilon tangent/dedupe 판정 임계값
  */
 export function ellipseTriangleIntersections(
-  ellipse: EllipseLike,
-  triangle: TriangleLike,
+  ellipse: Ellipse,
+  triangle: Triangle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   ellipseTriangleIntersectionsInto(out, ellipse, triangle, epsilon);
   return out;
 }

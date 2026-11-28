@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { EllipseLike, XYObjectWritable } from '../types';
+import type { Ellipse, PointWritable } from '../types/flat-shapes.internal';
 import { ellipseEllipseIntersectionsInto } from './ellipse-ellipse-intersections-into';
 
 /**
@@ -12,7 +12,7 @@ import { ellipseEllipseIntersectionsInto } from './ellipse-ellipse-intersections
  *   (radiusX/radiusY ≤ 0), non-finite는 빈 배열을 반환한다. coincident overlap에서 임의 점을 만들지
  *   않는다.
  *
- * 반환 point는 매 호출 새 `{ x, y }` object이며 입력 center object를 재사용하지 않는다.
+ * 반환 point는 매 호출 새 `{ x, y }` object다.
  * `epsilon`은 coincident/tangent/containment 판정에만 쓰고 finite validation에는 쓰지 않는다.
  * `epsilon`은 절대 임계값이며 두 radius보다 충분히 작다고 가정한다.
  *
@@ -20,12 +20,8 @@ import { ellipseEllipseIntersectionsInto } from './ellipse-ellipse-intersections
  * @param b 두 번째 ellipse
  * @param epsilon coincident / tangent / containment 판정 임계값
  */
-export function ellipseEllipseIntersections(
-  a: EllipseLike,
-  b: EllipseLike,
-  epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+export function ellipseEllipseIntersections(a: Ellipse, b: Ellipse, epsilon = DEFAULT_EPSILON): PointWritable[] {
+  const out: PointWritable[] = [];
   ellipseEllipseIntersectionsInto(out, a, b, epsilon);
   return out;
 }

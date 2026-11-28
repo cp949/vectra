@@ -1,7 +1,5 @@
-import { readEllipseCenter, readEllipseRadiusX, readEllipseRadiusY } from '../internal/ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readX, readY } from '../internal/xy';
-import type { EllipseLike, XYObjectWritable } from '../types';
+import type { Ellipse, PointWritable } from '../types/flat-shapes.internal';
 import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
 
 /**
@@ -15,34 +13,22 @@ import { ellipseEllipseDetailXY } from './ellipse-ellipse-detail.internal';
  *   점으로 표현할 수 없어 빈 결과를 남긴다. coincident overlap에서 임의 점을 만들지 않는다.
  *
  * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }`
- * object이며 입력 center object를 재사용하지 않는다.
+ * object다.
  * `epsilon`은 coincident/tangent/containment 판정에만 쓰고 finite validation에는 쓰지 않는다.
  * `epsilon`은 절대 임계값이며 두 radius보다 충분히 작다고 가정한다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param a 첫 번째 ellipse. point ordering의 기준이다.
  * @param b 두 번째 ellipse
  * @param epsilon coincident / tangent / containment 판정 임계값
  */
-export function ellipseEllipseIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  a: EllipseLike,
-  b: EllipseLike,
+export function ellipseEllipseIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  a: Ellipse,
+  b: Ellipse,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const ca = readEllipseCenter(a);
-  const cb = readEllipseCenter(b);
-  const detail = ellipseEllipseDetailXY(
-    readX(ca),
-    readY(ca),
-    readEllipseRadiusX(a),
-    readEllipseRadiusY(a),
-    readX(cb),
-    readY(cb),
-    readEllipseRadiusX(b),
-    readEllipseRadiusY(b),
-    epsilon
-  );
+): Out {
+  const detail = ellipseEllipseDetailXY(a.cx, a.cy, a.rx, a.ry, b.cx, b.cy, b.rx, b.ry, epsilon);
 
   outPoints.length = 0;
   if (detail.kind === 'point') {
