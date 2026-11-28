@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { CircleLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Circle, Segment, PointWritable } from '../types/flat-shapes.internal';
 import { segmentCircleIntersectionsInto } from './segment-circle-intersections-into';
 
 /**
@@ -19,11 +19,11 @@ import { segmentCircleIntersectionsInto } from './segment-circle-intersections-i
  * @param epsilon discriminant tangent 판정 임계값
  */
 export function segmentCircleIntersections(
-  segment: SegmentLike,
-  circle: CircleLike,
+  segment: Segment,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   segmentCircleIntersectionsInto(out, segment, circle, epsilon);
   return out;
 }

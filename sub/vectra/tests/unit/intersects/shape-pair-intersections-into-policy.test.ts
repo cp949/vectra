@@ -49,8 +49,8 @@ describe('Into out array clear/reference 보존 (S10-RM-007)', () => {
 
   test('segmentCircleIntersectionsInto는 매 호출 새 point object를 push한다', () => {
     const out: XYObjectWritable[] = [];
-    const seg = { a: { x: -10, y: 0 }, b: { x: 10, y: 0 } };
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
+    const seg = { x1: -10, y1: 0, x2: 10, y2: 0 };
+    const circle = { cx: 0, cy: 0, r: 5 };
     const first = segmentCircleIntersectionsInto(out, seg, circle)[0];
     const second = segmentCircleIntersectionsInto([], seg, circle)[0];
     expect(first).not.toBe(second);

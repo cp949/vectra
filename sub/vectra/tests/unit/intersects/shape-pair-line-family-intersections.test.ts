@@ -23,20 +23,20 @@ describe('line-family × circle 교점 collection (S10-RM-007)', () => {
   const circle = { center: { x: 0, y: 0 }, radius: 5 };
 
   test('segment crossing은 두 점을 segment parameter 오름차순으로 반환한다', () => {
-    const points = segmentCircleIntersections({ a: { x: -10, y: 0 }, b: { x: 10, y: 0 } }, circle);
+    const points = segmentCircleIntersections({ x1: -10, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toHaveLength(2);
     expectPointClose(points[0], -5, 0);
     expectPointClose(points[1], 5, 0);
   });
 
   test('segment tangent는 접점 한 점이다', () => {
-    const points = segmentCircleIntersections({ a: { x: -10, y: 5 }, b: { x: 10, y: 5 } }, circle);
+    const points = segmentCircleIntersections({ x1: -10, y1: 5, x2: 10, y2: 5 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toHaveLength(1);
     expectPointClose(points[0], 0, 5);
   });
 
   test('segment 전체가 circle 내부면 빈 배열이다', () => {
-    const points = segmentCircleIntersections({ a: { x: -1, y: 0 }, b: { x: 1, y: 0 } }, circle);
+    const points = segmentCircleIntersections({ x1: -1, y1: 0, x2: 1, y2: 0 }, { cx: 0, cy: 0, r: 5 });
     expect(points).toEqual([]);
   });
 
@@ -64,24 +64,8 @@ describe('line-family × circle 교점 collection (S10-RM-007)', () => {
   });
 
   test('radius 0/negative empty circle은 빈 배열이다', () => {
-    expect(
-      segmentCircleIntersections({ a: { x: -10, y: 0 }, b: { x: 10, y: 0 } }, { center: { x: 0, y: 0 }, radius: 0 })
-    ).toEqual([]);
-    expect(
-      segmentCircleIntersections({ a: { x: -10, y: 0 }, b: { x: 10, y: 0 } }, { center: { x: 0, y: 0 }, radius: -3 })
-    ).toEqual([]);
-  });
-
-  test('tuple 입력과 object 입력 결과가 같다', () => {
-    const objs = segmentCircleIntersections({ a: { x: -10, y: 0 }, b: { x: 10, y: 0 } }, circle);
-    const tuples = segmentCircleIntersections(
-      [
-        [-10, 0],
-        [10, 0],
-      ],
-      [[0, 0], 5]
-    );
-    expect(tuples).toEqual(objs);
+    expect(segmentCircleIntersections({ x1: -10, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: 0 })).toEqual([]);
+    expect(segmentCircleIntersections({ x1: -10, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: -3 })).toEqual([]);
   });
 });
 

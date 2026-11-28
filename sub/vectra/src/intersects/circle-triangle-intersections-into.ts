@@ -1,9 +1,7 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { closedEllipseBoundaryIntersectionPoints } from '../internal/closed-ellipse-boundary';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, TriangleLike, XYObjectWritable } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Circle, Triangle, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * circle circumference와 triangle boundary의 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -14,37 +12,35 @@ import type { CircleLike, TriangleLike, XYObjectWritable } from '../types';
  * empty circle(radius ≤ 0), degenerate triangle(signed area 2× === 0), non-finite vertex는 빈 배열을
  * 남긴다.
  *
- * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object이며
- * 입력 center/vertex object를 재사용하지 않는다. 반환 순서는 circle center 기준 normalized turn
+ * outPoints는 먼저 clear된 뒤 결과 point가 push된다. push되는 point는 매 호출 새 `{ x, y }` object다. 반환 순서는 circle center 기준 normalized turn
  * 오름차순이다. `epsilon`은 tangent/dedupe 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param circle 교점을 구할 circle. point ordering의 기준이다.
  * @param triangle 교점을 구할 triangle
  * @param epsilon tangent/dedupe 판정 임계값
  */
-export function circleTriangleIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  circle: CircleLike,
-  triangle: TriangleLike,
+export function circleTriangleIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  circle: Circle,
+  triangle: Triangle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
+): Out {
   outPoints.length = 0;
-  if (hasNonFiniteVertex(triangle) || triangleSignedArea2x(triangle) === 0) return outPoints;
-  const t = readTriangleRawCoords(triangle);
-  const center = readCircleCenter(circle);
-  const radius = readCircleRadius(circle);
-  return closedEllipseBoundaryIntersectionPoints(
+  if (hasNonFiniteTriangleVertex(triangle) || flatTriangleSignedArea2x(triangle) === 0) return outPoints;
+  const radius = circle.r;
+  closedEllipseBoundaryIntersectionPoints(
     outPoints,
     [
-      { x0: t.ax, y0: t.ay, x1: t.bx, y1: t.by },
-      { x0: t.bx, y0: t.by, x1: t.cx, y1: t.cy },
-      { x0: t.cx, y0: t.cy, x1: t.ax, y1: t.ay },
+      { x0: triangle.x1, y0: triangle.y1, x1: triangle.x2, y1: triangle.y2 },
+      { x0: triangle.x2, y0: triangle.y2, x1: triangle.x3, y1: triangle.y3 },
+      { x0: triangle.x3, y0: triangle.y3, x1: triangle.x1, y1: triangle.y1 },
     ],
-    readX(center),
-    readY(center),
+    circle.cx,
+    circle.cy,
     radius,
     radius,
     epsilon
   );
+  return outPoints;
 }

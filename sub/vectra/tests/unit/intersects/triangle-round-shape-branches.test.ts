@@ -46,17 +46,19 @@ describe('intersectsEllipseTriangle', () => {
 
 describe('intersectsCircleTriangle', () => {
   test('시계 방향 삼각형도 중심이 안에 있으면 true를 반환한다', () => {
-    expect(intersectsCircleTriangle({ center: { x: 5, y: 3 }, radius: 1 }, cwTriangle)).toBe(true);
+    expect(intersectsCircleTriangle({ cx: 5, cy: 3, r: 1 }, { x1: 0, y1: 0, x2: 5, y2: 10, x3: 10, y3: 0 })).toBe(true);
   });
 
   test('시계 방향 삼각형과 떨어진 circle은 false를 반환한다', () => {
-    expect(intersectsCircleTriangle({ center: { x: 30, y: 30 }, radius: 1 }, cwTriangle)).toBe(false);
+    expect(intersectsCircleTriangle({ cx: 30, cy: 30, r: 1 }, { x1: 0, y1: 0, x2: 5, y2: 10, x3: 10, y3: 0 })).toBe(
+      false
+    );
   });
 
   test('edge 길이 제곱이 underflow로 0이 되는 삼각형에서도 가까운 끝점으로 판정한다', () => {
     // a→b 길이가 1e-200이라 제곱이 0으로 underflow한다. 넓이는 1e-199로 0이 아니다.
-    const sliver = { a: { x: 0, y: 0 }, b: { x: 1e-200, y: 0 }, c: { x: 0, y: 10 } };
-    expect(intersectsCircleTriangle({ center: { x: -1, y: -1 }, radius: 5 }, sliver)).toBe(true);
-    expect(intersectsCircleTriangle({ center: { x: -30, y: -30 }, radius: 5 }, sliver)).toBe(false);
+    const sliver = { x1: 0, y1: 0, x2: 1e-200, y2: 0, x3: 0, y3: 10 };
+    expect(intersectsCircleTriangle({ cx: -1, cy: -1, r: 5 }, sliver)).toBe(true);
+    expect(intersectsCircleTriangle({ cx: -30, cy: -30, r: 5 }, sliver)).toBe(false);
   });
 });

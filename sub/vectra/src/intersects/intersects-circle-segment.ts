@@ -1,16 +1,7 @@
 import { lineFamilyCircleIntersects } from '../internal/line-family';
-import {
-  fillSegmentParam,
-  lineHitCircleCenter,
-  lineHitCircleRadius,
-  lineHitParamA,
-  lineHitSegmentA,
-  lineHitSegmentB,
-  lineHitX,
-  lineHitY,
-} from '../internal/line-hit-read.internal';
+import { fillSegmentParam, lineHitParamA } from '../internal/line-hit-read.internal';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { CircleLike, SegmentLike } from '../types';
+import type { Circle, Segment } from '../types/flat-shapes.internal';
 
 /**
  * circle과 segment가 교차하거나 접하면 true를 반환한다.
@@ -22,16 +13,7 @@ import type { CircleLike, SegmentLike } from '../types';
  * @param line 교차를 판정할 segment
  * @param epsilon 부동소수점 비교에 사용할 tolerance
  */
-export function intersectsCircleSegment(circle: CircleLike, line: SegmentLike, epsilon = DEFAULT_EPSILON): boolean {
-  const a = lineHitSegmentA(line);
-  const b = lineHitSegmentB(line);
-  const lineParam = fillSegmentParam(lineHitParamA, lineHitX(a), lineHitY(a), lineHitX(b), lineHitY(b));
-  const center = lineHitCircleCenter(circle);
-  return lineFamilyCircleIntersects(
-    lineParam,
-    lineHitX(center),
-    lineHitY(center),
-    lineHitCircleRadius(circle),
-    epsilon
-  );
+export function intersectsCircleSegment(circle: Circle, line: Segment, epsilon = DEFAULT_EPSILON): boolean {
+  const lineParam = fillSegmentParam(lineHitParamA, line.x1, line.y1, line.x2, line.y2);
+  return lineFamilyCircleIntersects(lineParam, circle.cx, circle.cy, circle.r, epsilon);
 }

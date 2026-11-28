@@ -46,7 +46,7 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
           { center: { x: 2, y: 0 }, radiusX: 2, radiusY: 2 }
         ),
     ],
-    ['segmentCircle', (v) => segmentCircleIntersections({ a: { x: v, y: 0 }, b: { x: 10, y: 0 } }, circle)],
+    ['segmentCircle', (v) => segmentCircleIntersections({ x1: v, y1: 0, x2: 10, y2: 0 }, { cx: 0, cy: 0, r: 5 })],
     ['rayCircle', (v) => rayCircleIntersections({ origin: { x: v, y: 0 }, direction: { x: 1, y: 0 } }, circle)],
     [
       'infiniteLineCircle',
@@ -75,7 +75,10 @@ describe('non-finite 입력 pass-through은 빈 collection이다 (S10-RM-007)', 
       'circleBounds',
       (v) => circleBoundsIntersections({ cx: v, cy: 5, r: 3 }, { minX: 0, minY: 0, maxX: 10, maxY: 10 }),
     ],
-    ['circleTriangle', (v) => circleTriangleIntersections({ center: { x: v, y: 0 }, radius: 2 }, triangle)],
+    [
+      'circleTriangle',
+      (v) => circleTriangleIntersections({ cx: v, cy: 0, r: 2 }, { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 }),
+    ],
     [
       'triangleTriangle',
       (v) =>

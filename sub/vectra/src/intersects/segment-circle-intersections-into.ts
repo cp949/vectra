@@ -1,9 +1,6 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
 import { lineFamilyEllipseIntersectionPoints } from '../internal/line-family-ellipse';
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import { readSegmentA, readSegmentB } from '../internal/segment';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, SegmentLike, XYObjectWritable } from '../types';
+import type { Circle, Segment, PointWritable } from '../types/flat-shapes.internal';
 
 /**
  * segment와 circle circumference의 range 안 모든 교점을 outPoints에 기록하고 같은 outPoints를 반환한다.
@@ -19,32 +16,30 @@ import type { CircleLike, SegmentLike, XYObjectWritable } from '../types';
  * object이며 입력 point object를 재사용하지 않는다.
  * `epsilon`은 discriminant tangent 판정에만 쓰고 finite validation에는 쓰지 않는다.
  *
- * @param outPoints 교점 object를 기록할 writable output array (호출 전 내용은 비워진다)
+ * @param outPoints 교점을 기록할 배열. 기존 내용은 비우고 { x, y } 점을 넣는다.
  * @param segment 교점을 구할 segment
  * @param circle 교점을 구할 circle
  * @param epsilon discriminant tangent 판정 임계값
  */
-export function segmentCircleIntersectionsInto(
-  outPoints: XYObjectWritable[],
-  segment: SegmentLike,
-  circle: CircleLike,
+export function segmentCircleIntersectionsInto<Out extends PointWritable[]>(
+  outPoints: Out,
+  segment: Segment,
+  circle: Circle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const a = readSegmentA(segment);
-  const b = readSegmentB(segment);
-  const center = readCircleCenter(circle);
-  const radius = readCircleRadius(circle);
-  return lineFamilyEllipseIntersectionPoints(
+): Out {
+  const radius = circle.r;
+  lineFamilyEllipseIntersectionPoints(
     outPoints,
-    readX(a),
-    readY(a),
-    readX(b) - readX(a),
-    readY(b) - readY(a),
+    segment.x1,
+    segment.y1,
+    segment.x2 - segment.x1,
+    segment.y2 - segment.y1,
     'finite',
-    readX(center),
-    readY(center),
+    circle.cx,
+    circle.cy,
     radius,
     radius,
     epsilon
   );
+  return outPoints;
 }

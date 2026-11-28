@@ -46,7 +46,7 @@ describe('S3-RM-014 canonical intersects owner cleanup', () => {
     expect(intersectsRectBounds(rect, bounds)).toBe(true);
     expect(intersectsRectRect(rect, { x: 4, y: 4, width: 2, height: 2 })).toBe(true);
     expect(intersectsBoundsTriangle(bounds, triangle)).toBe(true);
-    expect(intersectsCircleTriangle(circle, triangle)).toBe(true);
+    expect(intersectsCircleTriangle({ cx: 2, cy: 2, r: 1 }, { x1: 0, y1: 0, x2: 4, y2: 0, x3: 0, y3: 4 })).toBe(true);
     expect(intersectsRectTriangle(rect, triangle)).toBe(true);
     expect(intersectsTriangleTriangle(triangle, { a: { x: 4, y: 0 }, b: { x: 5, y: 0 }, c: { x: 4, y: 1 } })).toBe(
       true

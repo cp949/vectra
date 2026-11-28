@@ -148,83 +148,66 @@ describe('circle boolean query - intersectsRect', () => {
 describe('circle boolean query - intersectsSegment', () => {
   test('segment가 circle 밖에 있으면 false를 반환한다', () => {
     // closest point = (5, 0), dist = 5 > radius=2
-    const circle = { center: { x: 0, y: 0 }, radius: 2 };
-    const segment = { a: { x: 5, y: 0 }, b: { x: 10, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 2 };
+    const segment = { x1: 5, y1: 0, x2: 10, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(false);
   });
 
   test('한 endpoint가 circle 경계 위에 있으면 true를 반환한다 (closed boundary)', () => {
     // endpoint (3, 4) dist = 5 = radius
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
-    const segment = { a: { x: 3, y: 4 }, b: { x: 10, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 5 };
+    const segment = { x1: 3, y1: 4, x2: 10, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
   test('한 endpoint가 circle 안에 있으면 true를 반환한다', () => {
     // endpoint (3, 0) dist = 3 < radius=5
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
-    const segment = { a: { x: 3, y: 0 }, b: { x: 10, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 5 };
+    const segment = { x1: 3, y1: 0, x2: 10, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
   test('양 endpoint가 circle 안에 있으면 true를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 10 };
-    const segment = { a: { x: 1, y: 0 }, b: { x: 5, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 10 };
+    const segment = { x1: 1, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
   test('segment 중간이 circle을 통과하면 true를 반환한다', () => {
     // closest point = (0, 0), dist = 0 < radius=2
-    const circle = { center: { x: 0, y: 0 }, radius: 2 };
-    const segment = { a: { x: -5, y: 0 }, b: { x: 5, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 2 };
+    const segment = { x1: -5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
   test('segment가 circle에 tangent이면 true를 반환한다', () => {
     // circle center (0, 5) r=5, segment (-5,0)-(5,0), closest = (0, 0), dist = 5 = r
-    const circle = { center: { x: 0, y: 5 }, radius: 5 };
-    const segment = { a: { x: -5, y: 0 }, b: { x: 5, y: 0 } };
+    const circle = { cx: 0, cy: 5, r: 5 };
+    const segment = { x1: -5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
   test('degenerate segment (a===b 좌표)가 circle 안에 있으면 true를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 5 };
-    const segment = { a: { x: 3, y: 0 }, b: { x: 3, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 5 };
+    const segment = { x1: 3, y1: 0, x2: 3, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(true);
   });
 
   test('degenerate segment (a===b 좌표)가 circle 밖에 있으면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 2 };
-    const segment = { a: { x: 5, y: 0 }, b: { x: 5, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 2 };
+    const segment = { x1: 5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(false);
   });
 
   test('empty circle (radius=0)이면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 0 };
-    const segment = { a: { x: -5, y: 0 }, b: { x: 5, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: 0 };
+    const segment = { x1: -5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(false);
   });
 
   test('empty circle (radius < 0)이면 false를 반환한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: -1 };
-    const segment = { a: { x: -5, y: 0 }, b: { x: 5, y: 0 } };
+    const circle = { cx: 0, cy: 0, r: -1 };
+    const segment = { x1: -5, y1: 0, x2: 5, y2: 0 };
     expect(intersectsSegment(circle, segment)).toBe(false);
-  });
-
-  test('tuple center / tuple endpoint에서도 동작한다', () => {
-    // endpoint (3, 0) dist = 3 < radius=5
-    const circle = { center: [0, 0] as const, radius: 5 };
-    const segment = { a: [3, 0] as const, b: [10, 0] as const };
-    expect(intersectsSegment(circle, segment)).toBe(true);
-  });
-
-  test('tuple segment shorthand에서도 동작한다', () => {
-    const circle = { center: { x: 0, y: 0 }, radius: 2 };
-    const segment = [
-      [-5, 0],
-      [5, 0],
-    ] as const;
-
-    expect(intersectsSegment(circle, segment)).toBe(true);
   });
 });

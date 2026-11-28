@@ -1,5 +1,5 @@
 import { DEFAULT_EPSILON } from '../internal/numeric';
-import type { CircleLike, TriangleLike, XYObjectWritable } from '../types';
+import type { Circle, Triangle, PointWritable } from '../types/flat-shapes.internal';
 import { circleTriangleIntersectionsInto } from './circle-triangle-intersections-into';
 
 /**
@@ -18,11 +18,11 @@ import { circleTriangleIntersectionsInto } from './circle-triangle-intersections
  * @param epsilon tangent/dedupe 판정 임계값
  */
 export function circleTriangleIntersections(
-  circle: CircleLike,
-  triangle: TriangleLike,
+  circle: Circle,
+  triangle: Triangle,
   epsilon = DEFAULT_EPSILON
-): XYObjectWritable[] {
-  const out: XYObjectWritable[] = [];
+): PointWritable[] {
+  const out: PointWritable[] = [];
   circleTriangleIntersectionsInto(out, circle, triangle, epsilon);
   return out;
 }

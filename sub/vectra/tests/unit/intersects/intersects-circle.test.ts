@@ -13,38 +13,38 @@ import { singleIntersectionSegmentCircleInto } from '../../../src/intersects/sin
 // disk: x∈[1,5], y∈[1,5]
 
 describe('intersectsCircleSegment', () => {
-  const circle = { center: { x: 3, y: 3 }, radius: 2 };
+  const circle = { cx: 3, cy: 3, r: 2 };
 
   test('miss: circle 밖을 지나는 line은 false를 반환한다', () => {
     // y=6인 선, circle bottom이 y=5 → miss
-    const line = { a: { x: 0, y: 6 }, b: { x: 6, y: 6 } };
+    const line = { x1: 0, y1: 6, x2: 6, y2: 6 };
     expect(intersectsCircleSegment(circle, line)).toBe(false);
   });
 
   test('tangent: circle에 접하는 line은 true를 반환한다', () => {
     // y=5인 수평선이 circle 상단에 접함 (접점: 3,5)
-    const line = { a: { x: 0, y: 5 }, b: { x: 6, y: 5 } };
+    const line = { x1: 0, y1: 5, x2: 6, y2: 5 };
     expect(intersectsCircleSegment(circle, line)).toBe(true);
   });
 
   test('2-point crossing: circle을 관통하는 line은 true를 반환한다', () => {
-    const line = { a: { x: 0, y: 3 }, b: { x: 6, y: 3 } };
+    const line = { x1: 0, y1: 3, x2: 6, y2: 3 };
     expect(intersectsCircleSegment(circle, line)).toBe(true);
   });
 
   test('empty circle (radius=0): false를 반환한다', () => {
-    const line = { a: { x: 0, y: 3 }, b: { x: 6, y: 3 } };
-    expect(intersectsCircleSegment({ center: { x: 3, y: 3 }, radius: 0 }, line)).toBe(false);
+    const line = { x1: 0, y1: 3, x2: 6, y2: 3 };
+    expect(intersectsCircleSegment({ cx: 3, cy: 3, r: 0 }, line)).toBe(false);
   });
 
   test('empty circle (radius<0): false를 반환한다', () => {
-    const line = { a: { x: 0, y: 3 }, b: { x: 6, y: 3 } };
-    expect(intersectsCircleSegment({ center: { x: 3, y: 3 }, radius: -1 }, line)).toBe(false);
+    const line = { x1: 0, y1: 3, x2: 6, y2: 3 };
+    expect(intersectsCircleSegment({ cx: 3, cy: 3, r: -1 }, line)).toBe(false);
   });
 
   test('line이 circle 내부에 완전히 포함: true를 반환한다', () => {
     // center 근처 짧은 선분 — 완전히 disk 내부
-    const line = { a: { x: 3, y: 3 }, b: { x: 3.5, y: 3 } };
+    const line = { x1: 3, y1: 3, x2: 3.5, y2: 3 };
     expect(intersectsCircleSegment(circle, line)).toBe(true);
   });
 });

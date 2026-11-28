@@ -1,7 +1,5 @@
-import { readCircleCenter, readCircleRadius } from '../internal/circle';
-import { hasNonFiniteVertex, readTriangleRawCoords, triangleSignedArea2x } from '../internal/triangle';
-import { readX, readY } from '../internal/xy';
-import type { CircleLike, TriangleLike } from '../types';
+import { hasNonFiniteTriangleVertex, flatTriangleSignedArea2x } from '../internal/triangle';
+import type { Circle, Triangle } from '../types/flat-shapes.internal';
 
 /**
  * circle과 triangle이 교차하거나 접하면 true를 반환한다.
@@ -15,17 +13,17 @@ import type { CircleLike, TriangleLike } from '../types';
  * @param circle 교차를 판정할 circle
  * @param triangle 교차를 판정할 triangle
  */
-export function intersectsCircleTriangle(circle: CircleLike, triangle: TriangleLike): boolean {
-  if (hasNonFiniteVertex(triangle) || triangleSignedArea2x(triangle) === 0) return false;
+export function intersectsCircleTriangle(circle: Circle, triangle: Triangle): boolean {
+  if (hasNonFiniteTriangleVertex(triangle) || flatTriangleSignedArea2x(triangle) === 0) return false;
 
-  const r = readCircleRadius(circle);
+  const r = circle.r;
   if (r <= 0) return false;
 
   const r2 = r * r;
-  const cx = readX(readCircleCenter(circle));
-  const cy = readY(readCircleCenter(circle));
-  const { ax, ay, bx, by, cx: tcx, cy: tcy } = readTriangleRawCoords(triangle);
-  const sign = triangleSignedArea2x(triangle) > 0 ? 1 : -1;
+  const cx = circle.cx;
+  const cy = circle.cy;
+  const { x1: ax, y1: ay, x2: bx, y2: by, x3: tcx, y3: tcy } = triangle;
+  const sign = flatTriangleSignedArea2x(triangle) > 0 ? 1 : -1;
 
   const d0 = sign * ((bx - ax) * (cy - ay) - (by - ay) * (cx - ax));
   const d1 = sign * ((tcx - bx) * (cy - by) - (tcy - by) * (cx - bx));

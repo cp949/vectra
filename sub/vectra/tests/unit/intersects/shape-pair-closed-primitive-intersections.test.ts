@@ -126,41 +126,25 @@ describe('triangle × triangle 교점 collection (S10-RM-007)', () => {
 });
 
 describe('circle × triangle 교점 collection (S10-RM-007)', () => {
-  const triangle = { a: { x: 0, y: 0 }, b: { x: 10, y: 0 }, c: { x: 0, y: 10 } };
+  const triangle = { x1: 0, y1: 0, x2: 10, y2: 0, x3: 0, y3: 10 };
 
   test('두 edge crossing은 두 점을 circle center turn 오름차순으로 반환한다', () => {
-    const points = circleTriangleIntersections({ center: { x: 0, y: 0 }, radius: 2 }, triangle);
+    const points = circleTriangleIntersections({ cx: 0, cy: 0, r: 2 }, triangle);
     expect(points).toHaveLength(2);
     expectPointClose(points[0], 2, 0, 6);
     expectPointClose(points[1], 0, 2, 6);
   });
 
   test('circle이 triangle 내부에 있으면 빈 배열이다', () => {
-    const points = circleTriangleIntersections({ center: { x: 2, y: 2 }, radius: 0.5 }, triangle);
+    const points = circleTriangleIntersections({ cx: 2, cy: 2, r: 0.5 }, triangle);
     expect(points).toEqual([]);
   });
 
   test('degenerate triangle / empty circle은 빈 배열이다', () => {
-    expect(
-      circleTriangleIntersections(
-        { center: { x: 0, y: 0 }, radius: 2 },
-        { a: { x: 0, y: 0 }, b: { x: 2, y: 0 }, c: { x: 4, y: 0 } }
-      )
-    ).toEqual([]);
-    expect(circleTriangleIntersections({ center: { x: 0, y: 0 }, radius: 0 }, triangle)).toEqual([]);
-  });
-
-  test('tuple 입력과 object 입력 결과가 같다', () => {
-    const objs = circleTriangleIntersections({ center: { x: 0, y: 0 }, radius: 2 }, triangle);
-    const tuples = circleTriangleIntersections(
-      [[0, 0], 2],
-      [
-        [0, 0],
-        [10, 0],
-        [0, 10],
-      ]
+    expect(circleTriangleIntersections({ cx: 0, cy: 0, r: 2 }, { x1: 0, y1: 0, x2: 2, y2: 0, x3: 4, y3: 0 })).toEqual(
+      []
     );
-    expect(tuples).toEqual(objs);
+    expect(circleTriangleIntersections({ cx: 0, cy: 0, r: 0 }, triangle)).toEqual([]);
   });
 });
 
