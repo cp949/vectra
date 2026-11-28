@@ -98,7 +98,7 @@ export type {
   SvgRectShapeLike,
   SvgShapeLike,
 } from './svg-shape.internal';
-export type { BarycentricLike, BarycentricWritable } from './triangle.internal';
+export type { Barycentric, BarycentricWritable } from './triangle.internal';
 
 export type {
   Bounds,

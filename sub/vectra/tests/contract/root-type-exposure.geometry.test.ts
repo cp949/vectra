@@ -4,7 +4,7 @@
 
 import { describe, test } from 'vitest';
 import type {
-  BarycentricLike,
+  Barycentric,
   BarycentricWritable,
   Bounds,
   BoundsWritable,
@@ -115,11 +115,11 @@ describe('root geometry type exposure 계약', () => {
   });
 
   test('root entry가 barycentric type을 노출한다', () => {
-    const bary = expectAssignable<BarycentricLike>({ x: 0.25, y: 0.25, w: 0.5 });
-    expectAssignable<BarycentricLike>(bary);
+    const bary = expectAssignable<Barycentric>({ x: 0.25, y: 0.25, w: 0.5 });
+    expectAssignable<Barycentric>(bary);
     const writable = expectAssignable<BarycentricWritable>({ x: 0.25, y: 0.25, w: 0.5 });
-    // BarycentricWritable은 BarycentricLike에 할당 가능하다.
-    expectAssignable<BarycentricLike>(writable);
+    // BarycentricWritable은 Barycentric에 할당 가능하다.
+    expectAssignable<Barycentric>(writable);
   });
 
   test('root entry가 ellipse type을 노출한다', () => {

@@ -1,5 +1,5 @@
 import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
-import type { BarycentricLike } from '../types';
+import type { Barycentric } from '../types';
 import { pointFromBarycentricInto } from './point-from-barycentric-into';
 
 /**
@@ -17,7 +17,7 @@ import { pointFromBarycentricInto } from './point-from-barycentric-into';
  * @param triangle 기준 triangle
  * @param barycentric vertex A/B/C 가중치 (x = u, y = v, w = w)
  */
-export function pointFromBarycentric(triangle: Triangle, barycentric: BarycentricLike): PointWritable {
+export function pointFromBarycentric(triangle: Triangle, barycentric: Barycentric): PointWritable {
   const seed: PointWritable = { x: 0, y: 0 };
   return pointFromBarycentricInto(seed, triangle, barycentric);
 }

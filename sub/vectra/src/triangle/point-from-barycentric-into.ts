@@ -1,7 +1,7 @@
 import type { Triangle, PointWritable } from '../types/flat-shapes.internal';
-import type { BarycentricLike } from '../types';
+import type { Barycentric } from '../types';
 
-export type { BarycentricLike };
+export type { Barycentric };
 
 /**
  * barycentric 좌표를 Cartesian point로 변환해 out에 기록하고 out을 반환한다.
@@ -24,7 +24,7 @@ export type { BarycentricLike };
 export function pointFromBarycentricInto<Out extends PointWritable>(
   out: Out,
   triangle: Triangle,
-  barycentric: BarycentricLike
+  barycentric: Barycentric
 ): Out {
   const { x1: ax, y1: ay, x2: bx, y2: by, x3: cx, y3: cy } = triangle;
   const u = barycentric.x;

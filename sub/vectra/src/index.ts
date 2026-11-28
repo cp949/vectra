@@ -48,7 +48,7 @@ export type {
 } from './statistics/types';
 export type {
   AreaOverlapDetail,
-  BarycentricLike,
+  Barycentric,
   BarycentricWritable,
   Bounds,
   BoundsPadding,

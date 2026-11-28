@@ -73,7 +73,7 @@ export { perimeter } from './perimeter';
 export { pointAtIndex } from './point-at-index';
 export { pointAtIndexInto } from './point-at-index-into';
 export { pointFromBarycentric } from './point-from-barycentric';
-export { type BarycentricLike, pointFromBarycentricInto } from './point-from-barycentric-into';
+export { type Barycentric, pointFromBarycentricInto } from './point-from-barycentric-into';
 export { sideAt } from './side-at';
 export { sideAtInto } from './side-at-into';
 export { signedArea } from './signed-area';
